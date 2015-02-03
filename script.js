@@ -146,7 +146,7 @@ $(document).on('ready', function () {
 	$('#chart-panel').on('click', function(e){
 		if(!bb.chartClicked){
 			$('path.c3-arc').attr('class', function(index, classNames) {
-				return classNames.replace('_unselected_', '');
+				return classNames.replace(/_unselected_/g, '');
 			});
 			bb.chart1.unselect();
 			bb.chart2.unselect();
