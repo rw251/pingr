@@ -41,7 +41,10 @@ var getPie = function (data, colours, element, onclick) {
         },
         data: {
             columns: data,
-            type: 'pie'
+            type: 'pie',
+			selection: {
+				enabled: true
+			}
         }
 	};
 	if(onclick){
@@ -51,7 +54,7 @@ var getPie = function (data, colours, element, onclick) {
 }
 
 var showOverviewCharts = function () {
-    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1', function(d,i){
+	var ddd = getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1', function(d,i){
 		bb.chart1.focus(d.id);
 		if(d.id === "Nil"){
 			var template = $('#sap-nil').html();
@@ -69,7 +72,11 @@ var showOverviewCharts = function () {
 			var rendered = Mustache.render(template, chartData.unmeasured.items[1]);
 			$('#sap').html(rendered);
 		}
-	}));
+	});
+	ddd.data.onmouseout = function(d, i) {
+		
+	};
+    bb.chart1 = c3.generate(ddd);
 	bb.chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
 		bb.chart2.focus(d.id);
 		if (d.id === "Unmeasured") {
