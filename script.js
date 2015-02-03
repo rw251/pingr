@@ -55,7 +55,17 @@ var showOverviewCharts = function () {
 		if(d.id === "Nil"){
 			var template = $('#sap-nil').html();
 			Mustache.parse(template);   // optional, speeds up future uses
-			var rendered = Mustache.render(template, {improvement: chartData.unmeasured.items[0].improvement});
+			var rendered = Mustache.render(template, {improvement: chartData.unmeasured.items[0]});
+			$('#sap').html(rendered);
+		} else if(d.id === "Indirect") {
+			var template = $('#sap-indirect').html();
+			Mustache.parse(template);   // optional, speeds up future uses
+			var rendered = Mustache.render(template, {improvement: chartData.unmeasured.items[2]});
+			$('#sap').html(rendered);
+		} else if(d.id === "Direct") {
+			var template = $('#sap-direct').html();
+			Mustache.parse(template);   // optional, speeds up future uses
+			var rendered = Mustache.render(template, {improvement: chartData.unmeasured.items[1]});
 			$('#sap').html(rendered);
 		}
 	}));

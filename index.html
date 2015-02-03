@@ -196,14 +196,22 @@ Login
     <script src="script.js"></script>
 	
 	<script id="sap-nil" type="x-tmpl-mustache">
-	<p>These are patients that you have had no contact with. <span class="text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:
+	<p>These are patients that you have had no contact with. <span class="bg-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
 	<ul>
 		<li>Check these patients are still registered at your practice.</li>
 		<li>Check these patients still live in your area.</li>
 		<li>Invite these patients via letter or telephone for a blood pressure check.</li>
 		<li>If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?</li>
 	</ul>
-	</p>
+	</script>
+	<script id="sap-indirect" type="x-tmpl-mustache">
+	<p>These are patients you have had indirect contact with (e.g. prescriptions or letters). <span class="bg-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
+	<ul>
+		<li>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions – this could improve your performance by {{ i-prescriptions }}%.</li>
+		<li>Telephone those contactable by phone to invite them for a blood pressure check – this could improve your performance by {{ i-phone }}%.</li>
+		<li>Send letters to those with whom telephone contact has not been possible – this could improve your performance by {{ i-letter }}%.</li>
+		<li>Ask the patient to send in readings taken at home or at the pharmacy.</li>
+	</ul>	
 	</script>
 </body>
 

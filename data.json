@@ -13,7 +13,11 @@
             },
             {
                 "name": "indirect",
-                "n": 2072
+                "n": 2072,
+				"improvement" : "15",
+				"i-phone" : "10",
+				"i-letter" : "5",
+				"i-prescription" : "25"
             }
         ]
     },
