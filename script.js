@@ -5,6 +5,27 @@ var tooltiptext = function (value, ratio, id, index) {
     return value + ' (' + (ratio * 100).toFixed(2) + '%)';
 };
 
+var getMainData = function (){
+	var data = [];
+	data.push(['Unmeasured', chartData.unmeasured.n]);
+	data.push(['Uncontrolled', chartData.uncontrolled.n]);
+	return data;
+};
+var getUnmeasuredData = function (){
+	var data = [];
+	for(var item in chartData.unmeasured.items){
+		data.push([item.name, item.n]);
+	}
+	return data;
+};
+var getUncontrolledData = function (){
+	var data = [];
+	for(var item in chartData.uncontrolled.items){
+		data.push([item.name, item.n]);
+	}
+	return data;
+};
+
 var showOverviewCharts = function () {
     var chart1 = c3.generate({
         bindto: '#chart1',
@@ -18,11 +39,7 @@ var showOverviewCharts = function () {
         },
         data: {
             // iris data from R
-            columns: [
-                ['Direct', 595],
-                ['Indirect', 2072],
-                ['Nil', 1413]
-            ],
+            columns: getUnmeasuredData(),
             type: 'pie'
         }
     });
@@ -39,10 +56,7 @@ var showOverviewCharts = function () {
         },
         data: {
             // iris data from R
-            columns: [
-                ['Unmeasured', 2072],
-                ['Uncontrolled', 2868]
-            ],
+            columns: getMainData(),
             type: 'pie',
             onclick: function (d, i) {
                 if (d.id === "Unmeasured") {
@@ -68,11 +82,7 @@ var showOverviewCharts = function () {
         },
         data: {
             // iris data from R
-            columns: [
-                ['Recently Measured', 365],
-                ['Recently Changed Rx', 1174],
-                ['Suboptimal Rx', 1329]
-            ],
+            columns: getUncontrolledData(),
             type: 'pie'
         }
     });
