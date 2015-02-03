@@ -44,7 +44,8 @@ var getPie = function (data, colours, element, onclick) {
             type: 'pie',
 			selection: {
 				enabled: true
-			}
+			},
+			labels: true
         }
 	};
 	if(onclick){
