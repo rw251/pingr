@@ -28,6 +28,6 @@ body {
 }
 
 .c3-chart-arc path._selected_ {
-	stroke: #430A2B;
-	fill: #723558;
+	stroke: #DDDB99;
+	stroke-width: 5px;
 }
