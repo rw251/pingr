@@ -9,12 +9,13 @@
             },
             {
                 "name": "Direct",
-                "n": 595
+                "n": 595,
+				"improvement" : "16"
             },
             {
                 "name": "Indirect",
                 "n": 2072,
-				"improvement" : "15",
+				"improvement" : "17",
 				"i-phone" : "10",
 				"i-letter" : "5",
 				"i-prescriptions" : "25"
@@ -26,15 +27,18 @@
         "items": [
             {
                 "name": "Recently Measured",
-                "n": 365
+                "n": 365,
+				"improvement" : "14"
             },
             {
                 "name": "Recently Changed Rx",
-                "n": 1174
+                "n": 1174,
+				"improvement" : "13"
             },
             {
                 "name": "Suboptimal Rx",
-                "n": 1329
+                "n": 1329,
+				"improvement" : "12"
             }
         ]
     }

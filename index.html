@@ -191,7 +191,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src="script.js?5"></script>
+    <script src="script.js?6"></script>
 	
 	<script id="sap-nil" type="x-tmpl-mustache">
 	<p>These are patients that you have had no contact with. <span class="bg-danger text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
@@ -214,7 +214,7 @@
 	<script id="sap-direct" type="x-tmpl-mustache">
 	<p>These are patients you have had direct contact with (e.g. face-to-face or telephone). <span class="bg-danger text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
 	<ul>
-		<li>Ensure that the pop-ups in your EHR are working.
+		<li>Ensure that the pop-ups in your EHR are working.</li>
 		<li>Hold an educational session or meeting at your practice to highlight to colleagues: 
 			<ul>
 				<li>The importance of blood pressure measurement.</li>
@@ -225,10 +225,39 @@
 	</ul>
 	</script>
 	<script id="sap-recently-measured" type="x-tmpl-mustache">
+	<p>These are patients who have had a high blood pressure reading taken in the last 2 months. <span class="bg-danger text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
+	<ul>
+		<li>Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR.</li>
+		<li>Some patients have had chronically raised blood pressure and no change in medication, which should be addressed.</li>
+	</ul>
 	</script>
 	<script id="sap-recently-changed" type="x-tmpl-mustache">
+	<p>These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again. <span class="bg-danger text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
+	<ul>
+		<li>Ensure that the pop-ups in your EHR are working.</li>
+		<li>Hold an educational session or meeting at your practice to highlight to colleagues: 
+			<ul>
+				<li>The importance of blood pressure measurement.</li>
+				<li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li>
+				<li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR.  </li>
+			</ul>
+		</li>
+		<li>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions</li>
+	</ul>
 	</script>
 	<script id="sap-suboptimal" type="x-tmpl-mustache">
+	<p>These are patients who have had a high blood pressure reading taken and could have their medication optimised. <span class="bg-danger text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
+	<ul>
+		<li>Contact these patients by letter or telephone to offer them a change in their blood pressure medication.</li>
+		<li>Ensure that the pop-ups in your EHR are working.</li>
+		<li>Hold an educational session or meeting at your practice to highlight to colleagues: 
+			<ul>
+				<li>The importance of blood pressure measurement.</li>
+				<li>High blood pressure readings are not being acted on – this may be the only chance to do something about it.</li>
+				<li>If there are legitimate reasons why action on high blood pressure is not acted on it should be appropriately coded in the EHR. </li>
+			</ul>
+		</li>
+	</ul>
 	</script>
 </body>
 
