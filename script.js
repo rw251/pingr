@@ -54,17 +54,17 @@ var showOverviewCharts = function () {
     bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1' ));
 	bb.chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
                 if (d.id === "Unmeasured") {
-                    $('#chart1').show(800);
-                    $('#chart3').hide(800);
+                    bb.chart1.show();
+                    bb.chart3.hide();
                 } else {
-                    $('#chart3').show(800);
-                    $('#chart1').hide(800);
+                    bb.chart3.show();
+                    bb.chart1.hide();
                 }
             } ));
 	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#FF6633', '#ff5733', '#ff7533'], '#chart3' ));
 
-    $('#chart1').hide();
-    $('#chart3').hide();
+    bb.chart1.hide();
+    bb.chart3.hide();
 };
 
 var show = function (page) {
