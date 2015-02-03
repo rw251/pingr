@@ -196,7 +196,7 @@ Login
     <script src="script.js"></script>
 	
 	<script id="sap-nil" type="x-tmpl-mustache">
-	<p>These are patients that you have had no contact with. <span class="bg-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
+	<p>These are patients that you have had no contact with. <span class="bg-danger text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
 	<ul>
 		<li>Check these patients are still registered at your practice.</li>
 		<li>Check these patients still live in your area.</li>
@@ -205,11 +205,11 @@ Login
 	</ul>
 	</script>
 	<script id="sap-indirect" type="x-tmpl-mustache">
-	<p>These are patients you have had indirect contact with (e.g. prescriptions or letters). <span class="bg-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
+	<p>These are patients you have had indirect contact with (e.g. prescriptions or letters). <span class="bg-danger text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
 	<ul>
-		<li>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions – this could improve your performance by {{ i-prescriptions }}%.</li>
-		<li>Telephone those contactable by phone to invite them for a blood pressure check – this could improve your performance by {{ i-phone }}%.</li>
-		<li>Send letters to those with whom telephone contact has not been possible – this could improve your performance by {{ i-letter }}%.</li>
+		<li>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions – <span class="bg-danger text-danger">this could improve your performance by {{ i-prescriptions }}%.</span></li>
+		<li>Telephone those contactable by phone to invite them for a blood pressure check – <span class="bg-danger text-danger">this could improve your performance by {{ i-phone }}%.</span></li>
+		<li>Send letters to those with whom telephone contact has not been possible – <span class="bg-danger text-danger">this could improve your performance by {{ i-letter }}%.</span></li>
 		<li>Ask the patient to send in readings taken at home or at the pharmacy.</li>
 	</ul>	
 	</script>
