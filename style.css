@@ -1,0 +1,29 @@
+/* Put your css in here */
+body {
+  padding-top: 50px;
+}
+
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.form-horizontal .control-label {
+  padding-top: 4px;
+}
+.input-group-addon {
+  padding: 0px 6px;
+}
+.form-group .form-control, .form-group .input-group {
+  margin-bottom: 5px;
+}
+.input-group .form-control {
+  margin:0;
+}
+/* ------------------ Login page --------------------*/
+.login-page > .login-container {
+  width: 360px;
+}
+.login-page .login-panel {
+  margin-top: 100px;
+}
