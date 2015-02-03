@@ -26,3 +26,7 @@ body {
 .login-page .login-panel {
   margin-top: 40px;
 }
+
+_selected_ {
+	stroke: #000;
+}
