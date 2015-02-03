@@ -54,7 +54,7 @@ var getPie = function (data, colours, element, onclick) {
 }
 
 var showOverviewCharts = function () {
-	var ddd = getPie(getUnmeasuredData(), ['#0F073B', '#221858', '#5D5393'], '#chart1', function(d,i){
+    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#0F073B', '#221858', '#5D5393'], '#chart1', function(d,i){
 		bb.chartClicked=true;
 		$('#chart1 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
@@ -77,8 +77,7 @@ var showOverviewCharts = function () {
 			var rendered = Mustache.render(template, chartData.unmeasured.items[1]);
 			$('#sap').html(rendered);
 		}
-	});
-    bb.chart1 = c3.generate(ddd);
+	}));
 	bb.chart2 = c3.generate(getPie(getMainData(), ['#3C3176', '#A8383B'], '#chart2', function (d, i) {
 		bb.chartClicked=true;
 		$('#chart2 path.c3-arc').attr('class', function(index, classNames) {
@@ -96,7 +95,30 @@ var showOverviewCharts = function () {
 			bb.chart1.unselect();
 		}
 	} ));
-	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3' ));
+	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3' function(d,i){
+		bb.chartClicked=true;
+		$('#chart3 path.c3-arc').attr('class', function(index, classNames) {
+			return classNames + ' _unselected_';
+		});
+		bb.chart3.unselect();
+		bb.chart3.select(d.id);
+		if(d.id === "Recently Measured"){
+			var template = $('#sap-recently-measured').html();
+			Mustache.parse(template);   // optional, speeds up future uses
+			var rendered = Mustache.render(template, chartData.uncontrolled.items[0]);
+			$('#sap').html(rendered);
+		} else if(d.id === "Recently Changed Rx") {
+			var template = $('#sap-recently-changed').html();
+			Mustache.parse(template);   // optional, speeds up future uses
+			var rendered = Mustache.render(template, chartData.uncontrolled.items[2]);
+			$('#sap').html(rendered);
+		} else if(d.id === "Suboptimal Rx") {
+			var template = $('#sap-suboptimal').html();
+			Mustache.parse(template);   // optional, speeds up future uses
+			var rendered = Mustache.render(template, chartData.uncontrolled.items[1]);
+			$('#sap').html(rendered);
+		}
+	}));
 
     $('#chart1').hide();
     $('#chart3').hide();
