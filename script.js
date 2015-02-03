@@ -95,7 +95,7 @@ var showOverviewCharts = function () {
 			bb.chart1.unselect();
 		}
 	} ));
-	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3' function(d,i){
+	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3', function(d,i){
 		bb.chartClicked=true;
 		$('#chart3 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
