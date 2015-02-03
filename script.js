@@ -89,9 +89,11 @@ var showOverviewCharts = function () {
 		if (d.id === "Unmeasured") {
 			$('#chart1').show(400);
 			$('#chart3').hide(400);
+			bb.chart3.unselect();
 		} else {
 			$('#chart3').show(400);
 			$('#chart1').hide(400);
+			bb.chart1.unselect();
 		}
 	} ));
 	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3' ));
@@ -151,6 +153,9 @@ $(document).on('ready', function () {
 			bb.chart1.unselect();
 			bb.chart2.unselect();
 			bb.chart3.unselect();
+			
+			$('#chart1').hide();
+			$('#chart3').hide();
 		}
 		bb.chartClicked=false;
 	});
