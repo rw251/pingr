@@ -82,17 +82,17 @@ var showOverviewCharts = function () {
 		bb.chart2.unselect();
 		bb.chart2.select(d.id);
 		if (d.id === "Unmeasured") {
-			bb.chart1.show();
-			bb.chart3.hide();
+			$('#chart1').show(400);
+			$('#chart3').hide(400);
 		} else {
-			bb.chart3.show();
-			bb.chart1.hide();
+			$('#chart3').show(400);
+			$('#chart1').hide(400);
 		}
 	} ));
 	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3' ));
 
-    bb.chart1.hide();
-    bb.chart3.hide();
+    $('#chart1').hide();
+    $('#chart3').hide();
 };
 
 var show = function (page) {
