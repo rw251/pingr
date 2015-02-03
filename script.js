@@ -92,6 +92,7 @@ var showOverviewCharts = function () {
 			$('#chart3 path.c3-arc').attr('class', function(index, classNames) {
 				return classNames.replace(/_unselected_/g, '');
 			});
+			if(bb.chart1.selected.length===0) $('#sag').html('');
 		} else {
 			$('#chart3').show(400);
 			$('#chart1').hide(400);
@@ -99,6 +100,7 @@ var showOverviewCharts = function () {
 			$('#chart1 path.c3-arc').attr('class', function(index, classNames) {
 				return classNames.replace(/_unselected_/g, '');
 			});
+			if(bb.chart3.selected.length===0) $('#sag').html('');
 		}
 	} ));
 	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3', function(d,i){
@@ -184,6 +186,8 @@ $(document).on('ready', function () {
 			
 			$('#chart1').hide();
 			$('#chart3').hide();
+			
+			$('#sag').html('');
 		}
 		bb.chartClicked=false;
 	});
