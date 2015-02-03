@@ -27,6 +27,7 @@ body {
   margin-top: 40px;
 }
 
-._selected_ {
-	stroke: #000;
+.c3-chart-arc path._selected_ {
+	stroke: #430A2B;
+	fill: #723558;
 }
