@@ -27,6 +27,6 @@ body {
   margin-top: 40px;
 }
 
-_selected_ {
+._selected_ {
 	stroke: #000;
 }
