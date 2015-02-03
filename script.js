@@ -55,7 +55,9 @@ var getPie = function (data, colours, element, onclick) {
 
 var showOverviewCharts = function () {
 	var ddd = getPie(getUnmeasuredData(), ['#0F073B', '#221858', '#5D5393'], '#chart1', function(d,i){
-		$('#chart1 path.c3-arc').attr('class','_unselected_');
+		$('#chart1 path.c3-arc').attr('class', function(index, classNames) {
+			return classNames + ' _unselected_';
+		});
 		bb.chart1.unselect();
 		bb.chart1.select(d.id);
 		if(d.id === "Nil"){
@@ -77,7 +79,9 @@ var showOverviewCharts = function () {
 	});
     bb.chart1 = c3.generate(ddd);
 	bb.chart2 = c3.generate(getPie(getMainData(), ['#3C3176', '#A8383B'], '#chart2', function (d, i) {
-		$('#chart2 path.c3-arc').attr('class','_unselected_');
+		$('#chart2 path.c3-arc').attr('class', function(index, classNames) {
+			return classNames + ' _unselected_';
+		});
 		bb.chart2.unselect();
 		bb.chart2.select(d.id);
 		if (d.id === "Unmeasured") {
