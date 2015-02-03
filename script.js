@@ -13,15 +13,15 @@ var getMainData = function (){
 };
 var getUnmeasuredData = function (){
 	var data = [];
-	for(var item in chartData.unmeasured.items){
-		data.push([item.name, item.n]);
+	for(var i=0; i < chartData.measured.items.length; i++) {
+		data.push([chartData.measured.items[i].name, chartData.measured.items[i].n]);
 	}
 	return data;
 };
 var getUncontrolledData = function (){
 	var data = [];
-	for(var item in chartData.uncontrolled.items){
-		data.push([item.name, item.n]);
+	for(var i=0; i < chartData.uncontrolled.items.length; i++) {
+		data.push([chartData.uncontrolled.items[i].name, chartData.uncontrolled.items[i].n]);
 	}
 	return data;
 };
