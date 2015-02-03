@@ -59,7 +59,7 @@ var getPie = function (data, colours, element, onclick) {
 }
 
 var showOverviewCharts = function () {
-    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#0F073B', '#221858', '#5D5393'], '#chart1', function(d,i){
+    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#845fc8', '#a586de', '#cab5f0'], '#chart1', function(d,i){
 		bb.chartClicked=true;
 		$('#chart1 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
@@ -83,7 +83,7 @@ var showOverviewCharts = function () {
 			$('#sap').html(rendered);
 		}
 	}));
-	bb.chart2 = c3.generate(getPie(getMainData(), ['#3C3176', '#A8383B'], '#chart2', function (d, i) {
+	bb.chart2 = c3.generate(getPie(getMainData(), ['#845fc8', '#f96876'], '#chart2', function (d, i) {
 		bb.chartClicked=true;
 		$('#chart2 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
@@ -108,7 +108,7 @@ var showOverviewCharts = function () {
 			if(bb.chart3.selected().length===0) $('#sap').html('');
 		}
 	} ));
-	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3', function(d,i){
+	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#f96876', '#fc8d97', '#fdb9bf'], '#chart3', function(d,i){
 		bb.chartClicked=true;
 		$('#chart3 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
