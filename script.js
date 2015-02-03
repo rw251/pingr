@@ -141,5 +141,9 @@ var loadData = function() {
 $(document).on('ready', function () {
     wireUpPages();
 	
+	$('#chart-panel').on('click', function(e){
+		console.log(e);
+	});
+	
 	loadData();
 });
