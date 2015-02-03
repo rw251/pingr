@@ -26,11 +26,11 @@ var getUncontrolledData = function (){
 	return data;
 };
 
-var showOverviewCharts = function () {
-    var chart1 = c3.generate({
-        bindto: '#chart1',
+var getPie = function (data, colours, element, onclick) {
+	var pie = {
+		bindto: element,
         color: {
-            pattern: ['#3366FF', '#3375ff', '#3357ff']
+            pattern: colours
         },
         tooltip: {
             format: {
@@ -38,27 +38,19 @@ var showOverviewCharts = function () {
             }
         },
         data: {
-            // iris data from R
-            columns: getUnmeasuredData(),
+            columns: data,
             type: 'pie'
         }
-    });
+	};
+	if(onclick){
+		pie.data.onclick = onclick;
+	}
+	return pie;
+}
 
-    var chart2 = c3.generate({
-        bindto: '#chart2',
-        color: {
-            pattern: ['#3366FF', '#FF6633']
-        },
-        tooltip: {
-            format: {
-                value: tooltiptext
-            }
-        },
-        data: {
-            // iris data from R
-            columns: getMainData(),
-            type: 'pie',
-            onclick: function (d, i) {
+var showOverviewCharts = function () {
+    var chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1' ));
+	var chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
                 if (d.id === "Unmeasured") {
                     $('#chart1').show(800);
                     $('#chart3').hide(800);
@@ -66,26 +58,8 @@ var showOverviewCharts = function () {
                     $('#chart3').show(800);
                     $('#chart1').hide(800);
                 }
-            }
-        }
-    });
-
-    var chart3 = c3.generate({
-        bindto: '#chart3',
-        color: {
-            pattern: ['#FF6633', '#ff5733', '#ff7533']
-        },
-        tooltip: {
-            format: {
-                value: tooltiptext
-            }
-        },
-        data: {
-            // iris data from R
-            columns: getUncontrolledData(),
-            type: 'pie'
-        }
-    });
+            } ));
+	var chart3 = c3.generate(getPie(getUncontrolledData(), ['#FF6633', '#ff5733', '#ff7533'], '#chart3' ));
 
     $('#chart1').hide();
     $('#chart3').hide();
