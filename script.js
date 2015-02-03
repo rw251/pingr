@@ -123,4 +123,6 @@ var loadData = function() {
 
 $(document).on('ready', function () {
     wireUpPages();
+	
+	loadData();
 });
