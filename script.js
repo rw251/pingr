@@ -42,13 +42,16 @@ var getPie = function (data, colours, element, onclick) {
             type: 'pie',
 			selection: {
 				enabled: true
-			},
-			labels: {
-				format: function (v, id, i, j) {
-					return id + ' ('+v+')';
+			}
+        },
+		pie: {
+			label: {
+				format: function (value, ratio, id) {
+					return id + ' ('+value+')';
 				}
 			}
-        }
+		}
+    }
 	};
 	if(onclick){
 		pie.data.onclick = onclick;
