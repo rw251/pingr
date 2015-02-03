@@ -3,10 +3,6 @@
 "use strict";
 var bb = {};
 
-var tooltiptext = function (value, ratio, id, index) {
-    return value + ' (' + (ratio * 100).toFixed(2) + '%)';
-};
-
 var getMainData = function (){
 	var data = [];
 	data.push(['Unmeasured', chartData.unmeasured.n]);
@@ -36,7 +32,9 @@ var getPie = function (data, colours, element, onclick) {
         },
         tooltip: {
             format: {
-                value: tooltiptext
+                value: function (value, ratio, id, index) {
+					return value + ' (' + (ratio * 100).toFixed(2) + '%)';
+				}
             }
         },
         data: {
@@ -45,7 +43,11 @@ var getPie = function (data, colours, element, onclick) {
 			selection: {
 				enabled: true
 			},
-			labels: true
+			labels: {
+				format: function (v, id, i, j) {
+					return id + ' ('+v+')';
+				}
+			}
         }
 	};
 	if(onclick){
