@@ -13,8 +13,8 @@ var getMainData = function (){
 };
 var getUnmeasuredData = function (){
 	var data = [];
-	for(var i=0; i < chartData.measured.items.length; i++) {
-		data.push([chartData.measured.items[i].name, chartData.measured.items[i].n]);
+	for(var i=0; i < chartData.unmeasured.items.length; i++) {
+		data.push([chartData.unmeasured.items[i].name, chartData.unmeasured.items[i].n]);
 	}
 	return data;
 };
