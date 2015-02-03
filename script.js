@@ -54,7 +54,7 @@ var getPie = function (data, colours, element, onclick) {
 }
 
 var showOverviewCharts = function () {
-	var ddd = getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1', function(d,i){
+	var ddd = getPie(getUnmeasuredData(), ['#0F073B', '#221858', '#5D5393'], '#chart1', function(d,i){
 		bb.chart1.unselect();
 		bb.chart1.select(d.id);
 		if(d.id === "Nil"){
@@ -78,7 +78,7 @@ var showOverviewCharts = function () {
 		
 	};
     bb.chart1 = c3.generate(ddd);
-	bb.chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
+	bb.chart2 = c3.generate(getPie(getMainData(), ['#3C3176', '#A8383B'], '#chart2', function (d, i) {
 		bb.chart2.unselect();
 		bb.chart2.select(d.id);
 		if (d.id === "Unmeasured") {
@@ -89,7 +89,7 @@ var showOverviewCharts = function () {
 			bb.chart1.hide();
 		}
 	} ));
-	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#FF6633', '#ff5733', '#ff7533'], '#chart3' ));
+	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#540002', '#7E1518', '#D3696C'], '#chart3' ));
 
     bb.chart1.hide();
     bb.chart3.hide();
