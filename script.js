@@ -59,7 +59,7 @@ var getPie = function (data, colours, element, onclick) {
 }
 
 var showOverviewCharts = function () {
-    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#845fc8', '#a586de', '#cab5f0'], '#chart1', function(d,i){
+    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#845fc8', '#a586de', '#6841b0'], '#chart1', function(d,i){
 		bb.chartClicked=true;
 		$('#chart1 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
