@@ -51,7 +51,6 @@ var getPie = function (data, colours, element, onclick) {
 				}
 			}
 		}
-    }
 	};
 	if(onclick){
 		pie.data.onclick = onclick;
