@@ -52,6 +52,7 @@ var getPie = function (data, colours, element, onclick) {
 
 var showOverviewCharts = function () {
     bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1', function(d,i){
+		chart.focus(d.id);
 		if(d.id === "Nil"){
 			var template = $('#sap-nil').html();
 			Mustache.parse(template);   // optional, speeds up future uses
@@ -70,6 +71,7 @@ var showOverviewCharts = function () {
 		}
 	}));
 	bb.chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
+		chart.focus(d.id);
 		if (d.id === "Unmeasured") {
 			bb.chart1.show();
 			bb.chart3.hide();
