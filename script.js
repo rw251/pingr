@@ -51,16 +51,23 @@ var getPie = function (data, colours, element, onclick) {
 }
 
 var showOverviewCharts = function () {
-    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1' ));
+    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1', function(d,i){
+		if(d.id === "Nil"){
+			var template = $('#sap-nil').html();
+			Mustache.parse(template);   // optional, speeds up future uses
+			var rendered = Mustache.render(template, {improvement: chartData.unmeasured.items[0].improvement});
+			$('#sap').html(rendered);
+		}
+	}));
 	bb.chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
-                if (d.id === "Unmeasured") {
-                    bb.chart1.show();
-                    bb.chart3.hide();
-                } else {
-                    bb.chart3.show();
-                    bb.chart1.hide();
-                }
-            } ));
+		if (d.id === "Unmeasured") {
+			bb.chart1.show();
+			bb.chart3.hide();
+		} else {
+			bb.chart3.show();
+			bb.chart1.hide();
+		}
+	} ));
 	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#FF6633', '#ff5733', '#ff7533'], '#chart3' ));
 
     bb.chart1.hide();
