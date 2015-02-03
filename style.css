@@ -27,7 +27,12 @@ body {
   margin-top: 40px;
 }
 
+.c3-chart-arc path._unselected_ {
+	opacity: 0.3 !important;
+}
 .c3-chart-arc path._selected_ {
 	stroke: #DDDB99;
 	stroke-width: 5px;
+	opacity: 1 !important;
 }
+
