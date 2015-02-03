@@ -1,0 +1,36 @@
+{
+    "unmeasured": {
+        "n": 2072,
+        "items": [
+            {
+                "name": "Nil",
+                "n": 1413
+            },
+            {
+                "name": "Direct",
+                "n": 595
+            },
+            {
+                "name": "indirect",
+                "n": 2072
+            }
+        ]
+    },
+    "uncontrolled": {
+        "n": 2868,
+        "items": [
+            {
+                "name": "Recently Measured",
+                "n": 365
+            },
+            {
+                "name": "Recently Changed Rx",
+                "n": 1174
+            },
+            {
+                "name": "Suboptimal Rx",
+                "n": 1329
+            }
+        ]
+    }
+}

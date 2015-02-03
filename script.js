@@ -114,6 +114,13 @@ var wireUpPages = function () {
     });
 };
 
+var chartData = {};
+var loadData = function() {
+	$.getJSON("data.json", function(data) {
+		chartData = data;
+	});
+}
+
 $(document).on('ready', function () {
     wireUpPages();
 });
