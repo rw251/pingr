@@ -1,6 +1,8 @@
 /*jslint browser: true*/
 /*global $, c3*/
 "use strict";
+var bb = {};
+
 var tooltiptext = function (value, ratio, id, index) {
     return value + ' (' + (ratio * 100).toFixed(2) + '%)';
 };
@@ -49,8 +51,8 @@ var getPie = function (data, colours, element, onclick) {
 }
 
 var showOverviewCharts = function () {
-    var chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1' ));
-	var chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
+    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#3366FF', '#3375ff', '#3357ff'], '#chart1' ));
+	bb.chart2 = c3.generate(getPie(getMainData(), ['#3366FF', '#FF6633'], '#chart2', function (d, i) {
                 if (d.id === "Unmeasured") {
                     $('#chart1').show(800);
                     $('#chart3').hide(800);
@@ -59,7 +61,7 @@ var showOverviewCharts = function () {
                     $('#chart1').hide(800);
                 }
             } ));
-	var chart3 = c3.generate(getPie(getUncontrolledData(), ['#FF6633', '#ff5733', '#ff7533'], '#chart3' ));
+	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#FF6633', '#ff5733', '#ff7533'], '#chart3' ));
 
     $('#chart1').hide();
     $('#chart3').hide();
