@@ -102,7 +102,10 @@ var show = function (page) {
 
     if (page === 'page1') {
         showOverviewCharts();
-    }
+		$('#main').addClass('content');
+    } else {	
+		$('#main').removeClass('content');
+	}
 };
 
 var wireUpPages = function () {
