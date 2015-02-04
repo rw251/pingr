@@ -141,6 +141,12 @@ var loadData = function() {
 $(document).on('ready', function () {
     wireUpPages();
 	
+	$('.tick-hover').on('hover', function() {
+		$(this).find('i').addClass('fa-check-circle');
+	}, function () {
+		$(this).find('i').removeClass('fa-check-circle');
+	});
+	
 	$('#chart-panel').on('click', function(e){
 		if(!bb.chartClicked){
 			$('path.c3-arc').attr('class', function(index, classNames) {
