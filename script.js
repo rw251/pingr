@@ -116,7 +116,7 @@ var wireUpPages = function () {
 		else { show('login'); }
     });
     $('#login-button,#create-button,#forgot-button,#home-button').on('click', function (e) {
-        show('page1');
+        show('page0');
         $(".nav").find(".active").removeClass("active");
         $('#home-page').addClass("active");
         e.preventDefault();
