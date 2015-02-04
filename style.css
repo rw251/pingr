@@ -11,6 +11,13 @@ nav.part{
 	left: 75px;
 }
 
+header {
+	background-color: #f2f2f4;
+	border-bottom: 1px solid #ececee;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
 .starter-template {
   padding: 40px 15px 0px 15px;
 }
