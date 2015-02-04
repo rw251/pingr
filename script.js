@@ -45,22 +45,27 @@ var populatePatients = function (id) {
 	$('#patients').html(rendered);
 }
 
-var selectPieSlice = function (chart){
+var populatePanels = function (id) {
+	populatePatients(id);
+	populateSuggestedActions(id);
+}
+
+var selectPieSlice = function (chart, id){
 	bb.chartClicked=true;
 	$('#' + chart + ' path.c3-arc').attr('class', function(index, classNames) {
 		return classNames + ' _unselected_';
 	});
 	bb[chart].unselect();
-	bb[chart].select(d.id);
+	bb[chart].select(id);
 };
 
 var showOverviewCharts = function () {
     bb.chart1 = c3.generate(getPie(bb.data.unmeasured, ['#845fc8', '#a586de', '#6841b0'], '#chart1', function(d,i){
-		selectPieSlice('chart1');
-		populateSuggestedActions(d.id);
+		selectPieSlice('chart1', d.id);
+		populatePanels(d.id);
 	}));
 	bb.chart2 = c3.generate(getPie(bb.data.main, ['#845fc8', '#f96876'], '#chart2', function (d, i) {
-		selectPieSlice('chart2');
+		selectPieSlice('chart2', d.id);
 		if (d.id === "Unmeasured") {
 			$('#chart1').show(400);
 			$('#chart3').hide(400);
@@ -80,8 +85,8 @@ var showOverviewCharts = function () {
 		}
 	} ));
 	bb.chart3 = c3.generate(getPie(bb.data.uncontrolled, ['#f96876', '#fc8d97', '#f6495a'], '#chart3', function(d,i){
-		selectPieSlice('chart3');
-		populateSuggestedActions(d.id);
+		selectPieSlice('chart3', d.id);
+		populatePanels(d.id);
 	}));
 
     $('#chart1').hide();
