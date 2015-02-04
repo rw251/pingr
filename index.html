@@ -169,7 +169,7 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">Patients</h3>
                         </div>
-                        <div class="panel-body" style="height:400px">
+                        <div class="panel-body" style="min-height:400px">
                             <div id="patients">
 							</div>
                         </div>
@@ -261,9 +261,11 @@
 	</ul>
 	</script>
 	<script id="patient-list" type="x-tmpl-mustache">
+	<table>
 	{{#patients}}
-	<span>{{name}} - {{nhs}}</span>
+	<tr><td>{{name}}</td><td>{{nhs}}</td></tr>
 	{{/patients}}
+	</table>
 	</script>
 </body>
 
