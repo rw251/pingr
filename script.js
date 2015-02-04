@@ -38,7 +38,7 @@ var getPie = function (data, colours, element, onclick) {
 };
 
 var populateSuggestedActions = function (id){
-	var template = $('#sap-'+id.toLowerCase().replace(/ /g,'-').html();
+	var template = $('#sap-'+id.toLowerCase().replace(/ /g,'-')).html();
 	Mustache.parse(template);   // optional, speeds up future uses
 	var rendered = Mustache.render(template, bb.data.items[id]);
 	$('#sap').html(rendered);
