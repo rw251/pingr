@@ -7,6 +7,10 @@ body {
   padding: 40px 15px 0px 15px;
 }
 
+.starter-template-high {
+  padding: 15px 15px 0px 15px;
+}
+
 .form-horizontal .control-label {
   padding-top: 4px;
 }
