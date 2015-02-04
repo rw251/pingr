@@ -141,9 +141,10 @@ var loadData = function() {
 $(document).on('ready', function () {
     wireUpPages();
 	
-	$('.tick-hover').on('hover', function() {
+	$('.tick-hover').on('mouseover', function() {
 		$(this).find('i').addClass('fa-check-circle');
-	}, function () {
+	});
+	$('.tick-hover').on('mouseout', function () {
 		$(this).find('i').removeClass('fa-check-circle');
 	});
 	
