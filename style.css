@@ -3,8 +3,12 @@ body {
   padding-top: 50px;
 }
 
-aside.left-panel {
-	top: 40px;
+nav.full{
+	left:230px;
+}
+
+nav.part{
+	left: 75px;
 }
 
 .starter-template {

@@ -103,8 +103,10 @@ var show = function (page) {
     if (page === 'page1') {
         showOverviewCharts();
 		$('#main').addClass('content');
+		$('#topnavbar').addClass('full');
     } else {	
 		$('#main').removeClass('content');
+		$('#topnavbar').removeClass('full');
 	}
 };
 
