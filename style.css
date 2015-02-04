@@ -23,6 +23,9 @@ body {
 .login-page > .login-container {
   width: 360px;
 }
+.narrow-container{
+  width: 360px;
+}
 .login-page .login-panel {
   margin-top: 40px;
 }
