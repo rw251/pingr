@@ -59,6 +59,16 @@ var selectPieSlice = function (chart, id){
 	bb[chart].select(id);
 };
 
+var showHideCharts = function (show, hide){
+	$('#'+show).show(400);
+	$('#'+hide).hide(400);
+	bb[hide].unselect();
+	$('#' + hide + ' path.c3-arc').attr('class', function(index, classNames) {
+		return classNames.replace(/_unselected_/g, '');
+	});
+	if(bb[show].selected().length===0) $('#sap').html('');
+}
+
 var showOverviewCharts = function () {
     bb.chart1 = c3.generate(getPie(bb.data.unmeasured, ['#845fc8', '#a586de', '#6841b0'], '#chart1', function(d,i){
 		selectPieSlice('chart1', d.id);
@@ -67,21 +77,9 @@ var showOverviewCharts = function () {
 	bb.chart2 = c3.generate(getPie(bb.data.main, ['#845fc8', '#f96876'], '#chart2', function (d, i) {
 		selectPieSlice('chart2', d.id);
 		if (d.id === "Unmeasured") {
-			$('#chart1').show(400);
-			$('#chart3').hide(400);
-			bb.chart3.unselect();
-			$('#chart3 path.c3-arc').attr('class', function(index, classNames) {
-				return classNames.replace(/_unselected_/g, '');
-			});
-			if(bb.chart1.selected().length===0) $('#sap').html('');
+			showHideCharts('chart1','chart3');
 		} else {
-			$('#chart3').show(400);
-			$('#chart1').hide(400);
-			bb.chart1.unselect();
-			$('#chart1 path.c3-arc').attr('class', function(index, classNames) {
-				return classNames.replace(/_unselected_/g, '');
-			});
-			if(bb.chart3.selected().length===0) $('#sap').html('');
+			showHideCharts('chart3','chart1');
 		}
 	} ));
 	bb.chart3 = c3.generate(getPie(bb.data.uncontrolled, ['#f96876', '#fc8d97', '#f6495a'], '#chart3', function(d,i){
