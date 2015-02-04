@@ -34,15 +34,6 @@ body {
   margin-top: 40px;
 }
 
-.page {
-  background-color:#f9f9f9;
-  z-index:9;
-  top: 30px;
-  left: 0;
-  height:100%;
-  width:100%;
-}
-
 .c3-chart-arc path._unselected_ {
 	opacity: 0.3 !important;
 }
