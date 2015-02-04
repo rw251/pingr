@@ -25,6 +25,11 @@ var getPie = function (data, colours, element, onclick) {
 					return id + ' ('+value+')';
 				}
 			}
+		},
+		legend: {
+		  item: {
+			onclick: function (id) { bb.chartClicked=true; }
+		  }
 		}
 	};
 	if(onclick){ pie.data.onclick = onclick; }
