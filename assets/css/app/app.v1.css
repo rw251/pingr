@@ -415,11 +415,11 @@ header{
 	padding-bottom:4px;}
 	
 	
-
+/* rw - don't need
 .navbar-toggle{
 	margin:8px 20px 8px 0px;
 	display:block;
-	padding-left:0px;}
+	padding-left:0px;} */
 	
 .navbar-toggle .icon-bar{
 	background-color:#b3b3be;}
