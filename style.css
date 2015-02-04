@@ -55,3 +55,7 @@ body {
 	color: rgb(95, 175,245);
 }
 
+.fa-check-circle:before {
+  content: "\f058";
+}
+
