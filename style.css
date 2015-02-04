@@ -1,4 +1,12 @@
 /* Put your css in here */
+body {
+  padding-top: 50px;
+}
+
+aside {
+	top: 40px;
+}
+
 .starter-template {
   padding: 40px 15px 0px 15px;
 }
