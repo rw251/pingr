@@ -97,7 +97,7 @@ var showOverviewCharts = function () {
 };
 
 var show = function (page) {
-    $('.page').hide();
+    $('.page').fadeOut(500);
     $('#' + page).show();
 
     if (page === 'page1') {
