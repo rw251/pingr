@@ -3,27 +3,6 @@
 "use strict";
 var bb = {};
 
-var getMainData = function (){
-	var data = [];
-	data.push(['Unmeasured', chartData.unmeasured.n]);
-	data.push(['Uncontrolled', chartData.uncontrolled.n]);
-	return data;
-};
-var getUnmeasuredData = function (){
-	var data = [];
-	for(var i=0; i < chartData.unmeasured.items.length; i++) {
-		data.push([chartData.unmeasured.items[i].name, chartData.unmeasured.items[i].n]);
-	}
-	return data;
-};
-var getUncontrolledData = function (){
-	var data = [];
-	for(var i=0; i < chartData.uncontrolled.items.length; i++) {
-		data.push([chartData.uncontrolled.items[i].name, chartData.uncontrolled.items[i].n]);
-	}
-	return data;
-};
-
 var getPie = function (data, colours, element, onclick) {
 	var pie = {
 		bindto: element,
@@ -56,34 +35,26 @@ var getPie = function (data, colours, element, onclick) {
 		pie.data.onclick = onclick;
 	}
 	return pie;
-}
+};
+
+var populateSuggestedActions = function (id){
+	var template = $('#sap-'+id.toLowerCase().replace(/ /g,'-').html();
+	Mustache.parse(template);   // optional, speeds up future uses
+	var rendered = Mustache.render(template, bb.data.items[id]);
+	$('#sap').html(rendered);
+};
 
 var showOverviewCharts = function () {
-    bb.chart1 = c3.generate(getPie(getUnmeasuredData(), ['#845fc8', '#a586de', '#6841b0'], '#chart1', function(d,i){
+    bb.chart1 = c3.generate(getPie(bb.data.unmeasured, ['#845fc8', '#a586de', '#6841b0'], '#chart1', function(d,i){
 		bb.chartClicked=true;
 		$('#chart1 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
 		});
 		bb.chart1.unselect();
 		bb.chart1.select(d.id);
-		if(d.id === "Nil"){
-			var template = $('#sap-nil').html();
-			Mustache.parse(template);   // optional, speeds up future uses
-			var rendered = Mustache.render(template, chartData.unmeasured.items[0]);
-			$('#sap').html(rendered);
-		} else if(d.id === "Indirect") {
-			var template = $('#sap-indirect').html();
-			Mustache.parse(template);   // optional, speeds up future uses
-			var rendered = Mustache.render(template, chartData.unmeasured.items[2]);
-			$('#sap').html(rendered);
-		} else if(d.id === "Direct") {
-			var template = $('#sap-direct').html();
-			Mustache.parse(template);   // optional, speeds up future uses
-			var rendered = Mustache.render(template, chartData.unmeasured.items[1]);
-			$('#sap').html(rendered);
-		}
+		populateSuggestedActions(d.id);
 	}));
-	bb.chart2 = c3.generate(getPie(getMainData(), ['#845fc8', '#f96876'], '#chart2', function (d, i) {
+	bb.chart2 = c3.generate(getPie(bb.data.main, ['#845fc8', '#f96876'], '#chart2', function (d, i) {
 		bb.chartClicked=true;
 		$('#chart2 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
@@ -108,29 +79,14 @@ var showOverviewCharts = function () {
 			if(bb.chart3.selected().length===0) $('#sap').html('');
 		}
 	} ));
-	bb.chart3 = c3.generate(getPie(getUncontrolledData(), ['#f96876', '#fc8d97', '#f6495a'], '#chart3', function(d,i){
+	bb.chart3 = c3.generate(getPie(bb.data.uncontrolled, ['#f96876', '#fc8d97', '#f6495a'], '#chart3', function(d,i){
 		bb.chartClicked=true;
 		$('#chart3 path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
 		});
 		bb.chart3.unselect();
 		bb.chart3.select(d.id);
-		if(d.id === "Recently Measured"){
-			var template = $('#sap-recently-measured').html();
-			Mustache.parse(template);   // optional, speeds up future uses
-			var rendered = Mustache.render(template, chartData.uncontrolled.items[0]);
-			$('#sap').html(rendered);
-		} else if(d.id === "Recently Changed Rx") {
-			var template = $('#sap-recently-changed').html();
-			Mustache.parse(template);   // optional, speeds up future uses
-			var rendered = Mustache.render(template, chartData.uncontrolled.items[2]);
-			$('#sap').html(rendered);
-		} else if(d.id === "Suboptimal Rx") {
-			var template = $('#sap-suboptimal').html();
-			Mustache.parse(template);   // optional, speeds up future uses
-			var rendered = Mustache.render(template, chartData.uncontrolled.items[1]);
-			$('#sap').html(rendered);
-		}
+		populateSuggestedActions(d.id);
 	}));
 
     $('#chart1').hide();
@@ -170,10 +126,22 @@ var wireUpPages = function () {
     });
 };
 
-var chartData = {};
 var loadData = function() {
 	$.getJSON("data.json", function(data) {
-		chartData = data;
+		bb.data = {};
+		bb.data.all = data;
+		bb.data.items = {};
+		bb.data.unmeasured = [];
+		bb.data.uncontrolled = [];
+		bb.data.main = [['Unmeasured', bb.data.all.unmeasured.n],['Uncontrolled', bb.data.all.uncontrolled.n]];
+		for(var i=0; i < bb.data.all.unmeasured.items.length; i++) {
+			bb.data.unmeasured.push([bb.data.all.unmeasured.items[i].name, bb.data.all.unmeasured.items[i].n]);
+			bb.data.items[bb.data.all.unmeasured.items[i].name] = bb.data.all.unmeasured.items[i];
+		}
+		for(var i=0; i < bb.data.all.uncontrolled.items.length; i++) {
+			bb.data.uncontrolled.push([bb.data.all.uncontrolled.items[i].name, bb.data.all.uncontrolled.items[i].n]);
+			bb.data.items[bb.data.all.uncontrolled.items[i].name] = bb.data.all.uncontrolled.items[i];
+		}
 	});
 }
 
