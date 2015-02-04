@@ -147,6 +147,9 @@ $(document).on('ready', function () {
 	$('.tick-hover').on('mouseout', function () {
 		$(this).find('i').removeClass('fa-check-circle');
 	});
+	$('.tick-hover').on('click', function () {
+		show('page1');
+	});
 	
 	$('#chart-panel').on('click', function(e){
 		if(!bb.chartClicked){
