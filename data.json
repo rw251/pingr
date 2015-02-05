@@ -1,6 +1,9 @@
+[
 {
+	"disease" : "Blood Pressure",
     "unmeasured": {
         "n": 2072,
+		"measured" : 2410,
         "items": [
             {
                 "name": "Nil",
@@ -71,6 +74,7 @@
     },
     "uncontrolled": {
         "n": 2868,
+		"controlled" : 2104,
         "items": [
             {
                 "name": "Recently Measured",
@@ -204,3 +208,4 @@
         ]
     }
 }
+]

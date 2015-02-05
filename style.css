@@ -18,6 +18,43 @@ header {
 	padding-bottom: 4px;
 }
 
+#chart-benchmark .c3-line {
+	stroke-width: 0px;
+}
+
+.todo-list .list-item {
+	display: block;
+	padding-bottom: 10px;
+	padding-top: 5px;
+}
+
+.todo-list .highlighted {
+	border: 1px solid #fcff21;
+	background: rgb(242,242,244);
+}
+
+.todo-list .list-item:hover {
+	cursor: pointer;
+	background-color: rgb(242,242,244);
+}
+
+.shorty{
+	margin-left: 75px;
+}
+
+.navbar-toggle {
+	display: block;
+}
+
+.navbar .collapsed {
+	display: none;
+}
+
+.navbar .container {
+	width: auto;
+	background-color: rgb(242,242,244);
+}
+
 .starter-template {
   padding: 40px 15px 0px 15px;
 }
