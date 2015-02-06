@@ -10,7 +10,6 @@
                 "n": 1413,
 				"improvement" : "15",
 				"patients" : [
-					{"name":"Charles Ward", "nhs" : "9025310457"},
 					{"name":"Jesse Clark", "nhs" : "9002567106"},
 					{"name":"Raymond Butler", "nhs" : "9079708590"},
 					{"name":"Linda Evans", "nhs" : "9021318955"},
@@ -37,11 +36,7 @@
 					{"name":"Shawn Watson", "nhs" : "9000893907"},
 					{"name":"Marie Cooper", "nhs" : "9033191867"},
 					{"name":"Jane Howard", "nhs" : "9099247692"},
-					{"name":"Stephanie Taylor", "nhs" : "9066450634"},
-					{"name":"Jacqueline Flores", "nhs" : "9008160423"},
-					{"name":"Maria Martin", "nhs" : "9083870021"},
-					{"name":"Helen Reed", "nhs" : "9076097857"},
-					{"name":"Nicole Adams", "nhs" : "9055140552"}
+					{"name":"Stephanie Taylor", "nhs" : "9066450634"}
 				]
             },
             {
@@ -61,13 +56,7 @@
 					{"name":"Ryan Griffin", "nhs" : "9010856620"},
 					{"name":"Joyce Edwards", "nhs" : "9009771926"},
 					{"name":"Bruce Jones", "nhs" : "9092418386"},
-					{"name":"Lawrence Turner", "nhs" : "9059513272"},
-					{"name":"Mary Long", "nhs" : "9033642722"},
-					{"name":"Stephen Lee", "nhs" : "9078525580"},
-					{"name":"Brian Mitchell", "nhs" : "9064676157"},
-					{"name":"Steven Lopez", "nhs" : "9057671094"},
-					{"name":"Anna Rodriguez", "nhs" : "9088091161"},
-					{"name":"Billy Price", "nhs" : "9007401801"}
+					{"name":"Lawrence Turner", "nhs" : "9059513272"}
 				]
             }
         ]
@@ -90,18 +79,7 @@
 					{"name":"Matthew Phillips", "nhs" : "9067340515"},
 					{"name":"Frank Collins", "nhs" : "9021642165"},
 					{"name":"Jessica Scott", "nhs" : "9035356481"},
-					{"name":"Albert Brooks", "nhs" : "9000048507"},
-					{"name":"Brenda Howard", "nhs" : "9056764992"},
-					{"name":"Louis Watson", "nhs" : "9004789800"},
-					{"name":"Carol Richardson", "nhs" : "9007619621"},
-					{"name":"Paula Williams", "nhs" : "9086889588"},
-					{"name":"Julia Rogers", "nhs" : "9056838906"},
-					{"name":"Jerry Flores", "nhs" : "9026787222"},
-					{"name":"Peter Powell", "nhs" : "9066856830"},
-					{"name":"Justin Bryant", "nhs" : "9072342585"},
-					{"name":"Deborah Moore", "nhs" : "9036747604"},
-					{"name":"Joseph Cooper", "nhs" : "9077896163"},
-					{"name":"Melissa King", "nhs" : "9001394194"}
+					{"name":"Albert Brooks", "nhs" : "9000048507"}
 				]
             },
             {
@@ -118,55 +96,7 @@
 					{"name":"Shirley Alexander", "nhs" : "9054093275"},
 					{"name":"Paul Stewart", "nhs" : "9044111202"},
 					{"name":"Evelyn Evans", "nhs" : "9056590976"},
-					{"name":"Jane Rivera", "nhs" : "9097757004"},
-					{"name":"Nancy Jenkins", "nhs" : "9055932005"},
-					{"name":"Diana Perez", "nhs" : "9053678113"},
-					{"name":"Kenneth Anderson", "nhs" : "9041057008"},
-					{"name":"Richard Diaz", "nhs" : "9046709091"},
-					{"name":"Kathy Robinson", "nhs" : "9055104950"},
-					{"name":"Donna Ross", "nhs" : "9087291562"},
-					{"name":"Andrea Thompson", "nhs" : "9025289007"},
-					{"name":"Timothy Jones", "nhs" : "9056873237"},
-					{"name":"Mark Johnson", "nhs" : "9013474756"},
-					{"name":"Ralph Morris", "nhs" : "9064253332"},
-					{"name":"Stephen Morgan", "nhs" : "9076644952"},
-					{"name":"Aaron Bailey", "nhs" : "9005834851"},
-					{"name":"Ashley Butler", "nhs" : "9008698887"},
-					{"name":"Larry Perry", "nhs" : "9008654611"},
-					{"name":"Anthony Lopez", "nhs" : "9017413981"},
-					{"name":"Theresa Hall", "nhs" : "9067708133"},
-					{"name":"Judith White", "nhs" : "9081128623"},
-					{"name":"Jesse Brown", "nhs" : "9027100435"},
-					{"name":"Roy Barnes", "nhs" : "9013066313"},
-					{"name":"Stephanie Lee", "nhs" : "9002379666"},
-					{"name":"Joan Peterson", "nhs" : "9084967463"},
-					{"name":"Johnny Campbell", "nhs" : "9051262328"},
-					{"name":"Cynthia Ramirez", "nhs" : "9086873387"},
-					{"name":"Victor Thomas", "nhs" : "9084190857"},
-					{"name":"Rebecca Ward", "nhs" : "9006058613"},
-					{"name":"Sandra Edwards", "nhs" : "9040190708"},
-					{"name":"Martin Smith", "nhs" : "9097722147"},
-					{"name":"Brandon Parker", "nhs" : "9083007061"},
-					{"name":"Michelle Harris", "nhs" : "9069576795"},
-					{"name":"Sharon Russell", "nhs" : "9084229312"},
-					{"name":"Elizabeth Simmons", "nhs" : "9001493673"},
-					{"name":"Virginia Bennett", "nhs" : "9014725432"},
-					{"name":"Jacqueline Rodriguez", "nhs" : "9004337633"},
-					{"name":"Alan Martin", "nhs" : "9053553612"},
-					{"name":"Christine Gray", "nhs" : "9023649267"},
-					{"name":"John Reed", "nhs" : "9099294513"},
-					{"name":"Nicholas Nelson", "nhs" : "9046166907"},
-					{"name":"Mildred Wilson", "nhs" : "9075200309"},
-					{"name":"Catherine Torres", "nhs" : "9082147503"},
-					{"name":"Kathryn Baker", "nhs" : "9052878865"},
-					{"name":"Maria Wood", "nhs" : "9009862946"},
-					{"name":"Gerald Cook", "nhs" : "9072466131"},
-					{"name":"Jason Phillips", "nhs" : "9045411577"},
-					{"name":"Lisa Miller", "nhs" : "9021844319"},
-					{"name":"Willie Long", "nhs" : "9053827488"},
-					{"name":"Diane Hughes", "nhs" : "9012787695"},
-					{"name":"Harold Allen", "nhs" : "9082145890"},
-					{"name":"Chris Clark", "nhs" : "9011394297"}
+					{"name":"Jane Rivera", "nhs" : "9097757004"}
 				]
             },
             {
@@ -183,26 +113,7 @@
 					{"name":"Jonathan Walker", "nhs" : "9018071754"},
 					{"name":"Arthur Scott", "nhs" : "9040610338"},
 					{"name":"Sara Washington", "nhs" : "9051689216"},
-					{"name":"Eric Garcia", "nhs" : "9015846659"},
-					{"name":"Donald Jackson", "nhs" : "9032768377"},
-					{"name":"Jessica Mitchell", "nhs" : "9038824389"},
-					{"name":"Rose Green", "nhs" : "9095369465"},
-					{"name":"Jeremy Adams", "nhs" : "9049118463"},
-					{"name":"Billy Lewis", "nhs" : "9038561126"},
-					{"name":"Daniel Cox", "nhs" : "9054172339"},
-					{"name":"Adam Bell", "nhs" : "9080981757"},
-					{"name":"Juan Gonzales", "nhs" : "9080613368"},
-					{"name":"Sean Turner", "nhs" : "9045766914"},
-					{"name":"Laura Martinez", "nhs" : "9081891707"},
-					{"name":"Randy Carter", "nhs" : "9038267903"},
-					{"name":"Lillian Roberts", "nhs" : "9047867614"},
-					{"name":"Shawn Kelly", "nhs" : "9071545152"},
-					{"name":"Beverly Hernandez", "nhs" : "9043604036"},
-					{"name":"Nicole Taylor", "nhs" : "9038951193"},
-					{"name":"Janet Coleman", "nhs" : "9055479599"},
-					{"name":"Thomas Collins", "nhs" : "9091802445"},
-					{"name":"Fred Wright", "nhs" : "9012996837"},
-					{"name":"Christina Hill", "nhs" : "9000666371"}
+					{"name":"Eric Garcia", "nhs" : "9015846659"}
 				]
             }
         ]

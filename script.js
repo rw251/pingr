@@ -53,6 +53,7 @@ var populateSuggestedActions = function (id){
 	Mustache.parse(template);   // optional, speeds up future uses
 	var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id]);
 	$('#sap').html(rendered);
+	$('#sap-placeholder').hide();
 };
 
 var populatePatients = function (id) {
@@ -60,6 +61,7 @@ var populatePatients = function (id) {
 	Mustache.parse(template);   // optional, speeds up future uses
 	var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id]);
 	$('#patients').html(rendered);
+	$('#patients-placeholder').hide();
 	
 	bb.client = new ZeroClipboard($("#patients .btn-clip"));
 }
@@ -87,7 +89,7 @@ var showHideCharts = function (show, hide){
 	});
 	if(bb[show].selected().length===0) {
 		$('#sap').html('');
-		$('#patient-list').html('');
+		$('#patients').html('');
 	}
 };
 
@@ -371,7 +373,9 @@ $(document).on('ready', function () {
 			if(bb.chart2) bb.chart2.unselect();
 						
 			$('#sap').html('');
-			$('#patient-list').html('');
+			$('#sap-placeholder').show();
+			$('#patients').html('');
+			$('#patients-placeholder').show();
 		}
 		bb.chartClicked=false;
 	});

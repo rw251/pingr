@@ -252,8 +252,8 @@
             </aside>
 
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-8 col-md-6 col-lg-6">
+                <div class="row" style="max-height:400px">
+                    <div class="col-sm-8 col-md-8 col-lg-9">
                         <ul class="nav nav-tabs">
                             <li class="active" id="tab-select-performance">
                                 <a data-toggle="tab" href="#tab-performance">Current Performance</a>
@@ -267,9 +267,7 @@
                                 <a data-toggle="tab" href="#tab-benchmark">Benchmark</a>
                             </li>
                         </ul>
-						
-						<div class="row">
-						<div class="col-xs-12">
+
                         <div class="tab-content">
                             <div class="panel panel-default tab-pane tabs-up active" id="tab-performance">
 								<div class="panel-heading clean">
@@ -343,88 +341,7 @@
                             </div>
                         </div>
 
-						</div>
-						</div>
-                        <div class="row">
-                            <div class="col-sm-8">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">Suggested action plan</h3>
-                                    </div>
-
-                                    <div class="panel-body">
-                                        <ul class="nav nav-tabs">
-                                            <li class="active">
-                                                <a data-toggle="tab" href="#tab-sap-team">Team / Organisation</a>
-                                            </li>
-
-                                            <li>
-                                                <a data-toggle="tab" href="#tab-sap-individual">Individual Patient</a>
-                                            </li>
-                                        </ul>
-
-                                        <div class="tab-content">
-                                            <div class="panel panel-default padd-t-sm tab-pane tabs-up active" id="tab-sap-team">
-                                                <div class="panel-body">
-                                                    <div id="sap"></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="panel panel-default tab-pane tabs-up" id="tab-sap-individual">
-                                                <div class="panel-body"></div>
-
-                                                <div class="panel-footer">
-                                                    <form class="ng-pristine ng-valid">
-                                                        <div class="input-group">
-                                                            <input class="form-control ng-pristine ng-untouched ng-valid" data-ng-model="todoText" placeholder="Message here..." type="text"> <span class="input-group-btn"><button class=" btn-success btn" type="submit"><span class="input-group-btn"><span class="input-group-btn"><span class="input-group-btn">Send</span></span></span></button></span>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">Demographics</h3>
-                                    </div>
-
-                                    <div class="panel-body">
-                                        <ul class="nav nav-tabs">
-                                            <li class="active" id="demo-contact">
-                                                <a data-toggle="tab" href="#tab-demo-contact">Contact</a>
-                                            </li>
-
-                                            <li id="demo-trend">
-                                                <a data-toggle="tab" href="#tab-demo-trend">BP Trend</a>
-                                            </li>
-                                        </ul>
-
-                                        <div class="tab-content">
-                                            <div class="panel panel-default tab-pane tabs-up active" id="tab-demo-contact">
-                                                <div class="panel-body" id="chart-panel">
-                                                    <div class="row">
-                                                        <div id="chart-demo-contact"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="panel panel-default tab-pane tabs-up" id="tab-demo-trend">
-                                                <div class="panel-body" id="chart-panel">
-                                                    <div class="row">
-                                                        <div id="chart-demo-trend"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+					</div>
 
                     <div class="col-sm-4 col-md-4 col-lg-3">
                         <div class="panel panel-default">
@@ -433,12 +350,98 @@
                             </div>
 
                             <div class="panel-body" style="min-height:400px">
+								<div id="patients-placeholder">
+									Select a patient group to display affected patients
+								</div>
                                 <div id="patients"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            
+				<div class="row">				
+					<div class="col-sm-6">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Suggested action plan</h3>
+							</div>
+
+							<div class="panel-body">
+								<ul class="nav nav-tabs">
+									<li class="active">
+										<a data-toggle="tab" href="#tab-sap-team">Team / Organisation</a>
+									</li>
+
+									<li>
+										<a data-toggle="tab" href="#tab-sap-individual">Individual Patient</a>
+									</li>
+								</ul>
+
+								<div class="tab-content">
+									<div class="panel panel-default padd-t-sm tab-pane tabs-up active" id="tab-sap-team">
+										<div class="panel-body">
+											<div id="sap-placeholder">
+												Select a patient group to display suggested actions
+											</div>
+											<div id="sap"></div>
+										</div>
+									</div>
+
+									<div class="panel panel-default tab-pane tabs-up" id="tab-sap-individual">
+										<div class="panel-body"></div>
+
+										<div class="panel-footer">
+											<form class="ng-pristine ng-valid">
+												<div class="input-group">
+													<input class="form-control ng-pristine ng-untouched ng-valid" data-ng-model="todoText" placeholder="Message here..." type="text"> <span class="input-group-btn"><button class=" btn-success btn" type="submit"><span class="input-group-btn"><span class="input-group-btn"><span class="input-group-btn">Send</span></span></span></button></span>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-sm-6">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Demographics</h3>
+							</div>
+
+							<div class="panel-body">
+								<ul class="nav nav-tabs">
+									<li class="active" id="demo-contact">
+										<a data-toggle="tab" href="#tab-demo-contact">Contact</a>
+									</li>
+
+									<li id="demo-trend">
+										<a data-toggle="tab" href="#tab-demo-trend">BP Trend</a>
+									</li>
+								</ul>
+
+								<div class="tab-content">
+									<div class="panel panel-default tab-pane tabs-up active" id="tab-demo-contact">
+										<div class="panel-body" id="chart-panel">
+											<div class="row">
+												<div id="chart-demo-contact"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="panel panel-default tab-pane tabs-up" id="tab-demo-trend">
+										<div class="panel-body" id="chart-panel">
+											<div class="row">
+												<div id="chart-demo-trend"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
         </div>
     </section>
 
