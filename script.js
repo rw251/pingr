@@ -114,6 +114,7 @@ var showMainChart = function (disease, type) {
 		showBreakdown(disease, d.id.charAt(2).toUpperCase() + d.id.slice(3));
 	}));
 	$('#tbl22').hide();
+	$('#tbl21').show();
 };
 
 var showBreakdown = function (disease, type){
@@ -138,6 +139,7 @@ var showBreakdown = function (disease, type){
 		$('#row-'+d.id).addClass('tr-hovered');
 	}));
 	$('#tbl22').show();
+	$('#tbl21').hide();
 };
 
 var show = function (page) {
