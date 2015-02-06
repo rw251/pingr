@@ -32,10 +32,6 @@ $(function(){
 		$('#main').toggleClass('shorty');
 	});
 	
-	
-	
-	
-	
 	/********************************
 	Aside Navigation Menu
 	********************************/
