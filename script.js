@@ -200,10 +200,13 @@ var wireUpPages = function () {
 	
 	$('#pick-nice').on('click', function(){
 		$('#pick-button').html('NICE <span class="caret"></span>');
+		$('#guide-amount').html('<i class="fa fa-warning"></i> 96</span>');
+		$('#guide-text').html('CVD events could be prevented');
 	});
 	$('#pick-qof').on('click', function(){
 		$('#pick-button').html('QOF <span class="caret"></span>');
-		
+		$('#guide-amount').html('<i class="fa fa-warning"></i> 12</span>');
+		$('#guide-text').html('QOF points could be achieved');		
 	});
 	
 	$('#patients').on('click', 'tr', function(e){
