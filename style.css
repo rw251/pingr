@@ -28,6 +28,14 @@ header {
 	padding-top: 5px;
 }
 
+.tr-hovered {
+	background-color: rgb(244,244,255);	
+}
+
+#tbl22 tr:hover {
+	background-color: rgb(244,244,255);
+}
+
 .todo-list .highlighted {
 	border: 1px solid #fcff21;
 	background: rgb(242,242,244);

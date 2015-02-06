@@ -12,10 +12,10 @@ $(window).load(function() {
   });
 });	
 
-var getPie = function (data, colours, element, onclick) {
+var getPie = function (data, colours, element, onclick, onmouseover) {
 	var pie = {
 		bindto: element,
-        color: { pattern: colours },
+        //color: { pattern: colours },
         tooltip: {
             format: {
                 value: function (value, ratio, id, index) {
@@ -32,17 +32,19 @@ var getPie = function (data, colours, element, onclick) {
 		pie: {
 			label: {
 				format: function (value, ratio, id) {
-					return id + ' ('+value+')';
+					return '';//id + ' ('+value+')';
 				}
 			}
 		},
 		legend: {
-		  item: {
+			show: false
+		  /*item: {
 			onclick: function (id) { bb.chartClicked=true; }
-		  }
+		  }*/
 		}
 	};
 	if(onclick){ pie.data.onclick = onclick; }
+	if(onmouseover){ pie.data.onmouseover = onmouseover; }
 	return pie;
 };
 
@@ -92,23 +94,41 @@ var showHideCharts = function (show, hide){
 var showMainChart = function (disease, type) {
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
-	if(bb.chart1) bb.chart1.destroy();
-	if(bb.chart2) bb.chart2.destroy();
+	if(bb.chart1) {
+		bb.chart1.destroy();
+		delete bb.chart1;
+	}
+	if(bb.chart2) {
+		bb.chart2.destroy();
+		delete bb.chart2;
+	}
     bb.chart1 = c3.generate(getPie(bb.data[disease][type].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
 		showBreakdown(disease, d.id.charAt(2).toUpperCase() + d.id.slice(3));
 	}));
+	$('#tbl22').hide();
 };
 
 var showBreakdown = function (disease, type){
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
-	if(bb.chart1) bb.chart1.destroy();
-	if(bb.chart2) bb.chart2.destroy();
+	
+	if(bb.chart1) {
+		bb.chart1.destroy();
+		delete bb.chart1;
+	}
+	
+	if(bb.chart2) {
+		bb.chart2.destroy();
+		delete bb.chart2;
+	}
 	bb.chart2 = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#chart2', function (d, i) {
 		selectPieSlice('chart2', d.id);
 		populatePanels(d.id);
+	}, function(d,i){
+		$('#tbl22 tr').removeClass('tr-hovered');
+		$('#row-'+d.id).addClass('tr-hovered');
 	}));
-
+	$('#tbl22').show();
 };
 
 var show = function (page) {
@@ -267,7 +287,11 @@ var wireUpPages = function () {
 	});
 	
 	$('#tab-demo-trend').bind('afterAddClass', function() {
-		if(bb.chart6) bb.chart6.destroy();
+		
+		if(bb.chart6) {
+			bb.chart6.destroy();
+			delete bb.chart6;
+		}
 		bb.chart6 = c3.generate({
 			bindto: '#chart-demo-trend',
 			data: {
@@ -287,6 +311,19 @@ var wireUpPages = function () {
 				}
 			}
 		});
+	});
+	
+	$('#tbl22').on('mouseout', 'tr', function(){
+		bb.chart2.focus();
+	});
+	
+	$('#tbl22').on('mouseover', 'tr', function(){
+		bb.chart2.focus(this.id.slice(4));
+	});
+	
+	$('#tbl22').on('click', 'tr', function(){
+		selectPieSlice('chart2', this.id.slice(4));
+		populatePanels(this.id.slice(4));
 	});
 };
 
@@ -330,8 +367,8 @@ $(document).on('ready', function () {
 			$('path.c3-arc').attr('class', function(index, classNames) {
 				return classNames.replace(/_unselected_/g, '');
 			});
-			bb.chart1.unselect();
-			bb.chart2.unselect();
+			if(bb.chart1) bb.chart1.unselect();
+			if(bb.chart2) bb.chart2.unselect();
 						
 			$('#sap').html('');
 			$('#patient-list').html('');

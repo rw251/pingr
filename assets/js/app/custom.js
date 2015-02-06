@@ -7,7 +7,9 @@ jQuery(function($) {
       var result = _oldAddClass.apply( this, arguments );
 
       // you can trigger a before show if you want
-      $(this).trigger('afterAddClass');
+	  
+	  if(arguments && arguments[0]==='active')
+		$(this).trigger('afterAddClass');
 
       // now use the old function to show the element passing the new callback
       return result;
@@ -62,7 +64,7 @@ $(function(){
 		var menu = $(this).parent().parent().parent().find('span').html();
 		var submenu = $(this).html();
 		
-		showOverviewCharts(menu, submenu);
+		showMainChart(menu, submenu);
 		$('#sap').html('');
 	});
 	
