@@ -87,29 +87,28 @@ var showHideCharts = function (show, hide){
 		$('#sap').html('');
 		$('#patient-list').html('');
 	}
-}
+};
 
-var showOverviewCharts = function (disease, type) {
+var showMainChart = function (disease, type) {
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
 	if(bb.chart1) bb.chart1.destroy();
 	if(bb.chart2) bb.chart2.destroy();
-    bb.chart1 = c3.generate(getPie(bb.data[disease][type].main, ['#845fc8','#f96876'], '#chart1'));
+    bb.chart1 = c3.generate(getPie(bb.data[disease][type].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
+		showBreakdown(disease, d.id.charAt(2).toUpperCase() + d.id.slice(3));
+	}));
+};
+
+var showBreakdown = function (disease, type){
+	if(!disease) disease = "Blood Pressure";
+	if(!type) type = "Measured";
+	if(bb.chart1) bb.chart1.destroy();
+	if(bb.chart2) bb.chart2.destroy();
 	bb.chart2 = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#chart2', function (d, i) {
 		selectPieSlice('chart2', d.id);
 		populatePanels(d.id);
-		/*selectPieSlice('chart2', d.id);
-		if (d.id === "Unmeasured") {
-			showHideCharts('chart1','chart3');
-		} else {
-			showHideCharts('chart3','chart1');
-		}
-	} ));
-	bb.chart3 = c3.generate(getPie(bb.data.uncontrolled, ['#f96876', '#fc8d97', '#f6495a'], '#chart3', function(d,i){*/
 	}));
 
-    //$('#chart1').hide();
-    //$('#chart3').hide();
 };
 
 var show = function (page) {
@@ -117,7 +116,7 @@ var show = function (page) {
     $('#' + page).show();
 
     if (page === 'page1') {
-        showOverviewCharts();
+        showMainChart();
 		showContactChart();
 		$('#main').addClass('content');
 		$('#topnavbar').addClass('full');
@@ -188,7 +187,7 @@ var wireUpPages = function () {
 	
 	
 	$('#tab-performance').bind('afterAddClass', function() {
-      showOverviewCharts();
+      showMainChart();
     });
 	$('#tab-trend').bind('afterAddClass', function() {
 		var date = new Date();
