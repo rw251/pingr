@@ -92,8 +92,8 @@ var showHideCharts = function (show, hide){
 		$('#sap-placeholder').show();
 		$('#patients').html('');
 		$('#patients-placeholder').show();		
-		$('#demograhpic-placeholder').show();
-		$('#demograhpic-content').hide();
+		$('#demographic-placeholder').show();
+		$('#demographic-content').hide();
 	}
 };
 
@@ -203,8 +203,8 @@ var wireUpPages = function () {
 		$('.list-item').removeClass('highlighted');
 		$(this).addClass('highlighted');
 		var nhs = $(this).find('span').html();
-		$('#demograhpic-placeholder').hide();
-		$('#demograhpic-content').show();
+		$('#demographic-placeholder').hide();
+		$('#demographic-content').show();
 		e.preventDefault();
 	});
 	$('#patients').on('click', '.list-item button', function(e){
@@ -382,8 +382,8 @@ $(document).on('ready', function () {
 			$('#sap-placeholder').show();
 			$('#patients').html('');
 			$('#patients-placeholder').show();	
-			$('#demograhpic-placeholder').show();
-			$('#demograhpic-content').hide();
+			$('#demographic-placeholder').show();
+			$('#demographic-content').hide();
 		}
 		bb.chartClicked=false;
 	});
