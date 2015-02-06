@@ -198,18 +198,17 @@ var wireUpPages = function () {
         e.preventDefault();
     });
 	
-	$('#patients').on('click', '.list-item', function(e){
-		console.log('list item click');
+	$('#patients').on('click', 'tr', function(e){
 		$('.list-item').removeClass('highlighted');
 		$(this).addClass('highlighted');
-		var nhs = $(this).find('span').html();
+		var nhs = $(this).find('td').html();
 		$('#demographic-placeholder').hide();
 		$('#demographic-content').show();
 		e.preventDefault();
 	});
-	$('#patients').on('click', '.list-item button', function(e){
+	$('#patients').on('click', 'tr button', function(e){
 		console.log('button click');
-		var nhs = $(this).parent().parent().find('span').html();
+		var nhs = $(this).parent().parent().find('td').html();
 		e.preventDefault();
 	});
 	

@@ -36,12 +36,12 @@ header {
 	background-color: rgb(244,244,255);
 }
 
-.todo-list .highlighted {
+.patient-list .highlighted {
 	border: 1px solid #fcff21;
 	background: rgb(242,242,244);
 }
 
-.todo-list .list-item:hover {
+.patient-list tr:hover {
 	cursor: pointer;
 	background-color: rgb(242,242,244);
 }

@@ -253,7 +253,7 @@
 
             <div class="container-fluid">
                 <div class="row" style="max-height:400px">
-                    <div class="col-sm-8 col-md-8 col-lg-9">
+                    <div class="col-sm-7 col-md-7 col-lg-8">
                         <ul class="nav nav-tabs">
                             <li class="active" id="tab-select-performance">
                                 <a data-toggle="tab" href="#tab-performance">Current Performance</a>
@@ -343,7 +343,7 @@
 
 					</div>
 
-                    <div class="col-sm-4 col-md-4 col-lg-3">
+                    <div class="col-sm-5 col-md-5 col-lg-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Patients</h3>
@@ -547,11 +547,17 @@
     </ul>
     </script> 
 	<script id="patient-list" type="x-tmpl-mustache">
-	<ul class="list-group todo-list" >
+	<table class="table patient-list">
+	<tr>
+		<th>NHS no.</th>
+		<th>CVD risk <i class="fa fa-caret-up"></i></th>
+		<th>Actions</th>
+	</tr>
     {{#patients}}
-		<li class="list-item">
-			<span class="done-true">{{nhs}}</span>
-			<span class="pull-right">
+		<tr class="list-item">
+			<td>{{nhs}}</td>
+			<td>{{risk}}</td>
+			<td>
 				<button type="button" class="btn btn-xs btn-clip" data-clipboard-text="{{nhs}}">
 				  <span class="fa fa-clipboard"></span>
 				</button>
@@ -561,10 +567,10 @@
 				<button type="button" class="btn btn-xs btn-no">
 				  <span class="fa fa-times"></span>
 				</button>
-			</span>
-		</li>
+			</td>
+		</tr>
     {{/patients}}
-    </ul>
+    </table>
     </script>
 </body>
 </html>
