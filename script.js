@@ -54,6 +54,7 @@ var populateSuggestedActions = function (id){
 	var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id]);
 	$('#sap').html(rendered);
 	$('#sap-placeholder').hide();
+	$('#team-footer').show();
 };
 
 var populatePatients = function (id) {
@@ -90,6 +91,7 @@ var showHideCharts = function (show, hide){
 	if(bb[show].selected().length===0) {
 		$('#sap').html('');
 		$('#sap-placeholder').show();
+		$('#team-footer').hide();
 		$('#patients').html('');
 		$('#patients-placeholder').show();		
 		$('#demographic-placeholder').show();
@@ -130,6 +132,7 @@ var showBreakdown = function (disease, type){
 	bb.chart2 = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#chart2', function (d, i) {
 		selectPieSlice('chart2', d.id);
 		populatePanels(d.id);
+		$('a[href=#tab-sap-team]').tab('show');
 	}, function(d,i){
 		$('#tbl22 tr').removeClass('tr-hovered');
 		$('#row-'+d.id).addClass('tr-hovered');
@@ -215,6 +218,7 @@ var wireUpPages = function () {
 		var nhs = $(this).find('td').html();
 		$('#demographic-placeholder').hide();
 		$('#demographic-content').show();
+		$('a[href=#tab-sap-individual]').tab('show');
 		e.preventDefault();
 	});
 	$('#patients').on('click', 'tr button', function(e){
@@ -390,6 +394,7 @@ $(document).on('ready', function () {
 						
 			$('#sap').html('');
 			$('#sap-placeholder').show();
+			$('#team-footer').hide();
 			$('#patients').html('');
 			$('#patients-placeholder').show();	
 			$('#demographic-placeholder').show();

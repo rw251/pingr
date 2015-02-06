@@ -389,17 +389,27 @@
 											</div>
 											<div id="sap"></div>
 										</div>
+
+										<div id="team-footer" class="panel-footer" style="display:none">
+											<button type="button" class="btn btn-primary">
+											  <span class="fa fa-file-pdf-o"></span> Pdf
+											</button>
+											<button type="button" class="btn btn-default">
+											  <span class="fa fa-file-powerpoint-o"></span> Powerpoint
+											</button>
+											<button type="button" class="btn btn-success">
+											  <span class="fa fa-paper-plane"></span> Email
+											</button>
+										</div>
 									</div>
 
 									<div class="panel panel-default tab-pane tabs-up" id="tab-sap-individual">
-										<div class="panel-body"></div>
+										<div class="panel-body">
+											Some advice specific to this patient
+										</div>
 
 										<div class="panel-footer">
-											<form class="ng-pristine ng-valid">
-												<div class="input-group">
-													<input class="form-control ng-pristine ng-untouched ng-valid" data-ng-model="todoText" placeholder="Message here..." type="text"> <span class="input-group-btn"><button class=" btn-success btn" type="submit"><span class="input-group-btn"><span class="input-group-btn"><span class="input-group-btn">Send</span></span></span></button></span>
-												</div>
-											</form>
+											Action buttons
 										</div>
 									</div>
 								</div>
@@ -559,14 +569,20 @@
 	</tr>
     {{#patients}}
 		<tr class="list-item">
-			<td>{{nhs}}</td>
+			<td>{{nhs}}
+				<button type="button" class="btn btn-xs btn-clip pull-right" data-clipboard-text="{{nhs}}">
+				  <span class="fa fa-clipboard"></span>
+				</button></td>
 			<td>{{risk}}</td>
 			<td>
-				<button type="button" class="btn btn-xs btn-clip" data-clipboard-text="{{nhs}}">
-				  <span class="fa fa-clipboard"></span>
-				</button>
-				<button type="button" class="btn btn-xs btn-yes">
+				<button type="button" class="btn btn-xs btn-yes btn-success">
 				  <span class="fa fa-check"></span>
+				</button>
+				<button type="button" class="btn btn-xs btn-no btn-warning">
+				  <span class="fa fa-times"></span>
+				</button>
+				<button type="button" class="btn btn-xs btn-no">
+				  <span class="fa fa-times"></span>
 				</button>
 				<button type="button" class="btn btn-xs btn-no">
 				  <span class="fa fa-times"></span>
