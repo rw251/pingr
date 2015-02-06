@@ -273,10 +273,10 @@
 								<div class="panel-heading clean">
 									<div class="">
 										<div class="btn-group">
-											<button type="button" class="btn btn-default btn-sm btn-circle" data-toggle="dropdown">NICE <span class="caret"></span></button>
+											<button type="button" id="pick-button" class="btn btn-default btn-sm btn-circle" data-toggle="dropdown">NICE <span class="caret"></span></button>
 											<ul class="dropdown-menu" role="menu">
-												<li><a href="#">NICE</a></li>
-												<li><a href="#">QOF</a></li>
+												<li><a id="pick-nice" href="#">NICE</a></li>
+												<li><a id="pick-qof" href="#">QOF</a></li>
 											</ul>
 										</div>
 										<button type="button" class="btn btn-primary btn-sm btn-circle">Evidence</button>
@@ -288,6 +288,9 @@
 											<div>
 												<span class="text-green" style="font-size: 35px;"><i class="fa fa-caret-up"></i> 54%</span></div>
 											<div>Blood pressure measured</div>
+											<div style="margin-top:120px">
+												<span class="text-orange" style="font-size: 35px;"><i class="fa fa-warning"></i> 96</span></div>
+											<div>CVD events could be prevented</div>
                                         </div>
                                         <div class="col-xs-5">
                                             <div id="chart1"></div>

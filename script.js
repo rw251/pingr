@@ -198,6 +198,14 @@ var wireUpPages = function () {
         e.preventDefault();
     });
 	
+	$('#pick-nice').on('click', function(){
+		$('#pick-button').html('NICE <span class="caret"></span>');
+	});
+	$('#pick-qof').on('click', function(){
+		$('#pick-button').html('QOF <span class="caret"></span>');
+		
+	});
+	
 	$('#patients').on('click', 'tr', function(e){
 		$('.list-item').removeClass('highlighted');
 		$(this).addClass('highlighted');
