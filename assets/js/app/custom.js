@@ -64,8 +64,14 @@ $(function(){
 		var menu = $(this).parent().parent().parent().find('span').html();
 		var submenu = $(this).html();
 		
-		showMainChart(menu, submenu);
+		showMainCharts(menu, submenu);
 		$('#sap').html('');
+		$('#sap-placeholder').show();
+		$('#team-footer').hide();
+		$('#patients').html('');
+		$('#patients-placeholder').show();	
+		$('#demographic-placeholder').show();
+		$('#demographic-content').hide();
 	});
 	
 

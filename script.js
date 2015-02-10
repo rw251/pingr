@@ -142,10 +142,12 @@ var showMainCharts = function(disease){
 	bb.chart1 = c3.generate(getPie(bb.data[disease]["Measured"].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
 		if(d.id==="Measured") return;
 		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
+		bb.selected = d.id;
 	}));
 	bb.chart3 = c3.generate(getPie(bb.data[disease]["Controlled"].main, ['#845fc8','#f96876'], '#chart3', function (d, i){
 		if(d.id === "Controlled") return;
 		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
+		bb.selected = d.id;
 	}));
 	$('#breakdown-table').hide();
 	breadcrumbs([disease]);
@@ -284,6 +286,17 @@ var wireUpPages = function () {
 		$('#demographic-placeholder').hide();
 		$('#demographic-content').show();
 		$('a[href=#tab-sap-individual]').tab('show');
+		var examples = [["Increase ramipril by 2.5mg","Increase amlodipine by 5mg","Start a diuretic"],
+			      ["Increase losartan by 25mg","Increase bisoprolol by 2.5mg","Start a calcium channel blocker"],
+			      ["Refer to secondary care"]];
+			      var html = "";
+		if(bb.selected && bb.selected === "Uncontrolled"){
+		var r = Math.floor(Math.random()*3);
+html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr></thead><tbody><tr><td>' + examples[r].join('</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr><tr><td>')  + '</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr></tbody></table>';
+		} else if (bb.selected && bb.selected === "Excluded"){
+	    html='<span>Patient ' + nhs + '</span> is excluded because of xxx';
+		}
+		$('#advice').html(html);
 		e.preventDefault();
 	});
 	$('#patients').on('click', 'tr button', function(e){
