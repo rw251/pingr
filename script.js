@@ -124,6 +124,36 @@ var breadcrumbs = function(items){
   $('#breadcrumb').html(html.join(' &gt; '));
 };
 
+//most recent shows both side by side
+var showMainCharts = function(disease){
+	if(!disease) disease = "Blood Pressure";
+	if(bb.chart1) {
+		bb.chart1.destroy();
+		delete bb.chart1;
+	}
+	if(bb.chart2) {
+		bb.chart2.destroy();
+		delete bb.chart2;
+	}
+	if(bb.chart3) {
+		bb.chart3.destroy();
+		delete bb.chart3;
+	}
+	bb.chart1 = c3.generate(getPie(bb.data[disease]["Measured"].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
+		if(d.id==="Measured") return;
+		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
+	}));
+	bb.chart3 = c3.generate(getPie(bb.data[disease]["Controlled"].main, ['#845fc8','#f96876'], '#chart3', function (d, i){
+		if(d.id === "Controlled") return;
+		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
+	}));
+	$('#breakdown-table').hide();
+	breadcrumbs([disease]);
+	$('#overall1').show();
+	$('#overall2').hide();
+};
+
+//older - not used - displays one at a time
 var showMainChart = function (disease, type) {
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
@@ -156,6 +186,11 @@ var showBreakdown = function (disease, type, id){
 		bb.chart2.destroy();
 		delete bb.chart2;
 	}
+	
+	if(bb.chart3) {
+		bb.chart3.destroy();
+		delete bb.chart3;
+	}
 	bb.chart2 = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#chart2', function (d, i) {
 		selectPieSlice('chart2', d.id);
 		populatePanels(d.id);
@@ -166,6 +201,8 @@ var showBreakdown = function (disease, type, id){
 	}));
 	populateBreakdownTable(id);
 	breadcrumbs([disease, type]);
+	$('#overall1').hide();
+	$('#overall2').show();
 };
 
 var show = function (page) {
@@ -173,7 +210,7 @@ var show = function (page) {
     $('#' + page).show();
 
     if (page === 'page1') {
-        showMainChart();
+        showMainCharts();
 		showContactChart();
 		$('#main').addClass('content');
 		$('#topnavbar').addClass('full');
@@ -257,7 +294,7 @@ var wireUpPages = function () {
 	
 	
 	$('#tab-performance').bind('afterAddClass', function() {
-      showMainChart();
+      showMainCharts();
     });
 	$('#tab-trend').bind('afterAddClass', function() {
 		var date = new Date();
@@ -377,7 +414,7 @@ var wireUpPages = function () {
 	});
 	
 	$('#breadcrumb').on('click', 'a', function(e){
-	  showMainChart();
+	  showMainCharts();
 	  e.preventDefault();
 	});
 };
@@ -431,6 +468,7 @@ $(document).on('ready', function () {
 			});
 			if(bb.chart1) bb.chart1.unselect();
 			if(bb.chart2) bb.chart2.unselect();
+			if(bb.chart3) bb.chart3.unselect();
 						
 			$('#sap').html('');
 			$('#sap-placeholder').show();

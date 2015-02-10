@@ -290,15 +290,23 @@
 											<div>
 												<span class="text-green" style="font-size: 35px;"><i class="fa fa-caret-up"></i> 54%</span></div>
 											<div>Blood pressure measured</div>
+											<div id="overall1">
 											<div style="margin-top:130px">
+												<span class="text-red" style="font-size: 35px;"><i class="fa fa-caret-down"></i> 9%</span></div>
+											<div>Blood pressure controlled</div>
+											</div>
+											<div id="overall2" style="display:none;margin-top:130px;">
+											<div>
 												<span id="guide-amount" class="text-orange" style="font-size: 35px;"><i class="fa fa-warning"></i> 96</span></div>
 											<div  id="guide-text">CVD events could be prevented</div>
+											</div>
                                         </div>
                                         <div class="col-xs-5">
                                             <div id="chart1"></div>
 											<div id="chart2"></div>
                                         </div>
                                         <div class="col-xs-5">
+                                        <div id="chart3"></div>
 					  <div id="breakdown-table"></div>											
                                         </div>
                                     </div>
@@ -547,10 +555,7 @@
 	</tr>
     {{#patients}}
 		<tr class="list-item">
-			<td>{{nhs}}
-				<button type="button" class="btn btn-xs btn-clip pull-right" data-clipboard-text="{{nhs}}">
-				  <span class="fa fa-clipboard"></span>
-				</button></td>
+			<td><a href="#">{{nhs}}</a></td>
 			<td>{{risk}}</td>
 			<td>
 				<button type="button" class="btn btn-xs btn-yes btn-success">
