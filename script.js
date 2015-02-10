@@ -13,7 +13,7 @@ $(window).load(function() {
   });
 });	
 
-var getPie = function (data, colours, element, onclick, onmouseover) {
+var getPie = function (data, colours, element, onclick, onmouseover, onmouseout) {
 	var pie = {
 		bindto: element,
         //color: { pattern: colours },
@@ -46,6 +46,7 @@ var getPie = function (data, colours, element, onclick, onmouseover) {
 	};
 	if(onclick){ pie.data.onclick = onclick; }
 	if(onmouseover){ pie.data.onmouseover = onmouseover; }
+	if(onmouseout){ pie.data.onmouseout = onmouseout; }
 	return pie;
 };
 
@@ -66,8 +67,12 @@ var populateSuggestedActions = function (id){
 
 var populateBreakdownTable = function(id){
 	var template = $('#breakdown-table-template').html();
+	var data = bb.data["Blood Pressure"].all[id.toLowerCase()];
+	for(var i = 0 ; i< data.items.length; i++){
+	  data.items[i].color = bb.chart2.color(data.items[i].name);
+	}
 	Mustache.parse(template);   // optional, speeds up future uses
-	var rendered = Mustache.render(template, bb.data["Blood Pressure"].all[id.toLowerCase()]);
+	var rendered = Mustache.render(template, data);
 	$('#breakdown-table').html(rendered).show();
 }
 
@@ -133,10 +138,10 @@ var breadcrumbs = function(items){
 //most recent shows both side by side
 var showMainCharts = function(disease){
 	$('#breakdown-table').hide();
-	breadcrumbs([disease]);
 	$('#overall1').show();
 	$('#overall2').hide();
 	if(!disease) disease = "Blood Pressure";
+	breadcrumbs([disease]);
 	if(bb.chart1) {
 		bb.chart1.destroy();
 		delete bb.chart1;
@@ -201,12 +206,16 @@ var showBreakdown = function (disease, type, id){
 	}
 	bb.chart2 = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#chart2', function (d, i) {
 		selectPieSlice('chart2', d.id);
-		populatePanels(d.id);
+		populatePanels(d.id);		
+		$('#breakdown-table tr').removeClass('selected');
+		$('#row-'+bb.data[disease].items[d.id].id).addClass('selected');
 		$('a[href=#tab-sap-team]').tab('show');
 		bb.subselected = d.id;
 	}, function(d,i){
 		$('#breakdown-table tr').removeClass('tr-hovered');
 		$('#row-'+bb.data[disease].items[d.id].id).addClass('tr-hovered');
+	}, function (d,i){
+	  $('#breakdown-table tr').removeClass('tr-hovered');
 	}));
 	populateBreakdownTable(id);
 	breadcrumbs([disease, type]);
@@ -434,6 +443,8 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 	$('#breakdown-table').on('click', 'tr', function(){
 		selectPieSlice('chart2', bb.data["Blood Pressure"].ids[this.id.slice(4)]);
 		populatePanels(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
+		$('#breakdown-table tr').removeClass('selected');
+		$(this).addClass('selected');
 	});
 	
 	$('#breadcrumb').on('click', 'a', function(e){
