@@ -2,6 +2,7 @@
 /*global $, c3*/
 "use strict";
 var bb = {};
+bb.lookup = {"unmeasured" : "Measured", "uncontrolled": "Controlled", "excluded": "Excluded"};
 
 /********************************
 Preloader
@@ -32,7 +33,7 @@ var getPie = function (data, colours, element, onclick, onmouseover) {
 		pie: {
 			label: {
 				format: function (value, ratio, id) {
-					return '';//id + ' ('+value+')';
+					return id;// + ' ('+value+')';
 				}
 			}
 		},
@@ -56,6 +57,13 @@ var populateSuggestedActions = function (id){
 	$('#sap-placeholder').hide();
 	$('#team-footer').show();
 };
+
+var populateBreakdownTable = function(id){
+	var template = $('#breakdown-table-template').html();
+	Mustache.parse(template);   // optional, speeds up future uses
+	var rendered = Mustache.render(template, bb.data["Blood Pressure"].all[id.toLowerCase()]);
+	$('#breakdown-table').html(rendered).show();
+}
 
 var populatePatients = function (id) {
 	var template = $('#patient-list').html();
@@ -99,6 +107,23 @@ var showHideCharts = function (show, hide){
 	}
 };
 
+var breadcrumbs = function(items){
+  var html = [];
+  if(items.length===1) {
+    html.push('<span>' + items[0] + '</span>');
+  }
+  else {
+    for(var i =0 ; i< items.length; i++){
+      if(i===items.length-1){
+	html.push('<span>' + items[i] + '</span>');
+      } else{
+	html.push('<a href="">' + items[i] + '</a>');
+      }
+    }
+  }
+  $('#breadcrumb').html(html.join(' &gt; '));
+};
+
 var showMainChart = function (disease, type) {
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
@@ -111,13 +136,14 @@ var showMainChart = function (disease, type) {
 		delete bb.chart2;
 	}
     bb.chart1 = c3.generate(getPie(bb.data[disease][type].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
-		showBreakdown(disease, d.id.charAt(2).toUpperCase() + d.id.slice(3));
+		if(d.id==="Measured" || d.id === "Controlled") return;
+		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
 	}));
-	$('#tbl22').hide();
-	$('#tbl21').show();
+	$('#breakdown-table').hide();
+	breadcrumbs([disease]);
 };
 
-var showBreakdown = function (disease, type){
+var showBreakdown = function (disease, type, id){
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
 	
@@ -135,11 +161,11 @@ var showBreakdown = function (disease, type){
 		populatePanels(d.id);
 		$('a[href=#tab-sap-team]').tab('show');
 	}, function(d,i){
-		$('#tbl22 tr').removeClass('tr-hovered');
-		$('#row-'+d.id).addClass('tr-hovered');
+		$('#breakdown-table tr').removeClass('tr-hovered');
+		$('#row-'+bb.data[disease].items[d.id].id).addClass('tr-hovered');
 	}));
-	$('#tbl22').show();
-	$('#tbl21').hide();
+	populateBreakdownTable(id);
+	breadcrumbs([disease, type]);
 };
 
 var show = function (page) {
@@ -337,17 +363,22 @@ var wireUpPages = function () {
 		});
 	});
 	
-	$('#tbl22').on('mouseout', 'tr', function(){
+	$('#breakdown-table').on('mouseout', 'tr', function(){
 		bb.chart2.focus();
 	});
 	
-	$('#tbl22').on('mouseover', 'tr', function(){
-		bb.chart2.focus(this.id.slice(4));
+	$('#breakdown-table').on('mouseover', 'tr', function(){
+		bb.chart2.focus(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
 	});
 	
-	$('#tbl22').on('click', 'tr', function(){
-		selectPieSlice('chart2', this.id.slice(4));
-		populatePanels(this.id.slice(4));
+	$('#breakdown-table').on('click', 'tr', function(){
+		selectPieSlice('chart2', bb.data["Blood Pressure"].ids[this.id.slice(4)]);
+		populatePanels(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
+	});
+	
+	$('#breadcrumb').on('click', 'a', function(e){
+	  showMainChart();
+	  e.preventDefault();
 	});
 };
 
@@ -357,17 +388,24 @@ var loadData = function() {
 		bb.data={}
 		for(var i = 0 ; i < data.length; i++){
 			d = data[i].disease;
-			bb.data[d] = {"all" : data[i], "items" : {}, "Measured" : {"breakdown":[]}, "Controlled": {"breakdown":[]}};
-			bb.data[d].Measured.main = [['Unmeasured', bb.data[d].all.unmeasured.n],['Measured', bb.data[d].all.unmeasured.measured]];
-			bb.data[d].Controlled.main = [['Uncontrolled', bb.data[d].all.uncontrolled.n],['Controlled', bb.data[d].all.uncontrolled.controlled]];
+			bb.data[d] = {"all" : data[i], "ids" : {}, "items" : {}, "Measured" : {"breakdown":[]}, "Controlled": {"breakdown":[]}, "Excluded": {"breakdown":[]}};
+			bb.data[d].Measured.main = [['Unmeasured', bb.data[d].all.unmeasured.n],['Measured', bb.data[d].all.measured],['Excluded', bb.data[d].all.excluded.n]];
+			bb.data[d].Controlled.main = [['Uncontrolled', bb.data[d].all.uncontrolled.n],['Controlled', bb.data[d].all.controlled]	,['Excluded', bb.data[d].all.excluded.n]];
 			
 			for(var i=0; i < bb.data[d].all.unmeasured.items.length; i++) {
 				bb.data[d].Measured.breakdown.push([bb.data[d].all.unmeasured.items[i].name, bb.data[d].all.unmeasured.items[i].n]);
 				bb.data[d].items[bb.data[d].all.unmeasured.items[i].name] = bb.data[d].all.unmeasured.items[i];
+				bb.data[d].ids[bb.data[d].all.unmeasured.items[i].id] = bb.data[d].all.unmeasured.items[i].name;
 			}
 			for(var i=0; i < bb.data[d].all.uncontrolled.items.length; i++) {
 				bb.data[d].Controlled.breakdown.push([bb.data[d].all.uncontrolled.items[i].name, bb.data[d].all.uncontrolled.items[i].n]);
 				bb.data[d].items[bb.data[d].all.uncontrolled.items[i].name] = bb.data[d].all.uncontrolled.items[i];
+				bb.data[d].ids[bb.data[d].all.uncontrolled.items[i].id] = bb.data[d].all.uncontrolled.items[i].name;
+			}
+			for(var i=0; i < bb.data[d].all.excluded.items.length; i++) {
+				bb.data[d].Excluded.breakdown.push([bb.data[d].all.excluded.items[i].name, bb.data[d].all.excluded.items[i].n]);
+				bb.data[d].items[bb.data[d].all.excluded.items[i].name] = bb.data[d].all.excluded.items[i];
+				bb.data[d].ids[bb.data[d].all.excluded.items[i].id] = bb.data[d].all.excluded.items[i].name;
 			}
 		}
 	});
@@ -401,6 +439,7 @@ $(document).on('ready', function () {
 			$('#patients-placeholder').show();	
 			$('#demographic-placeholder').show();
 			$('#demographic-content').hide();
+			
 		}
 		bb.chartClicked=false;
 	});

@@ -280,8 +280,6 @@
 											</ul>
 										</div>
 										<button type="button" class="btn btn-primary btn-sm btn-circle">Evidence</button>
-										<div class="btn-group" id="breadcrumb">
-										</div>
 									</div>
 								</div>
                                 <div class="panel-body" id="chart-panel">
@@ -299,7 +297,58 @@
 											<div id="chart2"></div>
                                         </div>
                                         <div class="col-xs-5">
-					  <div id="breakdown-table"></div>											
+											<table id="tbl21" class="table no-margn">
+											  <thead>
+												<tr>
+												  <th>Reason for exclusion</th>
+												  <th>Count</th>
+												  <th>Percentage</th>
+												</tr>
+											  </thead>
+											  <tbody>
+												<tr id="row-pall">
+												  <td>In palliative care</td>
+												  <td>51</td>
+												  <td>10%</td>
+												</tr>
+												<tr id="row-Indirect">
+												  <td>Have had indirect contact</td>
+												  <td>564</td>
+												  <td>20%</td>
+												</tr>
+												<tr id="row-Nil">
+												  <td>Have had no contact</td>
+												  <td>1001</td>
+												  <td>15%</td>
+												</tr>
+											  </tbody>
+											</table>
+											<table id="tbl22" class="table no-margn">
+											  <thead>
+												<tr>
+												  <th>Type of contact</th>
+												  <th>Count</th>
+												  <th>Percentage</th>
+												</tr>
+											  </thead>
+											  <tbody>
+												<tr id="row-Direct">
+												  <td>Have had direct contact</td>
+												  <td>123</td>
+												  <td>10%</td>
+												</tr>
+												<tr id="row-Indirect">
+												  <td>Have had indirect contact</td>
+												  <td>564</td>
+												  <td>20%</td>
+												</tr>
+												<tr id="row-Nil">
+												  <td>Have had no contact</td>
+												  <td>1001</td>
+												  <td>15%</td>
+												</tr>
+											  </tbody>
+											</table>
                                         </div>
                                     </div>
                                 </div>
@@ -450,8 +499,7 @@
     </div>
 	
 	<!-- jQuery  -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-    <script src="assets/js/jquery/jquery-1.9.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
 	
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="assets/js/bootstrap/bootstrap.min.js"></script> 
@@ -567,25 +615,5 @@
     {{/patients}}
     </table>
     </script>
-	<script id="breakdown-table-template" type="x-tmpl-mustache">
-    <table class="table no-margn">
-    <thead>
-	  <tr>
-	  {{#heads}}
-	  <th>{{title}}</th>
-	  {{/heads}}
-	  </tr>
-    </thead>
-    <tbody>
-    {{#items}}
-	  <tr id="row-{{id}}">
-	    <td>{{desc}}</td>
-	    <td>{{n}}</td>
-	    <td>{{percentage}}</td>
-	  </tr>
-    {{/items}}
-    </tbody>
-    </table>
-    </script>  
 </body>
 </html>

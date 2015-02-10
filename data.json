@@ -1,29 +1,114 @@
 [
 {
 	"disease" : "Blood Pressure",
-    "unmeasured": {
-        "n": 2072,
-		"measured" : 2410,
-        "items": [
-            {
+	"excluded" : {
+	  "n" : 1032,
+	  "heads" : [{"title":"Reason for exclusion"},{"title":"Count"},{"title":"Percentage"}],
+	  "items" : [
+	    {
+	      "name" : "Palliative care",
+	      "desc" : "Palliative care",
+	      "id" : "pall",
+	      "n" : 250,
+                "percentage": 24.2,
+	      "patients" : [
+		{"name":"Thomas Bell", "nhs" : "9051546402"},
+		{"name":"Martin Gonzales", "nhs" : "9005252030"},
+		{"name":"Janice Henderson", "nhs" : "9077880214"},
+		{"name":"Michelle Morris", "nhs" : "9020801910"},
+		{"name":"Christine Torres", "nhs" : "9041918976"},
+		{"name":"Catherine Ross", "nhs" : "9061510350"},
+		{"name":"Matthew Phillips", "nhs" : "9067340515"},
+		{"name":"Frank Collins", "nhs" : "9021642165"},
+		{"name":"Jessica Scott", "nhs" : "9035356481"}
+	      ]
+	    },
+	    {
+	      "name" : "Care home",
+	      "desc" : "Lives in a care home",
+	      "id" : "care",
+	      "n" : 229,
+                "percentage": 22.2,
+	      "patients" : [
+		{"name":"Thomas Bell", "nhs" : "9051546402"},
+		{"name":"Martin Gonzales", "nhs" : "9005252030"},
+		{"name":"Janice Henderson", "nhs" : "9077880214"},
+		{"name":"Michelle Morris", "nhs" : "9020801910"},
+		{"name":"Christine Torres", "nhs" : "9041918976"},
+		{"name":"Catherine Ross", "nhs" : "9061510350"},
+		{"name":"Matthew Phillips", "nhs" : "9067340515"},
+		{"name":"Frank Collins", "nhs" : "9021642165"},
+		{"name":"Jessica Scott", "nhs" : "9035356481"}
+	      ]
+	    },
+	    {
+	      "name" : "Exclusion code",
+	      "desc" : "Is excluded from BP monitoring by read code",
+	      "id" : "excl",
+	      "n" : 330,
+                "percentage": 32.0,
+	      "patients" : [
+		{"name":"Thomas Bell", "nhs" : "9051546402"},
+		{"name":"Martin Gonzales", "nhs" : "9005252030"},
+		{"name":"Janice Henderson", "nhs" : "9077880214"},
+		{"name":"Michelle Morris", "nhs" : "9020801910"},
+		{"name":"Christine Torres", "nhs" : "9041918976"},
+		{"name":"Catherine Ross", "nhs" : "9061510350"},
+		{"name":"Matthew Phillips", "nhs" : "9067340515"},
+		{"name":"Frank Collins", "nhs" : "9021642165"},
+		{"name":"Jessica Scott", "nhs" : "9035356481"}
+	      ]
+	    },
+	    {
+	      "name" : "Hypotension",
+	      "desc" : "Patient with orthostatic hypotension",
+	      "id" : "hypo",
+	      "n" : 223,
+                "percentage": 21.6,
+	      "patients" : [
+		{"name":"Thomas Bell", "nhs" : "9051546402"},
+		{"name":"Martin Gonzales", "nhs" : "9005252030"},
+		{"name":"Janice Henderson", "nhs" : "9077880214"},
+		{"name":"Michelle Morris", "nhs" : "9020801910"},
+		{"name":"Christine Torres", "nhs" : "9041918976"},
+		{"name":"Catherine Ross", "nhs" : "9061510350"},
+		{"name":"Matthew Phillips", "nhs" : "9067340515"},
+		{"name":"Frank Collins", "nhs" : "9021642165"},
+		{"name":"Jessica Scott", "nhs" : "9035356481"}
+	      ]
+	    }
+	  ]
+	},
+	"measured" : 2410,
+	"unmeasured": {
+	"n": 2072,
+	  "heads" : [{"title":"Type of Contact"},{"title":"Count"},{"title":"Percentage"}],
+	"items": [
+	    {
                 "name": "Nil",
+	      "desc" : "Have had no contact",
+	      "id" : "nil-",
                 "n": 1413,
-				"improvement" : "15",
-				"patients" : [
-					{"name":"Jesse Clark", "nhs" : "9002567106", "risk" : "06%"},
-					{"name":"Raymond Butler", "nhs" : "9079708590", "risk" : "90%"},
-					{"name":"Linda Evans", "nhs" : "9021318955", "risk" : "55%"},
-					{"name":"Bobby Sanchez", "nhs" : "9053322816", "risk" : "16%"},
-					{"name":"Wayne Richardson", "nhs" : "9005934199", "risk" : "99%"},
-					{"name":"Ann Kelly", "nhs" : "9079571855", "risk" : "55%"},
-					{"name":"Wanda Harris", "nhs" : "9012082562", "risk" : "62%"},
-					{"name":"Marilyn Bennett", "nhs" : "9039658502", "risk" : "02%"},
-					{"name":"Jose Hall", "nhs" : "9091180247", "risk" : "47%"}
-				]
+                "percentage": 68.2,
+		"improvement" : "15",
+		"patients" : [
+			{"name":"Jesse Clark", "nhs" : "9002567106", "risk" : "06%"},
+			{"name":"Raymond Butler", "nhs" : "9079708590", "risk" : "90%"},
+			{"name":"Linda Evans", "nhs" : "9021318955", "risk" : "55%"},
+			{"name":"Bobby Sanchez", "nhs" : "9053322816", "risk" : "16%"},
+			{"name":"Wayne Richardson", "nhs" : "9005934199", "risk" : "99%"},
+			{"name":"Ann Kelly", "nhs" : "9079571855", "risk" : "55%"},
+			{"name":"Wanda Harris", "nhs" : "9012082562", "risk" : "62%"},
+			{"name":"Marilyn Bennett", "nhs" : "9039658502", "risk" : "02%"},
+			{"name":"Jose Hall", "nhs" : "9091180247", "risk" : "47%"}
+		]
             },
             {
                 "name": "Direct",
-                "n": 595,
+	      "desc" : "Have had direct contact",
+	      "id" : "dire",
+                "n": 395,
+                "percentage": 19.1,
 				"improvement" : "16",
 				"patients" : [
 					{"name":"Gloria Peterson", "nhs" : "9034498076", "risk" : "76%"},
@@ -39,7 +124,10 @@
             },
             {
                 "name": "Indirect",
-                "n": 2072,
+	      "desc" : "Have had indirect contact",
+	      "id" : "indi",
+                "n": 264,
+                "percentage": 12.7,
 				"improvement" : "17",
 				"i-phone" : "10",
 				"i-letter" : "5",
@@ -58,13 +146,17 @@
             }
         ]
     },
+	"controlled" : 2104,
     "uncontrolled": {
         "n": 2868,
-		"controlled" : 2104,
+	  "heads" : [{"title":"Uncontrolled breakdown"},{"title":"Count"},{"title":"Percentage"}],
         "items": [
             {
                 "name": "Recently Measured",
+	      "desc" : "BP measured in last 2 months",
+	      "id" : "rece",
                 "n": 365,
+                "percentage": 12.7,
 				"improvement" : "14",
 				"patients" : [
 					{"name":"Thomas Bell", "nhs" : "9051546402", "risk" : "02%"},
@@ -80,7 +172,10 @@
             },
             {
                 "name": "Recently Changed Rx",
+	      "desc" : "HTN Rx recently changed",
+	      "id" : "chng",
                 "n": 1174,
+                "percentage": 40.9,
 				"improvement" : "13",
 				"patients" : [				
 					{"name":"Louise Henderson", "nhs" : "9075959798", "risk" : "98%"},
@@ -96,7 +191,10 @@
             },
             {
                 "name": "Suboptimal Rx",
+	      "desc" : "Patient's Rx could be improved",
+	      "id" : "subo",
                 "n": 1329,
+                "percentage": 46.3,
 				"improvement" : "12",
 				"patients" : [
 					{"name":"Linda Gonzalez", "nhs" : "9057757561", "risk" : "61%"},
