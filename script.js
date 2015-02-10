@@ -50,12 +50,18 @@ var getPie = function (data, colours, element, onclick, onmouseover) {
 };
 
 var populateSuggestedActions = function (id){
-	var template = $('#sap-'+id.toLowerCase().replace(/ /g,'-')).html();
-	Mustache.parse(template);   // optional, speeds up future uses
-	var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id]);
-	$('#sap').html(rendered);
-	$('#sap-placeholder').hide();
-	$('#team-footer').show();
+	if(bb.selected==="Excluded"){
+	  $('#sap').html('No team actions for excluded patients');
+	  $('#sap-placeholder').hide();
+	  $('#team-footer').hide();	  
+	} else {
+	  var template = $('#sap-'+id.toLowerCase().replace(/ /g,'-')).html();
+	  Mustache.parse(template);   // optional, speeds up future uses
+	  var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id]);
+	  $('#sap').html(rendered);
+	  $('#sap-placeholder').hide();
+	  $('#team-footer').show();
+	}
 };
 
 var populateBreakdownTable = function(id){
@@ -126,6 +132,10 @@ var breadcrumbs = function(items){
 
 //most recent shows both side by side
 var showMainCharts = function(disease){
+	$('#breakdown-table').hide();
+	breadcrumbs([disease]);
+	$('#overall1').show();
+	$('#overall2').hide();
 	if(!disease) disease = "Blood Pressure";
 	if(bb.chart1) {
 		bb.chart1.destroy();
@@ -149,10 +159,6 @@ var showMainCharts = function(disease){
 		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
 		bb.selected = d.id;
 	}));
-	$('#breakdown-table').hide();
-	breadcrumbs([disease]);
-	$('#overall1').show();
-	$('#overall2').hide();
 };
 
 //older - not used - displays one at a time
@@ -197,6 +203,7 @@ var showBreakdown = function (disease, type, id){
 		selectPieSlice('chart2', d.id);
 		populatePanels(d.id);
 		$('a[href=#tab-sap-team]').tab('show');
+		bb.subselected = d.id;
 	}, function(d,i){
 		$('#breakdown-table tr').removeClass('tr-hovered');
 		$('#row-'+bb.data[disease].items[d.id].id).addClass('tr-hovered');
@@ -212,11 +219,11 @@ var show = function (page) {
     $('#' + page).show();
 
     if (page === 'page1') {
-        showMainCharts();
-		showContactChart();
 		$('#main').addClass('content');
 		$('#topnavbar').addClass('full');
 		$('#aside-toggle').removeClass('collapsed');
+        showMainCharts();
+		showContactChart();
     } else {	
 		$('#main').removeClass('content');
 		$('#topnavbar').removeClass('full');
@@ -293,8 +300,11 @@ var wireUpPages = function () {
 		if(bb.selected && bb.selected === "Uncontrolled"){
 		var r = Math.floor(Math.random()*3);
 html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr></thead><tbody><tr><td>' + examples[r].join('</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr><tr><td>')  + '</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr></tbody></table>';
-		} else if (bb.selected && bb.selected === "Excluded"){
-	    html='<span>Patient ' + nhs + '</span> is excluded because of xxx';
+		} else if (bb.selected && bb.selected === "Excluded" && bb.subselected){
+	    html='<div><span>Patient ' + nhs + '</span> is excluded because of "' + bb.data["Blood Pressure"].items[bb.subselected].desc +'"</div>';
+	    if(bb.subselected!="Exclusion code") {
+	      html += '<div>We suggest you add the following exclusion code to their record: <a href="#">9h3.</a></div>';
+	    }
 		}
 		$('#advice').html(html);
 		e.preventDefault();
