@@ -334,16 +334,59 @@
 					</div>
 
                     <div class="col-sm-5 col-md-5 col-lg-4">
-                        <div class="panel panel-default">
+                        <div class="panel panel-default" id="panel-right">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Patients</h3>
                             </div>
 
-                            <div class="panel-body" style="min-height:400px">
-								<div id="patients-placeholder">
-									Select a patient group to display affected patients
-								</div>
-                                <div id="patients"></div>
+                            <div class="panel-body" id="panel-patients">
+				    <div id="patients-placeholder">
+					    Select a patient group to display affected patients
+				    </div>
+				    <div id="patients"></div>
+			    </div>
+                            <div class="panel-body" id="panel-message" style="display:none">
+                                <ul tabindex="5001" style="overflow: hidden;" class="media-list messages nicescroll">
+                                    <li class="media">
+                                      <a href="#" class="pull-left user-status online">
+                                        <img alt="user" class="media-object" src="assets/images/avtar/ben.jpg">
+                                      </a>
+                                      <div class="media-body">
+                                        <h5 class="media-heading"><strong>Ben Brown</strong></h5>
+                                        <p class="text-muted no-margn">You've got some good figures for BP control - have you got any tips?</p>
+                                      </div>
+                                    </li>
+                                    <li class="media">
+                                      <a href="#" class="pull-right user-status invisibled">
+                                        <img alt="user" class="media-object" src="assets/images/avtar/richard.jpg">
+                                      </a>
+                                      <div class="media-body">
+                                        <h5 class="media-heading"><strong>Richard Williams</strong></h5>
+                                        <p class="text-muted no-margn">We have regular training sessions for staff to identify HTN patients who need follow up.</p>
+                                      </div>
+                                    </li>
+                                    <li class="media">
+                                      <a href="#" class="pull-left user-status online">
+                                        <img alt="user" class="media-object" src="assets/images/avtar/ben.jpg">
+                                      </a>
+                                      <div class="media-body">
+                                        <h5 class="media-heading"><strong>Ben Brown</strong></h5>
+                                        <p class="text-muted no-margn">Ok great.  We'll give it a try.</p>                                        
+                                      </div>
+                                    </li>
+                                    
+                                </ul>
+                            
+                            </div>
+                            <div class="panel-footer" style="display:none">
+                            	<form class="ng-pristine ng-valid" role="form">
+                                <div class="input-group">
+                                  <input placeholder="Message here..." class="form-control ng-pristine ng-untouched ng-valid" data-ng-model="todoText" type="text">
+                                  <span class="input-group-btn">
+                                    <a href="#" class=" btn-success btn">Send</a>
+                                  </span>
+                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -507,6 +550,13 @@
 	
 	<script src="script.js?8"></script> 
 	
+                                
+	<script id="checkbox-template" type="x-tmpl-mustache">
+	<label class="cr-styled">
+	    <input ng-model="todo.done" type="checkbox">
+	    <i class="fa"></i> 
+	</label>
+	</script>
 	<script id="sap-nil" type="x-tmpl-mustache">
 	<p>These are patients that you have had no contact with. <span class="text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
      <table class="table">
@@ -514,10 +564,10 @@
      <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
      </thead>
      <tbody>
-        <tr><td>Check these patients are still registered at your practice.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Check these patients still live in your area.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Invite these patients via letter or telephone for a blood pressure check.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+        <tr><td>Check these patients are still registered at your practice.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Check these patients still live in your area.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Invite these patients via letter or telephone for a blood pressure check.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
        </tbody>
     </table>
     </script> 
@@ -528,10 +578,10 @@
      <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
      </thead>
      <tbody>
-        <tr><td>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions – <span class="text-danger">this could improve your performance by {{ i-prescriptions }}%.</span></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Telephone those contactable by phone to invite them for a blood pressure check – <span class="text-danger">this could improve your performance by {{ i-phone }}%.</span></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Send letters to those with whom telephone contact has not been possible – <span class="text-danger">this could improve your performance by {{ i-letter }}%.</span></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Ask the patient to send in readings taken at home or at the pharmacy.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+        <tr><td>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions – <span class="text-danger">this could improve your performance by {{ i-prescriptions }}%.</span></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Telephone those contactable by phone to invite them for a blood pressure check – <span class="text-danger">this could improve your performance by {{ i-phone }}%.</span></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Send letters to those with whom telephone contact has not been possible – <span class="text-danger">this could improve your performance by {{ i-letter }}%.</span></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Ask the patient to send in readings taken at home or at the pharmacy.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
        </tbody>
     </table>
     </script> 
@@ -542,13 +592,13 @@
      <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
      </thead>
      <tbody>
-        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
         <tr><td>Hold an educational session or meeting at your practice to highlight to colleagues: 
             <ul>
                 <li>The importance of blood pressure measurement.</li>
                 <li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li>
                 <li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR. </li>
-            </ul></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+            </ul></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
  </tbody>
     </table>
     </script> 
@@ -559,8 +609,8 @@
      <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
      </thead>
      <tbody>
-        <tr><td>Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Some patients have had chronically raised blood pressure and no change in medication, which should be addressed.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+        <tr><td>Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Some patients have had chronically raised blood pressure and no change in medication, which should be addressed.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
      </tbody>
     </table>
     </script> 
@@ -571,14 +621,14 @@
      <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
      </thead>
      <tbody>
-        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
         <tr><td>Hold an educational session or meeting at your practice to highlight to colleagues: 
             <ul>
                 <li>The importance of blood pressure measurement.</li>
                 <li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li>
                 <li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR.  </li>
-            </ul></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+            </ul></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
        </tbody>
     </table>
     </script> 
@@ -589,14 +639,14 @@
      <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
      </thead>
      <tbody>
-        <tr><td>Contact these patients by letter or telephone to offer them a change in their blood pressure medication.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
-        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+        <tr><td>Contact these patients by letter or telephone to offer them a change in their blood pressure medication.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
         <tr><td>Hold an educational session or meeting at your practice to highlight to colleagues: 
             <ul>
                 <li>The importance of blood pressure measurement.</li>
                 <li>High blood pressure readings are not being acted on – this may be the only chance to do something about it.</li>
                 <li>If there are legitimate reasons why action on high blood pressure is not acted on it should be appropriately coded in the EHR. </li>
-            </ul></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr>
+            </ul></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
        </tbody>
     </table>
     

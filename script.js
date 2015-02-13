@@ -13,6 +13,37 @@ $(window).load(function() {
   });
 });	
 
+/********************************
+Charts
+********************************/
+
+var showContactChart = function (){
+	if(bb.chart5) bb.chart5.destroy();
+	bb.chart5  = c3.generate({
+		bindto: "#chart-demo-contact",
+		data: {
+			x: 'x',
+			columns: [
+				['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+				['data1', 30, 200, 100, 400, 150, 250]
+			]
+		},
+		axis: {
+			x: {
+				type: 'timeseries',
+				tick: {
+					format: '%Y-%m-%d'
+				}
+			}
+		},
+		grid: {
+			x: {
+				lines: [{value: '2013-01-02', text: 'F2F'}, {value: '2013-01-05', text: 'Prescription'}]
+			}
+		}
+	});
+};
+
 var getPie = function (data, colours, element, onclick, onmouseover, onmouseout) {
 	var pie = {
 		bindto: element,
@@ -57,8 +88,9 @@ var populateSuggestedActions = function (id){
 	  $('#team-footer').hide();	  
 	} else {
 	  var template = $('#sap-'+id.toLowerCase().replace(/ /g,'-')).html();
+	  var checkbox = $('#checkbox-template').html();
 	  Mustache.parse(template);   // optional, speeds up future uses
-	  var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id]);
+	  var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id], {"chk" : checkbox });
 	  $('#sap').html(rendered);
 	  $('#sap-placeholder').hide();
 	  $('#team-footer').show();
@@ -100,6 +132,16 @@ var selectPieSlice = function (chart, id){
 	bb[chart].select(id);
 };
 
+var hidePanels = function(){  
+      $('#sap').html('');
+      $('#sap-placeholder').show();
+      $('#team-footer').hide();
+      $('#patients').html('');
+      $('#patients-placeholder').show();
+      $('#demographic-placeholder').show();
+      $('#demographic-content').hide();
+}
+
 var showHideCharts = function (show, hide){
 	$('#'+show).show(400);
 	$('#'+hide).hide(400);
@@ -108,13 +150,7 @@ var showHideCharts = function (show, hide){
 		return classNames.replace(/_unselected_/g, '');
 	});
 	if(bb[show].selected().length===0) {
-		$('#sap').html('');
-		$('#sap-placeholder').show();
-		$('#team-footer').hide();
-		$('#patients').html('');
-		$('#patients-placeholder').show();		
-		$('#demographic-placeholder').show();
-		$('#demographic-content').hide();
+	  hidePanels();
 	}
 };
 
@@ -135,6 +171,15 @@ var breadcrumbs = function(items){
   $('#breadcrumb').html(html.join(' &gt; '));
 };
 
+var destroyCharts = function(charts){
+    for(var i = 0 ; i<charts.length; i++){
+	if(bb[charts[i]]) {
+		bb[charts[i]].destroy();
+		delete bb[charts[i]];
+	}
+    }
+}
+
 //most recent shows both side by side
 var showMainCharts = function(disease){
 	$('#breakdown-table').hide();
@@ -142,18 +187,9 @@ var showMainCharts = function(disease){
 	$('#overall2').hide();
 	if(!disease) disease = "Blood Pressure";
 	breadcrumbs([disease]);
-	if(bb.chart1) {
-		bb.chart1.destroy();
-		delete bb.chart1;
-	}
-	if(bb.chart2) {
-		bb.chart2.destroy();
-		delete bb.chart2;
-	}
-	if(bb.chart3) {
-		bb.chart3.destroy();
-		delete bb.chart3;
-	}
+	
+	destroyCharts(['chart1','chart2','chart3']);
+	
 	bb.chart1 = c3.generate(getPie(bb.data[disease]["Measured"].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
 		if(d.id==="Measured") return;
 		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
@@ -170,15 +206,9 @@ var showMainCharts = function(disease){
 var showMainChart = function (disease, type) {
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
-	if(bb.chart1) {
-		bb.chart1.destroy();
-		delete bb.chart1;
-	}
-	if(bb.chart2) {
-		bb.chart2.destroy();
-		delete bb.chart2;
-	}
-    bb.chart1 = c3.generate(getPie(bb.data[disease][type].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
+	destroyCharts(['chart1','chart2']);
+    
+	bb.chart1 = c3.generate(getPie(bb.data[disease][type].main, ['#845fc8','#f96876'], '#chart1', function (d, i){
 		if(d.id==="Measured" || d.id === "Controlled") return;
 		showBreakdown(disease, bb.lookup[d.id.toLowerCase()], d.id);
 	}));
@@ -190,20 +220,8 @@ var showBreakdown = function (disease, type, id){
 	if(!disease) disease = "Blood Pressure";
 	if(!type) type = "Measured";
 	
-	if(bb.chart1) {
-		bb.chart1.destroy();
-		delete bb.chart1;
-	}
+	destroyCharts(['chart1','chart2','chart3']);
 	
-	if(bb.chart2) {
-		bb.chart2.destroy();
-		delete bb.chart2;
-	}
-	
-	if(bb.chart3) {
-		bb.chart3.destroy();
-		delete bb.chart3;
-	}
 	bb.chart2 = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#chart2', function (d, i) {
 		selectPieSlice('chart2', d.id);
 		populatePanels(d.id);		
@@ -239,33 +257,6 @@ var show = function (page) {
 		$('#aside-toggle').addClass('collapsed');
 	}
 };
-
-var showContactChart = function (){
-	if(bb.chart5) bb.chart5.destroy();
-	bb.chart5  = c3.generate({
-		bindto: "#chart-demo-contact",
-		data: {
-			x: 'x',
-			columns: [
-				['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-				['data1', 30, 200, 100, 400, 150, 250]
-			]
-		},
-		axis: {
-			x: {
-				type: 'timeseries',
-				tick: {
-					format: '%Y-%m-%d'
-				}
-			}
-		},
-		grid: {
-			x: {
-				lines: [{value: '2013-01-02', text: 'F2F'}, {value: '2013-01-05', text: 'Prescription'}]
-			}
-		}
-	});
-}
 
 var wireUpPages = function () {
     show('login');
@@ -327,6 +318,10 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 	
 	$('#tab-performance').bind('afterAddClass', function() {
       showMainCharts();
+		$('#panel-right').find('.panel-title').html('Patients');
+		$('#panel-right').find('.panel-footer').hide();
+		$('#panel-message').hide();
+		$('#panel-patients').show();
     });
 	$('#tab-trend').bind('afterAddClass', function() {
 		var date = new Date();
@@ -376,6 +371,10 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 				}
 			}
 		});
+		$('#panel-right').find('.panel-title').html('Patients');
+		$('#panel-right').find('.panel-footer').hide();
+		$('#panel-message').hide();
+		$('#panel-patients').show();
 	});
 	
 	$('#tab-benchmark').bind('afterAddClass', function() {
@@ -399,6 +398,11 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 				}
 			}
 		});
+		
+		$('#panel-right').find('.panel-title').html('Messages');
+		$('#panel-right').find('.panel-footer').show();
+		$('#panel-message').show();
+		$('#panel-patients').hide();
 	});
 	
 	$('#tab-demo-contact').bind('afterAddClass', function() {
@@ -407,10 +411,7 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 	
 	$('#tab-demo-trend').bind('afterAddClass', function() {
 		
-		if(bb.chart6) {
-			bb.chart6.destroy();
-			delete bb.chart6;
-		}
+		destroyCharts(['chart6']);
 		bb.chart6 = c3.generate({
 			bindto: '#chart-demo-trend',
 			data: {
@@ -504,13 +505,7 @@ $(document).on('ready', function () {
 			if(bb.chart2) bb.chart2.unselect();
 			if(bb.chart3) bb.chart3.unselect();
 						
-			$('#sap').html('');
-			$('#sap-placeholder').show();
-			$('#team-footer').hide();
-			$('#patients').html('');
-			$('#patients-placeholder').show();	
-			$('#demographic-placeholder').show();
-			$('#demographic-content').hide();
+			hidePanels();
 			
 		}
 		bb.chartClicked=false;

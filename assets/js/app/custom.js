@@ -1,5 +1,8 @@
 jQuery(function($) {
 
+  /********************************
+  Trigger event when tab is made active
+  ********************************/
   var _oldAddClass = $.fn.addClass;
 
   $.fn.addClass = function() {
@@ -65,13 +68,7 @@ $(function(){
 		var submenu = $(this).html();
 		
 		showMainCharts(menu, submenu);
-		$('#sap').html('');
-		$('#sap-placeholder').show();
-		$('#team-footer').hide();
-		$('#patients').html('');
-		$('#patients-placeholder').show();	
-		$('#demographic-placeholder').show();
-		$('#demographic-content').hide();
+		hidePanels();
 	});
 	
 

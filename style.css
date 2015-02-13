@@ -102,8 +102,8 @@ header {
 	opacity: 0.3 !important;
 }
 .c3-chart-arc path._selected_ {
-	stroke: #fcff21;
-	stroke-width: 5px;
+	/*stroke: #fcff21;
+	stroke-width: 5px;*/
 	opacity: 1 !important;
 }
 
