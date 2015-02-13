@@ -37,7 +37,7 @@ header {
 }
 
 #breakdown-table tr.selected {
-	background-color: rgb(244,244,255);
+	background-color: rgb(244,255,244);
 }
 
 .patient-list .highlighted {
@@ -102,8 +102,6 @@ header {
 	opacity: 0.3 !important;
 }
 .c3-chart-arc path._selected_ {
-	/*stroke: #fcff21;
-	stroke-width: 5px;*/
 	opacity: 1 !important;
 }
 

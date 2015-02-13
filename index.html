@@ -545,112 +545,41 @@
     <script src="assets/js/plugins/calendar/calendar-conf.js"></script> 
 	<!-- Custom JQuery -->
     <script src="assets/js/app/custom.js" type="text/javascript"></script> 
-	<!-- Zero Clipboard -->
-	<script src="assets/js/clipboard/ZeroClipboard.min.js" type="text/javascript"></script> 
 	
 	<script src="script.js?8"></script> 
 	
                                 
 	<script id="checkbox-template" type="x-tmpl-mustache">
 	<label class="cr-styled">
-	    <input ng-model="todo.done" type="checkbox">
+	    <input type="checkbox">
 	    <i class="fa"></i> 
 	</label>
 	</script>
-	<script id="sap-nil" type="x-tmpl-mustache">
-	<p>These are patients that you have had no contact with. <span class="text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
+	
+	<script id="sap-template" type="x-tmpl-mustache">
+	<p>{{main}} <span class="text-danger">They represent potential for (absolute) {{ total-improvement }}% improvement in performance.</span> Potential actions are:</p>
      <table class="table">
      <thead>
-     <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
+     <tr>
+		<th>Action</th>
+		{{#actions}}
+		<th>{{.}}</th>
+		{{/actions}}
+	 </tr>
      </thead>
      <tbody>
-        <tr><td>Check these patients are still registered at your practice.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Check these patients still live in your area.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Invite these patients via letter or telephone for a blood pressure check.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
+		{{#suggestions}}
+        <tr>
+			<td>{{{text}}}{{#improvement}}<span class='text-danger'> - this could improve your performance by {{ improvement }}%.</span>{{/improvement}}</td>
+			{{#actions}}
+			<td>{{>chk}}</td>
+			{{/actions}}
+		</tr>
+		{{/suggestions}}
        </tbody>
     </table>
-    </script> 
-	<script id="sap-indirect" type="x-tmpl-mustache">
-	<p>These are patients you have had indirect contact with (e.g. prescriptions or letters). <span class="text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
-         <table class="table">
-     <thead>
-     <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
-     </thead>
-     <tbody>
-        <tr><td>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions – <span class="text-danger">this could improve your performance by {{ i-prescriptions }}%.</span></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Telephone those contactable by phone to invite them for a blood pressure check – <span class="text-danger">this could improve your performance by {{ i-phone }}%.</span></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Send letters to those with whom telephone contact has not been possible – <span class="text-danger">this could improve your performance by {{ i-letter }}%.</span></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Ask the patient to send in readings taken at home or at the pharmacy.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-       </tbody>
-    </table>
-    </script> 
-	<script id="sap-direct" type="x-tmpl-mustache">
-	<p>These are patients you have had direct contact with (e.g. face-to-face or telephone). <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
-         <table class="table">
-     <thead>
-     <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
-     </thead>
-     <tbody>
-        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Hold an educational session or meeting at your practice to highlight to colleagues: 
-            <ul>
-                <li>The importance of blood pressure measurement.</li>
-                <li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li>
-                <li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR. </li>
-            </ul></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
- </tbody>
-    </table>
-    </script> 
-	<script id="sap-recently-measured" type="x-tmpl-mustache">
-	<p>These are patients who have had a high blood pressure reading taken in the last 2 months. <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
-     <table class="table">
-     <thead>
-     <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
-     </thead>
-     <tbody>
-        <tr><td>Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Some patients have had chronically raised blood pressure and no change in medication, which should be addressed.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-     </tbody>
-    </table>
-    </script> 
-	<script id="sap-recently-changed-rx" type="x-tmpl-mustache">
-	<p>These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again. <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
-     <table class="table">
-     <thead>
-     <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
-     </thead>
-     <tbody>
-        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Hold an educational session or meeting at your practice to highlight to colleagues: 
-            <ul>
-                <li>The importance of blood pressure measurement.</li>
-                <li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li>
-                <li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR.  </li>
-            </ul></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-       </tbody>
-    </table>
-    </script> 
-	<script id="sap-suboptimal-rx" type="x-tmpl-mustache">
-	<p>These are patients who have had a high blood pressure reading taken and could have their medication optimised. <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
-     <table class="table">
-     <thead>
-     <tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr>
-     </thead>
-     <tbody>
-        <tr><td>Contact these patients by letter or telephone to offer them a change in their blood pressure medication.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Ensure that the pop-ups in your EHR are working.</td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-        <tr><td>Hold an educational session or meeting at your practice to highlight to colleagues: 
-            <ul>
-                <li>The importance of blood pressure measurement.</li>
-                <li>High blood pressure readings are not being acted on – this may be the only chance to do something about it.</li>
-                <li>If there are legitimate reasons why action on high blood pressure is not acted on it should be appropriately coded in the EHR. </li>
-            </ul></td><td>{{>chk}}</td><td>{{>chk}}</td><td>{{>chk}}</td></tr>
-       </tbody>
-    </table>
-    
-    </script> 
+	</script>
+	
 	<script id="patient-list" type="x-tmpl-mustache">
 	<table class="table patient-list">
 	<tr>
@@ -677,6 +606,7 @@
     {{/patients}}
     </table>
     </script>
+	
 	<script id="breakdown-table-template" type="x-tmpl-mustache">
     <table class="table no-margn">
     <thead>
