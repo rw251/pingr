@@ -1,116 +1,670 @@
 [
-{
-	"disease" : "Blood Pressure",
-    "unmeasured": {
-        "n": 2072,
-		"measured" : 2410,
-        "items": [
-            {
-                "name": "Nil",
-                "n": 1413,
-				"improvement" : "15",
-				"patients" : [
-					{"name":"Jesse Clark", "nhs" : "9002567106", "risk" : "06%"},
-					{"name":"Raymond Butler", "nhs" : "9079708590", "risk" : "90%"},
-					{"name":"Linda Evans", "nhs" : "9021318955", "risk" : "55%"},
-					{"name":"Bobby Sanchez", "nhs" : "9053322816", "risk" : "16%"},
-					{"name":"Wayne Richardson", "nhs" : "9005934199", "risk" : "99%"},
-					{"name":"Ann Kelly", "nhs" : "9079571855", "risk" : "55%"},
-					{"name":"Wanda Harris", "nhs" : "9012082562", "risk" : "62%"},
-					{"name":"Marilyn Bennett", "nhs" : "9039658502", "risk" : "02%"},
-					{"name":"Jose Hall", "nhs" : "9091180247", "risk" : "47%"}
-				]
-            },
-            {
-                "name": "Direct",
-                "n": 595,
-				"improvement" : "16",
-				"patients" : [
-					{"name":"Gloria Peterson", "nhs" : "9034498076", "risk" : "76%"},
-					{"name":"Emily Brooks", "nhs" : "9049040446", "risk" : "46%"},
-					{"name":"Amy Diaz", "nhs" : "9009083532", "risk" : "32%"},
-					{"name":"Terry Garcia", "nhs" : "9061124813", "risk" : "13%"},
-					{"name":"Betty Brown", "nhs" : "9038343867", "risk" : "67%"},
-					{"name":"David Ramirez", "nhs" : "9059876817", "risk" : "17%"},
-					{"name":"Shawn Watson", "nhs" : "9000893907", "risk" : "07%"},
-					{"name":"Marie Cooper", "nhs" : "9033191867", "risk" : "67%"},
-					{"name":"Jane Howard", "nhs" : "9099247692", "risk" : "92%"}
-				]
-            },
-            {
-                "name": "Indirect",
-                "n": 2072,
-				"improvement" : "17",
-				"i-phone" : "10",
-				"i-letter" : "5",
-				"i-prescriptions" : "25",
-				"patients" : [
-					{"name":"Gerald Campbell", "nhs" : "9098636572", "risk" : "72%"},
-					{"name":"Juan Barnes", "nhs" : "9079592014", "risk" : "14%"},
-					{"name":"Gregory Stewart", "nhs" : "9000910297", "risk" : "97%"},
-					{"name":"Benjamin Wood", "nhs" : "9069105021", "risk" : "21%"},
-					{"name":"Carlos Anderson", "nhs" : "9005929785", "risk" : "85%"},
-					{"name":"Johnny Gray", "nhs" : "9005703348", "risk" : "48%"},
-					{"name":"Ryan Griffin", "nhs" : "9010856620", "risk" : "20%"},
-					{"name":"Joyce Edwards", "nhs" : "9009771926", "risk" : "26%"},
-					{"name":"Bruce Jones", "nhs" : "9092418386", "risk" : "86%"}
-				]
-            }
-        ]
-    },
-    "uncontrolled": {
-        "n": 2868,
-		"controlled" : 2104,
-        "items": [
-            {
-                "name": "Recently Measured",
-                "n": 365,
-				"improvement" : "14",
-				"patients" : [
-					{"name":"Thomas Bell", "nhs" : "9051546402", "risk" : "02%"},
-					{"name":"Martin Gonzales", "nhs" : "9005252030", "risk" : "30%"},
-					{"name":"Janice Henderson", "nhs" : "9077880214", "risk" : "14%"},
-					{"name":"Michelle Morris", "nhs" : "9020801910", "risk" : "10%"},
-					{"name":"Christine Torres", "nhs" : "9041918976", "risk" : "76%"},
-					{"name":"Catherine Ross", "nhs" : "9061510350", "risk" : "50%"},
-					{"name":"Matthew Phillips", "nhs" : "9067340515", "risk" : "15%"},
-					{"name":"Frank Collins", "nhs" : "9021642165", "risk" : "65%"},
-					{"name":"Jessica Scott", "nhs" : "9035356481", "risk" : "81%"}
-				]
-            },
-            {
-                "name": "Recently Changed Rx",
-                "n": 1174,
-				"improvement" : "13",
-				"patients" : [				
-					{"name":"Louise Henderson", "nhs" : "9075959798", "risk" : "98%"},
-					{"name":"Marie Murphy", "nhs" : "9070438803", "risk" : "03%"},
-					{"name":"Raymond Davis", "nhs" : "9072750687", "risk" : "87%"},
-					{"name":"Tina Young", "nhs" : "9002732548", "risk" : "48%"},
-					{"name":"Carl Griffin", "nhs" : "9090314028", "risk" : "28%"},
-					{"name":"Benjamin Sanchez", "nhs" : "9063177276", "risk" : "76%"},
-					{"name":"Shirley Alexander", "nhs" : "9054093275", "risk" : "75%"},
-					{"name":"Paul Stewart", "nhs" : "9044111202", "risk" : "02%"},
-					{"name":"Evelyn Evans", "nhs" : "9056590976", "risk" : "76%"}
-				]
-            },
-            {
-                "name": "Suboptimal Rx",
-                "n": 1329,
-				"improvement" : "12",
-				"patients" : [
-					{"name":"Linda Gonzalez", "nhs" : "9057757561", "risk" : "61%"},
-					{"name":"Heather James", "nhs" : "9017120939", "risk" : "39%"},
-					{"name":"Bonnie Foster", "nhs" : "9066515462", "risk" : "62%"},
-					{"name":"Christopher Patterson", "nhs" : "9020621386", "risk" : "86%"},
-					{"name":"Amanda Sanders", "nhs" : "9050745408", "risk" : "08%"},
-					{"name":"Dennis Price", "nhs" : "9044275728", "risk" : "28%"},
-					{"name":"Jonathan Walker", "nhs" : "9018071754", "risk" : "54%"},
-					{"name":"Arthur Scott", "nhs" : "9040610338", "risk" : "38%"},
-					{"name":"Sara Washington", "nhs" : "9051689216", "risk" : "16%"}
-				]
-            }
-        ]
+    {
+        "disease": "Blood Pressure",
+        "excluded": {
+            "n": 1032,
+            "heads": [
+                {
+                    "title": "Reason for exclusion"
+                },
+                {
+                    "title": "Count"
+                },
+                {
+                    "title": "Percentage"
+                }
+            ],
+            "items": [
+                {
+                    "name": "Palliative care",
+                    "desc": "Palliative care",
+                    "id": "pall",
+                    "n": 250,
+                    "percentage": 24.2,
+                    "patients": [
+                        {
+                            "name": "Thomas Bell",
+                            "nhs": "9051546402"
+                        },
+                        {
+                            "name": "Martin Gonzales",
+                            "nhs": "9005252030"
+                        },
+                        {
+                            "name": "Janice Henderson",
+                            "nhs": "9077880214"
+                        },
+                        {
+                            "name": "Michelle Morris",
+                            "nhs": "9020801910"
+                        },
+                        {
+                            "name": "Christine Torres",
+                            "nhs": "9041918976"
+                        },
+                        {
+                            "name": "Catherine Ross",
+                            "nhs": "9061510350"
+                        },
+                        {
+                            "name": "Matthew Phillips",
+                            "nhs": "9067340515"
+                        },
+                        {
+                            "name": "Frank Collins",
+                            "nhs": "9021642165"
+                        },
+                        {
+                            "name": "Jessica Scott",
+                            "nhs": "9035356481"
+                        }
+                    ]
+                },
+                {
+                    "name": "Care home",
+                    "desc": "Lives in a care home",
+                    "id": "care",
+                    "n": 229,
+                    "percentage": 22.2,
+                    "patients": [
+                        {
+                            "name": "Thomas Bell",
+                            "nhs": "9051546402"
+                        },
+                        {
+                            "name": "Martin Gonzales",
+                            "nhs": "9005252030"
+                        },
+                        {
+                            "name": "Janice Henderson",
+                            "nhs": "9077880214"
+                        },
+                        {
+                            "name": "Michelle Morris",
+                            "nhs": "9020801910"
+                        },
+                        {
+                            "name": "Christine Torres",
+                            "nhs": "9041918976"
+                        },
+                        {
+                            "name": "Catherine Ross",
+                            "nhs": "9061510350"
+                        },
+                        {
+                            "name": "Matthew Phillips",
+                            "nhs": "9067340515"
+                        },
+                        {
+                            "name": "Frank Collins",
+                            "nhs": "9021642165"
+                        },
+                        {
+                            "name": "Jessica Scott",
+                            "nhs": "9035356481"
+                        }
+                    ]
+                },
+                {
+                    "name": "Exclusion code",
+                    "desc": "Is excluded from BP monitoring by read code",
+                    "id": "excl",
+                    "n": 330,
+                    "percentage": 32,
+                    "patients": [
+                        {
+                            "name": "Thomas Bell",
+                            "nhs": "9051546402"
+                        },
+                        {
+                            "name": "Martin Gonzales",
+                            "nhs": "9005252030"
+                        },
+                        {
+                            "name": "Janice Henderson",
+                            "nhs": "9077880214"
+                        },
+                        {
+                            "name": "Michelle Morris",
+                            "nhs": "9020801910"
+                        },
+                        {
+                            "name": "Christine Torres",
+                            "nhs": "9041918976"
+                        },
+                        {
+                            "name": "Catherine Ross",
+                            "nhs": "9061510350"
+                        },
+                        {
+                            "name": "Matthew Phillips",
+                            "nhs": "9067340515"
+                        },
+                        {
+                            "name": "Frank Collins",
+                            "nhs": "9021642165"
+                        },
+                        {
+                            "name": "Jessica Scott",
+                            "nhs": "9035356481"
+                        }
+                    ]
+                },
+                {
+                    "name": "Hypotension",
+                    "desc": "Patient with orthostatic hypotension",
+                    "id": "hypo",
+                    "n": 223,
+                    "percentage": 21.6,
+                    "patients": [
+                        {
+                            "name": "Thomas Bell",
+                            "nhs": "9051546402"
+                        },
+                        {
+                            "name": "Martin Gonzales",
+                            "nhs": "9005252030"
+                        },
+                        {
+                            "name": "Janice Henderson",
+                            "nhs": "9077880214"
+                        },
+                        {
+                            "name": "Michelle Morris",
+                            "nhs": "9020801910"
+                        },
+                        {
+                            "name": "Christine Torres",
+                            "nhs": "9041918976"
+                        },
+                        {
+                            "name": "Catherine Ross",
+                            "nhs": "9061510350"
+                        },
+                        {
+                            "name": "Matthew Phillips",
+                            "nhs": "9067340515"
+                        },
+                        {
+                            "name": "Frank Collins",
+                            "nhs": "9021642165"
+                        },
+                        {
+                            "name": "Jessica Scott",
+                            "nhs": "9035356481"
+                        }
+                    ]
+                }
+            ]
+        },
+        "measured": 2410,
+        "unmeasured": {
+            "n": 2072,
+            "heads": [
+                {
+                    "title": "Type of Contact"
+                },
+                {
+                    "title": "Count"
+                },
+                {
+                    "title": "Percentage"
+                }
+            ],
+            "items": [
+                {
+                    "name": "Nil",
+                    "desc": "Have had no contact",
+                    "id": "nil-",
+                    "n": 1413,
+                    "percentage": 68.2,
+                    "main": "These are patients that you have had no contact with.",
+                    "actions": [
+                        "Todo",
+                        "Done",
+                        "Declined"
+                    ],
+                    "suggestions": [
+                        {
+                            "text": "Check these patients are still registered at your practice."
+                        },
+                        {
+                            "text": "Check these patients still live in your area."
+                        },
+                        {
+                            "text": "Invite these patients via letter or telephone for a blood pressure check."
+                        },
+                        {
+                            "text": "If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?"
+                        }
+                    ],
+                    "total-improvement": "15",
+                    "patients": [
+                        {
+                            "name": "Jesse Clark",
+                            "nhs": "9002567106",
+                            "risk": "06%"
+                        },
+                        {
+                            "name": "Raymond Butler",
+                            "nhs": "9079708590",
+                            "risk": "90%"
+                        },
+                        {
+                            "name": "Linda Evans",
+                            "nhs": "9021318955",
+                            "risk": "55%"
+                        },
+                        {
+                            "name": "Bobby Sanchez",
+                            "nhs": "9053322816",
+                            "risk": "16%"
+                        },
+                        {
+                            "name": "Wayne Richardson",
+                            "nhs": "9005934199",
+                            "risk": "99%"
+                        },
+                        {
+                            "name": "Ann Kelly",
+                            "nhs": "9079571855",
+                            "risk": "55%"
+                        },
+                        {
+                            "name": "Wanda Harris",
+                            "nhs": "9012082562",
+                            "risk": "62%"
+                        },
+                        {
+                            "name": "Marilyn Bennett",
+                            "nhs": "9039658502",
+                            "risk": "02%"
+                        },
+                        {
+                            "name": "Jose Hall",
+                            "nhs": "9091180247",
+                            "risk": "47%"
+                        }
+                    ]
+                },
+                {
+                    "name": "Direct",
+                    "desc": "Have had direct contact",
+                    "id": "dire",
+                    "n": 395,
+                    "percentage": 19.1,
+                    "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
+                    "actions": [
+                        "Todo",
+                        "Done",
+                        "Declined"
+                    ],
+                    "suggestions": [
+                        {
+                            "text": "Ensure that the pop-ups in your EHR are working."
+                        },
+                        {
+                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li><li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR. </li></ul>"
+                        }
+                    ],
+                    "total-improvement": "16",
+                    "patients": [
+                        {
+                            "name": "Gloria Peterson",
+                            "nhs": "9034498076",
+                            "risk": "76%"
+                        },
+                        {
+                            "name": "Emily Brooks",
+                            "nhs": "9049040446",
+                            "risk": "46%"
+                        },
+                        {
+                            "name": "Amy Diaz",
+                            "nhs": "9009083532",
+                            "risk": "32%"
+                        },
+                        {
+                            "name": "Terry Garcia",
+                            "nhs": "9061124813",
+                            "risk": "13%"
+                        },
+                        {
+                            "name": "Betty Brown",
+                            "nhs": "9038343867",
+                            "risk": "67%"
+                        },
+                        {
+                            "name": "David Ramirez",
+                            "nhs": "9059876817",
+                            "risk": "17%"
+                        },
+                        {
+                            "name": "Shawn Watson",
+                            "nhs": "9000893907",
+                            "risk": "07%"
+                        },
+                        {
+                            "name": "Marie Cooper",
+                            "nhs": "9033191867",
+                            "risk": "67%"
+                        },
+                        {
+                            "name": "Jane Howard",
+                            "nhs": "9099247692",
+                            "risk": "92%"
+                        }
+                    ]
+                },
+                {
+                    "name": "Indirect",
+                    "desc": "Have had indirect contact",
+                    "id": "indi",
+                    "n": 264,
+                    "percentage": 12.7,
+                    "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
+                    "actions": [
+                        "Todo",
+                        "Done",
+                        "Declined"
+                    ],
+                    "suggestions": [
+                        {
+                            "text": "Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions",
+                            "improvement": "25"
+                        },
+                        {
+                            "text": "Telephone those contactable by phone to invite them for a blood pressure check",
+                            "improvement": "10"
+                        },
+                        {
+                            "text": "Send letters to those with whom telephone contact has not been possible",
+                            "improvement": "5"
+                        },
+                        {
+                            "text": "Ask the patient to send in readings taken at home or at the pharmacy."
+                        }
+                    ],
+                    "total-improvement": "17",
+                    "patients": [
+                        {
+                            "name": "Gerald Campbell",
+                            "nhs": "9098636572",
+                            "risk": "72%"
+                        },
+                        {
+                            "name": "Juan Barnes",
+                            "nhs": "9079592014",
+                            "risk": "14%"
+                        },
+                        {
+                            "name": "Gregory Stewart",
+                            "nhs": "9000910297",
+                            "risk": "97%"
+                        },
+                        {
+                            "name": "Benjamin Wood",
+                            "nhs": "9069105021",
+                            "risk": "21%"
+                        },
+                        {
+                            "name": "Carlos Anderson",
+                            "nhs": "9005929785",
+                            "risk": "85%"
+                        },
+                        {
+                            "name": "Johnny Gray",
+                            "nhs": "9005703348",
+                            "risk": "48%"
+                        },
+                        {
+                            "name": "Ryan Griffin",
+                            "nhs": "9010856620",
+                            "risk": "20%"
+                        },
+                        {
+                            "name": "Joyce Edwards",
+                            "nhs": "9009771926",
+                            "risk": "26%"
+                        },
+                        {
+                            "name": "Bruce Jones",
+                            "nhs": "9092418386",
+                            "risk": "86%"
+                        }
+                    ]
+                }
+            ]
+        },
+        "controlled": 2104,
+        "uncontrolled": {
+            "n": 2868,
+            "heads": [
+                {
+                    "title": "Uncontrolled breakdown"
+                },
+                {
+                    "title": "Count"
+                },
+                {
+                    "title": "Percentage"
+                }
+            ],
+            "items": [
+                {
+                    "name": "Recently Measured",
+                    "desc": "BP measured in last 2 months",
+                    "id": "rece",
+                    "n": 365,
+                    "percentage": 12.7,
+                    "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
+                    "actions": [
+                        "Todo",
+                        "Done",
+                        "Declined"
+                    ],
+                    "suggestions": [
+                        {
+                            "text": "Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR."
+                        },
+                        {
+                            "text": "Some patients have had chronically raised blood pressure and no change in medication, which should be addressed."
+                        }
+                    ],
+                    "total-improvement": "14",
+                    "patients": [
+                        {
+                            "name": "Thomas Bell",
+                            "nhs": "9051546402",
+                            "risk": "02%"
+                        },
+                        {
+                            "name": "Martin Gonzales",
+                            "nhs": "9005252030",
+                            "risk": "30%"
+                        },
+                        {
+                            "name": "Janice Henderson",
+                            "nhs": "9077880214",
+                            "risk": "14%"
+                        },
+                        {
+                            "name": "Michelle Morris",
+                            "nhs": "9020801910",
+                            "risk": "10%"
+                        },
+                        {
+                            "name": "Christine Torres",
+                            "nhs": "9041918976",
+                            "risk": "76%"
+                        },
+                        {
+                            "name": "Catherine Ross",
+                            "nhs": "9061510350",
+                            "risk": "50%"
+                        },
+                        {
+                            "name": "Matthew Phillips",
+                            "nhs": "9067340515",
+                            "risk": "15%"
+                        },
+                        {
+                            "name": "Frank Collins",
+                            "nhs": "9021642165",
+                            "risk": "65%"
+                        },
+                        {
+                            "name": "Jessica Scott",
+                            "nhs": "9035356481",
+                            "risk": "81%"
+                        }
+                    ]
+                },
+                {
+                    "name": "Recently Changed Rx",
+                    "desc": "HTN Rx recently changed",
+                    "id": "chng",
+                    "n": 1174,
+                    "percentage": 40.9,
+                    "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
+                    "actions": [
+                        "Todo",
+                        "Done",
+                        "Declined"
+                    ],
+                    "suggestions": [
+                        {
+                            "text": "Ensure that the pop-ups in your EHR are working."
+                        },
+                        {
+                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li><li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR.  </li></ul>"
+                        },
+                        {
+                            "text": "Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions"
+                        }
+                    ],
+                    "total-improvement": "13",
+                    "patients": [
+                        {
+                            "name": "Louise Henderson",
+                            "nhs": "9075959798",
+                            "risk": "98%"
+                        },
+                        {
+                            "name": "Marie Murphy",
+                            "nhs": "9070438803",
+                            "risk": "03%"
+                        },
+                        {
+                            "name": "Raymond Davis",
+                            "nhs": "9072750687",
+                            "risk": "87%"
+                        },
+                        {
+                            "name": "Tina Young",
+                            "nhs": "9002732548",
+                            "risk": "48%"
+                        },
+                        {
+                            "name": "Carl Griffin",
+                            "nhs": "9090314028",
+                            "risk": "28%"
+                        },
+                        {
+                            "name": "Benjamin Sanchez",
+                            "nhs": "9063177276",
+                            "risk": "76%"
+                        },
+                        {
+                            "name": "Shirley Alexander",
+                            "nhs": "9054093275",
+                            "risk": "75%"
+                        },
+                        {
+                            "name": "Paul Stewart",
+                            "nhs": "9044111202",
+                            "risk": "02%"
+                        },
+                        {
+                            "name": "Evelyn Evans",
+                            "nhs": "9056590976",
+                            "risk": "76%"
+                        }
+                    ]
+                },
+                {
+                    "name": "Suboptimal Rx",
+                    "desc": "Patient's Rx could be improved",
+                    "id": "subo",
+                    "n": 1329,
+                    "percentage": 46.3,
+                    "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
+                    "actions": [
+                        "Todo",
+                        "Done",
+                        "Declined"
+                    ],
+                    "suggestions": [
+                        {
+                            "text": "Contact these patients by letter or telephone to offer them a change in their blood pressure medication."
+                        },
+                        {
+                            "text": "Ensure that the pop-ups in your EHR are working."
+                        },
+                        {
+                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>High blood pressure readings are not being acted on – this may be the only chance to do something about it.</li><li>If there are legitimate reasons why action on high blood pressure is not acted on it should be appropriately coded in the EHR. </li></ul>"
+                        }
+                    ],
+                    "total-improvement": "12",
+                    "patients": [
+                        {
+                            "name": "Linda Gonzalez",
+                            "nhs": "9057757561",
+                            "risk": "61%"
+                        },
+                        {
+                            "name": "Heather James",
+                            "nhs": "9017120939",
+                            "risk": "39%"
+                        },
+                        {
+                            "name": "Bonnie Foster",
+                            "nhs": "9066515462",
+                            "risk": "62%"
+                        },
+                        {
+                            "name": "Christopher Patterson",
+                            "nhs": "9020621386",
+                            "risk": "86%"
+                        },
+                        {
+                            "name": "Amanda Sanders",
+                            "nhs": "9050745408",
+                            "risk": "08%"
+                        },
+                        {
+                            "name": "Dennis Price",
+                            "nhs": "9044275728",
+                            "risk": "28%"
+                        },
+                        {
+                            "name": "Jonathan Walker",
+                            "nhs": "9018071754",
+                            "risk": "54%"
+                        },
+                        {
+                            "name": "Arthur Scott",
+                            "nhs": "9040610338",
+                            "risk": "38%"
+                        },
+                        {
+                            "name": "Sara Washington",
+                            "nhs": "9051689216",
+                            "risk": "16%"
+                        }
+                    ]
+                }
+            ]
+        }
     }
-}
 ]

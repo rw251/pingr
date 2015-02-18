@@ -1,5 +1,8 @@
 jQuery(function($) {
 
+  /********************************
+  Trigger event when tab is made active
+  ********************************/
   var _oldAddClass = $.fn.addClass;
 
   $.fn.addClass = function() {
@@ -40,7 +43,7 @@ $(function(){
 
 	$("aside.left-panel nav.navigation > ul > li:has(ul) > a").click(function(){
 		
-		if( $("aside.left-panel").hasClass('collapsed') == false || $(window).width() < 768 ){
+		if( $("aside.left-panel").hasClass('collapsed') === false || $(window).width() < 768 ){
 
 		
 		
@@ -64,8 +67,8 @@ $(function(){
 		var menu = $(this).parent().parent().parent().find('span').html();
 		var submenu = $(this).html();
 		
-		showMainChart(menu, submenu);
-		$('#sap').html('');
+		drawMainCharts(menu, submenu);
+		hidePanels();
 	});
 	
 

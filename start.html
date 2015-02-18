@@ -68,10 +68,6 @@
                         <li>
                             <a class="hidden-xs" href="#contact">Contact</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#contact">Contact</a>
                         </li>
-
-                        <li>
-                            <img alt="..." class="img-circle pull-right" src="assets/images/icons/UoM.pictClipping" style="width: 70px;">
-                        <li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -284,9 +280,6 @@
 											</ul>
 										</div>
 										<button type="button" class="btn btn-primary btn-sm btn-circle">Evidence</button>
-										<span>| </span>
-										<div class="btn-group" id="breadcrumb">
-										</div>
 									</div>
 								</div>
                                 <div class="panel-body" id="chart-panel">
@@ -295,24 +288,67 @@
 											<div>
 												<span class="text-green" style="font-size: 35px;"><i class="fa fa-caret-up"></i> 54%</span></div>
 											<div>Blood pressure measured</div>
-											<div id="overall1">
 											<div style="margin-top:130px">
-												<span class="text-red" style="font-size: 35px;"><i class="fa fa-caret-down"></i> 9%</span></div>
-											<div>Blood pressure controlled</div>
-											</div>
-											<div id="overall2" style="display:none;margin-top:130px;">
-											<div>
 												<span id="guide-amount" class="text-orange" style="font-size: 35px;"><i class="fa fa-warning"></i> 96</span></div>
 											<div  id="guide-text">CVD events could be prevented</div>
-											</div>
                                         </div>
                                         <div class="col-xs-5">
                                             <div id="chart1"></div>
 											<div id="chart2"></div>
                                         </div>
                                         <div class="col-xs-5">
-                                        <div id="chart3"></div>
-					  <div id="breakdown-table"></div>											
+											<table id="tbl21" class="table no-margn">
+											  <thead>
+												<tr>
+												  <th>Reason for exclusion</th>
+												  <th>Count</th>
+												  <th>Percentage</th>
+												</tr>
+											  </thead>
+											  <tbody>
+												<tr id="row-pall">
+												  <td>In palliative care</td>
+												  <td>51</td>
+												  <td>10%</td>
+												</tr>
+												<tr id="row-Indirect">
+												  <td>Have had indirect contact</td>
+												  <td>564</td>
+												  <td>20%</td>
+												</tr>
+												<tr id="row-Nil">
+												  <td>Have had no contact</td>
+												  <td>1001</td>
+												  <td>15%</td>
+												</tr>
+											  </tbody>
+											</table>
+											<table id="tbl22" class="table no-margn">
+											  <thead>
+												<tr>
+												  <th>Type of contact</th>
+												  <th>Count</th>
+												  <th>Percentage</th>
+												</tr>
+											  </thead>
+											  <tbody>
+												<tr id="row-Direct">
+												  <td>Have had direct contact</td>
+												  <td>123</td>
+												  <td>10%</td>
+												</tr>
+												<tr id="row-Indirect">
+												  <td>Have had indirect contact</td>
+												  <td>564</td>
+												  <td>20%</td>
+												</tr>
+												<tr id="row-Nil">
+												  <td>Have had no contact</td>
+												  <td>1001</td>
+												  <td>15%</td>
+												</tr>
+											  </tbody>
+											</table>
                                         </div>
                                     </div>
                                 </div>
@@ -338,59 +374,16 @@
 					</div>
 
                     <div class="col-sm-5 col-md-5 col-lg-4">
-                        <div class="panel panel-default" id="panel-right">
+                        <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Patients</h3>
                             </div>
 
-                            <div class="panel-body" id="panel-patients">
-				    <div id="patients-placeholder">
-					    Select a patient group to display affected patients
-				    </div>
-				    <div id="patients"></div>
-			    </div>
-                            <div class="panel-body" id="panel-message" style="display:none">
-                                <ul tabindex="5001" style="overflow: hidden;" class="media-list messages nicescroll">
-                                    <li class="media">
-                                      <a href="#" class="pull-left user-status online">
-                                        <img alt="user" class="media-object" src="assets/images/avtar/ben.jpg">
-                                      </a>
-                                      <div class="media-body">
-                                        <h5 class="media-heading"><strong>Ben Brown</strong></h5>
-                                        <p class="text-muted no-margn">You've got some good figures for BP control - have you got any tips?</p>
-                                      </div>
-                                    </li>
-                                    <li class="media">
-                                      <a href="#" class="pull-right user-status invisibled">
-                                        <img alt="user" class="media-object" src="assets/images/avtar/richard.jpg">
-                                      </a>
-                                      <div class="media-body">
-                                        <h5 class="media-heading"><strong>Richard Williams</strong></h5>
-                                        <p class="text-muted no-margn">We have regular training sessions for staff to identify HTN patients who need follow up.</p>
-                                      </div>
-                                    </li>
-                                    <li class="media">
-                                      <a href="#" class="pull-left user-status online">
-                                        <img alt="user" class="media-object" src="assets/images/avtar/ben.jpg">
-                                      </a>
-                                      <div class="media-body">
-                                        <h5 class="media-heading"><strong>Ben Brown</strong></h5>
-                                        <p class="text-muted no-margn">Ok great.  We'll give it a try.</p>                                        
-                                      </div>
-                                    </li>
-                                    
-                                </ul>
-                            
-                            </div>
-                            <div class="panel-footer" style="display:none">
-                            	<form class="ng-pristine ng-valid" role="form">
-                                <div class="input-group">
-                                  <input placeholder="Message here..." class="form-control ng-pristine ng-untouched ng-valid" data-ng-model="todoText" type="text">
-                                  <span class="input-group-btn">
-                                    <a href="#" class=" btn-success btn">Send</a>
-                                  </span>
-                                </div>
-                                </form>
+                            <div class="panel-body" style="min-height:400px">
+								<div id="patients-placeholder">
+									Select a patient group to display affected patients
+								</div>
+                                <div id="patients"></div>
                             </div>
                         </div>
                     </div>
@@ -424,11 +417,6 @@
 										</div>
 
 										<div id="team-footer" class="panel-footer" style="display:none">
-										<div>
-										  <span style="vertical-align:top">Add you own action plan</span>
-										  <textarea></textarea>
-										  
-										</div>
 											<button type="button" class="btn btn-primary">
 											  <span class="fa fa-file-pdf-o"></span> Pdf
 											</button>
@@ -442,33 +430,12 @@
 									</div>
 
 									<div class="panel panel-default tab-pane tabs-up" id="tab-sap-individual">
-										<div id="advice" class="panel-body">
-										    
+										<div class="panel-body">
+											Advice for this patient
 										</div>
 
 										<div class="panel-footer">
-										<div>
-										  <span style="vertical-align:top">Add you own action plan</span>
-										  <textarea></textarea>
-										  
-										</div>
-										<div id="action-measured"><!-- style="display:none">	-->										
-											<button type="button" class="btn btn-primary">
-											  <span class="fa fa-paper-plane"></span> Letter
-											</button>										
-											<button type="button" class="btn btn-primary">
-											  <span class="fa fa-phone"></span> Phone
-											</button>
-											<button type="button" class="btn btn-primary">
-											  <span class="fa fa-file-text-o"></span> Prescription note
-											</button>
-											<button type="button" class="btn btn-success">
-											  <span class="fa fa-save"></span> Save
-											</button>
-											<button type="button" class="btn btn-danger">
-											  <span class="fa fa-times"></span>
-											</button>
-										</div>
+											Action buttons
 										</div>
 									</div>
 								</div>
@@ -532,8 +499,7 @@
     </div>
 	
 	<!-- jQuery  -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-    <script src="assets/js/jquery/jquery-1.9.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
 	
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="assets/js/bootstrap/bootstrap.min.js"></script> 
@@ -549,41 +515,77 @@
     <script src="assets/js/plugins/calendar/calendar-conf.js"></script> 
 	<!-- Custom JQuery -->
     <script src="assets/js/app/custom.js" type="text/javascript"></script> 
+	<!-- Zero Clipboard -->
+	<script src="assets/js/clipboard/ZeroClipboard.min.js" type="text/javascript"></script> 
 	
 	<script src="script.js?8"></script> 
 	
-                                
-	<script id="checkbox-template" type="x-tmpl-mustache">
-	<label class="cr-styled">
-	    <input type="checkbox">
-	    <i class="fa"></i> 
-	</label>
-	</script>
-	
-	<script id="sap-template" type="x-tmpl-mustache">
-	<p>{{main}} <span class="text-danger">They represent potential for (absolute) {{ total-improvement }}% improvement in performance.</span> Potential actions are:</p>
-     <table class="table">
-     <thead>
-     <tr>
-		<th>Action</th>
-		{{#actions}}
-		<th>{{.}}</th>
-		{{/actions}}
-	 </tr>
-     </thead>
-     <tbody>
-		{{#suggestions}}
-        <tr>
-			<td>{{{text}}}{{#improvement}}<span class='text-danger'> - this could improve your performance by {{ improvement }}%.</span>{{/improvement}}</td>
-			{{#actions}}
-			<td>{{>chk}}</td>
-			{{/actions}}
-		</tr>
-		{{/suggestions}}
-       </tbody>
-    </table>
-	</script>
-	
+	<script id="sap-nil" type="x-tmpl-mustache">
+	<p>These are patients that you have had no contact with. <span class="text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
+    <ul>
+        <li>Check these patients are still registered at your practice.</li>
+        <li>Check these patients still live in your area.</li>
+        <li>Invite these patients via letter or telephone for a blood pressure check.</li>
+        <li>If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?</li>
+    </ul>
+    </script> 
+	<script id="sap-indirect" type="x-tmpl-mustache">
+	<p>These are patients you have had indirect contact with (e.g. prescriptions or letters). <span class="text-danger">They represent potential for (absolute) {{ improvement }}% improvement in performance.</span> Potential actions are:</p>
+    <ul>
+        <li>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions – <span class="text-danger">this could improve your performance by {{ i-prescriptions }}%.</span></li>
+        <li>Telephone those contactable by phone to invite them for a blood pressure check – <span class="text-danger">this could improve your performance by {{ i-phone }}%.</span></li>
+        <li>Send letters to those with whom telephone contact has not been possible – <span class="text-danger">this could improve your performance by {{ i-letter }}%.</span></li>
+        <li>Ask the patient to send in readings taken at home or at the pharmacy.</li>
+    </ul>   
+    </script> 
+	<script id="sap-direct" type="x-tmpl-mustache">
+	<p>These are patients you have had direct contact with (e.g. face-to-face or telephone). <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
+    <ul>
+        <li>Ensure that the pop-ups in your EHR are working.</li>
+        <li>Hold an educational session or meeting at your practice to highlight to colleagues: 
+            <ul>
+                <li>The importance of blood pressure measurement.</li>
+                <li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li>
+                <li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR. </li>
+            </ul>
+        </li>
+    </ul>
+    </script> 
+	<script id="sap-recently-measured" type="x-tmpl-mustache">
+	<p>These are patients who have had a high blood pressure reading taken in the last 2 months. <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
+    <ul>
+        <li>Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR.</li>
+        <li>Some patients have had chronically raised blood pressure and no change in medication, which should be addressed.</li>
+    </ul>
+    </script> 
+	<script id="sap-recently-changed-rx" type="x-tmpl-mustache">
+	<p>These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again. <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
+    <ul>
+        <li>Ensure that the pop-ups in your EHR are working.</li>
+        <li>Hold an educational session or meeting at your practice to highlight to colleagues: 
+            <ul>
+                <li>The importance of blood pressure measurement.</li>
+                <li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li>
+                <li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR.  </li>
+            </ul>
+        </li>
+        <li>Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions</li>
+    </ul>
+    </script> 
+	<script id="sap-suboptimal-rx" type="x-tmpl-mustache">
+	<p>These are patients who have had a high blood pressure reading taken and could have their medication optimised. <span class="text-danger">They represent potential for {{ improvement }}% improvement in performance.</span> Potential actions are:
+    <ul>
+        <li>Contact these patients by letter or telephone to offer them a change in their blood pressure medication.</li>
+        <li>Ensure that the pop-ups in your EHR are working.</li>
+        <li>Hold an educational session or meeting at your practice to highlight to colleagues: 
+            <ul>
+                <li>The importance of blood pressure measurement.</li>
+                <li>High blood pressure readings are not being acted on – this may be the only chance to do something about it.</li>
+                <li>If there are legitimate reasons why action on high blood pressure is not acted on it should be appropriately coded in the EHR. </li>
+            </ul>
+        </li>
+    </ul>
+    </script> 
 	<script id="patient-list" type="x-tmpl-mustache">
 	<table class="table patient-list">
 	<tr>
@@ -593,7 +595,10 @@
 	</tr>
     {{#patients}}
 		<tr class="list-item">
-			<td><a href="#">{{nhs}}</a></td>
+			<td>{{nhs}}
+				<button type="button" class="btn btn-xs btn-clip pull-right" data-clipboard-text="{{nhs}}">
+				  <span class="fa fa-clipboard"></span>
+				</button></td>
 			<td>{{risk}}</td>
 			<td>
 				<button type="button" class="btn btn-xs btn-yes btn-success">
@@ -610,26 +615,5 @@
     {{/patients}}
     </table>
     </script>
-	
-	<script id="breakdown-table-template" type="x-tmpl-mustache">
-    <table class="table no-margn">
-    <thead>
-	  <tr>
-	  {{#heads}}
-	  <th>{{title}}</th>
-	  {{/heads}}
-	  </tr>
-    </thead>
-    <tbody>
-    {{#items}}
-	  <tr id="row-{{id}}" style="color:{{color}}">
-	    <td>{{desc}}</td>
-	    <td>{{n}}</td>
-	    <td>{{percentage}}</td>
-	  </tr>
-    {{/items}}
-    </tbody>
-    </table>
-    </script>  
 </body>
 </html>

@@ -1,23 +1,17 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
-	 
+		'jshint': {
+			all: ['*.js', '*.json', 'assets/js/app/custom.js']
+		},
+		'watch': {
+			files: ['*.js', '*.json', 'assets/js/app/custom.js'],
+			tasks: ['jshint']
+		},
 		'http-server': {
 	 
 			'dev': {
-	 
-				// the server root directory 
 				root: ".",
-	 
-				// the server port 
-				// can also be written as a function, e.g. 
-				// port: function() { return 8282; } 
 				port: 8282,
-				
-	 
-				// the host ip address 
-				// If specified to, for example, "127.0.0.1" the server will  
-				// only be available on that ip. 
-				// Specify "0.0.0.0" to be available everywhere 
 				host: "0.0.0.0",
 	 
 				cache: 10, //seconds
@@ -28,15 +22,16 @@ module.exports = function(grunt) {
 				ext: "html",
 	 
 				// run in parallel with other tasks 
-				runInBackground: false
-	 
+				runInBackground: true	 
 			}
 	 
 		}
 	});
 	 
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-http-server');
 
 	// Default task(s).
-	grunt.registerTask('default', ['http-server']);
+	grunt.registerTask('default', ['jshint','http-server','watch']);
 };
