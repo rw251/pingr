@@ -373,12 +373,15 @@
 			$('#main').addClass('content');
 			$('#topnavbar').addClass('full');
 			$('#aside-toggle').removeClass('collapsed');
+			$('#bottomnavbar').hide();
 			drawMainCharts();
 			drawContactChart();
 		} else {	
 			$('#main').removeClass('content');
 			$('#topnavbar').removeClass('full');
 			$('#aside-toggle').addClass('collapsed');
+			$('#bottomnavbar').show();
+
 		}
 	};
 	

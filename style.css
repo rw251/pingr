@@ -121,3 +121,9 @@ header {
   content: "\f058";
 }
 
+table, th, td {
+    border-collapse: collapse;
+}
+th,td {
+    padding: 30px;
+}
