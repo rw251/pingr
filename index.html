@@ -244,7 +244,6 @@
                                 </li>
                             </ul>
                         </li>
-
                         <li class="has-submenu">
                             <a href="#"><i class="fa fa-stethoscope"></i><span class="nav-label">COPD</span></a>
 
@@ -312,7 +311,7 @@
 								</div>
                                 <div class="panel-body" id="chart-panel">
                                     <div class="row">
-										<div class="col-xs-2">
+										<!--<div class="col-xs-2">
 											<div>
 												<span class="text-green" style="font-size: 35px;"><i class="fa fa-caret-up"></i> 54%</span></div>
 											<div>Blood pressure measured</div>
@@ -326,12 +325,12 @@
 												<span id="guide-amount" class="text-orange" style="font-size: 35px;"><i class="fa fa-warning"></i> 96</span></div>
 											<div  id="guide-text">CVD events could be prevented</div>
 											</div>
-                                        </div>
-                                        <div class="col-xs-5">
+                                        </div>-->
+                                        <div class="col-xs-6">
                                             <div id="chart1"></div>
 											<div id="chart2"></div>
                                         </div>
-                                        <div class="col-xs-5">
+                                        <div class="col-xs-6">
                                         <div id="chart3"></div>
 					  <div id="breakdown-table"></div>											
                                         </div>
@@ -500,7 +499,7 @@
 					<div class="col-sm-6">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-								<h3 class="panel-title">Demographics</h3>
+								<h3 class="panel-title">Blood Pressure Trend</h3>
 							</div>
 
 							<div class="panel-body">
@@ -586,7 +585,7 @@
      <table class="table">
      <thead>
      <tr>
-		<th>Action</th>
+		<th>Suggested Actions</th>
 		{{#actions}}
 		<th>{{.}}</th>
 		{{/actions}}
@@ -609,13 +608,13 @@
 	<table class="table patient-list">
 	<tr>
 		<th>NHS no.</th>
-		<th>CVD risk <i class="fa fa-caret-up"></i></th>
+		<!--<th>CVD risk <i class="fa fa-caret-up"></i></th>-->
 		<th>Actions</th>
 	</tr>
     {{#patients}}
 		<tr class="list-item">
 			<td><a href="#">{{nhs}}</a></td>
-			<td>{{risk}}</td>
+			<!--<td>{{risk}}</td>-->
 			<td>
 				<button type="button" class="btn btn-xs btn-yes btn-success">
 				  <span class="fa fa-check"></span>
