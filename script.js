@@ -399,13 +399,10 @@
 		$('#navbar').on('click', 'a', function () {
 			$("#navbar > .nav").find(".active").removeClass("active");
 			$(this).parent().addClass("active");
-			if (this.href.split('#')[1] === 'about') { show('page2'); } 
-			else if (this.href.split('#')[1] === 'contact') { show('page3'); } 
-			else { show('login'); }
 		});
 		
-		$('#login-button,#create-button,#forgot-button,#home-button').on('click', function (e) {
-			show('page0');
+		$('#enter-button').on('click', function (e) {
+			show('page1');
 			$("#navbar > .nav").find(".active").removeClass("active");
 			$('#home-page').addClass("active");
 			e.preventDefault();
