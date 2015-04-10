@@ -6,47 +6,10 @@
 	bb.lookup = {"unmeasured" : "Measured", "uncontrolled": "Controlled", "excluded": "Excluded"};
 
 	/********************************
-	Charts - data
-	********************************/
-	var getTrendChartData = function(){
-		var date = new Date();
-		var month = date.getMonth()+1;
-		var year = date.getFullYear()-1;
-		var years = ['x'];
-		
-		var bd=1573;
-		var cd=664;
-		var dd=995;
-		var ad = bd+cd+dd;
-		var a = ['Unmeasured'];
-		var b = ['Nil'];
-		var c = ['Indirect'];
-		var d = ['Direct'];
-		for(var i = 0; i< 13; i++) {
-			years.push(year+'-'+month+'-01');
-			a.push(ad);
-			b.push(bd);
-			c.push(cd);
-			d.push(dd);
-			month++;
-			if(month===13) {
-				month=1;
-				year++;
-			}
-			bd += -50 + ((i===7 || i===10) ? -75 : 0) + Math.floor(100*Math.random());
-			cd += -60 + ((i===7 || i===10) ? -75 : 0) + Math.floor(100*Math.random());
-			dd += -90 + ((i===7 || i===10) ? -125 : 0) + Math.floor(100*Math.random());
-			bd = Math.max(bd,0);cd = Math.max(cd,0);dd = Math.max(dd,0);
-			ad = bd+cd+dd;
-		}
-		return [years,a,b,c,d];
-	};
-
-	/********************************
 	Charts - draw
 	********************************/
 	var drawTrendChart = function(){
-		var data = getTrendChartData();			
+		var data = bb.trend;	
 		destroyCharts(['chart3']);	
 		bb.chart3 = c3.generate({
 			bindto: '#chart-trend',
@@ -62,16 +25,22 @@
 					}
 				}
 			},
+			point: {
+				show: false
+			},
+			size: {
+				height: null
+			},
 			grid: {
 				x: {
-					lines: [{value: data[0][6], text: 'Educational session held'}, {value: data[0][9], text: 'EHR alerts turned on'}]
+					lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
 				}
 			}
 		});
 	};
 
 	var drawBpTrendChart = function(){
-		destroyCharts(['chart6']);
+		//destroyCharts(['chart6']);
 		bb.chart6 = c3.generate({
 			bindto: '#chart-demo-trend',
 			data: {
@@ -88,29 +57,6 @@
 					tick: {
 						format: '%Y-%m-%d'
 					}
-				}
-			}
-		});
-	};
-
-	var drawBenchmarkChart = function(){
-		destroyCharts(['chart4']);
-		bb.chart4 = c3.generate({
-			bindto: '#chart-benchmark',
-			data: {
-				columns: [
-					["My practice", 2072,300,500,1745],
-					["CCG average", 3052,129, 740, 1200],
-				]
-			},
-			axis: {
-				x: {
-					type: 'category',
-					categories: ['Unmeasured', 'Nil',  'Direct', 'Indirect'],
-					label: 'Category'
-				},
-				y: {
-					label: 'Number'
 				}
 			}
 		});
@@ -331,7 +277,7 @@
 		  $('#patients').html('');
 		  $('#patients-placeholder').show();
 		  $('#demographic-placeholder').show();
-		  $('#demographic-content').hide();
+		  //$('#demographic-content').hide();
 	};
 
 	var breadcrumbs = function(items){
@@ -356,13 +302,6 @@
 		$('#panel-right').find('.panel-footer').hide();
 		$('#panel-message').hide();
 		$('#panel-patients').show();
-	};
-
-	var showMessagesTab = function(){
-		$('#panel-right').find('.panel-title').html('Messages');
-		$('#panel-right').find('.panel-footer').show();
-		$('#panel-message').show();
-		$('#panel-patients').hide();
 	};
 
 	var show = function (page) {
@@ -396,9 +335,11 @@
 	bb.wireUpPages = function () {
 		show('login');
 
-		$('#navbar').on('click', 'a', function () {
+		$('#topnavbar').on('click', 'a', function () {
 			$("#navbar > .nav").find(".active").removeClass("active");
 			$(this).parent().addClass("active");
+			if (this.href.split('#')[1] === 'help') { show('help-page'); } 
+			else show('page1');
 		});
 		
 		$('#enter-button').on('click', function (e) {
@@ -426,7 +367,9 @@
 				$(this).addClass('highlighted');
 				var nhs = $(this).find('td').html();
 				$('#demographic-placeholder').hide();
-				$('#demographic-content').show();
+				//$('#demographic-content').show(function() {
+					drawBpTrendChart(nhs);
+				//});				
 				$('a[href=#tab-sap-individual]').tab('show');
 				var examples = [["Increase ramipril by 2.5mg","Increase amlodipine by 5mg","Start a diuretic"],
 						  ["Increase losartan by 25mg","Increase bisoprolol by 2.5mg","Start a calcium channel blocker"],
@@ -459,20 +402,7 @@
 			drawTrendChart();		
 			showPatientsTab();
 		});
-		
-		$('#tab-benchmark').bind('afterAddClass', function() {
-			drawBenchmarkChart();		
-			showMessagesTab();		
-		});
-		
-		$('#tab-demo-contact').bind('afterAddClass', function() {
-			drawContactChart();
-		});
-		
-		$('#tab-demo-trend').bind('afterAddClass', function() {		
-			drawBpTrendChart();
-		});
-		
+				
 		$('#breakdown-table')
 			.on('mouseout', 'tr', function(){
 				bb.chart2.focus();
@@ -533,8 +463,10 @@
 	};
 
 	bb.loadData = function() {
-		$.getJSON("data.json", function(data) {
+		$.getJSON("data.json", function(file) {
 			var d="", i=0, j=0;
+			var data = file.data;
+			bb.trend = file.trend;
 			bb.data={};
 			for(i = 0 ; i < data.length; i++){
 				d = data[i].disease;
