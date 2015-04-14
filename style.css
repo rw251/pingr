@@ -34,6 +34,7 @@ header {
 
 #breakdown-table tr:hover {
 	background-color: rgb(244,244,255);
+	cursor: pointer;
 }
 
 #breakdown-table tr.selected {
@@ -41,7 +42,6 @@ header {
 }
 
 .patient-list .highlighted {
-	border: 1px solid #fcff21;
 	background: rgb(242,242,244);
 }
 

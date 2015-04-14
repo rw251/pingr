@@ -2,7 +2,7 @@
 /*global $, c3, Mustache*/
 (function () {
    'use strict';
-	var bb = {}, patientId;
+	var bb = {}, patientId, clip;
 	bb.lookup = {"unmeasured" : "Measured", "uncontrolled": "Controlled", "excluded": "Excluded"};
 
 	/********************************
@@ -64,7 +64,7 @@
 				x: {
 					lines: bb.data["Blood Pressure"].patients[nhs].contacts
 				}
-			}
+			};
 		}
 
 		bb.chart6 = c3.generate(chartOptions);
@@ -289,7 +289,8 @@
 					return 0;
 				}
 				
-				if(a[sortField] == "?" || b[sortField] == "?") return -1;
+				if(a[sortField] == "?") return 1;
+				if(b[sortField] == "?") return -1;
 				
 				if(a[sortField] > b[sortField]) {
 					return sortAsc ? 1 : -1;
@@ -306,6 +307,16 @@
 		var rendered = Mustache.render(template, data);
 		$('#patients').html(rendered);
 		$('#patients-placeholder').hide();
+		
+		//Wire up copy paste
+		ZeroClipboard.destroy(); //tidy up
+		var client = new ZeroClipboard( $('.btn-yes') );
+		
+		client.on( 'ready', function(event) {
+			client.on( 'aftercopy', function(event) {
+				console.log('Copied text to clipboard: ' + event.data['text/plain']);
+			});
+		});
 	};
 
 	var populatePanels = function (id) {
@@ -418,10 +429,10 @@
 			.on('click', 'tbody tr', function(e){
 				$('.list-item').removeClass('highlighted');
 				$(this).addClass('highlighted');
-				var nhs = $(this).find('td').html();
+				var nhs = $(this).find('td button').attr('data-clipboard-text');
 				$('#demographic-placeholder').hide();
 				//$('#demographic-content').show(function() {
-					drawBpTrendChart($(nhs).text());
+					drawBpTrendChart(nhs);
 				//});				
 				$('a[href=#tab-sap-individual]').tab('show');
 				var examples = [["Increase ramipril by 2.5mg","Increase amlodipine by 5mg","Start a diuretic"],
@@ -581,16 +592,6 @@ $(document).on('ready', function () {
         cursorwidth: "7px", // cursor width in pixel (you can also write "5px")
         //cursorborder: "1px solid #fff", // css definition for cursor border
         //cursorborderradius: "5px", // border radius in pixel for cursor
-	});
-	
-	var client = new ZeroClipboard( $('.btn-yes') );
-
-	client.on( "ready", function( readyEvent ) {
-		client.on( "aftercopy", function( event ) {
-		// `this` === `client`
-		// `event.target` === the element that was clicked
-		event.target.style.display = "none";
-		alert("Copied text to clipboard: " + event.data["text/plain"] );
-		});
-	});
+		horizrailenabled: false // nicescroll can manage horizontal scroll
+	});	
 });
