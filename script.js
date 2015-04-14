@@ -1,4 +1,5 @@
 /*jslint browser: true*/
+/*jshint -W055 */
 /*global $, c3, Mustache*/
 (function () {
    'use strict';
@@ -205,8 +206,21 @@
 		var current = getObj();
 		
 		$('#sap').find('input[type=checkbox]').each(function(i){
-			if(current.checkboxes && current.checkboxes[id] && current.checkboxes[id].length>i && current.checkboxes[id][i]){
+			if(current.actions && current.actions[id] && current.actions[id].done.length>i && current.actions[id].done[i]){
 				$(this).prop('checked', true);
+			}
+		});
+		
+		$('#sap').find('input[type=radio]').each(function(i){
+			i = Math.floor(i/2);
+			if(current.actions && current.actions[id] && current.actions[id].agree.length>i){
+				if(current.actions[id].agree[i]===true && this.value==="yes"){
+					$(this).prop('checked', true);
+					$(this).parent().addClass('active');
+				} else if(current.actions[id].agree[i]===false && this.value==="no"){
+					$(this).prop('checked', true);
+					$(this).parent().addClass('active');
+				}
 			}
 		});
 		
@@ -214,43 +228,103 @@
 	};
 	
 	var updateSapRows = function(){
+		$('#sap .suggestion').each(function(i){
+			$(this).find('td').last().children().hide();
+		});
+	
 		$('#sap').find('input[type=checkbox]').each(function(i){
 			if(this.checked){
-				if(i%3===0){
-					$(this).parent().parent().parent().addClass('warning');
-				}
-				else if(i%3===1){
-					$(this).parent().parent().parent().addClass('success');
-				} else {
-					$(this).parent().parent().parent().addClass('danger');
-				}
+				$(this).parent().parent().parent().addClass('success');				
 			} else {
-				if(i%3===0){
-					$(this).parent().parent().parent().removeClass('warning');
-				}
-				else if(i%3===1){
-					$(this).parent().parent().parent().removeClass('success');
-				} else {
-					$(this).parent().parent().parent().removeClass('danger');
-				}
+				$(this).parent().parent().parent().removeClass('success');
+			}
+		});		
+		
+		$('#sap').find('input[type=radio]:checked').each(function(i){
+			if(this.value==="yes"){
+				$(this).parent().parent().parent().parent().removeClass('danger');
+				$(this).parent().parent().parent().parent().find('td').last().children().show();
+			} else {
+				$(this).parent().parent().parent().parent().addClass('danger');
 			}
 		});
 	};
 	
+	var populateIndividualSuggestedActions = function (nhs) {
+		var examples = [["Increase ramipril by 2.5mg","Increase amlodipine by 5mg","Start a diuretic"],
+						  ["Increase losartan by 25mg","Increase bisoprolol by 2.5mg","Start a calcium channel blocker"],
+						  ["Refer to secondary care"]];
+		var html = "";
+		if(bb.selected && bb.selected === "Uncontrolled"){
+		var r = Math.floor(Math.random()*3);
+html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr></thead><tbody><tr><td>' + examples[r].join('</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr><tr><td>')  + '</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr></tbody></table>';
+		} else if (bb.selected && bb.selected === "Excluded" && bb.subselected){
+		html='<div><span>Patient ' + nhs + '</span> is excluded because of "' + bb.data["Blood Pressure"].items[bb.subselected].desc +'"</div>';
+		if(bb.subselected!="Exclusion code") {
+		  html += '<div>We suggest you add the following exclusion code to their record: 9h3.. <button type="button" data-clipboard-text="9h3.." title="Copy to clipboard." class="btn btn-xs btn-default" id="code-clip"><span class="fa fa-clipboard"></span></button></div>';
+		}
+		}
+		$('#advice-placeholder').hide();
+		$('#advice').html(html);
+		
+		var client = new ZeroClipboard( $('#code-clip') );
+		
+		client.on( 'ready', function(event) {
+			client.on( 'aftercopy', function(event) {
+				console.log('Copied text to clipboard: ' + event.data['text/plain']);
+			});
+		});
+		
+		displayPersonlisedActionPlan(nhs,$('#tab-sap-individual .panel-footer'), false, false);
+	};
+	
+	var displayPersonlisedActionPlan = function(id, parentElem, isTeam, isEditable) {
+		var plans = getObj().plans;
+		
+		var plan = "";
+		
+		if(isTeam && id) {
+			if(plans.team[id]) plan = plans.team[id];
+		} else if(!isTeam && id) {
+			if(plans.individual[id]) plan = plans.individual[id];
+		}
+		
+		if(plan === "") isEditable = true;
+	
+		var template = $('#action-plan' + (isEditable ? "" : "-display")).html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template, {"plan" : plan});
+		parentElem.html(rendered).show();
+	};
+	
 	var populateSuggestedActions = function (id){
 		if(bb.selected==="Excluded"){
-		  $('#sap').html('No team actions for excluded patients');
-		  $('#sap-placeholder').hide();
-		  $('#team-footer').hide();	  
+			$('#sap').html('No team actions for excluded patients');
+			$('#sap-placeholder').hide();
+			$('#team-footer').hide();	  
 		} else {
-		  var template = $('#sap-template').html();
-		  var checkbox = $('#checkbox-template').html();
-		  Mustache.parse(template);   // optional, speeds up future uses
-		  var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id], {"chk" : checkbox });
-		  $('#sap').html(rendered);
-		  $('#sap-placeholder').hide();
-		  $('#team-footer').show();
-		  updateCheckboxes(id);
+			var template = $('#sap-template').html();
+			var checkbox = $('#checkbox-template').html();
+			Mustache.parse(template);   // optional, speeds up future uses
+			if(!bb.data["Blood Pressure"].items[id].index){
+				bb.data["Blood Pressure"].items[id].index = function(){
+					return ++window.INDEX||(window.INDEX=0);
+				};
+				bb.data["Blood Pressure"].items[id].lastindex = function(){
+					return window.INDEX;
+				};
+				bb.data["Blood Pressure"].items[id].resetindex = function(){
+					window.INDEX=null;
+					return;
+				};
+			}
+			var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id], {"chk" : checkbox });
+			$('#sap').html(rendered);
+			$('#sap-placeholder').hide();
+
+			displayPersonlisedActionPlan(id, $('#tab-sap-team .panel-footer'), true, false);
+			
+			updateCheckboxes(id);
 		}
 	};
 
@@ -310,7 +384,7 @@
 		
 		//Wire up copy paste
 		ZeroClipboard.destroy(); //tidy up
-		var client = new ZeroClipboard( $('.btn-yes') );
+		var client = new ZeroClipboard( $('.btn-copy') );
 		
 		client.on( 'ready', function(event) {
 			client.on( 'aftercopy', function(event) {
@@ -327,6 +401,9 @@
 	var hidePanels = function(){  
 		  $('#sap').html('');
 		  $('#sap-placeholder').show();
+		  $('#advice').html('');
+		  $('#advice-placeholder').show();
+		  $('#individual-footer').hide();
 		  $('#team-footer').hide();
 		  $('#patients').html('');
 		  $('#patients-placeholder').show();
@@ -431,29 +508,20 @@
 				$(this).addClass('highlighted');
 				var nhs = $(this).find('td button').attr('data-clipboard-text');
 				$('#demographic-placeholder').hide();
-				//$('#demographic-content').show(function() {
-					drawBpTrendChart(nhs);
-				//});				
+
+				drawBpTrendChart(nhs);
+				bb.nhs = nhs;
+			
 				$('a[href=#tab-sap-individual]').tab('show');
-				var examples = [["Increase ramipril by 2.5mg","Increase amlodipine by 5mg","Start a diuretic"],
-						  ["Increase losartan by 25mg","Increase bisoprolol by 2.5mg","Start a calcium channel blocker"],
-						  ["Refer to secondary care"]];
-						  var html = "";
-				if(bb.selected && bb.selected === "Uncontrolled"){
-				var r = Math.floor(Math.random()*3);
-		html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action</th><th>Todo</th><th>Done</th><th>Declined</th></tr></thead><tbody><tr><td>' + examples[r].join('</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr><tr><td>')  + '</td><td><input type="checkbox" /></td><td><input type="checkbox" /></td><td><input type="checkbox" /></td></tr></tbody></table>';
-				} else if (bb.selected && bb.selected === "Excluded" && bb.subselected){
-				html='<div><span>Patient ' + nhs + '</span> is excluded because of "' + bb.data["Blood Pressure"].items[bb.subselected].desc +'"</div>';
-				if(bb.subselected!="Exclusion code") {
-				  html += '<div>We suggest you add the following exclusion code to their record: <a href="#">9h3.</a></div>';
-				}
-				}
-				$('#advice').html(html);
+				
+				populateIndividualSuggestedActions(nhs);
+				
 				e.preventDefault();
 			})
-			.on('click', 'tr button', function(e){
-				var nhs = $(this).parent().parent().find('td').html();
+			.on('click', 'tbody tr button', function(e){
+				//don't want row selected if just button pressed?
 				e.preventDefault();
+				e.stopPropagation();
 			});
 		
 		
@@ -483,6 +551,7 @@
 			.on('click', 'tr', function(){
 				selectPieSlice('chart2', bb.data["Blood Pressure"].ids[this.id.slice(4)]);
 				populatePanels(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
+				bb.subselected = bb.data["Blood Pressure"].ids[this.id.slice(4)];
 				$('#breakdown-table tr').removeClass('selected');
 				$(this).addClass('selected');
 			});
@@ -521,12 +590,12 @@
 		$('#sap').on('click', 'input[type=checkbox]', function(){
 			var idx = $('#sap').find('input[type=checkbox]').index(this);
 			var current = getObj();
-			if(!current.checkboxes) current.checkboxes = {};
-			if(!current.checkboxes[bb.subselected]) current.checkboxes[bb.subselected] = [];
-			while(current.checkboxes[bb.subselected].length<=idx){
-				current.checkboxes[bb.subselected].push(false);
+			if(!current.actions) current.actions = {};
+			if(!current.actions[bb.subselected]) current.actions[bb.subselected] = {"agree":[],"done":[]};
+			while(current.actions[bb.subselected].done.length<=idx){
+				current.actions[bb.subselected].done.push(false);
 			}
-			current.checkboxes[bb.subselected][idx]=this.checked;
+			current.actions[bb.subselected].done[idx]=this.checked;
 			setObj(current);
 			updateSapRows();
 		});
@@ -534,6 +603,136 @@
 		$("ul.nav-tabs a").click(function (e) {
 			e.preventDefault();  
 			$(this).tab('show');
+		});
+		
+		$('#tab-sap-team').on('click', '.edit-plan', function(e){
+			displayPersonlisedActionPlan(bb.subselected, $('#tab-sap-team .panel-footer'), true, true);
+		}).on('click', '.add-plan', function(e){
+			var obj = getObj();
+			obj.plans.team[bb.subselected] = $('#tab-sap-team textarea').val();
+			setObj(obj);
+			
+			displayPersonlisedActionPlan(bb.subselected, $('#tab-sap-team .panel-footer'), true, false);
+		}).on('change', 'input[type=radio]', function(e){
+			var idx = Math.floor($('#sap').find('input[type=radio]').index(this)/2);
+			var current = getObj();
+			if(!current.actions) current.actions = {};
+			if(!current.actions[bb.subselected]) current.actions[bb.subselected] = {"agree":[],"done":[]};
+			while(current.actions[bb.subselected].agree.length<=idx){
+				current.actions[bb.subselected].agree.push("");
+			}
+			current.actions[bb.subselected].agree[idx]=this.value==="yes";
+			setObj(current);
+			
+			updateSapRows();
+		});
+		
+		$('#tab-sap-individual').on('click', '.edit-plan', function(e){
+			displayPersonlisedActionPlan(bb.nhs, $('#tab-sap-individual .panel-footer'), false, true);
+		}).on('click', '.add-plan', function(e){
+			var obj = getObj();
+			obj.plans.individual[bb.nhs] = $('#tab-sap-individual textarea').val();
+			setObj(obj);
+			
+			displayPersonlisedActionPlan(bb.nhs, $('#tab-sap-individual .panel-footer'), false, false);
+		});
+		
+		$('#export-plan').on('click', function(){
+		
+			var doc = new jsPDF(), margin = 20, verticalOffset = margin;
+			
+			var addHeading = function(text, size){
+				if(verticalOffset > 270) {
+					doc.addPage();
+					verticalOffset = margin;
+				}
+				doc.setFontSize(size).text(margin, verticalOffset+10, text);
+				verticalOffset+=15;
+			};
+			
+			var addLine = function(text){
+				var lines = doc.setFontSize(11).splitTextToSize(text, 170);
+				if(verticalOffset +lines.length*10 > 280) {
+					doc.addPage();
+					verticalOffset = margin;
+				}
+				doc.text(margin, verticalOffset+5, lines);
+				verticalOffset+=lines.length*7;
+			};
+			
+			//create doctype
+			var data = getObj(),i=0,j=0,mainId,suggs;		
+				
+		
+			addHeading("Action Plan",24);
+			//Measured
+			addHeading("Measured",20);
+			
+			var internalFunc = function(el) {
+				if(data.plans.individual[el]) {
+					addLine("Patient "+ el +":" +data.plans.individual[el]);
+				}
+			};
+			for(i=0; i< bb.data["Blood Pressure"].Measured.breakdown.length; i++){
+				mainId = bb.data["Blood Pressure"].Measured.breakdown[i][0];
+				addHeading(mainId, 18);
+				addLine(bb.data["Blood Pressure"].items[mainId].main);
+				
+				suggs = bb.data["Blood Pressure"].items[mainId].suggestions;
+				addHeading("Actions", 18);
+				for(j = 0; j < suggs.length; j++){
+					if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
+						//Completed so ignore
+					} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
+						addLine(suggs[j].text);
+					}					
+				}				
+				
+				if(data.plans.team[mainId]) {
+					addHeading("Custom team plan",14);
+					addLine(data.plans.team[mainId]);
+				}
+				
+				addHeading("Custom individual plans",14);
+				bb.data["Blood Pressure"].items[mainId].patients.forEach(internalFunc);
+			}
+			
+			for(i=0; i< bb.data["Blood Pressure"].Controlled.breakdown.length; i++){
+				mainId = bb.data["Blood Pressure"].Controlled.breakdown[i][0];
+				addHeading(mainId, 18);
+				addLine(bb.data["Blood Pressure"].items[mainId].main);
+				
+				suggs = bb.data["Blood Pressure"].items[mainId].suggestions;
+				addHeading("Actions", 18);
+				for(j = 0; j < suggs.length; j++){
+					if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
+						//Completed so ignore
+					} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
+						addLine(suggs[j].text);
+					}					
+				}	
+				
+				if(data.plans.team[mainId]) {
+					addHeading("Team plan",14);
+					addLine(data.plans.team[mainId]);
+				}
+				
+				addHeading("Individuals",14);
+				bb.data["Blood Pressure"].items[mainId].patients.forEach(internalFunc);
+			}
+			
+			//Actions they agree with
+			
+			//Personalised team actions
+			for(i = 0; i < data.plans.team.length; i++){
+			}
+			
+			//Personalised individual actions
+			for(i = 0; i < data.plans.individual.length; i++){
+			}
+			
+			//trigger download
+			doc.save();
 		});
 	};
 
@@ -581,9 +780,19 @@ $(window).load(function() {
 });	
 	
 $(document).on('ready', function () {
-	if(!localStorage.bb) localStorage.bb = JSON.stringify({"checkboxes":{"Direct":[true,false,false,false,true],"Indirect":[false,false,false,true,false,false,false,false,false,true],"Nil":[false,false,false,false,false,false,true,false,false,false,true,false],"Recently Changed Rx":[true,false,false,true,false,false,true],"Suboptimal Rx":[false,true,false,false,false,false,false,true],"Recently Measured":[true,false,false,false,false,true]}});
 	bb.wireUpPages();	
 	bb.loadData();
+	
+	if(!localStorage.bb) localStorage.bb = JSON.stringify({});
+	var obj = JSON.parse(localStorage.bb);
+	if(!obj.actions) {
+		obj.actions = {"Direct": {"agree": [],"done": [true,false]},"Indirect": {"agree": [],"done": [false,false,false,true]},"Nil": {"agree": [],"done": [false,false,false,false]},"Recently Changed Rx": {"agree": [],"done": [true,false,false]},"Suboptimal Rx": {"agree": [],"done": [false,true,false]},"Recently Measured": {"agree": [],"done": [true,false]}};
+		localStorage.bb = JSON.stringify(obj);
+	}
+	if(!obj.plans) {
+		obj.plans = {"team":{}, "individual":{}};
+		localStorage.bb = JSON.stringify(obj);
+	}
 	
 	$("#patients").niceScroll({
 		//cursorcolor: "#424242", // change cursor color in hex

@@ -32,6 +32,14 @@ header {
 	background-color: rgb(244,244,255);	
 }
 
+.btn-toggle {
+	opacity:0.5;
+}
+
+.btn-toggle.active {
+	opacity:1;
+}
+
 #breakdown-table tr:hover {
 	background-color: rgb(244,244,255);
 	cursor: pointer;
@@ -73,6 +81,30 @@ header {
 
 .starter-template-high {
   padding: 15px 15px 0px 15px;
+}
+
+.suggestion.success td span, .suggestion.danger td span {
+	text-decoration: line-through;
+}
+
+.thumb-up {
+    color:  rgb(68, 157, 68);
+}
+
+.thumb-down {
+    color:  rgb(201, 48, 44);
+}
+
+.suggestion .fa-star {
+    color:  gold;
+    text-shadow: 1px 1px 1px #333;
+    font-size: 1.5em;
+	display: none;
+}
+
+.suggestion.success .fa-star {
+	display: inline;
+	text-decoration: none;
 }
 
 .form-horizontal .control-label {
