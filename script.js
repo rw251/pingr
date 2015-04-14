@@ -2,51 +2,14 @@
 /*global $, c3, Mustache*/
 (function () {
    'use strict';
-	var bb = {};
+	var bb = {}, patientId;
 	bb.lookup = {"unmeasured" : "Measured", "uncontrolled": "Controlled", "excluded": "Excluded"};
-
-	/********************************
-	Charts - data
-	********************************/
-	var getTrendChartData = function(){
-		var date = new Date();
-		var month = date.getMonth()+1;
-		var year = date.getFullYear()-1;
-		var years = ['x'];
-		
-		var bd=1573;
-		var cd=664;
-		var dd=995;
-		var ad = bd+cd+dd;
-		var a = ['Unmeasured'];
-		var b = ['Nil'];
-		var c = ['Indirect'];
-		var d = ['Direct'];
-		for(var i = 0; i< 13; i++) {
-			years.push(year+'-'+month+'-01');
-			a.push(ad);
-			b.push(bd);
-			c.push(cd);
-			d.push(dd);
-			month++;
-			if(month===13) {
-				month=1;
-				year++;
-			}
-			bd += -50 + ((i===7 || i===10) ? -75 : 0) + Math.floor(100*Math.random());
-			cd += -60 + ((i===7 || i===10) ? -75 : 0) + Math.floor(100*Math.random());
-			dd += -90 + ((i===7 || i===10) ? -125 : 0) + Math.floor(100*Math.random());
-			bd = Math.max(bd,0);cd = Math.max(cd,0);dd = Math.max(dd,0);
-			ad = bd+cd+dd;
-		}
-		return [years,a,b,c,d];
-	};
 
 	/********************************
 	Charts - draw
 	********************************/
 	var drawTrendChart = function(){
-		var data = getTrendChartData();			
+		var data = bb.trend;	
 		destroyCharts(['chart3']);	
 		bb.chart3 = c3.generate({
 			bindto: '#chart-trend',
@@ -62,25 +25,29 @@
 					}
 				}
 			},
+			point: {
+				show: false
+			},
+			size: {
+				height: null
+			},
 			grid: {
 				x: {
-					lines: [{value: data[0][6], text: 'Educational session held'}, {value: data[0][9], text: 'EHR alerts turned on'}]
+					lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
 				}
 			}
 		});
 	};
 
-	var drawBpTrendChart = function(){
+	var drawBpTrendChart = function(nhs){
 		destroyCharts(['chart6']);
-		bb.chart6 = c3.generate({
+		if(!bb.data["Blood Pressure"].patients || !bb.data["Blood Pressure"].patients[nhs] || !bb.data["Blood Pressure"].patients[nhs].bp) return;
+		
+		var chartOptions = {
 			bindto: '#chart-demo-trend',
 			data: {
 				x: 'x',
-				columns: [
-					['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-					['SBP', 150, 165, 160, 170, 175, 185],
-					['DBP', 90, 90, 85, 80, 110, 95]
-				]
+				columns: bb.data["Blood Pressure"].patients[nhs].bp
 			},
 			axis: {
 				x: {
@@ -90,30 +57,17 @@
 					}
 				}
 			}
-		});
-	};
-
-	var drawBenchmarkChart = function(){
-		destroyCharts(['chart4']);
-		bb.chart4 = c3.generate({
-			bindto: '#chart-benchmark',
-			data: {
-				columns: [
-					["My practice", 2072,300,500,1745],
-					["CCG average", 3052,129, 740, 1200],
-				]
-			},
-			axis: {
+		};
+		
+		if(bb.data["Blood Pressure"].patients[nhs].contacts){
+			chartOptions.grid = {
 				x: {
-					type: 'category',
-					categories: ['Unmeasured', 'Nil',  'Direct', 'Indirect'],
-					label: 'Category'
-				},
-				y: {
-					label: 'Number'
+					lines: bb.data["Blood Pressure"].patients[nhs].contacts
 				}
 			}
-		});
+		}
+
+		bb.chart6 = c3.generate(chartOptions);
 	};
 
 	var drawContactChart = function (){
@@ -311,10 +265,45 @@
 		$('#breakdown-table').html(rendered).show();
 	};
 
-	var populatePatients = function (id) {
+	var populatePatients = function (id, sortField, sortAsc) {
+		patientId = id;
 		var template = $('#patient-list').html();
 		Mustache.parse(template);   // optional, speeds up future uses
-		var rendered = Mustache.render(template, bb.data["Blood Pressure"].items[id]);
+		
+		var patients = bb.data["Blood Pressure"].items[id].patients.map(function(nhs) {
+			var ret = bb.data["Blood Pressure"].patients[nhs];
+			ret.nhs = nhs;
+			if(ret.bp) {
+				ret.sbp = ret.bp[1][ret.bp[1].length-1];
+			} else {
+				ret.sbp = "?";
+			}
+			return ret;
+		});
+
+		var data = {"patients": patients};
+		
+		if(sortField) {
+			data.patients.sort(function(a, b){
+				if(a[sortField] === b[sortField]) {
+					return 0;
+				}
+				
+				if(a[sortField] == "?" || b[sortField] == "?") return -1;
+				
+				if(a[sortField] > b[sortField]) {
+					return sortAsc ? 1 : -1;
+				} else if (a[sortField] < b[sortField]) {
+					return sortAsc ? -1 : 1;
+				} 
+			});
+			
+			data.direction = sortAsc ? "sort-asc" : "sort-desc";
+			data.isSorted = sortAsc;
+		}
+		
+
+		var rendered = Mustache.render(template, data);
 		$('#patients').html(rendered);
 		$('#patients-placeholder').hide();
 	};
@@ -331,7 +320,7 @@
 		  $('#patients').html('');
 		  $('#patients-placeholder').show();
 		  $('#demographic-placeholder').show();
-		  $('#demographic-content').hide();
+		  //$('#demographic-content').hide();
 	};
 
 	var breadcrumbs = function(items){
@@ -356,13 +345,6 @@
 		$('#panel-right').find('.panel-footer').hide();
 		$('#panel-message').hide();
 		$('#panel-patients').show();
-	};
-
-	var showMessagesTab = function(){
-		$('#panel-right').find('.panel-title').html('Messages');
-		$('#panel-right').find('.panel-footer').show();
-		$('#panel-message').show();
-		$('#panel-patients').hide();
 	};
 
 	var show = function (page) {
@@ -396,16 +378,15 @@
 	bb.wireUpPages = function () {
 		show('login');
 
-		$('#navbar').on('click', 'a', function () {
+		$('#topnavbar').on('click', 'a', function () {
 			$("#navbar > .nav").find(".active").removeClass("active");
 			$(this).parent().addClass("active");
-			if (this.href.split('#')[1] === 'about') { show('page2'); } 
-			else if (this.href.split('#')[1] === 'contact') { show('page3'); } 
-			else { show('login'); }
+			if (this.href.split('#')[1] === 'help') { show('help-page'); } 
+			else show('page1');
 		});
 		
-		$('#login-button,#create-button,#forgot-button,#home-button').on('click', function (e) {
-			show('page0');
+		$('#enter-button').on('click', function (e) {
+			show('page1');
 			$("#navbar > .nav").find(".active").removeClass("active");
 			$('#home-page').addClass("active");
 			e.preventDefault();
@@ -423,13 +404,25 @@
 			$('#guide-text').html('QOF points could be achieved');		
 		});
 		
+		$('#patients').on('click', 'thead tr th.sortable', function(e){
+			var sortAsc = !$(this).hasClass('sort-asc');
+			if(sortAsc) {
+				$(this).removeClass('sort-desc').addClass('sort-asc');
+			} else {
+				$(this).removeClass('sort-asc').addClass('sort-desc');
+			}
+			populatePatients(patientId, $(this).text().substr(0,1) === "L" ? "sbp" : "nhs", sortAsc);
+		});
+		
 		$('#patients')
-			.on('click', 'tr', function(e){
+			.on('click', 'tbody tr', function(e){
 				$('.list-item').removeClass('highlighted');
 				$(this).addClass('highlighted');
 				var nhs = $(this).find('td').html();
 				$('#demographic-placeholder').hide();
-				$('#demographic-content').show();
+				//$('#demographic-content').show(function() {
+					drawBpTrendChart($(nhs).text());
+				//});				
 				$('a[href=#tab-sap-individual]').tab('show');
 				var examples = [["Increase ramipril by 2.5mg","Increase amlodipine by 5mg","Start a diuretic"],
 						  ["Increase losartan by 25mg","Increase bisoprolol by 2.5mg","Start a calcium channel blocker"],
@@ -453,29 +446,22 @@
 			});
 		
 		
-		$('#tab-performance').bind('afterAddClass', function() {
-		  drawMainCharts();
-		  showPatientsTab();
+		$('#tab-performance').on('afterAddClass', function(e) {
+			//Events bubble up, but we only care about this element and not children
+			if(e.target === e.currentTarget) {
+				drawMainCharts();
+				showPatientsTab();
+			}
 		});
 		
-		$('#tab-trend').bind('afterAddClass', function() {
-			drawTrendChart();		
-			showPatientsTab();
+		$('#tab-trend').bind('afterAddClass', function(e) {
+			//Events bubble up, but we only care about this element and not children
+			if(e.target === e.currentTarget) {
+				drawTrendChart();		
+				showPatientsTab();
+			}
 		});
-		
-		$('#tab-benchmark').bind('afterAddClass', function() {
-			drawBenchmarkChart();		
-			showMessagesTab();		
-		});
-		
-		$('#tab-demo-contact').bind('afterAddClass', function() {
-			drawContactChart();
-		});
-		
-		$('#tab-demo-trend').bind('afterAddClass', function() {		
-			drawBpTrendChart();
-		});
-		
+				
 		$('#breakdown-table')
 			.on('mouseout', 'tr', function(){
 				bb.chart2.focus();
@@ -533,15 +519,22 @@
 			setObj(current);
 			updateSapRows();
 		});
+		
+		$("ul.nav-tabs a").click(function (e) {
+			e.preventDefault();  
+			$(this).tab('show');
+		});
 	};
 
 	bb.loadData = function() {
-		$.getJSON("data.json", function(data) {
+		$.getJSON("data.json", function(file) {
 			var d="", i=0, j=0;
+			var data = file.data;
+			bb.trend = file.trend;
 			bb.data={};
 			for(i = 0 ; i < data.length; i++){
 				d = data[i].disease;
-				bb.data[d] = {"all" : data[i], "ids" : {}, "items" : {}, "Measured" : {"breakdown":[]}, "Controlled": {"breakdown":[]}, "Excluded": {"breakdown":[]}};
+				bb.data[d] = {"all" : data[i], "ids" : {}, "patients" : data[i].patients, "items" : {}, "Measured" : {"breakdown":[]}, "Controlled": {"breakdown":[]}, "Excluded": {"breakdown":[]}};
 				bb.data[d].Measured.main = [['Unmeasured', bb.data[d].all.unmeasured.n],['Measured', bb.data[d].all.measured],['Excluded', bb.data[d].all.excluded.n]];
 				bb.data[d].Controlled.main = [['Uncontrolled', bb.data[d].all.uncontrolled.n],['Controlled', bb.data[d].all.controlled]	,['Excluded', bb.data[d].all.excluded.n]];
 				
@@ -580,4 +573,24 @@ $(document).on('ready', function () {
 	if(!localStorage.bb) localStorage.bb = JSON.stringify({"checkboxes":{"Direct":[true,false,false,false,true],"Indirect":[false,false,false,true,false,false,false,false,false,true],"Nil":[false,false,false,false,false,false,true,false,false,false,true,false],"Recently Changed Rx":[true,false,false,true,false,false,true],"Suboptimal Rx":[false,true,false,false,false,false,false,true],"Recently Measured":[true,false,false,false,false,true]}});
 	bb.wireUpPages();	
 	bb.loadData();
+	
+	$("#patients").niceScroll({
+		//cursorcolor: "#424242", // change cursor color in hex
+        cursoropacitymin: 0.3, // change opacity when cursor is inactive (scrollabar "hidden" state), range from 1 to 0
+        //cursoropacitymax: 1, // change opacity when cursor is active (scrollabar "visible" state), range from 1 to 0
+        cursorwidth: "7px", // cursor width in pixel (you can also write "5px")
+        //cursorborder: "1px solid #fff", // css definition for cursor border
+        //cursorborderradius: "5px", // border radius in pixel for cursor
+	});
+	
+	var client = new ZeroClipboard( $('.btn-yes') );
+
+	client.on( "ready", function( readyEvent ) {
+		client.on( "aftercopy", function( event ) {
+		// `this` === `client`
+		// `event.target` === the element that was clicked
+		event.target.style.display = "none";
+		alert("Copied text to clipboard: " + event.data["text/plain"] );
+		});
+	});
 });

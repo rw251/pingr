@@ -127,3 +127,8 @@ table, th, td {
 th,td {
     padding: 30px;
 }
+
+.soon {
+	font-size: 64px;
+	text-align: center;
+}
