@@ -18,6 +18,8 @@ header {
 	padding-bottom: 4px;
 }
 
+
+
 #chart-benchmark .c3-line {
 	stroke-width: 0px;
 }
@@ -40,12 +42,12 @@ header {
 	opacity:1;
 }
 
-#breakdown-table tr:hover {
+#breakdown-table tbody tr:hover {
 	background-color: rgb(244,244,255);
 	cursor: pointer;
 }
 
-#breakdown-table tr.selected {
+#breakdown-table tbody tr.selected {
 	background-color: rgb(244,255,244);
 }
 
@@ -62,6 +64,10 @@ header {
 	margin-left: 75px;
 }
 
+.navbar-nav>li>.btn-group {
+	padding: 10px 30px 10px 30px;
+}
+
 .navbar-toggle {
 	display: block;
 }
@@ -76,7 +82,7 @@ header {
 }
 
 .starter-template {
-  padding: 40px 15px 0px 15px;
+  padding: 20px 15px 0px 15px;
 }
 
 .starter-template-high {

@@ -9,37 +9,6 @@
 	/********************************
 	Charts - draw
 	********************************/
-	var drawTrendChart = function(){
-		var data = bb.trend;	
-		destroyCharts(['chart3']);	
-		bb.chart3 = c3.generate({
-			bindto: '#chart-trend',
-			data: {
-				x: 'x',
-				columns: data
-			},
-			axis: {
-				x: {
-					type: 'timeseries',
-					tick: {
-						format: '%Y-%m-%d'
-					}
-				}
-			},
-			point: {
-				show: false
-			},
-			size: {
-				height: null
-			},
-			grid: {
-				x: {
-					lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
-				}
-			}
-		});
-	};
-
 	var drawBpTrendChart = function(nhs){
 		destroyCharts(['chart6']);
 		if(!bb.data["Blood Pressure"].patients || !bb.data["Blood Pressure"].patients[nhs] || !bb.data["Blood Pressure"].patients[nhs].bp) return;
@@ -69,33 +38,6 @@
 		}
 
 		bb.chart6 = c3.generate(chartOptions);
-	};
-
-	var drawContactChart = function (){
-		if(bb.chart5) bb.chart5.destroy();
-		bb.chart5  = c3.generate({
-			bindto: "#chart-demo-contact",
-			data: {
-				x: 'x',
-				columns: [
-					['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-					['data1', 30, 200, 100, 400, 150, 250]
-				]
-			},
-			axis: {
-				x: {
-					type: 'timeseries',
-					tick: {
-						format: '%Y-%m-%d'
-					}
-				}
-			},
-			grid: {
-				x: {
-					lines: [{value: '2013-01-02', text: 'F2F'}, {value: '2013-01-05', text: 'Prescription'}]
-				}
-			}
-		});
 	};
 
 	var getPie = function (data, colours, element, onclick, onmouseover, onmouseout) {
@@ -152,17 +94,76 @@
 			}
 		}
 	};
+	
+	var changeBottomPanel = function(n){
+		if(n===1){
+			$('#bottom-left-panel').addClass('col-sm-12').removeClass('col-sm-6');
+			$('#bottom-right-panel').removeClass('col-sm-6').hide();
+		} else if(n===2) {
+			$('#bottom-left-panel').removeClass('col-sm-12').addClass('col-sm-6');
+			$('#bottom-right-panel').addClass('col-sm-6').show();
+		}
+	};
 
 	var drawMainCharts = function(disease){
-		$('#breakdown-table').hide();
-		$('#overall1').show();
-		$('#overall2').hide();
+		changeBottomPanel(2);
+		
+		hidePanels();
+		
+		//Add monitoring panel
+		addMonitoringPanel('#top-left-panel');
+		//Add monitoring panel
+		addTreatmentPanel('#top-right-panel');
+		
+		addDiagnosisPanel('#bottom-left-panel');
+		addExclusionPanel('#bottom-right-panel');
+	
+		//$('#breakdown-table').hide();
+		//$('#overall1').show();
+		//$('#overall2').hide();
 		if(!disease) disease = "Blood Pressure";
 		breadcrumbs([disease]);
 		
-		destroyCharts(['chart1','chart2','chart3']);
+		$('#top-left-panel>div').on('mouseover',function(){
+			$(this).addClass('panel-primary').removeClass('panel-default');
+		}).on('mouseout',function(){
+			$(this).removeClass('panel-primary').addClass('panel-default');
+		}).on('click', function(){
+			selectPanel(addMonitoringPanel);
+			
+			//breakdown
+			drawBreakdownChart(disease, bb.lookup.unmeasured, "Unmeasured");
+		});
 		
-		bb.chart1 = c3.generate(getPie(bb.data[disease].Measured.main, ['#845fc8','#f96876'], '#chart1', function (d, i){
+		$('#top-right-panel>div').on('mouseover',function(){
+			$(this).addClass('panel-primary').removeClass('panel-default');
+		}).on('mouseout',function(){
+			$(this).removeClass('panel-primary').addClass('panel-default');
+		}).on('click', function(){
+			selectPanel(addTreatmentPanel);
+			
+			//breakdown
+			drawBreakdownChart(disease, bb.lookup.uncontrolled, "Uncontrolled");
+		});
+		
+		$('#bottom-left-panel>div').on('mouseover',function(){
+			$(this).addClass('panel-primary').removeClass('panel-default');
+		}).on('mouseout',function(){
+			$(this).removeClass('panel-primary').addClass('panel-default');
+		}).on('click', function(){
+			selectPanel(addDiagnosisPanel);
+		});
+		
+		$('#bottom-right-panel>div').on('mouseover',function(){
+			$(this).addClass('panel-primary').removeClass('panel-default');
+		}).on('mouseout',function(){
+			$(this).removeClass('panel-primary').addClass('panel-default');
+		}).on('click', function(){
+			selectPanel(addExclusionPanel);
+		});
+		/*destroyCharts(['chart1','chart2','chart3']);*/
+		
+		/*bb.chart1 = c3.generate(getPie(bb.data[disease].Measured.main, ['#845fc8','#f96876'], '#chart1', function (d, i){
 			if(d.id==="Measured") return;
 			drawBreakdownChart(disease, bb.lookup[d.id.toLowerCase()], d.id);
 			bb.selected = d.id;
@@ -171,17 +172,34 @@
 			if(d.id === "Controlled") return;
 			drawBreakdownChart(disease, bb.lookup[d.id.toLowerCase()], d.id);
 			bb.selected = d.id;
-		}));
+		}));*/
 	};
 
 	var drawBreakdownChart = function (disease, type, id){
 		if(!disease) disease = "Blood Pressure";
 		if(!type) type = "Measured";
 		
-		destroyCharts(['chart1','chart2','chart3']);
+		addBreakdownPanel('#top-right-panel', type.toLowerCase());
 		
-		bb.chart2 = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#chart2', function (d, i) {
-			selectPieSlice('chart2', d.id);
+		$('#breakdown-table').on('mouseout', 'tr', function(){
+			if($(this).find('th').length>0) return; //ignore header row
+			bb['breakdown-chart'].focus();
+		}).on('mouseover', 'tr', function(){
+			if($(this).find('th').length>0) return; //ignore header row
+			bb['breakdown-chart'].focus(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
+		}).on('click', 'tr', function(){
+			if($(this).find('th').length>0) return; //ignore header row
+			selectPieSlice('breakdown-chart', bb.data["Blood Pressure"].ids[this.id.slice(4)]);
+			populatePanels(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
+			bb.subselected = bb.data["Blood Pressure"].ids[this.id.slice(4)];
+			$('#breakdown-table tr').removeClass('selected');
+			$(this).addClass('selected');
+		});
+		
+		destroyCharts(['breakdown-chart']);
+		
+		bb['breakdown-chart'] = c3.generate(getPie(bb.data[disease][type].breakdown, ['#845fc8', '#a586de', '#6841b0'], '#breakdown-chart', function (d, i) {
+			selectPieSlice('breakdown-chart', d.id);
 			populatePanels(d.id);		
 			$('#breakdown-table tr').removeClass('selected');
 			$('#row-'+bb.data[disease].items[d.id].id).addClass('selected');
@@ -327,17 +345,320 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 			updateCheckboxes(id);
 		}
 	};
+	
+	var addPatientsPanel = function(id) {
+		var template = $('#patients-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template);
+		$(id).html(rendered).show();
+		
+		
+		$('#patients').on('click', 'thead tr th.sortable', function(e){
+			var sortAsc = !$(this).hasClass('sort-asc');
+			if(sortAsc) {
+				$(this).removeClass('sort-desc').addClass('sort-asc');
+			} else {
+				$(this).removeClass('sort-asc').addClass('sort-desc');
+			}
+			populatePatients(patientId, $(this).text().substr(0,1) === "L" ? "sbp" : "nhs", sortAsc);
+		})
+		.on('click', 'tbody tr', function(e){
+			$('.list-item').removeClass('highlighted');
+			$(this).addClass('highlighted');
+			var nhs = $(this).find('td button').attr('data-clipboard-text');
+			$('#demographic-placeholder').hide();
+
+			drawBpTrendChart(nhs);
+			bb.nhs = nhs;
+		
+			$('a[href=#tab-sap-individual]').tab('show');
+			
+			populateIndividualSuggestedActions(nhs);
+			
+			e.preventDefault();
+		})
+		.on('click', 'tbody tr button', function(e){
+			//don't want row selected if just button pressed?
+			e.preventDefault();
+			e.stopPropagation();
+		})
+		.niceScroll({
+			//cursorcolor: "#424242", // change cursor color in hex
+			cursoropacitymin: 0.3, // change opacity when cursor is inactive (scrollabar "hidden" state), range from 1 to 0
+			//cursoropacitymax: 1, // change opacity when cursor is active (scrollabar "visible" state), range from 1 to 0
+			cursorwidth: "7px", // cursor width in pixel (you can also write "5px")
+			//cursorborder: "1px solid #fff", // css definition for cursor border
+			//cursorborderradius: "5px", // border radius in pixel for cursor
+			horizrailenabled: false // nicescroll can manage horizontal scroll
+		});	
+	};
+	
+	var addTrendPanel = function(id) {
+		var template = $('#bp-trend-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template);
+		$(id).html(rendered).show();
+	};
+	
+	var addBreakdownPanel = function(id, type) {
+		var template = $('#breakdown-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		
+		var header = "";
+		if(type==="measured") header = "Patients with opportunities for BP measurement";
+		else if(type==="controlled") header = "Patients who have potentially missed opportunities";
+
+		var rendered = Mustache.render(template,{"header":header});
+		$(id).html(rendered).show();
+		
+		
+		$(id).off('click','.panel-body');
+		$(id).on('click', '.panel-body', function(e){
+			if(!bb.chartClicked){
+				$('path.c3-arc').attr('class', function(index, classNames) {
+					return classNames.replace(/_unselected_/g, '');
+				});
+				if(bb.chart1) bb.chart1.unselect();
+				if(bb['breakdown-chart']) bb['breakdown-chart'].unselect();
+				if(bb.chart3) bb.chart3.unselect();
+							
+				hidePanels();				
+			}
+			bb.chartClicked=false;
+		});
+	};
+	
+	var addMonitoringPanel = function(id) {
+		var template = $('#monitoring-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template);
+		$(id).html(rendered).show();
+		
+		destroyCharts(['monitoring-chart']);	
+		bb["monitoring-chart"] = c3.generate({
+			bindto: '#monitoring-chart',
+			data: {
+				x: 'x',
+				columns: bb.data["Blood Pressure"].all.measured.trend,
+				axes: {
+					"%" : 'y',
+					"n" : 'y2'
+				}
+			},
+			axis: {
+				x: {
+					type: 'timeseries',
+					tick: {
+						format: '%Y-%m-%d',
+						count: 7,
+						culling: {
+							max: 4
+						}
+					}
+				},
+				y2: {
+					show: true
+				}
+			},
+			point: {
+				show: false
+			},
+			size: {
+				height: null
+			}/*,
+			grid: {
+				x: {
+					lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
+				}
+			}*/
+		});
+	};
+	
+	var addTreatmentPanel = function(id) {
+		var template = $('#treatment-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template);
+		$(id).html(rendered).show();	
+		
+		destroyCharts(['treatment-chart']);	
+		bb["treatment-chart"] = c3.generate({
+			bindto: '#treatment-chart',
+			data: {
+				x: 'x',
+				columns: bb.data["Blood Pressure"].all.controlled.trend,
+				axes: {
+					"%" : 'y',
+					"n" : 'y2'
+				}
+			},
+			axis: {
+				x: {
+					type: 'timeseries',
+					tick: {
+						format: '%Y-%m-%d',
+						count: 7,
+						culling: {
+							max: 4
+						}
+					}
+				},
+				y2: {
+					show: true
+				}
+			},
+			point: {
+				show: false
+			},
+			size: {
+				height: null
+			}/*,
+			grid: {
+				x: {
+					lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
+				}
+			}*/
+		});
+	};
+	
+	var addDiagnosisPanel = function(id) {
+		var template = $('#diagnosis-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template);
+		$(id).html(rendered).show();
+		
+		c3.generate({
+			bindto: '#diagnosis-chart',
+			data: {
+				columns: [
+					['data1', 30, 200, 100, 400, 150]
+				],
+				type: 'bar'
+			},
+			bar: {
+				width: {
+					ratio: 0.5 // this makes bar width 50% of length between ticks
+				}
+				// or
+				//width: 100 // this makes bar width 100px
+			},
+			axis: {
+				x: {
+					type: 'category',
+					categories: ['HTN', 'CKD', 'DM', 'Protein', 'McrA']
+				}
+			}
+		});
+	};
+	
+	var selectPanel = function(panel) {
+		//move to top left..
+		panel('#top-left-panel');
+		
+		//sort out bottom
+		changeBottomPanel(1);
+		
+		addActionPlanPanel('#bottom-left-panel');
+	};
+	
+	var addExclusionPanel = function(id) {
+		var template = $('#exclusion-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template);
+		$(id).html(rendered).show();
+		
+		c3.generate({
+			bindto: '#exclusion-chart',
+			data: {
+				columns: [
+					['data1', 54, 24, 78]
+				],
+				type: 'bar'
+			},
+			bar: {
+				width: {
+					ratio: 0.5 // this makes bar width 50% of length between ticks
+				}
+				// or
+				//width: 100 // this makes bar width 100px
+			},
+			axis: {
+				x: {
+					type: 'category',
+					categories: ['Hypotension', 'Palliative care', 'Exclusion code']
+				}
+			}
+		});
+	};
+	
+	var addActionPlanPanel = function(id) {
+		var template = $('#action-plan-panel').html();
+		Mustache.parse(template);   // optional, speeds up future uses
+		var rendered = Mustache.render(template);
+		$(id).html(rendered).show();
+		
+		$('#export-plan').on('click', exportPlan);
+		
+		$('#action-plan-tabs a').click(function (e) {
+			e.preventDefault();
+			$(this).tab('show');
+		});
+		
+		$('#sap').on('click', 'input[type=checkbox]', function(){
+			var idx = $('#sap').find('input[type=checkbox]').index(this);
+			var current = getObj();
+			if(!current.actions) current.actions = {};
+			if(!current.actions[bb.subselected]) current.actions[bb.subselected] = {"agree":[],"done":[]};
+			while(current.actions[bb.subselected].done.length<=idx){
+				current.actions[bb.subselected].done.push(false);
+			}
+			current.actions[bb.subselected].done[idx]=this.checked;
+			setObj(current);
+			updateSapRows();
+		});
+		
+		$('#tab-sap-team').on('click', '.edit-plan', function(e){
+			displayPersonlisedActionPlan(bb.subselected, $('#tab-sap-team .panel-footer'), true, true);
+		}).on('click', '.add-plan', function(e){
+			var obj = getObj();
+			obj.plans.team[bb.subselected] = $('#tab-sap-team textarea').val();
+			setObj(obj);
+			
+			displayPersonlisedActionPlan(bb.subselected, $('#tab-sap-team .panel-footer'), true, false);
+		}).on('change', 'input[type=radio]', function(e){
+			var idx = Math.floor($('#sap').find('input[type=radio]').index(this)/2);
+			var current = getObj();
+			if(!current.actions) current.actions = {};
+			if(!current.actions[bb.subselected]) current.actions[bb.subselected] = {"agree":[],"done":[]};
+			while(current.actions[bb.subselected].agree.length<=idx){
+				current.actions[bb.subselected].agree.push("");
+			}
+			current.actions[bb.subselected].agree[idx]=this.value==="yes";
+			setObj(current);
+			
+			updateSapRows();
+		});
+		
+		$('#tab-sap-individual').on('click', '.edit-plan', function(e){
+			displayPersonlisedActionPlan(bb.nhs, $('#tab-sap-individual .panel-footer'), false, true);
+		}).on('click', '.add-plan', function(e){
+			var obj = getObj();
+			obj.plans.individual[bb.nhs] = $('#tab-sap-individual textarea').val();
+			setObj(obj);
+			
+			displayPersonlisedActionPlan(bb.nhs, $('#tab-sap-individual .panel-footer'), false, false);
+		});
+	};
 
 	var populateBreakdownTable = function(id){
 		var template = $('#breakdown-table-template').html();
 		var data = bb.data["Blood Pressure"].all[id.toLowerCase()];
 		for(var i = 0 ; i< data.items.length; i++){
-		  data.items[i].color = bb.chart2.color(data.items[i].name);
+		  data.items[i].color = bb['breakdown-chart'].color(data.items[i].name);
 		}
 		Mustache.parse(template);   // optional, speeds up future uses
 		var rendered = Mustache.render(template, data);
 		$('#breakdown-table').html(rendered).show();
-	};
+	};	
 
 	var populatePatients = function (id, sortField, sortAsc) {
 		patientId = id;
@@ -408,7 +729,6 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 		  $('#patients').html('');
 		  $('#patients-placeholder').show();
 		  $('#demographic-placeholder').show();
-		  //$('#demographic-content').hide();
 	};
 
 	var breadcrumbs = function(items){
@@ -428,13 +748,6 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 	  $('#breadcrumb').html(html.join(' &gt; '));
 	};
 
-	var showPatientsTab = function(){
-		$('#panel-right').find('.panel-title').html('Patients');
-		$('#panel-right').find('.panel-footer').hide();
-		$('#panel-message').hide();
-		$('#panel-patients').show();
-	};
-
 	var show = function (page) {
 		$('.page').hide();
 		$('#' + page).show();
@@ -443,15 +756,17 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 			$('#main').addClass('content');
 			$('#topnavbar').addClass('full');
 			$('#aside-toggle').removeClass('collapsed');
-			$('#bottomnavbar').hide();
-			drawMainCharts();
-			drawContactChart();
+			$('#bottomnavbar').hide();			
+		
+			drawMainCharts();	
+	
+			//Add patients panel
+			addPatientsPanel('#right-panel');	
 		} else {	
 			$('#main').removeClass('content');
 			$('#topnavbar').removeClass('full');
 			$('#aside-toggle').addClass('collapsed');
 			$('#bottomnavbar').show();
-
 		}
 	};
 	
@@ -461,6 +776,103 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 	
 	var setObj = function(obj){
 		localStorage.bb = JSON.stringify(obj);
+	};
+	
+	var exportPlan = function(){
+		var doc = new jsPDF(), margin = 20, verticalOffset = margin;
+			
+		var addHeading = function(text, size){
+			if(verticalOffset > 270) {
+				doc.addPage();
+				verticalOffset = margin;
+			}
+			doc.setFontSize(size).text(margin, verticalOffset+10, text);
+			verticalOffset+=15;
+		};
+		
+		var addLine = function(text){
+			var lines = doc.setFontSize(11).splitTextToSize(text, 170);
+			if(verticalOffset +lines.length*10 > 280) {
+				doc.addPage();
+				verticalOffset = margin;
+			}
+			doc.text(margin, verticalOffset+5, lines);
+			verticalOffset+=lines.length*7;
+		};
+		
+		//create doctype
+		var data = getObj(),i=0,j=0,mainId,suggs;		
+			
+	
+		addHeading("Action Plan",24);
+		//Measured
+		addHeading("Measured",20);
+		
+		var internalFunc = function(el) {
+			if(data.plans.individual[el]) {
+				addLine("Patient "+ el +":" +data.plans.individual[el]);
+			}
+		};
+		for(i=0; i< bb.data["Blood Pressure"].Measured.breakdown.length; i++){
+			mainId = bb.data["Blood Pressure"].Measured.breakdown[i][0];
+			addHeading(mainId, 18);
+			addLine(bb.data["Blood Pressure"].items[mainId].main);
+			
+			suggs = bb.data["Blood Pressure"].items[mainId].suggestions;
+			addHeading("Actions", 18);
+			for(j = 0; j < suggs.length; j++){
+				if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
+					//Completed so ignore
+				} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
+					addLine(suggs[j].text);
+				}					
+			}				
+			
+			if(data.plans.team[mainId]) {
+				addHeading("Custom team plan",14);
+				addLine(data.plans.team[mainId]);
+			}
+			
+			addHeading("Custom individual plans",14);
+			bb.data["Blood Pressure"].items[mainId].patients.forEach(internalFunc);
+		}
+		
+		for(i=0; i< bb.data["Blood Pressure"].Controlled.breakdown.length; i++){
+			mainId = bb.data["Blood Pressure"].Controlled.breakdown[i][0];
+			addHeading(mainId, 18);
+			addLine(bb.data["Blood Pressure"].items[mainId].main);
+			
+			suggs = bb.data["Blood Pressure"].items[mainId].suggestions;
+			addHeading("Actions", 18);
+			for(j = 0; j < suggs.length; j++){
+				if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
+					//Completed so ignore
+				} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
+					addLine(suggs[j].text);
+				}					
+			}	
+			
+			if(data.plans.team[mainId]) {
+				addHeading("Team plan",14);
+				addLine(data.plans.team[mainId]);
+			}
+			
+			addHeading("Individuals",14);
+			bb.data["Blood Pressure"].items[mainId].patients.forEach(internalFunc);
+		}
+		
+		//Actions they agree with
+		
+		//Personalised team actions
+		for(i = 0; i < data.plans.team.length; i++){
+		}
+		
+		//Personalised individual actions
+		for(i = 0; i < data.plans.individual.length; i++){
+		}
+		
+		//trigger download
+		doc.save();
 	};
 
 	bb.wireUpPages = function () {
@@ -476,7 +888,6 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 		$('#enter-button').on('click', function (e) {
 			show('page1');
 			$("#navbar > .nav").find(".active").removeClass("active");
-			$('#home-page').addClass("active");
 			e.preventDefault();
 		});
 		
@@ -490,250 +901,12 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 			$('#pick-button').html('QOF <span class="caret"></span>');
 			$('#guide-amount').html('<i class="fa fa-warning"></i> 12</span>');
 			$('#guide-text').html('QOF points could be achieved');		
-		});
-		
-		$('#patients').on('click', 'thead tr th.sortable', function(e){
-			var sortAsc = !$(this).hasClass('sort-asc');
-			if(sortAsc) {
-				$(this).removeClass('sort-desc').addClass('sort-asc');
-			} else {
-				$(this).removeClass('sort-asc').addClass('sort-desc');
-			}
-			populatePatients(patientId, $(this).text().substr(0,1) === "L" ? "sbp" : "nhs", sortAsc);
-		});
-		
-		$('#patients')
-			.on('click', 'tbody tr', function(e){
-				$('.list-item').removeClass('highlighted');
-				$(this).addClass('highlighted');
-				var nhs = $(this).find('td button').attr('data-clipboard-text');
-				$('#demographic-placeholder').hide();
-
-				drawBpTrendChart(nhs);
-				bb.nhs = nhs;
-			
-				$('a[href=#tab-sap-individual]').tab('show');
-				
-				populateIndividualSuggestedActions(nhs);
-				
-				e.preventDefault();
-			})
-			.on('click', 'tbody tr button', function(e){
-				//don't want row selected if just button pressed?
-				e.preventDefault();
-				e.stopPropagation();
-			});
-		
-		
-		$('#tab-performance').on('afterAddClass', function(e) {
-			//Events bubble up, but we only care about this element and not children
-			if(e.target === e.currentTarget) {
-				drawMainCharts();
-				showPatientsTab();
-			}
-		});
-		
-		$('#tab-trend').bind('afterAddClass', function(e) {
-			//Events bubble up, but we only care about this element and not children
-			if(e.target === e.currentTarget) {
-				drawTrendChart();		
-				showPatientsTab();
-			}
-		});
-				
-		$('#breakdown-table')
-			.on('mouseout', 'tr', function(){
-				bb.chart2.focus();
-			})
-			.on('mouseover', 'tr', function(){
-				bb.chart2.focus(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
-			})
-			.on('click', 'tr', function(){
-				selectPieSlice('chart2', bb.data["Blood Pressure"].ids[this.id.slice(4)]);
-				populatePanels(bb.data["Blood Pressure"].ids[this.id.slice(4)]);
-				bb.subselected = bb.data["Blood Pressure"].ids[this.id.slice(4)];
-				$('#breakdown-table tr').removeClass('selected');
-				$(this).addClass('selected');
-			});
-		
+		});				
+	
 		$('#breadcrumb').on('click', 'a', function(e){
 		  drawMainCharts();
 		  e.preventDefault();
-		});
-		
-		$('.tick-hover')
-			.on('mouseover', function() {
-				$(this).find('i').addClass('fa-check-circle');
-			})
-			.on('mouseout', function () {
-				$(this).find('i').removeClass('fa-check-circle');
-			})
-			.on('click', function () {
-				show('page1');
-			});
-		
-		$('#chart-panel').on('click', function(e){
-			if(!bb.chartClicked){
-				$('path.c3-arc').attr('class', function(index, classNames) {
-					return classNames.replace(/_unselected_/g, '');
-				});
-				if(bb.chart1) bb.chart1.unselect();
-				if(bb.chart2) bb.chart2.unselect();
-				if(bb.chart3) bb.chart3.unselect();
-							
-				hidePanels();
-				
-			}
-			bb.chartClicked=false;
-		});
-		
-		$('#sap').on('click', 'input[type=checkbox]', function(){
-			var idx = $('#sap').find('input[type=checkbox]').index(this);
-			var current = getObj();
-			if(!current.actions) current.actions = {};
-			if(!current.actions[bb.subselected]) current.actions[bb.subselected] = {"agree":[],"done":[]};
-			while(current.actions[bb.subselected].done.length<=idx){
-				current.actions[bb.subselected].done.push(false);
-			}
-			current.actions[bb.subselected].done[idx]=this.checked;
-			setObj(current);
-			updateSapRows();
-		});
-		
-		$("ul.nav-tabs a").click(function (e) {
-			e.preventDefault();  
-			$(this).tab('show');
-		});
-		
-		$('#tab-sap-team').on('click', '.edit-plan', function(e){
-			displayPersonlisedActionPlan(bb.subselected, $('#tab-sap-team .panel-footer'), true, true);
-		}).on('click', '.add-plan', function(e){
-			var obj = getObj();
-			obj.plans.team[bb.subselected] = $('#tab-sap-team textarea').val();
-			setObj(obj);
-			
-			displayPersonlisedActionPlan(bb.subselected, $('#tab-sap-team .panel-footer'), true, false);
-		}).on('change', 'input[type=radio]', function(e){
-			var idx = Math.floor($('#sap').find('input[type=radio]').index(this)/2);
-			var current = getObj();
-			if(!current.actions) current.actions = {};
-			if(!current.actions[bb.subselected]) current.actions[bb.subselected] = {"agree":[],"done":[]};
-			while(current.actions[bb.subselected].agree.length<=idx){
-				current.actions[bb.subselected].agree.push("");
-			}
-			current.actions[bb.subselected].agree[idx]=this.value==="yes";
-			setObj(current);
-			
-			updateSapRows();
-		});
-		
-		$('#tab-sap-individual').on('click', '.edit-plan', function(e){
-			displayPersonlisedActionPlan(bb.nhs, $('#tab-sap-individual .panel-footer'), false, true);
-		}).on('click', '.add-plan', function(e){
-			var obj = getObj();
-			obj.plans.individual[bb.nhs] = $('#tab-sap-individual textarea').val();
-			setObj(obj);
-			
-			displayPersonlisedActionPlan(bb.nhs, $('#tab-sap-individual .panel-footer'), false, false);
-		});
-		
-		$('#export-plan').on('click', function(){
-		
-			var doc = new jsPDF(), margin = 20, verticalOffset = margin;
-			
-			var addHeading = function(text, size){
-				if(verticalOffset > 270) {
-					doc.addPage();
-					verticalOffset = margin;
-				}
-				doc.setFontSize(size).text(margin, verticalOffset+10, text);
-				verticalOffset+=15;
-			};
-			
-			var addLine = function(text){
-				var lines = doc.setFontSize(11).splitTextToSize(text, 170);
-				if(verticalOffset +lines.length*10 > 280) {
-					doc.addPage();
-					verticalOffset = margin;
-				}
-				doc.text(margin, verticalOffset+5, lines);
-				verticalOffset+=lines.length*7;
-			};
-			
-			//create doctype
-			var data = getObj(),i=0,j=0,mainId,suggs;		
-				
-		
-			addHeading("Action Plan",24);
-			//Measured
-			addHeading("Measured",20);
-			
-			var internalFunc = function(el) {
-				if(data.plans.individual[el]) {
-					addLine("Patient "+ el +":" +data.plans.individual[el]);
-				}
-			};
-			for(i=0; i< bb.data["Blood Pressure"].Measured.breakdown.length; i++){
-				mainId = bb.data["Blood Pressure"].Measured.breakdown[i][0];
-				addHeading(mainId, 18);
-				addLine(bb.data["Blood Pressure"].items[mainId].main);
-				
-				suggs = bb.data["Blood Pressure"].items[mainId].suggestions;
-				addHeading("Actions", 18);
-				for(j = 0; j < suggs.length; j++){
-					if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
-						//Completed so ignore
-					} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
-						addLine(suggs[j].text);
-					}					
-				}				
-				
-				if(data.plans.team[mainId]) {
-					addHeading("Custom team plan",14);
-					addLine(data.plans.team[mainId]);
-				}
-				
-				addHeading("Custom individual plans",14);
-				bb.data["Blood Pressure"].items[mainId].patients.forEach(internalFunc);
-			}
-			
-			for(i=0; i< bb.data["Blood Pressure"].Controlled.breakdown.length; i++){
-				mainId = bb.data["Blood Pressure"].Controlled.breakdown[i][0];
-				addHeading(mainId, 18);
-				addLine(bb.data["Blood Pressure"].items[mainId].main);
-				
-				suggs = bb.data["Blood Pressure"].items[mainId].suggestions;
-				addHeading("Actions", 18);
-				for(j = 0; j < suggs.length; j++){
-					if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
-						//Completed so ignore
-					} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
-						addLine(suggs[j].text);
-					}					
-				}	
-				
-				if(data.plans.team[mainId]) {
-					addHeading("Team plan",14);
-					addLine(data.plans.team[mainId]);
-				}
-				
-				addHeading("Individuals",14);
-				bb.data["Blood Pressure"].items[mainId].patients.forEach(internalFunc);
-			}
-			
-			//Actions they agree with
-			
-			//Personalised team actions
-			for(i = 0; i < data.plans.team.length; i++){
-			}
-			
-			//Personalised individual actions
-			for(i = 0; i < data.plans.individual.length; i++){
-			}
-			
-			//trigger download
-			doc.save();
-		});
+		});	
 	};
 
 	bb.loadData = function() {
@@ -745,8 +918,8 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 			for(i = 0 ; i < data.length; i++){
 				d = data[i].disease;
 				bb.data[d] = {"all" : data[i], "ids" : {}, "patients" : data[i].patients, "items" : {}, "Measured" : {"breakdown":[]}, "Controlled": {"breakdown":[]}, "Excluded": {"breakdown":[]}};
-				bb.data[d].Measured.main = [['Unmeasured', bb.data[d].all.unmeasured.n],['Measured', bb.data[d].all.measured],['Excluded', bb.data[d].all.excluded.n]];
-				bb.data[d].Controlled.main = [['Uncontrolled', bb.data[d].all.uncontrolled.n],['Controlled', bb.data[d].all.controlled]	,['Excluded', bb.data[d].all.excluded.n]];
+				bb.data[d].Measured.main = [['Unmeasured', bb.data[d].all.unmeasured.n],['Measured', bb.data[d].all.measured.n],['Excluded', bb.data[d].all.excluded.n]];
+				bb.data[d].Controlled.main = [['Uncontrolled', bb.data[d].all.uncontrolled.n],['Controlled', bb.data[d].all.controlled.n]	,['Excluded', bb.data[d].all.excluded.n]];
 				
 				for(j=0; j < bb.data[d].all.unmeasured.items.length; j++) {
 					bb.data[d].Measured.breakdown.push([bb.data[d].all.unmeasured.items[j].name, bb.data[d].all.unmeasured.items[j].n]);
@@ -794,13 +967,5 @@ $(document).on('ready', function () {
 		localStorage.bb = JSON.stringify(obj);
 	}
 	
-	$("#patients").niceScroll({
-		//cursorcolor: "#424242", // change cursor color in hex
-        cursoropacitymin: 0.3, // change opacity when cursor is inactive (scrollabar "hidden" state), range from 1 to 0
-        //cursoropacitymax: 1, // change opacity when cursor is active (scrollabar "visible" state), range from 1 to 0
-        cursorwidth: "7px", // cursor width in pixel (you can also write "5px")
-        //cursorborder: "1px solid #fff", // css definition for cursor border
-        //cursorborderradius: "5px", // border radius in pixel for cursor
-		horizrailenabled: false // nicescroll can manage horizontal scroll
-	});	
+	$("html").niceScroll();
 });
