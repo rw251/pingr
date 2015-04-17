@@ -170,3 +170,60 @@ th,td {
 	font-size: 64px;
 	text-align: center;
 }
+
+
+/*************************************
+*	Pathway code
+**************************************/
+
+.cd-container {
+  /* this class is used to give a max-width to the element it is applied to, and center it horizontally when it reaches that max-width */
+  width: 90%;
+  max-width: 1170px;
+  margin: 0 auto;
+}
+.cd-container::after {
+  /* clearfix */
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.cd-timeline-block .fa-circle {
+    color : #d7e4ed;
+}
+
+#cd-timeline {
+  position: relative;
+  padding: 2em 0;
+  margin-top: 3em;
+  margin-bottom: 3em;
+}
+#cd-timeline::before {
+  /* this is the vertical line */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+    margin-left: -2px;
+  width: 4px;
+  background: #d7e4ed;
+}
+
+.cd-timeline-block {
+  position: relative;
+  margin: 2em 0;
+    min-height:100px;
+}
+.cd-timeline-block:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.cd-timeline-block:first-child {
+  margin-top: 0;
+}
+.cd-timeline-block:last-child {
+  margin-bottom: 0;
+}

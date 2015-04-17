@@ -179,6 +179,8 @@
 		if(!disease) disease = "Blood Pressure";
 		if(!type) type = "Measured";
 		
+		bb.selected = id;
+		
 		addBreakdownPanel('#top-right-panel', type.toLowerCase());
 		
 		$('#breakdown-table').on('mouseout', 'tr', function(){
@@ -907,6 +909,13 @@ html='<span>Patient ' + nhs + '</span><table class="table"><thead><tr><th>Action
 		  drawMainCharts();
 		  e.preventDefault();
 		});	
+		
+		$('.cd-timeline-block span').on('mouseover',function(){
+			$(this).addClass('fa-3x');
+			//$(this).addClass('panel-primary').removeClass('panel-default');
+		}).on('mouseout',function(){
+			$(this).removeClass('fa-3x');
+		});
 	};
 
 	bb.loadData = function() {

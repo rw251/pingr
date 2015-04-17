@@ -113,16 +113,16 @@
                     <ul class="nav navbar-nav">
                         <table style="width:100%">
                             <tr>
-                                <td><img alt="..." class="img-responsive" src="assets/images/icons/herc-logo-125px.png"></td>
+                                <td><img alt="..." class="img-responsive" width="160" height="43" src="assets/images/icons/herc-logo-160px.png"></td>
                                 <td></td>
                                 <td></td>
-                                <td><img alt="..." class="img-responsive" src="assets/images/icons/uom-logo-160px.png"></td>
+                                <td><img alt="..." class="img-responsive" width="160" height="68" src="assets/images/icons/uom-logo-160px.png"></td>
                                 <td></td>
                                 <td></td>
-                                <td><img alt="..." class="img-responsive" src="assets/images/icons/farr-logo-125px.png"></td>
+                                <td><img alt="..." class="img-responsive" width="160" height="46" src="assets/images/icons/farr-logo-160px.png"></td>
                                 <td></td>
                                 <td></td>
-                                <td><img alt="..." class="img-responsive" src="assets/images/icons/wellcome-125px.png"></td>
+                                <td><img alt="..." class="img-responsive" width="160" height="42" src="assets/images/icons/wellcome-160px.png"></td>
                             </tr>
                         </table>
                     </ul>
@@ -140,7 +140,7 @@
         <div class="starter-template page" id="page1">
             <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
                 <div class="user text-center">
-                    <img alt="..." class="img-circle" src="assets/images/avtar/ben.jpg">
+                    <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
 
                     <h4 class="user-name">Ben Brown</h4>
 
@@ -165,19 +165,41 @@
 
                 <nav class="navigation">
                     <ul class="list-unstyled">
-                        <li class="has-submenu active">
+                        <li class="active">
                             <a href="#"><i class="fa fa-heart-o"></i> <span class="nav-label">Blood Pressure</span></a>
-
-                            <ul class="list-unstyled">
-                                <li>
-                                    <a href="#">Measured</a>
-                                </li>
-
-                                <li>
-                                    <a href="#">Controlled</a>
-                                </li>
-                            </ul>
                         </li>
+                    </ul>
+                </nav>
+				
+				<section class="cd-container" id="cd-timeline">
+					<div class="cd-timeline-block">
+						<div style="text-align: center;">
+							<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-exclamation-triangle fa-stack-1x" style=
+							"color: green;"></i></span>
+						</div>
+					</div>
+
+					<div class="cd-timeline-block">
+						<div style="text-align: center;">
+							<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-stethoscope fa-stack-1x" style="color: blue;"></i></span>
+						</div>
+					</div>
+
+					<div class="cd-timeline-block">
+						<div style="text-align: center;">
+							<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-medkit fa-stack-1x" style="color: blue;"></i></span>
+						</div>
+					</div>
+				</section>
+
+				<div class="cd-timeline-block">
+					<div style="text-align: center;">
+						<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x" style=" color: red;"></i></span>
+					</div>
+				</div>
+
+                <nav class="navigation">
+                    <ul class="list-unstyled">
                         <li>
                             <a href="#"><i class="fa fa-stethoscope"></i><span class="nav-label">COPD (Coming soon!)</span></a>
                         </li>
@@ -456,7 +478,7 @@
 	<script id="monitoring-panel" type="x-tmpl-mustache">	
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			Monitoring
+			<i class="fa fa-stethoscope fa-fw"></i>&nbsp; Monitoring
 		</div>
 		<div class="panel-body">
 			<div>
@@ -474,7 +496,7 @@
 	<script id="treatment-panel" type="x-tmpl-mustache">	
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			Treatment
+			<i class="fa fa-medkit fa-fw"></i>&nbsp; Treatment
 		</div>
 		<div class="panel-body">
 			<div>
@@ -515,7 +537,7 @@
 	<script id="diagnosis-panel" type="x-tmpl-mustache">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			Diagnosis
+			<i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp; Diagnosis
 		</div>
 		<div class="panel-body">
 			<div>
@@ -531,7 +553,7 @@
 	<script id="exclusion-panel" type="x-tmpl-mustache">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			Exclusions
+			<i class="fa fa-times fa-fw"></i>&nbsp; Exclusions
 		</div>
 		<div class="panel-body">
 			<div>
