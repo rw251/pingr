@@ -215,9 +215,10 @@
 	</section>
 
 
-	<!-- jQuery  -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-    <script src="assets/js/jquery/jquery-1.9.1.min.js"></script>
+	<!-- jQuery from CDN  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<!-- jQuery fallback if no online version -->
+	<script>window.jQuery || document.write('<script src="assets/js/jquery/jquery-1.9.1.min.js"><\/script>')</script>	
 	
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="assets/js/bootstrap/bootstrap.min.js"></script> 
