@@ -12,6 +12,8 @@
     <link href="assets/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<!-- Load c3.css -->
     <link href="assets/css/c3/c3.min.css" rel="stylesheet" type="text/css">
+	<!-- Bootstrap Select2 -->
+	<link href="assets/css/select2/select2.min.css" rel="stylesheet" />
 	<!-- Fonts  -->
     <link href='https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300' rel='stylesheet' type='text/css'>
 	<!-- Base Brio Styling  -->
@@ -81,6 +83,9 @@
 							<div class="btn-group" id="breadcrumb">
 							</div>
 						</li>
+						<div class="input-group pull-left" id="search-box">
+							<input type="text" placeholder="Search for patients..." class="typeahead">
+						</div>
                     </ul>
                 </div>
             </div>
@@ -137,7 +142,7 @@
 			<p>Some more instructions</p>
 		</div>
 		
-        <div class="starter-template page" id="page1">
+        <div class="starter-template page" id="main-dashboard">
             <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
                 <div class="user text-center">
                     <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
@@ -166,7 +171,7 @@
                 <nav class="navigation">
                     <ul class="list-unstyled">
                         <li class="active">
-                            <a href="#"><i class="fa fa-heart-o"></i> <span class="nav-label">Blood Pressure</span></a>
+                            <a href="#" id="selectBP"><i class="fa fa-heart-o"></i> <span class="nav-label">Blood Pressure</span></a>
                         </li>
                     </ul>
                 </nav>
@@ -174,27 +179,42 @@
 				<section class="cd-container" id="cd-timeline">
 					<div class="cd-timeline-block">
 						<div style="text-align: center;">
-							<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-exclamation-triangle fa-stack-1x" style=
-							"color: green;"></i></span>
+							<span data-stage="diagnosis" data-toggle="tooltip" data-placement="top" title="Diagnosis" class="fa-stack fa-2x fa-stack-mod">
+								<i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i> 
+								<i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+								<i class="fa fa-exclamation-triangle fa-stack-1x" style="color: green;"></i>
+							</span>
 						</div>
 					</div>
 
 					<div class="cd-timeline-block">
 						<div style="text-align: center;">
-							<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-stethoscope fa-stack-1x" style="color: blue;"></i></span>
+							<span data-stage="monitoring" data-toggle="tooltip" data-placement="top" title="Monitoring" class="fa-stack fa-2x fa-stack-mod">
+								<i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i> 
+								<i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+								<i class="fa fa-stethoscope fa-stack-1x" style="color: blue;"></i>
+							</span>
 						</div>
 					</div>
 
 					<div class="cd-timeline-block">
 						<div style="text-align: center;">
-							<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-medkit fa-stack-1x" style="color: blue;"></i></span>
+							<span data-stage="treatment" data-toggle="tooltip" data-placement="top" title="Treatment" class="fa-stack fa-2x fa-stack-mod">
+								<i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i> 
+								<i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+								<i class="fa fa-medkit fa-stack-1x" style="color: blue;"></i>
+							</span>
 						</div>
 					</div>
 				</section>
 
 				<div class="cd-timeline-block">
 					<div style="text-align: center;">
-						<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x" style=" color: red;"></i></span>
+						<span data-stage="exclusions" data-toggle="tooltip" data-placement="top" title="Exclusions" class="fa-stack fa-2x fa-stack-mod">
+								<i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i> 
+								<i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+							<i class="fa fa-times fa-stack-1x" style=" color: red;"></i>
+						</span>
 					</div>
 				</div>
 
@@ -235,18 +255,21 @@
 	<!-- jQuery fallback if no online version -->
 	<script>window.jQuery || document.write('<script src="assets/js/jquery/jquery-1.9.1.min.js"><\/script>')</script>	
 	
+	<!-- jQuery from CDN  -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/js/select2.min.js"></script>
+	<!-- fallback -->
+	<script>window.jQuery.fn.select2 || document.write('<script src="assets/js/select2/select2.min.js"><\/script>')</script>
+	
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="assets/js/bootstrap/bootstrap.min.js"></script> 
 	<!-- Underscore -->
     <script src="assets/js/plugins/underscore/underscore-min.js"></script> 
 	<!-- Globalize -->
     <script src="assets/js/globalize/globalize.min.js"></script> 
-	<!-- NanoScroll -->
+	<!-- NiceScroll -->
     <script src="assets/js/plugins/nicescroll/jquery.nicescroll.min.js"></script> 
-	<!-- Calendar JS -->
-    <!--<script src="assets/js/plugins/calendar/calendar.js"></script> -->
-	<!-- Calendar Conf -->
-    <!--<script src="assets/js/plugins/calendar/calendar-conf.js"></script> -->
+	<!-- Typeahead -->
+	<script src="assets/js/plugins/typehead/typeahead.bundle.js"></script> 
 	<!-- Zero clipboard -->
     <script src="assets/js/clipboard/ZeroClipboard.min.js"></script> 
 	<!-- jsPDF -->
@@ -297,7 +320,7 @@
 						<span class="fa fa-thumbs-up"></span>
 					</label>
 					<label class="btn btn-xs btn-no btn-toggle btn-danger">
-						<input type="radio" name="action-agree-{{lastindex}}" value="no" autocomplete="off">
+						<input type="radio" name="action-agree-{{lastIndex}}" value="no" autocomplete="off">
 						<span class="fa fa-thumbs-down"></span>
 					</label>
 				</div>
@@ -430,7 +453,12 @@
 								<div id="advice-placeholder">
 									Select an individual patient from the patient panel to view advice
 								</div>
-								<div id="advice"></div>
+								<div id="advice" class="row">
+									<div class="col-sm-6" id="advice-list">
+									</div>
+									<div class="col-sm-6" id="patient-info">
+									</div>
+								</div>
 							</div>
 
 							<div id="individual-footer" class="panel-footer">
@@ -443,27 +471,65 @@
 	</div>
 	</script>
 	
+	<script id="individual-panel" type="x-tmpl-mustache">	
+	<h4>Patient {{nhs}}</h4> 
+	{{#isExclusion}} is excluded because of {{exclusionReason}}
+	{{#isReadCode}}
+	<div>We suggest you add the following exclusion code to their record: 9h3.. 
+		<button type="button" data-clipboard-text="9h3.." title="Copy to clipboard." class="btn btn-xs btn-default" id="code-clip">
+			<span class="fa fa-clipboard"></span>
+		</button>
+	</div>
+	{{/isReadCode}}
+	{{/isExclusion}}
+	{{#hasActions}}
+	<table class="table">
+	<thead>
+		<tr>
+			<th>Suggested Actions</th>
+			<th>Do you agree?</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#actions}}
+		<tr class="suggestion">
+			<td>
+				<span>{{.}}</span>
+				<span class="fa fa-star" style="color:gold;text-shadow: 1px 1px 1px #333;font-size: 1.5em;"></span>
+			</td>
+			<td>
+				<div class="btn-group" data-toggle="buttons">
+					<label class="btn btn-xs btn-yes btn-toggle btn-success">
+						<input type="radio" name="individual-action-agree-{{index}}" value="yes" autocomplete="off"> 
+						<span class="fa fa-thumbs-up"></span>
+					</label>
+					<label class="btn btn-xs btn-no btn-toggle btn-danger">
+						<input type="radio" name="individual-action-agree-{{lastIndex}}" value="no" autocomplete="off">
+						<span class="fa fa-thumbs-down"></span>
+					</label>
+				</div>
+			</td>			
+			<td>{{>chk}}</td>
+		</tr>
+		{{/actions}}
+		{{resetIndex}}
+	</tbody>
+	</table>
+	{{/hasActions}}	
+	</script>	
+	
 	<script id="bp-trend-panel" type="x-tmpl-mustache">	
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">Blood Pressure Trend</h3>
-		</div>
-
-		<div class="panel-body">
-			<div id="demographic-placeholder">
-				Select a patient to display specific information
-			</div>
-			<div id="demographic-content">
-				<div id="chart-demo-trend"></div>
-			</div>
-		</div>
+	<div id="demographic-content">
+		<h4>Blood pressure</h4>
+		<div id="chart-demo-trend" style="max-height:100px"></div>
 	</div>
 	</script>
 	
 	<script id="patients-panel" type="x-tmpl-mustache">	
 	<div class="panel panel-default" id="panel-right">
 		<div class="panel-heading">
-			<h3 class="panel-title">Patients</h3>
+			<h4 class="panel-title">Patients</h4>
 		</div>
 
 		<div class="panel-body" id="panel-patients">
@@ -475,36 +541,77 @@
 	</div>
 	</script>
 	
+	<script id="change-bar" type="x-tmpl-mustache">
+	<span class="pull-right">{{percent}}% (
+		{{#percentUp}}
+		<span class="text-green">
+			<i class="fa fa-caret-up"></i> {{percentChange}}%
+		</span>
+		{{/percentUp}}
+		{{^percentUp}}
+		<span class="text-red">
+			<i class="fa fa-caret-down"></i> {{percentChange}}%
+		</span>
+		{{/percentUp}}
+		), n={{number}} (
+		{{#numberUp}}
+		<span class="text-green">
+			<i class="fa fa-caret-up"></i> {{numberChange}}
+		</span>
+		{{/numberUp}}
+		{{^numberUp}}
+		<span class="text-red">
+			<i class="fa fa-caret-down"></i> {{numberChange}}
+		</span>
+		{{/numberUp}}
+		)
+	</span>
+	</script>
+	
 	<script id="monitoring-panel" type="x-tmpl-mustache">	
-	<div class="panel panel-default">
+	<div data-stage="monitoring" class="panel panel-default">
 		<div class="panel-heading">
 			<i class="fa fa-stethoscope fa-fw"></i>&nbsp; Monitoring
 		</div>
 		<div class="panel-body">
 			<div>
-				<p>Patients who have had BP measured</p>
+				<p>Patients who have had BP measured {{>change-bar}}</p>
 			</div>
-			<div>
-				<div id="monitoring-chart"></div>
-				<!--<div id="chart1"></div>
-				<div id="chart2"></div>-->
-			</div>
+			<div id="monitoring-chart"></div>
+			<!--
+			<div class="row row-no-padding full-height-col-container">
+				<div class="col-sm-10">
+					<div id="monitoring-chart"></div>
+				</div>
+				<div class="col-sm-2 full-height-col">
+					<h6 class="transit">
+						52% 
+						<span class="text-green">
+							<i class="fa fa-caret-up"></i> 6%
+						</span>
+					</h6>
+					<h6 class="transit">
+						n=150 
+						<span class="text-red">
+							<i class="fa fa-caret-down"></i> 20
+						</span>
+					</h6>
+				</div>
+			</div>-->
 		</div>                                        
 	</div>
 	</script>
 	
 	<script id="treatment-panel" type="x-tmpl-mustache">	
-	<div class="panel panel-default">
+	<div data-stage="treatment" class="panel panel-default">
 		<div class="panel-heading">
 			<i class="fa fa-medkit fa-fw"></i>&nbsp; Treatment
 		</div>
 		<div class="panel-body">
 			<div>
-				<p>Patients with controlled BP</p>
+				<p>Patients with controlled BP {{>change-bar}}</p>
 			</div>
 			<div>
-				<!--<div id="chart3"></div>
-				<div id="breakdown-table"></div>-->
 				<div id="treatment-chart"></div>
 			</div>
 		</div> 
@@ -535,7 +642,7 @@
 	</script>
 	
 	<script id="diagnosis-panel" type="x-tmpl-mustache">
-	<div class="panel panel-default">
+	<div data-stage="diagnosis" class="panel panel-default">
 		<div class="panel-heading">
 			<i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp; Diagnosis
 		</div>
@@ -551,7 +658,7 @@
 	</script>
 	
 	<script id="exclusion-panel" type="x-tmpl-mustache">
-	<div class="panel panel-default">
+	<div data-stage="exclusions" class="panel panel-default">
 		<div class="panel-heading">
 			<i class="fa fa-times fa-fw"></i>&nbsp; Exclusions
 		</div>

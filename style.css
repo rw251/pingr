@@ -18,8 +18,22 @@ header {
 	padding-bottom: 4px;
 }
 
+.fa-stack-mod {
+	line-height: 60px;
+}
 
+.icon-background {
+	color: white;
+}
 
+.fa-stack-2-2x {
+	font-size: 2.2em;
+}
+
+.icon-background-border {
+	color: #85868d;
+}
+/*
 #chart-benchmark .c3-line {
 	stroke-width: 0px;
 }
@@ -28,7 +42,7 @@ header {
 	display: block;
 	padding-bottom: 10px;
 	padding-top: 5px;
-}
+}*/
 
 .tr-hovered {
 	background-color: rgb(244,244,255);	
@@ -112,7 +126,7 @@ header {
 	display: inline;
 	text-decoration: none;
 }
-
+/*
 .form-horizontal .control-label {
   padding-top: 4px;
 }
@@ -124,14 +138,14 @@ header {
 }
 .input-group .form-control {
   margin:0;
-}
+}*/
 /* ------------------ Login page --------------------*/
 .login-page > .login-container {
   width: 360px;
-}
+}/*
 .narrow-container{
   width: 360px;
-}
+}*/
 .login-page .login-panel {
   margin-top: 40px;
 }
@@ -146,18 +160,18 @@ header {
 .c3-chart-arc text {
 	fill: #000;
 }
-
+/*
 .dashboard-stats .view-style {
 	opacity: 1;
 	font-style: italic;
 	font-size: 20px;
 	padding: 7px 0px 15px 0px;
 	color: rgb(95, 175,245);
-}
-
+}*/
+/*
 .fa-check-circle:before {
   content: "\f058";
-}
+}*/
 
 table, th, td {
     border-collapse: collapse;
@@ -166,10 +180,10 @@ th,td {
     padding: 30px;
 }
 
-.soon {
+/*.soon {
 	font-size: 64px;
 	text-align: center;
-}
+}*/
 
 
 /*************************************
@@ -189,10 +203,6 @@ th,td {
   clear: both;
 }
 
-.cd-timeline-block .fa-circle {
-    color : #d7e4ed;
-}
-
 #cd-timeline {
   position: relative;
   padding: 2em 0;
@@ -208,7 +218,7 @@ th,td {
   height: 100%;
     margin-left: -2px;
   width: 4px;
-  background: #d7e4ed;
+  background: #85868d;
 }
 
 .cd-timeline-block {
@@ -226,4 +236,142 @@ th,td {
 }
 .cd-timeline-block:last-child {
   margin-bottom: 0;
+}
+
+
+/**********************************/
+/* Typeahead for patient searching
+************************************/
+
+.tt-dropdown-menu,
+.gist {
+  text-align: left;
+}
+
+.typeahead,
+.tt-query,
+.tt-hint {
+  width: 396px;
+  height: 30px;
+  padding: 0px 12px;
+  font-size: 13px;
+  line-height: 30px;
+  border: 2px solid #ccc;
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  outline: none;
+}
+
+.typeahead {
+  background-color: #fff;
+}
+
+.typeahead:focus {
+  border: 2px solid #0097cf;
+}
+
+.tt-query {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.tt-hint {
+  color: #999
+}
+
+.tt-dropdown-menu {
+  width: 422px;
+  margin-top: 12px;
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+  padding: 3px 20px;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.tt-suggestion.tt-cursor {
+  color: #fff;
+  background-color: #0097cf;
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
+
+.gist {
+  font-size: 14px;
+}
+
+.twitter-typeahead {
+  position: relative;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-right: 15px;
+}
+
+.twitter-typeahead:before{
+	content:"\f002";
+	position:absolute;
+	left:12px;
+	font-family: FontAwesome;
+	cursor:pointer;
+	top:7px;
+	color:#c4c4cd;
+	display:inline-block;
+}
+
+/* Fix for c3 flicker whereby
+   extra svg elements at the bottom
+   of the page cause the vertical
+   scrollbar to toggle  */
+body > svg { 
+	/*height:0px !important;*/
+	position: absolute;
+    z-index: -10;
+    top: 0;
+}
+
+/* Style the tooltips for the care pathway*/
+.tooltip.top .tooltip-arrow {
+  bottom: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-top-color: #fff;
+  border-width: 5px 5px 0;
+}
+.tooltip-inner {
+  color: #000;
+  background: #fff;
+  border: solid 1px #fff;
+}
+
+/* Define a class for a padding less row*/
+.row-no-padding>div {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Allow column to stretch to height of container*/
+.full-height-col-container {
+	overflow: hidden;
+	position: relative;
+}
+
+.full-height-col-container .full-height-col{
+	position: absolute;
+	height: 100%;
+	right: 0;
 }

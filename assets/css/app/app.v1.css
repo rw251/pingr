@@ -160,10 +160,15 @@ aside.left-panel{
 	
 aside.left-panel.collapsed{
 	overflow:visible !important;
-	position:absolute;
+	/*position:absolute;*/
 	bottom:0px;}
 
-
+aside.left-panel.collapsed .fa-3x {
+	font-size: 2em;
+}
+aside.left-panel.collapsed .fa-3x  .icon-background-border{
+	color: #ff404b;
+}
 /*** Aside sizes ***/
 	
 aside.left-panel.lg{
@@ -193,9 +198,9 @@ aside.left-panel.collapsed .navigation > ul > li > a{
 	padding:20px;}
 
 
-	
+	/*
 aside.left-panel.collapsed i.fa{
-	font-size:22px;}
+	font-size:22px;}*/
 	
 aside.left-panel.collapsed .navigation > ul > li.has-submenu:after{
 	display:none;}
@@ -369,7 +374,6 @@ aside:not(.collapsed) .navigation ul li.active ul{
 /*** Aside Collapsed Sub Menu ***/
 @media (min-width: 768px) {
 aside.left-panel.collapsed .navigation ul li ul{
-	position:absolute;
 	z-index:3;
 	left:100%;
 	top:0px;
@@ -1381,8 +1385,9 @@ Responsive Stying
 	
 	aside.left-panel.collapsed{
 	width:250px;
+	height: 3000px;
 	left:0px;
-	overflow:hidden !important;}
+	/*overflow:hidden !important;*/}
 	
 	aside.left-panel.collapsed + .content{
 	margin-left:0px;
