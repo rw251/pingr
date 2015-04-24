@@ -350,7 +350,7 @@
 	<tbody>
     {{#patients}}
 		<tr class="list-item">
-			<td>{{nhs}} <button type="button" data-clipboard-text="{{nhs}}" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
+			<td>{{nhsNumber}} <button type="button" data-clipboard-text="{{nhsNumber}}" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
 				  <span class="fa fa-clipboard"></span>
 				</button></td>
 			<td>{{sbp}}</td>
@@ -379,7 +379,7 @@
     </thead>
     <tbody>
     {{#items}}
-	  <tr id="row-{{id}}" style="color:{{color}}">
+	  <tr data-subsection="{{name}}" style="color:{{color}}">
 	    <td>{{desc}}</td>
 	    <td>{{n}}</td>
 	    <td>{{percentage}}</td>
@@ -472,7 +472,7 @@
 	</script>
 	
 	<script id="individual-panel" type="x-tmpl-mustache">	
-	<h4>Patient {{nhs}}</h4> 
+	<h4>Patient {{nhsNumber}}</h4> 
 	{{#isExclusion}} is excluded because of {{exclusionReason}}
 	{{#isReadCode}}
 	<div>We suggest you add the following exclusion code to their record: 9h3.. 
