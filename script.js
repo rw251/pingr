@@ -118,13 +118,15 @@
 	};
 
 	var showMonitoringPanel = function(location) {
+		var percentChange = local.data[local.pathway].all.monitoring.trend[1][1]-local.data[local.pathway].all.monitoring.trend[1][30];
+		var numberChange = local.data[local.pathway].all.monitoring.trend[2][1]-local.data[local.pathway].all.monitoring.trend[2][30];
 		createPanel(monitoringPanel, location, {
 			percent: local.data[local.pathway].all.monitoring.trend[1][1],
-			percentChange: Math.abs(local.data[local.pathway].all.monitoring.trend[1][1]-local.data[local.pathway].all.monitoring.trend[1][30]),
-			percentUp: local.data[local.pathway].all.monitoring.trend[1][1]-local.data[local.pathway].all.monitoring.trend[1][30]>=0,
+			percentChange: Math.abs(percentChange),
+			percentUp: percentChange>=0,
 			number: local.data[local.pathway].all.monitoring.trend[2][1],
-			numberUp: local.data[local.pathway].all.monitoring.trend[2][1]-local.data[local.pathway].all.monitoring.trend[2][30]>=0,
-			numberChange: Math.abs(local.data[local.pathway].all.monitoring.trend[2][1]-local.data[local.pathway].all.monitoring.trend[2][30])
+			numberUp: numberChange>=0,
+			numberChange: Math.abs(numberChange)
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -150,8 +152,12 @@
 						}
 					}
 				},
+				y : {
+					min : 0
+				},
 				y2: {
-					show: true
+					show: true,
+					min: 0
 				}
 			},
 			point: {
@@ -169,13 +175,15 @@
 	};
 
 	var showTreatmentPanel = function(location) {
+		var percentChange = local.data[local.pathway].all.treatment.trend[1][1]-local.data[local.pathway].all.treatment.trend[1][30];
+		var numberChange = local.data[local.pathway].all.treatment.trend[2][1]-local.data[local.pathway].all.treatment.trend[2][30];
 		createPanel(treatmentPanel, location, {
 			percent: local.data[local.pathway].all.treatment.trend[1][1],
-			percentChange: Math.abs(local.data[local.pathway].all.treatment.trend[1][1]-local.data[local.pathway].all.treatment.trend[1][30]),
-			percentUp: local.data[local.pathway].all.treatment.trend[1][1]-local.data[local.pathway].all.treatment.trend[1][30]>=0,
+			percentChange: Math.abs(percentChange),
+			percentUp: percentChange>=0,
 			number: local.data[local.pathway].all.treatment.trend[2][1],
-			numberUp: local.data[local.pathway].all.treatment.trend[2][1]-local.data[local.pathway].all.treatment.trend[2][30]>=0,
-			numberChange: Math.abs(local.data[local.pathway].all.treatment.trend[2][1]-local.data[local.pathway].all.treatment.trend[2][30])
+			numberUp: numberChange>=0,
+			numberChange: Math.abs(numberChange)
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -201,8 +209,12 @@
 						}
 					}
 				},
+				y : {
+					min : 0
+				},
 				y2: {
-					show: true
+					show: true,
+					min: 0
 				}
 			},
 			point: {
@@ -533,15 +545,7 @@
 
 		$('#patients-placeholder').hide();
 
-		//Wire up copy paste
-		ZeroClipboard.destroy(); //tidy up
-		var client = new ZeroClipboard( $('.btn-copy') );
-
-		client.on( 'ready', function() {
-			client.on( 'aftercopy', function(event) {
-				console.log('Copied text to clipboard: ' + event.data['text/plain']);
-			});
-		});
+		setupClipboard($('.btn-copy'), true);
 	};
 
 	var populateSuggestedActionsPanel = function (id){
@@ -721,14 +725,7 @@
 
 	var updateCheckboxes = function(id){
 		var current = getObj();
-
-		suggestedActionPlan.find('input[type=checkbox]').each(function(i){
-			if(current.actions && current.actions[id] && current.actions[id].done.length>i && current.actions[id].done[i]){
-				$(this).prop('checked', true);
-			}
-		});
-
-		suggestedActionPlan.find('input[type=radio]').each(function(i){
+		var wireUpRadioButtons = function(i) {
 			i = Math.floor(i/2);
 			if(current.actions && current.actions[id] && current.actions[id].agree.length>i){
 				if(current.actions[id].agree[i]===true && this.value==="yes"){
@@ -739,26 +736,21 @@
 					$(this).parent().addClass('active');
 				}
 			}
-		});
+		};
 
-		adviceList.find('input[type=checkbox]').each(function(i){
+		var wireUpCheckboxes =function(i){
 			if(current.actions && current.actions[id] && current.actions[id].done.length>i && current.actions[id].done[i]){
 				$(this).prop('checked', true);
 			}
-		});
+		};
 
-		adviceList.find('input[type=radio]').each(function(i){
-			i = Math.floor(i/2);
-			if(current.actions && current.actions[id] && current.actions[id].agree.length>i){
-				if(current.actions[id].agree[i]===true && this.value==="yes"){
-					$(this).prop('checked', true);
-					$(this).parent().addClass('active');
-				} else if(current.actions[id].agree[i]===false && this.value==="no"){
-					$(this).prop('checked', true);
-					$(this).parent().addClass('active');
-				}
-			}
-		});
+		suggestedActionPlan.find('input[type=checkbox]').each(wireUpCheckboxes);
+
+		suggestedActionPlan.find('input[type=radio]').each(wireUpRadioButtons);
+
+		adviceList.find('input[type=checkbox]').each(wireUpCheckboxes);
+
+		adviceList.find('input[type=radio]').each(wireUpRadioButtons);
 
 		updateSapRows();
 	};
@@ -821,13 +813,7 @@
 
 		createPanel(individualPanel, adviceList, data, {"chk" : $('#checkbox-template').html() });
 
-		var client = new ZeroClipboard( $('#code-clip') );
-
-		client.on( 'ready', function() {
-			client.on( 'aftercopy', function(event) {
-				console.log('Copied text to clipboard: ' + event.data['text/plain']);
-			});
-		});
+		setupClipboard( $('#code-clip'), false );
 
 		updateCheckboxes(nhsNumber);
 
@@ -927,6 +913,18 @@
 
 	var setObj = function(obj){
 		localStorage.bb = JSON.stringify(obj);
+	};
+
+	var setupClipboard = function(selector, destroy) {
+		if(destroy)	ZeroClipboard.destroy(); //tidy up
+
+		var client = new ZeroClipboard(selector);
+
+		client.on( 'ready', function() {
+			client.on( 'aftercopy', function(event) {
+				console.log('Copied text to clipboard: ' + event.data['text/plain']);
+			});
+		});
 	};
 
 	var exportPlan = function(){

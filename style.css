@@ -74,6 +74,19 @@ header {
 	background-color: rgb(242,242,244);
 }
 
+.icon-success {
+	color:rgb(44, 160, 44);
+}
+.icon-info {
+	color:rgb(31, 119, 180);
+}
+.icon-warning{
+	color:rgb(255, 127, 14);
+}
+.icon-danger{
+	color:rgb(214, 39, 40);
+}
+
 .shorty{
 	margin-left: 75px;
 }

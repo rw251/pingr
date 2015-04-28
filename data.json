@@ -2,6 +2,198 @@
 "data":[
     {
         "disease": "Blood Pressure",
+		"monitoring" : {
+			"measured" : 150,
+			"unmeasured" : 150,
+			"trend" : [
+				["x","2015-05-01","2015-04-30","2015-04-29","2015-04-28","2015-04-27","2015-04-26","2015-04-25","2015-04-24","2015-04-23","2015-04-22","2015-04-21","2015-04-20","2015-04-19","2015-04-18","2015-04-17","2015-04-16","2015-04-15","2015-04-14","2015-04-13","2015-04-12","2015-04-11","2015-04-10","2015-04-09","2015-04-08","2015-04-07","2015-04-06","2015-04-05","2015-04-04","2015-04-03","2015-04-02","2015-04-01","2015-03-31","2015-03-30","2015-03-29","2015-03-28","2015-03-27","2015-03-26","2015-03-25","2015-03-24","2015-03-23","2015-03-22","2015-03-21","2015-03-20","2015-03-19","2015-03-18","2015-03-17","2015-03-16","2015-03-15","2015-03-14","2015-03-13","2015-03-12","2015-03-11","2015-03-10","2015-03-09","2015-03-08","2015-03-07","2015-03-06","2015-03-05","2015-03-04","2015-03-03","2015-03-02","2015-03-01","2015-02-28","2015-02-27","2015-02-26","2015-02-25","2015-02-24","2015-02-23","2015-02-22","2015-02-21","2015-02-20","2015-02-19","2015-02-18","2015-02-17","2015-02-16","2015-02-15","2015-02-14","2015-02-13","2015-02-12","2015-02-11","2015-02-10","2015-02-09","2015-02-08","2015-02-07","2015-02-06","2015-02-05","2015-02-04","2015-02-03","2015-02-02","2015-02-01"],
+				["%",50,50,50,50,50,50,50,50,51,51,51,51,51,51,52,52,51,51,51,50,50,49,49,49,49,49,49,48,47,47,47,47,47,47,47,47,46,47,46,46,46,46,46,45,45,45,45,44,44,44,44,44,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,46,46,46,45,45,45,46,46,46,46,45,45,45,46,46,46],
+				["n",150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,149,149,149,148,148,148,148,148,148,148,148,146,146,146,146,146,146,146,146,146,146,144,144,145,145,145,143,143,143,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,142,142,142,141,141,141,141,139,139,139,139,139,139,139,139,138,138,138,139,139,139,138,136,136,136,136,136,136]
+			],
+			"header" : "Patients with opportunities for BP measurement",
+			"table-headings" : [
+                {
+                    "title": "Type"
+                },
+                {
+                    "title": "n"
+                },
+                {
+                    "title": "%"
+                }
+            ],
+            "items": [
+                {
+                    "name": "Nil2",
+                    "desc": "Have had no contact",
+                    "n": 102,
+                    "percentage": 68,
+                    "main": "These are patients that you have had no contact with.",
+                    "suggestions": [
+                        {
+                            "text": "Check these patients are still registered at your practice."
+                        },
+                        {
+                            "text": "Check these patients still live in your area."
+                        },
+                        {
+                            "text": "Invite these patients via letter or telephone for a blood pressure check."
+                        },
+                        {
+                            "text": "If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?"
+                        }
+                    ],
+                    "total-improvement": "15",
+                    "patients": [9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9061510350,9067340515,9021642165,9035356481]
+                },
+                {
+                    "name": "Nil",
+                    "desc": "Have had no contact",
+                    "n": 102,
+                    "percentage": 68,
+                    "main": "These are patients that you have had no contact with.",
+                    "suggestions": [
+                        {
+                            "text": "Check these patients are still registered at your practice."
+                        },
+                        {
+                            "text": "Check these patients still live in your area."
+                        },
+                        {
+                            "text": "Invite these patients via letter or telephone for a blood pressure check."
+                        },
+                        {
+                            "text": "If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?"
+                        }
+                    ],
+                    "total-improvement": "15",
+                    "patients": [9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481,9061510350,9067340515,9021642165,9035356481]
+                },
+                {
+                    "name": "Direct",
+                    "desc": "Have had direct contact",
+                    "n": 29,
+                    "percentage": 19.3,
+                    "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
+                    "suggestions": [
+                        {
+                            "text": "Ensure that the pop-ups in your EHR are working."
+                        },
+                        {
+                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li><li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR. </li></ul>"
+                        }
+                    ],
+                    "total-improvement": "16",
+                    "patients": [9034498076,9049040446,9009083532,9061124813,9038343867,9059876817,9000893907,9033191867,9099247692,9041918976,9061510350,9067340515,9021642165,9035356481,9034498076,9049040446,9009083532,9061124813,9038343867,9059876817,9000893907,9033191867,9099247692,9041918976,9061510350,9067340515,9021642165,9035356481,9035356481]
+                },
+                {
+                    "name": "Indirect",
+                    "desc": "Have had indirect contact",
+                    "n": 19,
+                    "percentage": 12.7,
+                    "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
+                    "suggestions": [
+                        {
+                            "text": "Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions",
+                            "improvement": "25"
+                        },
+                        {
+                            "text": "Telephone those contactable by phone to invite them for a blood pressure check",
+                            "improvement": "10"
+                        },
+                        {
+                            "text": "Send letters to those with whom telephone contact has not been possible",
+                            "improvement": "5"
+                        },
+                        {
+                            "text": "Ask the patient to send in readings taken at home or at the pharmacy."
+                        }
+                    ],
+                    "total-improvement": "17",
+                    "patients": [9098636572,9079592014,9000910297,9069105021,9005929785,9005703348,9010856620,9009771926,9092418386,9041918976,9061510350,9067340515,9021642165,9035356481,9098636572,9079592014,9000910297,9069105021,9005929785]
+                }
+            ]
+        },
+		"treatment" : {
+			"controlled" : 75,
+			"uncontrolled" : 50,
+			"header" : "Patients who have potentially missed opportunities",
+			"trend" : [
+				["x","2015-05-01","2015-04-30","2015-04-29","2015-04-28","2015-04-27","2015-04-26","2015-04-25","2015-04-24","2015-04-23","2015-04-22","2015-04-21","2015-04-20","2015-04-19","2015-04-18","2015-04-17","2015-04-16","2015-04-15","2015-04-14","2015-04-13","2015-04-12","2015-04-11","2015-04-10","2015-04-09","2015-04-08","2015-04-07","2015-04-06","2015-04-05","2015-04-04","2015-04-03","2015-04-02","2015-04-01","2015-03-31","2015-03-30","2015-03-29","2015-03-28","2015-03-27","2015-03-26","2015-03-25","2015-03-24","2015-03-23","2015-03-22","2015-03-21","2015-03-20","2015-03-19","2015-03-18","2015-03-17","2015-03-16","2015-03-15","2015-03-14","2015-03-13","2015-03-12","2015-03-11","2015-03-10","2015-03-09","2015-03-08","2015-03-07","2015-03-06","2015-03-05","2015-03-04","2015-03-03","2015-03-02","2015-03-01","2015-02-28","2015-02-27","2015-02-26","2015-02-25","2015-02-24","2015-02-23","2015-02-22","2015-02-21","2015-02-20","2015-02-19","2015-02-18","2015-02-17","2015-02-16","2015-02-15","2015-02-14","2015-02-13","2015-02-12","2015-02-11","2015-02-10","2015-02-09","2015-02-08","2015-02-07","2015-02-06","2015-02-05","2015-02-04","2015-02-03","2015-02-02","2015-02-01"],
+				["%",60,60,60,61,61,61,62,63,64,64,63,63,63,63,65,65,66,67,66,66,66,68,66,68,68,68,69,71,72,73,75,74,73,75,73,73,72,70,73,72,73,74,72,73,74,73,72,70,67,66,67,65,66,63,64,62,63,62,62,58,59,59,59,58,55,52,50,50,47,47,48,48,48,50,50,50,50,50,50,50,51,51,50,50,47,47,48,45,45,42],
+				["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
+			],
+            "table-headings": [
+                {
+                    "title": "Breakdown"
+                },
+                {
+                    "title": "n"
+                },
+                {
+                    "title": "%"
+                }
+            ],
+            "items": [
+                {
+                    "name": "Recently Measured",
+                    "desc": "BP measured in last 2 months",
+                    "n": 6,
+                    "percentage": 12,
+                    "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
+                    "suggestions": [
+                        {
+                            "text": "Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR."
+                        },
+                        {
+                            "text": "Some patients have had chronically raised blood pressure and no change in medication, which should be addressed."
+                        }
+                    ],
+                    "total-improvement": "14",
+                    "patients": [9051546402,9005252030,9077880214,9020801910,9041918976,9061510350]
+                },
+                {
+                    "name": "Recently Changed Rx",
+                    "desc": "HTN Rx recently changed",
+                    "n": 21,
+                    "percentage": 42,
+                    "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
+                    "suggestions": [
+                        {
+                            "text": "Ensure that the pop-ups in your EHR are working."
+                        },
+                        {
+                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li><li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR.  </li></ul>"
+                        },
+                        {
+                            "text": "Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions"
+                        }
+                    ],
+                    "total-improvement": "13",
+                    "patients": [9075959798,9070438803,9072750687,9002732548,9090314028,9063177276,9054093275,9044111202,9056590976,9041918976,9061510350,9067340515,9021642165,9035356481,9075959798,9070438803,9072750687,9002732548,9090314028,9063177276,9054093275,9044111202,9056590976,9041918976,9061510350]
+                },
+                {
+                    "name": "Suboptimal Rx",
+                    "desc": "Patient's Rx could be improved",
+                    "n": 23,
+                    "percentage": 46,
+                    "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
+                    "suggestions": [
+                        {
+                            "text": "Contact these patients by letter or telephone to offer them a change in their blood pressure medication."
+                        },
+                        {
+                            "text": "Ensure that the pop-ups in your EHR are working."
+                        },
+                        {
+                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>High blood pressure readings are not being acted on – this may be the only chance to do something about it.</li><li>If there are legitimate reasons why action on high blood pressure is not acted on it should be appropriately coded in the EHR. </li></ul>"
+                        }
+                    ],
+                    "total-improvement": "12",
+                    "patients": [9057757561,9017120939,9066515462,9020621386,9050745408,9044275728,9018071754,9040610338,9051689216,9041918976,9061510350,9067340515,9021642165,9035356481,9057757561,9017120939,9066515462,9020621386,9050745408,9044275728,9018071754,9040610338,9057757561,9017120939,9066515462,9020621386,9050745408,9044275728,9018071754,9040610338,9057757561,9017120939,9066515462,9020621386,9050745408,9044275728,9018071754,9040610338,9057757561,9017120939,9066515462,9020621386,9050745408,9044275728,9018071754,9040610338]
+                }
+            ]
+        },
 		"patients": {
 			"9051546402": {
 				"name": "Thomas Bell",
@@ -615,174 +807,6 @@
                     "n": 223,
                     "percentage": 21.6,
                     "patients": [9051546402,9005252030,9077880214,9020801910,9041918976,9061510350,9067340515,9021642165,9035356481]
-                }
-            ]
-        },
-		"monitoring" : {
-			"measured" : 2410,
-			"unmeasured" : 2072,
-			"trend" : [
-				["x","2015-05-01","2015-04-30","2015-04-29","2015-04-28","2015-04-27","2015-04-26","2015-04-25","2015-04-24","2015-04-23","2015-04-22","2015-04-21","2015-04-20","2015-04-19","2015-04-18","2015-04-17","2015-04-16","2015-04-15","2015-04-14","2015-04-13","2015-04-12","2015-04-11","2015-04-10","2015-04-09","2015-04-08","2015-04-07","2015-04-06","2015-04-05","2015-04-04","2015-04-03","2015-04-02","2015-04-01","2015-03-31","2015-03-30","2015-03-29","2015-03-28","2015-03-27","2015-03-26","2015-03-25","2015-03-24","2015-03-23","2015-03-22","2015-03-21","2015-03-20","2015-03-19","2015-03-18","2015-03-17","2015-03-16","2015-03-15","2015-03-14","2015-03-13","2015-03-12","2015-03-11","2015-03-10","2015-03-09","2015-03-08","2015-03-07","2015-03-06","2015-03-05","2015-03-04","2015-03-03","2015-03-02","2015-03-01","2015-02-28","2015-02-27","2015-02-26","2015-02-25","2015-02-24","2015-02-23","2015-02-22","2015-02-21","2015-02-20","2015-02-19","2015-02-18","2015-02-17","2015-02-16","2015-02-15","2015-02-14","2015-02-13","2015-02-12","2015-02-11","2015-02-10","2015-02-09","2015-02-08","2015-02-07","2015-02-06","2015-02-05","2015-02-04","2015-02-03","2015-02-02","2015-02-01"],
-				["%",50,50,50,50,50,50,50,50,51,51,51,51,51,51,52,52,51,51,51,50,50,49,49,49,49,49,49,48,47,47,47,47,47,47,47,47,46,47,46,46,46,46,46,45,45,45,45,44,44,44,44,44,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,46,46,46,45,45,45,46,46,46,46,45,45,45,46,46,46],
-				["n",150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,149,149,149,148,148,148,148,148,148,148,148,146,146,146,146,146,146,146,146,146,146,144,144,145,145,145,143,143,143,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,142,142,142,141,141,141,141,139,139,139,139,139,139,139,139,138,138,138,139,139,139,138,136,136,136,136,136,136]
-			],
-			"header" : "Patients with opportunities for BP measurement",
-			"table-headings" : [
-                {
-                    "title": "Type"
-                },
-                {
-                    "title": "n"
-                },
-                {
-                    "title": "%"
-                }
-            ],
-            "items": [
-                {
-                    "name": "Nil",
-                    "desc": "Have had no contact",
-                    "n": 1413,
-                    "percentage": 68.2,
-                    "main": "These are patients that you have had no contact with.",
-                    "suggestions": [
-                        {
-                            "text": "Check these patients are still registered at your practice."
-                        },
-                        {
-                            "text": "Check these patients still live in your area."
-                        },
-                        {
-                            "text": "Invite these patients via letter or telephone for a blood pressure check."
-                        },
-                        {
-                            "text": "If these patients have been invited 3 times or more and declined a blood pressure check, should they be excluded from the quality standards?"
-                        }
-                    ],
-                    "total-improvement": "15",
-                    "patients": [9002567106,9079708590,9021318955,9053322816,9005934199,9079571855,9012082562,9039658502,9091180247,9041918976,9061510350,9067340515,9021642165,9035356481]
-                },
-                {
-                    "name": "Direct",
-                    "desc": "Have had direct contact",
-                    "n": 395,
-                    "percentage": 19.1,
-                    "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
-                    "suggestions": [
-                        {
-                            "text": "Ensure that the pop-ups in your EHR are working."
-                        },
-                        {
-                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li><li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR. </li></ul>"
-                        }
-                    ],
-                    "total-improvement": "16",
-                    "patients": [9034498076,9049040446,9009083532,9061124813,9038343867,9059876817,9000893907,9033191867,9099247692,9041918976,9061510350,9067340515,9021642165,9035356481]
-                },
-                {
-                    "name": "Indirect",
-                    "desc": "Have had indirect contact",
-                    "n": 264,
-                    "percentage": 12.7,
-                    "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
-                    "suggestions": [
-                        {
-                            "text": "Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions",
-                            "improvement": "25"
-                        },
-                        {
-                            "text": "Telephone those contactable by phone to invite them for a blood pressure check",
-                            "improvement": "10"
-                        },
-                        {
-                            "text": "Send letters to those with whom telephone contact has not been possible",
-                            "improvement": "5"
-                        },
-                        {
-                            "text": "Ask the patient to send in readings taken at home or at the pharmacy."
-                        }
-                    ],
-                    "total-improvement": "17",
-                    "patients": [9098636572,9079592014,9000910297,9069105021,9005929785,9005703348,9010856620,9009771926,9092418386,9041918976,9061510350,9067340515,9021642165,9035356481]
-                }
-            ]
-        },
-		"treatment" : {
-			"controlled" : 2104,
-			"header" : "Patients who have potentially missed opportunities",
-			"trend" : [
-				["x","2015-05-01","2015-04-30","2015-04-29","2015-04-28","2015-04-27","2015-04-26","2015-04-25","2015-04-24","2015-04-23","2015-04-22","2015-04-21","2015-04-20","2015-04-19","2015-04-18","2015-04-17","2015-04-16","2015-04-15","2015-04-14","2015-04-13","2015-04-12","2015-04-11","2015-04-10","2015-04-09","2015-04-08","2015-04-07","2015-04-06","2015-04-05","2015-04-04","2015-04-03","2015-04-02","2015-04-01","2015-03-31","2015-03-30","2015-03-29","2015-03-28","2015-03-27","2015-03-26","2015-03-25","2015-03-24","2015-03-23","2015-03-22","2015-03-21","2015-03-20","2015-03-19","2015-03-18","2015-03-17","2015-03-16","2015-03-15","2015-03-14","2015-03-13","2015-03-12","2015-03-11","2015-03-10","2015-03-09","2015-03-08","2015-03-07","2015-03-06","2015-03-05","2015-03-04","2015-03-03","2015-03-02","2015-03-01","2015-02-28","2015-02-27","2015-02-26","2015-02-25","2015-02-24","2015-02-23","2015-02-22","2015-02-21","2015-02-20","2015-02-19","2015-02-18","2015-02-17","2015-02-16","2015-02-15","2015-02-14","2015-02-13","2015-02-12","2015-02-11","2015-02-10","2015-02-09","2015-02-08","2015-02-07","2015-02-06","2015-02-05","2015-02-04","2015-02-03","2015-02-02","2015-02-01"],
-				["%",60,60,60,61,61,61,62,63,64,64,63,63,63,63,65,65,66,67,66,66,66,68,66,68,68,68,69,71,72,73,75,74,73,75,73,73,72,70,73,72,73,74,72,73,74,73,72,70,67,66,67,65,66,63,64,62,63,62,62,58,59,59,59,58,55,52,50,50,47,47,48,48,48,50,50,50,50,50,50,50,51,51,50,50,47,47,48,45,45,42],
-				["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
-			],
-            "table-headings": [
-                {
-                    "title": "Breakdown"
-                },
-                {
-                    "title": "n"
-                },
-                {
-                    "title": "%"
-                }
-            ],
-            "items": [
-                {
-                    "name": "Recently Measured",
-                    "desc": "BP measured in last 2 months",
-                    "n": 365,
-                    "percentage": 12.7,
-                    "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
-                    "suggestions": [
-                        {
-                            "text": "Some patients may be under surveillance and have a planned appointment to re-check their blood pressure. This could be checked in your EHR."
-                        },
-                        {
-                            "text": "Some patients have had chronically raised blood pressure and no change in medication, which should be addressed."
-                        }
-                    ],
-                    "total-improvement": "14",
-                    "patients": [9051546402,9005252030,9077880214,9020801910,9041918976,9061510350,9067340515,9021642165,9035356481,9041918976,9061510350,9067340515,9021642165,9035356481]
-                },
-                {
-                    "name": "Recently Changed Rx",
-                    "desc": "HTN Rx recently changed",
-                    "n": 1174,
-                    "percentage": 40.9,
-                    "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
-                    "suggestions": [
-                        {
-                            "text": "Ensure that the pop-ups in your EHR are working."
-                        },
-                        {
-                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>These patients are attending and not having their blood pressure measured – this visit may be the only chance to record it.</li><li>If there are legitimate reasons why blood pressure is not measured it should be appropriately coded in the EHR.  </li></ul>"
-                        },
-                        {
-                            "text": "Put individualised reminder notes on prescriptions for those collecting repeat or regular prescriptions"
-                        }
-                    ],
-                    "total-improvement": "13",
-                    "patients": [9075959798,9070438803,9072750687,9002732548,9090314028,9063177276,9054093275,9044111202,9056590976,9041918976,9061510350,9067340515,9021642165,9035356481]
-                },
-                {
-                    "name": "Suboptimal Rx",
-                    "desc": "Patient's Rx could be improved",
-                    "n": 1329,
-                    "percentage": 46.3,
-                    "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
-                    "suggestions": [
-                        {
-                            "text": "Contact these patients by letter or telephone to offer them a change in their blood pressure medication."
-                        },
-                        {
-                            "text": "Ensure that the pop-ups in your EHR are working."
-                        },
-                        {
-                            "text": "Hold an educational session or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement.</li><li>High blood pressure readings are not being acted on – this may be the only chance to do something about it.</li><li>If there are legitimate reasons why action on high blood pressure is not acted on it should be appropriately coded in the EHR. </li></ul>"
-                        }
-                    ],
-                    "total-improvement": "12",
-                    "patients": [9057757561,9017120939,9066515462,9020621386,9050745408,9044275728,9018071754,9040610338,9051689216,9041918976,9061510350,9067340515,9021642165,9035356481]
                 }
             ]
         }
