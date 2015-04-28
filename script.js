@@ -119,12 +119,12 @@
 
 	var showMonitoringPanel = function(location) {
 		createPanel(monitoringPanel, location, {
-			percent: local.data[local.pathway].all.measured.trend[1][1],
-			percentChange: Math.abs(local.data[local.pathway].all.measured.trend[1][1]-local.data[local.pathway].all.measured.trend[1][30]),
-			percentUp: local.data[local.pathway].all.measured.trend[1][1]-local.data[local.pathway].all.measured.trend[1][30]>=0,
-			number: local.data[local.pathway].all.measured.trend[2][1],
-			numberUp: local.data[local.pathway].all.measured.trend[2][1]-local.data[local.pathway].all.measured.trend[2][30]>=0,
-			numberChange: Math.abs(local.data[local.pathway].all.measured.trend[2][1]-local.data[local.pathway].all.measured.trend[2][30])
+			percent: local.data[local.pathway].all.monitoring.trend[1][1],
+			percentChange: Math.abs(local.data[local.pathway].all.monitoring.trend[1][1]-local.data[local.pathway].all.monitoring.trend[1][30]),
+			percentUp: local.data[local.pathway].all.monitoring.trend[1][1]-local.data[local.pathway].all.monitoring.trend[1][30]>=0,
+			number: local.data[local.pathway].all.monitoring.trend[2][1],
+			numberUp: local.data[local.pathway].all.monitoring.trend[2][1]-local.data[local.pathway].all.monitoring.trend[2][30]>=0,
+			numberChange: Math.abs(local.data[local.pathway].all.monitoring.trend[2][1]-local.data[local.pathway].all.monitoring.trend[2][30])
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -133,7 +133,7 @@
 			bindto: '#monitoring-chart',
 			data: {
 				x: 'x',
-				columns: local.data[local.pathway].all.measured.trend,
+				columns: local.data[local.pathway].all.monitoring.trend,
 				axes: {
 					"%" : 'y',
 					"n" : 'y2'
@@ -170,12 +170,12 @@
 
 	var showTreatmentPanel = function(location) {
 		createPanel(treatmentPanel, location, {
-			percent: local.data[local.pathway].all.controlled.trend[1][1],
-			percentChange: Math.abs(local.data[local.pathway].all.controlled.trend[1][1]-local.data[local.pathway].all.controlled.trend[1][30]),
-			percentUp: local.data[local.pathway].all.controlled.trend[1][1]-local.data[local.pathway].all.controlled.trend[1][30]>=0,
-			number: local.data[local.pathway].all.controlled.trend[2][1],
-			numberUp: local.data[local.pathway].all.controlled.trend[2][1]-local.data[local.pathway].all.controlled.trend[2][30]>=0,
-			numberChange: Math.abs(local.data[local.pathway].all.controlled.trend[2][1]-local.data[local.pathway].all.controlled.trend[2][30])
+			percent: local.data[local.pathway].all.treatment.trend[1][1],
+			percentChange: Math.abs(local.data[local.pathway].all.treatment.trend[1][1]-local.data[local.pathway].all.treatment.trend[1][30]),
+			percentUp: local.data[local.pathway].all.treatment.trend[1][1]-local.data[local.pathway].all.treatment.trend[1][30]>=0,
+			number: local.data[local.pathway].all.treatment.trend[2][1],
+			numberUp: local.data[local.pathway].all.treatment.trend[2][1]-local.data[local.pathway].all.treatment.trend[2][30]>=0,
+			numberChange: Math.abs(local.data[local.pathway].all.treatment.trend[2][1]-local.data[local.pathway].all.treatment.trend[2][30])
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -184,7 +184,7 @@
 			bindto: '#treatment-chart',
 			data: {
 				x: 'x',
-				columns: local.data[local.pathway].all.controlled.trend,
+				columns: local.data[local.pathway].all.treatment.trend,
 				axes: {
 					"%" : 'y',
 					"n" : 'y2'
@@ -312,7 +312,7 @@
 		});
 	};
 
-	var addBreakdownPanel = function (type, id){
+	var addBreakdownPanel = function (type, id, pathwayStage){
 		local.selected = id;
 
 		createPanel(breakdownPanel, topRightPanel,{"header": local.data[local.pathway][type] ? local.data[local.pathway][type].header : ""});
@@ -394,7 +394,7 @@
 			}
 		});
 
-		populateBreakdownTable(id);
+		populateBreakdownTable(pathwayStage);
 	};
 
 	var addActionPlanPanel = function(location) {
@@ -602,7 +602,7 @@
 
 			selectPanel(pathwayStage);
 
-			addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2);
+			addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2, pathwayStage);
 
 			//Unselect all other pathway nodes and keep this one enlarged
 			cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
@@ -880,7 +880,7 @@
 		//select patient
 		selectPanel(pathwayStage);
 
-		addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2);
+		addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2, pathwayStage);
 
 		populatePatientPanel(subsection);
 		populateSuggestedActionsPanel(subsection);
@@ -1114,7 +1114,7 @@
 
 			selectPanel(pathwayStage);
 
-			addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2);
+			addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2, pathwayStage);
 		});
 		
 		$('#selectBP').on('click', function(){			
@@ -1145,30 +1145,30 @@
 			var data = file.data;
 			for(i = 0 ; i < data.length; i++){
 				d = data[i].disease;
-				local.data[d] = {"all" : data[i], "patients" : data[i].patients, "items" : {}, "Measured" : {"header": data[i].measured.header,"breakdown":[]}, "Controlled": {"header": data[i].controlled.header,"breakdown":[]}, "Exclusions": {"header": data[i].exclusions.header,"breakdown":[]}};
+				local.data[d] = {"all" : data[i], "patients" : data[i].patients, "items" : {}, "Measured" : {"header": data[i].monitoring.header,"breakdown":[]}, "Controlled": {"header": data[i].treatment.header,"breakdown":[]}, "Exclusions": {"header": data[i].exclusions.header,"breakdown":[]}};
 				local.data[d].patientArray = [];
 				for(var o in data[i].patients) {
 					if(data[i].patients.hasOwnProperty(o)) {
 						local.data[d].patientArray.push(o);
 					}
 				}
-				local.data[d].Measured.main = [['Unmeasured', local.data[d].all.unmeasured.n],['Measured', local.data[d].all.measured.n],['Exclusions', local.data[d].all.exclusions.n]];
-				local.data[d].Controlled.main = [['Uncontrolled', local.data[d].all.uncontrolled.n],['Controlled', local.data[d].all.controlled.n]	,['Exclusions', local.data[d].all.exclusions.n]];
+				local.data[d].Measured.main = [['Unmeasured', local.data[d].all.monitoring.unmeasured],['Measured', local.data[d].all.monitoring.measured],['Exclusions', local.data[d].all.exclusions.n]];
+				local.data[d].Controlled.main = [['Uncontrolled', local.data[d].all.treatment.uncontrolled],['Controlled', local.data[d].all.treatment.controlled]	,['Exclusions', local.data[d].all.exclusions.n]];
 				
-				for(j=0; j < local.data[d].all.unmeasured.items.length; j++) {
-					local.data[d].Measured.breakdown.push([local.data[d].all.unmeasured.items[j].name, local.data[d].all.unmeasured.items[j].n]);
-					local.data[d].items[local.data[d].all.unmeasured.items[j].name] = local.data[d].all.unmeasured.items[j];
-					for(k=0; k < local.data[d].all.unmeasured.items[j].patients.length; k++) {
-						local.data[d].patients[local.data[d].all.unmeasured.items[j].patients[k]].pathwayStage = "monitoring";
-						local.data[d].patients[local.data[d].all.unmeasured.items[j].patients[k]].subsection = local.data[d].all.unmeasured.items[j].name;
+				for(j=0; j < local.data[d].all.monitoring.items.length; j++) {
+					local.data[d].Measured.breakdown.push([local.data[d].all.monitoring.items[j].name, local.data[d].all.monitoring.items[j].n]);
+					local.data[d].items[local.data[d].all.monitoring.items[j].name] = local.data[d].all.monitoring.items[j];
+					for(k=0; k < local.data[d].all.monitoring.items[j].patients.length; k++) {
+						local.data[d].patients[local.data[d].all.monitoring.items[j].patients[k]].pathwayStage = "monitoring";
+						local.data[d].patients[local.data[d].all.monitoring.items[j].patients[k]].subsection = local.data[d].all.monitoring.items[j].name;
 					}
 				}
-				for(j=0; j < local.data[d].all.uncontrolled.items.length; j++) {
-					local.data[d].Controlled.breakdown.push([local.data[d].all.uncontrolled.items[j].name, local.data[d].all.uncontrolled.items[j].n]);
-					local.data[d].items[local.data[d].all.uncontrolled.items[j].name] = local.data[d].all.uncontrolled.items[j];
-					for(k=0; k < local.data[d].all.uncontrolled.items[j].patients.length; k++) {
-						local.data[d].patients[local.data[d].all.uncontrolled.items[j].patients[k]].pathwayStage = "treatment";
-						local.data[d].patients[local.data[d].all.uncontrolled.items[j].patients[k]].subsection = local.data[d].all.uncontrolled.items[j].name;
+				for(j=0; j < local.data[d].all.treatment.items.length; j++) {
+					local.data[d].Controlled.breakdown.push([local.data[d].all.treatment.items[j].name, local.data[d].all.treatment.items[j].n]);
+					local.data[d].items[local.data[d].all.treatment.items[j].name] = local.data[d].all.treatment.items[j];
+					for(k=0; k < local.data[d].all.treatment.items[j].patients.length; k++) {
+						local.data[d].patients[local.data[d].all.treatment.items[j].patients[k]].pathwayStage = "treatment";
+						local.data[d].patients[local.data[d].all.treatment.items[j].patients[k]].subsection = local.data[d].all.treatment.items[j].name;
 					}
 				}
 				for(j=0; j < local.data[d].all.exclusions.items.length; j++) {
