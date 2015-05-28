@@ -8,10 +8,16 @@
     "lint": "jshint --show-non-errors script.js data.json",
     "prebuild": "npm run lint",
     "build": "",
+
     "serve": "http-server -o -p 9090 .",
     "live-reload": "live-reload --port 9091 .",
     "watch": "nodemon -q -w . --ext \".\" --exec \"npm run build\"",
-    "start": "parallelshell \"npm run open -s\" \"npm run live-reload -s\" \"npm run serve -s\" \"npm run watch -s\""
+
+    "start": "npm run dev",
+
+    "dev": "parallelshell \"npm run live-reload -s\" \"npm run serve -s\" \"npm run watch -s\"",
+    "commit": "git add --all && git commit -m \"Changes\" && git push origin",
+    "deploy": "git push origin master:gh-pages && git checkout gh-pages"
   },
   "repository": {
     "type": "git",
@@ -24,6 +30,7 @@
   },
   "homepage": "https://github.com/rw251/rw251.github.io",
   "devDependencies": {
+    "htmlprocessor": "^0.1.10",
     "http-server": "^0.8.0",
     "jshint": "^2.7.0",
     "live-reload": "^1.1.0",
