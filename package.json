@@ -4,7 +4,14 @@
   "description": "The performance improvement plan generator",
   "main": "script.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "jshint --show-non-errors script.js data.json",
+    "prebuild": "npm run lint",
+    "build": "",
+    "serve": "http-server -o -p 9090 .",
+    "live-reload": "live-reload --port 9091 .",
+    "watch": "nodemon -q -w . --ext \".\" --exec \"npm run build\"",
+    "start": "parallelshell \"npm run open -s\" \"npm run live-reload -s\" \"npm run serve -s\" \"npm run watch -s\""
   },
   "repository": {
     "type": "git",
@@ -17,9 +24,10 @@
   },
   "homepage": "https://github.com/rw251/rw251.github.io",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-http-server": "^1.2.0"
+    "http-server": "^0.8.0",
+    "jshint": "^2.7.0",
+    "live-reload": "^1.1.0",
+    "nodemon": "^1.3.7",
+    "parallelshell": "^1.1.1"
   }
 }
