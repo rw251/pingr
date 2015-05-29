@@ -57,7 +57,7 @@
 				if(i===items.length-1){
 					html.push('<span>' + items[i] + '</span>');
 				} else{
-					html.push('<a href="">' + items[i] + '</a>');
+					html.push('<a href="#main">' + items[i] + '</a>');
 				}
 			}
 		}
@@ -109,15 +109,16 @@
 	};
 
 	var showPanel = function(pathwayStage, location, enableHover) {
-		if(pathwayStage === local.categories.monitoring.name) showMonitoringPanel(location);
-		if(pathwayStage === local.categories.treatment.name) showTreatmentPanel(location);
-		if(pathwayStage === local.categories.diagnosis.name) showDiagnosisPanel(location);
-		if(pathwayStage === local.categories.exclusions.name) showExclusionsPanel(location);
+		if(pathwayStage === local.categories.monitoring.name) showMonitoringPanel(location, enableHover);
+		if(pathwayStage === local.categories.treatment.name) showTreatmentPanel(location, enableHover);
+		if(pathwayStage === local.categories.diagnosis.name) showDiagnosisPanel(location, enableHover);
+		if(pathwayStage === local.categories.exclusions.name) showExclusionsPanel(location, enableHover);
 
 		if(enableHover) highlightOnHoverAndEnableSelectByClick(location);
+    else location.children('div').addClass('unclickable');
 	};
 
-	var showMonitoringPanel = function(location) {
+	var showMonitoringPanel = function(location, enableHover) {
 		var percentChange = local.data[local.pathway].all.monitoring.trend[1][1]-local.data[local.pathway].all.monitoring.trend[1][30];
 		var numberChange = local.data[local.pathway].all.monitoring.trend[2][1]-local.data[local.pathway].all.monitoring.trend[2][30];
 		createPanel(monitoringPanel, location, {
@@ -141,6 +142,13 @@
 					"n" : 'y2'
 				}
 			},
+      tooltip: {
+        format: {
+          title: function () { return 'Click for more detail'; },
+          value: function () { return undefined;}
+        },
+        show : enableHover
+      },
 			axis: {
 				x: {
 					type: 'timeseries',
@@ -174,7 +182,7 @@
 		});
 	};
 
-	var showTreatmentPanel = function(location) {
+	var showTreatmentPanel = function(location, enableHover) {
 		var percentChange = local.data[local.pathway].all.treatment.trend[1][1]-local.data[local.pathway].all.treatment.trend[1][30];
 		var numberChange = local.data[local.pathway].all.treatment.trend[2][1]-local.data[local.pathway].all.treatment.trend[2][30];
 		createPanel(treatmentPanel, location, {
@@ -198,6 +206,13 @@
 					"n" : 'y2'
 				}
 			},
+      tooltip: {
+        format: {
+          title: function () { return 'Click for more detail'; },
+          value: function () { return undefined;}
+        },
+        show : enableHover
+      },
 			axis: {
 				x: {
 					type: 'timeseries',
@@ -231,7 +246,7 @@
 		});
 	};
 
-	var showDiagnosisPanel = function(location) {
+	var showDiagnosisPanel = function(location, enableHover) {
 		createPanel(diagnosisPanel, location);
 
 		c3.generate({
@@ -242,6 +257,13 @@
 				],
 				type: 'bar'
 			},
+      tooltip: {
+        format: {
+          title: function () { return 'Click for more detail'; },
+          value: function () { return undefined;}
+        },
+        show : enableHover
+      },
 			bar: {
 				width: {
 					ratio: 0.5 // this makes bar width 50% of length between ticks
@@ -258,7 +280,7 @@
 		});
 	};
 
-	var showExclusionsPanel = function(location) {
+	var showExclusionsPanel = function(location, enableHover) {
 		createPanel(exclusionPanel, location);
 
 		c3.generate({
@@ -269,6 +291,13 @@
 				],
 				type: 'bar'
 			},
+      tooltip: {
+        format: {
+          title: function () { return 'Click for more detail'; },
+          value: function () { return undefined;}
+        },
+        show : enableHover
+      },
 			bar: {
 				width: {
 					ratio: 0.5 // this makes bar width 50% of length between ticks
@@ -327,7 +356,7 @@
 	var addBreakdownPanel = function (type, id, pathwayStage){
 		local.selected = id;
 
-		createPanel(breakdownPanel, topRightPanel,{"header": local.data[local.pathway][type] ? local.data[local.pathway][type].header : ""});
+		createPanel(breakdownPanel, topRightPanel,{"pathwayStage" : pathwayStage, "header": local.data[local.pathway][type] ? local.data[local.pathway][type].header : ""});
 
 		breakdownTable = $('#breakdown-table');
 
@@ -414,8 +443,8 @@
 		populateBreakdownTable(pathwayStage);
 	};
 
-	var addActionPlanPanel = function(location) {
-		createPanel(actionPlanPanel,location);
+	var addActionPlanPanel = function(location, pathwayStage) {
+		createPanel(actionPlanPanel,location,{"pathwayStage" : pathwayStage});
 
 		suggestedActionPlan = $('#sap');
 		adviceList = $('#advice-list');
@@ -504,12 +533,16 @@
 	var selectPanel = function(pathwayStage) {
 		//move to top left..
 		showPanel(pathwayStage, topLeftPanel, false);
+    topLeftPanel.children('div').removeClass('panel-default');
 
 		switchToThreePanelLayout();
 
-		addActionPlanPanel(bottomLeftPanel);
+		addActionPlanPanel(bottomLeftPanel, pathwayStage);
 
 		updateBreadcrumbs([local.pathway, local.categories[pathwayStage].d1]);
+
+    //update patient panel
+    patientsPanel.parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
 	};
 
 	var populatePatientPanel = function (id, sortField, sortAsc) {
@@ -590,20 +623,28 @@
 	};
 
 	var highlightOnHoverAndEnableSelectByClick = function(panelSelector) {
-		panelSelector.children('div').on('mouseover',function(){
-			$(this).addClass('panel-primary').removeClass('panel-default');
+		panelSelector.children('div').removeClass('unclickable').on('mouseover',function(){
+			$(this).removeClass('panel-default');
 
 			var pathwayStage = $(this).data('stage');
 
 			//Make the icon grow
 			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').addClass('fa-3x');
+      //Change the color
+      cdTimeLineBlock.find('span[data-stage=' + pathwayStage + '] i.fa-circle-thin').removeClass('icon-background-border');
 		}).on('mouseout',function(){
-			$(this).removeClass('panel-primary').addClass('panel-default');
+
+			//un-highlight the appropriate panel if no other selected
+      if(cdTimeLineBlock.find('span').map(function(){ return $(this).data('selected');}).get().indexOf(true) === -1)
+			   $(this).addClass('panel-default');
 
 			var pathwayStage = $(this).data('stage');
 
-			//Make the icon shrink
-			if(!cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected')) cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').removeClass('fa-3x');
+			//Make the icon shrink and change color
+			if(!cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected')) {
+        cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').removeClass('fa-3x');
+          cdTimeLineBlock.find('span[data-stage=' + pathwayStage + '] i.fa-circle-thin').addClass('icon-background-border');
+      }
 		}).on('click', function(){
 			window.location.hash = $(this).data('stage');
 		});
@@ -707,6 +748,7 @@
 
 		//Unselect all nodes on pathway
 		cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
+		cdTimeLineBlock.find('span').data('selected', false).find('i.fa-circle-thin').addClass('icon-background-border');
 
 		switchToFourPanelLayout();
 
@@ -714,9 +756,9 @@
 
 		updateBreadcrumbs([local.pathway]);
 
-		showPanel(local.categories.monitoring.name, topLeftPanel, true);
-		showPanel(local.categories.treatment.name, topRightPanel, true);
-		showPanel(local.categories.diagnosis.name, bottomLeftPanel, true);
+		showPanel(local.categories.diagnosis.name, topLeftPanel, true);
+		showPanel(local.categories.monitoring.name, topRightPanel, true);
+		showPanel(local.categories.treatment.name, bottomLeftPanel, true);
 		showPanel(local.categories.exclusions.name, bottomRightPanel, true);
 	};
 
@@ -1045,7 +1087,9 @@
       //Unselect all other nodes and keep this one enlarged
       var pathwayStage = hash.substr(1);
       cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
+      cdTimeLineBlock.find('span').data('selected', false).find('i.fa-circle-thin').addClass('icon-background-border');
 			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected',true).addClass('fa-3x');
+			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected',true).find('i.fa-circle-thin').removeClass('icon-background-border');
 
       selectPanel(pathwayStage);
 
@@ -1101,28 +1145,25 @@
       e.preventDefault();
 		});
 
-		$('#breadcrumb').on('click', 'a', function(e){
-			showOverview();
-			e.preventDefault();
-		});
-
 		//Wire up the pathway in the side panel
 		cdTimeLineBlock.find('span').on('mouseover',function(){
 			//Make the icon grow
 			$(this).addClass('fa-3x');
+      //Change icon color
+			$(this).find('i.fa-circle-thin').removeClass('icon-background-border');
 			//highlight the appropriate panel
-			$('div[data-stage=' + $(this).data('stage') +']').addClass('panel-primary').removeClass('panel-default');
+			$('div[data-stage=' + $(this).data('stage') +']').removeClass('panel-default');
 		}).on('mouseout',function(){
-			//Make the icon shrink
-			if(!$(this).data('selected')) $(this).removeClass('fa-3x');
-			//un-highlight the appropriate panel
-			$('div[data-stage=' + $(this).data('stage') +']').removeClass('panel-primary').addClass('panel-default');
+			//Make the icon shrink and change color
+			if(!$(this).data('selected')) {
+        $(this).removeClass('fa-3x');
+  			$(this).find('i.fa-circle-thin').addClass('icon-background-border');
+      }
+			//un-highlight the appropriate panel if no other selected
+      if(cdTimeLineBlock.find('span').map(function(){ return $(this).data('selected');}).get().indexOf(true) === -1)
+			   $('div[data-stage=' + $(this).data('stage') +']').addClass('panel-default');
 		}).on('click', function() {
       window.location.hash = $(this).data('stage');
-		});
-
-		$('#selectBP').on('click', function(){
-			showOverview();
 		});
 
 		/**********************************

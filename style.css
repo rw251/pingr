@@ -30,8 +30,33 @@ header {
 	font-size: 2.2em;
 }
 
+
+.icon-background-border-success {
+	color: #70ba63;
+}
+
+.icon-background-border-info {
+	color: #4cbceb;
+}
+
+.icon-background-border-warning {
+	color: #feb252;
+}
+
+.icon-background-border-danger {
+	color: #e35b5a;
+}
+
 .icon-background-border {
 	color: #85868d;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.unclickable {
+  cursor: default;
 }
 /*
 #chart-benchmark .c3-line {
@@ -45,7 +70,7 @@ header {
 }*/
 
 .tr-hovered {
-	background-color: rgb(244,244,255);	
+	background-color: rgb(244,244,255);
 }
 
 .btn-toggle {
@@ -226,10 +251,10 @@ th,td {
   /* this is the vertical line */
   content: '';
   position: absolute;
-  top: 0;
+  top: 30px;
   left: 50%;
-  height: 100%;
-    margin-left: -2px;
+  height: 75%;
+  margin-left: -2px;
   width: 4px;
   background: #85868d;
 }
@@ -350,7 +375,7 @@ th,td {
    extra svg elements at the bottom
    of the page cause the vertical
    scrollbar to toggle  */
-body > svg { 
+body > svg {
 	/*height:0px !important;*/
 	position: absolute;
     z-index: -10;

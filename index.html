@@ -62,7 +62,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand">PINGR</a>
+          <a href="#main" class="navbar-brand">PINGR</a>
         </div>
 
         <div class="collapse navbar-collapse" id="navbar">
@@ -185,7 +185,7 @@
         <nav class="navigation">
           <ul class="list-unstyled">
             <li class="active">
-              <a href="#" id="selectBP"><i class="fa fa-heart-o"></i> <span class="nav-label">Blood Pressure</span></a>
+              <a href="#main"><i class="fa fa-heart-o"></i> <span class="nav-label">Blood Pressure</span></a>
             </li>
           </ul>
         </nav>
@@ -193,9 +193,9 @@
         <section class="cd-container" id="cd-timeline">
           <div class="cd-timeline-block">
             <div style="text-align: center;">
-              <span data-stage="diagnosis" data-toggle="tooltip" data-placement="top" title="Diagnosis" class="fa-stack fa-2x fa-stack-mod">
+              <span data-stage="diagnosis" data-toggle="tooltip" data-placement="top" title="Diagnosis" class="fa-stack fa-2x fa-stack-mod clickable">
                 <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-                <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+                <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-success"></i>
                 <i class="fa fa-exclamation-triangle fa-stack-1x icon-success"></i>
               </span>
             </div>
@@ -203,9 +203,9 @@
 
           <div class="cd-timeline-block">
             <div style="text-align: center;">
-              <span data-stage="monitoring" data-toggle="tooltip" data-placement="top" title="Monitoring" class="fa-stack fa-2x fa-stack-mod">
+              <span data-stage="monitoring" data-toggle="tooltip" data-placement="top" title="Monitoring" class="fa-stack fa-2x fa-stack-mod clickable">
                 <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-                <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+                <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-info"></i>
                 <i class="fa fa-stethoscope fa-stack-1x icon-info"></i>
               </span>
             </div>
@@ -213,9 +213,9 @@
 
           <div class="cd-timeline-block">
             <div style="text-align: center;">
-              <span data-stage="treatment" data-toggle="tooltip" data-placement="top" title="Treatment" class="fa-stack fa-2x fa-stack-mod">
+              <span data-stage="treatment" data-toggle="tooltip" data-placement="top" title="Treatment" class="fa-stack fa-2x fa-stack-mod clickable">
                 <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-                <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+                <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-warning"></i>
                 <i class="fa fa-medkit fa-stack-1x icon-warning"></i>
               </span>
             </div>
@@ -224,9 +224,9 @@
 
         <div class="cd-timeline-block">
           <div style="text-align: center;">
-            <span data-stage="exclusions" data-toggle="tooltip" data-placement="top" title="Exclusions" class="fa-stack fa-2x fa-stack-mod">
+            <span data-stage="exclusions" data-toggle="tooltip" data-placement="top" title="Exclusions" class="fa-stack fa-2x fa-stack-mod clickable">
               <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-              <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border"></i>
+              <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-danger"></i>
               <i class="fa fa-times fa-stack-1x icon-danger"></i>
             </span>
           </div>
@@ -235,11 +235,11 @@
         <nav class="navigation">
           <ul class="list-unstyled">
             <li>
-              <a href="#"><i class="fa fa-stethoscope"></i><span class="nav-label">COPD (Coming soon!)</span></a>
+              <a href="#main"><i class="fa fa-stethoscope"></i><span class="nav-label">COPD (Coming soon!)</span></a>
             </li>
 
             <li>
-              <a href="#"><i class="fa fa-medkit"></i><span class="nav-label">Kidney Health (Coming soon!)</span></a>
+              <a href="#main"><i class="fa fa-medkit"></i><span class="nav-label">Kidney Health (Coming soon!)</span></a>
             </li>
           </ul>
         </nav>
@@ -436,7 +436,7 @@
   </script>
 
   <script id="action-plan-panel" type="x-tmpl-mustache">
-    <div class="panel panel-default">
+    <div class="panel panel-{{pathwayStage}}">
       <div class="panel-heading clearfix">
         <h3 class="panel-title">Suggested action plan</h3>
       </div>
@@ -583,7 +583,7 @@
   </script>
 
   <script id="monitoring-panel" type="x-tmpl-mustache">
-    <div data-stage="monitoring" class="panel panel-default">
+    <div data-stage="monitoring" class="panel panel-monitoring panel-default clickable">
       <div class="panel-heading">
         <i class="fa fa-stethoscope fa-fw"></i>&nbsp; Monitoring
       </div>
@@ -617,7 +617,7 @@
   </script>
 
   <script id="treatment-panel" type="x-tmpl-mustache">
-    <div data-stage="treatment" class="panel panel-default">
+    <div data-stage="treatment" class="panel panel-treatment panel-default clickable">
       <div class="panel-heading">
         <i class="fa fa-medkit fa-fw"></i>&nbsp; Treatment
       </div>
@@ -633,7 +633,7 @@
   </script>
 
   <script id="breakdown-panel" type="x-tmpl-mustache">
-    <div class="panel panel-default">
+    <div class="panel panel-{{pathwayStage}}">
       <div class="panel-heading">
         Improvement opportunities
       </div>
@@ -656,7 +656,7 @@
   </script>
 
   <script id="diagnosis-panel" type="x-tmpl-mustache">
-    <div data-stage="diagnosis" class="panel panel-default">
+    <div data-stage="diagnosis" class="panel panel-diagnosis panel-default clickable">
       <div class="panel-heading">
         <i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp; Diagnosis
       </div>
@@ -672,7 +672,7 @@
   </script>
 
   <script id="exclusion-panel" type="x-tmpl-mustache">
-    <div data-stage="exclusions" class="panel panel-default">
+    <div data-stage="exclusions" class="panel panel-exclusions panel-default clickable">
       <div class="panel-heading">
         <i class="fa fa-times fa-fw"></i>&nbsp; Exclusions
       </div>
