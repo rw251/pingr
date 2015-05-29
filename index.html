@@ -317,8 +317,7 @@
   </script>
 
   <script id="sap-template" type="x-tmpl-mustache">
-    <p>{{main}}
-      <span class="text-danger">They represent potential for (absolute) {{ total-improvement }}% improvement in performance.</span> Potential actions are:</p>
+    <p>Potential actions are:</p>
     <table class="table">
       <thead>
         <tr>
@@ -366,26 +365,27 @@
             <i class="fa fa-caret-up"></i>{{/isSorted}} {{^isSorted}}
             <i class="fa fa-caret-down"></i>{{/isSorted}}
           </th>
-          <th>Do you agree?</th>
+          <!--<th>Do you agree?</th>-->
         </tr>
       </thead>
       <tbody>
         {{#patients}}
         <tr class="list-item">
-          <td>{{nhsNumber}}
+          <td>
             <button type="button" data-clipboard-text="{{nhsNumber}}" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
             </button>
+            {{nhsNumber}}
           </td>
           <td>{{sbp}}</td>
-          <td>
+          <!--<td>
             <button type="button" class="btn btn-xs btn-yes btn-default thumb-up">
               <span class="fa fa-thumbs-up"></span> Yes
             </button>
             <button type="button" class="btn btn-xs btn-no btn-default thumb-down">
               <span class="fa fa-thumbs-down"></span> No - fix it
             </button>
-          </td>
+          </td>-->
         </tr>
         {{/patients}}
       </tbody>
