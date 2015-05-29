@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*jshint -W055 */
-/*global $, c3, Mustache*/
+/*global $, c3, Mustache, ZeroClipboard, console, jsPDF, Bloodhound, bb*/
 
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.
@@ -8,7 +8,7 @@
  * Clicking on a panel takes you to a screen specific to that stage, but similar in layour and content
  *  to all the others.
  */
- 
+
 (function () {
    'use strict';
 
@@ -334,9 +334,12 @@
 		topRightPanel.off('click','.panel-body');
 		topRightPanel.on('click', '.panel-body', function(){
 			if(!local.chartClicked){
+        /*jshint unused: true*/
 				$('path.c3-arc').attr('class', function(index, classNames) {
 					return classNames.replace(/_unselected_/g, '');
 				});
+        /*jshint unused: false*/
+
 				if(local.charts['breakdown-chart']) local.charts['breakdown-chart'].unselect();
 
 				hideAllPanels();
@@ -396,9 +399,11 @@
 			},
 			pie: {
 				label: {
+          /*jshint unused: true*/
 					format: function (value, ratio, id) {
 						return id;// + ' ('+value+')';
 					}
+          /*jshint unused: false*/
 				}
 			},
 			legend: {
@@ -600,17 +605,7 @@
 			//Make the icon shrink
 			if(!cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected')) cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').removeClass('fa-3x');
 		}).on('click', function(){
-			hideAllPanels();
-
-			var pathwayStage = $(this).data('stage');
-
-			selectPanel(pathwayStage);
-
-			addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2, pathwayStage);
-
-			//Unselect all other pathway nodes and keep this one enlarged
-			cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
-			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected',true).addClass('fa-3x');
+			window.location.hash = $(this).data('stage');
 		});
 	};
 
@@ -690,9 +685,11 @@
 
 	var selectPieSlice = function (chart, id){
 		local.chartClicked=true;
+    /*jshint unused: true*/
 		$('#' + chart + ' path.c3-arc').attr('class', function(index, classNames) {
 			return classNames + ' _unselected_';
 		});
+    /*jshint unused: false*/
 		local.charts[chart].unselect();
 		local.charts[chart].select(id);
 	};
@@ -849,24 +846,10 @@
 	var displaySelectedPatient = function(id){
 		//find patient - throw error if not exists
 
-		//if screen not in correct segment then select it
-		if(local.page !== 'main-dashboard'){
-			$('.page').hide();
-			$('#main-dashboard').show();
-
-			showSidePanel();
-			showOverview();
-
-			addPatientPanel(farRightPanel);
-		}
-
 		var pathwayStage = local.data[local.pathway].patients[id].pathwayStage;
 		var subsection = local.data[local.pathway].patients[id].subsection;
 
-		//select patient
-		selectPanel(pathwayStage);
-
-		addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2, pathwayStage);
+    window.location.hash = pathwayStage;
 
 		populatePatientPanel(subsection);
 		populateSuggestedActionsPanel(subsection);
@@ -886,10 +869,6 @@
 		$('a[href=#tab-sap-individual]').tab('show');
 
 		populateIndividualSuggestedActions(id);
-
-		//Unselect all other pathway nodes and keep this one enlarged
-		cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
-		cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected',true).addClass('fa-3x');
 	};
 
 	var showPage = function (page) {
@@ -1024,7 +1003,10 @@
 		doc.save();
 	};
 
+
+  /*jshint unused: true*/
 	var onSelected = function($e, nhsNumberObject) {
+  /*jshint unused: false*/
 		//Hide the suggestions panel
 		$('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
@@ -1034,8 +1016,52 @@
 		displaySelectedPatient(nhsNumberObject.value);
 	};
 
+  var loadContent = function(hash, isPoppingState){
+    if(!isPoppingState) {
+      window.location.hash = hash;
+    }
+
+    if(hash === ''){
+      showPage('login');
+    }else if(hash === "#main") {
+      showPage('main-dashboard');
+      $('#navbar').children('.nav').find(".active").removeClass("active");
+    } else if (hash === "#help") {
+      showPage('help-page');
+    } else {
+      //if screen not in correct segment then select it
+      if(local.page !== 'main-dashboard'){
+        $('.page').hide();
+        $('#main-dashboard').show();
+
+        showSidePanel();
+        showOverview();
+
+        addPatientPanel(farRightPanel);
+      }
+
+      hideAllPanels();
+
+      //Unselect all other nodes and keep this one enlarged
+      var pathwayStage = hash.substr(1);
+      cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
+			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected',true).addClass('fa-3x');
+
+      selectPanel(pathwayStage);
+
+      addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2, pathwayStage);
+    }
+
+
+  };
+
 	var wireUpPages = function () {
 		showPage('login');
+
+    //History
+    window.onpopstate = function() {
+        loadContent(window.location.hash, true);
+    };
 
 		//Templates
 		monitoringPanel = $('#monitoring-panel');
@@ -1061,66 +1087,46 @@
 		farRightPanel = $('#right-panel');
 		cdTimeLineBlock = $('.cd-timeline-block');
 
-		$('#topnavbar').on('click', 'a', function () {
-			$('#navbar').children('.nav').find(".active").removeClass("active");
-			$(this).parent().addClass("active");
-			if (this.href.split('#')[1] === 'help') { showPage('help-page'); } 
-			else showPage('main-dashboard');
-		});
-		
-		$('#enter-button').on('click', function (e) {
-			showPage('main-dashboard');
-			$('#navbar').children('.nav').find(".active").removeClass("active");
-			e.preventDefault();
-		});
-		
-		$('#pick-nice').on('click', function(){
+		$('#pick-nice').on('click', function(e){
 			$('#pick-button').html('NICE <span class="caret"></span>');
 			$('#guide-amount').html('<i class="fa fa-warning"></i> 96</span>');
 			$('#guide-text').html('CVD events could be prevented');
+      e.preventDefault();
 		});
-		
-		$('#pick-qof').on('click', function(){
+
+		$('#pick-qof').on('click', function(e){
 			$('#pick-button').html('QOF <span class="caret"></span>');
 			$('#guide-amount').html('<i class="fa fa-warning"></i> 12</span>');
-			$('#guide-text').html('QOF points could be achieved');		
-		});				
-	
+			$('#guide-text').html('QOF points could be achieved');
+      e.preventDefault();
+		});
+
 		$('#breadcrumb').on('click', 'a', function(e){
 			showOverview();
 			e.preventDefault();
-		});	
-		
+		});
+
 		//Wire up the pathway in the side panel
 		cdTimeLineBlock.find('span').on('mouseover',function(){
 			//Make the icon grow
 			$(this).addClass('fa-3x');
 			//highlight the appropriate panel
-			$('div[data-stage=' + $(this).data('stage') +']').addClass('panel-primary').removeClass('panel-default'); 
+			$('div[data-stage=' + $(this).data('stage') +']').addClass('panel-primary').removeClass('panel-default');
 		}).on('mouseout',function(){
 			//Make the icon shrink
 			if(!$(this).data('selected')) $(this).removeClass('fa-3x');
 			//un-highlight the appropriate panel
 			$('div[data-stage=' + $(this).data('stage') +']').removeClass('panel-primary').addClass('panel-default');
 		}).on('click', function() {
-			hideAllPanels();
-
-			//Unselect all other nodes and keep this one enlarged
-			var pathwayStage = $(this).data('stage');
-			cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
-			$(this).data('selected',true).addClass('fa-3x');
-
-			selectPanel(pathwayStage);
-
-			addBreakdownPanel(local.categories[pathwayStage].d1, local.categories[pathwayStage].d2, pathwayStage);
+      window.location.hash = $(this).data('stage');
 		});
-		
-		$('#selectBP').on('click', function(){			
+
+		$('#selectBP').on('click', function(){
 			showOverview();
 		});
-		
+
 		/**********************************
-		 ** Patient search auto complete ** 
+		 ** Patient search auto complete **
 		 **********************************/
 		var states = new Bloodhound({
 			datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -1152,7 +1158,7 @@
 				}
 				local.data[d].Measured.main = [['Unmeasured', local.data[d].all.monitoring.unmeasured],['Measured', local.data[d].all.monitoring.measured],['Exclusions', local.data[d].all.exclusions.n]];
 				local.data[d].Controlled.main = [['Uncontrolled', local.data[d].all.treatment.uncontrolled],['Controlled', local.data[d].all.treatment.controlled]	,['Exclusions', local.data[d].all.exclusions.n]];
-				
+
 				for(j=0; j < local.data[d].all.monitoring.items.length; j++) {
 					local.data[d].Measured.breakdown.push([local.data[d].all.monitoring.items[j].name, local.data[d].all.monitoring.items[j].n]);
 					local.data[d].items[local.data[d].all.monitoring.items[j].name] = local.data[d].all.monitoring.items[j];
@@ -1178,15 +1184,15 @@
 					}
 				}
 			}
-			
+
 			callback();
 		});
 	};
-	
+
 	var initialize = function(){
 		loadData(wireUpPages);
 	};
-	
+
 	window.bb = {
 		init : initialize
 	};
@@ -1199,7 +1205,7 @@ $(window).load(function() {
   $('.loading-container').fadeOut(1000, function() {
 	$(this).remove();
   });
-});	
+});
 
 /******************************************
 *** This happens when the page is ready ***
@@ -1207,7 +1213,7 @@ $(window).load(function() {
 $(document).on('ready', function () {
 	//Load the data then wire up the events on the page
 	bb.init();
-	
+
 	//Sorts out the data held locally in the user's browser
 	if(!localStorage.bb) localStorage.bb = JSON.stringify({});
 	var obj = JSON.parse(localStorage.bb);
@@ -1219,6 +1225,6 @@ $(document).on('ready', function () {
 		obj.plans = {"team":{}, "individual":{}};
 		localStorage.bb = JSON.stringify(obj);
 	}
-	
+
 	$('[data-toggle="tooltip"]').tooltip();
 });
