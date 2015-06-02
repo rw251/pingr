@@ -316,8 +316,30 @@
     </label>
   </script>
 
+  <script id="sap-item"  type="x-tmpl-mustache">
+  <tr class="suggestion">
+    <td>
+      <span>{{{text}}}</span>
+      {{#improvement}}
+      <span class='text-danger'> - this could improve your performance by {{ improvement }}%.</span>{{/improvement}}
+    </td>
+    <td>
+      <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-xs btn-yes btn-toggle btn-success">
+          <input type="radio" name="action-agree-{{index}}" value="yes" autocomplete="off">
+          <span class="fa fa-thumbs-up"></span>
+        </label>
+        <label class="btn btn-xs btn-no btn-toggle btn-danger">
+          <input type="radio" name="action-agree-{{lastIndex}}" value="no" autocomplete="off">
+          <span class="fa fa-thumbs-down"></span>
+        </label>
+      </div>
+    </td>
+    <td>{{>chk}}</td>
+  </tr>
+  </script>
+
   <script id="sap-template" type="x-tmpl-mustache">
-    <p>Potential actions are:</p>
     <table class="table">
       <thead>
         <tr>
@@ -328,27 +350,7 @@
       </thead>
       <tbody>
         {{#suggestions}}
-        <tr class="suggestion">
-          <td>
-            <span>{{{text}}}</span>
-            {{#improvement}}
-            <span class='text-danger'> - this could improve your performance by {{ improvement }}%.</span>{{/improvement}}
-            <span class="fa fa-star" style="color:gold;text-shadow: 1px 1px 1px #333;font-size: 1.5em;"></span>
-          </td>
-          <td>
-            <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-xs btn-yes btn-toggle btn-success">
-                <input type="radio" name="action-agree-{{index}}" value="yes" autocomplete="off">
-                <span class="fa fa-thumbs-up"></span>
-              </label>
-              <label class="btn btn-xs btn-no btn-toggle btn-danger">
-                <input type="radio" name="action-agree-{{lastIndex}}" value="no" autocomplete="off">
-                <span class="fa fa-thumbs-down"></span>
-              </label>
-            </div>
-          </td>
-          <td>{{>chk}}</td>
-        </tr>
+        {{>item}}
         {{/suggestions}} {{resetIndex}}
       </tbody>
     </table>
@@ -413,16 +415,50 @@
     </table>
   </script>
 
-  <script id="action-plan" type="x-tmpl-mustache">
-    <div>
-      <div>Add your own action plan:</div>
-      <div class="form-group">
-        <textarea class="form-control" rows="3">{{plan}}</textarea>
+  <script id="action-plan-item" type="x-tmpl-mustache">
+  <tr class="suggestion">
+    <td>
+      <span>{{{text}}}</span>
+    </td>
+    <td>
+      <div class="btn-group" data-toggle="buttons">
+        <button class="btn btn-xs btn-default edit-plan">
+          <span class="fa fa-edit"></span>
+        </button>
+        <button class="btn btn-xs btn-default delete-plan">
+          <span class="fa fa-trash"></span>
+        </button>
       </div>
-      <button type="button" class="btn btn-primary add-plan">
-        <span class="fa fa-plus"></span> Add
-      </button>
-    </div>
+    </td>
+    <td>{{>chk}}</td>
+  </tr>
+  </script>
+
+  <script id="action-plan-list" type="x-tmpl-mustache">
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width:100%;">Your Own Actions</th>
+        <th>Edit/ Delete</th>
+        <th>Completed</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#suggestions}}
+      {{>action-plan-item}}
+      {{/suggestions}} {{resetIndex}}
+    </tbody>
+  </table>
+  {{>action-plan}}
+  </script>
+
+  <script id="action-plan" type="x-tmpl-mustache">
+  <div class="input-group">
+    <input type="text" class="form-control" id="newActionPlanItem" placeholder="Enter a new action plan item...">
+    <span class="input-group-btn">
+      <button class="btn btn-default add-plan">Add</button>
+    </span>
+  </div>
   </script>
 
   <script id="action-plan-display" type="x-tmpl-mustache">
@@ -466,6 +502,7 @@
                     Select a patient group to display suggested actions
                   </div>
                   <div id="sap"></div>
+                  <div id="personalPlanTeam"></div>
                 </div>
 
                 <div id="team-footer" class="panel-footer" style="display:none">
@@ -483,12 +520,34 @@
                     <div class="col-sm-6" id="patient-info">
                     </div>
                   </div>
+                  <div id="personalPlanIndividual"></div>
                 </div>
 
                 <div id="individual-footer" class="panel-footer">
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="editPlan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">Edit Plan</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="text" class="form-control" id="editActionPlanItem">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary save-plan">Save</button>
           </div>
         </div>
       </div>
@@ -517,7 +576,6 @@
         <tr class="suggestion">
           <td>
             <span>{{.}}</span>
-            <span class="fa fa-star" style="color:gold;text-shadow: 1px 1px 1px #333;font-size: 1.5em;"></span>
           </td>
           <td>
             <div class="btn-group" data-toggle="buttons">

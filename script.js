@@ -32,7 +32,8 @@
 	var bottomLeftPanel, bottomRightPanel, topLeftPanel, topRightPanel, farRightPanel, monitoringPanel, treatmentPanel,
 		diagnosisPanel,	exclusionPanel, patientsPanelTemplate, breakdownPanel, actionPlanPanel, patientList, sapTemplate,
 		breakdownTableTemplate,	individualPanel, bpTrendPanel, actionPlan, actionPlanDisplay, patientsPanel,
-		suggestedActionPlan, adviceList, breakdownTable, patientInfo, teamTab, individualTab, cdTimeLineBlock;
+		suggestedActionPlan, adviceList, breakdownTable, patientInfo, teamTab, individualTab, cdTimeLineBlock,
+    actionPlanList;
 
 	/**************
 	 *** Layout ***
@@ -486,15 +487,51 @@
 			updateSapRows();
 		});
 
+    $('#personalPlanTeam').on('click', 'input[type=checkbox]', function(){
+			var idx = $(this).closest('tr').prevAll().length;
+      var obj = getObj();
+      if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
+      obj.plans.team[pathwayStage][idx].done = this.checked;
+      setObj(obj);
+
+      if(this.checked){
+        $(this).parent().parent().parent().addClass('success');
+      } else {
+        $(this).parent().parent().parent().removeClass('success');
+      }
+      //displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true, false);
+		});
+
 		teamTab.on('click', '.edit-plan', function(){
-			displayPersonalisedActionPlan(local.subselected, teamTab.find('.panel-footer'), true, true);
-		}).on('click', '.add-plan', function(){
-			var obj = getObj();
-      if(!obj.plans.team[local.selected]) obj.plans.team[local.selected] = []
-			obj.plans.team[local.selected].push({"text" : teamTab.find('textarea').val(), "done": false});
+      var idx = $(this).closest('tr').prevAll().length;
+
+      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[0]).find('span').text());
+
+      $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+        displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true, false);
+      }).off('click','.save-plan').on('click', '.save-plan',function(){
+        var obj = getObj();
+        if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
+  			obj.plans.team[pathwayStage][idx].text = $('#editActionPlanItem').val();
+  			setObj(obj);
+
+        $('#editPlan').modal('hide');
+      }).modal();
+		}).on('click', '.delete-plan', function(){
+      var idx = $(this).closest('tr').prevAll().length;
+      var obj = getObj();
+      if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
+			obj.plans.team[pathwayStage].splice(idx,1);
 			setObj(obj);
 
-			displayPersonalisedActionPlan(local.selected, teamTab.find('.panel-footer'), true, false);
+			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true, false);
+		}).on('click', '.add-plan', function(){
+			var obj = getObj();
+      if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
+			obj.plans.team[pathwayStage].push({"text" : teamTab.find('input[type=text]').val(), "done": false});
+			setObj(obj);
+
+			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true, false);
 		}).on('change', 'input[type=radio]', function(){
 			var idx = Math.floor(suggestedActionPlan.find('input[type=radio]').index(this)/2);
 			var current = getObj();
@@ -510,14 +547,35 @@
 		});
 
 		individualTab.on('click', '.edit-plan', function(){
-			displayPersonalisedActionPlan(local.nhsNumber, individualTab.find('.panel-footer'), false, true);
-		}).on('click', '.add-plan', function(){
-			var obj = getObj();
-      if(!obj.plans.individual[local.nhsNumber]) obj.plans.individual[local.nhsNumber] = []
-			obj.plans.individual[local.nhsNumber].push({"text": individualTab.find('textarea').val(), "done": false});
+      var idx = $(this).closest('tr').prevAll().length;
+
+      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[0]).find('span').text());
+
+      $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+        displayPersonalisedActionPlan(local.nhsNumber, $('#personalPlanIndividual'), false, false);
+      }).off('click','.save-plan').on('click', '.save-plan',function(){
+        var obj = getObj();
+        if(!obj.plans.individual[local.nhsNumber]) obj.plans.individual[local.nhsNumber] = [];
+  			obj.plans.individual[local.nhsNumber][idx].text = $('#editActionPlanItem').val();
+  			setObj(obj);
+
+        $('#editPlan').modal('hide');
+      }).modal();
+		}).on('click', '.delete-plan', function(){
+      var idx = $(this).closest('tr').prevAll().length;
+      var obj = getObj();
+      if(!obj.plans.individual[local.nhsNumber]) obj.plans.individual[local.nhsNumber] = [];
+			obj.plans.individual[local.nhsNumber].splice(idx,1);
 			setObj(obj);
 
-			displayPersonalisedActionPlan(local.nhsNumber, individualTab.find('.panel-footer'), false, false);
+      displayPersonalisedActionPlan(local.nhsNumber, $('#personalPlanIndividual'), false, false);
+		}).on('click', '.add-plan', function(){
+			var obj = getObj();
+      if(!obj.plans.individual[local.nhsNumber]) obj.plans.individual[local.nhsNumber] = [];
+			obj.plans.individual[local.nhsNumber].push({"text": individualTab.find('input[type=text]').val(), "done": false});
+			setObj(obj);
+
+			displayPersonalisedActionPlan(local.nhsNumber, $('#personalPlanIndividual'), false, false);
 		}).on('change', 'input[type=radio]', function(){
 			var idx = Math.floor(adviceList.find('input[type=radio]').index(this)/2);
 			var current = getObj();
@@ -612,11 +670,11 @@
 				};
 			}
 
-			createPanel(sapTemplate, suggestedActionPlan, local.data[local.pathway].items[pathwayStage], {"chk" : $('#checkbox-template').html() });
+			createPanel(sapTemplate, suggestedActionPlan, local.data[local.pathway].items[pathwayStage], {"item" : $('#sap-item').html(), "chk" : $('#checkbox-template').html() });
 
 			$('#sap-placeholder').hide();
 
-			displayPersonalisedActionPlan(pathwayStage, teamTab.find('.panel-footer'), true, false);
+			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true, false);
 
 			updateCheckboxes(local.categories[pathwayStage].d2);
 		}
@@ -692,7 +750,7 @@
 		local.charts['chart-demo-trend'] = c3.generate(chartOptions);
 	};
 
-	var drawContactChart = function(nhsNumber){
+/*	var drawContactChart = function(nhsNumber){
 		destroyCharts(['chart-demo-trend']);
 		if(!local.data[local.pathway].patients || !local.data[local.pathway].patients[nhsNumber] || !local.data[local.pathway].patients[nhsNumber].contact) return;
 		local.charts['chart-demo-trend'] = c3.generate({
@@ -730,7 +788,7 @@
 				}
 			}
 		});
-	};
+	};*/
 
 	var selectPieSlice = function (chart, id){
 		local.chartClicked=true;
@@ -867,15 +925,8 @@
 		createPanel(bpTrendPanel, patientInfo);
 
     drawBpTrendChart(nhsNumber);
-		/*if(local.selected && local.selected === "Uncontrolled"){
-			drawBpTrendChart(nhsNumber);
-		} else if(local.selected && local.selected === "Unmeasured"){
-			drawContactChart(nhsNumber);
-		} else if(local.selected && local.selected === "Exclusions"){
-			drawBpTrendChart(nhsNumber);
-		}*/
 
-		displayPersonalisedActionPlan(nhsNumber, individualTab.find('.panel-footer'), false, false);
+		displayPersonalisedActionPlan(nhsNumber, $('#personalPlanIndividual'), false, false);
 	};
 
 	var displayPersonalisedActionPlan = function(id, parentElem, isTeam, isEditable) {
@@ -889,9 +940,8 @@
 			if(plans.individual[id]) plan = plans.individual[id];
 		}
 
-		if(plan === "") isEditable = true;
+		createPanel(actionPlanList, parentElem, {"suggestions" : plan}, {"action-plan": actionPlan.html(), "action-plan-item": $('#action-plan-item').html(), "chk" : $('#checkbox-template').html() });
 
-		createPanel(isEditable ? actionPlan : actionPlanDisplay, parentElem, {"plan" : plan});
 	};
 
 	var displaySelectedPatient = function(id){
@@ -1131,6 +1181,7 @@
 		bpTrendPanel = $('#bp-trend-panel');
 		actionPlan = $('#action-plan');
 		actionPlanDisplay = $('#action-plan-display');
+		actionPlanList = $('#action-plan-list');
 
 		//Selectors
 		bottomLeftPanel = $('#bottom-left-panel');

@@ -19,7 +19,7 @@
         "items": [
           {
             "name": "Nil2",
-            "desc": "Have had no contact",
+            "desc": "No contact",
             "n": 102,
             "percentage": 68,
             "main": "These are patients that you have had no contact with.",
@@ -28,7 +28,7 @@
           },
           {
             "name": "Nil",
-            "desc": "Have had no contact",
+            "desc": "No contact",
             "n": 102,
             "percentage": 68,
             "main": "These are patients that you have had no contact with.",
@@ -37,7 +37,7 @@
           },
           {
             "name": "Direct",
-            "desc": "Have had direct contact",
+            "desc": "Direct contact",
             "n": 29,
             "percentage": 19.3,
             "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
@@ -46,7 +46,7 @@
           },
           {
             "name": "Indirect",
-            "desc": "Have had indirect contact",
+            "desc": "Indirect contact",
             "n": 19,
             "percentage": 12.7,
             "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
