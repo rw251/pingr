@@ -117,13 +117,13 @@
 	};
 
 	var showMonitoringPanel = function(location, enableHover) {
-		var percentChange = local.data[local.pathway].all.monitoring.trend[1][1]-local.data[local.pathway].all.monitoring.trend[1][30];
-		var numberChange = local.data[local.pathway].all.monitoring.trend[2][1]-local.data[local.pathway].all.monitoring.trend[2][30];
+		var percentChange = local.data[local.pathway].monitoring.trend[1][1]-local.data[local.pathway].monitoring.trend[1][30];
+		var numberChange = local.data[local.pathway].monitoring.trend[2][1]-local.data[local.pathway].monitoring.trend[2][30];
 		createPanel(monitoringPanel, location, {
-			percent: local.data[local.pathway].all.monitoring.trend[1][1],
+			percent: local.data[local.pathway].monitoring.trend[1][1],
 			percentChange: Math.abs(percentChange),
 			percentUp: percentChange>=0,
-			number: local.data[local.pathway].all.monitoring.trend[2][1],
+			number: local.data[local.pathway].monitoring.trend[2][1],
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange)
 			}, {"change-bar": $('#change-bar').html()}
@@ -134,7 +134,7 @@
 			bindto: '#monitoring-chart',
 			data: {
 				x: 'x',
-				columns: local.data[local.pathway].all.monitoring.trend,
+				columns: local.data[local.pathway].monitoring.trend,
 				axes: {
 					"%" : 'y',
 					"n" : 'y2'
@@ -181,13 +181,13 @@
 	};
 
 	var showTreatmentPanel = function(location, enableHover) {
-		var percentChange = local.data[local.pathway].all.treatment.trend[1][1]-local.data[local.pathway].all.treatment.trend[1][30];
-		var numberChange = local.data[local.pathway].all.treatment.trend[2][1]-local.data[local.pathway].all.treatment.trend[2][30];
+		var percentChange = local.data[local.pathway].treatment.trend[1][1]-local.data[local.pathway].treatment.trend[1][30];
+		var numberChange = local.data[local.pathway].treatment.trend[2][1]-local.data[local.pathway].treatment.trend[2][30];
 		createPanel(treatmentPanel, location, {
-			percent: local.data[local.pathway].all.treatment.trend[1][1],
+			percent: local.data[local.pathway].treatment.trend[1][1],
 			percentChange: Math.abs(percentChange),
 			percentUp: percentChange>=0,
-			number: local.data[local.pathway].all.treatment.trend[2][1],
+			number: local.data[local.pathway].treatment.trend[2][1],
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange)
 			}, {"change-bar": $('#change-bar').html()}
@@ -198,7 +198,7 @@
 			bindto: '#treatment-chart',
 			data: {
 				x: 'x',
-				columns: local.data[local.pathway].all.treatment.trend,
+				columns: local.data[local.pathway].treatment.trend,
 				axes: {
 					"%" : 'y',
 					"n" : 'y2'
@@ -334,7 +334,7 @@
 			$('#demographic-placeholder').hide();
 
 			drawBpTrendChart(patientId);
-			local.nhsNumber = nhsNumber;
+      local.patientId = patientId;
 
 			$('a[href=#tab-plan-individual]').tab('show');
 
@@ -370,7 +370,7 @@
 
 				if(local.charts['breakdown-chart']) local.charts['breakdown-chart'].unselect();
 
-				hideAllPanels();
+				//hideAllPanels();
 			}
 			local.chartClicked=false;
 		});
@@ -413,12 +413,12 @@
 					populatePatientPanel(d.id);
 					//populateSuggestedActionsPanel(d.id);
 					breakdownTable.find('tr').removeClass('selected');
-					breakdownTable.find('tr[data-subsection="' + local.data[local.pathway].items[d.id].name + '"]').addClass('selected');
+					breakdownTable.find('tr[data-subsection="' + local.data[local.pathway][pathwayStage].bdown[d.id].name + '"]').addClass('selected');
 					local.subselected = d.id;
 				},
 				onmouseover: function(d){
 					breakdownTable.find('tr').removeClass('tr-hovered');
-					breakdownTable.find('tr[data-subsection="' + local.data[local.pathway].items[d.id].name + '"]').addClass('tr-hovered');
+					breakdownTable.find('tr[data-subsection="' + local.data[local.pathway][pathwayStage].bdown[d.id].name + '"]').addClass('tr-hovered');
 				},
 				onmouseout: function (){
 					breakdownTable.find('tr').removeClass('tr-hovered');
@@ -479,11 +479,11 @@
 			var idx = adviceList.find('input[type=checkbox]').index(this);
 			var current = getObj();
 			if(!current.actions) current.actions = {};
-			if(!current.actions[local.nhsNumber]) current.actions[local.nhsNumber] = {"agree":[],"done":[]};
-			while(current.actions[local.nhsNumber].done.length<=idx){
-				current.actions[local.nhsNumber].done.push(false);
+			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
+			while(current.actions[local.patientId].done.length<=idx){
+				current.actions[local.patientId].done.push(false);
 			}
-			current.actions[local.nhsNumber].done[idx]=this.checked;
+			current.actions[local.patientId].done[idx]=this.checked;
 			setObj(current);
 			updateSapRows();
 		});
@@ -511,6 +511,8 @@
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
         displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
+      }).off('shown.bs.modal').on('shown.bs.modal', function () {
+        $('#editActionPlanItem').focus();
       }).off('click','.save-plan').on('click', '.save-plan',function(){
         var obj = getObj();
         if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
@@ -518,6 +520,8 @@
   			setObj(obj);
 
         $('#editPlan').modal('hide');
+      }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
+        if(e.which === 13) $('#editPlan .save-plan').click();
       }).modal();
 		}).on('click', '.delete-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
@@ -530,12 +534,12 @@
 		}).on('click', '.add-plan', function(){
 			var obj = getObj();
       if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
-			obj.plans.team[pathwayStage].push({"text" : teamTab.find('input[type=text]').val(), "done": false});
+			obj.plans.team[pathwayStage].push({"text" : $(this).parent().parent().find('input[type=text]').val(), "done": false});
 			setObj(obj);
 
 			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
 		}).on('change', 'input[type=radio]', function(){
-      if(this.value==="no") $('#teamDisagreeModal').modal();
+      if(this.value==="no") launchTeamModal(local.selected, $(this).closest('tr').children().first().children().first().text());
 			var idx = Math.floor(suggestedPlanTeam.find('input[type=radio]').index(this)/2);
 			var current = getObj();
 			if(!current.actions) current.actions = {};
@@ -547,7 +551,11 @@
 			setObj(current);
 
 			updateSapRows();
-		});
+		}).on('keyup', 'input[type=text]', function(e){
+      if(e.which === 13) {
+        teamTab.find('.add-plan').click();
+      }
+    });
 
 		individualTab.on('click', '.edit-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
@@ -555,43 +563,52 @@
       $('#editActionPlanItem').val($($(this).closest('tr').children('td')[0]).find('span').text());
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
-        displayPersonalisedActionPlan(local.nhsNumber, $('#personalPlanIndividual'), false);
+        displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
+      }).off('shown.bs.modal').on('shown.bs.modal', function () {
+        $('#editActionPlanItem').focus();
       }).off('click','.save-plan').on('click', '.save-plan',function(){
         var obj = getObj();
-        if(!obj.plans.individual[local.nhsNumber]) obj.plans.individual[local.nhsNumber] = [];
-  			obj.plans.individual[local.nhsNumber][idx].text = $('#editActionPlanItem').val();
+        if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
+  			obj.plans.individual[local.patientId][idx].text = $('#editActionPlanItem').val();
   			setObj(obj);
 
         $('#editPlan').modal('hide');
+      }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
+        if(e.which === 13) $('#editPlan .save-plan').click();
       }).modal();
 		}).on('click', '.delete-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
       var obj = getObj();
-      if(!obj.plans.individual[local.nhsNumber]) obj.plans.individual[local.nhsNumber] = [];
-			obj.plans.individual[local.nhsNumber].splice(idx,1);
+      if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
+			obj.plans.individual[local.patientId].splice(idx,1);
 			setObj(obj);
 
-      displayPersonalisedActionPlan(local.nhsNumber, $('#personalPlanIndividual'), false);
+      displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
 		}).on('click', '.add-plan', function(){
 			var obj = getObj();
-      if(!obj.plans.individual[local.nhsNumber]) obj.plans.individual[local.nhsNumber] = [];
-			obj.plans.individual[local.nhsNumber].push({"text": individualTab.find('input[type=text]').val(), "done": false});
+      if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
+			obj.plans.individual[local.patientId].push({"text": $(this).parent().parent().find('input[type=text]').val(), "done": false});
 			setObj(obj);
 
-			displayPersonalisedActionPlan(local.nhsNumber, $('#personalPlanIndividual'), false);
+			displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
 		}).on('change', 'input[type=radio]', function(){
+      if(this.value==="no") launchPatientActionModal(local.patientId, $(this).closest('tr').children().first().children().first().text());
 			var idx = Math.floor(adviceList.find('input[type=radio]').index(this)/2);
 			var current = getObj();
 			if(!current.actions) current.actions = {};
-			if(!current.actions[local.nhsNumber]) current.actions[local.nhsNumber] = {"agree":[],"done":[]};
-			while(current.actions[local.nhsNumber].agree.length<=idx){
-				current.actions[local.nhsNumber].agree.push("");
+			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
+			while(current.actions[local.patientId].agree.length<=idx){
+				current.actions[local.patientId].agree.push("");
 			}
-			current.actions[local.nhsNumber].agree[idx]=this.value==="yes";
+			current.actions[local.patientId].agree[idx]=this.value==="yes";
 			setObj(current);
 
 			updateSapRows();
-		});
+		}).on('keyup', 'input[type=text]', function(e){
+      if(e.which === 13) {
+        individualTab.find('.add-plan').click();
+      }
+    });
 	};
 
 	var selectPanel = function(pathwayStage) {
@@ -611,7 +628,8 @@
 	};
 
 	var populatePatientPanel = function (id, sortField, sortAsc) {
-		var patients = local.data[local.pathway].items[id].patients.map(function(patientId) {
+    var pathwayStage = local.selected;
+		var patients = local.data[local.pathway][pathwayStage].bdown[id].patients.map(function(patientId) {
 			var ret = local.data[local.pathway].patients[patientId];
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
@@ -658,19 +676,19 @@
 		} else if(pathwayStage === local.categories.diagnosis.name){
 			suggestedPlanTeam.html('No team actions for these patients');
 		} else {
-			if(!local.data[local.pathway].items[pathwayStage].index){
-				local.data[local.pathway].items[pathwayStage].index = function(){
+			if(!local.data[local.pathway][pathwayStage].index){
+				local.data[local.pathway][pathwayStage].index = function(){
 					return ++window.INDEX||(window.INDEX=0);
 				};
-				local.data[local.pathway].items[pathwayStage].lastIndex = function(){
+				local.data[local.pathway][pathwayStage].lastIndex = function(){
 					return window.INDEX;
 				};
-				local.data[local.pathway].items[pathwayStage].resetIndex = function(){
+				local.data[local.pathway][pathwayStage].resetIndex = function(){
 					window.INDEX=null;
 				};
 			}
 
-			createPanel(suggestedPlanTemplate, suggestedPlanTeam, local.data[local.pathway].items[pathwayStage], {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
+			createPanel(suggestedPlanTemplate, suggestedPlanTeam, local.data[local.pathway][pathwayStage], {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
 
 			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
 
@@ -679,7 +697,7 @@
 	};
 
 	var populateBreakdownTable = function(id){
-		var data = local.data[local.pathway].all[id.toLowerCase()];
+		var data = local.data[local.pathway][id.toLowerCase()];
 		for(var i = 0 ; i< data.items.length; i++){
 			data.items[i].color = local.charts['breakdown-chart'].color(data.items[i].name);
 		}
@@ -747,46 +765,6 @@
 
 		local.charts['chart-demo-trend'] = c3.generate(chartOptions);
 	};
-
-/*	var drawContactChart = function(nhsNumber){
-		destroyCharts(['chart-demo-trend']);
-		if(!local.data[local.pathway].patients || !local.data[local.pathway].patients[nhsNumber] || !local.data[local.pathway].patients[nhsNumber].contact) return;
-		local.charts['chart-demo-trend'] = c3.generate({
-			bindto: '#chart-demo-trend',
-			data: {
-				x: 'x',
-				columns: local.data[local.pathway].patients[nhsNumber].contact,
-				type:'bar'
-			},
-			tooltip: {
-				grouped: false,
-			  //contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-				//return defaultTitleFormat;//... // formatted html as you want
-			  //},
-				format: {
-					value: function () { return ""; } //function (value, ratio, id, index)
-				}
-			},
-			bar: {
-				width: 10
-			},
-			axis: {
-				x: {
-					type: 'timeseries',
-					tick: {
-						format: '%Y-%m-%d',
-						count: 7,
-						culling: {
-							max: 4
-						}
-					}
-				},
-				y: {
-					show:false
-				}
-			}
-		});
-	};*/
 
 	var selectPieSlice = function (chart, id){
 		local.chartClicked=true;
@@ -886,26 +864,20 @@
 	};
 
 	var populateIndividualSuggestedActions = function (patientId) {
-		var examples = [["Increase ramipril by 2.5mg","Increase amlodipine by 5mg","Start a diuretic"],
-						  ["Increase losartan by 25mg","Increase bisoprolol by 2.5mg","Start a calcium channel blocker"],
-						  ["Refer to secondary care"]];
 		var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId};
+    var pathwayStage = local.selected;
 
-		if(local.selected && local.selected === "Uncontrolled"){
-			var r = Math.floor(Math.random()*3);
-			data.hasActions = true;
-			data.actions = examples[r];
-		} else if (local.selected && local.selected === local.categories.exclusions.name && local.subselected){
+		if (local.selected && local.selected === local.categories.exclusions.name && local.subselected){
 			data.isExclusion = true;
-			data.exclusionReason = local.data[local.pathway].items[local.subselected].desc;
+			data.exclusionReason = local.data[local.pathway][pathwayStage].bdown[local.subselected].desc;
 
 			if(local.subselected!="Exclusion code") {
 			  data.isReadCode = true;
 			}
 		}
 
-    data.suggestions = local.data[local.pathway].items[local.subselected].suggestions;
-    data.section = local.data[local.pathway].items[local.subselected].desc;
+    data.suggestions = local.data[local.pathway][pathwayStage].bdown[local.subselected].suggestions;
+    data.section = local.data[local.pathway][pathwayStage].bdown[local.subselected].desc;
     data.category = local.data[local.pathway].patients[patientId].category;
 
 		if(!data.index){
@@ -925,10 +897,10 @@
 		createPanel(individualPanel, adviceList, data, {"chk" : $('#checkbox-template').html() });
 
     $('#patientDisagreeButton').on('click', function(){
-      $('#patientDisagreeModal').modal();
+      launchPatientModal(patientId, "overall");
     });
 
-		setupClipboard( $('.btn-copy'), false );
+		setupClipboard( $('.btn-copy'), true );
 
 		updateCheckboxes(patientId);
 
@@ -952,6 +924,7 @@
 
 		createPanel(actionPlanList, parentElem, {"suggestions" : plan}, {"action-plan": $('#action-plan').html(), "action-plan-item": $('#action-plan-item').html(), "chk" : $('#checkbox-template').html() });
 
+
 	};
 
 	var displaySelectedPatient = function(id){
@@ -959,6 +932,7 @@
 
 		var pathwayStage = local.data[local.pathway].patients[id].pathwayStage;
 		var subsection = local.data[local.pathway].patients[id].subsection;
+    var nhs = local.patLookup ? local.patLookup[id] : id;
 
     window.location.hash = pathwayStage;
 
@@ -971,11 +945,11 @@
 		setTimeout(function(){ return selectPieSlice('breakdown-chart', subsection);},500);
 
 		$('.list-item').removeClass('highlighted');
-		$('.list-item:has(button[data-clipboard-text=' + id +'])').addClass('highlighted');
+		$('.list-item:has(button[data-clipboard-text=' + nhs +'])').addClass('highlighted');
 		$('#demographic-placeholder').hide();
 
 		drawBpTrendChart(id);
-		local.nhsNumber = local.patLookup ? local.patLookup[id] : id;
+    local.patientId = id;
 
 		$('a[href=#tab-plan-individual]').tab('show');
 
@@ -996,6 +970,43 @@
 			hideSidePanel();
 		}
 	};
+
+  var launchModal = function(data, label, value){
+    var template = $('#modal-why').html();
+    Mustache.parse(template);   // optional, speeds up future uses
+
+    var reasonTemplate = $('#modal-why-item').html();
+    Mustache.parse(reasonTemplate);
+
+    var rendered = Mustache.render(template, data, {"item" : reasonTemplate});
+    $('#modal').html(rendered);
+
+    $('#modal .modal').off('click','.save-plan').on('click', '.save-plan', {"label" : label}, function(e){
+      var obj = getObj();
+      if(!obj.feedback) obj.feedback = {};
+      if(!obj.feedback[e.data.label]) obj.feedback[label] = [];
+      var reason = $('input:radio[name=reason]:checked').val();
+      var reasonText = $('#modal input[type=text]').val();
+      var item = {"val" : value, "reason" : reason};
+      if(reasonText !== "") item.text = reasonText;
+      obj.feedback[e.data.label].push(item);
+      setObj(obj);
+
+      $('#modal .modal').modal('hide');
+    }).modal();
+  };
+
+  var launchTeamModal = function(label, value){
+    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
+  };
+
+  var launchPatientModal = function(label, value){
+    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Meets the target","value":"meetstarget"},{"reason":"Should be excluded","value":"shouldexclude"},{"reason":"Should be in recently measured / recently changed / suboptimal rx group","value":"othergroup"},{"reason":"Something else","value":"else"}]},label, value);
+  };
+
+  var launchPatientActionModal = function(label, value){
+    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
+  };
 
 	var getObj = function(){
 		return JSON.parse(localStorage.bb);
@@ -1021,7 +1032,7 @@
         });
         clearTimeout(local.tmp);
         $(event.target).popover('show');
-        local.tmp = setTimeout(function(){$(event.target).popover('hide')}, 600);
+        local.tmp = setTimeout(function(){$(event.target).popover('hide');}, 600);
 			});
 		});
 	};
@@ -1064,9 +1075,9 @@
 		for(i=0; i< local.data[local.pathway].monitoring.breakdown.length; i++){
 			mainId = local.data[local.pathway].monitoring.breakdown[i][0];
 			addHeading(mainId, 18);
-			addLine(local.data[local.pathway].items[mainId].main);
+			addLine(local.data[local.pathway][pathwayStage].bdown[mainId].main);
 
-			suggs = local.data[local.pathway].items[mainId].suggestions;
+			suggs = local.data[local.pathway][pathwayStage].bdown[mainId].suggestions;
 			addHeading("Actions", 18);
 			for(j = 0; j < suggs.length; j++){
 				if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
@@ -1082,15 +1093,15 @@
 			}
 
 			addHeading("Custom individual plans",14);
-			local.data[local.pathway].items[mainId].patients.forEach(internalFunc);
+			local.data[local.pathway][pathwayStage].bdown[mainId].patients.forEach(internalFunc);
 		}
 
 		for(i=0; i< local.data[local.pathway].treatment.breakdown.length; i++){
 			mainId = local.data[local.pathway].treatment.breakdown[i][0];
 			addHeading(mainId, 18);
-			addLine(local.data[local.pathway].items[mainId].main);
+			addLine(local.data[local.pathway][pathwayStage].bdown[mainId].main);
 
-			suggs = local.data[local.pathway].items[mainId].suggestions;
+			suggs = local.data[local.pathway][pathwayStage].bdown[mainId].suggestions;
 			addHeading("Actions", 18);
 			for(j = 0; j < suggs.length; j++){
 				if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
@@ -1106,7 +1117,7 @@
 			}
 
 			addHeading("Individuals",14);
-			local.data[local.pathway].items[mainId].patients.forEach(internalFunc);
+			local.data[local.pathway][pathwayStage].bdown[mainId].patients.forEach(internalFunc);
 		}
 
 		//Actions they agree with
@@ -1163,10 +1174,9 @@
 
         showSidePanel();
         showOverview();
-
-        addPatientPanel(farRightPanel);
       }
 
+      addPatientPanel(farRightPanel);
       hideAllPanels();
 
       //Unselect all other nodes and keep this one enlarged
@@ -1180,8 +1190,6 @@
 
       addBreakdownPanel(pathwayStage);
     }
-
-
   };
 
   var wireUpSearchBox = function () {
@@ -1281,7 +1289,7 @@
       var file = evt.target.files[0]; // FileList object
       var reader = new FileReader();
 
-      reader.onload = (function(theFile) {
+      reader.onload = (function() {
         return function(e) {
           var JsonObj = JSON.parse(e.target.result);
           getData(null, JsonObj.data);
@@ -1290,7 +1298,7 @@
           wireUpSearchBox();
 
           setTimeout(function() { $('#data-file-wrapper').hide(500); }, 1000);
-        }
+        };
       })(file);
 
       reader.readAsText(file);
@@ -1301,7 +1309,7 @@
       var file = evt.target.files[0]; // FileList object
       var reader = new FileReader();
 
-      reader.onload = (function(theFile) {
+      reader.onload = (function() {
         return function(e) {
           var lines = e.target.result.split("\n");
           local.patLookup = {};
@@ -1314,7 +1322,7 @@
           wireUpSearchBox();
 
           setTimeout(function() { $('#patient-file-wrapper').hide(500); }, 1000);
-        }
+        };
       })(file);
 
       reader.readAsText(file);
@@ -1332,10 +1340,11 @@
     var d="", i, j, k;
     for(i = 0 ; i < data.length; i++){
       d = data[i].disease;
-      local.data[d] = {"all" : data[i], "patients" : data[i].patients, "items" : {}, "monitoring" : {"header": data[i].monitoring.header,"breakdown":[]},
-      "treatment": {"header": data[i].treatment.header,"breakdown":[]},
-      "diagnosis": {"header": data[i].diagnosis.header,"breakdown":[]},
-      "exclusions": {"header": data[i].exclusions.header,"breakdown":[]}};
+      local.data[d] = {"patients" : data[i].patients,
+        "monitoring" : {"header": data[i].monitoring.header,"breakdown":[], "suggestions" : local.actionPlan.monitoring.practice, "bdown":{}, "trend":data[i].monitoring.trend, "table-headings":data[i].monitoring["table-headings"], "items" : data[i].monitoring.items},
+        "treatment": {"header": data[i].treatment.header,"breakdown":[], "suggestions" : local.actionPlan.treatment.practice, "bdown":{}, "trend":data[i].treatment.trend, "table-headings":data[i].treatment["table-headings"], "items" : data[i].treatment.items},
+        "diagnosis": {"header": data[i].diagnosis.header,"breakdown":[], "suggestions" : local.actionPlan.diagnosis.practice, "bdown":{}, "trend":data[i].diagnosis.trend, "table-headings":data[i].diagnosis["table-headings"], "items" : data[i].diagnosis.items},
+        "exclusions": {"header": data[i].exclusions.header,"breakdown":[], "suggestions" : local.actionPlan.exclusions.practice, "bdown":{}, "trend":data[i].exclusions.trend, "table-headings":data[i].exclusions["table-headings"], "items" : data[i].exclusions.items}};
       local.data[d].patientArray = [];
       for(var o in data[i].patients) {
         if(data[i].patients.hasOwnProperty(o)) {
@@ -1343,44 +1352,40 @@
         }
       }
 
-      local.data[d].items.monitoring = {"suggestions" : local.actionPlan.monitoring.practice};
-      local.data[d].items.treatment = {"suggestions" : local.actionPlan.treatment.practice};
-      local.data[d].items.exclusions = {"suggestions" : local.actionPlan.exclusions.practice};
-      local.data[d].items.diagnosis = {"suggestions" : local.actionPlan.diagnosis.practice};
-      for(j=0; j < local.data[d].all.monitoring.items.length; j++) {
-        local.data[d].monitoring.breakdown.push([local.data[d].all.monitoring.items[j].name, local.data[d].all.monitoring.items[j].n]);
-        local.data[d].items[local.data[d].all.monitoring.items[j].name] = local.data[d].all.monitoring.items[j];
-        local.data[d].items[local.data[d].all.monitoring.items[j].name].suggestions = local.actionPlan.monitoring.individual[local.data[d].all.monitoring.items[j].name];
-        for(k=0; k < local.data[d].all.monitoring.items[j].patients.length; k++) {
-          local.data[d].patients[local.data[d].all.monitoring.items[j].patients[k]].pathwayStage = "monitoring";
-          local.data[d].patients[local.data[d].all.monitoring.items[j].patients[k]].subsection = local.data[d].all.monitoring.items[j].name;
+      for(j=0; j < local.data[d].monitoring.items.length; j++) {
+        local.data[d].monitoring.breakdown.push([local.data[d].monitoring.items[j].name, local.data[d].monitoring.items[j].n]);
+        local.data[d].monitoring.bdown[local.data[d].monitoring.items[j].name] = local.data[d].monitoring.items[j];
+        local.data[d].monitoring.bdown[local.data[d].monitoring.items[j].name].suggestions = local.actionPlan.monitoring.individual[local.data[d].monitoring.items[j].name];
+        for(k=0; k < local.data[d].monitoring.items[j].patients.length; k++) {
+          local.data[d].patients[local.data[d].monitoring.items[j].patients[k]].pathwayStage = "monitoring";
+          local.data[d].patients[local.data[d].monitoring.items[j].patients[k]].subsection = local.data[d].monitoring.items[j].name;
         }
       }
-      for(j=0; j < local.data[d].all.treatment.items.length; j++) {
-        local.data[d].treatment.breakdown.push([local.data[d].all.treatment.items[j].name, local.data[d].all.treatment.items[j].n]);
-        local.data[d].items[local.data[d].all.treatment.items[j].name] = local.data[d].all.treatment.items[j];
-        local.data[d].items[local.data[d].all.treatment.items[j].name].suggestions = local.actionPlan.treatment.individual[local.data[d].all.treatment.items[j].name];
-        for(k=0; k < local.data[d].all.treatment.items[j].patients.length; k++) {
-          local.data[d].patients[local.data[d].all.treatment.items[j].patients[k]].pathwayStage = "treatment";
-          local.data[d].patients[local.data[d].all.treatment.items[j].patients[k]].subsection = local.data[d].all.treatment.items[j].name;
+      for(j=0; j < local.data[d].treatment.items.length; j++) {
+        local.data[d].treatment.breakdown.push([local.data[d].treatment.items[j].name, local.data[d].treatment.items[j].n]);
+        local.data[d].treatment.bdown[local.data[d].treatment.items[j].name] = local.data[d].treatment.items[j];
+        local.data[d].treatment.bdown[local.data[d].treatment.items[j].name].suggestions = local.actionPlan.treatment.individual[local.data[d].treatment.items[j].name];
+        for(k=0; k < local.data[d].treatment.items[j].patients.length; k++) {
+          local.data[d].patients[local.data[d].treatment.items[j].patients[k]].pathwayStage = "treatment";
+          local.data[d].patients[local.data[d].treatment.items[j].patients[k]].subsection = local.data[d].treatment.items[j].name;
         }
       }
-      for(j=0; j < local.data[d].all.exclusions.items.length; j++) {
-        local.data[d].exclusions.breakdown.push([local.data[d].all.exclusions.items[j].name, local.data[d].all.exclusions.items[j].n]);
-        local.data[d].items[local.data[d].all.exclusions.items[j].name] = local.data[d].all.exclusions.items[j];
-        local.data[d].items[local.data[d].all.exclusions.items[j].name].suggestions = local.actionPlan.exclusions.individual[local.data[d].all.exclusions.items[j].name];
-        for(k=0; k < local.data[d].all.exclusions.items[j].patients.length; k++) {
-          local.data[d].patients[local.data[d].all.exclusions.items[j].patients[k]].pathwayStage = "exclusions";
-          local.data[d].patients[local.data[d].all.exclusions.items[j].patients[k]].subsection = local.data[d].all.exclusions.items[j].name;
+      for(j=0; j < local.data[d].exclusions.items.length; j++) {
+        local.data[d].exclusions.breakdown.push([local.data[d].exclusions.items[j].name, local.data[d].exclusions.items[j].n]);
+        local.data[d].exclusions.bdown[local.data[d].exclusions.items[j].name] = local.data[d].exclusions.items[j];
+        local.data[d].exclusions.bdown[local.data[d].exclusions.items[j].name].suggestions = local.actionPlan.exclusions.individual[local.data[d].exclusions.items[j].name];
+        for(k=0; k < local.data[d].exclusions.items[j].patients.length; k++) {
+          local.data[d].patients[local.data[d].exclusions.items[j].patients[k]].pathwayStage = "exclusions";
+          local.data[d].patients[local.data[d].exclusions.items[j].patients[k]].subsection = local.data[d].exclusions.items[j].name;
         }
       }
-      for(j=0; j < local.data[d].all.diagnosis.items.length; j++) {
-        local.data[d].diagnosis.breakdown.push([local.data[d].all.diagnosis.items[j].name, local.data[d].all.diagnosis.items[j].n]);
-        local.data[d].items[local.data[d].all.diagnosis.items[j].name] = local.data[d].all.diagnosis.items[j];
-        local.data[d].items[local.data[d].all.diagnosis.items[j].name].suggestions = local.actionPlan.diagnosis.individual[local.data[d].all.diagnosis.items[j].name];
-        for(k=0; k < local.data[d].all.diagnosis.items[j].patients.length; k++) {
-          local.data[d].patients[local.data[d].all.diagnosis.items[j].patients[k]].pathwayStage = "diagnosis";
-          local.data[d].patients[local.data[d].all.diagnosis.items[j].patients[k]].subsection = local.data[d].all.diagnosis.items[j].name;
+      for(j=0; j < local.data[d].diagnosis.items.length; j++) {
+        local.data[d].diagnosis.breakdown.push([local.data[d].diagnosis.items[j].name, local.data[d].diagnosis.items[j].n]);
+        local.data[d].diagnosis.bdown[local.data[d].diagnosis.items[j].name] = local.data[d].diagnosis.items[j];
+        local.data[d].diagnosis.bdown[local.data[d].diagnosis.items[j].name].suggestions = local.actionPlan.diagnosis.individual[local.data[d].diagnosis.items[j].name];
+        for(k=0; k < local.data[d].diagnosis.items[j].patients.length; k++) {
+          local.data[d].patients[local.data[d].diagnosis.items[j].patients[k]].pathwayStage = "diagnosis";
+          local.data[d].patients[local.data[d].diagnosis.items[j].patients[k]].subsection = local.data[d].diagnosis.items[j].name;
         }
       }
     }
@@ -1389,12 +1394,12 @@
 	var getData = function(callback, json) {
     if(json) {
       loadData(json);
-      typeof callback === 'function' && callback();
+      if(typeof callback === 'function') callback();
     } else {
       var r = Math.random();
   		$.getJSON("data.json?v="+r, function(file) {
   			loadData(file.data);
-        typeof callback === 'function' && callback();
+        if(typeof callback === 'function') callback();
   		});
     }
 	};
@@ -1429,14 +1434,9 @@ $(document).on('ready', function () {
 	//Sorts out the data held locally in the user's browser
 	if(!localStorage.bb) localStorage.bb = JSON.stringify({});
 	var obj = JSON.parse(localStorage.bb);
-	if(!obj.actions) {
-		obj.actions = {"Direct": {"agree": [],"done": [true,false]},"Indirect": {"agree": [],"done": [false,false,false,true]},"Nil": {"agree": [],"done": [false,false,false,false]},"Recently Changed Rx": {"agree": [],"done": [true,false,false]},"Suboptimal Rx": {"agree": [],"done": [false,true,false]},"Recently Measured": {"agree": [],"done": [true,false]}};
-		localStorage.bb = JSON.stringify(obj);
-	}
-	if(!obj.plans) {
-		obj.plans = {"team":{}, "individual":{}};
-		localStorage.bb = JSON.stringify(obj);
-	}
+  if(!obj.version || obj.version!=="1.2"){
+    localStorage.bb = JSON.stringify({"version" : "1.2", "plans" : {"team" : {}, "individual" : {}}});
+  }
 
 	$('[data-toggle="tooltip"]').tooltip();
 });
