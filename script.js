@@ -1226,9 +1226,15 @@
 		showPage('login');
 
     //History
-    window.onpopstate = function() {
+    if (window.onpopstate != undefined) {
+      window.onpopstate = function() {
         loadContent(window.location.hash, true);
-    };
+      };
+    } else {
+      window.onhashchange = function() {
+        loadContent(window.location.hash, true);
+      };
+    }
 
 		//Templates
 		monitoringPanel = $('#monitoring-panel');
