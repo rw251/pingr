@@ -766,6 +766,7 @@
 		local.charts['chart-demo-trend'] = c3.generate(chartOptions);
 	};
 
+
 	var selectPieSlice = function (chart, id){
 		local.chartClicked=true;
     /*jshint unused: true*/
