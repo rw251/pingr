@@ -16,7 +16,7 @@
     "start": "npm run dev",
     "dev": "parallelshell \"npm run live-reload -s\" \"npm run serve -s\" \"npm run watch -s\"",
     "commit": "git add --all && git commit -m \"Changes\" && git push origin",
-    "deploy": "git push origin master:gh-pages && git checkout gh-pages && git pull && git checkout master"
+    "deploy": "npm run remove-live-reload && npm run commit && git push origin master:gh-pages && git checkout gh-pages && git pull && git checkout master && npm run add-live-reload && npm run commit"
   },
   "repository": {
     "type": "git",
