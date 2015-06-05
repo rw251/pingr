@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors script.js data.json",
-    "prebuild": "npm run lint",
+    "prebuild": "npm run lint && exit 0",
     "build": "",
 
     "serve": "http-server -o -p 9090 .",

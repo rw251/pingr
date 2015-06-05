@@ -3,6 +3,19 @@ body {
   padding-top: 50px;
 }
 
+.scroll-bar {
+  overflow-y: scroll;
+}
+
+/*
+To stop screen shifting left slightly on modal popup
+see https://github.com/twbs/bootstrap/issues/9855
+*/
+
+.modal-open {
+  padding-right: 0 !important;
+}
+
 nav.full{
 	left:230px;
 }
