@@ -3,14 +3,14 @@
     "practice": [
       {"text":"Ensure the pop-ups in your patient record are working so clinicians are reminded to take a patient’s blood pressure when they see them."},
       {"text":"Customise your pop-ups to demonstrate the consequences of ignoring them. "},
-      {"text":"Put a blood pressure machine in your waiting room so patients can take their blood pressure and give the receptionists the reading [link to an example from a practice]."},
-      {"text":"Hold an educational session or meeting at your practice to highlight to colleagues: the importance of blood pressure measurement, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes [link to presentation]."},
-      {"text":"Organise an open access or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked [link to an example from a practice]."},
-      {"text":"Work with your local pharmacy to enable them to take blood pressure readings and send the results directly to you [link to an example from a practice] as well as checking for adverse events and drug compliance."},
+      {"text":"Put a blood pressure machine in your waiting room so patients can take their blood pressure and give the receptionists the reading <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+      {"text":"Hold an educational session or meeting at your practice to highlight to colleagues: the importance of blood pressure measurement, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes. <a href=\"powerpoint.pptx\" target=\"_blank\">A presentation.</a>"},
+      {"text":"Organise an open access or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+      {"text":"Work with your local pharmacy to enable them to take blood pressure readings and send the results directly to you <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a> as well as checking for adverse events and drug compliance."},
       {"text":"Introduce a text-messaging service to remind patients they need a blood pressure check."},
-      {"text":"Synchronise hypertension annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure blood pressure is measured at the same time as other reviews – this could be done for the patient’s birthday [link to an example from a practice]."},
-      {"text":"Nominate a hypertension lead in your practice who can initiate some of these changes [link to an example from a practice]."},
-      {"text":"Arrange to have blood pressures taken during upcoming vaccination programmes e.g. flu, shingles, whooping cough [link to an example from a practice]."},
+      {"text":"Synchronise hypertension annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure blood pressure is measured at the same time as other reviews – this could be done for the patient’s birthday <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+      {"text":"Nominate a hypertension lead in your practice who can initiate some of these changes <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+      {"text":"Arrange to have blood pressures taken during upcoming vaccination programmes e.g. flu, shingles, whooping cough <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
       {"text":"Generate a list of patients who regularly attend and do not have a blood pressure measurement and circulate to practice doctors or administrative staff to highlight when these patients are attending in advance."},
       {"text":"Ensure all consulting rooms have electronic BP machines so it is quicker to take a measurement than using a manual sphygmomanometer."}
     ],
@@ -19,34 +19,34 @@
         {"text":"Check this patient is still registered at your practice."},
         {"text":"Check this patient is still alive."},
         {"text":"Check this patient still lives in your area – writing a letter may result in returned post."},
-        {"text":"Invite this patient via letter, telephone or text for a blood pressure check [link to example template]."},
+        {"text":"Invite this patient via letter, telephone or text for a blood pressure check <a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>."},
         {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-        {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [9h32 or 8I3Y insert copy button]."}
+        {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
       ],
       "Direct": [
         {"text":"Invite this patient via letter or telephone for a blood pressure check."},
         {"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
         {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
         {"text":"Put an alert on this patient’s record to remind the next person they see to take their blood pressure."},
-        {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [9h32 or 8I3Y insert copy button]."}
+        {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
       ],
       "Indirect": [
         {"text":"Invite this patient via letter, telephone or text for a blood pressure check."},
         {"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
         {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-        {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [9h32 or 8I3Y insert copy button]."}
+        {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
       ]
     }
   },
   "treatment": {
     "practice": [
-      {"text":"Introduce an ambulatory blood pressure monitoring service at your practice – often high blood pressure readings taken in surgery are normal at home [link to an example from a practice]."},
-      {"text":"Hold an educational session or meeting at your practice to highlight to colleagues: the importance of blood pressure control, be aware of pop-ups during patient consultation, the proportion of patients with uncontrolled blood pressure at your practice, and that if there are legitimate reasons why blood pressure is not controlled it should be coded in their notes [link to presentation]."},
+      {"text":"Introduce an ambulatory blood pressure monitoring service at your practice – often high blood pressure readings taken in surgery are normal at home <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+      {"text":"Hold an educational session or meeting at your practice to highlight to colleagues: the importance of blood pressure control, be aware of pop-ups during patient consultation, the proportion of patients with uncontrolled blood pressure at your practice, and that if there are legitimate reasons why blood pressure is not controlled it should be coded in their notes <a href=\"powerpoint.pptx\" target=\"_blank\">A presentation.</a>."},
       {"text":"Customise your pop-ups to demonstrate the consequences of ignoring them and to highlight that this tool can be used for individualised patient medication decision support. "},
-      {"text":"Organise an open access or a regular planned dedicated blood pressure clinic (e.g. monthly) for patients with uncontrolled blood pressure [link to an example from a practice]."},
+      {"text":"Organise an open access or a regular planned dedicated blood pressure clinic (e.g. monthly) for patients with uncontrolled blood pressure <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
       {"text":"Introduce a text-messaging service to remind patients they may need changes to their blood pressure medication."},
-      {"text":"Synchronise hypertension annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure their blood pressure control is reviewed at the same time as other reviews – this could be done for the patient’s birthday [link to an example from a practice]."},
-      {"text":"Nominate a hypertension lead in your practice who can initiate some of these changes [link to an example from a practice]."}
+      {"text":"Synchronise hypertension annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure their blood pressure control is reviewed at the same time as other reviews – this could be done for the patient’s birthday <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+      {"text":"Nominate a hypertension lead in your practice who can initiate some of these changes <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."}
     ],
     "individual": {
       "Medication Optimisation": [
@@ -54,7 +54,7 @@
         {"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (evidence), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
         {"text":"Get nurses to measure (evidence)"},
         {"text":"HBP – either their own device, or your own. Patient resources: home BP monitoring leaflet"},
-        {"text":"You may wish to exception report this patient or code the reason why their BP is high if you feel it is unsuitable to treat them for high blood pressure – for example: <ul><li>Use code 9h31 if you feel the patient is unsuitable</li><li>Use code 9h32 for “informed dissent”</li><li>Use code 8I3Y for “BP procedure refused”</li><li>Also add specific diagnosis for why patient unsuitable if possible e.g. syncope, postural hypotension, frailty, white coat hypertension etc</li></ul>"}
+        {"text":"You may wish to exception report this patient or code the reason why their BP is high if you feel it is unsuitable to treat them for high blood pressure – for example: <ul><li>Use code [COPY:9h31] if you feel the patient is unsuitable</li><li>Use code [COPY:9h32] for “informed dissent”</li><li>Use code [COPY:8I3Y] for “BP procedure refused”</li><li>Also add specific diagnosis for why patient unsuitable if possible e.g. syncope, postural hypotension, frailty, white coat hypertension etc</li></ul>"}
       ],
       "Non-adherence": [
         {"text":"Discuss with patients whether or not they are taking medication – if they are not, find out why and address these concerns (e.g. side effects, health beliefs etc)<ul><li>Encourage the recording of medicine-taking and self-monitoring</li><li>Simplify the dosing regimen</li><li>Offer dossette boxes</li></ul>"},

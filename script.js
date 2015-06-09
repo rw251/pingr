@@ -905,6 +905,13 @@
       launchPatientModal(patientId, "overall");
     });
 
+    //Wire up any clipboard stuff in the suggestions
+    adviceList.find('span:contains("[COPY")').each(function(e){
+      var x = 3;
+      var html = $(this).text();
+      $(this).html(html.replace(/\[COPY:([^\]]*)\]/g,'<button type="button" data-clipboard-text="$1" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span> $1</button>'));
+    });
+
 		setupClipboard( $('.btn-copy'), true );
 
 		updateCheckboxes(patientId);
