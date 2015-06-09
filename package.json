@@ -15,7 +15,10 @@
     "watch": "nodemon -q -w . --ext \".\" --exec \"npm run build\"",
     "start": "npm run dev",
     "dev": "parallelshell \"npm run live-reload -s\" \"npm run serve -s\" \"npm run watch -s\"",
-    "commit": "git add --all && git commit -m \"Changes\" && git push origin",
+
+    "precommit" : "git add --all",
+    "commit": "git commit -m \"Changes\"",
+    "postcommit": "git push origin",
     "deploy": "npm run remove-live-reload && npm run commit && git push origin master:gh-pages && git checkout gh-pages && git pull && git checkout master && npm run add-live-reload && npm run commit"
   },
   "repository": {
