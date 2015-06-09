@@ -910,8 +910,10 @@
 			}
 		}
 
-    data.suggestions = local.data[local.pathway][pathwayStage].bdown[local.subselected].suggestions;
-    data.section = local.data[local.pathway][pathwayStage].bdown[local.subselected].desc;
+    var subsection = local.data[local.pathway].patients[patientId].subsection;
+
+    data.suggestions = local.data[local.pathway][pathwayStage].bdown[subsection].suggestions;
+    data.section = local.data[local.pathway][pathwayStage].bdown[subsection].desc;
     data.category = local.data[local.pathway].patients[patientId].category;
 
 		if(!data.index){
