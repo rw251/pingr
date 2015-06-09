@@ -19,7 +19,10 @@
     "precommit" : "git add --all",
     "commit": "git diff-index --quiet HEAD || git commit -m \"Changes\"",
     "postcommit": "git push origin",
-    "deploy": "npm run remove-live-reload && npm run commit && git push origin master:gh-pages && git checkout gh-pages && git pull && git checkout master && npm run add-live-reload && npm run commit"
+
+    "predeploy": "npm run remove-live-reload && npm run commit",
+    "deploy": "git push origin master:gh-pages && git checkout gh-pages && git pull",
+    "postdeploy": "git checkout master && npm run add-live-reload && npm run commit"
   },
   "repository": {
     "type": "git",
