@@ -1058,7 +1058,7 @@
 		localStorage.bb = JSON.stringify(obj);
 	};
 
- local.tmp = null;
+  local.tmp = null;
 	var setupClipboard = function(selector, destroy) {
 		if(destroy)	ZeroClipboard.destroy(); //tidy up
 
@@ -1107,70 +1107,84 @@
 
 		addHeading("Action Plan",24);
 		//Measured
-		addHeading("Measured",20);
+		addHeading("Monitoring",20);
 
 		var internalFunc = function(el) {
-			if(data.plans.individual[el]) {
-				addLine("Patient "+ el +":" +data.plans.individual[el]);
-			}
+      var k;
+			if(data.plans.individual[el] || data.actions[el]) {
+        addLine("Patient "+ el +":");
+        if(data.plans.individual[el]) {
+          for(k =0; k < data.plans.individual[el].length; k++){
+            if(!data.plans.individual[el][k].done){
+              addLine(data.plans.individual[el][k].text);
+            }
+          }
+  			}
+        if(data.actions[el]) {
+          var pathSec = local.data[local.pathway].patients[el].pathwayStage;
+          var pathSub = local.data[local.pathway].patients[el].subsection;
+          for(k =0; k < Math.max(data.actions[el].agree.length, data.actions[el].done.length); k++){
+            if(data.actions[el].done.length>k && data.actions[el].done[k] ){
+              //Completed so ignore
+            } else if(data.actions[el].agree.length>k && data.actions[el].agree[k] ){
+              addLine(local.actionPlan[pathSec].individual[pathSub][k].text);
+            }
+          }   //
+  			}
+      }
 		};
-		for(i=0; i< local.data[local.pathway].monitoring.breakdown.length; i++){
+
+    addHeading("Team plan",14);
+    suggs = local.data[local.pathway].monitoring.suggestions;
+    for(i=0; i<suggs.length; i++){
+      if(data.actions.monitoring && data.actions.monitoring.done && data.actions.monitoring.done.length>i && data.actions.monitoring.done[i] ){
+        //Completed so ignore
+      } else if(data.actions.monitoring && data.actions.monitoring.agree && data.actions.monitoring.agree.length>i && data.actions.monitoring.agree[i] ){
+        addLine(suggs[i].text);
+      }
+    }
+
+    if(data.plans.team.monitoring && data.plans.team.monitoring.filter(function(i,v){if(!v.done) return true; else return false;}).length>0){
+      addHeading("Custom team plan",14);
+      for(i=0; i < data.plans.team.monitoring.length; i++){
+          if(!data.plans.team.monitoring[i].done){
+            addLine(data.plans.team.monitoring[i].text);
+          }
+      }
+    }
+
+		addHeading("Custom individual plans",14);
+    for(i=0; i< local.data[local.pathway].monitoring.breakdown.length; i++){
 			mainId = local.data[local.pathway].monitoring.breakdown[i][0];
-			addHeading(mainId, 18);
-			addLine(local.data[local.pathway][pathwayStage].bdown[mainId].main);
+		  local.data[local.pathway].monitoring.bdown[mainId].patients.forEach(internalFunc);
+    }
 
-			suggs = local.data[local.pathway][pathwayStage].bdown[mainId].suggestions;
-			addHeading("Actions", 18);
-			for(j = 0; j < suggs.length; j++){
-				if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
-					//Completed so ignore
-				} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
-					addLine(suggs[j].text);
-				}
-			}
+    addHeading("Treatment",20);
 
-			if(data.plans.team[mainId]) {
-				addHeading("Custom team plan",14);
-				addLine(data.plans.team[mainId]);
-			}
+    addHeading("Team plan",14);
+    suggs = local.data[local.pathway].treatment.suggestions;
+    for(i=0; i<suggs.length; i++){
+      if(data.actions.treatment && data.actions.treatment.done && data.actions.treatment.done.length>i && data.actions.treatment.done[i] ){
+        //Completed so ignore
+      } else if(data.actions.treatment && data.actions.treatment.agree && data.actions.treatment.agree.length>i && data.actions.treatment.agree[i] ){
+        addLine(suggs[i].text);
+      }
+    }
 
-			addHeading("Custom individual plans",14);
-			local.data[local.pathway][pathwayStage].bdown[mainId].patients.forEach(internalFunc);
-		}
+    if(data.plans.team.treatment && data.plans.team.treatment.filter(function(i,v){if(!v.done) return true; else return false;}).length>0){
+      addHeading("Custom team plan",14);
+      for(i=0; i < data.plans.team.treatment.length; i++){
+          if(!data.plans.team.treatment[i].done){
+            addLine(data.plans.team.treatment[i].text);
+          }
+      }
+    }
 
-		for(i=0; i< local.data[local.pathway].treatment.breakdown.length; i++){
-			mainId = local.data[local.pathway].treatment.breakdown[i][0];
-			addHeading(mainId, 18);
-			addLine(local.data[local.pathway][pathwayStage].bdown[mainId].main);
-
-			suggs = local.data[local.pathway][pathwayStage].bdown[mainId].suggestions;
-			addHeading("Actions", 18);
-			for(j = 0; j < suggs.length; j++){
-				if(data.actions[mainId] && data.actions[mainId].done && data.actions[mainId].done.length>j && data.actions[mainId].done[j]) {
-					//Completed so ignore
-				} else if(data.actions[mainId] && data.actions[mainId].agree && data.actions[mainId].agree.length>j && data.actions[mainId].agree[j]) {
-					addLine(suggs[j].text);
-				}
-			}
-
-			if(data.plans.team[mainId]) {
-				addHeading("Team plan",14);
-				addLine(data.plans.team[mainId]);
-			}
-
-			addHeading("Individuals",14);
-			local.data[local.pathway][pathwayStage].bdown[mainId].patients.forEach(internalFunc);
-		}
-
-		//Actions they agree with
-
-		//Personalised team actions
-		for(i = 0; i < data.plans.team.length; i++){
-		}
-
-		//Personalised individual actions
-		for(i = 0; i < data.plans.individual.length; i++){
-		}
+		addHeading("Custom individual plans",14);
+    for(i=0; i< local.data[local.pathway].monitoring.breakdown.length; i++){
+			mainId = local.data[local.pathway].monitoring.breakdown[i][0];
+		  local.data[local.pathway].monitoring.bdown[mainId].patients.forEach(internalFunc);
+    }
 
 		//trigger download
 		doc.save();

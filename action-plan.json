@@ -76,7 +76,14 @@
         {"text":"Contact patient as per above methods to re-check"},
         {"text":"Exclude"},
         {"text":"HBP"}
-      ]
+      ],
+      "Recently Measured": [
+        {"text":"Do something"}
+      ],
+      "Recently Changed Rx": [
+        {"text":"Do something else"}],
+      "Suboptimal Rx": [
+        {"text":"Do something else else"}]
     }
   },
   "diagnosis": {
