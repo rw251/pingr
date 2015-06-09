@@ -324,7 +324,7 @@
 			} else {
 				$(this).removeClass('sort-asc').addClass('sort-desc');
 			}
-			populatePatientPanel(local.selected, local.subselected, $(this).text().substr(0,1) === "L" ? "sbp" : "nhsNumber", sortAsc);
+			populatePatientPanel(local.selected, local.subselected, $(this).index(), sortAsc);
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
 			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted');
@@ -636,39 +636,71 @@
 			var ret = local.data[local.pathway].patients[patientId];
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
+      ret.items = []; //The fields in the patient list table
 			if(ret.bp) {
-				ret.sbp = ret.bp[1][ret.bp[1].length-1];
-        ret.sbpDate = ret.bp[0][ret.bp[0].length-1];
+        if(pathwayStage === local.categories.monitoring.name){
+          ret.items.push(ret.bp[0][ret.bp[0].length-1]); //Last BP date
+        }
+        else{
+          ret.items.push(ret.bp[1][ret.bp[1].length-1]); //Last SBP
+        }
 			} else {
-				ret.sbp = "?";
-        ret.sbpDate = "?";
+        ret.items.push("?");
 			}
 			return ret;
 		});
 
-		var data = {"patients": patients};
+		var data = {"patients": patients, "header-items" : [{"title" : "NHS no.", "isSorted":true, "direction":"sort-asc"}]};
 
-		if(sortField) {
+    if(pathwayStage === local.categories.monitoring.name){
+      data["header-items"].push({"title" : "Last BP Date", "isSorted":false, "direction":"sort-asc"});
+    }
+    else{
+      data["header-items"].push({"title" : "Last SBP", "isSorted":false, "direction":"sort-asc"});
+    }
+
+		if(sortField !== undefined) {
 			data.patients.sort(function(a, b){
-				if(a[sortField] === b[sortField]) {
-					return 0;
-				}
+        if(sortField===0) { //NHS number
+          if(a.nhsNumber === b.nhsNumber) {
+  					return 0;
+  				}
 
-				if(a[sortField] == "?") return 1;
-				if(b[sortField] == "?") return -1;
+  				if(a.nhsNumber > b.nhsNumber) {
+  					return sortAsc ? 1 : -1;
+  				} else if (a.nhsNumber< b.nhsNumber) {
+  					return sortAsc ? -1 : 1;
+  				}
+        } else {
+        	if(a.items[sortField-1] === b.items[sortField-1]) {
+  					return 0;
+  				}
 
-				if(a[sortField] > b[sortField]) {
-					return sortAsc ? 1 : -1;
-				} else if (a[sortField] < b[sortField]) {
-					return sortAsc ? -1 : 1;
-				}
+  				if(a.items[sortField-1] == "?") return 1;
+  				if(b.items[sortField-1] == "?") return -1;
+
+  				if(a.items[sortField-1] > b.items[sortField-1]) {
+  					return sortAsc ? 1 : -1;
+  				} else if (a.items[sortField-1] < b.items[sortField-1]) {
+  					return sortAsc ? -1 : 1;
+  				}
+        }
 			});
 
-			data.direction = sortAsc ? "sort-asc" : "sort-desc";
-			data.isSorted = sortAsc;
+      for(var i = 0; i < data["header-items"].length; i++) {
+        if(i === sortField){
+          data["header-items"][i].direction = sortAsc ? "sort-asc" : "sort-desc";
+          data["header-items"][i].isAsc = sortAsc;
+          data["header-items"][i].isSorted = true;
+        } else {
+          data["header-items"][i].isSorted = false;
+        }
+      }
+			//data.direction = sortAsc ? "sort-asc" : "sort-desc";
+			//data.isSorted = sortAsc;
 		}
 
-		createPanel(patientList, patientsPanel, data);
+		createPanel(patientList, patientsPanel, data, {"header-item" : $("#patient-list-header-item").html(), "item" : $('#patient-list-item').html()});
 
 		$('#patients-placeholder').hide();
 
@@ -873,9 +905,6 @@
     var pathwayStage = local.selected;
 
 		if (local.selected && local.selected === local.categories.exclusions.name && local.subselected){
-			data.isExclusion = true;
-			data.exclusionReason = local.data[local.pathway][pathwayStage].bdown[local.subselected].desc;
-
 			if(local.subselected!="Exclusion code") {
 			  data.isReadCode = true;
 			}
@@ -906,8 +935,7 @@
     });
 
     //Wire up any clipboard stuff in the suggestions
-    adviceList.find('span:contains("[COPY")').each(function(e){
-      var x = 3;
+    adviceList.find('span:contains("[COPY")').each(function(){
       var html = $(this).text();
       $(this).html(html.replace(/\[COPY:([^\]]*)\]/g,'<button type="button" data-clipboard-text="$1" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span> $1</button>'));
     });
@@ -1233,7 +1261,7 @@
 		showPage('login');
 
     //History
-    if (window.onpopstate != undefined) {
+    if (window.onpopstate !== undefined) {
       window.onpopstate = function() {
         loadContent(window.location.hash, true);
       };

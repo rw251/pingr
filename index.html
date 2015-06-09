@@ -398,17 +398,30 @@
   </table>
   </script>
 
+  <script id="patient-list-header-item" type="x-tmpl-mustache">
+  <th class="sortable {{direction}}">
+    {{title}}
+    {{#isSorted}}
+    {{#isAsc}}<i class="fa fa-caret-up"></i>{{/isAsc}}
+    {{^isAsc}}<i class="fa fa-caret-down"></i>{{/isAsc}}
+    {{/isSorted}}
+    {{^isSorted}}
+    <i class="fa fa-caret-down fa-caret-invisible">
+    {{/isSorted}}
+  </th>
+  </script>
+
+  <script id="patient-list-item" type="x-tmpl-mustache">
+  <td>{{.}}</td>
+  </script>
+
   <script id="patient-list" type="x-tmpl-mustache">
     <table class="table patient-list">
       <thead>
         <tr>
-          <th class="sortable {{direction}}">NHS no. {{#isSorted}}
-            <i class="fa fa-caret-up"></i>{{/isSorted}} {{^isSorted}}
-            <i class="fa fa-caret-down"></i>{{/isSorted}}</th>
-          <th class="sortable {{direction}}">Last SBP {{#isSorted}}
-            <i class="fa fa-caret-up"></i>{{/isSorted}} {{^isSorted}}
-            <i class="fa fa-caret-down"></i>{{/isSorted}}
-          </th>
+          {{#header-items}}
+          {{>header-item}}
+          {{/header-items}}
         </tr>
       </thead>
       <tbody>
@@ -420,7 +433,9 @@
             </button>
             {{nhsNumber}}
           </td>
-          <td>{{sbp}}</td>
+          {{#items}}
+          {{>item}}
+          {{/items}}
         </tr>
         {{/patients}}
       </tbody>
@@ -582,13 +597,13 @@
       <span class="fa fa-thumbs-down"></span> No
     </button>
     </p>
-    {{#isExclusion}} is excluded because of {{exclusionReason}} {{#isReadCode}}
+    {{#isReadCode}}
     <div>We suggest you add the following exclusion code to their record: 9h3..
       <button type="button" data-clipboard-text="9h3.." data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default">
         <span class="fa fa-clipboard"></span>
       </button>
     </div>
-    {{/isReadCode}} {{/isExclusion}}
+    {{/isReadCode}}
     <table class="table">
       <thead>
         <tr>

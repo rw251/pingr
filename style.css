@@ -7,6 +7,9 @@ body {
   overflow-y: scroll;
 }
 
+.fa-caret-invisible {
+  opacity: 0;
+}
 /*
 To stop screen shifting left slightly on modal popup
 see https://github.com/twbs/bootstrap/issues/9855
