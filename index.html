@@ -86,9 +86,13 @@
               <div class="btn-group" id="breadcrumb">
               </div>
             </li>
-            <div class="input-group pull-left" id="search-box">
-              <input type="text" placeholder="Search for patients..." class="typeahead">
+
+            <div class="input-group pull-right">
+              <span class="btn btn-primary btn-padding" id="export-plan">
+                <span class="fa fa-download"></span> Download Action Plan
+              </span>
             </div>
+
             <div class="input-group pull-right">
               <span class="btn btn-default btn-file" id="data-file-wrapper">
                 Load data <input type="file" id="data-file" >
@@ -96,6 +100,9 @@
               <span class="btn btn-default btn-file" id="patient-file-wrapper">
                 Load patients <input type="file" id="patient-file" >
               </span>
+            </div>
+            <div class="input-group pull-right" id="search-box">
+              <input type="text" placeholder="Search for patients..." class="typeahead">
             </div>
           </ul>
         </div>
@@ -470,10 +477,10 @@
     </td>
     <td>
       <div class="btn-group" data-toggle="buttons">
-        <button class="btn btn-xs btn-default edit-plan">
+        <button class="btn btn-xs btn-warning edit-plan">
           <span class="fa fa-edit"></span>
         </button>
-        <button class="btn btn-xs btn-default delete-plan">
+        <button class="btn btn-xs btn-danger delete-plan">
           <span class="fa fa-trash"></span>
         </button>
       </div>
@@ -502,9 +509,9 @@
 
   <script id="action-plan" type="x-tmpl-mustache">
   <div class="input-group">
-    <input type="text" class="form-control" placeholder="Enter a new action plan item...">
+    <textarea class="form-control" placeholder="Enter your own action plan..."></textarea>
     <span class="input-group-btn">
-      <button class="btn btn-default add-plan">Add</button>
+      <button class="btn btn-primary add-plan">Add</button>
     </span>
   </div>
   </script>
@@ -526,12 +533,6 @@
               <li>
                 <a href="#tab-plan-individual">Individual Patient</a>
               </li>
-
-              <div class="btn-group pull-right">
-                <button id="export-plan" type="button" class="btn btn-primary">
-                  <span class="fa fa-download"></span> Download Action Plan
-                </button>
-              </div>
             </ul>
             <div class="tab-content">
               <div class="panel panel-default padd-t-sm tab-pane tabs-up active" id="tab-plan-team">
@@ -584,19 +585,32 @@
   </script>
 
   <script id="individual-panel" type="x-tmpl-mustache">
-    <h4>Patient {{nhsNumber}}
+    <h4>Patient <strong>{{nhsNumber}}</strong>
       <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
         <span class="fa fa-clipboard"></span>
       </button>
     </h4>
-    <p>{{section}} - {{category}} - agree? &nbsp;
-    <button type="button" class="btn btn-xs btn-yes btn-default thumb-up">
-      <span class="fa fa-thumbs-up"></span> Yes
-    </button>
-    <button id="patientDisagreeButton" type="button" class="btn btn-xs btn-no btn-default thumb-down">
-      <span class="fa fa-thumbs-down"></span> No
-    </button>
-    </p>
+    <table class="table table-minimal">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Agree?</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>{{section}} - {{category}}</td>
+      <td>
+        <button type="button" class="btn btn-xs btn-yes btn-default thumb-up">
+          <span class="fa fa-thumbs-up"></span> Yes
+        </button>
+        <button id="patientDisagreeButton" type="button" class="btn btn-xs btn-no btn-default thumb-down">
+          <span class="fa fa-thumbs-down"></span> No
+        </button>
+      </td>
+    </tr>
+    </tbody>
+    </table>
     {{#isReadCode}}
     <div>We suggest you add the following exclusion code to their record: 9h3..
       <button type="button" data-clipboard-text="9h3.." data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default">

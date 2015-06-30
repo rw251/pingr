@@ -451,8 +451,6 @@
 		teamTab = $('#tab-plan-team');
 		individualTab = $('#tab-plan-individual');
 
-		$('#export-plan').on('click', exportPlan);
-
 		$('#action-plan-tabs').find('a').click(function (e) {
 			e.preventDefault();
 			$(this).tab('show');
@@ -505,6 +503,22 @@
       //displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
 		});
 
+    $('#personalPlanIndividual').on('click', 'input[type=checkbox]', function(){
+			var idx = $(this).closest('tr').prevAll().length;
+      var obj = getObj();
+      if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
+      obj.plans.individual[local.patientId][idx].done = this.checked;
+      setObj(obj);
+
+      if(this.checked){
+        $(this).parent().parent().parent().addClass('success');
+        recordEvent("Personal plan item", local.patientId);
+      } else {
+        $(this).parent().parent().parent().removeClass('success');
+      }
+      //displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
+		});
+
 		teamTab.on('click', '.edit-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
 
@@ -535,7 +549,7 @@
 		}).on('click', '.add-plan', function(){
 			var obj = getObj();
       if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
-			obj.plans.team[pathwayStage].push({"text" : $(this).parent().parent().find('input[type=text]').val(), "done": false});
+			obj.plans.team[pathwayStage].push({"text" : $(this).parent().parent().find('textarea').val(), "done": false});
 			setObj(obj);
 
 			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
@@ -588,7 +602,7 @@
 		}).on('click', '.add-plan', function(){
 			var obj = getObj();
       if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
-			obj.plans.individual[local.patientId].push({"text": $(this).parent().parent().find('input[type=text]').val(), "done": false});
+			obj.plans.individual[local.patientId].push({"text": $(this).parent().parent().find('textarea').val(), "done": false});
 			setObj(obj);
 
 			displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
@@ -870,12 +884,41 @@
 
 		adviceList.find('input[type=radio]').each(wireUpRadioButtons);
 
+		//RW TODO need to update the personal plan checkboxes
+
 		updateSapRows();
 	};
 
 	var updateSapRows = function(){
 		suggestedPlanTeam.find('.suggestion').add(adviceList.find('.suggestion')).each(function(){
 			$(this).find('td').last().children().hide();
+		});
+
+    var anyTeam = false;
+    var anyIndividual = false;
+
+    suggestedPlanTeam.find('input[type=radio]:checked').each(function(){
+			if(this.value==="yes"){
+				$(this).parent().parent().parent().parent().removeClass('danger');
+				$(this).parent().parent().parent().parent().addClass('active');
+				$(this).parent().parent().parent().parent().find('td').last().children().show();
+        anyTeam = true;
+			} else {
+				$(this).parent().parent().parent().parent().removeClass('active');
+				$(this).parent().parent().parent().parent().addClass('danger');
+			}
+		});
+
+    adviceList.find('input[type=radio]:checked').each(function(){
+			if(this.value==="yes"){
+				$(this).parent().parent().parent().parent().removeClass('danger');
+				$(this).parent().parent().parent().parent().addClass('active');
+				$(this).parent().parent().parent().parent().find('td').last().children().show();
+        anyIndividual = true;
+			} else {
+				$(this).parent().parent().parent().parent().removeClass('active');
+				$(this).parent().parent().parent().parent().addClass('danger');
+			}
 		});
 
 		suggestedPlanTeam.add(adviceList).find('input[type=checkbox]').each(function(){
@@ -886,18 +929,8 @@
 			}
 		});
 
-    var any = false;
-    suggestedPlanTeam.add(adviceList).find('input[type=radio]:checked').each(function(){
-			if(this.value==="yes"){
-				$(this).parent().parent().parent().parent().removeClass('danger');
-				$(this).parent().parent().parent().parent().find('td').last().children().show();
-        any = true;
-			} else {
-				$(this).parent().parent().parent().parent().addClass('danger');
-			}
-		});
-
-    suggestedPlanTeam.find('table thead tr th').last().html( any ? 'Completed' : '');
+    suggestedPlanTeam.find('table thead tr th').last().html( anyTeam ? 'Completed' : '');
+    adviceList.find('table thead tr th').last().html( anyIndividual ? 'Completed' : '');
 	};
 
 	var populateIndividualSuggestedActions = function (patientId) {
@@ -1393,6 +1426,9 @@
 
       reader.readAsText(file);
     });
+
+    //exportPlan
+    $('#export-plan').on('click', exportPlan);
 	};
 
   var loadActionPlan = function(callback) {
@@ -1482,7 +1518,9 @@
   		$.getJSON("data.json?v="+r, function(file) {
   			loadData(file.data);
         if(typeof callback === 'function') callback();
-  		});
+  		}).fail(function(err){
+        alert("data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+      });
     }
 	};
 
