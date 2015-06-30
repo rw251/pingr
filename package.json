@@ -15,7 +15,7 @@
     "watch": "nodemon -q -w . --ext \".\" --exec \"npm run build\"",
     "start": "npm run dev",
     "dev": "parallelshell \"npm run live-reload -s\" \"npm run serve -s\" \"npm run watch -s\"",
-
+    "demo": "npm run serve -s",
     "precommit" : "git add --all",
     "commit": "git diff-index --quiet HEAD || git commit -m \"Changes\"",
     "postcommit": "git push origin",

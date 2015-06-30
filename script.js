@@ -429,10 +429,11 @@
 			},
 			pie: {
 				label: {
+          show: false
           /*jshint unused: true*/
-					format: function (value, ratio, id) {
+					/*format: function (value, ratio, id) {
 						return id;// + ' ('+value+')';
-					}
+					}*/
           /*jshint unused: false*/
 				}
 			},

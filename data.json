@@ -53,30 +53,30 @@
           ["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
         ],
         "table-headings": [
-          { "title": "Breakdown" },
+          { "title": "Type" },
           { "title": "n" },
           { "title": "%" }
         ],
         "items": [
           {
-            "name": "Medication Optimisation",
-            "desc": "BP measured in last 2 months",
+            "name": "Suboptimal medication",
+            "desc": "Suboptimal medication",
             "n": 10,
             "percentage": 20,
             "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
             "patients": [5553175806,5553261095,5553284844,5553308051,5553395446,5553482379,5553577971,5553617291,5553623847,5553697995]
           },
           {
-            "name": "Non-adherence",
-            "desc": "HTN Rx recently changed",
+            "name": "Medication non-adherence",
+            "desc": "Medication non-adherence",
             "n": 7,
             "percentage": 14,
             "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
             "patients": [5553776929,5553846192,5553902625,5553976396,5554010860,5554015794,5554043449]
           },
           {
-            "name": "Referral",
-            "desc": "Patient's Rx could be improved",
+            "name": "Referral to secondary care",
+            "desc": "Referral to secondary care",
             "n": 13,
             "percentage": 26,
             "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
@@ -84,7 +84,7 @@
           },
           {
             "name": "One-off high BP reading",
-            "desc": "",
+            "desc": "One-off high BP reading",
             "n": 6,
             "percentage": 12,
             "main": "",
@@ -92,23 +92,23 @@
           },
           {
             "name": "Recently optimised medication",
-            "desc": "",
+            "desc": "Recently optimised medication",
             "n": 7,
             "percentage": 14,
             "main": "",
             "patients": [5555256064,5555351913,5555355306,5555373501,5555382894,5555433795,5555446560]
           },
           {
-            "name": "Potential exclusions",
-            "desc": "",
+            "name": "Potential should be excluded",
+            "desc": "Potential should be excluded",
             "n": 3,
             "percentage": 6,
             "main": "",
             "patients": [5555477132,5555565864,5555627748]
           },
           {
-            "name": "White coat",
-            "desc": "",
+            "name": "White coat hypertension",
+            "desc": "White coat hypertension",
             "n": 4,
             "percentage": 8,
             "main": "",
@@ -134,7 +134,7 @@
           },
           {
             "name": "Exclusion code",
-            "desc": "",
+            "desc": "Exclusion code",
             "n": 20,
             "percentage": 41.7,
             "patients": [5556359342,5556445952,5556474770,5556560995,5556658291,5556671587,5556753852,5556799251,5556845192,5556879657,5556956733,5557018373,5557057422,5557142142,5557162124,5557195403,5557292078,5557335333,5557427267,5557476564]
@@ -148,7 +148,7 @@
           },
           {
             "name": "White coat hypertension",
-            "desc": "",
+            "desc": "White coat hypertension",
             "n": 4,
             "percentage": 8.3,
             "patients": [5558176883,5558224981,5558318019,5558343811]

@@ -49,19 +49,19 @@
       {"text":"Nominate a hypertension lead in your practice who can initiate some of these changes <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."}
     ],
     "individual": {
-      "Medication Optimisation": [
+      "Suboptimal medication": [
         {"text":"Medication suggestion"},
         {"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (<a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">evidence</a>.), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
         {"text":"Get nurses to measure (evidence)"},
         {"text":"HBP – either their own device, or your own. Patient resources: home BP monitoring leaflet"},
         {"text":"You may wish to exception report this patient or code the reason why their BP is high if you feel it is unsuitable to treat them for high blood pressure – for example: <ul><li>Use code [COPY:9h31] if you feel the patient is unsuitable</li><li>Use code [COPY:9h32] for “informed dissent”</li><li>Use code [COPY:8I3Y] for “BP procedure refused”</li><li>Also add specific diagnosis for why patient unsuitable if possible e.g. syncope, postural hypotension, frailty, white coat hypertension etc</li></ul>"}
       ],
-      "Non-adherence": [
+      "Medication non-adherence": [
         {"text":"Discuss with patients whether or not they are taking medication – if they are not, find out why and address these concerns (e.g. side effects, health beliefs etc)<ul><li>Encourage the recording of medicine-taking and self-monitoring</li><li>Simplify the dosing regimen</li><li>Offer dossette boxes</li></ul>"},
         {"text":"Exclude"},
         {"text":"HBP"}
       ],
-      "Referral": [
+      "Referral to secondary care": [
         {"text":"Refer to secondary care"},
         {"text":"Recommend to exclude"},
         {"text":"HBP"}
@@ -77,10 +77,10 @@
         {"text":"Exclude"},
         {"text":"HBP"}
       ],
-      "Potential exclusions":[
+      "Potential should be excluded":[
 
       ],
-      "White coat":[
+      "White coat hypertension":[
         {"text":"This patient has whitecoat hypertension / anxiety, try HBPM / ABPM"}
       ],
       "Recently Measured": [
