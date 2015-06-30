@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*jshint -W055 */
-/*global $, c3, Mustache, ZeroClipboard, console, jsPDF, Bloodhound, bb*/
+/*global $, c3, Mustache, ZeroClipboard, console, jsPDF, Bloodhound, bb, alert*/
 
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.
@@ -354,6 +354,7 @@
 
 	var addBreakdownPanel = function (pathwayStage){
 		local.selected = pathwayStage;
+    local.subselected = null;
 
 		createPanel(breakdownPanel, topRightPanel,{"pathwayStage" : pathwayStage, "header": local.data[local.pathway][pathwayStage] ? local.data[local.pathway][pathwayStage].header : ""});
 
@@ -371,6 +372,7 @@
 				if(local.charts['breakdown-chart']) local.charts['breakdown-chart'].unselect();
 
         populatePatientPanel(pathwayStage, null);
+        local.subselected = null;
 				//hideAllPanels();
 			}
 			local.chartClicked=false;
