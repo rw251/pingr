@@ -19,7 +19,7 @@
         "items": [
           {
             "name": "No opportunities",
-            "desc": "No contact",
+            "desc": "No opportunities",
             "n": 40,
             "percentage": 55.6,
             "main": "These are patients that you have had no contact with.",
@@ -27,7 +27,7 @@
           },
           {
             "name": "Face-to-face",
-            "desc": "Direct contact",
+            "desc": "Face-to-face",
             "n": 12,
             "percentage": 16.7,
             "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
@@ -35,7 +35,7 @@
           },
           {
             "name": "Non face-to-face",
-            "desc": "Indirect contact",
+            "desc": "Non face-to-face",
             "n": 20,
             "percentage": 27.8,
             "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
@@ -99,8 +99,8 @@
             "patients": [5555256064,5555351913,5555355306,5555373501,5555382894,5555433795,5555446560]
           },
           {
-            "name": "Potential should be excluded",
-            "desc": "Potential should be excluded",
+            "name": "Potentially should be excluded",
+            "desc": "Potentially should be excluded",
             "n": 3,
             "percentage": 6,
             "main": "",
