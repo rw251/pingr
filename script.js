@@ -978,6 +978,13 @@
       $(this).html(html.replace(/\[COPY:([^\]]*)\]/g,'<button type="button" data-clipboard-text="$1" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span> $1</button>'));
     });
 
+    adviceList.find('span:contains("[MED-SUGGESTION")').each(function(){
+      var html = $(this).text();
+      var suggestion = Math.random() <0.33 ? "Increase Ramipril to 10mg per day" : (Math.random() < 0.5 ? "Consider adding an ACE inhibior" : "Consider adding a thiazide-like diuretic");
+      $(this).html(html.replace(/\[MED\-SUGGESTION\]/g,suggestion));
+    });
+
+
 		setupClipboard( $('.btn-copy'), true );
 
 		updateCheckboxes(patientId);

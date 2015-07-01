@@ -50,7 +50,7 @@
     ],
     "individual": {
       "Suboptimal medication": [
-        {"text":"Medication suggestion"},
+        {"text":"[MED-SUGGESTION]"},
         {"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (<a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">evidence</a>.), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
         {"text":"Get nurses to measure (evidence)"},
         {"text":"HBP – either their own device, or your own. Patient resources: home BP monitoring leaflet"},
@@ -68,7 +68,7 @@
       ],
       "One-off high BP reading": [
         {"text":"Contact patient as per above methods to re-check [may already have future appt / plan in place to re-check]"},
-        {"text":"Medication suggestion"},
+        {"text":"[MED-SUGGESTION]"},
         {"text":"Exclude"},
         {"text":"HBP"}
       ],
@@ -77,7 +77,7 @@
         {"text":"Exclude"},
         {"text":"HBP"}
       ],
-      "Potential should be excluded":[
+      "Potentially should be excluded":[
 
       ],
       "White coat hypertension":[
