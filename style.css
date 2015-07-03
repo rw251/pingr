@@ -134,7 +134,7 @@ header {
 }
 
 .navbar-nav>li>.btn-group {
-	padding: 10px 30px 10px 30px;
+	padding: 10px 15px 10px 15px;
 }
 
 .navbar-toggle {
@@ -171,7 +171,7 @@ header {
 }
 
 .navbar-nav {
-  width: 90%;
+  width: 85%;
 }
 
 .btn-padding {
@@ -395,6 +395,10 @@ th,td {
 
 .gist {
   font-size: 14px;
+}
+
+.twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
+  width: 150px;
 }
 
 .twitter-typeahead {

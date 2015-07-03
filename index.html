@@ -20,7 +20,7 @@
   <!-- Base Brio Styling  -->
   <link href="assets/css/app/app.v1.css" rel="stylesheet">
   <!-- My styling -->
-  <link href="style.css?12" rel="stylesheet" type="text/css">
+  <link href="style.css?14" rel="stylesheet" type="text/css">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -87,20 +87,31 @@
               </div>
             </li>
 
+            <!-- Single button -->
+            <div class="btn-group pull-right">
+              <button type="button" class="btn btn-default btn-padding dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fa fa-cog"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <span class="btn btn-default btn-file" id="data-file-wrapper">
+                    Load data <input type="file" id="data-file" >
+                  </span>
+                </li>
+                <li>
+                  <span class="btn btn-default btn-file" id="patient-file-wrapper">
+                    Load patients <input type="file" id="patient-file" >
+                  </span>
+                </li>
+              </ul>
+            </div>
+
             <div class="input-group pull-right">
               <span class="btn btn-primary btn-padding" id="export-plan">
                 <span class="fa fa-download"></span> Download Action Plan
               </span>
             </div>
 
-            <div class="input-group pull-right">
-              <span class="btn btn-default btn-file" id="data-file-wrapper">
-                Load data <input type="file" id="data-file" >
-              </span>
-              <span class="btn btn-default btn-file" id="patient-file-wrapper">
-                Load patients <input type="file" id="patient-file" >
-              </span>
-            </div>
             <div class="input-group pull-right" id="search-box">
               <input type="text" placeholder="Search for patients..." class="typeahead">
             </div>
@@ -260,7 +271,7 @@
         </nav>
       </aside>
 
-      <div class="container-fluid">
+      <div class="container">
         <div class="row">
           <div class="col-sm-8">
             <div class="row" style="max-height:400px">
@@ -393,7 +404,7 @@
     <thead>
       <tr>
         <th>Suggested Actions</th>
-        <th>Do you agree?</th>
+        <th style="width: 65px">Do you agree?</th>
         <th></th>
       </tr>
     </thead>
@@ -493,7 +504,7 @@
   <table class="table">
     <thead>
       <tr>
-        <th style="width:100%;">Your Own Actions</th>
+        <th style="width:70%;">Your Own Actions</th>
         <th>Edit/ Delete</th>
         <th>Completed</th>
       </tr>
@@ -509,9 +520,9 @@
 
   <script id="action-plan" type="x-tmpl-mustache">
   <div class="input-group">
-    <textarea class="form-control" placeholder="Enter your own action plan..."></textarea>
-    <span class="input-group-btn">
-      <button class="btn btn-primary add-plan">Add</button>
+    <textarea class="form-control" rows="3" style="resize:none" placeholder="Enter your own action plan..."></textarea>
+    <span class="input-group-addon btn add-plan">
+      Add
     </span>
   </div>
   </script>
@@ -622,7 +633,7 @@
       <thead>
         <tr>
           <th>Suggested Actions</th>
-          <th>Do you agree?</th>
+          <th style="width: 65px">Do you agree?</th>
           <th></th>
         </tr>
       </thead>

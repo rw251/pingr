@@ -142,10 +142,9 @@
 			},
       tooltip: {
         format: {
-          title: function () { return 'Click for more detail'; },
-          value: function () { return undefined;}
-        },
-        show : enableHover
+          title: function (x) { return enableHover ? 'Click for more detail' : x.toDateString(); },
+          value: function (value) { return  enableHover ? undefined : value;}
+        }
       },
 			axis: {
 				x: {
@@ -206,10 +205,9 @@
 			},
       tooltip: {
         format: {
-          title: function () { return 'Click for more detail'; },
-          value: function () { return undefined;}
-        },
-        show : enableHover
+          title: function (x) { return enableHover ? 'Click for more detail' : x.toDateString(); },
+          value: function (value) { return  enableHover ? undefined : value;}
+        }
       },
 			axis: {
 				x: {
@@ -257,10 +255,9 @@
 			},
       tooltip: {
         format: {
-          title: function () { return 'Click for more detail'; },
-          value: function () { return undefined;}
-        },
-        show : enableHover
+          title: function (x) { return enableHover ? 'Click for more detail' : x; },
+          value: function (value) { return  enableHover ? undefined : value;}
+        }
       },
 			bar: {
 				width: {
@@ -291,10 +288,9 @@
 			},
       tooltip: {
         format: {
-          title: function () { return 'Click for more detail'; },
-          value: function () { return undefined;}
-        },
-        show : enableHover
+          title: function (x) { return enableHover ? 'Click for more detail' : x; },
+          value: function (value) { return  enableHover ? undefined : value;}
+        }
       },
 			bar: {
 				width: {
