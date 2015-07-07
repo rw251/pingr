@@ -455,8 +455,8 @@
 			$(this).tab('show');
 		});
 
-		suggestedPlanTeam.on('click', 'input[type=checkbox]', function(){
-			var idx = suggestedPlanTeam.find('input[type=checkbox]').index(this);
+		suggestedPlanTeam.on('click', '.cr-styled input[type=checkbox]', function(){
+			var idx = suggestedPlanTeam.find('.cr-styled input[type=checkbox]').index(this);
 			var current = getObj();
 			if(!current.actions) current.actions = {};
 			if(!current.actions[local.selected]) current.actions[local.selected] = {"agree":[],"done":[]};
@@ -473,8 +473,8 @@
 			updateSapRows();
 		});
 
-		adviceList.on('click', 'input[type=checkbox]', function(){
-			var idx = adviceList.find('input[type=checkbox]').index(this);
+		adviceList.on('click', '.cr-styled input[type=checkbox]', function(){
+			var idx = adviceList.find('.cr-styled input[type=checkbox]').index(this);
 			var current = getObj();
 			if(!current.actions) current.actions = {};
 			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
@@ -483,6 +483,11 @@
 			}
 			current.actions[local.patientId].done[idx]=this.checked;
 			setObj(current);
+
+      if(this.checked) {
+        recordEvent("Item completed", local.patientId);
+      }
+
 			updateSapRows();
 		});
 
@@ -552,19 +557,40 @@
 			setObj(obj);
 
 			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
-		}).on('change', 'input[type=radio]', function(){
-      if(this.value==="no") launchTeamModal(local.selected, $(this).closest('tr').children().first().children().first().text());
-			var idx = Math.floor(suggestedPlanTeam.find('input[type=radio]').index(this)/2);
-			var current = getObj();
-			if(!current.actions) current.actions = {};
-			if(!current.actions[local.selected]) current.actions[local.selected] = {"agree":[],"done":[]};
-			while(current.actions[local.selected].agree.length<=idx){
-				current.actions[local.selected].agree.push("");
-			}
-			current.actions[local.selected].agree[idx]=this.value==="yes";
-			setObj(current);
+		}).on('change', '.btn-toggle input[type=checkbox]', function(){
+      updateSapRows();
+    }).on('click', '.btn-yes,.btn-no', function(){
+      var checkbox = $(this).find("input[type=checkbox]");
+      if($(this).hasClass("active")){
+        //unselecting
+  			var idx = Math.floor(suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
+  			var current = getObj();
+  			if(!current.actions) current.actions = {};
+  			if(!current.actions[local.selected]) current.actions[local.selected] = {"agree":[],"done":[]};
+  			while(current.actions[local.selected].agree.length<=idx){
+  				current.actions[local.selected].agree.push("");
+  			}
+  			current.actions[local.selected].agree[idx]="";
+  			setObj(current);
 
-			updateSapRows();
+      } else {
+        //unselect other
+        var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+        other.removeClass("active");
+        other.find("input[type=checkbox]").prop("checked", false);
+
+        //selecting
+        if(checkbox.val()==="no") launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text());
+  			var idx = Math.floor(suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
+  			var current = getObj();
+  			if(!current.actions) current.actions = {};
+  			if(!current.actions[local.selected]) current.actions[local.selected] = {"agree":[],"done":[]};
+  			while(current.actions[local.selected].agree.length<=idx){
+  				current.actions[local.selected].agree.push("");
+  			}
+  			current.actions[local.selected].agree[idx]=checkbox.val()==="yes";
+  			setObj(current);
+      }
 		}).on('keyup', 'input[type=text]', function(e){
       if(e.which === 13) {
         teamTab.find('.add-plan').click();
@@ -605,19 +631,40 @@
 			setObj(obj);
 
 			displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
-		}).on('change', 'input[type=radio]', function(){
-      if(this.value==="no") launchPatientActionModal(local.patientId, $(this).closest('tr').children().first().children().first().text());
-			var idx = Math.floor(adviceList.find('input[type=radio]').index(this)/2);
-			var current = getObj();
-			if(!current.actions) current.actions = {};
-			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
-			while(current.actions[local.patientId].agree.length<=idx){
-				current.actions[local.patientId].agree.push("");
-			}
-			current.actions[local.patientId].agree[idx]=this.value==="yes";
-			setObj(current);
+		}).on('change', '.btn-toggle input[type=checkbox]', function(){
+      updateSapRows();
+    }).on('click', '.btn-yes,.btn-no', function(){
+      var checkbox = $(this).find("input[type=checkbox]");
+      if($(this).hasClass("active")){
+        //unselecting
+  			var idx = Math.floor(adviceList.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
+  			var current = getObj();
+  			if(!current.actions) current.actions = {};
+  			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
+  			while(current.actions[local.patientId].agree.length<=idx){
+  				current.actions[local.patientId].agree.push("");
+  			}
+  			current.actions[local.patientId].agree[idx]="";
+  			setObj(current);
 
-			updateSapRows();
+      } else {
+        //unselect other
+        var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+        other.removeClass("active");
+        other.find("input[type=checkbox]").prop("checked", false);
+
+        //selecting
+        if(checkbox.val()==="no") launchPatientActionModal(local.patientId, $(this).closest('tr').children().first().children().first().text());
+  			var idx = Math.floor(adviceList.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
+  			var current = getObj();
+  			if(!current.actions) current.actions = {};
+  			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
+  			while(current.actions[local.patientId].agree.length<=idx){
+  				current.actions[local.patientId].agree.push("");
+  			}
+  			current.actions[local.patientId].agree[idx]=checkbox.val()==="yes";
+  			setObj(current);
+      }
 		}).on('keyup', 'input[type=text]', function(e){
       if(e.which === 13) {
         individualTab.find('.add-plan').click();
@@ -663,15 +710,16 @@
 			return ret;
 		});
 
-		var data = {"patients": patients, "header-items" : [{"title" : "NHS no.", "isSorted":true, "direction":"sort-asc"}]};
+		var data = {"patients": patients, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}]};
 
     if(pathwayStage === local.categories.monitoring.name){
-      data["header-items"].push({"title" : "Last BP Date", "isSorted":false, "direction":"sort-asc"});
+      data["header-items"].push({"title" : "Last BP Date", "isSorted":true, "direction":"sort-asc"});
     }
     else{
-      data["header-items"].push({"title" : "Last SBP", "isSorted":false, "direction":"sort-asc"});
+      data["header-items"].push({"title" : "Last SBP", "isSorted":true, "direction":"sort-asc"});
     }
 
+    if(sortField === undefined) sortField = 1;
 		if(sortField !== undefined) {
 			data.patients.sort(function(a, b){
         if(sortField===0) { //NHS number
@@ -799,19 +847,38 @@
 				x: {
 					type: 'timeseries',
 					tick: {
-						format: '%Y-%m-%d'
-					}
+  					format: '%Y-%m-%d',
+  					count: 7,
+  					culling: {
+  						max: 3
+  					}
+					},
+          max: new Date()
 				}
 			}
 		};
 
+    var lines = null;
 		if(local.data[local.pathway].patients[patientId].contacts){
-			chartOptions.grid = {
+			lines = local.data[local.pathway].patients[patientId].contacts.slice();
+		} //"contacts": [{"value": "2012-09-01", "text": "F2F"}, {"value": "2013-03-03", "text": "F2F"}]
+
+    var obj = getObj();
+    if(obj.events && obj.events[patientId] && obj.events[patientId].length>0){
+      if(!lines) lines = [];
+      for(var i = 0; i < obj.events[patientId].length; i++){
+        lines.push({"value": obj.events[patientId][i].date.substr(0,10), "text": obj.events[patientId][i].name});
+      }
+    }
+
+    if(lines){
+      chartOptions.grid = {
 				x: {
-					lines: local.data[local.pathway].patients[patientId].contacts
+					lines: lines
 				}
 			};
-		}
+    }
+
 
 		local.charts['chart-demo-trend'] = c3.generate(chartOptions);
 	};
@@ -875,13 +942,13 @@
 			}
 		};
 
-		suggestedPlanTeam.find('input[type=checkbox]').each(wireUpCheckboxes);
+		suggestedPlanTeam.find('.cr-styled input[type=checkbox]').each(wireUpCheckboxes);
 
-		suggestedPlanTeam.find('input[type=radio]').each(wireUpRadioButtons);
+		suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
 
-		adviceList.find('input[type=checkbox]').each(wireUpCheckboxes);
+		adviceList.find('.cr-styled input[type=checkbox]').each(wireUpCheckboxes);
 
-		adviceList.find('input[type=radio]').each(wireUpRadioButtons);
+		adviceList.find('.btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
 
 		//RW TODO need to update the personal plan checkboxes
 
@@ -896,36 +963,57 @@
     var anyTeam = false;
     var anyIndividual = false;
 
-    suggestedPlanTeam.find('input[type=radio]:checked').each(function(){
-			if(this.value==="yes"){
-				$(this).parent().parent().parent().parent().removeClass('danger');
-				$(this).parent().parent().parent().parent().addClass('active');
-				$(this).parent().parent().parent().parent().find('td').last().children().show();
-        anyTeam = true;
-			} else {
-				$(this).parent().parent().parent().parent().removeClass('active');
-				$(this).parent().parent().parent().parent().addClass('danger');
-			}
+
+    suggestedPlanTeam.add(adviceList).find('.cr-styled input[type=checkbox]').each(function(){
+      if(this.checked){
+        $(this).parent().parent().parent().addClass('success');
+      } else {
+        $(this).parent().parent().parent().removeClass('success');
+      }
+    });
+
+    suggestedPlanTeam.find('tr').each(function(){
+      var self = $(this);
+      var any = false;
+      self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
+        any = true;
+  			if(this.value==="yes"){
+  				self.removeClass('danger');
+  				self.addClass('active');
+  				self.find('td').last().children().show();
+          anyTeam = true;
+  			} else {
+  				self.removeClass('active');
+  				self.addClass('danger');
+  			}
+      });
+      if(!any){
+        self.removeClass('danger');
+        self.removeClass('active');
+        self.removeClass('success');
+      }
 		});
 
-    adviceList.find('input[type=radio]:checked').each(function(){
-			if(this.value==="yes"){
-				$(this).parent().parent().parent().parent().removeClass('danger');
-				$(this).parent().parent().parent().parent().addClass('active');
-				$(this).parent().parent().parent().parent().find('td').last().children().show();
-        anyIndividual = true;
-			} else {
-				$(this).parent().parent().parent().parent().removeClass('active');
-				$(this).parent().parent().parent().parent().addClass('danger');
-			}
-		});
-
-		suggestedPlanTeam.add(adviceList).find('input[type=checkbox]').each(function(){
-			if(this.checked){
-				$(this).parent().parent().parent().addClass('success');
-			} else {
-				$(this).parent().parent().parent().removeClass('success');
-			}
+    adviceList.find('tr').each(function(){
+      var self = $(this);
+      var any = false;
+      self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
+        any = true;
+  			if(this.value==="yes"){
+  				self.removeClass('danger');
+  				self.addClass('active');
+  				self.find('td').last().children().show();
+          anyIndividual = true;
+  			} else {
+  				self.removeClass('active');
+  				self.addClass('danger');
+  			}
+      });
+      if(!any){
+        self.removeClass('danger');
+        self.removeClass('active');
+        self.removeClass('success');
+      }
 		});
 
     suggestedPlanTeam.find('table thead tr th').last().html( anyTeam ? 'Completed' : '');
@@ -1062,19 +1150,33 @@
     var rendered = Mustache.render(template, data, {"item" : reasonTemplate});
     $('#modal').html(rendered);
 
-    $('#modal .modal').off('click','.save-plan').on('click', '.save-plan', {"label" : label}, function(e){
+    local.modalSaved = false;
+
+    $('#modal .modal').off('submit','form').on('submit', 'form', {"label" : label}, function(e){
       var obj = getObj();
       if(!obj.feedback) obj.feedback = {};
       if(!obj.feedback[e.data.label]) obj.feedback[label] = [];
       var reason = $('input:radio[name=reason]:checked').val();
-      var reasonText = $('#modal input[type=text]').val();
+      var reasonText = $('#modal textarea').val();
       var item = {"val" : value, "reason" : reason};
       if(reasonText !== "") item.text = reasonText;
       obj.feedback[e.data.label].push(item);
       setObj(obj);
 
+      local.modalSaved = true;
+
+      e.preventDefault();
       $('#modal .modal').modal('hide');
     }).modal();
+
+    $('#modal').off('hidden.bs.modal').on('hidden.bs.modal', {"label" : label}, function(e) {
+      if(local.modalSaved) {
+        local.modalSaved = false;
+      } else {
+        //uncheck as cancelled.
+        $('tr:contains('+value+')').find(".btn-toggle input[type=checkbox]:checked").click();
+      }
+    });
   };
 
   var launchTeamModal = function(label, value){
@@ -1082,7 +1184,14 @@
   };
 
   var launchPatientModal = function(label, value){
-    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Meets the target","value":"meetstarget"},{"reason":"Should be excluded","value":"shouldexclude"},{"reason":"Should be in recently measured / recently changed / suboptimal rx group","value":"othergroup"},{"reason":"Something else","value":"else"}]},label, value);
+    var reasons = [{"reason":"Meets the target","value":"meetstarget"},{"reason":"Should be excluded","value":"shouldexclude"}];
+    for(var prop in local.data[local.pathway][local.selected].bdown) {
+      if(local.data[local.pathway].patients[local.patientId].subsection !== prop) {
+        reasons.push({"reason": "Should be in the '" + prop + "' group", "value": "shouldbe_"+prop.replace(/\s+/g, '')});
+      }
+    }
+    reasons.push({"reason":"Something else","value":"else"});
+    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : reasons},label, value);
   };
 
   var launchPatientActionModal = function(label, value){
