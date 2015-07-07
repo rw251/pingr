@@ -26,7 +26,8 @@
 			"exclusions": {"name": "exclusions", "display": "Exclusions"}
 		},
 		"page" : "",
-		"pathway" : "Blood Pressure"
+		"pathway" : "Blood Pressure",
+    "colors" : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 	};
 
 	var bottomLeftPanel, bottomRightPanel, topLeftPanel, topRightPanel, farRightPanel, monitoringPanel, treatmentPanel,
@@ -142,8 +143,8 @@
 			},
       tooltip: {
         format: {
-          title: function (x) { return enableHover ? 'Click for more detail' : x.toDateString(); },
-          value: function (value) { return  enableHover ? undefined : value;}
+          title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
+          value: function (value) { return  enableHover ? undefined : value;}*/
         }
       },
 			axis: {
@@ -155,14 +156,26 @@
 						culling: {
 							max: 4
 						}
-					}
+					},
+          label: {
+            text: 'Date',
+            position: 'outer-center'
+          }
 				},
 				y : {
-					min : 0
+					min : 0,
+          label: {
+            text: 'Proportion (%)',
+            position: 'outer-middle'
+          }
 				},
 				y2: {
 					show: true,
-					min: 0
+					min: 0,
+          label: {
+            text: 'Patient count (n)',
+            position: 'outer-middle'
+          }
 				}
 			},
 			point: {
@@ -205,8 +218,8 @@
 			},
       tooltip: {
         format: {
-          title: function (x) { return enableHover ? 'Click for more detail' : x.toDateString(); },
-          value: function (value) { return  enableHover ? undefined : value;}
+          title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
+          value: function (value) { return  enableHover ? undefined : value;}*/
         }
       },
 			axis: {
@@ -218,14 +231,26 @@
 						culling: {
 							max: 4
 						}
-					}
+					},
+          label: {
+            text: 'Date',
+            position: 'outer-center'
+          }
 				},
 				y : {
-					min : 0
+					min : 0,
+          label: {
+            text: 'Proportion (%)',
+            position: 'outer-middle'
+          }
 				},
 				y2: {
 					show: true,
-					min: 0
+					min: 0,
+          label: {
+            text: 'Patient count (n)',
+            position: 'outer-middle'
+          }
 				}
 			},
 			point: {
@@ -249,15 +274,22 @@
 			bindto: '#diagnosis-chart',
 			data: {
 				columns: [
-					['data1', 30, 200, 100, 400, 150]
+					['Patients', 30, 200, 100, 400, 150]
 				],
-				type: 'bar'
+				type: 'bar',
+        labels: true,
+        color: function (color, d) {
+          return local.colors[d.index];
+        }
 			},
       tooltip: {
         format: {
-          title: function (x) { return enableHover ? 'Click for more detail' : x; },
-          value: function (value) { return  enableHover ? undefined : value;}
+          title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
+          value: function (value) { return  enableHover ? undefined : value;}*/
         }
+      },
+      legend:{
+        show: false
       },
 			bar: {
 				width: {
@@ -269,8 +301,18 @@
 			axis: {
 				x: {
 					type: 'category',
-					categories: ['HTN', 'CKD', 'DM', 'Protein', 'McrA']
-				}
+					categories: ['HTN', 'CKD', 'DM', 'Protein', 'McrA'],
+          label: {
+            text: 'Disease',
+            position: 'outer-center'
+          }
+				},
+        y : {
+          label: {
+            text: 'Patient count (n)',
+            position: 'outer-middle'
+          }
+        }
 			}
 		});
 	};
@@ -282,15 +324,22 @@
 			bindto: '#exclusion-chart',
 			data: {
 				columns: [
-					['data1', 122, 78]
+					['Patients', 122, 78]
 				],
-				type: 'bar'
+				type: 'bar',
+        labels: true,
+        color: function (color, d) {
+          return local.colors[d.index];
+        }
 			},
       tooltip: {
         format: {
-          title: function (x) { return enableHover ? 'Click for more detail' : x; },
-          value: function (value) { return  enableHover ? undefined : value;}
+          title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
+          value: function (value) { return  enableHover ? undefined : value;}*/
         }
+      },
+      legend: {
+        show: false
       },
 			bar: {
 				width: {
@@ -302,8 +351,18 @@
 			axis: {
 				x: {
 					type: 'category',
-					categories: ['Reasons we think', 'Exclusion code']
-				}
+					categories: ['Reasons we think', 'Exclusion code'],
+          label: {
+            text: 'Reason for exclusion',
+            position: 'outer-center'
+          }
+				},
+        y : {
+          label: {
+            text: 'Patient count (n)',
+            position: 'outer-middle'
+          }
+        }
 			}
 		});
 	};
