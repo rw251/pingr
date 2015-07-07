@@ -3,6 +3,10 @@ body {
   padding-top: 50px;
 }
 
+body.qof {
+  background-color: #ddf9f9;
+}
+
 .scroll-bar {
   overflow-y: scroll;
 }
