@@ -690,13 +690,13 @@
 			setObj(obj);
 
 			displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
-		}).on('change', '.btn-toggle input[type=checkbox]', function(){
+		}).on('change', '#individual-suggested-actions-table .btn-toggle input[type=checkbox]', function(){
       updateSapRows();
-    }).on('click', '.btn-yes,.btn-no', function(){
+    }).on('click', '#individual-suggested-actions-table .btn-yes,#individual-suggested-actions-table .btn-no', function(){
       var checkbox = $(this).find("input[type=checkbox]");
       if($(this).hasClass("active")){
         //unselecting
-  			var idx = Math.floor(adviceList.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
+  			var idx = Math.floor(adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').index(checkbox)/2);
   			var current = getObj();
   			if(!current.actions) current.actions = {};
   			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
@@ -714,7 +714,7 @@
 
         //selecting
         if(checkbox.val()==="no") launchPatientActionModal(local.patientId, $(this).closest('tr').children().first().children().first().text());
-  			var idx = Math.floor(adviceList.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
+  			var idx = Math.floor(adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').index(checkbox)/2);
   			var current = getObj();
   			if(!current.actions) current.actions = {};
   			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
@@ -1007,7 +1007,7 @@
 
 		adviceList.find('.cr-styled input[type=checkbox]').each(wireUpCheckboxes);
 
-		adviceList.find('.btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
+		adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
 
 		//RW TODO need to update the personal plan checkboxes
 
@@ -1053,7 +1053,7 @@
       }
 		});
 
-    adviceList.find('tr').each(function(){
+    adviceList.find('#individual-suggested-actions-table tr').each(function(){
       var self = $(this);
       var any = false;
       self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
@@ -1232,8 +1232,8 @@
       if(local.modalSaved) {
         local.modalSaved = false;
       } else {
-        //uncheck as cancelled.
-        $('tr:contains('+value+')').find(".btn-toggle input[type=checkbox]:checked").click();
+        //uncheck as cancelled. - but not if value is empty as this unchecks everything
+        if(value !== "") $('tr:contains('+value+')').find(".btn-toggle input[type=checkbox]:checked").click();
       }
     });
   };
@@ -1474,7 +1474,7 @@
 
     $('#search-box').find('.typeahead').typeahead('destroy');
     $('#search-box').find('.typeahead').typeahead(
-      {hint: true, highlight: true, minLength: 2},
+      {hint: true, highlight: true, minLength: 2, autoselect: true},
       {name: 'patients', displayKey: 'value', source: local.states.ttAdapter()}
     ).on('typeahead:selected', onSelected)
     .on('typeahead:autocompleted', onSelected);

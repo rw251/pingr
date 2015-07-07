@@ -413,7 +413,7 @@
     <thead>
       <tr>
         <th>Suggested Actions</th>
-        <th style="width: 65px">Do you agree?</th>
+        <th style="width: 65px">Agree?</th>
         <th></th>
       </tr>
     </thead>
@@ -605,32 +605,40 @@
   </script>
 
   <script id="individual-panel" type="x-tmpl-mustache">
-    <h4>Patient <strong>{{nhsNumber}}</strong>
-      <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
-        <span class="fa fa-clipboard"></span>
-      </button>
-    </h4>
-    <table class="table table-minimal">
-    <thead>
-    <tr>
-      <th></th>
-      <th style="width:150px">Agree?</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td style="font-size:1.25em">{{section}} - {{category}}</td>
-      <td>
-        <button type="button" class="btn btn btn-yes btn-default thumb-up">
-          <span class="fa fa-thumbs-up"></span> Yes
-        </button>
-        <button id="patientDisagreeButton" type="button" class="btn btn btn-no btn-default thumb-down">
-          <span class="fa fa-thumbs-down"></span> No
-        </button>
-      </td>
-    </tr>
-    </tbody>
-    </table>
+    <div class="panel panel-default panel-grey">
+      <div class="panel-body">
+        <h4>Patient <strong>{{nhsNumber}}</strong>
+          <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
+            <span class="fa fa-clipboard"></span>
+          </button>
+        </h4>
+      </div>
+      <table id="individual-panel-classification" class="table table-minimal">
+      <thead>
+      <tr>
+        <th>Improvement opportunity</th>
+        <th style="width:100px">Agree?</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td style="font-size:1.25em">{{section}} - {{category}}</td>
+        <td>
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-yes btn-toggle btn-success">
+              <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off">
+              <span class="fa fa-thumbs-up"></span>
+            </label>
+            <label class="btn btn-no btn-toggle btn-danger">
+              <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off">
+              <span class="fa fa-thumbs-down"></span>
+            </label>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+      </table>
+    </div>
     {{#isReadCode}}
     <div>We suggest you add the following exclusion code to their record: 9h3..
       <button type="button" data-clipboard-text="9h3.." data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default">
@@ -638,11 +646,11 @@
       </button>
     </div>
     {{/isReadCode}}
-    <table class="table">
+    <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
           <th>Suggested Actions</th>
-          <th style="width: 65px">Do you agree?</th>
+          <th style="width: 65px">Agree?</th>
           <th></th>
         </tr>
       </thead>
@@ -669,49 +677,6 @@
         {{/suggestions}} {{resetIndex}}
       </tbody>
     </table>
-
-
-  <!--  <div class="modal fade" id="patientDisagreeModal" tabindex="-1" role="dialog" aria-labelledby="patientModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="patientModalLabel">Why?</h4>
-          </div>
-          <div class="modal-body">
-            <div class="radio">
-              <label>
-                <input type="radio" name="teamReason" value="done">
-                Meets the target
-              </label>
-            </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="teamReason" value="nowork">
-                Should be excluded
-              </label>
-            </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="teamReason" value="nowork">
-                Should be in different group
-              </label>
-            </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="teamReason" value="other">
-                Something else
-              </label>
-            </div>
-            <textarea rows="3" style="resize:none" class="form-control" id="teamOther" placeholder="Tell us more so we won’t make this error again..."></textarea>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary save-plan">Save</button>
-          </div>
-        </div>
-      </div>
-    </div>-->
   </script>
 
   <script id="bp-trend-panel" type="x-tmpl-mustache">

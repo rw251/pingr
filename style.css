@@ -11,6 +11,10 @@ body {
   opacity: 0;
 }
 
+.panel-grey {
+  background-color: #f3f3f3;
+}
+
 /* Better widths for container */
 @media (min-width: 768px) {
   .container {
