@@ -20,7 +20,7 @@
   <!-- Base Brio Styling  -->
   <link href="assets/css/app/app.v1.css" rel="stylesheet">
   <!-- My styling -->
-  <link href="style.css?20" rel="stylesheet" type="text/css">
+  <link href="style.css?21" rel="stylesheet" type="text/css">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -605,7 +605,7 @@
   </script>
 
   <script id="individual-panel" type="x-tmpl-mustache">
-    <div class="panel panel-default panel-grey">
+    <div id="individual-panel-classification" class="panel panel-default panel-grey">
       <div class="panel-body">
         <h4>Patient <strong>{{nhsNumber}}</strong>
           <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
@@ -613,7 +613,7 @@
           </button>
         </h4>
       </div>
-      <table id="individual-panel-classification" class="table table-minimal">
+      <table class="table table-minimal">
       <thead>
       <tr>
         <th>Improvement opportunity</th>

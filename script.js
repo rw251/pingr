@@ -729,6 +729,34 @@
         individualTab.find('.add-plan').click();
       }
     });
+
+    individualTab.on('change', '#individual-panel-classification .btn-toggle input[type=checkbox]', function(){
+      updateSapRows();
+    }).on('click', '#individual-panel-classification .btn-yes,#individual-panel-classification .btn-no', function(){
+      var checkbox = $(this).find("input[type=checkbox]");
+      if($(this).hasClass("active")){
+        //unselecting
+  			var current = getObj();
+  			if(!current.actions) current.actions = {};
+  			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
+  			current.actions[local.patientId].classification = "";
+  			setObj(current);
+      } else {
+        //unselect other
+        var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+        other.removeClass("active");
+        other.find("input[type=checkbox]").prop("checked", false);
+
+        //selecting
+        if(checkbox.val()==="no") launchPatientModal(local.patientId, $(this).closest('tr').children(':first').text());
+
+  			var current = getObj();
+  			if(!current.actions) current.actions = {};
+  			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
+  			current.actions[local.patientId].classification = checkbox.val()==="yes";
+  			setObj(current);
+      }
+		});
 	};
 
 	var selectPanel = function(pathwayStage) {
@@ -995,6 +1023,18 @@
 			}
 		};
 
+		var wireUpRadioButtons2 = function() {
+			if(current.actions && current.actions[id] && current.actions[id].classification !== undefined && current.actions[id].classification !== ""){
+				if(current.actions[id].classification && this.value==="yes"){
+					$(this).prop('checked', true);
+					$(this).parent().addClass('active');
+				} else if(!current.actions[id].classification && this.value==="no"){
+					$(this).prop('checked', true);
+					$(this).parent().addClass('active');
+				}
+			}
+		};
+
 		var wireUpCheckboxes =function(i){
 			if(current.actions && current.actions[id] && current.actions[id].done.length>i && current.actions[id].done[i]){
 				$(this).prop('checked', true);
@@ -1008,6 +1048,8 @@
 		adviceList.find('.cr-styled input[type=checkbox]').each(wireUpCheckboxes);
 
 		adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
+
+    adviceList.find('#individual-panel-classification .btn-toggle input[type=checkbox]').each(wireUpRadioButtons2);
 
 		//RW TODO need to update the personal plan checkboxes
 
@@ -1075,6 +1117,18 @@
       }
 		});
 
+    $('#individual-panel-classification').removeClass('panel-green').removeClass('panel-red');
+    $('#individual-panel-classification').find('tr').each(function(){
+      var self = $(this);
+      self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
+  			if(this.value==="yes"){
+  				$('#individual-panel-classification').addClass('panel-green');
+  			} else {
+  				$('#individual-panel-classification').addClass('panel-red');
+  			}
+      });
+    });
+
     suggestedPlanTeam.find('table thead tr th').last().html( anyTeam ? 'Completed' : '');
     adviceList.find('table thead tr th').last().html( anyIndividual ? 'Completed' : '');
 	};
@@ -1110,10 +1164,6 @@
 		$('#advice').show();
 
 		createPanel(individualPanel, adviceList, data, {"chk" : $('#checkbox-template').html() });
-
-    $('#patientDisagreeButton').on('click', function(){
-      launchPatientModal(patientId, "overall");
-    });
 
     //Wire up any clipboard stuff in the suggestions
     adviceList.find('span:contains("[COPY")').each(function(){

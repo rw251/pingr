@@ -15,6 +15,14 @@ body {
   background-color: #f3f3f3;
 }
 
+.panel-red {
+  background-color: #f3cccc;
+}
+
+.panel-green {
+  background-color: #ccf3cc;
+}
+
 /* Better widths for container */
 @media (min-width: 768px) {
   .container {
@@ -217,7 +225,7 @@ header {
   padding: 15px 15px 0px 15px;
 }
 
-.suggestion.success td span, .suggestion.danger td span {
+.suggestion.danger td span {
 	text-decoration: line-through;
 }
 
