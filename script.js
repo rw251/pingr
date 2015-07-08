@@ -613,12 +613,17 @@
       }).modal();
 		}).on('click', '.delete-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
-      var obj = getObj();
-      if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
-			obj.plans.team[pathwayStage].splice(idx,1);
-			setObj(obj);
 
-			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
+      $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
+      }).off('click','.delete-plan').on('click', '.delete-plan',function(){
+        var obj = getObj();
+        if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
+  			obj.plans.team[pathwayStage].splice(idx,1);
+  			setObj(obj);
+
+        $('#deletePlan').modal('hide');
+      }).modal();
 		}).on('click', '.add-plan', function(){
 			var obj = getObj();
       if(!obj.plans.team[pathwayStage]) obj.plans.team[pathwayStage] = [];
@@ -687,12 +692,17 @@
       }).modal();
 		}).on('click', '.delete-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
-      var obj = getObj();
-      if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
-			obj.plans.individual[local.patientId].splice(idx,1);
-			setObj(obj);
 
-      displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
+      $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        displayPersonalisedActionPlan(local.patientId, $('#personalPlanIndividual'), false);
+      }).off('click','.delete-plan').on('click', '.delete-plan',function(){
+        var obj = getObj();
+        if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
+  			obj.plans.individual[local.patientId].splice(idx,1);
+  			setObj(obj);
+
+        $('#deletePlan').modal('hide');
+      }).modal();
 		}).on('click', '.add-plan', function(){
 			var obj = getObj();
       if(!obj.plans.individual[local.patientId]) obj.plans.individual[local.patientId] = [];
@@ -1551,6 +1561,11 @@
         $('#navbar').children('.nav').find(".active").removeClass("active");
       } else if (hash === "#help") {
         showPage('help-page');
+
+        showSidePanel();
+        showHeaderBarItems();
+        hideAllPanels();
+        addNavigation(local.diseases,[], $('#help-page'));
       } else if (hash === "#welcome") {
         showPage('welcome');
 
@@ -1560,10 +1575,7 @@
         addNavigation(local.diseases,[], $('#welcome'));
 
         //add tasks
-        //get tasks
-        var tasks = [];//{"pathway": "Blood Pressure", "stage":"monitoring", "task": "Customise your pop-ups to demonstrate the consequences of ignoring them."},
-        ///{"pathway": "Blood Pressure", "stage":"monitoring", "task": "Organise an open access or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked link to an example from a practice."},
-        //{"pathway": "Blood Pressure", "stage":"treatment", "task": "Hold an educational session or meeting at your practice to highlight to colleagues: the importance of blood pressure measurement, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes. A presentation."}];
+        var tasks = [];
 
         var current = getObj();
         if(current.actions) {

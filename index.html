@@ -53,7 +53,7 @@
   </div>
 
   <section id="main">
-    <nav class="navbar navbar-fixed-top" id="topnavbar">
+    <nav class="navbar navbar-fixed-top hide-if-logged-out" id="topnavbar">
       <div class="container">
         <div class="navbar-header">
           <button class="navbar-toggle pull-left collapsed" id="aside-toggle" type="button">
@@ -67,10 +67,10 @@
 
         <div class="collapse navbar-collapse" id="navbar">
           <ul class="nav navbar-nav">
-            <li class="active" id="help">
+            <li class="active hide-if-logged-out" id="help">
               <a class="hidden-xs" href="#help">Instructions</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Instructions</a>
             </li>
-            <li class=" hide-if-logged-out">
+            <li class="hide-if-logged-out">
               <div class="btn-group">
                 <button type="button" id="pick-button" class="btn btn-default btn-sm btn-circle" data-toggle="dropdown">NICE
                   <span class="caret"></span>
@@ -183,7 +183,7 @@
         <nav class="navigation"></nav>
 
       </aside>
-      <div class="container-fluid">
+      <div class="container">
         <div class="row">
           <h1>Welcome!</h1>
           <h3>You can now either:</h3>
@@ -235,10 +235,62 @@
     </nav>
 
     <div class="starter-template page" id="help-page">
-      <h1>Instructions</h1>
-      <p>Some instructions</p>
-      <h3>Sub heading</h3>
-      <p>Some more instructions</p>
+
+      <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
+        <div class="user text-center">
+          <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
+
+          <h4 class="user-name">Ben Brown</h4>
+
+          <div class="dropdown user-login">
+            <button class="btn btn-xs dropdown-toggle btn-rounded" data-toggle="dropdown" type="button"><i class="fa fa-circle status-icon available"></i> Available <i class="fa fa-angle-down"></i></button>
+
+            <ul class="dropdown-menu">
+              <li>
+                <a href="#"><i class="fa fa-circle status-icon busy"></i> Busy</a>
+              </li>
+
+              <li>
+                <a href="#"><i class="fa fa-circle status-icon invisibled"></i> Invisible</a>
+              </li>
+
+              <li>
+                <a href="#"><i class="fa fa-circle status-icon signout"></i> Sign out</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <nav class="navigation"></nav>
+
+      </aside>
+      <div class="container-fluid">
+        <h2>About PINGR</h2>
+        <p>PINGR analyses coded data from primary care electronic health records to suggest quality improvements GP practices could make in the way they care for long-term conditions. Health record data are compared against quality standards from the National Institute for Health and Care Excellence (NICE) or the Quality and Outcomes Framework (QOF) according to 4 aspects of care:</p>
+        <ul>
+          <li><strong>Diagnosis:</strong> How well a condition is diagnosed.</li>
+          <li><strong>Monitoring:</strong> How well a condition is monitored.</li>
+          <li><strong>Treatment:</strong> How well a condition is treated.</li>
+          <li><strong>Exclusions:</strong> Whether patients are appropriately excluded from quality standards.</li>
+        </ul>
+        <p>Based on this information, PINGR then suggests quality improvement actions a GP practice could undertake as a team / organisation and for individual patients.</p>
+        <h2>How to use PINGR</h2>
+        <ul>
+          <li>Select the <strong>clinical area</strong> you wish to look at from the left hand menu. When you’ve done this, the analysis of the 4 aspects of care for that condition in your practice will be displayed.</li>
+          <li>How PINGR thinks care <strong>could be improved</strong> can be found by clicking on any of the 4 panels. These are split into 2 areas:
+            <ul>
+              <li>Suggested actions that a GP practice could undertake as a <strong>team / organisation.</strong></li>
+              <li>Suggested actions for <strong>individual patients</strong> (by selecting a patient from the panel on the right).</li>
+            </ul>
+          </li>
+          <li>Choose whether you want to use <strong>NICE</strong> or <strong>QOF</strong> standards from the drop-down menu at the top of the page.</li>
+          <li>If you <strong>agree</strong> with a suggestion PINGR makes, please click the <strong>green thumbs up</strong> <label class="btn btn-xs btn-success"><span class="fa fa-thumbs-up"></span></label> – this will save this suggestion for you to your <strong>personal action plan log</strong> (this can be <strong>downloaded</strong> as a PDF document at any time for printing or sharing with others).</li>
+          <li>If you <strong>do not agree</strong> with a suggestion that PINGR makes, please click the <strong>red thumbs down</strong> <label class="btn btn-xs btn-danger"><span class="fa fa-thumbs-down"></span></label> – this will remove the suggestion from your screen and provide us with important feedback on how to improve PINGR. The <strong>more you can tell us</strong> why you don’t agree with the suggestion the <strong>more we can improve</strong>.</li>
+          <li>You can also <strong>add your own action plans</strong> in addition to the ones suggested by PINGR at the bottom of the suggested action plan lists.</li>
+        </ul>
+        <h2>Contact us</h2>
+        <p>If you have any questions or problems please send us an email <a href="mailto:Benjamin.brown@manchester.ac.uk">Benjamin.brown@manchester.ac.uk</a></p>
+      </div>
     </div>
 
     <div class="starter-template page" id="main-dashboard">
@@ -605,6 +657,23 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary save-plan">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="deletePlan" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger delete-plan">Delete</button>
           </div>
         </div>
       </div>
