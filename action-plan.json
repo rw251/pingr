@@ -77,9 +77,6 @@
         {"text":"Exclude"},
         {"text":"HBP"}
       ],
-      "Potentially should be excluded":[
-
-      ],
       "White coat hypertension":[
         {"text":"This patient has whitecoat hypertension / anxiety, try HBPM / ABPM"}
       ],

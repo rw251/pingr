@@ -1319,7 +1319,10 @@
   };
 
   var launchPatientModal = function(label, value){
-    var reasons = [{"reason":"Meets the target","value":"meetstarget"},{"reason":"Should be excluded","value":"shouldexclude"}];
+    var reasons = [];
+    if(local.selected===local.categories.monitoring.name) reasons.push({"reason":"Has actually already been monitored","value":"alreadymonitored"});
+    else if(local.selected===local.categories.treatment.name) reasons.push({"reason":"Is actually treated to target","value":"treated"});
+    reasons.push({"reason":"Should be excluded","value":"shouldexclude"});
     for(var prop in local.data[local.pathwayId][local.selected].bdown) {
       if(local.data[local.pathwayId].patients[local.patientId].subsection !== prop) {
         reasons.push({"reason": "Should be in the '" + prop + "' group", "value": "shouldbe_"+prop.replace(/\s+/g, '')});
