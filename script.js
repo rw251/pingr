@@ -136,7 +136,8 @@
 			percentUp: percentChange>=0,
 			number: local.data[local.pathwayId].monitoring.trend[2][1],
 			numberUp: numberChange>=0,
-			numberChange: Math.abs(numberChange)
+			numberChange: Math.abs(numberChange),
+      pathway: local.pathwayNames[local.pathwayId]
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -211,7 +212,8 @@
 			percentUp: percentChange>=0,
 			number: local.data[local.pathwayId].treatment.trend[2][1],
 			numberUp: numberChange>=0,
-			numberChange: Math.abs(numberChange)
+			numberChange: Math.abs(numberChange),
+      pathway: local.pathwayNames[local.pathwayId]
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -754,12 +756,19 @@
       updateSapRows();
     }).on('click', '#individual-panel-classification .btn-yes,#individual-panel-classification .btn-no', function(){
       var checkbox = $(this).find("input[type=checkbox]");
+      var isClassification = $(this).closest('.panel').children().index($(this).closest('table'))===1;
+
       if($(this).hasClass("active")){
         //unselecting
   			var current = getObj();
   			if(!current.actions) current.actions = {};
   			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
-  			current.actions[local.patientId].classification = "";
+
+        if(isClassification){
+          current.actions[local.patientId].classification = "";
+        } else {
+          current.actions[local.patientId].standard = "";
+        }
   			setObj(current);
       } else {
         //unselect other
@@ -768,12 +777,16 @@
         other.find("input[type=checkbox]").prop("checked", false);
 
         //selecting
-        if(checkbox.val()==="no") launchPatientModal(local.patientId, $(this).closest('tr').children(':first').text());
+        if(checkbox.val()==="no") launchPatientModal(local.patientId, $(this).closest('tr').children(':first').text(), !isClassification);
 
   			var current = getObj();
   			if(!current.actions) current.actions = {};
   			if(!current.actions[local.patientId]) current.actions[local.patientId] = {"agree":[],"done":[]};
-  			current.actions[local.patientId].classification = checkbox.val()==="yes";
+        if(isClassification){
+          current.actions[local.patientId].classification = checkbox.val()==="yes";
+        } else {
+          current.actions[local.patientId].standard = checkbox.val()==="yes";
+        }
   			setObj(current);
       }
 		});
@@ -873,6 +886,8 @@
 		$('#patients-placeholder').hide();
 
 		setupClipboard($('.btn-copy'), true);
+
+    $('[data-toggle="tooltip"]').tooltip();
 	};
 
 	var populateSuggestedActionsPanel = function (pathwayStage){
@@ -1026,6 +1041,8 @@
 		showPanel(local.categories.monitoring.name, topRightPanel, true);
 		showPanel(local.categories.treatment.name, bottomLeftPanel, true);
 		showPanel(local.categories.exclusions.name, bottomRightPanel, true);
+
+    $('[data-toggle="tooltip"]').tooltip();
 	};
 
 	var updateCheckboxes = function(id){
@@ -1055,6 +1072,18 @@
 			}
 		};
 
+		var wireUpRadioButtons3 = function() {
+			if(current.actions && current.actions[id] && current.actions[id].standard !== undefined && current.actions[id].standard !== ""){
+				if(current.actions[id].standard && this.value==="yes"){
+					$(this).prop('checked', true);
+					$(this).parent().addClass('active');
+				} else if(!current.actions[id].standard && this.value==="no"){
+					$(this).prop('checked', true);
+					$(this).parent().addClass('active');
+				}
+			}
+		};
+
 		var wireUpCheckboxes =function(i){
 			if(current.actions && current.actions[id] && current.actions[id].done.length>i && current.actions[id].done[i]){
 				$(this).prop('checked', true);
@@ -1069,7 +1098,8 @@
 
 		adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
 
-    adviceList.find('#individual-panel-classification .btn-toggle input[type=checkbox]').each(wireUpRadioButtons2);
+    adviceList.find('#individual-panel-classification table:first .btn-toggle input[type=checkbox]').each(wireUpRadioButtons2);
+    adviceList.find('#individual-panel-classification table:last .btn-toggle input[type=checkbox]').each(wireUpRadioButtons3);
 
 		//RW TODO need to update the personal plan checkboxes
 
@@ -1137,14 +1167,14 @@
       }
 		});
 
-    $('#individual-panel-classification').removeClass('panel-green').removeClass('panel-red');
+    $('#individual-panel-classification table').removeClass('panel-green').removeClass('panel-red');
     $('#individual-panel-classification').find('tr').each(function(){
       var self = $(this);
       self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
   			if(this.value==="yes"){
-  				$('#individual-panel-classification').addClass('panel-green');
+          $(this).closest('table').addClass('panel-green');
   			} else {
-  				$('#individual-panel-classification').addClass('panel-red');
+  				$(this).closest('table').addClass('panel-red');
   			}
       });
     });
@@ -1166,7 +1196,7 @@
     var subsection = local.data[local.pathwayId].patients[patientId].subsection;
 
     data.suggestions = local.data[local.pathwayId][pathwayStage].bdown[subsection].suggestions;
-    data.section = local.data[local.pathwayId][pathwayStage].bdown[subsection].desc;
+    data.section = local.data[local.pathwayId][pathwayStage].bdown[subsection].name;
     data.category = local.data[local.pathwayId].patients[patientId].category;
 
 		if(!data.index){
@@ -1318,17 +1348,19 @@
     launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
   };
 
-  var launchPatientModal = function(label, value){
+  var launchPatientModal = function(label, value, justtext){
     var reasons = [];
-    if(local.selected===local.categories.monitoring.name) reasons.push({"reason":"Has actually already been monitored","value":"alreadymonitored"});
-    else if(local.selected===local.categories.treatment.name) reasons.push({"reason":"Is actually treated to target","value":"treated"});
-    reasons.push({"reason":"Should be excluded","value":"shouldexclude"});
-    for(var prop in local.data[local.pathwayId][local.selected].bdown) {
-      if(local.data[local.pathwayId].patients[local.patientId].subsection !== prop) {
-        reasons.push({"reason": "Should be in the '" + prop + "' group", "value": "shouldbe_"+prop.replace(/\s+/g, '')});
+    if(justtext!==true && (local.selected===local.categories.monitoring.name || local.selected===local.categories.treatment.name)) {
+      if(local.selected===local.categories.monitoring.name) reasons.push({"reason":"Has actually already been monitored","value":"alreadymonitored"});
+      else if(local.selected===local.categories.treatment.name) reasons.push({"reason":"Is actually treated to target","value":"treated"});
+      reasons.push({"reason":"Should be excluded – please see the suggested way on how to do this below in the 'suggested actions panel'","value":"shouldexclude"});
+      for(var prop in local.data[local.pathwayId][local.selected].bdown) {
+        if(local.data[local.pathwayId].patients[local.patientId].subsection !== prop) {
+          reasons.push({"reason": "Should be in the '" + prop + "' group", "value": "shouldbe_"+prop.replace(/\s+/g, '')});
+        }
       }
+      reasons.push({"reason":"Something else","value":"else"});
     }
-    reasons.push({"reason":"Something else","value":"else"});
     launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : reasons},label, value);
   };
 
@@ -1625,6 +1657,8 @@
         selectPanel(pathwayStage);
 
         addBreakdownPanel(pathwayStage);
+
+        $('[data-toggle=tooltip]').tooltip();
       }
     }
   };

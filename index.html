@@ -71,7 +71,7 @@
               <a class="hidden-xs" href="#help">Instructions</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Instructions</a>
             </li>
             <li class="hide-if-logged-out">
-              <div class="btn-group">
+              <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Switch quality standards">
                 <button type="button" id="pick-button" class="btn btn-default btn-sm btn-circle" data-toggle="dropdown">NICE
                   <span class="caret"></span>
                 </button>
@@ -485,7 +485,7 @@
   </script>
 
   <script id="patient-list-header-item" type="x-tmpl-mustache">
-  <th class="sortable {{direction}}">
+  <th class="sortable {{direction}}" title="Order patients">
     {{title}}
     {{#isSorted}}
     {{#isAsc}}<i class="fa fa-caret-up"></i>{{/isAsc}}
@@ -539,8 +539,8 @@
       </thead>
       <tbody>
         {{#items}}
-        <tr data-subsection="{{name}}" style="color:{{color}}">
-          <td>{{desc}}</td>
+        <tr data-subsection="{{name}}" style="color:{{color}}" data-toggle="tooltip" data-placement="right" title="{{desc}}">
+          <td>{{name}}</td>
           <td>{{n}}</td>
           <td>{{percentage}}</td>
         </tr>
@@ -556,10 +556,10 @@
     </td>
     <td>
       <div class="btn-group" data-toggle="buttons">
-        <button class="btn btn-xs btn-warning edit-plan">
+        <button class="btn btn-xs btn-warning edit-plan" data-toggle="tooltip" data-placement="top" title="Edit plan">
           <span class="fa fa-edit"></span>
         </button>
-        <button class="btn btn-xs btn-danger delete-plan">
+        <button class="btn btn-xs btn-danger delete-plan" data-toggle="tooltip" data-placement="top" title="Delete plan">
           <span class="fa fa-trash"></span>
         </button>
       </div>
@@ -698,7 +698,7 @@
       </thead>
       <tbody>
       <tr>
-        <td style="font-size:1.25em">{{section}} - {{category}}</td>
+        <td style="font-size:1.25em">{{section}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
             <label class="btn btn-yes btn-toggle btn-success">
@@ -707,6 +707,31 @@
             </label>
             <label class="btn btn-no btn-toggle btn-danger">
               <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off">
+              <span class="fa fa-thumbs-down"></span>
+            </label>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+      </table>
+      <table class="table table-minimal">
+      <thead>
+      <tr>
+        <th>Quality standard missed</th>
+        <th style="width:100px">Agree?</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td style="font-size:1.25em">{{category}}</td>
+        <td>
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-yes btn-toggle btn-success">
+              <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off">
+              <span class="fa fa-thumbs-up"></span>
+            </label>
+            <label class="btn btn-no btn-toggle btn-danger">
+              <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off">
               <span class="fa fa-thumbs-down"></span>
             </label>
           </div>
@@ -764,7 +789,7 @@
 
   <script id="patients-panel" type="x-tmpl-mustache">
     <div class="panel panel-default" id="panel-right">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
         <h4 class="panel-title">Patients</h4>
       </div>
 
@@ -778,7 +803,7 @@
   </script>
 
   <script id="change-bar" type="x-tmpl-mustache">
-    <span class="pull-right">{{percent}}% ( {{#percentUp}}
+    <span class="pull-right" data-toggle="tooltip" data-placement="bottom" title="Current % / number of patients meeting this standard and how this has changed from last month">{{percent}}% ( {{#percentUp}}
       <span class="text-green">
         <i class="fa fa-caret-up"></i> {{percentChange}}%
       </span>
@@ -800,7 +825,7 @@
 
   <script id="monitoring-panel" type="x-tmpl-mustache">
     <div data-stage="monitoring" class="panel panel-monitoring panel-default clickable">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being monitored.">
         <i class="fa fa-stethoscope fa-fw"></i>&nbsp; Monitoring
       </div>
       <div class="panel-body" style="max-height:380px">
@@ -808,33 +833,13 @@
           <p>Patients who have had BP measured {{>change-bar}}</p>
         </div>
         <div id="monitoring-chart"></div>
-        <!--
-			<div class="row row-no-padding full-height-col-container">
-				<div class="col-sm-10">
-					<div id="monitoring-chart"></div>
-				</div>
-				<div class="col-sm-2 full-height-col">
-					<h6 class="transit">
-						52%
-						<span class="text-green">
-							<i class="fa fa-caret-up"></i> 6%
-						</span>
-					</h6>
-					<h6 class="transit">
-						n=150
-						<span class="text-red">
-							<i class="fa fa-caret-down"></i> 20
-						</span>
-					</h6>
-				</div>
-			</div>-->
       </div>
     </div>
   </script>
 
   <script id="treatment-panel" type="x-tmpl-mustache">
     <div data-stage="treatment" class="panel panel-treatment panel-default clickable">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being treated.">
         <i class="fa fa-medkit fa-fw"></i>&nbsp; Treatment
       </div>
       <div class="panel-body" style="max-height:380px">
