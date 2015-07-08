@@ -71,7 +71,6 @@
               <a class="hidden-xs" href="#help">Instructions</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Instructions</a>
             </li>
             <li class=" hide-if-logged-out">
-              <!--RW-->
               <div class="btn-group">
                 <button type="button" id="pick-button" class="btn btn-default btn-sm btn-circle" data-toggle="dropdown">NICE
                   <span class="caret"></span>
@@ -81,7 +80,6 @@
                   <li><a id="pick-qof" href="#">QOF</a></li>
                 </ul>
               </div>
-              <!--<button type="button" class="btn btn-primary btn-sm btn-circle">Evidence</button>-->
               <span> | </span>
               <div class="btn-group" id="breadcrumb">
               </div>
@@ -107,7 +105,7 @@
             </div>
 
             <div class="hide-if-logged-out input-group pull-right">
-              <span class="btn btn-primary btn-padding" id="export-plan">
+              <span class="btn btn-primary btn-padding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document" id="export-plan">
                 <span class="fa fa-download"></span> Download Action Plan
               </span>
             </div>
@@ -185,7 +183,22 @@
         <nav class="navigation"></nav>
 
       </aside>
-      Some preliminaery stuff
+      <div class="container-fluid">
+        <div class="row">
+          <h1>Welcome!</h1>
+          <h3>You can now either:</h3>
+        </div>
+        <div class="row">
+          <h2><i class="fa fa-hand-o-left"></i> Select an area to get started</h2>
+          <h3>or</h3>
+          <h2><i class="fa fa-hand-o-down"></i> Review your planned actions</h2>
+        </div>
+        <div class="row">
+          <div id="task-panel" class="panel panel-info">
+            <div class="panel-heading">Tasks</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <nav class="navbar navbar-fixed-bottom" id="bottomnavbar">
@@ -874,6 +887,39 @@
       </span>
     </div>
   </div>
+  </script>
+
+  <script id="welcome-task-item" type="x-tmpl-mustache">
+  <tr>
+    <td>{{pathway}}</td>
+    <td>{{stage}}</td>
+    <td>{{{task}}}</td>
+  </td>
+  </script>
+
+  <script id="welcome-task-items" type="x-tmpl-mustache">
+  {{#hasTasks}}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Pathway</th>
+        <th>Stage</th>
+        <th>Task</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#tasks}}
+      {{>task-item}}
+      {{/tasks}}
+    </tbody>
+  </table>
+  {{/hasTasks}}
+  {{^hasTasks}}
+  <div class="panel-body">
+  You currently have no outstanding tasks
+  </div>
+  {{/hasTasks}}
+
   </script>
 </body>
 </html>

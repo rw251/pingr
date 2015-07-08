@@ -59,7 +59,7 @@
 		else {
 			for(var i =0 ; i< items.length; i++){
 				if(i===items.length-1){
-					html.push('<span>' + items[i] + '</span>');
+					html.push('<span>' + local.categories[items[i]].display + '</span>');
 				} else{
 					html.push('<a href="#main/' + items[i] + '">' + local.pathwayNames[items[i]] + '</a>');
 				}
@@ -1523,6 +1523,7 @@
   };
 
   var loadContent = function(hash, isPoppingState){
+    var i;
     if(!isPoppingState) {
       window.location.hash = hash;
     }
@@ -1554,6 +1555,33 @@
         hideAllPanels();
         addNavigation(local.diseases,[], $('#welcome'));
 
+        //add tasks
+        //get tasks
+        var tasks = [];//{"pathway": "Blood Pressure", "stage":"monitoring", "task": "Customise your pop-ups to demonstrate the consequences of ignoring them."},
+        ///{"pathway": "Blood Pressure", "stage":"monitoring", "task": "Organise an open access or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked link to an example from a practice."},
+        //{"pathway": "Blood Pressure", "stage":"treatment", "task": "Hold an educational session or meeting at your practice to highlight to colleagues: the importance of blood pressure measurement, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes. A presentation."}];
+
+        var current = getObj();
+        if(current.actions) {
+          for(var k in local.categories){
+            if(current.actions[k] && current.actions[k].agree){
+              for(i = 0; i < current.actions[k].agree.length; i++){
+                if(current.actions[k].agree[i] && ! current.actions[k].done[i]){
+                  tasks.push({"pathway": "Blood Pressure", "stage":local.categories[k].display, "task": local.actionPlan[k].practice[i].text});
+                }
+              }
+            }
+          }
+        }
+
+        var template = $('#welcome-task-items').html();
+        var itemTemplate = $('#welcome-task-item').html();
+        Mustache.parse(template);
+        Mustache.parse(itemTemplate);
+
+        var rendered = Mustache.render(template, {"tasks": tasks, "hasTasks": tasks.length>0}, {"task-item" : itemTemplate});
+        $('#task-panel').children().not(":first").remove();
+        $('#task-panel').append(rendered);
       } else {
         //if screen not in correct segment then select it
         if(local.page !== 'main-dashboard'){
@@ -1652,6 +1680,9 @@
       $('body').addClass('qof');
       e.preventDefault();
 		});
+
+    /*Wire up tooltips*/
+    $('[data-toggle="tooltip"]').tooltip()
 
 		/**********************************
 		 ** Patient search auto complete **

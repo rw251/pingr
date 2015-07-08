@@ -514,6 +514,36 @@
 					"category":"HTN target 140/90"
         }
       }
+    },{
+      "disease": "asthma",
+      "display-name": "Asthma (Coming soon!)",
+      "icon":"fa-medkit",
+      "link" : "welcome",
+      "monitoring": {},
+      "treatment": {},
+      "exclusions": {},
+      "diagnosis": {},
+      "patients": {}
+    },{
+      "disease": "copd",
+      "display-name": "COPD (Coming soon!)",
+      "icon":"fa-bed",
+      "link" : "welcome",
+      "monitoring": {},
+      "treatment": {},
+      "exclusions": {},
+      "diagnosis": {},
+      "patients": {}
+    },{
+      "disease": "ckd",
+      "display-name": "Kidney Health (Coming soon!)",
+      "icon":"fa-medkit",
+      "link" : "welcome",
+      "monitoring": {},
+      "treatment": {},
+      "exclusions": {},
+      "diagnosis": {},
+      "patients": {}
     }
   ]
 }

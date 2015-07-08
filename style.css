@@ -506,7 +506,7 @@ body > svg {
 }
 
 /* Style the tooltips for the care pathway*/
-.tooltip.top .tooltip-arrow {
+/*.tooltip.top .tooltip-arrow {
   bottom: 0;
   left: 50%;
   margin-left: -5px;
@@ -517,7 +517,7 @@ body > svg {
   color: #000;
   background: #fff;
   border: solid 1px #fff;
-}
+}*/
 
 /* Define a class for a padding less row*/
 .row-no-padding>div {
