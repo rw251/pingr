@@ -1293,6 +1293,10 @@
     $('#modal').off('hidden.bs.modal').on('hidden.bs.modal', {"label" : label}, function(e) {
       if(local.modalSaved) {
         local.modalSaved = false;
+        $("#thanks-message").toggleClass("in");
+        window.setTimeout(function(){
+          $("#thanks-message").toggleClass("in");
+        }, 2000);
       } else {
         //uncheck as cancelled. - but not if value is empty as this unchecks everything
         if(value !== "") $('tr:contains('+value+')').find(".btn-toggle input[type=checkbox]:checked").click();
