@@ -26,14 +26,16 @@
 			"exclusions": {"name": "exclusions", "display": "Exclusions"}
 		},
 		"page" : "",
-		"pathway" : "Blood Pressure",
-    "colors" : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+		"pathwayId" : "bp",
+    "colors" : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
+    "diseases" : [],
+    "pathwayNames" : {}
 	};
 
 	var bottomLeftPanel, bottomRightPanel, topLeftPanel, topRightPanel, farRightPanel, monitoringPanel, treatmentPanel,
 		diagnosisPanel,	exclusionPanel, patientsPanelTemplate, breakdownPanel, actionPlanPanel, patientList, suggestedPlanTemplate,
 		breakdownTableTemplate,	individualPanel, bpTrendPanel, patientsPanel,	suggestedPlanTeam, adviceList, breakdownTable,
-    patientInfo, teamTab, individualTab, cdTimeLineBlock, actionPlanList;
+    patientInfo, teamTab, individualTab, actionPlanList;
 
 	/**************
 	 *** Layout ***
@@ -52,14 +54,14 @@
 	var updateBreadcrumbs = function(items){
 		var html = [];
 		if(items.length===1) {
-			html.push('<span>' + items[0] + '</span>');
+			html.push('<span>' + local.pathwayNames[items[0]] + '</span>');
 		}
 		else {
 			for(var i =0 ; i< items.length; i++){
 				if(i===items.length-1){
 					html.push('<span>' + items[i] + '</span>');
 				} else{
-					html.push('<a href="#main">' + items[i] + '</a>');
+					html.push('<a href="#main/' + items[i] + '">' + local.pathwayNames[items[i]] + '</a>');
 				}
 			}
 		}
@@ -79,6 +81,14 @@
 		$('#aside-toggle').addClass('collapsed');
 		$('#bottomnavbar').show();
 	};
+
+  var showHeaderBarItems = function() {
+    $('.hide-if-logged-out').show();
+  };
+
+  var hideHeaderBarItems = function() {
+    $('.hide-if-logged-out').hide();
+  };
 
 	/**************
 	 *** Panels ***
@@ -118,13 +128,13 @@
 	};
 
 	var showMonitoringPanel = function(location, enableHover) {
-		var percentChange = local.data[local.pathway].monitoring.trend[1][1]-local.data[local.pathway].monitoring.trend[1][30];
-		var numberChange = local.data[local.pathway].monitoring.trend[2][1]-local.data[local.pathway].monitoring.trend[2][30];
+		var percentChange = local.data[local.pathwayId].monitoring.trend[1][1]-local.data[local.pathwayId].monitoring.trend[1][30];
+		var numberChange = local.data[local.pathwayId].monitoring.trend[2][1]-local.data[local.pathwayId].monitoring.trend[2][30];
 		createPanel(monitoringPanel, location, {
-			percent: local.data[local.pathway].monitoring.trend[1][1],
+			percent: local.data[local.pathwayId].monitoring.trend[1][1],
 			percentChange: Math.abs(percentChange),
 			percentUp: percentChange>=0,
-			number: local.data[local.pathway].monitoring.trend[2][1],
+			number: local.data[local.pathwayId].monitoring.trend[2][1],
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange)
 			}, {"change-bar": $('#change-bar').html()}
@@ -135,7 +145,7 @@
 			bindto: '#monitoring-chart',
 			data: {
 				x: 'x',
-				columns: local.data[local.pathway].monitoring.trend,
+				columns: local.data[local.pathwayId].monitoring.trend,
 				axes: {
 					"%" : 'y',
 					"n" : 'y2'
@@ -193,13 +203,13 @@
 	};
 
 	var showTreatmentPanel = function(location, enableHover) {
-		var percentChange = local.data[local.pathway].treatment.trend[1][1]-local.data[local.pathway].treatment.trend[1][30];
-		var numberChange = local.data[local.pathway].treatment.trend[2][1]-local.data[local.pathway].treatment.trend[2][30];
+		var percentChange = local.data[local.pathwayId].treatment.trend[1][1]-local.data[local.pathwayId].treatment.trend[1][30];
+		var numberChange = local.data[local.pathwayId].treatment.trend[2][1]-local.data[local.pathwayId].treatment.trend[2][30];
 		createPanel(treatmentPanel, location, {
-			percent: local.data[local.pathway].treatment.trend[1][1],
+			percent: local.data[local.pathwayId].treatment.trend[1][1],
 			percentChange: Math.abs(percentChange),
 			percentUp: percentChange>=0,
-			number: local.data[local.pathway].treatment.trend[2][1],
+			number: local.data[local.pathwayId].treatment.trend[2][1],
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange)
 			}, {"change-bar": $('#change-bar').html()}
@@ -210,7 +220,7 @@
 			bindto: '#treatment-chart',
 			data: {
 				x: 'x',
-				columns: local.data[local.pathway].treatment.trend,
+				columns: local.data[local.pathwayId].treatment.trend,
 				axes: {
 					"%" : 'y',
 					"n" : 'y2'
@@ -411,7 +421,7 @@
 		local.selected = pathwayStage;
     local.subselected = null;
 
-		createPanel(breakdownPanel, topRightPanel,{"pathwayStage" : pathwayStage, "header": local.data[local.pathway][pathwayStage] ? local.data[local.pathway][pathwayStage].header : ""});
+		createPanel(breakdownPanel, topRightPanel,{"pathwayStage" : pathwayStage, "header": local.data[local.pathwayId][pathwayStage] ? local.data[local.pathwayId][pathwayStage].header : ""});
 
 		breakdownTable = $('#breakdown-table');
 
@@ -462,7 +472,7 @@
 				}
 			},
 			data: {
-				columns: local.data[local.pathway][pathwayStage].breakdown,
+				columns: local.data[local.pathwayId][pathwayStage].breakdown,
 				type: 'pie',
 				selection: { enabled: true },
 				order: null,
@@ -471,12 +481,12 @@
 					populatePatientPanel(pathwayStage, d.id);
 					//populateSuggestedActionsPanel(d.id);
 					breakdownTable.find('tr').removeClass('selected');
-					breakdownTable.find('tr[data-subsection="' + local.data[local.pathway][pathwayStage].bdown[d.id].name + '"]').addClass('selected');
+					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('selected');
 					local.subselected = d.id;
 				},
 				onmouseover: function(d){
 					breakdownTable.find('tr').removeClass('tr-hovered');
-					breakdownTable.find('tr[data-subsection="' + local.data[local.pathway][pathwayStage].bdown[d.id].name + '"]').addClass('tr-hovered');
+					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('tr-hovered');
 				},
 				onmouseout: function (){
 					breakdownTable.find('tr').removeClass('tr-hovered');
@@ -769,7 +779,7 @@
 		addActionPlanPanel(bottomLeftPanel, pathwayStage);
     populateSuggestedActionsPanel(pathwayStage);
 
-		updateBreadcrumbs([local.pathway, pathwayStage]);
+		updateBreadcrumbs([local.pathwayId, pathwayStage]);
 
     //update patient panel
     patientsPanel.parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
@@ -778,9 +788,9 @@
 	};
 
 	var populatePatientPanel = function (pathwayStage, subsection, sortField, sortAsc) {
-    var pList = subsection ? local.data[local.pathway][pathwayStage].bdown[subsection] : local.data[local.pathway][pathwayStage];
+    var pList = subsection ? local.data[local.pathwayId][pathwayStage].bdown[subsection] : local.data[local.pathwayId][pathwayStage];
 		var patients = pList.patients.map(function(patientId) {
-			var ret = local.data[local.pathway].patients[patientId];
+			var ret = local.data[local.pathwayId].patients[patientId];
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
       ret.items = []; //The fields in the patient list table
@@ -861,19 +871,19 @@
 		} else if(pathwayStage === local.categories.diagnosis.name){
 			suggestedPlanTeam.html('No team actions for these patients');
 		} else {
-			if(!local.data[local.pathway][pathwayStage].index){
-				local.data[local.pathway][pathwayStage].index = function(){
+			if(!local.data[local.pathwayId][pathwayStage].index){
+				local.data[local.pathwayId][pathwayStage].index = function(){
 					return ++window.INDEX||(window.INDEX=0);
 				};
-				local.data[local.pathway][pathwayStage].lastIndex = function(){
+				local.data[local.pathwayId][pathwayStage].lastIndex = function(){
 					return window.INDEX;
 				};
-				local.data[local.pathway][pathwayStage].resetIndex = function(){
+				local.data[local.pathwayId][pathwayStage].resetIndex = function(){
 					window.INDEX=null;
 				};
 			}
 
-			createPanel(suggestedPlanTemplate, suggestedPlanTeam, local.data[local.pathway][pathwayStage], {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
+			createPanel(suggestedPlanTemplate, suggestedPlanTeam, local.data[local.pathwayId][pathwayStage], {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
 
 			displayPersonalisedActionPlan(pathwayStage, $('#personalPlanTeam'), true);
 
@@ -882,7 +892,7 @@
 	};
 
 	var populateBreakdownTable = function(id){
-		var data = local.data[local.pathway][id.toLowerCase()];
+		var data = local.data[local.pathwayId][id.toLowerCase()];
 		for(var i = 0 ; i< data.items.length; i++){
 			data.items[i].color = local.charts['breakdown-chart'].color(data.items[i].name);
 		}
@@ -896,21 +906,21 @@
 			var pathwayStage = $(this).data('stage');
 
 			//Make the icon grow
-			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').addClass('fa-3x');
+			$('.cd-timeline-block').find('span[data-stage=' + pathwayStage + ']').addClass('fa-3x');
       //Change the color
-      cdTimeLineBlock.find('span[data-stage=' + pathwayStage + '] i.fa-circle-thin').removeClass('icon-background-border');
+      $('.cd-timeline-block').find('span[data-stage=' + pathwayStage + '] i.fa-circle-thin').removeClass('icon-background-border');
 		}).on('mouseout',function(){
 
 			//un-highlight the appropriate panel if no other selected
-      if(cdTimeLineBlock.find('span').map(function(){ return $(this).data('selected');}).get().indexOf(true) === -1)
+      if($('.cd-timeline-block').find('span').map(function(){ return $(this).data('selected');}).get().indexOf(true) === -1)
 			   $(this).addClass('panel-default');
 
 			var pathwayStage = $(this).data('stage');
 
 			//Make the icon shrink and change color
-			if(!cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected')) {
-        cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').removeClass('fa-3x');
-          cdTimeLineBlock.find('span[data-stage=' + pathwayStage + '] i.fa-circle-thin').addClass('icon-background-border');
+			if(!$('.cd-timeline-block').find('span[data-stage=' + pathwayStage + ']').data('selected')) {
+        $('.cd-timeline-block').find('span[data-stage=' + pathwayStage + ']').removeClass('fa-3x');
+          $('.cd-timeline-block').find('span[data-stage=' + pathwayStage + '] i.fa-circle-thin').addClass('icon-background-border');
       }
 		}).on('click', function(){
 			window.location.hash = $(this).data('stage');
@@ -922,13 +932,13 @@
 	********************************/
 	var drawBpTrendChart = function(patientId){
 		destroyCharts(['chart-demo-trend']);
-		if(!local.data[local.pathway].patients || !local.data[local.pathway].patients[patientId] || !local.data[local.pathway].patients[patientId].bp) return;
+		if(!local.data[local.pathwayId].patients || !local.data[local.pathwayId].patients[patientId] || !local.data[local.pathwayId].patients[patientId].bp) return;
 
 		var chartOptions = {
 			bindto: '#chart-demo-trend',
 			data: {
 				x: 'x',
-				columns: local.data[local.pathway].patients[patientId].bp
+				columns: local.data[local.pathwayId].patients[patientId].bp
 			},
 			axis: {
 				x: {
@@ -946,8 +956,8 @@
 		};
 
     var lines = null;
-		if(local.data[local.pathway].patients[patientId].contacts){
-			lines = local.data[local.pathway].patients[patientId].contacts.slice();
+		if(local.data[local.pathwayId].patients[patientId].contacts){
+			lines = local.data[local.pathwayId].patients[patientId].contacts.slice();
 		} //"contacts": [{"value": "2012-09-01", "text": "F2F"}, {"value": "2013-03-03", "text": "F2F"}]
 
     var obj = getObj();
@@ -993,14 +1003,14 @@
 	var showOverview = function(){
 
 		//Unselect all nodes on pathway
-		cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
-		cdTimeLineBlock.find('span').data('selected', false).find('i.fa-circle-thin').addClass('icon-background-border');
+		$('.cd-timeline-block').find('span').data('selected', false).removeClass('fa-3x');
+		$('.cd-timeline-block').find('span').data('selected', false).find('i.fa-circle-thin').addClass('icon-background-border');
 
 		switchToFourPanelLayout();
 
 		hideAllPanels();
 
-		updateBreadcrumbs([local.pathway]);
+		updateBreadcrumbs([local.pathwayId]);
 
 		showPanel(local.categories.diagnosis.name, topLeftPanel, true);
 		showPanel(local.categories.monitoring.name, topRightPanel, true);
@@ -1143,11 +1153,11 @@
 			}
 		}
 
-    var subsection = local.data[local.pathway].patients[patientId].subsection;
+    var subsection = local.data[local.pathwayId].patients[patientId].subsection;
 
-    data.suggestions = local.data[local.pathway][pathwayStage].bdown[subsection].suggestions;
-    data.section = local.data[local.pathway][pathwayStage].bdown[subsection].desc;
-    data.category = local.data[local.pathway].patients[patientId].category;
+    data.suggestions = local.data[local.pathwayId][pathwayStage].bdown[subsection].suggestions;
+    data.section = local.data[local.pathwayId][pathwayStage].bdown[subsection].desc;
+    data.category = local.data[local.pathwayId].patients[patientId].category;
 
 		if(!data.index){
 			data.index = function(){
@@ -1208,8 +1218,8 @@
 	var displaySelectedPatient = function(id){
 		//find patient - throw error if not exists
 
-		var pathwayStage = local.data[local.pathway].patients[id].pathwayStage;
-		var subsection = local.data[local.pathway].patients[id].subsection;
+		var pathwayStage = local.data[local.pathwayId].patients[id].pathwayStage;
+		var subsection = local.data[local.pathwayId].patients[id].subsection;
     var nhs = local.patLookup ? local.patLookup[id] : id;
 
     window.location.hash = pathwayStage;
@@ -1242,10 +1252,12 @@
 		if (page === 'main-dashboard') {
 			showSidePanel();
 			showOverview();
+      showHeaderBarItems();
 
 			addPatientPanel(farRightPanel);
 		} else {
 			hideSidePanel();
+      hideHeaderBarItems();
 		}
 	};
 
@@ -1294,8 +1306,8 @@
 
   var launchPatientModal = function(label, value){
     var reasons = [{"reason":"Meets the target","value":"meetstarget"},{"reason":"Should be excluded","value":"shouldexclude"}];
-    for(var prop in local.data[local.pathway][local.selected].bdown) {
-      if(local.data[local.pathway].patients[local.patientId].subsection !== prop) {
+    for(var prop in local.data[local.pathwayId][local.selected].bdown) {
+      if(local.data[local.pathwayId].patients[local.patientId].subsection !== prop) {
         reasons.push({"reason": "Should be in the '" + prop + "' group", "value": "shouldbe_"+prop.replace(/\s+/g, '')});
       }
     }
@@ -1378,8 +1390,8 @@
           }
   			}
         if(data.actions[el]) {
-          var pathSec = local.data[local.pathway].patients[el].pathwayStage;
-          var pathSub = local.data[local.pathway].patients[el].subsection;
+          var pathSec = local.data[local.pathwayId].patients[el].pathwayStage;
+          var pathSub = local.data[local.pathwayId].patients[el].subsection;
           for(k =0; k < Math.max(data.actions[el].agree.length, data.actions[el].done.length); k++){
             if(data.actions[el].done.length>k && data.actions[el].done[k] ){
               //Completed so ignore
@@ -1392,7 +1404,7 @@
 		};
 
     addHeading("Team plan",14);
-    suggs = local.data[local.pathway].monitoring.suggestions;
+    suggs = local.data[local.pathwayId].monitoring.suggestions;
     for(i=0; i<suggs.length; i++){
       if(data.actions.monitoring && data.actions.monitoring.done && data.actions.monitoring.done.length>i && data.actions.monitoring.done[i] ){
         //Completed so ignore
@@ -1411,15 +1423,15 @@
     }
 
 		addHeading("Custom individual plans",14);
-    for(i=0; i< local.data[local.pathway].monitoring.breakdown.length; i++){
-			mainId = local.data[local.pathway].monitoring.breakdown[i][0];
-		  local.data[local.pathway].monitoring.bdown[mainId].patients.forEach(internalFunc);
+    for(i=0; i< local.data[local.pathwayId].monitoring.breakdown.length; i++){
+			mainId = local.data[local.pathwayId].monitoring.breakdown[i][0];
+		  local.data[local.pathwayId].monitoring.bdown[mainId].patients.forEach(internalFunc);
     }
 
     addHeading("Treatment",20);
 
     addHeading("Team plan",14);
-    suggs = local.data[local.pathway].treatment.suggestions;
+    suggs = local.data[local.pathwayId].treatment.suggestions;
     for(i=0; i<suggs.length; i++){
       if(data.actions.treatment && data.actions.treatment.done && data.actions.treatment.done.length>i && data.actions.treatment.done[i] ){
         //Completed so ignore
@@ -1438,9 +1450,9 @@
     }
 
 		addHeading("Custom individual plans",14);
-    for(i=0; i< local.data[local.pathway].monitoring.breakdown.length; i++){
-			mainId = local.data[local.pathway].monitoring.breakdown[i][0];
-		  local.data[local.pathway].monitoring.bdown[mainId].patients.forEach(internalFunc);
+    for(i=0; i< local.data[local.pathwayId].monitoring.breakdown.length; i++){
+			mainId = local.data[local.pathwayId].monitoring.breakdown[i][0];
+		  local.data[local.pathwayId].monitoring.bdown[mainId].patients.forEach(internalFunc);
     }
 
 		//trigger download
@@ -1467,6 +1479,49 @@
 		displaySelectedPatient(nhsNumberObject.id);
 	};
 
+  var addNavigation = function(listBefore, listAfter, parent){
+    var template = $('#pathway-picker').html();
+    var itemTemplate = $('#pathway-picker-item').html();
+    var pathwayTemplate = $('#pathway-map').html();
+    Mustache.parse(template);
+    Mustache.parse(itemTemplate);
+    Mustache.parse(pathwayTemplate);
+
+    parent.find('aside div.pathway-holder').html("");
+
+    var renderedBefore = Mustache.render(template, {"items": listBefore}, {"item": itemTemplate});
+    parent.find('aside nav:first').html(renderedBefore);
+
+    if(listAfter && listAfter.length>0){
+      var renderedAfter = Mustache.render(template, {"items": listAfter}, {"item": itemTemplate});
+      var renderedPathway = Mustache.render(pathwayTemplate);
+      parent.find('aside nav:last').html(renderedAfter);
+      parent.find('aside div.pathway-holder').html(renderedPathway);
+
+      //Wire up the pathway in the side panel
+      $('.cd-timeline-block').find('span').on('mouseover',function(){
+        //Make the icon grow
+        $(this).addClass('fa-3x');
+        //Change icon color
+        $(this).find('i.fa-circle-thin').removeClass('icon-background-border');
+        //highlight the appropriate panel
+        $('div[data-stage=' + $(this).data('stage') +']').removeClass('panel-default');
+      }).on('mouseout',function(){
+        //Make the icon shrink and change color
+        if(!$(this).data('selected')) {
+          $(this).removeClass('fa-3x');
+          $(this).find('i.fa-circle-thin').addClass('icon-background-border');
+        }
+        //un-highlight the appropriate panel if no other selected
+        if($('.cd-timeline-block').find('span').map(function(){ return $(this).data('selected');}).get().indexOf(true) === -1)
+           $('div[data-stage=' + $(this).data('stage') +']').addClass('panel-default');
+      }).on('click', function() {
+        window.location.hash = $(this).data('stage');
+      });
+    }
+
+  };
+
   var loadContent = function(hash, isPoppingState){
     if(!isPoppingState) {
       window.location.hash = hash;
@@ -1477,11 +1532,28 @@
       $('html').removeClass('scroll-bar');
     } else {
       $('html').addClass('scroll-bar');
-      if(hash === "#main") {
+      if(/#main/.test(hash)) {
+        var disease = hash.split('/')[1];
+        local.pathwayId = disease;
+
+        var idx = local.diseases.map(function(v){ return v.id; }).indexOf(disease);
+        var itemsBefore = local.diseases.slice(0,idx+1).map(function(v, i, arr){ v.isSelected = i===arr.length-1; return v; });
+        var itemsAfter = local.diseases.slice(idx+1).map(function(v, i, arr){ v.isSelected = false; return v; });
+
+        addNavigation(itemsBefore, itemsAfter, $('#main-dashboard'));
+
         showPage('main-dashboard');
         $('#navbar').children('.nav').find(".active").removeClass("active");
       } else if (hash === "#help") {
         showPage('help-page');
+      } else if (hash === "#welcome") {
+        showPage('welcome');
+
+        showSidePanel();
+        showHeaderBarItems();
+        hideAllPanels();
+        addNavigation(local.diseases,[], $('#welcome'));
+
       } else {
         //if screen not in correct segment then select it
         if(local.page !== 'main-dashboard'){
@@ -1490,6 +1562,7 @@
 
           showSidePanel();
           showOverview();
+          showHeaderBarItems();
         }
 
         addPatientPanel(farRightPanel);
@@ -1497,10 +1570,10 @@
 
         //Unselect all other nodes and keep this one enlarged
         var pathwayStage = hash.substr(1);
-        cdTimeLineBlock.find('span').data('selected', false).removeClass('fa-3x');
-        cdTimeLineBlock.find('span').data('selected', false).find('i.fa-circle-thin').addClass('icon-background-border');
-  			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected',true).addClass('fa-3x');
-  			cdTimeLineBlock.find('span[data-stage=' + pathwayStage + ']').data('selected',true).find('i.fa-circle-thin').removeClass('icon-background-border');
+        $('.cd-timeline-block').find('span').data('selected', false).removeClass('fa-3x');
+        $('.cd-timeline-block').find('span').data('selected', false).find('i.fa-circle-thin').addClass('icon-background-border');
+  			$('.cd-timeline-block').find('span[data-stage=' + pathwayStage + ']').data('selected',true).addClass('fa-3x');
+  			$('.cd-timeline-block').find('span[data-stage=' + pathwayStage + ']').data('selected',true).find('i.fa-circle-thin').removeClass('icon-background-border');
 
         selectPanel(pathwayStage);
 
@@ -1517,7 +1590,7 @@
     local.states = new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      local: $.map(local.data[local.pathway].patientArray, function(state) { return { id: state, value: local.patLookup ? local.patLookup[state] : state }; })
+      local: $.map(local.data[local.pathwayId].patientArray, function(state) { return { id: state, value: local.patLookup ? local.patLookup[state] : state }; })
     });
 
     local.states.initialize(true);
@@ -1530,7 +1603,7 @@
     .on('typeahead:autocompleted', onSelected);
   };
 
-	var wireUpPages = function () {
+  var preWireUpPages = function() {
 		showPage('login');
 
     //History
@@ -1565,8 +1638,9 @@
 		topLeftPanel = $('#top-left-panel');
 		topRightPanel = $('#top-right-panel');
 		farRightPanel = $('#right-panel');
-		cdTimeLineBlock = $('.cd-timeline-block');
+  };
 
+	var wireUpPages = function () {
 		$('#pick-nice').on('click', function(e){
 			$('#pick-button').html('NICE <span class="caret"></span>');
       $('body').removeClass('qof');
@@ -1577,27 +1651,6 @@
 			$('#pick-button').html('QOF <span class="caret"></span>');
       $('body').addClass('qof');
       e.preventDefault();
-		});
-
-		//Wire up the pathway in the side panel
-		cdTimeLineBlock.find('span').on('mouseover',function(){
-			//Make the icon grow
-			$(this).addClass('fa-3x');
-      //Change icon color
-			$(this).find('i.fa-circle-thin').removeClass('icon-background-border');
-			//highlight the appropriate panel
-			$('div[data-stage=' + $(this).data('stage') +']').removeClass('panel-default');
-		}).on('mouseout',function(){
-			//Make the icon shrink and change color
-			if(!$(this).data('selected')) {
-        $(this).removeClass('fa-3x');
-  			$(this).find('i.fa-circle-thin').addClass('icon-background-border');
-      }
-			//un-highlight the appropriate panel if no other selected
-      if(cdTimeLineBlock.find('span').map(function(){ return $(this).data('selected');}).get().indexOf(true) === -1)
-			   $('div[data-stage=' + $(this).data('stage') +']').addClass('panel-default');
-		}).on('click', function() {
-      window.location.hash = $(this).data('stage');
 		});
 
 		/**********************************
@@ -1666,8 +1719,11 @@
         if($.inArray(el, array) === -1) array.push(el);
       };
     };
+
     for(i = 0 ; i < data.length; i++){
       d = data[i].disease;
+      local.pathwayNames[d] = data[i]["display-name"];
+      local.diseases.push({"id":d,"link": data[i].link ? data[i].link : "main/"+d, "faIcon":data[i].icon, "name":data[i]["display-name"]});
       local.data[d] = {"patients" : data[i].patients,
         "monitoring" : {"header": data[i].monitoring.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.monitoring.practice, "bdown":{}, "trend":data[i].monitoring.trend, "table-headings":data[i].monitoring["table-headings"], "items" : data[i].monitoring.items},
         "treatment": {"header": data[i].treatment.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.treatment.practice, "bdown":{}, "trend":data[i].treatment.trend, "table-headings":data[i].treatment["table-headings"], "items" : data[i].treatment.items},
@@ -1680,6 +1736,7 @@
         }
       }
 
+      if(!local.data[d].monitoring.header) continue;
       patients = [];
       for(j=0; j < local.data[d].monitoring.items.length; j++) {
         local.data[d].monitoring.breakdown.push([local.data[d].monitoring.items[j].name, local.data[d].monitoring.items[j].n]);
@@ -1747,6 +1804,8 @@
 	};
 
 	var initialize = function(){
+    preWireUpPages();
+
     loadActionPlan(function(){
       getData(wireUpPages);
     });

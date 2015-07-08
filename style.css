@@ -7,6 +7,10 @@ body.qof {
   background-color: #ddf9f9;
 }
 
+.hide-if-logged-out {
+  display: none;
+}
+
 .scroll-bar {
   overflow-y: scroll;
 }
@@ -366,9 +370,9 @@ th,td {
   /* this is the vertical line */
   content: '';
   position: absolute;
-  top: 30px;
+  top: 40px;
   left: 50%;
-  height: 75%;
+  height: 70%;
   margin-left: -2px;
   width: 4px;
   background: #85868d;
@@ -376,8 +380,8 @@ th,td {
 
 .cd-timeline-block {
   position: relative;
-  margin: 2em 0;
-    min-height:100px;
+  margin: 1.5em 0;
+  min-height:90px;
 }
 .cd-timeline-block:after {
   content: "";
