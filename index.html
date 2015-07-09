@@ -887,7 +887,7 @@
 
   <script id="diagnosis-panel" type="x-tmpl-mustache">
     <div data-stage="diagnosis" class="panel panel-diagnosis panel-default clickable">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being diagnosed.">
         <i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp; Diagnosis
       </div>
       <div class="panel-body" style="max-height:380px">
@@ -903,7 +903,7 @@
 
   <script id="exclusion-panel" type="x-tmpl-mustache">
     <div data-stage="exclusions" class="panel panel-exclusions panel-default clickable">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="Whether patients are appropriately excluded from {{pathway}} quality standards.">
         <i class="fa fa-times fa-fw"></i>&nbsp; Exclusions
       </div>
       <div class="panel-body" style="max-height:380px">
@@ -1011,7 +1011,7 @@
   {{/hasTasks}}
   {{^hasTasks}}
   <div class="panel-body">
-  You currently have no outstanding tasks
+  You currently have no outstanding planned actions
   </div>
   {{/hasTasks}}
 

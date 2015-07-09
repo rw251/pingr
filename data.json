@@ -416,7 +416,7 @@
         "items": [
           {
             "name": "No opportunities",
-            "desc": "No opportunities",
+            "desc": "Patients who have had no contact with the practice",
             "n": 40,
             "percentage": 55.6,
             "main": "These are patients that you have had no contact with.",
@@ -424,7 +424,7 @@
           },
           {
             "name": "Face-to-face",
-            "desc": "Face-to-face",
+            "desc": "Patients who have seen a clinician in GP practice",
             "n": 12,
             "percentage": 16.7,
             "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
@@ -432,7 +432,7 @@
           },
           {
             "name": "Non face-to-face",
-            "desc": "Non face-to-face",
+            "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, picking up repeat prescriptions, letters",
             "n": 20,
             "percentage": 27.8,
             "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
@@ -458,7 +458,7 @@
         "items": [
           {
             "name": "Suboptimal medication",
-            "desc": "Suboptimal medication",
+            "desc": "Patients who could have their medication optimised",
             "n": 10,
             "percentage": 20,
             "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
@@ -466,7 +466,7 @@
           },
           {
             "name": "Medication non-adherence",
-            "desc": "Medication non-adherence",
+            "desc": "Patients who may not be picking up their repeat medication regularly",
             "n": 7,
             "percentage": 14,
             "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
@@ -474,7 +474,7 @@
           },
           {
             "name": "Referral to secondary care",
-            "desc": "Referral to secondary care",
+            "desc": "Patients who are on maximal anti-hypertensive medication",
             "n": 13,
             "percentage": 26,
             "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
@@ -494,7 +494,7 @@
         "items": [
           {
             "name": "Palliative Care",
-            "desc": "Palliative care",
+            "desc": "Patients who are receiving palliative care",
             "n": 10,
             "percentage": 20.8,
             "patients":[6665994176,6666051664,6666073709,6666149338,6666159822,6666190660,6666241997,6666242352,6666284912,6666340645]
@@ -508,7 +508,7 @@
           },
           {
             "name": "Hypotension",
-            "desc": "Patient with orthostatic hypotension",
+            "desc": "Patients who have a postural hypotension code",
             "n": 14,
             "percentage": 29.2,
             "patients": [6667492389,6667516551,6667606489,6667685811,6667741611,6667782914,6667818889,6667887258,6667950983,6667989507,6668043481,6668079663,6668155912,6668167715]
@@ -534,28 +534,28 @@
         "items": [
           {
             "name": "HTN",
-            "desc": "HTN",
+            "desc": "Patients who likely have hypertension",
             "n": 12,
             "percentage": 36.4,
             "patients":[6668427022,6668488560,6668534144,6668632333,6668649101,6668678386,6668698566,6668701500,6668775716,6668822253,6668833890,6668916157]
           },
           {
             "name": "CKD",
-            "desc": "CKD",
+            "desc": "Patients who likely have Chronic Kidney Disease",
             "n": 5,
             "percentage": 15.2,
             "patients": [6668943913,6669033587,6669122609,6669136270,6669154739]
           },
           {
             "name": "DM",
-            "desc": "DM",
+            "desc": "Patients who likely have Diabetes",
             "n": 8,
             "percentage": 24.2,
             "patients": [6669227708,6669293812,6669296816,6669345201,6669401992,6669490326,6669545413,6669596469]
           },
           {
             "name": "PROT",
-            "desc": "PROT",
+            "desc": "Patients who likely have Proteinuria",
             "n": 8,
             "percentage": 24.2,
             "patients": [6669648060,6669718903,6669766361,6669804595,6669869820,6669893119,6669919369,6669995772]

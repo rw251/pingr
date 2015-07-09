@@ -283,7 +283,7 @@
 	};
 
 	var showDiagnosisPanel = function(location, enableHover) {
-		createPanel(diagnosisPanel, location, {title: local.data[local.pathwayId].diagnosis.title});
+		createPanel(diagnosisPanel, location, {pathway: local.pathwayNames[local.pathwayId],title: local.data[local.pathwayId].diagnosis.title});
 
 		c3.generate({
 			bindto: '#diagnosis-chart',
@@ -333,7 +333,7 @@
 	};
 
 	var showExclusionsPanel = function(location, enableHover) {
-		createPanel(exclusionPanel, location, {title: local.data[local.pathwayId].exclusions.title});
+		createPanel(exclusionPanel, location, {pathway: local.pathwayNames[local.pathwayId],title: local.data[local.pathwayId].exclusions.title});
 
 		c3.generate({
 			bindto: '#exclusion-chart',
