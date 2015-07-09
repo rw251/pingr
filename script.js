@@ -1826,7 +1826,8 @@
 	};
 
   var loadActionPlan = function(callback) {
-    $.getJSON("action-plan.json", function(file){
+    var r = Math.random();
+    $.getJSON("action-plan.json?v="+r, function(file){
       local.actionPlan = file;
       callback();
     });
