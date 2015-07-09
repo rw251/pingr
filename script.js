@@ -29,7 +29,8 @@
 		"pathwayId" : "bp",
     "colors" : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
     "diseases" : [],
-    "pathwayNames" : {}
+    "pathwayNames" : {},
+    "monitored" : {"bp" : "Blood Pressure", "asthma" : "Peak Expiratory Flow"}
 	};
 
 	var bottomLeftPanel, bottomRightPanel, topLeftPanel, topRightPanel, farRightPanel, monitoringPanel, treatmentPanel,
@@ -137,7 +138,8 @@
 			number: local.data[local.pathwayId].monitoring.trend[2][1],
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange),
-      pathway: local.pathwayNames[local.pathwayId]
+      pathway: local.pathwayNames[local.pathwayId],
+      title: local.data[local.pathwayId].monitoring.title
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -213,7 +215,8 @@
 			number: local.data[local.pathwayId].treatment.trend[2][1],
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange),
-      pathway: local.pathwayNames[local.pathwayId]
+      pathway: local.pathwayNames[local.pathwayId],
+      title: local.data[local.pathwayId].treatment.title
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -280,7 +283,7 @@
 	};
 
 	var showDiagnosisPanel = function(location, enableHover) {
-		createPanel(diagnosisPanel, location);
+		createPanel(diagnosisPanel, location, {title: local.data[local.pathwayId].diagnosis.title});
 
 		c3.generate({
 			bindto: '#diagnosis-chart',
@@ -330,7 +333,7 @@
 	};
 
 	var showExclusionsPanel = function(location, enableHover) {
-		createPanel(exclusionPanel, location);
+		createPanel(exclusionPanel, location, {title: local.data[local.pathwayId].exclusions.title});
 
 		c3.generate({
 			bindto: '#exclusion-chart',
@@ -468,6 +471,7 @@
 			bindto: '#breakdown-chart',
 			tooltip: {
 				format: {
+          name: function (name) { return name + ':<br>' +local.data[local.pathwayId][local.selected].bdown[name].desc; },
 					value: function (value, ratio) { //function(value, ratio, id, index) {
 						return value + ' (' + (ratio * 100).toFixed(2) + '%)';
 					}
@@ -1232,7 +1236,7 @@
 
 		updateCheckboxes(patientId);
 
-		createPanel(bpTrendPanel, patientInfo);
+		createPanel(bpTrendPanel, patientInfo, {"pathway": local.monitored[local.pathwayId]});
 
     drawBpTrendChart(patientId);
 
@@ -1610,29 +1614,60 @@
         addNavigation(local.diseases,[], $('#welcome'));
 
         //add tasks
-        var tasks = [];
+        var teamTasks = [];
+        var individualTasks = [];
 
         var current = getObj();
         if(current.actions) {
-          for(var k in local.categories){
-            if(current.actions[k] && current.actions[k].agree){
+          for(var k in current.actions){
+            if(local.categories[k] && current.actions[k] && current.actions[k].agree){
               for(i = 0; i < current.actions[k].agree.length; i++){
                 if(current.actions[k].agree[i] && ! current.actions[k].done[i]){
-                  tasks.push({"pathway": "Blood Pressure", "stage":local.categories[k].display, "task": local.actionPlan[k].practice[i].text});
+                  teamTasks.push({"pathway": "Blood Pressure", "stage":local.categories[k].display, "task": local.actionPlan[k].practice[i].text});
+                }
+              }
+            } else {
+              for(i = 0; i < current.actions[k].agree.length; i++){
+                if(current.actions[k].agree[i] && ! current.actions[k].done[i]){
+                  //find individual TODO update this!!!
+                  if(local.data.bp.patients[k]){
+                    individualTasks.push({"pathway": "Blood Pressure", "patientId":k, "task": local.actionPlan[local.data.bp.patients[k].pathwayStage].individual[local.data.bp.patients[k].subsection][i].text});
+                  } else {
+                    individualTasks.push({"pathway": "Asthma", "patientId":k, "task": local.actionPlan[local.data.asthma.patients[k].pathwayStage].individual[local.data.asthma.patients[k].subsection][i].text});
+                  }
                 }
               }
             }
           }
         }
 
+        var addTemplate = $('#action-plan').html();
+        Mustache.parse(addTemplate);
+        var rendered = Mustache.render(addTemplate);
+        $('#team-add-plan').html(rendered);
+
+        $('#team-add-plan').off('click').on('click', '.add-plan', function(){
+    			var obj = getObj();
+          if(!obj.plans.team["other"]) obj.plans.team["other"] = [];
+          var plan = $(this).parent().parent().find('textarea').val();
+    			obj.plans.team["other"].push({"text" : plan, "done": false});
+    			setObj(obj);
+
+          $('#team-task-panel').find('table tbody').append('<tr><td></td><td>' + plan + '</td><td><label class="cr-styled"><input type="checkbox"><i class="fa"></i></label></td></tr>');
+    		});
+
         var template = $('#welcome-task-items').html();
         var itemTemplate = $('#welcome-task-item').html();
         Mustache.parse(template);
         Mustache.parse(itemTemplate);
 
-        var rendered = Mustache.render(template, {"tasks": tasks, "hasTasks": tasks.length>0}, {"task-item" : itemTemplate});
-        $('#task-panel').children().not(":first").remove();
-        $('#task-panel').append(rendered);
+        rendered = Mustache.render(template, {"tasks": teamTasks, "hasTasks": teamTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
+        $('#team-task-panel').children().not(":first").remove();
+        $('#team-task-panel').append(rendered);
+
+        rendered = Mustache.render(template, {"tasks": individualTasks, "isPatientTable":true, "hasTasks": individualTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
+        $('#individual-task-panel').children().not(":first").remove();
+        $('#individual-task-panel').append(rendered);
       } else {
         //if screen not in correct segment then select it
         if(local.page !== 'main-dashboard'){
@@ -1809,10 +1844,10 @@
       local.pathwayNames[d] = data[i]["display-name"];
       local.diseases.push({"id":d,"link": data[i].link ? data[i].link : "main/"+d, "faIcon":data[i].icon, "name":data[i]["display-name"]});
       local.data[d] = {"patients" : data[i].patients,
-        "monitoring" : {"header": data[i].monitoring.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.monitoring.practice, "bdown":{}, "trend":data[i].monitoring.trend, "table-headings":data[i].monitoring["table-headings"], "items" : data[i].monitoring.items},
-        "treatment": {"header": data[i].treatment.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.treatment.practice, "bdown":{}, "trend":data[i].treatment.trend, "table-headings":data[i].treatment["table-headings"], "items" : data[i].treatment.items},
-        "diagnosis": {"header": data[i].diagnosis.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.diagnosis.practice, "bdown":{}, "trend":data[i].diagnosis.trend, "table-headings":data[i].diagnosis["table-headings"], "items" : data[i].diagnosis.items},
-        "exclusions": {"header": data[i].exclusions.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.exclusions.practice, "bdown":{}, "trend":data[i].exclusions.trend, "table-headings":data[i].exclusions["table-headings"], "items" : data[i].exclusions.items}};
+        "monitoring" : {"title": data[i].monitoring.title, "header": data[i].monitoring.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.monitoring.practice, "bdown":{}, "trend":data[i].monitoring.trend, "table-headings":data[i].monitoring["table-headings"], "items" : data[i].monitoring.items},
+        "treatment": {"title": data[i].treatment.title, "header": data[i].treatment.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.treatment.practice, "bdown":{}, "trend":data[i].treatment.trend, "table-headings":data[i].treatment["table-headings"], "items" : data[i].treatment.items},
+        "diagnosis": {"title": data[i].diagnosis.title, "header": data[i].diagnosis.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.diagnosis.practice, "bdown":{}, "trend":data[i].diagnosis.trend, "table-headings":data[i].diagnosis["table-headings"], "items" : data[i].diagnosis.items},
+        "exclusions": {"title": data[i].exclusions.title, "header": data[i].exclusions.header,"breakdown":[], "patients" : [], "suggestions" : local.actionPlan.exclusions.practice, "bdown":{}, "trend":data[i].exclusions.trend, "table-headings":data[i].exclusions["table-headings"], "items" : data[i].exclusions.items}};
       local.data[d].patientArray = [];
       for(var o in data[i].patients) {
         if(data[i].patients.hasOwnProperty(o)) {

@@ -62,7 +62,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="#welcome" class="navbar-brand hide-if-logged-out">PINGR</a>
+          <a href="#welcome" class="navbar-brand hide-if-logged-out">Home</a>
         </div>
 
         <div class="collapse navbar-collapse" id="navbar">
@@ -194,8 +194,17 @@
           <h2><i class="fa fa-hand-o-down"></i> Review your planned actions</h2>
         </div>
         <div class="row">
-          <div id="task-panel" class="panel panel-info">
-            <div class="panel-heading">Tasks</div>
+          <div id="team-task-panel" class="panel panel-info">
+            <div class="panel-heading">Team / organisational planned actions</div>
+          </div>
+        </div>
+        <div class="row">
+          <div id="team-add-plan" style="padding-bottom: 15px;margin-top: -10px;">
+          </div>
+        </div>
+        <div class="row">
+          <div id="individual-task-panel" class="panel panel-warning">
+            <div class="panel-heading">Individual patient planned actions</div>
           </div>
         </div>
       </div>
@@ -782,7 +791,7 @@
 
   <script id="bp-trend-panel" type="x-tmpl-mustache">
     <div id="demographic-content">
-      <h4>Blood pressure</h4>
+      <h4>{{pathway}}</h4>
       <div id="chart-demo-trend" style="max-height:100px"></div>
     </div>
   </script>
@@ -830,7 +839,7 @@
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>Patients who have had BP measured {{>change-bar}}</p>
+          <p>{{title}} {{>change-bar}}</p>
         </div>
         <div id="monitoring-chart"></div>
       </div>
@@ -844,7 +853,7 @@
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>Patients with controlled BP {{>change-bar}}</p>
+          <p>{{title}} {{>change-bar}}</p>
         </div>
         <div>
           <div id="treatment-chart"></div>
@@ -883,7 +892,7 @@
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>Patients with potentially undiagnosed conditions</p>
+          <p>{{title}}</p>
         </div>
         <div>
           <div id="diagnosis-chart"></div>
@@ -899,7 +908,7 @@
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>Excluded patients</p>
+          <p>{{title}}</p>
         </div>
         <div>
           <div id="exclusion-chart"></div>
@@ -972,8 +981,11 @@
   <script id="welcome-task-item" type="x-tmpl-mustache">
   <tr>
     <td>{{pathway}}</td>
-    <td>{{stage}}</td>
+    {{#patientId}}
+    <td>{{patientId}}</td>
+    {{/patientId}}
     <td>{{{task}}}</td>
+    <td>{{>chk}}</td>
   </td>
   </script>
 
@@ -982,9 +994,12 @@
   <table class="table">
     <thead>
       <tr>
-        <th>Pathway</th>
-        <th>Stage</th>
-        <th>Task</th>
+        <th>Condition</th>
+        {{#isPatientTable}}
+        <th>NHS number</th>
+        {{/isPatientTable}}
+        <th>Planned action</th>
+        <th>Completed</th>
       </tr>
     </thead>
     <tbody>

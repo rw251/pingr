@@ -109,13 +109,17 @@
     "practice": [],
     "individual": {
       "Hypotension": [
-        {"text":"Suggest checking and add exclusion code"}
+        {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
       ],
       "Palliative Care": [
-        {"text":"Suggest checking and add exclusion code"}
+        {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
       ],
-      "White coat hypertension": [],
-      "Exclusion code": []
+      "White coat hypertension": [
+        {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
+      ],
+      "Exclusion code": [
+        {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
+      ]
     }
   }
 }
