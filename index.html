@@ -62,13 +62,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="#welcome" class="navbar-brand hide-if-logged-out">Home</a>
+          <a href="#welcome" class="navbar-brand hide-if-logged-out history">Home</a>
         </div>
 
         <div class="collapse navbar-collapse" id="navbar">
           <ul class="nav navbar-nav">
             <li class="active hide-if-logged-out" id="help">
-              <a class="hidden-xs" href="#help">Instructions</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Instructions</a>
+              <a class="hidden-xs history" href="#help">Instructions</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Instructions</a>
             </li>
             <li class="hide-if-logged-out">
               <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Switch quality standards">
@@ -145,7 +145,7 @@
               </label>
               Remember me
             </div>
-            <a type="button" class="btn btn-purple btn-block" href="#welcome">
+            <a type="button" class="btn btn-purple btn-block history" href="#welcome">
               Sign in
               <span class="fa fa-arrow-circle-right"></span>
             </a>
@@ -398,6 +398,9 @@
 
   <!-- Mustache -->
   <script src="assets/js/mustache/mustache.min.js"></script>
+
+  <!-- History polyfill -->
+  <script src="assets/js/history/history.min.js"></script>
 
   <!-- Custom JQuery -->
   <script src="assets/js/app/custom.js" type="text/javascript"></script>
@@ -841,7 +844,9 @@
         <div>
           <p>{{title}} {{>change-bar}}</p>
         </div>
-        <div id="monitoring-chart"></div>
+        <div>
+          <div id="monitoring-chart"></div>
+        </div>
       </div>
     </div>
   </script>
@@ -857,29 +862,6 @@
         </div>
         <div>
           <div id="treatment-chart"></div>
-        </div>
-      </div>
-    </div>
-  </script>
-
-  <script id="breakdown-panel" type="x-tmpl-mustache">
-    <div class="panel panel-{{pathwayStage}}">
-      <div class="panel-heading">
-        Improvement opportunities
-      </div>
-      <div class="panel-body" style="max-height:380px; padding-right:0">
-        <div class="row">
-          <div class="col-sm-12">
-            <p>{{header}}</p>
-          </div>
-        </div>
-        <div>
-          <div class="col-sm-2" style="padding:0">
-            <div id="breakdown-chart"></div>
-          </div>
-          <div class="col-sm-10" style="padding:0">
-            <div id="breakdown-table"></div>
-          </div>
         </div>
       </div>
     </div>
@@ -912,6 +894,29 @@
         </div>
         <div>
           <div id="exclusion-chart"></div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="breakdown-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      <div class="panel-heading">
+        Improvement opportunities
+      </div>
+      <div class="panel-body" style="max-height:380px; padding-right:0">
+        <div class="row">
+          <div class="col-sm-12">
+            <p>{{header}}</p>
+          </div>
+        </div>
+        <div>
+          <div class="col-sm-2" style="padding:0">
+            <div id="breakdown-chart"></div>
+          </div>
+          <div class="col-sm-10" style="padding:0">
+            <div id="breakdown-table"></div>
+          </div>
         </div>
       </div>
     </div>

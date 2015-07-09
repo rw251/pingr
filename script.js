@@ -10,8 +10,9 @@
  */
 
 (function () {
-   'use strict';
+  'use strict';
 
+  var location = window.history.location || window.location;
 	/*******************************
 	 *** Define local properties ***
 	 *******************************/
@@ -30,7 +31,8 @@
     "colors" : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
     "diseases" : [],
     "pathwayNames" : {},
-    "monitored" : {"bp" : "Blood Pressure", "asthma" : "Peak Expiratory Flow"}
+    "monitored" : {"bp" : "Blood Pressure", "asthma" : "Peak Expiratory Flow"},
+    "tmp" : null
 	};
 
 	var bottomLeftPanel, bottomRightPanel, topLeftPanel, topRightPanel, farRightPanel, monitoringPanel, treatmentPanel,
@@ -952,13 +954,18 @@
           $('.cd-timeline-block').find('span[data-stage=' + pathwayStage + '] i.fa-circle-thin').addClass('icon-background-border');
       }
 		}).on('click', function(){
-			window.location.hash = $(this).data('stage');
+        // keep the link in the browser history
+        history.pushState(null, null, '#'+$(this).data('stage'));
+        loadContent('#'+$(this).data('stage'), true);
+        // do not give a default action
+        return false;
 		});
 	};
 
 	/********************************
 	* Charts - draw
 	********************************/
+
 	var drawBpTrendChart = function(patientId){
 		destroyCharts(['chart-demo-trend']);
 		if(!local.data[local.pathwayId].patients || !local.data[local.pathwayId].patients[patientId] || !local.data[local.pathwayId].patients[patientId].bp) return;
@@ -1028,6 +1035,7 @@
 			}
 		}
 	};
+
 
 	var showOverview = function(){
 
@@ -1104,8 +1112,6 @@
 
     adviceList.find('#individual-panel-classification table:first .btn-toggle input[type=checkbox]').each(wireUpRadioButtons2);
     adviceList.find('#individual-panel-classification table:last .btn-toggle input[type=checkbox]').each(wireUpRadioButtons3);
-
-		//RW TODO need to update the personal plan checkboxes
 
 		updateSapRows();
 	};
@@ -1266,7 +1272,10 @@
 		var subsection = local.data[local.pathwayId].patients[id].subsection;
     var nhs = local.patLookup ? local.patLookup[id] : id;
 
-    window.location.hash = pathwayStage;
+
+    // keep the link in the browser history
+    history.pushState(null, null, '#'+pathwayStage);
+    loadContent('#'+pathwayStage, true);
 
 		populatePatientPanel(pathwayStage, subsection);
 		populateSuggestedActionsPanel(pathwayStage);
@@ -1304,6 +1313,10 @@
       hideHeaderBarItems();
 		}
 	};
+
+  /********************************
+	* Modals
+	********************************/
 
   var launchModal = function(data, label, value){
     var template = $('#modal-why').html();
@@ -1372,6 +1385,10 @@
     launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
   };
 
+  /*******************
+  * Utility functions
+  ********************/
+
 	var getObj = function(){
 		return JSON.parse(localStorage.bb);
 	};
@@ -1380,7 +1397,6 @@
 		localStorage.bb = JSON.stringify(obj);
 	};
 
-  local.tmp = null;
 	var setupClipboard = function(selector, destroy) {
 		if(destroy)	ZeroClipboard.destroy(); //tidy up
 
@@ -1520,9 +1536,12 @@
     setObj(obj);
   };
 
-  /*jshint unused: true*/
+
+  /********************************
+	* Page setup
+	********************************/
+
 	var onSelected = function($e, nhsNumberObject) {
-  /*jshint unused: false*/
 		//Hide the suggestions panel
 		$('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
@@ -1569,7 +1588,11 @@
         if($('.cd-timeline-block').find('span').map(function(){ return $(this).data('selected');}).get().indexOf(true) === -1)
            $('div[data-stage=' + $(this).data('stage') +']').addClass('panel-default');
       }).on('click', function() {
-        window.location.hash = $(this).data('stage');
+          // keep the link in the browser history
+          history.pushState(null, null, '#'+$(this).data('stage'));
+          loadContent('#'+$(this).data('stage'), true);
+          // do not give a default action
+          return false;
       });
     }
 
@@ -1722,16 +1745,19 @@
   var preWireUpPages = function() {
 		showPage('login');
 
-    //History
-    if (window.onpopstate !== undefined) {
-      window.onpopstate = function() {
-        loadContent(window.location.hash, true);
-      };
-    } else {
-      window.onhashchange = function() {
-        loadContent(window.location.hash, true);
-      };
-    }
+    //Every link element stores href in history
+    $(document).on('click', 'a.history', function() {
+      // keep the link in the browser history
+      history.pushState(null, null, this.href);
+      loadContent(location.hash, true);
+      // do not give a default action
+      return false;
+    });
+
+    //Called when the back button is hit
+    $(window).on('popstate', function(e) {
+      loadContent(location.hash, true);
+    });
 
 		//Templates
 		monitoringPanel = $('#monitoring-panel');
@@ -1960,4 +1986,7 @@ $(document).on('ready', function () {
   }
 
 	$('[data-toggle="tooltip"]').tooltip();
+
+  //ensure on first load the login screen is cached to the history
+  history.pushState(null, null, '');
 });
