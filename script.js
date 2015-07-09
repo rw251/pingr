@@ -1547,7 +1547,7 @@
 
     if(listAfter && listAfter.length>0){
       var renderedAfter = Mustache.render(template, {"items": listAfter}, {"item": itemTemplate});
-      var renderedPathway = Mustache.render(pathwayTemplate);
+      var renderedPathway = Mustache.render(pathwayTemplate, {"pathway": local.pathwayNames[local.pathwayId]});
       parent.find('aside nav:last').html(renderedAfter);
       parent.find('aside div.pathway-holder').html(renderedPathway);
 
