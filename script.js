@@ -146,65 +146,67 @@
 		);
 
 		destroyCharts(['monitoring-chart']);
-		local.charts["monitoring-chart"] = c3.generate({
-			bindto: '#monitoring-chart',
-			data: {
-				x: 'x',
-				columns: local.data[local.pathwayId].monitoring.trend,
-				axes: {
-					"%" : 'y',
-					"n" : 'y2'
-				}
-			},
-      tooltip: {
-        format: {
-          title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
-          value: function (value) { return  enableHover ? undefined : value;}*/
-        }
-      },
-			axis: {
-				x: {
-					type: 'timeseries',
-					tick: {
-						format: '%Y-%m-%d',
-						count: 7,
-						culling: {
-							max: 4
-						}
-					},
-          label: {
-            text: 'Date',
-            position: 'outer-center'
+    setTimeout(function(){
+  		local.charts["monitoring-chart"] = c3.generate({
+  			bindto: '#monitoring-chart',
+  			data: {
+  				x: 'x',
+  				columns: local.data[local.pathwayId].monitoring.trend,
+  				axes: {
+  					"%" : 'y',
+  					"n" : 'y2'
+  				}
+  			},
+        tooltip: {
+          format: {
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
+            value: function (value) { return  enableHover ? undefined : value;}*/
           }
-				},
-				y : {
-					min : 0,
-          label: {
-            text: 'Proportion (%)',
-            position: 'outer-middle'
-          }
-				},
-				y2: {
-					show: true,
-					min: 0,
-          label: {
-            text: 'Patient count (n)',
-            position: 'outer-middle'
-          }
-				}
-			},
-			point: {
-				show: false
-			},
-			size: {
-				height: null
-			}
-			/*grid: {
-			 x: {
-			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
-			 }
-			 }*/
-		});
+        },
+  			axis: {
+  				x: {
+  					type: 'timeseries',
+  					tick: {
+  						format: '%Y-%m-%d',
+  						count: 7,
+  						culling: {
+  							max: 4
+  						}
+  					},
+            label: {
+              text: 'Date',
+              position: 'outer-center'
+            }
+  				},
+  				y : {
+  					min : 0,
+            label: {
+              text: 'Proportion (%)',
+              position: 'outer-middle'
+            }
+  				},
+  				y2: {
+  					show: true,
+  					min: 0,
+            label: {
+              text: 'Patient count (n)',
+              position: 'outer-middle'
+            }
+  				}
+  			},
+  			point: {
+  				show: false
+  			},
+  			size: {
+  				height: null
+  			}
+  			/*grid: {
+  			 x: {
+  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
+  			 }
+  			 }*/
+  		});
+    },1);
 	};
 
 	var showTreatmentPanel = function(location, enableHover) {
@@ -223,165 +225,171 @@
 		);
 
 		destroyCharts(['treatment-chart']);
-		local.charts["treatment-chart"] = c3.generate({
-			bindto: '#treatment-chart',
-			data: {
-				x: 'x',
-				columns: local.data[local.pathwayId].treatment.trend,
-				axes: {
-					"%" : 'y',
-					"n" : 'y2'
-				}
-			},
-      tooltip: {
-        format: {
-          title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
-          value: function (value) { return  enableHover ? undefined : value;}*/
-        }
-      },
-			axis: {
-				x: {
-					type: 'timeseries',
-					tick: {
-						format: '%Y-%m-%d',
-						count: 7,
-						culling: {
-							max: 4
-						}
-					},
-          label: {
-            text: 'Date',
-            position: 'outer-center'
+    setTimeout(function(){
+  		local.charts["treatment-chart"] = c3.generate({
+  			bindto: '#treatment-chart',
+  			data: {
+  				x: 'x',
+  				columns: local.data[local.pathwayId].treatment.trend,
+  				axes: {
+  					"%" : 'y',
+  					"n" : 'y2'
+  				}
+  			},
+        tooltip: {
+          format: {
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
+            value: function (value) { return  enableHover ? undefined : value;}*/
           }
-				},
-				y : {
-					min : 0,
-          label: {
-            text: 'Proportion (%)',
-            position: 'outer-middle'
-          }
-				},
-				y2: {
-					show: true,
-					min: 0,
-          label: {
-            text: 'Patient count (n)',
-            position: 'outer-middle'
-          }
-				}
-			},
-			point: {
-				show: false
-			},
-			size: {
-				height: null
-			}/*,
-			 grid: {
-			 x: {
-			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
-			 }
-			 }*/
-		});
+        },
+  			axis: {
+  				x: {
+  					type: 'timeseries',
+  					tick: {
+  						format: '%Y-%m-%d',
+  						count: 7,
+  						culling: {
+  							max: 4
+  						}
+  					},
+            label: {
+              text: 'Date',
+              position: 'outer-center'
+            }
+  				},
+  				y : {
+  					min : 0,
+            label: {
+              text: 'Proportion (%)',
+              position: 'outer-middle'
+            }
+  				},
+  				y2: {
+  					show: true,
+  					min: 0,
+            label: {
+              text: 'Patient count (n)',
+              position: 'outer-middle'
+            }
+  				}
+  			},
+  			point: {
+  				show: false
+  			},
+  			size: {
+  				height: null
+  			}/*,
+  			 grid: {
+  			 x: {
+  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
+  			 }
+  			 }*/
+  		});
+    },1);
 	};
 
 	var showDiagnosisPanel = function(location, enableHover) {
 		createPanel(diagnosisPanel, location, {pathway: local.pathwayNames[local.pathwayId],title: local.data[local.pathwayId].diagnosis.title});
 
-		c3.generate({
-			bindto: '#diagnosis-chart',
-			data: {
-				columns: [
-					['Patients', 30, 200, 100, 400, 150]
-				],
-				type: 'bar',
-        labels: true,
-        color: function (color, d) {
-          return local.colors[d.index];
-        }
-			},
-      tooltip: {
-        format: {
-          title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
-          value: function (value) { return  enableHover ? undefined : value;}*/
-        }
-      },
-      legend:{
-        show: false
-      },
-			bar: {
-				width: {
-					ratio: 0.5 // this makes bar width 50% of length between ticks
-				}
-				// or
-				//width: 100 // this makes bar width 100px
-			},
-			axis: {
-				x: {
-					type: 'category',
-					categories: ['HTN', 'CKD', 'DM', 'Protein', 'McrA'],
-          label: {
-            text: 'Disease',
-            position: 'outer-center'
+		setTimeout(function(){
+      c3.generate({
+  			bindto: '#diagnosis-chart',
+  			data: {
+  				columns: [
+  					['Patients', 30, 200, 100, 400, 150]
+  				],
+  				type: 'bar',
+          labels: true,
+          color: function (color, d) {
+            return local.colors[d.index];
           }
-				},
-        y : {
-          label: {
-            text: 'Patient count (n)',
-            position: 'outer-middle'
+  			},
+        tooltip: {
+          format: {
+            title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
+            value: function (value) { return  enableHover ? undefined : value;}*/
           }
-        }
-			}
-		});
+        },
+        legend:{
+          show: false
+        },
+  			bar: {
+  				width: {
+  					ratio: 0.5 // this makes bar width 50% of length between ticks
+  				}
+  				// or
+  				//width: 100 // this makes bar width 100px
+  			},
+  			axis: {
+  				x: {
+  					type: 'category',
+  					categories: ['HTN', 'CKD', 'DM', 'Protein', 'McrA'],
+            label: {
+              text: 'Disease',
+              position: 'outer-center'
+            }
+  				},
+          y : {
+            label: {
+              text: 'Patient count (n)',
+              position: 'outer-middle'
+            }
+          }
+  			}
+  		});
+    },1);
 	};
 
 	var showExclusionsPanel = function(location, enableHover) {
 		createPanel(exclusionPanel, location, {pathway: local.pathwayNames[local.pathwayId],title: local.data[local.pathwayId].exclusions.title});
 
-		c3.generate({
-			bindto: '#exclusion-chart',
-			data: {
-				columns: [
-					['Patients', 122, 78]
-				],
-				type: 'bar',
-        labels: true,
-        color: function (color, d) {
-          return local.colors[d.index];
-        }
-			},
-      tooltip: {
-        format: {
-          title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
-          value: function (value) { return  enableHover ? undefined : value;}*/
-        }
-      },
-      legend: {
-        show: false
-      },
-			bar: {
-				width: {
-					ratio: 0.5 // this makes bar width 50% of length between ticks
-				}
-				// or
-				//width: 100 // this makes bar width 100px
-			},
-			axis: {
-				x: {
-					type: 'category',
-					categories: ['Reasons we think', 'Exclusion code'],
-          label: {
-            text: 'Reason for exclusion',
-            position: 'outer-center'
+    setTimeout(function(){
+  		c3.generate({
+  			bindto: '#exclusion-chart',
+  			data: {
+  				columns: [
+  					['Patients', 122, 78]
+  				],
+  				type: 'bar',
+          labels: true,
+          color: function (color, d) {
+            return local.colors[d.index];
           }
-				},
-        y : {
-          label: {
-            text: 'Patient count (n)',
-            position: 'outer-middle'
+  			},
+        tooltip: {
+          format: {
+            title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
+            value: function (value) { return  enableHover ? undefined : value;}*/
           }
-        }
-			}
-		});
+        },
+        legend: {
+          show: false
+        },
+  			bar: {
+  				width: {
+  					ratio: 0.5 // this makes bar width 50% of length between ticks
+  				}
+  				// or
+  				//width: 100 // this makes bar width 100px
+  			},
+  			axis: {
+  				x: {
+  					type: 'category',
+  					categories: ['Reasons we think', 'Exclusion code'],
+            label: {
+              text: 'Reason for exclusion',
+              position: 'outer-center'
+            }
+  				},
+          y : {
+            label: {
+              text: 'Patient count (n)',
+              position: 'outer-middle'
+            }
+          }
+  			}
+  		});
+    }, 1);
 	};
 
 	var addPatientPanel = function(location) {
@@ -469,51 +477,53 @@
 
 		destroyCharts(['breakdown-chart']);
 
-		local.charts['breakdown-chart'] = c3.generate({
-			bindto: '#breakdown-chart',
-			tooltip: {
-				format: {
-          name: function (name) { return name + ':<br>' +local.data[local.pathwayId][local.selected].bdown[name].desc; },
-					value: function (value, ratio) { //function(value, ratio, id, index) {
-						return value + ' (' + (ratio * 100).toFixed(2) + '%)';
-					}
-				}
-			},
-			data: {
-				columns: local.data[local.pathwayId][pathwayStage].breakdown,
-				type: 'pie',
-				selection: { enabled: true },
-				order: null,
-				onclick: function (d) {
-					selectPieSlice('breakdown-chart', d.id);
-					populatePatientPanel(pathwayStage, d.id);
-					//populateSuggestedActionsPanel(d.id);
-					breakdownTable.find('tr').removeClass('selected');
-					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('selected');
-					local.subselected = d.id;
-				},
-				onmouseover: function(d){
-					breakdownTable.find('tr').removeClass('tr-hovered');
-					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('tr-hovered');
-				},
-				onmouseout: function (){
-					breakdownTable.find('tr').removeClass('tr-hovered');
-				}
-			},
-			pie: {
-				label: {
-          show: false
-          /*jshint unused: true*/
-					/*format: function (value, ratio, id) {
-						return id;// + ' ('+value+')';
-					}*/
-          /*jshint unused: false*/
-				}
-			},
-			legend: {
-				show: false
-			}
-		});
+    setTimeout(function(){
+  		local.charts['breakdown-chart'] = c3.generate({
+  			bindto: '#breakdown-chart',
+  			tooltip: {
+  				format: {
+            name: function (name) { return name + ':<br>' +local.data[local.pathwayId][local.selected].bdown[name].desc; },
+  					value: function (value, ratio) { //function(value, ratio, id, index) {
+  						return value + ' (' + (ratio * 100).toFixed(2) + '%)';
+  					}
+  				}
+  			},
+  			data: {
+  				columns: local.data[local.pathwayId][pathwayStage].breakdown,
+  				type: 'pie',
+  				selection: { enabled: true },
+  				order: null,
+  				onclick: function (d) {
+  					selectPieSlice('breakdown-chart', d.id);
+  					populatePatientPanel(pathwayStage, d.id);
+  					//populateSuggestedActionsPanel(d.id);
+  					breakdownTable.find('tr').removeClass('selected');
+  					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('selected');
+  					local.subselected = d.id;
+  				},
+  				onmouseover: function(d){
+  					breakdownTable.find('tr').removeClass('tr-hovered');
+  					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('tr-hovered');
+  				},
+  				onmouseout: function (){
+  					breakdownTable.find('tr').removeClass('tr-hovered');
+  				}
+  			},
+  			pie: {
+  				label: {
+            show: false
+            /*jshint unused: true*/
+  					/*format: function (value, ratio, id) {
+  						return id;// + ' ('+value+')';
+  					}*/
+            /*jshint unused: false*/
+  				}
+  			},
+  			legend: {
+  				show: false
+  			}
+  		});
+    },1);
 
 		populateBreakdownTable(pathwayStage);
 	};
@@ -925,7 +935,7 @@
 	var populateBreakdownTable = function(id){
 		var data = local.data[local.pathwayId][id.toLowerCase()];
 		for(var i = 0 ; i< data.items.length; i++){
-			data.items[i].color = local.charts['breakdown-chart'].color(data.items[i].name);
+			data.items[i].color = local.colors[i];// local.charts['breakdown-chart'].color(data.items[i].name);
 		}
 		createPanel(breakdownTableTemplate, breakdownTable, data);
 	};
@@ -1012,8 +1022,10 @@
 			};
     }
 
-
-		local.charts['chart-demo-trend'] = c3.generate(chartOptions);
+    //draw charts in separate thread and with delay to stop sluggish appearance
+    setTimeout(function(){
+      local.charts['chart-demo-trend'] = c3.generate(chartOptions);
+    }, 1);
 	};
 
 	var selectPieSlice = function (chart, id){
