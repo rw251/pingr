@@ -7,6 +7,34 @@ body.qof {
   background-color: #ddf9f9;
 }
 
+/*support for slightly wider desktops */
+.col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12{
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 1300px) {
+  .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12{
+    float: left;
+  }
+  .col-xl-12 {
+    width: 100%;
+  }
+  .col-xl-8 {
+    width: 66.66666667%;
+  }
+  .col-xl-6 {
+    width: 50%;
+  }
+  .col-xl-4 {
+    width: 33.33333333%;
+  }
+  .col-xl-3 {
+    width: 25%;
+  }
+}
 /* thanks fly in message */
 .flyover {
    left: 150%;
@@ -116,7 +144,7 @@ mod
 }
 
 nav.full{
-	left:230px;
+	left:190px;
 }
 
 nav.part{

@@ -55,20 +55,10 @@
   <section id="main">
     <nav class="navbar navbar-fixed-top hide-if-logged-out" id="topnavbar">
       <div class="container">
-        <div class="navbar-header">
-          <button class="navbar-toggle pull-left collapsed" id="aside-toggle" type="button">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a href="#welcome" class="navbar-brand hide-if-logged-out history">Home</a>
-        </div>
-
         <div class="collapse navbar-collapse" id="navbar">
           <ul class="nav navbar-nav">
             <li class="active hide-if-logged-out" id="help">
-              <a class="hidden-xs history" href="#help">Instructions</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Instructions</a>
+              <a class="hidden-xs history" href="#help">Help</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Help</a>
             </li>
             <li class="hide-if-logged-out">
               <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Switch quality standards">
@@ -106,7 +96,7 @@
 
             <div class="hide-if-logged-out input-group pull-right">
               <span class="btn btn-primary btn-padding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document" id="export-plan">
-                <span class="fa fa-download"></span> Download Action Plan
+                <span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span>
               </span>
             </div>
 
@@ -161,23 +151,6 @@
 
           <h4 class="user-name">Ben Brown</h4>
 
-          <div class="dropdown user-login">
-            <button class="btn btn-xs dropdown-toggle btn-rounded" data-toggle="dropdown" type="button"><i class="fa fa-circle status-icon available"></i> Available <i class="fa fa-angle-down"></i></button>
-
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon busy"></i> Busy</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon invisibled"></i> Invisible</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon signout"></i> Sign out</a>
-              </li>
-            </ul>
-          </div>
         </div>
 
         <nav class="navigation"></nav>
@@ -251,23 +224,6 @@
 
           <h4 class="user-name">Ben Brown</h4>
 
-          <div class="dropdown user-login">
-            <button class="btn btn-xs dropdown-toggle btn-rounded" data-toggle="dropdown" type="button"><i class="fa fa-circle status-icon available"></i> Available <i class="fa fa-angle-down"></i></button>
-
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon busy"></i> Busy</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon invisibled"></i> Invisible</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon signout"></i> Sign out</a>
-              </li>
-            </ul>
-          </div>
         </div>
 
         <nav class="navigation"></nav>
@@ -309,43 +265,25 @@
 
           <h4 class="user-name">Ben Brown</h4>
 
-          <div class="dropdown user-login">
-            <button class="btn btn-xs dropdown-toggle btn-rounded" data-toggle="dropdown" type="button"><i class="fa fa-circle status-icon available"></i> Available <i class="fa fa-angle-down"></i></button>
-
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon busy"></i> Busy</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon invisibled"></i> Invisible</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon signout"></i> Sign out</a>
-              </li>
-            </ul>
-          </div>
         </div>
 
-        <nav class="navigation"></nav>
-        <div class="pathway-holder"></div>
         <nav class="navigation"></nav>
       </aside>
 
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-8">
-            <div class="row" style="max-height:400px">
-              <div id="top-left-panel" class="col-sm-6"></div>
-              <div id="top-right-panel" class="col-sm-6"></div>
-            </div>
+          <div class="col-xl-4 col-lg-3" id="left-panel"></div>
+          <div class="col-xl-8 col-lg-6" id="mid-panel">
+            <!--<div class="row" style="max-height:400px">
+            </div>-->
             <div class="row">
-              <div id="bottom-left-panel" class="col-sm-6"></div>
-              <div id="bottom-right-panel" class="col-sm-6"></div>
+              <div id="top-left-panel" class="col-xl-6"></div>
+              <div id="top-right-panel" class="col-xl-6"></div>
+              <div id="bottom-left-panel" class="col-xl-6"></div>
+              <div id="bottom-right-panel" class="col-xl-6"></div>
             </div>
           </div>
-          <div class="col-sm-4" id="right-panel"></div>
+          <div class="col-xl-4 col-lg-6" id="right-panel"></div>
         </div>
       </div>
 
@@ -540,6 +478,42 @@
     </table>
   </script>
 
+  <script id="patient-list-simple" type="x-tmpl-mustache">
+    <table class="table patient-list">
+      <thead>
+      </thead>
+      <tbody>
+        {{#patients}}
+        <tr class="list-item">
+          <td>
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
+              <span class="fa fa-clipboard"></span>
+            </button>
+            {{nhsNumber}}
+          </td>
+        </tr>
+        {{/patients}}
+      </tbody>
+    </table>
+  </script>
+
+  <script id="patient-dropdown-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default" id="panel-right">
+      <div class="panel-heading">
+        <i class="fa fa-users fa-fw"></i>&nbsp; Patients
+      </div>
+
+      <div class="panel-body" id="panel-patients">
+        <select class="form-control">
+        {{#patients}}
+        <option>{{.}}</option>
+        {{/patients}}
+        </select>
+      </div>
+    </div>
+
+  </script>
+
   <script id="breakdown-table-template" type="x-tmpl-mustache">
     <table class="table no-margn">
       <thead>
@@ -562,94 +536,120 @@
   </script>
 
   <script id="action-plan-item" type="x-tmpl-mustache">
-  <tr class="suggestion active">
-    <td>
-      <span>{{{text}}}</span>
-    </td>
-    <td>
-      <div class="btn-group" data-toggle="buttons">
-        <button class="btn btn-xs btn-warning edit-plan" data-toggle="tooltip" data-placement="top" title="Edit plan">
-          <span class="fa fa-edit"></span>
-        </button>
-        <button class="btn btn-xs btn-danger delete-plan" data-toggle="tooltip" data-placement="top" title="Delete plan">
-          <span class="fa fa-trash"></span>
-        </button>
-      </div>
-    </td>
-    <td>{{>chk}}</td>
-  </tr>
+    <tr class="suggestion active">
+      <td>
+        <span>{{{text}}}</span>
+      </td>
+      <td>
+        <div class="btn-group" data-toggle="buttons">
+          <button class="btn btn-xs btn-warning edit-plan" data-toggle="tooltip" data-placement="top" title="Edit plan">
+            <span class="fa fa-edit"></span>
+          </button>
+          <button class="btn btn-xs btn-danger delete-plan" data-toggle="tooltip" data-placement="top" title="Delete plan">
+            <span class="fa fa-trash"></span>
+          </button>
+        </div>
+      </td>
+      <td>{{>chk}}</td>
+    </tr>
   </script>
 
   <script id="action-plan-list" type="x-tmpl-mustache">
-  <table class="table">
-    <thead>
-      <tr>
-        <th style="width:70%;">Your Own Actions</th>
-        <th>Edit/ Delete</th>
-        <th>Completed</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#suggestions}}
-      {{>action-plan-item}}
-      {{/suggestions}} {{resetIndex}}
-    </tbody>
-  </table>
-  {{>action-plan}}
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:70%;">Your Own Actions</th>
+          <th>Edit/ Delete</th>
+          <th>Completed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#suggestions}}
+        {{>action-plan-item}}
+        {{/suggestions}} {{resetIndex}}
+      </tbody>
+    </table>
+    {{>action-plan}}
   </script>
 
   <script id="action-plan" type="x-tmpl-mustache">
-  <div class="input-group">
-    <textarea class="form-control" rows="3" style="resize:none" placeholder="Enter your own action plan..."></textarea>
-    <span class="input-group-addon btn add-plan">
-      Add
-    </span>
-  </div>
+    <div class="input-group">
+      <textarea class="form-control" rows="3" style="resize:none" placeholder="Enter your own action plan..."></textarea>
+      <span class="input-group-addon btn add-plan">
+        Add
+      </span>
+    </div>
   </script>
 
-  <script id="action-plan-panel" type="x-tmpl-mustache">
-    <div class="panel panel-{{pathwayStage}}">
+  <script id="team-action-plan-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
       <div class="panel-heading clearfix">
-        <h3 class="panel-title">Suggested action plan</h3>
+        <i class="fa fa-list-ul fa-fw"></i>&nbsp; Suggested action plan
       </div>
 
-      <div class="panel-body">
-        <div class="tab-pane fade active in">
-          <div class="tabbable">
-            <ul class="nav nav-tabs" id="action-plan-tabs">
-              <li class="active">
-                <a href="#tab-plan-team">Team / Organisation</a>
-              </li>
+      <div class="panel-body" id="tab-plan-team">
+        <div id="suggestedPlanTeam"></div>
+        <div id="personalPlanTeam"></div>
+      </div>
+    </div>
 
-              <li>
-                <a href="#tab-plan-individual">Individual Patient</a>
-              </li>
-            </ul>
-            <div class="tab-content">
-              <div class="panel panel-default padd-t-sm tab-pane tabs-up active" id="tab-plan-team">
-                <div class="panel-body">
-                  <div id="suggestedPlanTeam"></div>
-                  <div id="personalPlanTeam"></div>
-                </div>
-              </div>
 
-              <div class="panel panel-default tab-pane tabs-up" id="tab-plan-individual">
-                <div class="panel-body">
-                  <div id="advice-placeholder">
-                    Select an individual patient from the patient panel to view advice
-                  </div>
-                  <div id="advice" class="row">
-                    <div class="col-sm-6" id="advice-list">
-                    </div>
-                    <div class="col-sm-6" id="patient-info">
-                    </div>
-                  </div>
-                  <div id="personalPlanIndividual"></div>
-                </div>
-              </div>
+    <div class="modal fade" id="editPlan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">Edit Plan</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="text" class="form-control" id="editActionPlanItem">
             </div>
           </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary save-plan">Save</button>
+          </div>
         </div>
+      </div>
+    </div>
+    <div class="modal fade" id="deletePlan" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger delete-plan">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="individual-action-plan-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      <div class="panel-heading clearfix">
+        <i class="fa fa-list-ul fa-fw"></i>&nbsp; Suggested action plan
+      </div>
+
+      <div class="panel-body" id="tab-plan-individual">
+        <div id="advice-placeholder">
+          Select an individual patient from the patient panel to view advice
+        </div>
+        <div id="advice-list"></div>
+        <!--<div id="advice" class="row">
+          <div class="col-sm-6" id="advice-list">
+          </div>
+          <div class="col-sm-6" id="patient-info">
+          </div>
+        </div>-->
+        <div id="personalPlanIndividual"></div>
       </div>
     </div>
 
@@ -792,17 +792,58 @@
     </table>
   </script>
 
-  <script id="bp-trend-panel" type="x-tmpl-mustache">
-    <div id="demographic-content">
-      <h4>{{pathway}}</h4>
-      <div id="chart-demo-trend" style="max-height:100px"></div>
+  <script id="value-trend-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      <div class="panel-heading">
+        <i class="fa fa-line-chart fa-fw"></i>&nbsp; {{pathway}}
+      </div>
+      <div class="panel-body" style="max-height:380px">
+        <div id="chart-demo-trend" style="max-height:100px"></div>
+      </div>
+    </div>
+  </script>
+
+  <script id="medications-row" type="x-tmpl-mustache">
+    <tr>
+      <td>{{medication}}</td>
+      <td>{{dose}}</td>
+      <td>{{last}}</td>
+    </tr>
+  </script>
+
+  <script id="medications-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      <div class="panel-heading">
+        <i class="fa fa-file-text fa-fw"></i>&nbsp; Medications
+      </div>
+      <div class="panel-body" style="max-height:380px">
+      {{#areMedications}}
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Medication</th>
+            <th>Dose</th>
+            <th>Last Rx</th>
+          </tr>
+          </thead>
+          <tbody>
+          {{#medications}}
+          {{>medicationRow}}
+          {{/medications}}
+          </tbody>
+        </table>
+      {{/areMedications}}
+      {{^areMedications}}
+      No medications
+      {{/areMedications}}
+      </div>
     </div>
   </script>
 
   <script id="patients-panel" type="x-tmpl-mustache">
     <div class="panel panel-default" id="panel-right">
       <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
-        <h4 class="panel-title">Patients</h4>
+        <i class="fa fa-users fa-fw"></i>&nbsp; Patients
       </div>
 
       <div class="panel-body" id="panel-patients">
@@ -922,104 +963,71 @@
     </div>
   </script>
 
+  <script id="pathway-picker-sub-item" type="x-tmpl-mustache">
+    <ul class="list-unstyled">
+      <li><a href="#diagnosis">Diagnosis</a></li>
+      <li><a href="#monitoring">Monitoring</a></li>
+      <li><a href="#treatment">Treatment</a></li>
+      <li><a href="#exclusions">Exclusions</a></li>
+    </ul>
+  </script>
+
   <script id="pathway-picker-item" type="x-tmpl-mustache">
-  <li {{#isSelected}}class="active"{{/isSelected}}>
-    <a href="#{{link}}">
-      <i class="fa {{faIcon}}"></i>
-      <span class="nav-label">{{name}}</span>
-    </a>
-  </li>
+    <li {{#isSelected}}class="active"{{/isSelected}}>
+      <a href="#{{link}}">
+        <i class="fa {{faIcon}}"></i>
+        <span class="nav-label">{{name}}</span>
+      </a>
+      {{#hasSubItems}}
+      {{>subItem}}
+      {{/hasSubItems}}
+    </li>
   </script>
 
   <script id="pathway-picker" type="x-tmpl-mustache">
-  <ul class="list-unstyled">
-    {{#items}}
-    {{>item}}
-    {{/items}}
-  </ul>
-  </script>
-
-  <script id="pathway-map" type="x-tmpl-mustache">
-  <section class="cd-container" id="cd-timeline">
-    <div class="cd-timeline-block">
-      <div style="text-align: center;">
-        <span data-stage="diagnosis" data-toggle="tooltip" data-placement="top" title="Diagnosis: How well {{pathway}} is being diagnosed" class="fa-stack fa-2x fa-stack-mod clickable">
-          <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-          <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-success"></i>
-          <i class="fa fa-exclamation-triangle fa-stack-1x icon-success"></i>
-        </span>
-      </div>
-    </div>
-
-    <div class="cd-timeline-block">
-      <div style="text-align: center;">
-        <span data-stage="monitoring" data-toggle="tooltip" data-placement="top" title="Monitoring: How well {{pathway}} is being monitored" class="fa-stack fa-2x fa-stack-mod clickable">
-          <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-          <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-info"></i>
-          <i class="fa fa-stethoscope fa-stack-1x icon-info"></i>
-        </span>
-      </div>
-    </div>
-
-    <div class="cd-timeline-block">
-      <div style="text-align: center;">
-        <span data-stage="treatment" data-toggle="tooltip" data-placement="top" title="Treatment: How well {{pathway}} is being treated" class="fa-stack fa-2x fa-stack-mod clickable">
-          <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-          <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-warning"></i>
-          <i class="fa fa-medkit fa-stack-1x icon-warning"></i>
-        </span>
-      </div>
-    </div>
-  </section>
-
-  <div class="cd-timeline-block">
-    <div style="text-align: center;">
-      <span data-stage="exclusions" data-toggle="tooltip" data-placement="top" title="Exclusions: Whether patients are appropriately excluded from {{pathway}} quality standards" class="fa-stack fa-2x fa-stack-mod clickable">
-        <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-        <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-danger"></i>
-        <i class="fa fa-times fa-stack-1x icon-danger"></i>
-      </span>
-    </div>
-  </div>
+    <ul class="list-unstyled">
+      {{#items}}
+      {{>item}}
+      {{/items}}
+    </ul>
   </script>
 
   <script id="welcome-task-item" type="x-tmpl-mustache">
-  <tr>
-    <td>{{pathway}}</td>
-    {{#patientId}}
-    <td>{{patientId}}</td>
-    {{/patientId}}
-    <td>{{{task}}}</td>
-    <td>{{>chk}}</td>
-  </td>
+    <tr>
+      <td>{{pathway}}</td>
+      {{#patientId}}
+      <td>{{patientId}}</td>
+      {{/patientId}}
+      <td>{{{task}}}</td>
+      <td>{{>chk}}</td>
+    </td>
   </script>
 
   <script id="welcome-task-items" type="x-tmpl-mustache">
-  {{#hasTasks}}
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Condition</th>
-        {{#isPatientTable}}
-        <th>NHS number</th>
-        {{/isPatientTable}}
-        <th>Planned action</th>
-        <th>Completed</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#tasks}}
-      {{>task-item}}
-      {{/tasks}}
-    </tbody>
-  </table>
-  {{/hasTasks}}
-  {{^hasTasks}}
-  <div class="panel-body">
-  You currently have no outstanding planned actions
-  </div>
-  {{/hasTasks}}
-
+    {{#hasTasks}}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Condition</th>
+            {{#isPatientTable}}
+            <th>NHS number</th>
+            {{/isPatientTable}}
+            <th>Planned action</th>
+            <th>Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#tasks}}
+          {{>task-item}}
+          {{/tasks}}
+        </tbody>
+      </table>
+    {{/hasTasks}}
+    {{^hasTasks}}
+      <div class="panel-body">
+      You currently have no outstanding planned actions
+      </div>
+    {{/hasTasks}}
   </script>
 </body>
 </html>
