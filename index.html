@@ -95,7 +95,7 @@
             </div>
 
             <div class="hide-if-logged-out input-group pull-right">
-              <span class="btn btn-primary btn-padding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document" id="export-plan">
+              <span class="btn btn-primary btn-padding export-plan" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document" >
                 <span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span>
               </span>
             </div>
@@ -180,6 +180,9 @@
             <div class="panel-heading">Individual patient planned actions</div>
           </div>
         </div>
+        <span class="btn btn-primary btn-padding export-plan" data-toggle="tooltip" data-placement="top" title="Download your planned actions as a PDF document">
+          <span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span>
+        </span>
       </div>
     </div>
 
@@ -351,104 +354,104 @@
 
   <script id="checkbox-template" type="x-tmpl-mustache">
     <label class="cr-styled">
-      <input type="checkbox">
+      <input type="checkbox" {{#done}}checked="checked"{{/done}}>
       <i class="fa"></i>
     </label>
   </script>
 
   <script id="suggested-plan-item"  type="x-tmpl-mustache">
-  <tr class="suggestion">
-    <td>
-      <span>{{{text}}}</span>
-      {{#improvement}}
-      <span class='text-danger'> - this could improve your performance by {{ improvement }}%.</span>{{/improvement}}
-    </td>
-    <td>
-      <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-xs btn-yes btn-toggle btn-success">
-          <input type="checkbox" name="action-agree-{{index}}" value="yes" autocomplete="off">
-          <span class="fa fa-thumbs-up"></span>
-        </label>
-        <label class="btn btn-xs btn-no btn-toggle btn-danger">
-          <input type="checkbox" name="action-agree-{{lastIndex}}" value="no" autocomplete="off">
-          <span class="fa fa-thumbs-down"></span>
-        </label>
-      </div>
-    </td>
-    <td>{{>chk}}</td>
-  </tr>
+    <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
+      <td>
+        <span>{{{text}}}</span>
+      </td>
+      <td>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}">
+            <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+            <span class="fa fa-thumbs-up"></span>
+          </label>
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}">
+            <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+            <span class="fa fa-thumbs-down"></span>
+          </label>
+        </div>
+      </td>
+      <td>{{>chk}}</td>
+    </tr>
   </script>
 
   <script id="modal-why-item" type="x-tmpl-mustache">
-  <div class="radio">
-    <label>
-      <input type="radio" name="reason" value="{{value}}" required>
-      {{reason}}
-    </label>
-  </div>
+    <div class="radio">
+      <label>
+        <input type="radio" name="reason" value="{{value}}" required>
+        {{reason}}
+      </label>
+    </div>
   </script>
 
   <script id="modal-why" type="x-tmpl-mustache">
-  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="modalLabel">{{header}}</h4>
-        </div>
-        <div class="modal-body">
-        <form>
-          <div class = "form-group">
-          {{#reasons}}
-          {{>item}}
-          {{/reasons}}
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="modalLabel">{{header}}</h4>
           </div>
-          <div class = "form-group">
-          <textarea rows="3" style="resize:none" class="form-control" placeholder="{{placeholder}}"></textarea>
+          <div class="modal-body">
+          <form>
+            <div class = "form-group">
+            <label>Why?</label>
+            {{#reasons}}
+            {{>item}}
+            {{/reasons}}
+            </div>
+            <div class = "form-group">
+            <label>Tell us more</label>
+            <textarea rows="3" style="resize:none" class="form-control" placeholder="{{placeholder}}"></textarea>
+            </div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary save-plan">Save</button>
+          </form>
           </div>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary save-plan">Save</button>
-        </form>
-        </div>
-        <div class="modal-footer">
+          <div class="modal-footer">
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </script>
 
   <script id="suggested-plan-template" type="x-tmpl-mustache">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Suggested Actions</th>
-        <th style="width: 65px">Agree?</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#suggestions}}
-      {{>item}}
-      {{/suggestions}} {{resetIndex}}
-    </tbody>
-  </table>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Suggested Actions</th>
+          <th style="width: 65px">Agree?</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#suggestions}}
+        {{>item}}
+        {{/suggestions}}
+      </tbody>
+    </table>
   </script>
 
   <script id="patient-list-header-item" type="x-tmpl-mustache">
-  <th class="sortable {{direction}}" title="Order patients">
-    {{title}}
-    {{#isSorted}}
-    {{#isAsc}}<i class="fa fa-caret-up"></i>{{/isAsc}}
-    {{^isAsc}}<i class="fa fa-caret-down"></i>{{/isAsc}}
-    {{/isSorted}}
-    {{^isSorted}}
-    <i class="fa fa-caret-down fa-caret-invisible">
-    {{/isSorted}}
-  </th>
+    <th class="sortable {{direction}}" title="Order patients">
+      {{title}}
+      {{#isSorted}}
+      {{#isAsc}}<i class="fa fa-caret-up"></i>{{/isAsc}}
+      {{^isAsc}}<i class="fa fa-caret-down"></i>{{/isAsc}}
+      {{/isSorted}}
+      {{^isSorted}}
+      <i class="fa fa-caret-down fa-caret-invisible">
+      {{/isSorted}}
+    </th>
   </script>
 
   <script id="patient-list-item" type="x-tmpl-mustache">
-  <td>{{.}}</td>
+    <td>{{.}}</td>
   </script>
 
   <script id="patient-list" type="x-tmpl-mustache">
@@ -503,12 +506,17 @@
         <i class="fa fa-users fa-fw"></i>&nbsp; Patients
       </div>
 
-      <div class="panel-body" id="panel-patients">
-        <select class="form-control">
+      <div class="panel-body" id="panel-patients" style="max-height:380px">
+        <!--<select class="form-control">
         {{#patients}}
         <option>{{.}}</option>
         {{/patients}}
-        </select>
+        </select>-->
+        <table class="table">
+        {{#patients}}
+        <tr><td>{{.}}</td></tr>
+        {{/patients}}
+        </table>
       </div>
     </div>
 
@@ -536,7 +544,7 @@
   </script>
 
   <script id="action-plan-item" type="x-tmpl-mustache">
-    <tr class="suggestion active">
+    <tr class="suggestion active {{#done}}success{{/done}}" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
       <td>
         <span>{{{text}}}</span>
       </td>
@@ -566,7 +574,7 @@
       <tbody>
         {{#suggestions}}
         {{>action-plan-item}}
-        {{/suggestions}} {{resetIndex}}
+        {{/suggestions}}
       </tbody>
     </table>
     {{>action-plan}}
@@ -769,25 +777,25 @@
       </thead>
       <tbody>
         {{#suggestions}}
-        <tr class="suggestion">
+        <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
           <td>
             <span>{{{text}}}</span>
           </td>
           <td>
             <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-xs btn-yes btn-toggle btn-success">
-                <input type="checkbox" name="individual-action-agree-{{index}}" value="yes" autocomplete="off">
+              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}">
+                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
                 <span class="fa fa-thumbs-up"></span>
               </label>
-              <label class="btn btn-xs btn-no btn-toggle btn-danger">
-                <input type="checkbox" name="individual-action-agree-{{lastIndex}}" value="no" autocomplete="off">
+              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}">
+                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
                 <span class="fa fa-thumbs-down"></span>
               </label>
             </div>
           </td>
           <td>{{>chk}}</td>
         </tr>
-        {{/suggestions}} {{resetIndex}}
+        {{/suggestions}}
       </tbody>
     </table>
   </script>
@@ -855,6 +863,20 @@
     </div>
   </script>
 
+  <script id="change-bar-number" type="x-tmpl-mustache">
+    <span class="pull-right" data-toggle="tooltip" data-placement="bottom" title="Current number of patients meeting this standard and how this has changed from last month">
+      n={{number}} ( {{#numberUp}}
+      <span class="text-green">
+        <i class="fa fa-caret-up"></i> {{numberChange}}
+      </span>
+      {{/numberUp}} {{^numberUp}}
+      <span class="text-red">
+        <i class="fa fa-caret-down"></i> {{numberChange}}
+      </span>
+      {{/numberUp}} )
+    </span>
+  </script>
+
   <script id="change-bar" type="x-tmpl-mustache">
     <span class="pull-right" data-toggle="tooltip" data-placement="bottom" title="Current % / number of patients meeting this standard and how this has changed from last month">{{percent}}% ( {{#percentUp}}
       <span class="text-green">
@@ -915,7 +937,7 @@
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>{{title}}</p>
+          <p>{{title}} {{>change-bar-number}}</p>
         </div>
         <div>
           <div id="diagnosis-chart"></div>
@@ -931,7 +953,7 @@
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>{{title}}</p>
+          <p>{{title}} {{>change-bar-number}}</p>
         </div>
         <div>
           <div id="exclusion-chart"></div>
@@ -993,7 +1015,7 @@
   </script>
 
   <script id="welcome-task-item" type="x-tmpl-mustache">
-    <tr>
+    <tr data-id="{{data}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
       <td>{{pathway}}</td>
       {{#patientId}}
       <td>{{patientId}}</td>

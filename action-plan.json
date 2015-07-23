@@ -1,257 +1,225 @@
 {
-  "bp": {
-    "team" : [
-      {"text":"Ensure the <strong>pop-ups in your patient record are working</strong> so clinicians are reminded to take a patient’s blood pressure when they see them. <strong>Customise</strong> them to demonstrate the consequences of suboptimal blood pressure treatment and that PINGR can be used for individualised patient medication decision support. "},
-      {"text":"Put a <strong>BP machine in your waiting room</strong> so patients can take their blood pressure and give the receptionists the reading <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Hold an <strong>educational session</strong> or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement and control, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes. <a href=\"powerpoint.pptx\" target=\"_blank\">A presentation.</a>"},
-      {"text":"Organise an <strong>open access</strong> or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Work with your local pharmacy to enable them to take blood pressure readings and send the results directly to you <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a> as well as checking for adverse events and drug compliance."},
-      {"text":"Introduce a text-messaging service to remind patients they need a blood pressure check."},
-      {"text":"Synchronise hypertension annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure blood pressure is measured at the same time as other reviews – this could be done for the patient’s birthday <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Nominate a hypertension lead in your practice who can initiate some of these changes <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Arrange to have blood pressures taken during upcoming vaccination programmes e.g. flu, shingles, whooping cough <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Generate a list of patients who regularly attend and do not have a blood pressure measurement and circulate to practice doctors or administrative staff to highlight when these patients are attending in advance."},
-      {"text":"Ensure all consulting rooms have electronic BP machines so it is quicker to take a measurement than using a manual sphygmomanometer."},
-      {"text":"Introduce an ambulatory blood pressure monitoring service at your practice – often high blood pressure readings taken in surgery are normal at home <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."}
-    ],
-    "monitoring": {
-      "individual": {
-        "No opportunities": [
-          {"text":"Check this patient is still registered at your practice."},
-          {"text":"Check this patient is still alive."},
-          {"text":"Check this patient still lives in your area – writing a letter may result in returned post."},
-          {"text":"Invite this patient via letter, telephone or text for a blood pressure check <a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>."},
-          {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-          {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
-        ],
-        "Non face-to-face": [
-          {"text":"Invite this patient via letter or telephone for a blood pressure check."},
-          {"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
-          {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-          {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
-        ],
-        "Face-to-face": [
-          {"text":"Invite this patient via letter, telephone or text for a blood pressure check."},
-          {"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
-          {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-          {"text":"Put an alert on this patient’s record to remind the next person they see to take their blood pressure."},
-          {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
-        ]
+  "diseases": {
+    "bp": {
+      "team" : ["0001","0002","0003","0004","0005","0006","0007","0008","0009","0010","0011","0012"],
+      "monitoring": {
+        "individual": {
+          "No opportunities": ["0013","0014","0015","0016","0017","0018"],
+          "Non face-to-face": ["0019","0020","0021","0022"],
+          "Face-to-face": ["0023","0024","0025","0026","0027"]
+        }
+      },
+      "treatment": {
+        "individual": {
+          "Suboptimal medication":  ["0028","0029","0030","0031","0032"],
+          "Medication non-adherence":  ["0033","0034","0035"],
+          "Referral to secondary care":  ["0036","0037","0038"],
+          "One-off high BP reading":  ["0039","0040","0041","0042"],
+          "Recently optimised medication": ["0043","0044","0045"],
+          "White coat hypertension": ["0046" ],
+          "Recently Measured": ["0047" ],
+          "Recently Changed Rx": ["0048" ],
+          "Suboptimal Rx": ["0049" ]
+        }
+      },
+      "exclusions": {
+        "practice": [],
+        "individual": {
+          "Hypotension": ["0050" ],
+          "Palliative Care": ["0050" ],
+          "White coat hypertension": ["0050" ],
+          "Exclusion code": ["0050" ]
+        }
+      },
+      "diagnosis": {
+        "individual": {
+          "HTN":  ["0051","0052","0053"],
+          "CKD":  ["0054","0055"],
+          "DM": [],
+          "PROT": []
+        }
       }
     },
-    "treatment": {
-      "individual": {
-        "Suboptimal medication": [
-          {"text":"[MED-SUGGESTION]"},
-          {"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (<a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">evidence</a>.), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
-          {"text":"Get nurses to measure (evidence)"},
-          {"text":"HBP – either their own device, or your own. Patient resources: home BP monitoring leaflet"},
-          {"text":"You may wish to exception report this patient or code the reason why their BP is high if you feel it is unsuitable to treat them for high blood pressure – for example: <ul><li>Use code [COPY:9h31] if you feel the patient is unsuitable</li><li>Use code [COPY:9h32] for “informed dissent”</li><li>Use code [COPY:8I3Y] for “BP procedure refused”</li><li>Also add specific diagnosis for why patient unsuitable if possible e.g. syncope, postural hypotension, frailty, white coat hypertension etc</li></ul>"}
-        ],
-        "Medication non-adherence": [
-          {"text":"Discuss with patients whether or not they are taking medication – if they are not, find out why and address these concerns (e.g. side effects, health beliefs etc)<ul><li>Encourage the recording of medicine-taking and self-monitoring</li><li>Simplify the dosing regimen</li><li>Offer dossette boxes</li></ul>"},
-          {"text":"Exclude"},
-          {"text":"HBP"}
-        ],
-        "Referral to secondary care": [
-          {"text":"Refer to secondary care"},
-          {"text":"Recommend to exclude"},
-          {"text":"HBP"}
-        ],
-        "One-off high BP reading": [
-          {"text":"Contact patient as per above methods to re-check [may already have future appt / plan in place to re-check]"},
-          {"text":"[MED-SUGGESTION]"},
-          {"text":"Exclude"},
-          {"text":"HBP"}
-        ],
-        "Recently optimised medication": [
-          {"text":"Contact patient as per above methods to re-check"},
-          {"text":"Exclude"},
-          {"text":"HBP"}
-        ],
-        "White coat hypertension":[
-          {"text":"This patient has whitecoat hypertension / anxiety, try HBPM / ABPM"}
-        ],
-        "Recently Measured": [
-          {"text":"Do something"}
-        ],
-        "Recently Changed Rx": [
-          {"text":"Do something else"}],
-        "Suboptimal Rx": [
-          {"text":"Do something else else"}]
+    "asthma": {
+      "team" :["0056","0057","0058","0059","0060","0061","0062","0063","0064","0065","0066","0067"],
+      "monitoring": {
+        "individual": {
+          "No opportunities": ["0068","0069","0070","0071","0072","0073"],
+          "Non face-to-face": ["0074","0075","0076","0077"],
+          "Face-to-face": ["0078","0079","0080","0081","0082"]
+        }
+      },
+      "treatment": {
+        "individual": {
+          "Suboptimal medication":  ["0083","0084","0085","0086","0087"],
+          "Medication non-adherence":  ["0088","0089","0090"],
+          "Referral to secondary care":  ["0091","0092","0093"]
+        }
+      },
+      "exclusions": {
+        "practice": [],
+        "individual": {
+          "Hypotension": ["0094"],
+          "Palliative Care": ["0094"],
+          "White coat hypertension": ["0094"],
+          "Exclusion code": ["0094"]
+        }
+      },
+      "diagnosis": {
+        "individual": {
+          "HTN": ["0095","0096","0097"],
+          "CKD": ["0098","0099"],
+          "DM": [],
+          "PROT": []
+        }
       }
     },
-    "exclusions": {
-      "practice": [],
-      "individual": {
-        "Hypotension": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ],
-        "Palliative Care": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ],
-        "White coat hypertension": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ],
-        "Exclusion code": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ]
+    "ckd" :{
+      "team":[],
+      "monitoring":{
+        "individual":{
+
+        }
+      },
+      "treatment":{
+        "individual":{
+
+        }
+      },
+      "exclusions":{
+        "individual":{
+
+        }
+      },
+      "diagnosis":{
+        "individual":{
+
+        }
       }
     },
-    "diagnosis": {
-      "individual": {
-        "HTN": [
-          {"text":"Likely already has HTN<ul><li>Needs further testing anyway (<a href=\"http://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub\" target=\"_blank\">evidence</a>)</li></ul>"},
-          {"text":"Needs further testing<ul><li>Get nurses to measure (<a href=\"http://bjgp.org/content/64/621/e223\" target=\"_blank\">evidence</a>)</li><li>HBP – either their own device, or your own.</li></ul>"},
-          {"text":"Exception report?"}
-        ],
-        "CKD": [
-          {"text":"Likely already has CKD"},
-          {"text":"Needs further testing<ul><li>To confirm diagnosis</li><li>To monitor</li></ul>"}
-        ],
-        "DM": [],
-        "PROT": []
+    "copd" :{
+      "team":[]   ,
+      "monitoring":{
+        "individual":{
+
+        }
+      },
+      "treatment":{
+        "individual":{
+
+        }
+      },
+      "exclusions":{
+        "individual":{
+
+        }
+      },
+      "diagnosis":{
+        "individual":{
+
+        }
       }
     }
   },
-  "asthma": {
-    "team" : [
-      {"text":"Ensure the <strong>pop-ups in your patient record are working</strong> so clinicians are reminded to take a patient’s blood pressure when they see them. <strong>Customise</strong> them to demonstrate the consequences of suboptimal blood pressure treatment and that PINGR can be used for individualised patient medication decision support. "},
-      {"text":"Put a <strong>asthma machine in your waiting room</strong> so patients can take their blood pressure and give the receptionists the reading <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Hold an <strong>educational session</strong> or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement and control, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes. <a href=\"powerpoint.pptx\" target=\"_blank\">A presentation.</a>"},
-      {"text":"Organise an <strong>open access</strong> or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Work with your local pharmacy to enable them to take blood pressure readings and send the results directly to you <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a> as well as checking for adverse events and drug compliance."},
-      {"text":"Introduce a text-messaging service to remind patients they need a blood pressure check."},
-      {"text":"Synchronise hypertension annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure blood pressure is measured at the same time as other reviews – this could be done for the patient’s birthday <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Nominate a hypertension lead in your practice who can initiate some of these changes <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Arrange to have blood pressures taken during upcoming vaccination programmes e.g. flu, shingles, whooping cough <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
-      {"text":"Generate a list of patients who regularly attend and do not have a blood pressure measurement and circulate to practice doctors or administrative staff to highlight when these patients are attending in advance."},
-      {"text":"Ensure all consulting rooms have electronic asthma machines so it is quicker to take a measurement than using a manual sphygmomanometer."},
-      {"text":"Introduce an ambulatory blood pressure monitoring service at your practice – often high blood pressure readings taken in surgery are normal at home <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."}
-    ],
-    "monitoring": {
-      "individual": {
-        "No opportunities": [
-          {"text":"Check this patient is still registered at your practice."},
-          {"text":"Check this patient is still alive."},
-          {"text":"Check this patient still lives in your area – writing a letter may result in returned post."},
-          {"text":"Invite this patient via letter, telephone or text for a blood pressure check <a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>."},
-          {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-          {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
-        ],
-        "Non face-to-face": [
-          {"text":"Invite this patient via letter or telephone for a blood pressure check."},
-          {"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
-          {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-          {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
-        ],
-        "Face-to-face": [
-          {"text":"Invite this patient via letter, telephone or text for a blood pressure check."},
-          {"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
-          {"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-          {"text":"Put an alert on this patient’s record to remind the next person they see to take their blood pressure."},
-          {"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."}
-        ]
-      }
-    },
-    "treatment": {
-      "individual": {
-        "Suboptimal medication": [
-          {"text":"[MED-SUGGESTION]"},
-          {"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (<a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">evidence</a>.), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
-          {"text":"Get nurses to measure (evidence)"},
-          {"text":"Hasthma – either their own device, or your own. Patient resources: home asthma monitoring leaflet"},
-          {"text":"You may wish to exception report this patient or code the reason why their asthma is high if you feel it is unsuitable to treat them for high blood pressure – for example: <ul><li>Use code [COPY:9h31] if you feel the patient is unsuitable</li><li>Use code [COPY:9h32] for “informed dissent”</li><li>Use code [COPY:8I3Y] for “asthma procedure refused”</li><li>Also add specific diagnosis for why patient unsuitable if possible e.g. syncope, postural hypotension, frailty, white coat hypertension etc</li></ul>"}
-        ],
-        "Medication non-adherence": [
-          {"text":"Discuss with patients whether or not they are taking medication – if they are not, find out why and address these concerns (e.g. side effects, health beliefs etc)<ul><li>Encourage the recording of medicine-taking and self-monitoring</li><li>Simplify the dosing regimen</li><li>Offer dossette boxes</li></ul>"},
-          {"text":"Exclude"},
-          {"text":"Hasthma"}
-        ],
-        "Referral to secondary care": [
-          {"text":"Refer to secondary care"},
-          {"text":"Recommend to exclude"},
-          {"text":"Hasthma"}
-        ]
-      }
-    },
-    "exclusions": {
-      "practice": [],
-      "individual": {
-        "Hypotension": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ],
-        "Palliative Care": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ],
-        "White coat hypertension": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ],
-        "Exclusion code": [
-          {"text":"Add code [COPY:9h31.] (patient is unsuitable)"}
-        ]
-      }
-    },
-    "diagnosis": {
-      "individual": {
-        "HTN": [
-          {"text":"Likely already has HTN<ul><li>Needs further testing anyway (<a href=\"http://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub\" target=\"_blank\">evidence</a>)</li></ul>"},
-          {"text":"Needs further testing<ul><li>Get nurses to measure (<a href=\"http://bjgp.org/content/64/621/e223\" target=\"_blank\">evidence</a>)</li><li>Hasthma – either their own device, or your own.</li></ul>"},
-          {"text":"Exception report?"}
-        ],
-        "CKD": [
-          {"text":"Likely already has CKD"},
-          {"text":"Needs further testing<ul><li>To confirm diagnosis</li><li>To monitor</li></ul>"}
-        ],
-        "DM": [],
-        "PROT": []
-      }
-    }
-  },
-  "ckd" :{
-    "team":[],
-    "monitoring":{
-      "individual":{
-
-      }
-    },
-    "treatment":{
-      "individual":{
-
-      }
-    },
-    "exclusions":{
-      "individual":{
-
-      }
-    },
-    "diagnosis":{
-      "individual":{
-
-      }
-    }
-  },
-  "copd" :{
-    "team":[]   ,
-    "monitoring":{
-      "individual":{
-
-      }
-    },
-    "treatment":{
-      "individual":{
-
-      }
-    },
-    "exclusions":{
-      "individual":{
-
-      }
-    },
-    "diagnosis":{
-      "individual":{
-
-      }
-    } 
+  "plans":{
+    "0001":{"text":"Ensure the <strong>pop-ups in your patient record are working</strong> so clinicians are reminded to take a patient’s blood pressure when they see them. <strong>Customise</strong> them to demonstrate the consequences of suboptimal blood pressure treatment and that PINGR can be used for individualised patient medication decision support."},
+    "0002":{"text":"Put a <strong>BP machine in your waiting room</strong> so patients can take their blood pressure and give the receptionists the reading <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0003":{"text":"Hold an <strong>educational session</strong> or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement and control, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes. <a href=\"powerpoint.pptx\" target=\"_blank\">A presentation.</a>"},
+    "0004":{"text":"Organise an <strong>open access</strong> or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0005":{"text":"Work with your local pharmacy to enable them to take blood pressure readings and send the results directly to you <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a> as well as checking for adverse events and drug compliance."},
+    "0006":{"text":"Introduce a text-messaging service to remind patients they need a blood pressure check."},
+    "0007":{"text":"Synchronise hypertension annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure blood pressure is measured at the same time as other reviews – this could be done for the patient’s birthday <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0008":{"text":"Nominate a hypertension lead in your practice who can initiate some of these changes <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0009":{"text":"Arrange to have blood pressures taken during upcoming vaccination programmes e.g. flu, shingles, whooping cough <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0010":{"text":"Generate a list of patients who regularly attend and do not have a blood pressure measurement and circulate to practice doctors or administrative staff to highlight when these patients are attending in advance."},
+    "0011":{"text":"Ensure all consulting rooms have electronic BP machines so it is quicker to take a measurement than using a manual sphygmomanometer."},
+    "0012":{"text":"Introduce an ambulatory blood pressure monitoring service at your practice – often high blood pressure readings taken in surgery are normal at home <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0013":{"text":"Check this patient is still registered at your practice."},
+    "0014":{"text":"Check this patient is still alive."},
+    "0015":{"text":"Check this patient still lives in your area – writing a letter may result in returned post."},
+    "0016":{"text":"Invite this patient via letter, telephone or text for a blood pressure check <a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>."},
+    "0017":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0018":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
+    "0019":{"text":"Invite this patient via letter or telephone for a blood pressure check."},
+    "0020":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
+    "0021":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0022":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
+    "0023":{"text":"Invite this patient via letter, telephone or text for a blood pressure check."},
+    "0024":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
+    "0025":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0026":{"text":"Put an alert on this patient’s record to remind the next person they see to take their blood pressure."},
+    "0027":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
+    "0028":{"text":"[MED-SUGGESTION]"},
+    "0029":{"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (<a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">evidence</a>.), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
+    "0030":{"text":"Get nurses to measure (evidence)"},
+    "0031":{"text":"HBP – either their own device, or your own. Patient resources: home BP monitoring leaflet"},
+    "0032":{"text":"You may wish to exception report this patient or code the reason why their BP is high if you feel it is unsuitable to treat them for high blood pressure – for example: <ul><li>Use code [COPY:9h31] if you feel the patient is unsuitable</li><li>Use code [COPY:9h32] for “informed dissent”</li><li>Use code [COPY:8I3Y] for “BP procedure refused”</li><li>Also add specific diagnosis for why patient unsuitable if possible e.g. syncope, postural hypotension, frailty, white coat hypertension etc</li></ul>"},
+    "0033":{"text":"Discuss with patients whether or not they are taking medication – if they are not, find out why and address these concerns (e.g. side effects, health beliefs etc)<ul><li>Encourage the recording of medicine-taking and self-monitoring</li><li>Simplify the dosing regimen</li><li>Offer dossette boxes</li></ul>"},
+    "0034":{"text":"Exclude"},
+    "0035":{"text":"HBP"},
+    "0036":{"text":"Refer to secondary care"},
+    "0037":{"text":"Recommend to exclude"},
+    "0038":{"text":"HBP"},
+    "0039":{"text":"Contact patient as per above methods to re-check [may already have future appt / plan in place to re-check]"},
+    "0040":{"text":"[MED-SUGGESTION]"},
+    "0041":{"text":"Exclude"},
+    "0042":{"text":"HBP"},
+    "0043":{"text":"Contact patient as per above methods to re-check"},
+    "0044":{"text":"Exclude"},
+    "0045":{"text":"HBP"},
+    "0046":{"text":"This patient has whitecoat hypertension / anxiety, try HBPM / ABPM"},
+    "0047":{"text":"Do something"},
+    "0048":{"text":"Do something else"},
+    "0049":{"text":"Do something else else"},
+    "0050":{"text":"Add code [COPY:9h31.] (patient is unsuitable)"},
+    "0051":{"text":"Likely already has HTN<ul><li>Needs further testing anyway (<a href=\"http://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub\" target=\"_blank\">evidence</a>)</li></ul>"},
+    "0052":{"text":"Needs further testing<ul><li>Get nurses to measure (<a href=\"http://bjgp.org/content/64/621/e223\" target=\"_blank\">evidence</a>)</li><li>HBP – either their own device, or your own.</li></ul>"},
+    "0053":{"text":"Exception report?"},
+    "0054":{"text":"Likely already has CKD"},
+    "0055":{"text":"Needs further testing<ul><li>To confirm diagnosis</li><li>To monitor</li></ul>"},
+    "0056":{"text":"Ensure the <strong>pop-ups in your patient record are working</strong> so clinicians are reminded to take a patient’s blood pressure when they see them. <strong>Customise</strong> them to demonstrate the consequences of suboptimal blood pressure treatment and that PINGR can be used for individualised patient medication decision support."},
+    "0057":{"text":"Put a <strong>asthma machine in your waiting room</strong> so patients can take their blood pressure and give the receptionists the reading <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0058":{"text":"Hold an <strong>educational session</strong> or meeting at your practice to highlight to colleagues: <ul><li>The importance of blood pressure measurement and control, be aware of pop-ups during patient consultation, the proportion of patients attending and not having their blood pressure measured at your practice, and that if there are legitimate reasons why blood pressure is not measured it should be coded in their notes. <a href=\"powerpoint.pptx\" target=\"_blank\">A presentation.</a>"},
+    "0059":{"text":"Organise an <strong>open access</strong> or a regular nurse-led blood pressure clinic (e.g. monthly) to enable patients to get the blood pressure checked <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0060":{"text":"Work with your local pharmacy to enable them to take blood pressure readings and send the results directly to you <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a> as well as checking for adverse events and drug compliance."},
+    "0061":{"text":"Introduce a text-messaging service to remind patients they need a blood pressure check."},
+    "0062":{"text":"Synchronise asthma annual reviews of patients with other reviews of long-term conditions (e.g. COPD, Asthma) to ensure blood pressure is measured at the same time as other reviews – this could be done for the patient’s birthday <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0063":{"text":"Nominate a asthma lead in your practice who can initiate some of these changes <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0064":{"text":"Arrange to have blood pressures taken during upcoming vaccination programmes e.g. flu, shingles, whooping cough <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0065":{"text":"Generate a list of patients who regularly attend and do not have a blood pressure measurement and circulate to practice doctors or administrative staff to highlight when these patients are attending in advance."},
+    "0066":{"text":"Ensure all consulting rooms have electronic asthma machines so it is quicker to take a measurement than using a manual sphygmomanometer."},
+    "0067":{"text":"Introduce an ambulatory blood pressure monitoring service at your practice – often high blood pressure readings taken in surgery are normal at home <a href=\"http://www.google.com\" target=\"_blank\">link to an example from a practice</a>."},
+    "0068":{"text":"Check this patient is still registered at your practice."},
+    "0069":{"text":"Check this patient is still alive."},
+    "0070":{"text":"Check this patient still lives in your area – writing a letter may result in returned post."},
+    "0071":{"text":"Invite this patient via letter, telephone or text for a blood pressure check <a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>."},
+    "0072":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0073":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
+    "0074":{"text":"Invite this patient via letter or telephone for a blood pressure check."},
+    "0075":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
+    "0076":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0077":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
+    "0078":{"text":"Invite this patient via letter, telephone or text for a blood pressure check."},
+    "0079":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
+    "0080":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0081":{"text":"Put an alert on this patient’s record to remind the next person they see to take their blood pressure."},
+    "0082":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
+    "0083":{"text":"[MED-SUGGESTION]"},
+    "0084":{"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (<a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">evidence</a>.), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
+    "0085":{"text":"Get nurses to measure (evidence)"},
+    "0086":{"text":"Hasthma – either their own device, or your own. Patient resources: home asthma monitoring leaflet"},
+    "0087":{"text":"You may wish to exception report this patient or code the reason why their asthma is high if you feel it is unsuitable to treat them for high blood pressure – for example: <ul><li>Use code [COPY:9h31] if you feel the patient is unsuitable</li><li>Use code [COPY:9h32] for “informed dissent”</li><li>Use code [COPY:8I3Y] for “asthma procedure refused”</li><li>Also add specific diagnosis for why patient unsuitable if possible e.g. syncope, postural hypotension, frailty, white coat hypertension etc</li></ul>"},
+    "0088":{"text":"Discuss with patients whether or not they are taking medication – if they are not, find out why and address these concerns (e.g. side effects, health beliefs etc)<ul><li>Encourage the recording of medicine-taking and self-monitoring</li><li>Simplify the dosing regimen</li><li>Offer dossette boxes</li></ul>"},
+    "0089":{"text":"Exclude"},
+    "0090":{"text":"Hasthma"},
+    "0091":{"text":"Refer to secondary care"},
+    "0092":{"text":"Recommend to exclude"},
+    "0093":{"text":"Hasthma"},
+    "0094":{"text":"Add code [COPY:9h31.] (patient is unsuitable)"},
+    "0095":{"text":"Likely already has HTN<ul><li>Needs further testing anyway (<a href=\"http://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub\" target=\"_blank\">evidence</a>)</li></ul>"},
+    "0096":{"text":"Needs further testing<ul><li>Get nurses to measure (<a href=\"http://bjgp.org/content/64/621/e223\" target=\"_blank\">evidence</a>)</li><li>Hasthma – either their own device, or your own.</li></ul>"},
+    "0097":{"text":"Exception report?"},
+    "0098":{"text":"Likely already has CKD"},
+    "0099":{"text":"Needs further testing<ul><li>To confirm diagnosis</li><li>To monitor</li></ul>"}
   }
 }

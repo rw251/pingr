@@ -70,6 +70,9 @@
 
   var showPathwayStageView = function(pathwayStage){
 
+    $('aside li ul li').removeClass('active');
+    $('aside a[href=#' + pathwayStage + ']').parent().addClass('active');
+
     showPatientPanel(farLeftPanel);
 
     hideAllPanels();
@@ -94,13 +97,13 @@
 
   var showPathwayStagePatientView = function(patientId){
 
-    drawBpTrendChart(patientId);
+    drawTrendChart(patientId);
     local.patientId = patientId;
 
     populateIndividualSuggestedActions(patientId);
 
     showTestTrendPanel(topRightPanel);
-    drawBpTrendChart(patientId);
+    drawTrendChart(patientId);
 
     showMedicationPanel(bottomRightPanel);
   };
@@ -127,6 +130,134 @@
 		updateBreadcrumbs(["Patients"]);
 
     //populatePatientPanelSimple();
+  };
+
+  //id is either "team" or the patientId
+  var recordFeedback = function(pathwayId, id, suggestion, reason, reasonText ){
+    var obj = getObj();
+
+    var item = {"pathwayId": pathwayId, "id": id, "val" : suggestion};
+    if(reasonText !== "") item.reasonText = reasonText;
+    if(reason !== "") item.reason = reason;
+    obj.feedback.push(item);
+    setObj(obj);
+  };
+
+  var recordEvent = function(pathwayId, id, name) {
+    var obj = getObj();
+    obj.events.push({"pathwayId": pathwayId, "id": id, "name": name, "date": new Date()});
+    setObj(obj);
+  };
+
+  var recordPlan = function(id, text, pathwayId){
+    if(!id) alert("PLAN");
+    var obj = getObj();
+
+    if(!obj.plans[id]) obj.plans[id] = {};
+    var planId = Date.now()+"";
+    obj.plans[id][planId] = {"text":text, "done":false, "pathwayId" : pathwayId};
+
+    setObj(obj);
+    return planId;
+  };
+
+  var findPlan = function(obj, planId){
+    for(var k in obj.plans){
+      if(obj.plans[k][planId]) return k;
+    }
+    return -1;
+  };
+
+  var editPlan = function(planId, text, done){
+    var obj = getObj();
+    var id = findPlan(obj, planId);
+    if(text) obj.plans[id][planId].text = text;
+    if(done===true || done===false) obj.plans[id][planId].done = done;
+    setObj(obj);
+  };
+
+  var deletePlan = function(planId){
+    var obj = getObj();
+    var id = findPlan(obj, planId);
+    delete obj.plans[id][planId];
+    setObj(obj);
+  };
+
+  var listPlans = function(id, pathwayId){
+    var obj = getObj(), arr = [];
+    if(!id) return obj.plans;
+    for(var prop in obj.plans[id]){
+      obj.plans[id][prop].id = prop;
+      if(!pathwayId || pathwayId === obj.plans[id][prop].pathwayId) arr.push(obj.plans[id][prop]);
+    }
+    return arr;
+  };
+
+  var editAction = function(id, actionId, agree, done){
+    var obj = getObj();
+    if(!id) alert("ACTION TEAM/IND ID");
+    if(!actionId) alert("ACTION ID");
+
+    if(!obj.actions[id]) {
+      obj.actions[id] = {};
+    }
+
+    if(!obj.actions[id][actionId]) {
+      obj.actions[id][actionId] = {"agree" : agree ? agree : false, "done" : done ? done : false};
+    } else {
+      if(agree===true || agree===false) obj.actions[id][actionId].agree=agree;
+      if(done===true || done===false) obj.actions[id][actionId].done=done;
+    }
+
+    setObj(obj);
+  };
+
+  var ignoreAction = function(id, actionId){
+    var obj = getObj();
+    delete obj.actions[id][actionId];
+    setObj(obj);
+  };
+
+  var listActions = function(id, pathwayId){
+    var obj = getObj(), arr = [];
+    if(!id) return obj.actions;
+    if(!obj.actions[id]) return arr;
+    for(var prop in obj.actions[id]){
+      obj.actions[id][prop].id = prop;
+      //if(!pathwayId || pathwayId === obj.actions[id][prop].pathwayId)
+      arr.push(obj.actions[id][prop]);
+    }
+    return arr;
+  };
+
+  var editPatientAgree = function(pathwayId, pathwayStage, patientId, item, agree){
+    var obj = getObj();
+    if(!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
+
+    if(!obj.agrees[patientId]) obj.agrees[patientId] = [];
+    var item = obj.agrees[patientId].filter(function(val){
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.item === item;
+    });
+
+    if(item.length===1) {
+        item[0].agree = agree;
+    }
+
+    setObj(obj);
+  };
+
+  var getPatientAgree = function(pathwayId, pathwayStage, patientId, item){
+    var obj = getObj();
+
+    if(!obj.agrees[patientId]) return null;
+    var item = obj.agrees[patientId].filter(function(val){
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.item === item;
+    });
+
+    if(item.length===1) {
+        return item[0].agree;
+    }
+    return null;
   };
 
 	/**************
@@ -416,7 +547,13 @@
 	};
 
 	var showDiagnosisPanel = function(location, enableHover) {
-		createPanel(diagnosisPanel, location, {pathway: local.pathwayNames[local.pathwayId],title: local.data[local.pathwayId].diagnosis.title});
+		createPanel(diagnosisPanel, location, {
+      pathway: local.pathwayNames[local.pathwayId],
+      title: local.data[local.pathwayId].diagnosis.title,
+      number: local.data[local.pathwayId].diagnosis.n,
+			numberUp: local.data[local.pathwayId].diagnosis.change>=0,
+			numberChange: Math.abs(local.data[local.pathwayId].diagnosis.change)
+    }, {"change-bar-number": $('#change-bar-number').html()});
 
 		setTimeout(function(){
       c3.generate({
@@ -468,7 +605,14 @@
 	};
 
 	var showExclusionsPanel = function(location, enableHover) {
-		createPanel(exclusionPanel, location, {pathway: local.pathwayNames[local.pathwayId],title: local.data[local.pathwayId].exclusions.title});
+		createPanel(exclusionPanel, location, {
+      pathway: local.pathwayNames[local.pathwayId],
+      title: local.data[local.pathwayId].exclusions.title,
+      number: local.data[local.pathwayId].exclusions.n,
+			numberUp: local.data[local.pathwayId].exclusions.change>=0,
+			numberChange: Math.abs(local.data[local.pathwayId].exclusions.change)
+    }, {"change-bar-number": $('#change-bar-number').html()});
+
 
     setTimeout(function(){
   		c3.generate({
@@ -593,9 +737,11 @@
 		breakdownTable.on('mouseout', 'tr', function(){
 			if($(this).find('th').length>0) return; //ignore header row
 			local.charts['breakdown-chart'].focus();
+      //$('#breakdown-chart .c3-tooltip-container').hide()
 		}).on('mouseover', 'tr', function(){
 			if($(this).find('th').length>0) return; //ignore header row
 			local.charts['breakdown-chart'].focus($(this).data('subsection'));
+      //$('#breakdown-chart .c3-tooltip-container').show()
 		}).on('click', 'tr', function(){
 			if($(this).find('th').length>0) return; //ignore header row
 			var subselected = $(this).data('subsection');
@@ -667,29 +813,24 @@
 
 		suggestedPlanTeam.on('click', '.cr-styled input[type=checkbox]', function(){
 			var idx = suggestedPlanTeam.find('.cr-styled input[type=checkbox]').index(this);
-			var current = getObj();
-			while(current[local.pathwayId].actions.team.done.length<=idx){
-				current[local.pathwayId].actions.team.done.push(false);
-			}
-			current[local.pathwayId].actions.team.done[idx]=this.checked;
-			setObj(current);
+      var ACTIONID = $(this).closest('tr').data('id');
+      editAction("team", ACTIONID, null, this.checked);
 
       if(this.checked) {
-        recordEvent("Item completed", local.pathwayId);
+        recordEvent(local.pathwayId, "team", "Item completed");
       }
 
 			updateTeamSapRows();
 		});
 
     $('#personalPlanTeam').on('click', 'input[type=checkbox]', function(){
-			var idx = $(this).closest('tr').prevAll().length;
-      var obj = getObj();
-      obj[local.pathwayId].plans.team[idx].done = this.checked;
-      setObj(obj);
+			var PLANID = $(this).closest('tr').data("id");
+
+      editPlan(PLANID, null, this.checked);
 
       if(this.checked){
         $(this).parent().parent().parent().addClass('success');
-        recordEvent("Personal plan item", pathwayStage);
+        recordEvent(local.pathwayId, "team", "Personal plan item");
       } else {
         $(this).parent().parent().parent().removeClass('success');
       }
@@ -699,6 +840,7 @@
     var teamTab = $('#tab-plan-team'), idx, current;
 		teamTab.on('click', '.edit-plan', function(){
       idx = $(this).closest('tr').prevAll().length;
+      var PLANID = $(this).closest('tr').data("id");
 
       $('#editActionPlanItem').val($($(this).closest('tr').children('td')[0]).find('span').text());
 
@@ -707,10 +849,8 @@
       }).off('shown.bs.modal').on('shown.bs.modal', function () {
         $('#editActionPlanItem').focus();
       }).off('click','.save-plan').on('click', '.save-plan',function(){
-        var obj = getObj();
-        if(!obj[local.pathwayId].plans.team[pathwayStage]) obj[local.pathwayId].plans.team[pathwayStage] = [];
-  			obj[local.pathwayId].plans.team[pathwayStage][idx].text = $('#editActionPlanItem').val();
-  			setObj(obj);
+
+        editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
@@ -718,38 +858,28 @@
       }).modal();
 		}).on('click', '.delete-plan', function(){
       idx = $(this).closest('tr').prevAll().length;
+      var PLANID = $(this).closest('tr').data("id");
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
         displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       }).off('click','.delete-plan').on('click', '.delete-plan',function(){
-        var obj = getObj();
-        if(!obj[local.pathwayId].plans.team[pathwayStage]) obj[local.pathwayId].plans.team[pathwayStage] = [];
-  			obj[local.pathwayId].plans.team[pathwayStage].splice(idx,1);
-  			setObj(obj);
+        deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
 		}).on('click', '.add-plan', function(){
-			var obj = getObj();
-      if(!obj[local.pathwayId].plans.team[pathwayStage]) obj[local.pathwayId].plans.team[pathwayStage] = [];
-			obj[local.pathwayId].plans.team[pathwayStage].push({"text" : $(this).parent().parent().find('textarea').val(), "done": false});
-			setObj(obj);
+      recordPlan("team", $(this).parent().parent().find('textarea').val(), local.pathwayId);
 
 			displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
 		}).on('change', '.btn-toggle input[type=checkbox]', function(){
       updateTeamSapRows();
     }).on('click', '.btn-yes,.btn-no', function(){
       var checkbox = $(this).find("input[type=checkbox]");
+      var ACTIONID = $(this).closest('tr').data('id');
       if($(this).hasClass("active")){
         //unselecting
   			idx = Math.floor(suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
-  			current = getObj();
-  			while(current[local.pathwayId].actions.team.agree.length<=idx){
-  				current[local.pathwayId].actions.team.agree.push("");
-  			}
-  			current[local.pathwayId].actions.team.agree[idx]="";
-  			setObj(current);
-
+        ignoreAction("team", ACTIONID);
       } else {
         //unselect other
         var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
@@ -759,12 +889,7 @@
         //selecting
         if(checkbox.val()==="no") launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text());
   			idx = Math.floor(suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
-  			current = getObj();
-  			while(current[local.pathwayId].actions.team.agree.length<=idx){
-  				current[local.pathwayId].actions.team.agree.push("");
-  			}
-  			current[local.pathwayId].actions.team.agree[idx]=checkbox.val()==="yes";
-  			setObj(current);
+        editAction("team", ACTIONID, checkbox.val()==="yes");
       }
 		}).on('keyup', 'input[type=text]', function(e){
       if(e.which === 13) {
@@ -783,31 +908,25 @@
 
 		adviceList.on('click', '.cr-styled input[type=checkbox]', function(){
 			var idx = adviceList.find('.cr-styled input[type=checkbox]').index(this);
-			var current = getObj();
-			if(!current[local.pathwayId].actions[local.patientId]) current[local.pathwayId].actions[local.patientId] = {"agree":[],"done":[]};
-			while(current[local.pathwayId].actions[local.patientId].done.length<=idx){
-				current[local.pathwayId].actions[local.patientId].done.push(false);
-			}
-			current[local.pathwayId].actions[local.patientId].done[idx]=this.checked;
-			setObj(current);
+      var ACTIONID = $(this).closest('tr').data('id');
+      editAction(local.patientId, ACTIONID, null, this.checked);
 
       if(this.checked) {
-        recordEvent("Item completed", local.patientId);
+        recordEvent(local.pathwayId, local.patientId, "Item completed");
       }
 
 			updateIndividualSapRows();
 		});
 
     $('#personalPlanIndividual').on('click', 'input[type=checkbox]', function(){
-			var idx = $(this).closest('tr').prevAll().length;
+      var PLANID = $(this).closest('tr').data("id");
       var obj = getObj();
-      if(!obj[local.pathwayId].plans.individual[local.patientId]) obj[local.pathwayId].plans.individual[local.patientId] = [];
-      obj[local.pathwayId].plans.individual[local.patientId][idx].done = this.checked;
-      setObj(obj);
+
+      editPlan(PLANID, null, this.checked);
 
       if(this.checked){
         $(this).parent().parent().parent().addClass('success');
-        recordEvent("Personal plan item", local.patientId);
+        recordEvent(local.pathwayId, local.patientId, "Personal plan item");
       } else {
         $(this).parent().parent().parent().removeClass('success');
       }
@@ -816,6 +935,7 @@
 
 		individualTab.on('click', '.edit-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
+      var PLANID = $(this).closest('tr').data("id");
 
       $('#editActionPlanItem').val($($(this).closest('tr').children('td')[0]).find('span').text());
 
@@ -824,10 +944,8 @@
       }).off('shown.bs.modal').on('shown.bs.modal', function () {
         $('#editActionPlanItem').focus();
       }).off('click','.save-plan').on('click', '.save-plan',function(){
-        var obj = getObj();
-        if(!obj[local.pathwayId].plans.individual[local.patientId]) obj[local.pathwayId].plans.individual[local.patientId] = [];
-  			obj[local.pathwayId].plans.individual[local.patientId][idx].text = $('#editActionPlanItem').val();
-  			setObj(obj);
+
+        editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
@@ -835,39 +953,28 @@
       }).modal();
 		}).on('click', '.delete-plan', function(){
       var idx = $(this).closest('tr').prevAll().length;
+      var PLANID = $(this).closest('tr').data("id");
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
         displayPersonalisedIndividualActionPlan(local.patientId, $('#personalPlanIndividual'));
       }).off('click','.delete-plan').on('click', '.delete-plan',function(){
-        var obj = getObj();
-        if(!obj[local.pathwayId].plans.individual[local.patientId]) obj[local.pathwayId].plans.individual[local.patientId] = [];
-  			obj[local.pathwayId].plans.individual[local.patientId].splice(idx,1);
-  			setObj(obj);
+        deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
 		}).on('click', '.add-plan', function(){
-			var obj = getObj();
-      if(!obj[local.pathwayId].plans.individual[local.patientId]) obj[local.pathwayId].plans.individual[local.patientId] = [];
-			obj[local.pathwayId].plans.individual[local.patientId].push({"text": $(this).parent().parent().find('textarea').val(), "done": false});
-			setObj(obj);
+      recordPlan(local.patientId, $(this).parent().parent().find('textarea').val(), local.pathwayId);
 
 			displayPersonalisedIndividualActionPlan(local.patientId, $('#personalPlanIndividual'));
 		}).on('change', '#individual-suggested-actions-table .btn-toggle input[type=checkbox]', function(){
       updateIndividualSapRows();
     }).on('click', '#individual-suggested-actions-table .btn-yes,#individual-suggested-actions-table .btn-no', function(){
       var checkbox = $(this).find("input[type=checkbox]");
+      var ACTIONID = $(this).closest('tr').data('id');
       if($(this).hasClass("active")){
         //unselecting
   			var idx = Math.floor(adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').index(checkbox)/2);
-  			var current = getObj();
-  			if(!current[local.pathwayId].actions[local.patientId]) current[local.pathwayId].actions[local.patientId] = {"agree":[],"done":[]};
-  			while(current[local.pathwayId].actions[local.patientId].agree.length<=idx){
-  				current[local.pathwayId].actions[local.patientId].agree.push("");
-  			}
-  			current[local.pathwayId].actions[local.patientId].agree[idx]="";
-  			setObj(current);
-
+        ignoreAction(local.patientId, ACTIONID);
       } else {
         //unselect other
         var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
@@ -877,13 +984,7 @@
         //selecting
         if(checkbox.val()==="no") launchPatientActionModal(local.patientId, $(this).closest('tr').children().first().children().first().text());
   			var idx = Math.floor(adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').index(checkbox)/2);
-  			var current = getObj();
-  			if(!current[local.pathwayId].actions[local.patientId]) current[local.pathwayId].actions[local.patientId] = {"agree":[],"done":[]};
-  			while(current[local.pathwayId].actions[local.patientId].agree.length<=idx){
-  				current[local.pathwayId].actions[local.patientId].agree.push("");
-  			}
-  			current[local.pathwayId].actions[local.patientId].agree[idx]=checkbox.val()==="yes";
-  			setObj(current);
+        editAction(local.patientId, ACTIONID, checkbox.val()==="yes");
       }
 		}).on('keyup', 'input[type=text]', function(e){
       if(e.which === 13) {
@@ -1018,12 +1119,12 @@
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
       ret.items = []; //The fields in the patient list table
-			if(ret.bp) {
+			if(ret[local.data[local.pathwayId]["value-label"]]) {
         if(pathwayStage === local.categories.monitoring.name){
-          ret.items.push(ret.bp[0][ret.bp[0].length-1]); //Last BP date
+          ret.items.push(ret[local.data[local.pathwayId]["value-label"]][0][ret[local.data[local.pathwayId]["value-label"]][0].length-1]);
         }
         else{
-          ret.items.push(ret.bp[1][ret.bp[1].length-1]); //Last SBP
+          ret.items.push(ret[local.data[local.pathwayId]["value-label"]][1][ret[local.data[local.pathwayId]["value-label"]][1].length-1]);
         }
 			} else {
         ret.items.push("?");
@@ -1091,20 +1192,28 @@
     $('[data-toggle="tooltip"]').tooltip();
 	};
 
-  var populateTeamSuggestedActionsPanel = function (){
-		if(!local.data[local.pathwayId].index){
-			local.data[local.pathwayId].index = function(){
-				return ++window.INDEX||(window.INDEX=0);
-			};
-			local.data[local.pathwayId].lastIndex = function(){
-				return window.INDEX;
-			};
-			local.data[local.pathwayId].resetIndex = function(){
-				window.INDEX=null;
-			};
-		}
+  var mergeTeamStuff = function(suggestions){
+    var teamActions = listActions();
+    if(!teamActions["team"]) return suggestions;
 
-		createPanel(suggestedPlanTemplate, suggestedPlanTeam, local.data[local.pathwayId], {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
+    for(var i = 0; i < suggestions.length; i++){
+      if(teamActions["team"][suggestions[i].id]){
+        if(teamActions["team"][suggestions[i].id].agree) {
+          suggestions[i].agree = true;
+        } else if(teamActions["team"][suggestions[i].id].agree===false){
+          suggestions[i].disagree = true;
+        }
+        if(teamActions["team"][suggestions[i].id].done) suggestions[i].done = teamActions["team"][suggestions[i].id].done;
+      }
+    }
+    return suggestions;
+  };
+
+  var populateTeamSuggestedActionsPanel = function (){
+    var suggestions = suggestionList(local.actionPlan[local.pathwayId].team);
+    suggestions = mergeTeamStuff(suggestions);
+
+		createPanel(suggestedPlanTemplate, suggestedPlanTeam, {"suggestions" : suggestions}, {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
 
 		displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
 
@@ -1117,18 +1226,6 @@
 		} else if(pathwayStage === local.categories.diagnosis.name){
 			suggestedPlanTeam.html('No team actions for these patients');
 		} else {
-			if(!local.data[local.pathwayId][pathwayStage].index){
-				local.data[local.pathwayId][pathwayStage].index = function(){
-					return ++window.INDEX||(window.INDEX=0);
-				};
-				local.data[local.pathwayId][pathwayStage].lastIndex = function(){
-					return window.INDEX;
-				};
-				local.data[local.pathwayId][pathwayStage].resetIndex = function(){
-					window.INDEX=null;
-				};
-			}
-
 			createPanel(suggestedPlanTemplate, suggestedPlanTeam, local.data[local.pathwayId][pathwayStage], {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
 
 			displayPersonalisedIndividualActionPlan(pathwayStage, $('#personalPlanTeam'));
@@ -1163,15 +1260,15 @@
 	* Charts - draw
 	********************************/
 
-	var drawBpTrendChart = function(patientId){
+	var drawTrendChart = function(patientId){
 		destroyCharts(['chart-demo-trend']);
-		if(!local.data.patients || !local.data.patients[patientId] || !local.data.patients[patientId].bp) return;
+		if(!local.data.patients || !local.data.patients[patientId] || !local.data.patients[patientId][local.data[local.pathwayId]["value-label"]]) return;
 
 		var chartOptions = {
 			bindto: '#chart-demo-trend',
 			data: {
 				x: 'x',
-				columns: local.data.patients[patientId].bp
+				columns: local.data.patients[patientId][local.data[local.pathwayId]["value-label"]]
 			},
 			axis: {
 				x: {
@@ -1194,10 +1291,13 @@
 		} //"contacts": [{"value": "2012-09-01", "text": "F2F"}, {"value": "2013-03-03", "text": "F2F"}]
 
     var obj = getObj();
-    if(obj[local.pathwayId].events && obj[local.pathwayId].events[patientId] && obj[local.pathwayId].events[patientId].length>0){
+    var patientEvents = obj.events.filter(function(val){
+      return val.id === patientId;
+    });
+    if(patientEvents.length>0){
       if(!lines) lines = [];
-      for(var i = 0; i < obj[local.pathwayId].events[patientId].length; i++){
-        lines.push({"value": obj[local.pathwayId].events[patientId][i].date.substr(0,10), "text": obj[local.pathwayId].events[patientId][i].name});
+      for(var i = 0; i < patientEvents.length; i++){
+        lines.push({"value": patientEvents[i].date.substr(0,10), "text": patientEvents[i].name});
       }
     }
 
@@ -1254,7 +1354,7 @@
 
   var updateTeamCheckboxes = function(){
     var current = getObj();
-		var wireUpRadioButtons = function(i) {
+		/*var wireUpRadioButtons = function(i) {
 			i = Math.floor(i/2);
 			if(current[local.pathwayId].actions.team.agree.length>i){
 				if(current[local.pathwayId].actions.team.agree[i]===true && this.value==="yes"){
@@ -1275,14 +1375,14 @@
 
 		suggestedPlanTeam.find('.cr-styled input[type=checkbox]').each(wireUpCheckboxes);
 
-		suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
+		suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').each(wireUpRadioButtons);*/
 
 		updateTeamSapRows();
   };
 
 	var updateIndividualCheckboxes = function(id){
 		var current = getObj();
-		var wireUpRadioButtons = function(i) {
+		/*var wireUpRadioButtons = function(i) {
 			i = Math.floor(i/2);
 			if(current[local.pathwayId].actions && current[local.pathwayId].actions[id] && current[local.pathwayId].actions[id].agree.length>i){
 				if(current[local.pathwayId].actions[id].agree[i]===true && this.value==="yes"){
@@ -1330,7 +1430,7 @@
 		adviceList.find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').each(wireUpRadioButtons);
 
     adviceList.find('#individual-panel-classification table:first .btn-toggle input[type=checkbox]').each(wireUpRadioButtons2);
-    adviceList.find('#individual-panel-classification table:last .btn-toggle input[type=checkbox]').each(wireUpRadioButtons3);
+    adviceList.find('#individual-panel-classification table:last .btn-toggle input[type=checkbox]').each(wireUpRadioButtons3);*/
 
     updateIndividualSapRows();
 	};
@@ -1501,6 +1601,29 @@
     adviceList.find('table thead tr th').last().html( anyIndividual ? 'Completed' : '');
 	};
 
+  var suggestionList = function (ids){
+    return ids.map(function(val){
+      return {"id" : val, "text" : local.actionText[val].text};
+    });
+  };
+
+  var mergeIndividualStuff = function(suggestions, patientId){
+    var actions = listActions();
+    if(!actions[patientId]) return suggestions;
+
+    for(var i = 0; i < suggestions.length; i++){
+      if(actions[patientId][suggestions[i].id]){
+        if(actions[patientId][suggestions[i].id].agree) {
+          suggestions[i].agree = true;
+        } else if(actions[patientId][suggestions[i].id].agree===false){
+          suggestions[i].disagree = true;
+        }
+        if(actions[patientId][suggestions[i].id].done) suggestions[i].done = actions[patientId][suggestions[i].id].done;
+      }
+    }
+    return suggestions;
+  };
+
 	var populateIndividualSuggestedActions = function (patientId) {
 		var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId};
     var pathwayStage = local.selected;
@@ -1511,23 +1634,12 @@
 			}
 		}
 
-    var subsection = local.data.patients[patientId].subsection;
+    var subsection = local.data.patients[patientId].breach.filter(function(v) {return v.pathwayId === local.pathwayId && v.pathwayStage === pathwayStage;})[0].subsection;
 
-    data.suggestions = local.data[local.pathwayId][pathwayStage].bdown[subsection].suggestions;
+    data.suggestions = mergeIndividualStuff(suggestionList(local.data[local.pathwayId][pathwayStage].bdown[subsection].suggestions), patientId);
     data.section = local.data[local.pathwayId][pathwayStage].bdown[subsection].name;
     data.category = local.data.patients[patientId].category;
 
-		if(!data.index){
-			data.index = function(){
-				return ++window.INDEX||(window.INDEX=0);
-			};
-			data.lastIndex = function(){
-				return window.INDEX;
-			};
-			data.resetIndex = function(){
-				window.INDEX=null;
-			};
-		}
 		$('#advice-placeholder').hide();
 		$('#advice').show();
 
@@ -1554,31 +1666,15 @@
 	};
 
 	var displayPersonalisedTeamActionPlan = function(parentElem) {
-		var plans = getObj()[local.pathwayId].plans;
+		var plans = listPlans("team", local.pathwayId);
 
-		var plan = "";
-
-		if(plans.team) {
-      plan = plans.team;
-    }
-
-		createPanel(actionPlanList, parentElem, {"suggestions" : plan}, {"action-plan": $('#action-plan').html(), "action-plan-item": $('#action-plan-item').html(), "chk" : $('#checkbox-template').html() });
-
-
+		createPanel(actionPlanList, parentElem, {"suggestions" : plans}, {"action-plan": $('#action-plan').html(), "action-plan-item": $('#action-plan-item').html(), "chk" : $('#checkbox-template').html() });
 	};
 
 	var displayPersonalisedIndividualActionPlan = function(id, parentElem) {
-		var plans = getObj()[local.pathwayId].plans;
+		var plans = listPlans(id);
 
-		var plan = "";
-
-		if(id && plans.individual[id]) {
-      plan = plans.individual[id];
-		}
-
-		createPanel(actionPlanList, parentElem, {"suggestions" : plan}, {"action-plan": $('#action-plan').html(), "action-plan-item": $('#action-plan-item').html(), "chk" : $('#checkbox-template').html() });
-
-
+		createPanel(actionPlanList, parentElem, {"suggestions" : plans}, {"action-plan": $('#action-plan').html(), "action-plan-item": $('#action-plan-item').html(), "chk" : $('#checkbox-template').html() });
 	};
 
 	var displayPersonalisedActionPlan = function(id, parentElem, isTeam) {
@@ -1620,7 +1716,7 @@
 		$('.list-item').removeClass('highlighted');
 		$('.list-item:has(button[data-clipboard-text=' + nhs +'])').addClass('highlighted');
 
-		drawBpTrendChart(id);
+		drawTrendChart(id);
     local.patientId = id;
 
 		$('a[href=#tab-plan-individual]').tab('show');
@@ -1656,15 +1752,11 @@
     local.modalSaved = false;
 
     $('#modal .modal').off('submit','form').on('submit', 'form', {"label" : label}, function(e){
-      var obj = getObj();
       if(!e.data.label) e.data.label = "team";
-      if(!obj[local.pathwayId].feedback[e.data.label]) obj[local.pathwayId].feedback[label] = [];
       var reason = $('input:radio[name=reason]:checked').val();
       var reasonText = $('#modal textarea').val();
-      var item = {"val" : value, "reason" : reason};
-      if(reasonText !== "") item.text = reasonText;
-      obj[local.pathwayId].feedback[e.data.label].push(item);
-      setObj(obj);
+
+      recordFeedback(local.pathwayId, e.data.label, value, reason, reasonText)
 
       local.modalSaved = true;
 
@@ -1675,9 +1767,11 @@
     $('#modal').off('hidden.bs.modal').on('hidden.bs.modal', {"label" : label}, function(e) {
       if(local.modalSaved) {
         local.modalSaved = false;
-        $("#thanks-message").toggleClass("in");
+        $("#thanks-message").hide().toggleClass("in").fadeIn(300);
         window.setTimeout(function(){
-          $("#thanks-message").toggleClass("in");
+          $("#thanks-message").fadeOut(300, function(){
+            $(this).toggleClass("in");
+          });
         }, 2000);
       } else {
         //uncheck as cancelled. - but not if value is empty as this unchecks everything
@@ -1716,8 +1810,24 @@
 
 	var getObj = function(){
     var obj = JSON.parse(localStorage.bb);
-    for(var i = 0 ; i < local.diseases.length; i++){
-      if(!obj[local.diseases[i].id]) obj[local.diseases[i].id] = {"feedback":{"team":[]},"plans":{"team":[], "individual":{}},"actions":{"team":{"agree":[],"done":[]}},"events":{"team":[]}};
+    if(!obj.actions) {
+      obj.actions = {};
+      setObj(obj);
+    }
+    if(!obj.plans) {
+      obj.plans = {};
+      setObj(obj);
+    }
+    if(!obj.agrees) {
+      obj.plans = {};
+      setObj(obj);
+    }
+    if(!obj.feedback) {
+      obj.feedback = [];
+      setObj(obj);
+    }
+    if(!obj.events) {
+      obj.events = [];
       setObj(obj);
     }
 		return obj;
@@ -1858,13 +1968,6 @@
 		doc.save();
 	};
 
-  var recordEvent = function(name, pathwayStage) {
-    var obj = getObj();
-    if(!obj[local.pathwayId].events[pathwayStage]) obj[local.pathwayId].events[pathwayStage] = [];
-    obj[local.pathwayId].events[pathwayStage].push({"name": name, "date": new Date()});
-    setObj(obj);
-  };
-
 
   /********************************
 	* Page setup
@@ -1934,26 +2037,36 @@
         var teamTasks = [];
         var individualTasks = [];
 
-        var current = getObj();
-        for(i = 0; i < local.diseases.length; i++){
-          if(current[local.diseases[i].id].actions) {
-            for(var k in current[local.diseases[i].id].actions){
-              if(k==="team" && current[local.diseases[i].id].actions[k] && current[local.diseases[i].id].actions[k].agree){
-                for(var ii = 0; ii < current[local.diseases[i].id].actions[k].agree.length; ii++){
-                  if(current[local.diseases[i].id].actions[k].agree[ii] && ! current[local.diseases[i].id].actions[k].done[ii]){
-                    teamTasks.push({"pathway": local.diseases[i].name, "task": local.actionPlan[local.diseases[i].id][k][ii].text});
-                  }
-                }
-              } /*else {
-                for(i = 0; i < current[local.diseases[i].id].actions[k].agree.length; i++){
-                  if(current[local.diseases[i].id].actions[k].agree[i] && ! current[local.diseases[i].id].actions[k].done[i]){
-                    //find individual TODO update this!!!
-                    if(local.data[local.diseases[i].id].patients[k]){
-                      individualTasks.push({"pathway": local.diseases[i].name, "patientId":k, "task": local.actionPlan[local.diseases[i].id][local.data[local.diseases[i].id].patients[k].pathwayStage].individual[local.data[local.diseases[i].id].patients[k].subsection][i].text});
-                    }
-                  }
-                }
-              }*/
+        //Add the team tasks
+        for(var k in listActions("team")){
+          if(listActions("team")[k].agree && ! listActions("team")[k].done){
+            teamTasks.push({"pathway": "tba", "task": local.actionText[listActions("team")[k].id].text, "data":listActions("team")[k].id, "tpId":"team"});
+          }
+        }
+
+        //Add the user added team tasks
+        for(var k in listPlans("team")){
+          if(! listPlans("team")[k].done){
+            teamTasks.push({"pathway": local.pathwayNames[listPlans("team")[k].pathwayId], "task": listPlans("team")[k].text, "data": listPlans("team")[k].id});
+          }
+        }
+
+        //Add individual
+        for(var k in listActions()){
+          if(k==="team") continue;
+          for(var l in listActions()[k]){
+            if(! listActions()[k][l].done){
+              individualTasks.push({"pathway": "tba", "patientId":k, "task": local.actionText[l].text, "data":l, "tpId":k});
+            }
+          }
+        }
+
+        //Add custom individual
+        for(var k in listPlans()){
+          if(k==="team") continue;
+          for(var l in listPlans()[k]){
+            if(! listPlans()[k][l].done){
+              individualTasks.push({"pathway": local.pathwayNames[listPlans()[k][l].pathwayId], "patientId":k, "task": listPlans()[k][l].text, "data":l});
             }
           }
         }
@@ -1964,11 +2077,8 @@
         $('#team-add-plan').html(rendered);
 
         $('#team-add-plan').off('click').on('click', '.add-plan', function(){
-    			var obj = getObj();
-          if(!obj[local.pathwayId].plans.team.other) obj[local.pathwayId].plans.team.other = [];
           var plan = $(this).parent().parent().find('textarea').val();
-    			obj[local.pathwayId].plans.team.other.push({"text" : plan, "done": false});
-    			setObj(obj);
+          recordPlan("team", plan, "custom");
 
           $('#team-task-panel').find('table tbody').append('<tr><td></td><td>' + plan + '</td><td><label class="cr-styled"><input type="checkbox"><i class="fa"></i></label></td></tr>');
     		});
@@ -1985,6 +2095,16 @@
         rendered = Mustache.render(template, {"tasks": individualTasks, "isPatientTable":true, "hasTasks": individualTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
         $('#individual-task-panel').children().not(":first").remove();
         $('#individual-task-panel').append(rendered);
+
+        $('#team-task-panel,#individual-task-panel').on('change', 'input[type=checkbox]', function(){
+          $(this).closest('tr').removeClass("success");
+          if($(this).is(':checked')) $(this).closest('tr').addClass("success");
+          var planId = $(this).closest('tr').data("id");
+          if((planId+"").length>=10)  editPlan(planId, null, $(this).is(':checked'));
+          else {
+            editAction($(this).closest('tr').data("teamOrPatientId"), planId, null, $(this).is(':checked'));
+          }
+        });
       } else {
         //if screen not in correct segment then select it
         if(local.page !== 'main-dashboard'){
@@ -2017,7 +2137,7 @@
     local.states = new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      local: $.map(local.data[local.pathwayId].patientArray, function(state) { return { id: state, value: local.patLookup ? local.patLookup[state] : state }; })
+      local: $.map(local.data.patientArray, function(state) { return { id: state, value: local.patLookup ? local.patLookup[state] : state }; })
     });
 
     local.states.initialize(true);
@@ -2103,7 +2223,7 @@
       reader.onload = (function() {
         return function(e) {
           var JsonObj = JSON.parse(e.target.result);
-          getData(null, JsonObj.data);
+          getData(null, JsonObj);
           console.log(JsonObj);
 
           wireUpSearchBox();
@@ -2140,102 +2260,77 @@
     });
 
     //exportPlan
-    $('#export-plan').on('click', exportPlan);
+    $('span.export-plan').on('click', exportPlan);
 	};
 
   var loadActionPlan = function(callback) {
     var r = Math.random();
     $.getJSON("action-plan.json?v="+r, function(file){
-      local.actionPlan = file;
+      local.actionPlan = file.diseases;
+      local.actionText = file.plans;
       callback();
     });
   };
 
-  var addToPatientsObject = function(patients){
-    for(var k in patients){
-      if(local.data.patients[k]){
+  var loadData = function(file){
+    var d="", j, k, data = file.diseases;
 
-      } else {
-        local.data.patients[k] = patients[k];
+    local.data = jQuery.extend({}, data); //copy
+
+    local.data.patients = file.patients;
+    local.data.patientArray = [];
+    for(var o in file.patients) {
+      if(file.patients.hasOwnProperty(o)) {
+        local.data.patientArray.push(o);
       }
     }
-  };
 
-  var loadData = function(data){
-    var d="", i, j, k, patients, innerFunc = function(array){
-      return function(i, el) {
-        if($.inArray(el, array) === -1) array.push(el);
-      };
-    };
-
-    local.data.patients = {};
-    for(i = 0 ; i < data.length; i++){
-      d = data[i].disease;
-      local.pathwayNames[d] = data[i]["display-name"];
-      local.diseases.push({"id":d,"link": data[i].link ? data[i].link : "main/"+d, "faIcon":data[i].icon, "name":data[i]["display-name"]});
-      addToPatientsObject(data[i].patients);
-      local.data[d] = {
-        "suggestions" : local.actionPlan[d].team,
-        "monitoring" : {"title": data[i].monitoring.title, "header": data[i].monitoring.header,"breakdown":[], "patients" : [], "bdown":{}, "trend":data[i].monitoring.trend, "table-headings":data[i].monitoring["table-headings"], "items" : data[i].monitoring.items},
-        "treatment": {"title": data[i].treatment.title, "header": data[i].treatment.header,"breakdown":[], "patients" : [], "bdown":{}, "trend":data[i].treatment.trend, "table-headings":data[i].treatment["table-headings"], "items" : data[i].treatment.items},
-        "diagnosis": {"title": data[i].diagnosis.title, "header": data[i].diagnosis.header,"breakdown":[], "patients" : [], "bdown":{}, "trend":data[i].diagnosis.trend, "table-headings":data[i].diagnosis["table-headings"], "items" : data[i].diagnosis.items},
-        "exclusions": {"title": data[i].exclusions.title, "header": data[i].exclusions.header,"breakdown":[], "patients" : [], "bdown":{}, "trend":data[i].exclusions.trend, "table-headings":data[i].exclusions["table-headings"], "items" : data[i].exclusions.items}};
-      local.data[d].patientArray = [];
-      for(var o in data[i].patients) {
-        if(data[i].patients.hasOwnProperty(o)) {
-          local.data[d].patientArray.push(o);
-        }
-      }
+    for(d in data){
+      local.pathwayNames[d] = data[d]["display-name"];
+      local.diseases.push({"id":d,"link": data[d].link ? data[d].link : "main/"+d, "faIcon":data[d].icon, "name":data[d]["display-name"]});
+      local.data[d].suggestions = local.actionPlan[d].team;
+      $.extend(local.data[d].monitoring, {"breakdown":[], "bdown":{}});
+      $.extend(local.data[d].treatment, {"breakdown":[], "bdown":{}});
+      $.extend(local.data[d].diagnosis, {"breakdown":[], "bdown":{}});
+      $.extend(local.data[d].exclusions, {"breakdown":[], "bdown":{}});
 
       if(!local.data[d].monitoring.header) continue;
-      patients = [];
       for(j=0; j < local.data[d].monitoring.items.length; j++) {
         local.data[d].monitoring.breakdown.push([local.data[d].monitoring.items[j].name, local.data[d].monitoring.items[j].n]);
         local.data[d].monitoring.bdown[local.data[d].monitoring.items[j].name] = local.data[d].monitoring.items[j];
         local.data[d].monitoring.bdown[local.data[d].monitoring.items[j].name].suggestions = local.actionPlan[d].monitoring.individual[local.data[d].monitoring.items[j].name];
         for(k=0; k < local.data[d].monitoring.items[j].patients.length; k++) {
-          local.data.patients[local.data[d].monitoring.items[j].patients[k]].pathwayStage = "monitoring";
-          local.data.patients[local.data[d].monitoring.items[j].patients[k]].subsection = local.data[d].monitoring.items[j].name;
-          patients.push(local.data[d].monitoring.items[j].patients[k]);
+          if(!local.data.patients[local.data[d].monitoring.items[j].patients[k]].breach) local.data.patients[local.data[d].monitoring.items[j].patients[k]].breach = [];
+          local.data.patients[local.data[d].monitoring.items[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"monitoring", "subsection":local.data[d].monitoring.items[j].name});
         }
       }
-      $.each(patients, innerFunc(local.data[d].monitoring.patients));
-      patients = [];
       for(j=0; j < local.data[d].treatment.items.length; j++) {
         local.data[d].treatment.breakdown.push([local.data[d].treatment.items[j].name, local.data[d].treatment.items[j].n]);
         local.data[d].treatment.bdown[local.data[d].treatment.items[j].name] = local.data[d].treatment.items[j];
         local.data[d].treatment.bdown[local.data[d].treatment.items[j].name].suggestions = local.actionPlan[d].treatment.individual[local.data[d].treatment.items[j].name];
         for(k=0; k < local.data[d].treatment.items[j].patients.length; k++) {
-          local.data.patients[local.data[d].treatment.items[j].patients[k]].pathwayStage = "treatment";
-          local.data.patients[local.data[d].treatment.items[j].patients[k]].subsection = local.data[d].treatment.items[j].name;
-          patients.push(local.data[d].treatment.items[j].patients[k]);
+          if(!local.data.patients[local.data[d].treatment.items[j].patients[k]].breach) local.data.patients[local.data[d].treatment.items[j].patients[k]].breach = [];
+          local.data.patients[local.data[d].treatment.items[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"treatment", "subsection":local.data[d].treatment.items[j].name});
         }
       }
-      $.each(patients, innerFunc(local.data[d].treatment.patients));
-      patients = [];
       for(j=0; j < local.data[d].exclusions.items.length; j++) {
         local.data[d].exclusions.breakdown.push([local.data[d].exclusions.items[j].name, local.data[d].exclusions.items[j].n]);
         local.data[d].exclusions.bdown[local.data[d].exclusions.items[j].name] = local.data[d].exclusions.items[j];
         local.data[d].exclusions.bdown[local.data[d].exclusions.items[j].name].suggestions = local.actionPlan[d].exclusions.individual[local.data[d].exclusions.items[j].name];
         for(k=0; k < local.data[d].exclusions.items[j].patients.length; k++) {
-          local.data.patients[local.data[d].exclusions.items[j].patients[k]].pathwayStage = "exclusions";
-          local.data.patients[local.data[d].exclusions.items[j].patients[k]].subsection = local.data[d].exclusions.items[j].name;
-          patients.push(local.data[d].exclusions.items[j].patients[k]);
+          if(!local.data.patients[local.data[d].exclusions.items[j].patients[k]].breach) local.data.patients[local.data[d].exclusions.items[j].patients[k]].breach = [];
+          local.data.patients[local.data[d].exclusions.items[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"exclusions", "subsection":local.data[d].exclusions.items[j].name});
         }
       }
-      $.each(patients, innerFunc(local.data[d].exclusions.patients));
-      patients = [];
       for(j=0; j < local.data[d].diagnosis.items.length; j++) {
         local.data[d].diagnosis.breakdown.push([local.data[d].diagnosis.items[j].name, local.data[d].diagnosis.items[j].n]);
         local.data[d].diagnosis.bdown[local.data[d].diagnosis.items[j].name] = local.data[d].diagnosis.items[j];
         local.data[d].diagnosis.bdown[local.data[d].diagnosis.items[j].name].suggestions = local.actionPlan[d].diagnosis.individual[local.data[d].diagnosis.items[j].name];
         for(k=0; k < local.data[d].diagnosis.items[j].patients.length; k++) {
-          local.data.patients[local.data[d].diagnosis.items[j].patients[k]].pathwayStage = "diagnosis";
-          local.data.patients[local.data[d].diagnosis.items[j].patients[k]].subsection = local.data[d].diagnosis.items[j].name;
-          patients.push(local.data[d].diagnosis.items[j].patients[k]);
+          if(!local.data.patients[local.data[d].diagnosis.items[j].patients[k]].breach) local.data.patients[local.data[d].diagnosis.items[j].patients[k]].breach = [];
+          local.data.patients[local.data[d].diagnosis.items[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"diagnosis", "subsection":local.data[d].diagnosis.items[j].name});
         }
       }
-      $.each(patients, innerFunc(local.data[d].diagnosis.patients));
     }
   };
 
@@ -2246,7 +2341,7 @@
     } else {
       var r = Math.random();
   		$.getJSON("data.json?v="+r, function(file) {
-  			loadData(file.data);
+  			loadData(file);
         if(typeof callback === 'function') callback();
   		}).fail(function(err){
         alert("data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
@@ -2263,7 +2358,8 @@
 	};
 
 	window.bb = {
-		init : initialize
+    "version" : "1.14",
+		"init" : initialize
 	};
 })();
 
@@ -2286,8 +2382,8 @@ $(document).on('ready', function () {
 	//Sorts out the data held locally in the user's browser
 	if(!localStorage.bb) localStorage.bb = JSON.stringify({});
 	var obj = JSON.parse(localStorage.bb);
-  if(!obj.version || obj.version!=="1.6"){
-    localStorage.bb = JSON.stringify({"version" : "1.6"});
+  if(!obj.version || obj.version!==bb.version){
+    localStorage.bb = JSON.stringify({"version" : bb.version});
   }
 
 	$('[data-toggle="tooltip"]').tooltip();
