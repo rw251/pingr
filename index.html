@@ -718,15 +718,15 @@
       </thead>
       <tbody>
       <tr>
-        <td style="font-size:1.25em">{{section}}</td>
+        <td style="font-size:1.25em">{{section.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-yes btn-toggle btn-success">
-              <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off">
+            <label class="btn btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}">
+              <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-no btn-toggle btn-danger">
-              <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off">
+            <label class="btn btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}">
+              <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
           </div>
@@ -743,15 +743,15 @@
       </thead>
       <tbody>
       <tr>
-        <td style="font-size:1.25em">{{category}}</td>
+        <td style="font-size:1.25em">{{category.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-yes btn-toggle btn-success">
-              <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off">
+            <label class="btn btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}">
+              <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-no btn-toggle btn-danger">
-              <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off">
+            <label class="btn btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}">
+              <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
           </div>
