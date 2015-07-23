@@ -280,6 +280,7 @@
             <!--<div class="row" style="max-height:400px">
             </div>-->
             <div class="row">
+              <div id="top-panel" class="col-xl-12"></div>
               <div id="top-left-panel" class="col-xl-6"></div>
               <div id="top-right-panel" class="col-xl-6"></div>
               <div id="bottom-left-panel" class="col-xl-6"></div>
@@ -701,6 +702,11 @@
   </script>
 
   <script id="individual-panel" type="x-tmpl-mustache">
+    {{#isMultiple}}
+    <div class="alert alert-info clickable" role="alert" data-id={{patientId}}>
+      <strong>This patient appears on multiple pathways - click to view</strong>
+    </div>
+    {{/isMultiple}}
     <div id="individual-panel-classification" class="panel panel-default panel-grey">
       <div class="panel-body">
         <h4>Patient <strong>{{nhsNumber}}</strong>
@@ -760,13 +766,6 @@
       </tbody>
       </table>
     </div>
-    {{#isReadCode}}
-    <div>We suggest you add the following exclusion code to their record: 9h3..
-      <button type="button" data-clipboard-text="9h3.." data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default">
-        <span class="fa fa-clipboard"></span>
-      </button>
-    </div>
-    {{/isReadCode}}
     <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
@@ -848,20 +847,42 @@
     </div>
   </script>
 
-  <script id="patients-panel" type="x-tmpl-mustache">
-    <div class="panel panel-default" id="panel-right">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
-        <i class="fa fa-users fa-fw"></i>&nbsp; Patients
-      </div>
-
-      <div class="panel-body" id="panel-patients">
-        <div id="patients-placeholder">
-          Select a patient group to display affected patients
-        </div>
-        <div id="patients" style="max-height:800px"></div>
-      </div>
+  <script id="pathway-panel-radio" type="x-tmpl-mustache">
+    <div class="radio">
+      <label>
+        <input type="radio" name="pathwayradio" value="{{pathwayId}}" {{#checked}}checked="checked"{{/checked}}>{{name}}
+      </label>
     </div>
   </script>
+
+  <script id="pathway-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-sitemap fa-fw"></i>&nbsp; Pathway
+      </div>
+      <div class="panel-body">
+      <p>This patient flags multiple pathways - please click to select:</p>
+          {{#pathways}}
+          {{>radio}}
+          {{/pathways}}
+      </div>
+    </div>
+    </script>
+
+    <script id="patients-panel" type="x-tmpl-mustache">
+      <div class="panel panel-default" id="panel-right">
+        <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
+        <i class="fa fa-users fa-fw"></i>&nbsp; Patients
+        </div>
+
+        <div class="panel-body" id="panel-patients">
+          <div id="patients-placeholder">
+          Select a patient group to display affected patients
+          </div>
+          <div id="patients" style="max-height:800px"></div>
+        </div>
+      </div>
+    </script>
 
   <script id="change-bar-number" type="x-tmpl-mustache">
     <span class="pull-right" data-toggle="tooltip" data-placement="bottom" title="Current number of patients meeting this standard and how this has changed from last month">
@@ -987,10 +1008,10 @@
 
   <script id="pathway-picker-sub-item" type="x-tmpl-mustache">
     <ul class="list-unstyled">
-      <li><a href="#diagnosis">Diagnosis</a></li>
-      <li><a href="#monitoring">Monitoring</a></li>
-      <li><a href="#treatment">Treatment</a></li>
-      <li><a href="#exclusions">Exclusions</a></li>
+      <li><a href="#main/{{id}}/diagnosis">Diagnosis</a></li>
+      <li><a href="#main/{{id}}/monitoring">Monitoring</a></li>
+      <li><a href="#main/{{id}}/treatment">Treatment</a></li>
+      <li><a href="#main/{{id}}/exclusions">Exclusions</a></li>
     </ul>
   </script>
 
