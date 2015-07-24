@@ -108,7 +108,7 @@
     showTestTrendPanel(topRightPanel, pathwayId, pathwayStage);
     drawTrendChart(patientId, pathwayId);
 
-    showMedicationPanel(bottomRightPanel, pathwayStage);
+    showMedicationPanel(bottomRightPanel, pathwayStage, patientId);
   };
 
   var showPatientView = function(patientId, reload){
@@ -1033,8 +1033,8 @@
     createPanel(valueTrendPanel, location, {"pathway": local.monitored[pathwayId], "pathwayStage" : pathwayStage});
   };
 
-  var showMedicationPanel = function(location, pathwayStage){
-    var medications = [];
+  var showMedicationPanel = function(location, pathwayStage, patientId) {
+    var medications = local.data.patients[patientId].medications || [];
     createPanel(medicationPanel, location, {"areMedications" : medications.length>0, "medications": medications, "pathwayStage" : pathwayStage},{"medicationRow":$('#medication-row').html()});
   };
 
@@ -1143,9 +1143,15 @@
   				if(a.items[sortField-1] == "?") return 1;
   				if(b.items[sortField-1] == "?") return -1;
 
-  				if(a.items[sortField-1] > b.items[sortField-1]) {
+          var A = Number(a.items[sortField-1]);
+          var B = Number(b.items[sortField-1]);
+          if(isNaN(A) || isNaN(B)){
+            A = a.items[sortField-1];
+            B = b.items[sortField-1];
+          }
+  				if(A > B) {
   					return sortAsc ? 1 : -1;
-  				} else if (a.items[sortField-1] < b.items[sortField-1]) {
+  				} else if (A < B) {
   					return sortAsc ? -1 : 1;
   				}
         }
@@ -1181,18 +1187,43 @@
       if(teamActions["team"][suggestions[i].id]){
         if(teamActions["team"][suggestions[i].id].agree) {
           suggestions[i].agree = true;
+          suggestions[i].disagree = false;
         } else if(teamActions["team"][suggestions[i].id].agree===false){
+          suggestions[i].agree = false;
           suggestions[i].disagree = true;
         }
         if(teamActions["team"][suggestions[i].id].done) suggestions[i].done = teamActions["team"][suggestions[i].id].done;
+        else suggestions[i].done = false;
       }
     }
     return suggestions;
   };
 
+  var sortSuggestions = function(suggestions){
+    suggestions.sort(function(a,b){
+      if(a.agree && !a.done){
+        if(b.agree && !b.done) return 0;
+        return -1;
+      } else if(!a.agree && !a.disagree){
+        if(!b.agree && !b.disagree) return 0;
+        if(b.agree && !b.done) return 1;
+        return -1;
+      } else if(a.agree && a.done){
+        if(b.agree && b.done) return 0;
+        if(b.disagree) return -1;
+        return 1;
+      } else {
+        if(b.disagree) return 0;
+        return 1;
+      }
+    });
+
+    return suggestions;
+  };
+
   var populateTeamSuggestedActionsPanel = function (){
     var suggestions = suggestionList(local.actionPlan[local.pathwayId].team);
-    suggestions = mergeTeamStuff(suggestions);
+    suggestions = sortSuggestions(mergeTeamStuff(suggestions));
 
 		createPanel(suggestedPlanTemplate, suggestedPlanTeam, {"suggestions" : suggestions}, {"item" : $('#suggested-plan-item').html(), "chk" : $('#checkbox-template').html() });
 
@@ -1449,7 +1480,7 @@
 
     var subsection = local.data.patients[patientId].breach.filter(function(v) {return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage;})[0].subsection;
 
-    data.suggestions = mergeIndividualStuff(suggestionList(local.data[pathwayId][pathwayStage].bdown[subsection].suggestions), patientId);
+    data.suggestions = sortSuggestions(mergeIndividualStuff(suggestionList(local.data[pathwayId][pathwayStage].bdown[subsection].suggestions), patientId));
     data.section = {
       "name" : local.data[pathwayId][pathwayStage].bdown[subsection].name,
       "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
@@ -1896,7 +1927,7 @@
         for(var k in listActions()){
           if(k==="team") continue;
           for(var l in listActions()[k]){
-            if(! listActions()[k][l].done){
+            if(listActions()[k][l].agree && !listActions()[k][l].done){
               individualTasks.push({"pathway": "tba", "patientId":k, "task": local.actionText[l].text, "data":l, "tpId":k});
             }
           }
