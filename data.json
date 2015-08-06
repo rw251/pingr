@@ -2,7 +2,7 @@
   "diseases":{
     "bp": {
       "disease": "bp",
-      "display-name": "Blood Pressure",
+      "display-name": "Hypertension",
       "icon":"fa-heart-o",
       "value-label":"bp",
       "monitoring" : {

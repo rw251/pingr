@@ -26,7 +26,7 @@
 		"categories" : {
 			"diagnosis": {"name": "diagnosis", "display": "Diagnosis"},
 			"monitoring": {"name": "monitoring", "display": "Monitoring"},
-			"treatment": {"name": "treatment", "display": "Treatment"},
+			"treatment": {"name": "treatment", "display": "Control"},
 			"exclusions": {"name": "exclusions", "display": "Exclusions"}
 		},
 		"page" : "",
@@ -45,6 +45,7 @@
 
 
   var showDiseaseView = function(disease){
+    //$('#main-dashboard div.container-fluid').fadeOut(200, function() {$(this).fadeIn(200);});
     local.pathwayId = disease;
 
     //Set up navigation panel
@@ -357,7 +358,7 @@
 	};
 
   var updateTitle = function(title, tooltip){
-    $('.pagetitle').html(title).attr('title', tooltip).tooltip();
+    $('.pagetitle').html(title).attr('title', tooltip).tooltip({delay: { "show": 500, "hide": 100 }});
   }
 
 	var updateBreadcrumbs = function(items){
@@ -1242,11 +1243,14 @@
 
 		setupClipboard($('.btn-copy'), true);
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
   };
 
 	var populatePatientPanel = function (pathwayId, pathwayStage, subsection, sortField, sortAsc) {
     var pList=[], i,k, prop, header;
+    patientsPanel.fadeOut(200, function(){
+      $(this).fadeIn(200);
+    });
     if(pathwayId && pathwayStage && subsection) {
       pList = local.data[pathwayId][pathwayStage].bdown[subsection].patients;
       header = local.data[pathwayId][pathwayStage].bdown[subsection].name;
@@ -1360,7 +1364,7 @@
 
 		setupClipboard($('.btn-copy'), true);
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
 	};
 
   var mergeTeamStuff = function(suggestions){
@@ -1544,7 +1548,7 @@
 		showPanel(local.categories.treatment.name, bottomLeftPanel, true);
 		showPanel(local.categories.exclusions.name, bottomRightPanel, true);
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
 	};
 
   var updateTeamSapRows = function(){
@@ -1583,7 +1587,7 @@
       }
 		});
 
-    suggestedPlanTeam.find('table thead tr th').last().html( anyTeam ? 'Completed' : '');
+    //suggestedPlanTeam.find('table thead tr th').last().html( anyTeam ? 'Action implemented' : '');
   };
 
   var updateIndividualSapRows = function(){
@@ -1633,7 +1637,7 @@
   			}
       });
     });
-    $('#advice-list').find('table thead tr th').last().html( anyIndividual ? 'Completed' : '');
+    //$('#advice-list').find('table thead tr th').last().html( anyIndividual ? 'Action implemented' : '');
   };
 
   var suggestionList = function (ids){
@@ -1816,7 +1820,7 @@
   };
 
   var launchTeamModal = function(label, value){
-    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
+    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Please tell us more – whatever your selection above...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
   };
 
   var launchPatientModal = function(pathwayId, pathwayStage, label, value, justtext){
@@ -1833,11 +1837,11 @@
       }
       reasons.push({"reason":"Something else","value":"else"});
     }
-    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : reasons},label, value);
+    launchModal({"header" : "Why?", "placeholder":"Please tell us more – whatever your selection above...", "reasons" : reasons},label, value);
   };
 
   var launchPatientActionModal = function(label, value){
-    launchModal({"header" : "Why?", "placeholder":"Tell us more so we won’t make this error again...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
+    launchModal({"header" : "Disagree with a suggested action", "placeholder":"Please tell us more – whatever your selection above...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
   };
 
   /*******************
@@ -2014,7 +2018,8 @@
 		$('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
 		//Clear the patient search box - needs a slight delay for some reason
-		setTimeout(function() {$('#search-box > span > input.typeahead.tt-input, #search-box > span > input.typeahead.tt-hint').val('');},400);
+		//setTimeout(function() {$('#search-box > span > input.typeahead.tt-input, #search-box > span > input.typeahead.tt-hint').val('');},400);
+    $('.typeahead').typeahead('val', '');
 
 		displaySelectedPatient(nhsNumberObject.id);
 	};
@@ -2026,8 +2031,9 @@
     Mustache.parse(itemTemplate);
 
     list = list.slice();
+    list[0].isBreakAbove = true;
     list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Home"});
-    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients"});
+    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbove":true});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; v.hasSubItems = (i===idx+1 && idx>-1 && idx < arr.length-2); return v; });
 
@@ -2064,7 +2070,7 @@
         showDiseaseView(pathwayId);
         if(pathwayStage) showPathwayStageView(pathwayStage);
 
-        $('[data-toggle=tooltip]').tooltip();
+        $('[data-toggle=tooltip]').tooltip({delay: { "show": 500, "hide": 100 }});
 
       } else if (urlBits[0] === "#help") {
         showPage('help-page');
@@ -2080,7 +2086,7 @@
 
         showPatientView(patientId, true);
 
-        $('[data-toggle=tooltip]').tooltip();
+        $('[data-toggle=tooltip]').tooltip({delay: { "show": 500, "hide": 100 }});
       } else if (urlBits[0] === "#welcome") {
         showPage('welcome');
 
@@ -2176,7 +2182,7 @@
 
         showPathwayStageView(pathwayStage);
 
-        $('[data-toggle=tooltip]').tooltip();
+        $('[data-toggle=tooltip]').tooltip({delay: { "show": 500, "hide": 100 }});
       }
     }
   };
@@ -2196,8 +2202,14 @@
 
     $('#search-box').find('.typeahead').typeahead('destroy');
     $('#search-box').find('.typeahead').typeahead(
-      {hint: true, highlight: true, minLength: 2, autoselect: true},
-      {name: 'patients', displayKey: 'value', source: local.states.ttAdapter()}
+      {hint: true, highlight: true, minLength: 1, autoselect: true},
+      {name: 'patients', displayKey: 'value', source: local.states.ttAdapter(), templates: {
+        empty: [
+          '<div class="empty-message">',
+            'No matches',
+          '</div>'
+        ].join('\n')}
+      }
     ).on('typeahead:selected', onSelected)
     .on('typeahead:autocompleted', onSelected);
   };
@@ -2249,19 +2261,17 @@
 
 	var wireUpPages = function () {
 		$('#pick-nice').on('click', function(e){
-			$('#pick-button').html('NICE <span class="caret"></span>');
       $('body').removeClass('qof');
       e.preventDefault();
 		});
 
 		$('#pick-qof').on('click', function(e){
-			$('#pick-button').html('QOF <span class="caret"></span>');
       $('body').addClass('qof');
       e.preventDefault();
 		});
 
     /*Wire up tooltips*/
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
 
 		/**********************************
 		 ** Patient search auto complete **
@@ -2314,6 +2324,7 @@
 
     //exportPlan
     $('span.export-plan').on('click', exportPlan);
+
 	};
 
   var loadActionPlan = function(callback) {
@@ -2439,7 +2450,7 @@ $(document).on('ready', function () {
     localStorage.bb = JSON.stringify({"version" : bb.version});
   }
 
-	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
 
   //ensure on first load the login screen is cached to the history
   history.pushState(null, null, '');

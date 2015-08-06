@@ -33,10 +33,10 @@
       },
       "diagnosis": {
         "individual": {
-          "HTN":  ["0051","0052","0053"],
-          "CKD":  ["0054","0055"],
-          "DM": [],
-          "PROT": []
+          "Most likely have hypertension":  ["0051","0052","0053"],
+          "Need further testing to confirm hypertension":  ["0054","0055"],
+          "No reading – Face-to-face": [],
+          "No reading – Non face-to-face": []
         }
       }
     },

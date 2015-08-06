@@ -57,10 +57,12 @@
       <div class="container">
         <div class="collapse navbar-collapse" id="navbar">
           <ul class="nav navbar-nav">
-            <li class="active hide-if-logged-out" id="help">
-              <a class="hidden-xs history" href="#help">Help</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Help</a>
+
+            <li class="hide-if-logged-out input-group pull-left" id="search-box">
+              <input type="text" placeholder="Search for patients..." class="typeahead">
             </li>
-            <li class="hide-if-logged-out">
+
+            <!--<li class="hide-if-logged-out">
               <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Switch quality standards">
                 <button type="button" id="pick-button" class="btn btn-default btn-sm btn-circle" data-toggle="dropdown">NICE
                   <span class="caret"></span>
@@ -69,11 +71,24 @@
                   <li><a id="pick-nice" href="#">NICE</a></li>
                   <li><a id="pick-qof" href="#">QOF</a></li>
                 </ul>
-              </div>
-              <span> | </span>
+              </div>-->
+              <!--<span> | </span>
               <div class="btn-group" id="breadcrumb">
+              </div>--><!--
+            </li>-->
+
+            <li class="hide-if-logged-out">
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active" id="pick-nice">
+                  <input type="radio" name="options" autocomplete="off" checked=""> NICE
+                </label>
+                <label class="btn btn-info" id="pick-qof">
+                  <input type="radio" name="options" autocomplete="off"> QOF
+                </label>
+
               </div>
             </li>
+
 
             <!-- Single button -->
             <div class="hide-if-logged-out btn-group pull-right">
@@ -94,15 +109,23 @@
               </ul>
             </div>
 
-            <div class="hide-if-logged-out input-group pull-right">
+            <li class="active hide-if-logged-out pull-right">
+              <a class="history" href="/">Sign out</a>
+            </li>
+
+            <li class="active hide-if-logged-out pull-right">
+              <a href="mailto:benjamin.brown@manchester.ac.uk">Contact us</a>
+            </li>
+
+            <li class="active hide-if-logged-out pull-right" id="help">
+              <a class="history" href="#help">Help</a>
+            </li>
+
+            <!--<div class="hide-if-logged-out input-group pull-right">
               <span class="btn btn-primary btn-padding export-plan" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document" >
                 <span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span>
               </span>
-            </div>
-
-            <div class="hide-if-logged-out input-group pull-right" id="search-box">
-              <input type="text" placeholder="Search for patients..." class="typeahead">
-            </div>
+            </div>-->
           </ul>
         </div>
       </div>
@@ -117,12 +140,12 @@
               <br> Improvement plaN
               <br> GeneratoR
             </h1>
-            <br>
+            <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
             <br>
             <!--<form role="form" _lpchecked="1">-->
             <div class="form-group input-group">
             	<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-              <input type="email" class="form-control" placeholder="Email Adress">
+              <input type="email" class="form-control" placeholder="Email Address">
             </div>
             <div class="form-group input-group">
             	<span class="input-group-addon"><i class="fa fa-key"></i></span>
@@ -130,7 +153,7 @@
             </div>
             <div class="form-group">
               <label class="cr-styled">
-                  <input type="checkbox" ng-model="todo.done">
+                  <input type="checkbox">
                   <i class="fa"></i>
               </label>
               Remember me
@@ -147,9 +170,11 @@
     <div class="starter-template page welcome-page" id="welcome">
       <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
         <div class="user text-center">
-          <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
-
-          <h4 class="user-name">Ben Brown</h4>
+          <!--<img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">-->
+          <i class="fa fa-camera-retro fa-5x"></i>
+          <h3>PINGR</h3>
+          <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
+          <h4 class="user-name">Hello Dr Brown</h4>
 
         </div>
 
@@ -223,9 +248,10 @@
 
       <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
         <div class="user text-center">
-          <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
-
-          <h4 class="user-name">Ben Brown</h4>
+          <i class="fa fa-camera-retro fa-5x"></i>
+          <h3>PINGR</h3>
+          <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
+          <h4 class="user-name">Hello Dr Brown</h4>
 
         </div>
 
@@ -238,7 +264,7 @@
         <ul>
           <li><strong>Diagnosis:</strong> How well a condition is diagnosed.</li>
           <li><strong>Monitoring:</strong> How well a condition is monitored.</li>
-          <li><strong>Treatment:</strong> How well a condition is treated.</li>
+          <li><strong>Control:</strong> How well a condition is treated.</li>
           <li><strong>Exclusions:</strong> Whether patients are appropriately excluded from quality standards.</li>
         </ul>
         <p>Based on this information, PINGR then suggests quality improvement actions a GP practice could undertake as a team / organisation and for individual patients.</p>
@@ -264,9 +290,10 @@
     <div class="starter-template page" id="main-dashboard">
       <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
         <div class="user text-center">
-          <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
-
-          <h4 class="user-name">Ben Brown</h4>
+          <i class="fa fa-camera-retro fa-5x"></i>
+          <h3>PINGR</h3>
+          <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
+          <h4 class="user-name">Hello Dr Brown</h4>
 
         </div>
 
@@ -296,7 +323,7 @@
 
       <div id="modal"></div>
       <div id="thanks-message" class="jumbotron flyover flyover-centered">
-         <h1>Thanks! <i class="fa fa-smile-o text-success"></i></h1>
+         <h1>Saved! <!--<i class="fa fa-smile-o text-success"></i>--></h1>
          <p>
             Thanks for telling us - we'll now use it to improve.
          </p>
@@ -357,7 +384,7 @@
   <!-- /build -->
 
   <script id="checkbox-template" type="x-tmpl-mustache">
-    <label class="cr-styled">
+    <label class="cr-styled" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">
       <input type="checkbox" {{#done}}checked="checked"{{/done}}>
       <i class="fa"></i>
     </label>
@@ -402,9 +429,10 @@
             <h4 class="modal-title" id="modalLabel">{{header}}</h4>
           </div>
           <div class="modal-body">
+          <span style="font-style:italic">{{item}}</span>
           <form>
             <div class = "form-group">
-            <label>Why?</label>
+            <label>Are you sure?</label>
             {{#reasons}}
             {{>item}}
             {{/reasons}}
@@ -413,8 +441,8 @@
             <label>Tell us more</label>
             <textarea rows="3" style="resize:none" class="form-control" placeholder="{{placeholder}}"></textarea>
             </div>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="submit" class="btn btn-primary save-plan">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </form>
           </div>
           <div class="modal-footer">
@@ -430,7 +458,7 @@
         <tr>
           <th>Suggested Actions</th>
           <th style="width: 65px">Agree?</th>
-          <th></th>
+          <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
         </tr>
       </thead>
       <tbody>
@@ -470,7 +498,7 @@
       </thead>
       <tbody>
         {{#patients}}
-        <tr class="list-item">
+        <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
           <td>
             <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
@@ -572,7 +600,7 @@
         <tr>
           <th style="width:70%;">Your Own Actions</th>
           <th>Edit/ Delete</th>
-          <th>Completed</th>
+          <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
         </tr>
       </thead>
       <tbody>
@@ -619,8 +647,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary save-plan">Save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -636,8 +664,8 @@
             <p>Are you sure?</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-danger delete-plan">Delete</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -679,8 +707,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary save-plan">Save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -696,8 +724,8 @@
             <p>Are you sure?</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-danger delete-plan">Delete</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -774,7 +802,7 @@
         <tr>
           <th>Suggested Actions</th>
           <th style="width: 65px">Agree?</th>
-          <th></th>
+          <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
         </tr>
       </thead>
       <tbody>
@@ -971,7 +999,7 @@
   <script id="treatment-panel" type="x-tmpl-mustache">
     <div data-stage="treatment" class="panel panel-treatment panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being treated.">
-        <i class="fa fa-medkit fa-fw"></i>&nbsp; Treatment
+        <i class="fa fa-medkit fa-fw"></i>&nbsp; Control
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
@@ -1043,12 +1071,13 @@
     <ul class="list-unstyled">
       <li><a href="#main/{{id}}/diagnosis">Diagnosis</a></li>
       <li><a href="#main/{{id}}/monitoring">Monitoring</a></li>
-      <li><a href="#main/{{id}}/treatment">Treatment</a></li>
+      <li><a href="#main/{{id}}/treatment">Control</a></li>
       <li><a href="#main/{{id}}/exclusions">Exclusions</a></li>
     </ul>
   </script>
 
   <script id="pathway-picker-item" type="x-tmpl-mustache">
+    {{#isBreakAbove}}<hr>{{/isBreakAbove}}
     <li {{#isSelected}}class="active"{{/isSelected}}>
       <a href="#{{link}}">
         <i class="fa {{faIcon}}"></i>
@@ -1089,7 +1118,7 @@
             <th>NHS number</th>
             {{/isPatientTable}}
             <th>Planned action</th>
-            <th>Completed</th>
+            <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
           </tr>
         </thead>
         <tbody>
