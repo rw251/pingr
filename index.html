@@ -275,6 +275,9 @@
 
       <div class="container-fluid">
         <div class="row">
+          <h2 class="pagetitle" data-toggle="tooltip" data-placement="right"></h2>
+        </div>
+        <div class="row">
           <div class="col-xl-4 col-lg-3" id="left-panel"></div>
           <div class="col-xl-8 col-lg-6" id="mid-panel">
             <!--<div class="row" style="max-height:400px">
@@ -350,7 +353,7 @@
   <script src="script.js?8"></script>
 
   <!-- build:remove:dev -->
-  <script src="//localhost:9091"></script>
+  <!--<script src="//localhost:9091"></script>-->
   <!-- /build -->
 
   <script id="checkbox-template" type="x-tmpl-mustache">
@@ -456,6 +459,7 @@
   </script>
 
   <script id="patient-list" type="x-tmpl-mustache">
+    <h4>{{header}}</h4>
     <table class="table patient-list">
       <thead>
         <tr>
@@ -520,7 +524,6 @@
         </table>
       </div>
     </div>
-
   </script>
 
   <script id="breakdown-table-template" type="x-tmpl-mustache">
@@ -867,22 +870,52 @@
           {{/pathways}}
       </div>
     </div>
-    </script>
+  </script>
 
-    <script id="patients-panel" type="x-tmpl-mustache">
-      <div class="panel panel-default" id="panel-right">
-        <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
-        <i class="fa fa-users fa-fw"></i>&nbsp; Patients
-        </div>
+  <script id="patients-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="{{panelTooltip}}">
+      <i class="fa fa-users fa-fw"></i>&nbsp; {{panelTitle}}
+      </div>
 
-        <div class="panel-body" id="panel-patients">
-          <div id="patients-placeholder">
-          Select a patient group to display affected patients
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <h4>{{header}}</h4>
+            <h6>(click sections to change patient list below)</h6>
           </div>
-          <div id="patients" style="max-height:800px"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12" style="padding:0">
+            <div id="breakdown-chart"></div>
+          </div>
+          <!--<div class="col-sm-10" style="padding:0">
+            <div id="breakdown-table"></div>
+          </div>-->
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div id="patients" style="max-height:800px"></div>
+          </div>
         </div>
       </div>
-    </script>
+    </div>
+  </script>
+
+  <!--<script id="patients-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default" id="panel-right">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
+      <i class="fa fa-users fa-fw"></i>&nbsp; Patients
+      </div>
+
+      <div class="panel-body" id="panel-patients">
+        <div id="patients-placeholder">
+        Select a patient group to display affected patients
+        </div>
+        <div id="patients" style="max-height:800px"></div>
+      </div>
+    </div>
+  </script>-->
 
   <script id="change-bar-number" type="x-tmpl-mustache">
     <span class="pull-right" data-toggle="tooltip" data-placement="bottom" title="Current number of patients meeting this standard and how this has changed from last month">

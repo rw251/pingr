@@ -13,8 +13,12 @@
           ["%",50,50,50,50,50,50,50,50,51,51,51,51,51,51,52,52,51,51,51,50,50,49,49,49,49,49,49,48,47,47,47,47,47,47,47,47,46,47,46,46,46,46,46,45,45,45,45,44,44,44,44,44,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,46,46,46,45,45,45,46,46,46,46,45,45,45,46,46,46],
           ["n",150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,149,149,149,148,148,148,148,148,148,148,148,146,146,146,146,146,146,146,146,146,146,144,144,145,145,145,143,143,143,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,142,142,142,141,141,141,141,139,139,139,139,139,139,139,139,138,138,138,139,139,139,138,136,136,136,136,136,136]
         ],
-        "title" : "Patients who have had BP measured",
-        "header" : "Patients with opportunities for BP measurement",
+        "pageTitle" : "Hypertension – monitoring",
+        "panelTitle" : "Patients who have not had their hypertension monitored",
+        "panelTitleTooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months",
+        "header" : "Current opportunities to monitor hypertension",
+        "patientListHeader" : "Current patients who have not had their hypertension monitored",
+        "patientListHeaderTooltip" :"Patients with potentially undiagnosed hypertension",
         "table-headings" : [
           { "title": "Type" },
           { "title": "n" },
@@ -50,8 +54,12 @@
       "treatment" : {
         "controlled" : 75,
         "uncontrolled" : 50,
-        "title" : "Patients with controlled BP",
-        "header" : "Patients with room for improvement",
+        "pageTitle" : "Hypertension – control",
+        "panelTitle" : "Patients with uncontrolled hypertension",
+        "panelTitleTooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, whose latest blood pressure reading in the last 12 months is not controlled according to their individualised treatment target",
+        "header" : "Current opportunities to control hypertension",
+        "patientListHeader" : "Current patients with uncontrolled hypertension",
+        "patientListHeaderTooltip" :"Patients with potentially undiagnosed hypertension",
         "trend" : [
           ["x","2015-05-01","2015-04-30","2015-04-29","2015-04-28","2015-04-27","2015-04-26","2015-04-25","2015-04-24","2015-04-23","2015-04-22","2015-04-21","2015-04-20","2015-04-19","2015-04-18","2015-04-17","2015-04-16","2015-04-15","2015-04-14","2015-04-13","2015-04-12","2015-04-11","2015-04-10","2015-04-09","2015-04-08","2015-04-07","2015-04-06","2015-04-05","2015-04-04","2015-04-03","2015-04-02","2015-04-01","2015-03-31","2015-03-30","2015-03-29","2015-03-28","2015-03-27","2015-03-26","2015-03-25","2015-03-24","2015-03-23","2015-03-22","2015-03-21","2015-03-20","2015-03-19","2015-03-18","2015-03-17","2015-03-16","2015-03-15","2015-03-14","2015-03-13","2015-03-12","2015-03-11","2015-03-10","2015-03-09","2015-03-08","2015-03-07","2015-03-06","2015-03-05","2015-03-04","2015-03-03","2015-03-02","2015-03-01","2015-02-28","2015-02-27","2015-02-26","2015-02-25","2015-02-24","2015-02-23","2015-02-22","2015-02-21","2015-02-20","2015-02-19","2015-02-18","2015-02-17","2015-02-16","2015-02-15","2015-02-14","2015-02-13","2015-02-12","2015-02-11","2015-02-10","2015-02-09","2015-02-08","2015-02-07","2015-02-06","2015-02-05","2015-02-04","2015-02-03","2015-02-02","2015-02-01"],
           ["%",60,60,60,61,61,61,62,63,64,64,63,63,63,63,65,65,66,67,66,66,66,68,66,68,68,68,69,71,72,73,75,74,73,75,73,73,72,70,73,72,73,74,72,73,74,73,72,70,67,66,67,65,66,63,64,62,63,62,62,58,59,59,59,58,55,52,50,50,47,47,48,48,48,50,50,50,50,50,50,50,51,51,50,50,47,47,48,45,45,42],
@@ -115,8 +123,12 @@
       },
       "exclusions": {
         "n": 45,
-        "title" : "Excluded patients",
+        "pageTitle" : "Hypertension – exclusions",
+        "panelTitle" : "Additional patients who may benefit from exclusion from hypertension quality standards",
+        "panelTitleTooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who may benefit from being excluded from hypertension quality standards",
         "header" : "Reasons for exclusion",
+        "patientListHeader" : "Current patients with opportunities to diagnose hypertension",
+        "patientListHeaderTooltip" :"Patients with potentially undiagnosed hypertension",
         "change" : -10,
         "table-headings": [
           { "title": "Reason" },
@@ -156,8 +168,12 @@
       },
       "diagnosis": {
         "n": 33,
-        "title" : "Patients with potentially undiagnosed conditions",
-        "header" : "Something about diagnosis",
+        "pageTitle" : "Hypertension - diagnosis",
+        "panelTitle" : "Patients with potentially undiagnosed hypertension",
+        "panelTitleTooltip" : "Patients at your practice without a hypertension diagnostic Read code and opportunities to diagnose hypertension",
+        "header" : "Current opportunities to diagnose hypertension",
+        "patientListHeader" : "Current patients with opportunities to diagnose hypertension",
+        "patientListHeaderTooltip" :"Patients with potentially undiagnosed hypertension",
         "change" : 5,
         "table-headings": [
           { "title": "Reason" },
@@ -166,28 +182,28 @@
         ],
         "items": [
           {
-            "name": "HTN",
-            "desc": "Patients who likely have hypertension",
+            "name": "Most likely have hypertension",
+            "desc": "Patients without a hypertension diagnostic Read code with more than 2 consecutive blood pressure readings > 160/100 mmHg in the last 2 years and no recent readings < 140 / 90 mmHg",
             "n": 12,
             "percentage": 36.4,
             "patients":[5558427022,5558488560,5558534144,5558632333,5558649101,5558678386,5558698566,5558701500,5558775716,5558822253,5558833890,5558916157]
           },
           {
-            "name": "CKD",
-            "desc": "Patients who likely have Chronic Kidney Disease",
+            "name": "Need further testing to confirm hypertension",
+            "desc": "Patients without a hypertension diagnostic Read code and at least 1 blood pressure reading > 140/ 90 mmHg in the last 2 years",
             "n": 5,
             "percentage": 15.2,
             "patients": [5558943913,5559033587,5559122609,5559136270,5559154739]
           },
           {
-            "name": "DM",
+            "name": "No reading – Face-to-face",
             "desc": "Patients who likely have Diabetes",
             "n": 8,
             "percentage": 24.2,
             "patients": [5559227708,5559293812,5559296816,5559345201,5559401992,5559490326,5559545413,5559596469]
           },
           {
-            "name": "PROT",
+            "name": "No reading – Non face-to-face",
             "desc": "Patients who likely have Proteinuria",
             "n": 8,
             "percentage": 24.2,
