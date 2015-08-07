@@ -66,7 +66,6 @@
     //Show overview panels
     showOverviewPanels();
     showTeamActionPlanPanel(farRightPanel);
-    populateTeamSuggestedActionsPanel();
   };
 
   //Show the pathway stage for a disease
@@ -84,7 +83,6 @@
     showPatientPanel(pathwayStage, farLeftPanel);
     populatePatientPanel(local.pathwayId, pathwayStage, null);
     showTeamActionPlanPanel(farRightPanel);
-    populateTeamSuggestedActionsPanel();
 
     updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
 
@@ -99,10 +97,8 @@
 
     switchTo121Layout();
 
-    showIndividualActionPlanPanel(farRightPanel, local.pathwayId, pathwayStage);
-    populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, isMultiple);
-    showTestTrendPanel(topRightPanel, pathwayId, pathwayStage);
-    drawTrendChart(patientId, pathwayId);
+    showIndividualActionPlanPanel(farRightPanel, pathwayId, pathwayStage, patientId, isMultiple);
+    showTestTrendPanel(topRightPanel, pathwayId, pathwayStage, patientId);
     showMedicationPanel(bottomRightPanel, pathwayStage, patientId);
   };
 
@@ -110,10 +106,8 @@
   var showIndividualPatientView = function(patientId, pathwayId, pathwayStage, isMultiple){
     local.patientId = patientId;
 
-    showIndividualActionPlanPanel(farRightPanel, pathwayId, pathwayStage);
-    populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, isMultiple);
-    showTestTrendPanel(topRightPanel, pathwayId, pathwayStage);
-    drawTrendChart(patientId, pathwayId);
+    showIndividualActionPlanPanel(farRightPanel, pathwayId, pathwayStage, patientId, isMultiple);
+    showTestTrendPanel(topRightPanel, pathwayId, pathwayStage, patientId);
     showMedicationPanel(bottomRightPanel, pathwayStage, patientId);
   };
 
@@ -127,7 +121,7 @@
       hideAllPanels();
 
       showAllPatientPanel(farLeftPanel);
-      populatePatientPanelSimple();
+      populateAllPatientPanel();
     }
 
     if(patientId){
@@ -837,102 +831,6 @@
     }
 	};
 
-	var showBreakdownPanel = function (pathwayStage, location){
-		local.selected = pathwayStage;
-    local.subselected = null;
-
-		createPanel(breakdownPanel, location,{"pathwayStage" : pathwayStage, "header": local.data[local.pathwayId][pathwayStage] ? local.data[local.pathwayId][pathwayStage].header : ""});
-
-		breakdownTable = $('#breakdown-table');
-
-		location.off('click','.panel-body');
-		location.on('click', '.panel-body', function(){
-			if(!local.chartClicked){
-        /*jshint unused: true*/
-				$('path.c3-arc').attr('class', function(index, classNames) {
-					return classNames.replace(/_unselected_/g, '');
-				});
-        /*jshint unused: false*/
-
-				if(local.charts['breakdown-chart']) local.charts['breakdown-chart'].unselect();
-
-        populatePatientPanel(local.pathwayId, pathwayStage, null);
-        local.subselected = null;
-				//hideAllPanels();
-			}
-			local.chartClicked=false;
-		});
-
-		breakdownTable.on('mouseout', 'tr', function(){
-			if($(this).find('th').length>0) return; //ignore header row
-			local.charts['breakdown-chart'].focus();
-      //$('#breakdown-chart .c3-tooltip-container').hide()
-		}).on('mouseover', 'tr', function(){
-			if($(this).find('th').length>0) return; //ignore header row
-			local.charts['breakdown-chart'].focus($(this).data('subsection'));
-      //$('#breakdown-chart .c3-tooltip-container').show()
-		}).on('click', 'tr', function(){
-			if($(this).find('th').length>0) return; //ignore header row
-			var subselected = $(this).data('subsection');
-			selectPieSlice('breakdown-chart', subselected);
-			populatePatientPanel(local.pathwayId, pathwayStage, subselected);
-			local.subselected = subselected;
-			breakdownTable.find('tr').removeClass('selected');
-			$(this).addClass('selected');
-		});
-
-		destroyCharts(['breakdown-chart']);
-
-    setTimeout(function(){
-  		local.charts['breakdown-chart'] = c3.generate({
-  			bindto: '#breakdown-chart',
-  			tooltip: {
-  				format: {
-            name: function (name) { return name + ':<br>' +local.data[local.pathwayId][local.selected].bdown[name].desc; },
-  					value: function (value, ratio) { //function(value, ratio, id, index) {
-  						return value + ' (' + (ratio * 100).toFixed(2) + '%)';
-  					}
-  				}
-  			},
-  			data: {
-  				columns: local.data[local.pathwayId][pathwayStage].breakdown,
-  				type: 'pie',
-  				selection: { enabled: true },
-  				order: null,
-  				onclick: function (d) {
-  					selectPieSlice('breakdown-chart', d.id);
-  					populatePatientPanel(local.pathwayId, pathwayStage, d.id);
-  					breakdownTable.find('tr').removeClass('selected');
-  					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('selected');
-  					local.subselected = d.id;
-  				},
-  				onmouseover: function(d){
-  					breakdownTable.find('tr').removeClass('tr-hovered');
-  					breakdownTable.find('tr[data-subsection="' + local.data[local.pathwayId][pathwayStage].bdown[d.id].name + '"]').addClass('tr-hovered');
-  				},
-  				onmouseout: function (){
-  					breakdownTable.find('tr').removeClass('tr-hovered');
-  				}
-  			},
-  			pie: {
-  				label: {
-            show: false
-            /*jshint unused: true*/
-  					/*format: function (value, ratio, id) {
-  						return id;// + ' ('+value+')';
-  					}*/
-            /*jshint unused: false*/
-  				}
-  			},
-  			legend: {
-  				show: false
-  			}
-  		});
-    },1);
-
-		populateBreakdownTable(pathwayStage);
-	};
-
   var showTeamActionPlanPanel = function(location){
     createPanel($('#team-action-plan-panel'),location);
 
@@ -1023,9 +921,11 @@
         teamTab.find('.add-plan').click();
       }
     });
+
+    populateTeamSuggestedActionsPanel();
   };
 
-	var showIndividualActionPlanPanel = function(location, pathwayId, pathwayStage) {
+	var showIndividualActionPlanPanel = function(location, pathwayId, pathwayStage, patientId, isMultiple) {
 		createPanel($('#individual-action-plan-panel'),location,{"pathwayStage" : pathwayStage || "default"});
 
 		individualTab = $('#tab-plan-individual');
@@ -1138,10 +1038,14 @@
 
       }
 		});
+
+    populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, isMultiple);
 	};
 
-  var showTestTrendPanel = function(location, pathwayId, pathwayStage){
+  var showTestTrendPanel = function(location, pathwayId, pathwayStage, patientId){
     createPanel(valueTrendPanel, location, {"pathway": local.monitored[pathwayId], "pathwayStage" : pathwayStage});
+
+    drawTrendChart(patientId, pathwayId);
   };
 
   var showMedicationPanel = function(location, pathwayStage, patientId) {
@@ -1149,7 +1053,7 @@
     createPanel(medicationPanel, location, {"areMedications" : medications.length>0, "medications": medications, "pathwayStage" : pathwayStage},{"medicationRow":$('#medication-row').html()});
   };
 
-  var populatePatientPanelSimple = function(){
+  var populateAllPatientPanel = function(){
     var pList=[], i,k, prop;
     for(k=0; k < local.diseases.length; k++){
       for(i in local.categories){
@@ -1364,14 +1268,6 @@
 		}
 	};
 
-	var populateBreakdownTable = function(id){
-		var data = local.data[local.pathwayId][id.toLowerCase()];
-		for(var i = 0 ; i< data.items.length; i++){
-			data.items[i].color = local.colors[i];// local.charts['breakdown-chart'].color(data.items[i].name);
-		}
-		createPanel(breakdownTableTemplate, breakdownTable, data);
-	};
-
 	var highlightOnHoverAndEnableSelectByClick = function(panelSelector) {
 		panelSelector.children('div').removeClass('unclickable').on('mouseover',function(){
 			$(this).removeClass('panel-default');
@@ -1466,10 +1362,7 @@
 	};
 
 	var showOverviewPanels = function(){
-
 		switchTo221Layout();
-
-		updateBreadcrumbs([local.pathwayId]);
 
 		showPanel(local.categories.diagnosis.name, topLeftPanel, true);
 		showPanel(local.categories.monitoring.name, topRightPanel, true);
