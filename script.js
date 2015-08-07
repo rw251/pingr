@@ -898,17 +898,24 @@
 			displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
 		}).on('change', '.btn-toggle input[type=checkbox]', function(){
       updateTeamSapRows();
-    }).on('click', '.btn-yes,.btn-no', function(){
+    }).on('click', '.btn-yes,.btn-no', function(e){
       var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
       var ACTIONID = $(this).closest('tr').data('id');
-      if($(this).hasClass("active")){
+      if($(this).hasClass("active") && other.hasClass("inactive")){
         //unselecting
   			idx = Math.floor(suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
         ignoreAction("team", ACTIONID);
+        other.removeClass("inactive");
+      } else if(!$(this).hasClass("active") && other.hasClass("active")) {
+        e.stopPropagation();
+        e.preventDefault();
+        return;
       } else {
+        $(this).removeClass("inactive");
+
         //unselect other
-        var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
-        other.removeClass("active");
+        other.removeClass("active").addClass("inactive");
         other.find("input[type=checkbox]").prop("checked", false);
 
         //selecting
@@ -1401,6 +1408,9 @@
   				self.addClass('danger');
   			}
       });
+      if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive");
+      }
       if(!any){
         self.removeClass('danger');
         self.removeClass('active');
@@ -1643,7 +1653,7 @@
   };
 
   var launchPatientModal = function(pathwayId, pathwayStage, label, value, justtext){
-    var reasons = [];
+    var reasons = [], header;
     if(justtext!==true && (pathwayStage===local.categories.monitoring.name || pathwayStage===local.categories.treatment.name)) {
       if(pathwayStage===local.categories.monitoring.name) reasons.push({"reason":"Has actually already been monitored","value":"alreadymonitored"});
       else if(pathwayStage===local.categories.treatment.name) reasons.push({"reason":"Is actually treated to target","value":"treated"});
@@ -1656,11 +1666,16 @@
       }
       reasons.push({"reason":"Something else","value":"else"});
     }
-    launchModal({"header" : "Why?", "placeholder":"Please tell us more – whatever your selection above...", "reasons" : reasons},label, value);
+    if(justtext){
+      header = "Disagree with quality standard missed";
+    } else {
+      header = "Disagree with improvement opportunity";
+    }
+    launchModal({"header" : header, "item" : value, "placeholder":"Please tell us more – whatever your selection above...", "reasons" : reasons},label, value);
   };
 
   var launchPatientActionModal = function(label, value){
-    launchModal({"header" : "Disagree with a suggested action", "placeholder":"Please tell us more – whatever your selection above...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
+    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Please tell us more – whatever your selection above...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
   };
 
   /*******************
@@ -2185,6 +2200,8 @@
     //exportPlan
     $('span.export-plan').on('click', exportPlan);
 
+    if(bb.hash !== location.hash) location.hash = bb.hash;
+    loadContent(location.hash, true);
 	};
 
   var loadActionPlan = function(callback) {
@@ -2301,6 +2318,8 @@ $(window).load(function() {
 *** This happens when the page is ready ***
 ******************************************/
 $(document).on('ready', function () {
+  //Grab the hash if exists - IE seems to forget it
+  bb.hash = location.hash;
 	//Load the data then wire up the events on the page
 	bb.init();
 

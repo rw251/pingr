@@ -218,12 +218,12 @@ header {
 	background-color: rgb(244,244,255);
 }
 
-.btn-toggle {
+/*.btn-toggle {
 	opacity:0.5;
-}
+}*/
 
-.btn-toggle.active {
-	opacity:1;
+.btn-toggle.inactive {
+	opacity:0.5;
 }
 
 #breakdown-table tbody tr:hover {
