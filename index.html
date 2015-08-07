@@ -167,20 +167,21 @@
       </div>
     </div>
 
+    <aside id="aside-toggle" class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
+      <div class="user text-center">
+        <!--<img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">-->
+        <i class="fa fa-camera-retro fa-5x"></i>
+        <h3>PINGR</h3>
+        <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
+        <h4 class="user-name">Hello Dr Brown</h4>
+
+      </div>
+
+      <nav class="navigation"></nav>
+
+    </aside>
+
     <div class="starter-template page welcome-page" id="welcome">
-      <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
-        <div class="user text-center">
-          <!--<img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">-->
-          <i class="fa fa-camera-retro fa-5x"></i>
-          <h3>PINGR</h3>
-          <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
-          <h4 class="user-name">Hello Dr Brown</h4>
-
-        </div>
-
-        <nav class="navigation"></nav>
-
-      </aside>
       <div class="container">
         <div class="row">
           <h1>Welcome!</h1>
@@ -214,7 +215,7 @@
     <nav class="navbar navbar-fixed-bottom" id="bottomnavbar">
       <div class="container">
 
-        <div class="collapse navbar-collapse" id="navbar">
+        <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <table style="width:100%">
               <tr>
@@ -246,18 +247,6 @@
 
     <div class="starter-template page" id="help-page">
 
-      <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
-        <div class="user text-center">
-          <i class="fa fa-camera-retro fa-5x"></i>
-          <h3>PINGR</h3>
-          <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
-          <h4 class="user-name">Hello Dr Brown</h4>
-
-        </div>
-
-        <nav class="navigation"></nav>
-
-      </aside>
       <div class="container-fluid">
         <h2>About PINGR</h2>
         <p>PINGR analyses coded data from primary care electronic health records to suggest quality improvements GP practices could make in the way they care for long-term conditions. Health record data are compared against quality standards from the National Institute for Health and Care Excellence (NICE) or the Quality and Outcomes Framework (QOF) according to 4 aspects of care:</p>
@@ -288,17 +277,6 @@
     </div>
 
     <div class="starter-template page" id="main-dashboard">
-      <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
-        <div class="user text-center">
-          <i class="fa fa-camera-retro fa-5x"></i>
-          <h3>PINGR</h3>
-          <p style="font-size: 0.9em;font-style: italic;">Generating quality improvement actions for GP practices</p>
-          <h4 class="user-name">Hello Dr Brown</h4>
-
-        </div>
-
-        <nav class="navigation"></nav>
-      </aside>
 
       <div class="container-fluid">
         <div class="row">
@@ -915,7 +893,7 @@
         </div>
         <div class="row">
           <div class="col-sm-12" style="padding:0">
-            <div id="breakdown-chart"></div>
+            <div style="height:200px" id="breakdown-chart"></div>
           </div>
           <!--<div class="col-sm-10" style="padding:0">
             <div id="breakdown-table"></div>
@@ -923,27 +901,24 @@
         </div>
         <div class="row">
           <div class="col-sm-12">
-            <div id="patients" style="max-height:800px"></div>
+            <div id="patients" style="max-height:400px"></div>
           </div>
         </div>
       </div>
     </div>
   </script>
 
-  <!--<script id="patients-panel" type="x-tmpl-mustache">
+  <script id="all-patients-panel" type="x-tmpl-mustache">
     <div class="panel panel-default" id="panel-right">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
+      <div class="panel-heading">
       <i class="fa fa-users fa-fw"></i>&nbsp; Patients
       </div>
 
       <div class="panel-body" id="panel-patients">
-        <div id="patients-placeholder">
-        Select a patient group to display affected patients
-        </div>
         <div id="patients" style="max-height:800px"></div>
       </div>
     </div>
-  </script>-->
+  </script>
 
   <script id="change-bar-number" type="x-tmpl-mustache">
     <span class="pull-right" data-toggle="tooltip" data-placement="bottom" title="Current number of patients meeting this standard and how this has changed from last month">
