@@ -169,10 +169,9 @@
       "diagnosis": {
         "n": 33,
         "pageTitle" : "Hypertension - diagnosis",
-        "panelTitle" : "Patients with potentially undiagnosed hypertension",
+        "panelTitle" : "Undiagnosed hypertension",
         "panelTitleTooltip" : "Patients at your practice without a hypertension diagnostic Read code and opportunities to diagnose hypertension",
-        "header" : "Current opportunities to diagnose hypertension",
-        "patientListHeader" : "Current patients with opportunities to diagnose hypertension",
+        "header" : "Patients with potential opportunities to diagnose hypertension",
         "patientListHeaderTooltip" :"Patients with potentially undiagnosed hypertension",
         "change" : 5,
         "table-headings": [
@@ -182,14 +181,14 @@
         ],
         "items": [
           {
-            "name": "Most likely have hypertension",
+            "name": "Likely have hypertension",
             "desc": "Patients without a hypertension diagnostic Read code with more than 2 consecutive blood pressure readings > 160/100 mmHg in the last 2 years and no recent readings < 140 / 90 mmHg",
             "n": 12,
             "percentage": 36.4,
             "patients":[5558427022,5558488560,5558534144,5558632333,5558649101,5558678386,5558698566,5558701500,5558775716,5558822253,5558833890,5558916157]
           },
           {
-            "name": "Need further testing to confirm hypertension",
+            "name": "Require further testing",
             "desc": "Patients without a hypertension diagnostic Read code and at least 1 blood pressure reading > 140/ 90 mmHg in the last 2 years",
             "n": 5,
             "percentage": 15.2,
