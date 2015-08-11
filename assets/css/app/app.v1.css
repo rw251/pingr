@@ -1,9 +1,10 @@
 @import url('../fontawesome/font-awesome.min.css'); /*Icons Fonts*/
+@import url('../fontpingr/font-pingr.css'); /*Icons Fonts*/
 
 body{
 	background-color:#f9f9f9;
 	color:#85868d;
-	font-family: 'Raleway', sans-serif;
+	font-family: 'Roboto', sans-serif;
 	position:relative;}
 
 body, html{

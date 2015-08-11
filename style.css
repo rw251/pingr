@@ -8,6 +8,10 @@ body.qof {
   background-color: #ddf9f9;
 }
 
+.info-button {
+  color: cornflowerblue;
+}
+
 .navigation ul li ul li.active a  {
   color: white;
 }
@@ -40,24 +44,22 @@ body.qof {
     width: 25%;
   }
 }
+.btn-copy {
+  color:orange;
+}
 /* thanks fly in message */
 .flyover {
-   left: 150%;
-   overflow: hidden;
-   position: fixed;
-   width: 50%;
-   opacity: 0.9;
-   z-index: 1050;
-   /*transition: left 0.6s ease-out 0s;*/
-}
-
-.flyover-centered {
-   top: 50%;
-   transform: translate(-50%, -50%);
+  position: fixed;
+  left:150%;
+  bottom: 20px;
+  padding: 5px 15px;
+  z-index:999;
+  opacity: 0.8;
 }
 
 .flyover.in {
-   left: 50%;
+   left: auto;
+   right: 20px;
 }
 
 .hide-if-logged-out {
