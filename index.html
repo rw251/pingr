@@ -16,7 +16,7 @@
   <!-- Bootstrap Select2 -->
   <link href="assets/css/select2/select2.min.css" rel="stylesheet" />
   <!-- Fonts  -->
-  <link href='https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,300' rel='stylesheet' type='text/css'>
   <!-- Base Brio Styling  -->
   <link href="assets/css/app/app.v1.css" rel="stylesheet">
   <!-- My styling -->
@@ -169,7 +169,7 @@
     </div>
 
     <aside id="aside-toggle" class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
-      <div class="user text-center">
+      <div class="user text-center clickable">
         <!--<img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">-->
         <!--<i class="fa fa-camera-retro fa-2x"></i>-->
         <img alt="..." width="52" height="52" src="assets/images/icons/PINGR_logo-52px.png">
@@ -302,8 +302,8 @@
       </div>
 
       <div id="modal"></div>
-      <div id="thanks-message" class="jumbotron flyover flyover-centered">
-         <h1>Saved! <!--<i class="fa fa-smile-o text-success"></i>--></h1>
+      <div id="saved-message" class="flyover tooltip-inner">
+         <h1>Saved! </h1>
       </div>
     </div>
   </section>
@@ -361,10 +361,15 @@
   <!-- /build -->
 
   <script id="checkbox-template" type="x-tmpl-mustache">
+    {{^done}}
     <label class="cr-styled" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">
       <input type="checkbox" {{#done}}checked="checked"{{/done}}>
       <i class="fa"></i>
     </label>
+    {{/done}}
+    {{#done}}
+    <button class="btn btn-warning btn-undo" data-toggle="tooltip" data-placement="bottom" title="You marked this as complete - click to undo">Undo</button>
+    {{/done}}
   </script>
 
   <script id="suggested-plan-item"  type="x-tmpl-mustache">
@@ -374,11 +379,11 @@
       </td>
       <td>
         <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with this action">
             <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
             <span class="fa fa-thumbs-up"></span>
           </label>
-          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}">
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with this action">
             <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
             <span class="fa fa-thumbs-down"></span>
           </label>
@@ -453,11 +458,11 @@
     <th class="sortable {{direction}}" title="Order patients">
       {{title}}
       {{#isSorted}}
-      {{#isAsc}}<i class="fa fa-caret-up"></i>{{/isAsc}}
-      {{^isAsc}}<i class="fa fa-caret-down"></i>{{/isAsc}}
+      {{#isAsc}}<i class="fa fa-sort-asc"></i>{{/isAsc}}
+      {{^isAsc}}<i class="fa fa-sort-desc"></i>{{/isAsc}}
       {{/isSorted}}
       {{^isSorted}}
-      <i class="fa fa-caret-down fa-caret-invisible">
+      <i class="fa fa-sort">
       {{/isSorted}}
     </th>
   </script>
@@ -480,7 +485,7 @@
         {{#patients}}
         <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
           <td>
-            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
             </button>
             {{nhsNumber}}
@@ -502,7 +507,7 @@
         {{#patients}}
         <tr class="list-item">
           <td>
-            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
             </button>
             {{nhsNumber}}
@@ -605,6 +610,7 @@
     <div class="panel panel-default">
       <div class="panel-heading clearfix">
         <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions
+        <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated from recommended actions in NICE clinical guidelines, peer-reviewed academic journals, and other users of this application"></i>
       </div>
 
       <div class="panel-body" id="tab-plan-team">
@@ -638,9 +644,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+            <h4 class="modal-title" id="deleteModalLabel">Delete a suggested action you added</h4>
           </div>
           <div class="modal-body">
+            <span id="team-delete-item" style="font-style:italic"></span>
             <p>Are you sure?</p>
           </div>
           <div class="modal-footer">
@@ -654,21 +661,17 @@
 
   <script id="individual-action-plan-panel" type="x-tmpl-mustache">
     <div class="panel panel-{{pathwayStage}}">
+      {{^noHeader}}
       <div class="panel-heading clearfix">
         <i class="fa fa-list-ul fa-fw"></i>&nbsp; Improvement actions
       </div>
+      {{/noHeader}}
 
       <div class="panel-body" id="tab-plan-individual">
         <div id="advice-placeholder">
           Select an individual patient from the patient panel to view advice
         </div>
         <div id="advice-list"></div>
-        <!--<div id="advice" class="row">
-          <div class="col-sm-6" id="advice-list">
-          </div>
-          <div class="col-sm-6" id="patient-info">
-          </div>
-        </div>-->
         <div id="personalPlanIndividual"></div>
       </div>
     </div>
@@ -698,35 +701,24 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+            <h4 class="modal-title" id="deleteModalLabel">Delete a suggested action you added</h4>
           </div>
           <div class="modal-body">
+            <span id="individual-delete-item" style="font-style:italic"></span>
             <p>Are you sure?</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger delete-plan">Delete</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
     </div>
   </script>
 
-  <script id="individual-panel" type="x-tmpl-mustache">
-    {{#isMultiple}}
-    <div class="alert alert-info clickable" role="alert" data-id={{patientId}}>
-      <strong>This patient appears on multiple pathways - click to view</strong>
-    </div>
-    {{/isMultiple}}
+  <script id="qual-standard" type="x-tmpl-mustache">
     <div id="individual-panel-classification" class="panel panel-default panel-grey">
-      <div class="panel-body">
-        <h4>Patient <strong>{{nhsNumber}}</strong>
-          <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
-            <span class="fa fa-clipboard"></span>
-          </button>
-        </h4>
-      </div>
-      <table class="table table-minimal">
+      <table class="table table-minimal" data-is-classification>
       <thead>
       <tr>
         <th>Improvement opportunity</th>
@@ -735,14 +727,14 @@
       </thead>
       <tbody>
       <tr>
-        <td style="font-size:1.25em">{{section.name}}</td>
+        <td>{{section.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
               <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}">
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
               <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
@@ -760,14 +752,14 @@
       </thead>
       <tbody>
       <tr>
-        <td style="font-size:1.25em">{{category.name}}</td>
+        <td>{{category.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}">
               <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}">
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}">
               <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
@@ -777,10 +769,21 @@
       </tbody>
       </table>
     </div>
+  </script>
+
+  <script id="individual-panel" type="x-tmpl-mustache">
+    {{#isMultiple}}
+    <div class="alert alert-info clickable" role="alert" data-id={{patientId}}>
+      <strong>This patient appears on multiple pathways - click to view</strong>
+    </div>
+    {{/isMultiple}}
+
     <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
-          <th>Suggested by PINGR</th>
+          <th>Suggested Actions
+            <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated by analysing data from the patients’ Electronic Health Records, then linking them to appropriate recommendations in NICE clinical guidelines and the British National Formulary."></i>
+          </th>
           <th style="width: 65px">Agree?</th>
           <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
         </tr>
@@ -812,9 +815,11 @@
 
   <script id="value-trend-panel" type="x-tmpl-mustache">
     <div class="panel panel-{{pathwayStage}}">
+      {{^noHeader}}
       <div class="panel-heading">
         <i class="fa fa-line-chart fa-fw"></i>&nbsp; {{pathway}}
       </div>
+      {{/noHeader}}
       <div class="panel-body" style="max-height:380px">
         <div id="chart-demo-trend" style="max-height:100px"></div>
       </div>
@@ -831,9 +836,11 @@
 
   <script id="medications-panel" type="x-tmpl-mustache">
     <div class="panel panel-{{pathwayStage}}">
+      {{^noHeader}}
       <div class="panel-heading">
         <i class="fa fa-file-text fa-fw"></i>&nbsp; Medications
       </div>
+      {{/noHeader}}
       <div class="panel-body" style="max-height:380px">
       {{#areMedications}}
         <table class="table">
@@ -858,6 +865,25 @@
     </div>
   </script>
 
+  <script id="patient-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      <div class="panel-heading">
+        <!--<i class="fa fa-file-text fa-fw"></i>-->&nbsp; Patient {{nhsNumber}}
+        <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+          <span class="fa fa-clipboard"></span>
+        </button>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div id="patient-panel-left" class="col-sm-6">
+          </div>
+          <div id="patient-panel-right" class="col-sm-6">
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
   <script id="pathway-panel-radio" type="x-tmpl-mustache">
     <div class="radio">
       <label>
@@ -868,9 +894,9 @@
 
   <script id="pathway-panel" type="x-tmpl-mustache">
     <div class="panel panel-default">
-      <div class="panel-heading">
+      <!--<div class="panel-heading">
         <i class="fa fa-sitemap fa-fw"></i>&nbsp; Pathway
-      </div>
+      </div>-->
       <div class="panel-body">
       <p>This patient flags multiple pathways - please click to select:</p>
           {{#pathways}}
@@ -1046,6 +1072,7 @@
 
   <script id="pathway-picker-sub-item" type="x-tmpl-mustache">
     <ul class="list-unstyled">
+      <li><a href="#main/{{id}}">Overview</a></li>
       <li><a href="#main/{{id}}/diagnosis">Diagnosis</a></li>
       <li><a href="#main/{{id}}/monitoring">Monitoring</a></li>
       <li><a href="#main/{{id}}/treatment">Control</a></li>

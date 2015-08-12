@@ -393,7 +393,7 @@
     "copd": {
       "disease": "copd",
       "display-name": "COPD (Coming soon!)",
-      "icon":"fa-bed",
+      "icon":"PINGR-COPD_o",
       "link" : "welcome",
       "monitoring": {},
       "treatment": {},
@@ -403,7 +403,7 @@
     "ckd": {
       "disease": "ckd",
       "display-name": "Kidney Health (Coming soon!)",
-      "icon":"fa-medkit",
+      "icon":"PINGR-renal_k_o",
       "link" : "welcome",
       "monitoring": {},
       "treatment": {},

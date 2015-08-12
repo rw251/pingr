@@ -1,0 +1,76 @@
+@font-face {
+	font-family: 'PINGR';
+	src:url('../../fonts/pingr/PINGR.eot?-d1vmgc');
+	src:url('../../fonts/pingr/PINGR.eot?#iefix-d1vmgc') format('embedded-opentype'),
+		url('../../fonts/pingr/PINGR.ttf?-d1vmgc') format('truetype'),
+		url('../../fonts/pingr/PINGR.woff?-d1vmgc') format('woff'),
+		url('../../fonts/pingr/PINGR.svg?-d1vmgc#PINGR') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="PINGR-"], [class*=" PINGR-"] {
+	font-family: 'PINGR';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.PINGR-COPD:before {
+	content: "\e600";
+}
+.PINGR-COPD_o:before {
+	content: "\e601";
+}
+.PINGR-DM_noSym:before {
+	content: "\e602";
+}
+.PINGR-DM_noSym_o:before {
+	content: "\e603";
+}
+.PINGR-DM_sym:before {
+	content: "\e604";
+}
+.PINGR-DM_sym_o:before {
+	content: "\e605";
+}
+.PINGR-DM_symBold:before {
+	content: "\e606";
+}
+.PINGR-DM_symBold_o:before {
+	content: "\e607";
+}
+.PINGR-DM_symNoSlash:before {
+	content: "\e608";
+}
+.PINGR-DM_symNoSlash_o:before {
+	content: "\e609";
+}
+.PINGR-Exclusions:before {
+	content: "\e60a";
+}
+.PINGR-renal_k:before {
+	content: "\e60b";
+}
+.PINGR-renal_k_o:before {
+	content: "\e60c";
+}
+.PINGR-renal_kNk:before {
+	content: "\e60d";
+}
+.PINGR-renal_kNk_o:before {
+	content: "\e60e";
+}
+.PINGR-renal_kNu:before {
+	content: "\e60f";
+}
+.PINGR-renal_kNu_o:before {
+	content: "\e610";
+}
