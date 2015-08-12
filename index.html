@@ -379,11 +379,11 @@
       </td>
       <td>
         <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with this action">
             <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
             <span class="fa fa-thumbs-up"></span>
           </label>
-          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with this action">
             <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
             <span class="fa fa-thumbs-down"></span>
           </label>
@@ -641,9 +641,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+            <h4 class="modal-title" id="deleteModalLabel">Delete a suggested action you added</h4>
           </div>
           <div class="modal-body">
+            <span id="team-delete-item" style="font-style:italic"></span>
             <p>Are you sure?</p>
           </div>
           <div class="modal-footer">
@@ -697,14 +698,15 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+            <h4 class="modal-title" id="deleteModalLabel">Delete a suggested action you added</h4>
           </div>
           <div class="modal-body">
+            <span id="individual-delete-item" style="font-style:italic"></span>
             <p>Are you sure?</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger delete-plan">Delete</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -889,9 +891,9 @@
 
   <script id="pathway-panel" type="x-tmpl-mustache">
     <div class="panel panel-default">
-      <div class="panel-heading">
+      <!--<div class="panel-heading">
         <i class="fa fa-sitemap fa-fw"></i>&nbsp; Pathway
-      </div>
+      </div>-->
       <div class="panel-body">
       <p>This patient flags multiple pathways - please click to select:</p>
           {{#pathways}}
