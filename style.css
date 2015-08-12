@@ -544,7 +544,8 @@ th,td {
 }
 
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
-  width: 150px;
+  width: 400px;
+  height: 36px;
 }
 
 .twitter-typeahead {

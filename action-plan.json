@@ -4,9 +4,9 @@
       "team" : ["0002","0003","0004","0005","0009","0012"],
       "monitoring": {
         "individual": {
-          "No opportunities": ["0013","0014","0015","0016","0017","0018"],
-          "Non face-to-face": ["0019","0020","0021","0022"],
-          "Face-to-face": ["0023","0024","0025","0026","0027"]
+          "No opportunities": ["0013","0014","0015"],
+          "Non face-to-face": ["0016","0020","0014","0015"],
+          "Face-to-face": ["0026","0016","0020","0014","0015"]
         }
       },
       "treatment": {
@@ -34,9 +34,10 @@
       "diagnosis": {
         "individual": {
           "Likely have hypertension":  ["0051","0052"],
-          "Require further testing":  ["0051","0052"],
-          "No reading – Face-to-face": [],
-          "No reading – Non face-to-face": []
+          "Require further testing to confirm hypertension":  ["0051","0052"],
+          "No reading - no opportunities": ["0013","0014","0017"],
+          "No reading – non face-to-face opportunities": ["0016","0020","0014","0017"],
+          "No reading – face-to-face opportunities": ["0026","0016","0020","0014","0017"]
         }
       }
     },
@@ -134,20 +135,20 @@
     "0010":{"text":"Generate a list of patients who regularly attend and do not have a blood pressure measurement and circulate to practice doctors or administrative staff to highlight when these patients are attending in advance."},
     "0011":{"text":"Ensure all consulting rooms have electronic BP machines so it is quicker to take a measurement than using a manual sphygmomanometer."},
     "0012":{"text":"Introduce an ambulatory blood pressure monitoring service – often high blood pressure readings taken in surgery are normal at home"},
-    "0013":{"text":"Check this patient is still registered at your practice."},
-    "0014":{"text":"Check this patient is still alive."},
-    "0015":{"text":"Check this patient still lives in your area – be aware that writing a letter may result in returned post."},
-    "0016":{"text":"Invite this patient via letter, telephone or text for a blood pressure check <a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>."},
-    "0017":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0013":{"text":"Check this patient is still at your practice:<ul><li>Have they registered elsewhere?</li><li>Do they still live in your catchment area?</li><li>Are they still alive?</li></ul>"},
+    "0014":{"text":"Ask the patient to send in blood pressure readings they could take themselves at home, work, or elsewhere."},
+    "0015":{"text":"Exclude this patient from hypertension quality standards using the following Read codes:<ul><li>[COPY:9h32] for 'informed dissent'</li><li>[COPY:8I3Y] for 'blood pressure procedure refused' (e.g. patients who have been recorded as refusing to attend review on at least three occasions during the financial year)</li><li>[COPY:212K] or [COPY:21261] for 'hypertension resolved'</li><li>[COPY:9h31] for 'patient unsuitable' (e.g. patients with a terminal illness or extreme frailty – please also add a more specific diagnosis Read code; or patients who have been diagnosed or registered with your practice in the last 3 months)</li></ul>"},
+    "0016":{"text":"Invite this patient via letter, telephone or text message for a blood pressure check <!--<a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>-->."},
+    "0017":{"text":"Exclude this patient from hypertension quality standards using the following Read codes:<ul><li>[COPY:9h32] for 'informed dissent'</li><li>[COPY:8I3Y] for 'blood pressure procedure refused' (e.g. patients who have been recorded as refusing to attend review on at least three occasions during the financial year)</li><li>[COPY:9h31] for 'patient unsuitable' (e.g. patients with a terminal illness or extreme frailty – please also add a more specific diagnosis Read code; or patients who have been registered with your practice in the last 3 months)</li></ul>"},
     "0018":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
     "0019":{"text":"Invite this patient via letter or telephone for a blood pressure check."},
-    "0020":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
-    "0021":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
+    "0020":{"text":"Put a reminder on this patient’s prescription to book in for a blood pressure check."},
+    "0021":{"text":""},
     "0022":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
-    "0023":{"text":"Invite this patient via letter, telephone or text for a blood pressure check."},
+    "0023":{"text":""},
     "0024":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
-    "0025":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
-    "0026":{"text":"Put an alert on this patient’s record to remind the next person they see to take their blood pressure."},
+    "0025":{"text":""},
+    "0026":{"text":"Put a note on this patient’s record to remind the next clinician they see to take their blood pressure <br> e.g. [COPY: 'PLEASE MEASURE THIS PATIENT'S BLOOD PRESSURE NEXT TIME THEY ARE SEEN']."},
     "0027":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
     "0028":{"text":"[MED-SUGGESTION]"},
     "0029":{"text":"Lifetsyle suggestions<ul><li>Diet – low salt (&lt;3g per day) (<a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">evidence</a>.), high potassium. Patient resources: DASH diet, low salt diet</li><li>Exercise</li><li>Lose weight</li><li>Stop smoking</li></ul>"},
@@ -172,8 +173,8 @@
     "0048":{"text":"Do something else"},
     "0049":{"text":"Do something else else"},
     "0050":{"text":"Add code [COPY:9h31.] (patient is unsuitable)"},
-    "0051":{"text":"Add a <strong>diagnostic code</strong> for hypertension starting G2 [COPY]"},
-    "0052":{"text":"Use <strong>home blood pressure readings</strong> to confirm a diagnosis of hypertension – either using the patient’s or the practice’s sphygmomanometer"},
+    "0051":{"text":"Add a diagnostic code for hypertension e.g. [COPY: G2]"},
+    "0052":{"text":"Use home blood pressure readings to confirm a diagnosis of hypertension – either advise the patient to buy a sphygmomanometer or use the practice’s Ambulatory Blood Pressure Machine"},
     "0053":{"text":"Exception report?"},
     "0054":{"text":"Likely already has CKD"},
     "0055":{"text":"Needs further testing<ul><li>To confirm diagnosis</li><li>To monitor</li></ul>"},
@@ -192,14 +193,14 @@
     "0068":{"text":"Check this patient is still registered at your practice."},
     "0069":{"text":"Check this patient is still alive."},
     "0070":{"text":"Check this patient still lives in your area – writing a letter may result in returned post."},
-    "0071":{"text":"Invite this patient via letter, telephone or text for a blood pressure check <a href=\"letter.docx\" target=\"_blank\">Letter Template.</a>."},
+    "0071":{"text":""},
     "0072":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
     "0073":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
     "0074":{"text":"Invite this patient via letter or telephone for a blood pressure check."},
     "0075":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
     "0076":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
     "0077":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
-    "0078":{"text":"Invite this patient via letter, telephone or text for a blood pressure check."},
+    "0078":{"text":""},
     "0079":{"text":"Put a reminder note on this patient’s prescription to book in for a blood pressure check."},
     "0080":{"text":"Ask the patient to send in their blood pressure readings they have taken at home or at the pharmacy or work or elsewhere."},
     "0081":{"text":"Put an alert on this patient’s record to remind the next person they see to take their blood pressure."},
