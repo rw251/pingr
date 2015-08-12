@@ -35,7 +35,7 @@
           },
           {
             "name": "Face-to-face",
-            "desc": "Patients who have seen a clinician in GP practice",
+            "desc": "Patients who have seen a clinician in the practice",
             "n": 12,
             "percentage": 16.7,
             "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
@@ -43,7 +43,7 @@
           },
           {
             "name": "Non face-to-face",
-            "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, picking up repeat prescriptions, letters",
+            "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
             "n": 20,
             "percentage": 27.8,
             "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
@@ -171,7 +171,7 @@
         "pageTitle" : "Hypertension - diagnosis",
         "panelTitle" : "Undiagnosed hypertension",
         "panelTitleTooltip" : "Patients at your practice without a hypertension diagnostic Read code and opportunities to diagnose hypertension",
-        "header" : "Patients with potential opportunities to diagnose hypertension",
+        "header" : "Patients with current opportunities to diagnose hypertension",
         "patientListHeaderTooltip" :"Patients with potentially undiagnosed hypertension",
         "change" : 5,
         "table-headings": [
@@ -188,25 +188,32 @@
             "patients":[5558427022,5558488560,5558534144,5558632333,5558649101,5558678386,5558698566,5558701500,5558775716,5558822253,5558833890,5558916157]
           },
           {
-            "name": "Require further testing",
+            "name": "Require further testing to confirm hypertension",
             "desc": "Patients without a hypertension diagnostic Read code and at least 1 blood pressure reading > 140/ 90 mmHg in the last 2 years",
             "n": 5,
             "percentage": 15.2,
             "patients": [5558943913,5559033587,5559122609,5559136270,5559154739]
           },
           {
-            "name": "No reading – Face-to-face",
-            "desc": "Patients who likely have Diabetes",
-            "n": 8,
-            "percentage": 24.2,
-            "patients": [5559227708,5559293812,5559296816,5559345201,5559401992,5559490326,5559545413,5559596469]
+            "name": "No reading - no opportunities",
+            "desc": "Patients aged 45 and over that have no blood pressure measurement record in the last 5 years and had no contact with the practice",
+            "n": 4,
+            "percentage": 12.1,
+            "patients": [5559919369,5559995772,5559545413,5559596469]
           },
           {
-            "name": "No reading – Non face-to-face",
-            "desc": "Patients who likely have Proteinuria",
-            "n": 8,
-            "percentage": 24.2,
-            "patients": [5559648060,5559718903,5559766361,5559804595,5559869820,5559893119,5559919369,5559995772]
+            "name": "No reading – face-to-face opportunities",
+            "desc": "Patients aged 45 and over that have no blood pressure measurement record in the last 5 years but have seen a clinician in the practice",
+            "n": 6,
+            "percentage": 18.1,
+            "patients": [5559227708,5559293812,5559296816,5559345201,5559401992,5559490326]
+          },
+          {
+            "name": "No reading – non face-to-face opportunities",
+            "desc": "Patients aged 45 and over that have no blood pressure measurement record in the last 5 years but have had non face-to-face contact e.g. telephone calls, picking up repeat prescriptions, letters",
+            "n": 6,
+            "percentage": 18.1,
+            "patients": [5559648060,5559718903,5559766361,5559804595,5559869820,5559893119]
           }
         ]
       }

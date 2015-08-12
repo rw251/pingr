@@ -1525,12 +1525,12 @@
 
     //Wire up any clipboard stuff in the suggestions
     $('#advice-list').find('span:contains("[COPY")').each(function(){
-      var html = $(this).text();
+      var html = $(this).html();
       $(this).html(html.replace(/\[COPY:([^\]]*)\]/g,'<button type="button" data-clipboard-text="$1" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span> $1</button>'));
     });
 
     $('#advice-list').find('span:contains("[MED-SUGGESTION")').each(function(){
-      var html = $(this).text();
+      var html = $(this).html();
       var suggestion = Math.random() <0.33 ? "Increase Ramipril to 10mg per day" : (Math.random() < 0.5 ? "Consider adding an ACE inhibior" : "Consider adding a thiazide-like diuretic");
       $(this).html(html.replace(/\[MED\-SUGGESTION\]/g,suggestion));
     });
@@ -1649,7 +1649,7 @@
   };
 
   var launchTeamModal = function(label, value){
-    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Please tell us more – whatever your selection above...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
+    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Enter free-text here...", "reasons" : [{"reason":"We've already done this","value":"done"},{"reason":"It wouldn't work","value":"nowork"},{"reason":"Other","value":"else"}]},label, value);
   };
 
   var launchPatientModal = function(pathwayId, pathwayStage, label, value, justtext){
@@ -1671,11 +1671,11 @@
     } else {
       header = "Disagree with improvement opportunity";
     }
-    launchModal({"header" : header, "item" : value, "placeholder":"Please tell us more – whatever your selection above...", "reasons" : reasons},label, value);
+    launchModal({"header" : header, "item" : value, "placeholder":"Provide more information here...", "reasons" : reasons},label, value);
   };
 
   var launchPatientActionModal = function(label, value){
-    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Please tell us more – whatever your selection above...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
+    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Provide more information here...", "reasons" : [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}]},label, value);
   };
 
   /*******************

@@ -304,9 +304,6 @@
       <div id="modal"></div>
       <div id="thanks-message" class="jumbotron flyover flyover-centered">
          <h1>Saved! <!--<i class="fa fa-smile-o text-success"></i>--></h1>
-         <p>
-            Thanks for telling us - we'll now use it to improve.
-         </p>
       </div>
     </div>
   </section>
@@ -409,16 +406,19 @@
             <h4 class="modal-title" id="modalLabel">{{header}}</h4>
           </div>
           <div class="modal-body">
+          <label>You have disagreed with the following suggested action:</label>
+          <p></p>
           <span style="font-style:italic">{{item}}</span>
           <form>
             <div class = "form-group">
-            <label>Are you sure?</label>
+            <p></p>
+            <label>Why?</label>
             {{#reasons}}
             {{>item}}
             {{/reasons}}
             </div>
             <div class = "form-group">
-            <label>Tell us more</label>
+            <label>Please tell us more - whatever your selection above:</label>
             <textarea rows="3" style="resize:none" class="form-control" placeholder="{{placeholder}}"></textarea>
             </div>
             <button type="submit" class="btn btn-primary save-plan">Save</button>
@@ -436,7 +436,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Suggested actions</th>
+          <th>Suggested by PINGR</th>
           <th style="width: 65px">Agree?</th>
           <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
         </tr>
@@ -578,7 +578,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th style="width:70%;">Your Own Actions</th>
+          <th style="width:70%;">Suggested by you</th>
           <th>Edit/ Delete</th>
           <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
         </tr>
@@ -604,7 +604,7 @@
   <script id="team-action-plan-panel" type="x-tmpl-mustache">
     <div class="panel panel-default">
       <div class="panel-heading clearfix">
-        <i class="fa fa-list-ul fa-fw"></i>&nbsp; Suggested action plan
+        <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions
       </div>
 
       <div class="panel-body" id="tab-plan-team">
@@ -655,7 +655,7 @@
   <script id="individual-action-plan-panel" type="x-tmpl-mustache">
     <div class="panel panel-{{pathwayStage}}">
       <div class="panel-heading clearfix">
-        <i class="fa fa-list-ul fa-fw"></i>&nbsp; Suggested action plan
+        <i class="fa fa-list-ul fa-fw"></i>&nbsp; Improvement actions
       </div>
 
       <div class="panel-body" id="tab-plan-individual">
@@ -780,7 +780,7 @@
     <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
-          <th>Suggested Actions</th>
+          <th>Suggested by PINGR</th>
           <th style="width: 65px">Agree?</th>
           <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
         </tr>
@@ -960,7 +960,7 @@
   <script id="monitoring-panel" type="x-tmpl-mustache">
     <div data-stage="monitoring" class="panel panel-monitoring panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being monitored.">
-        <i class="fa fa-stethoscope fa-fw"></i>&nbsp; Monitoring
+        <!--<i class="fa fa-stethoscope fa-fw">--></i>&nbsp; Monitoring
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
@@ -976,7 +976,7 @@
   <script id="treatment-panel" type="x-tmpl-mustache">
     <div data-stage="treatment" class="panel panel-treatment panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being treated.">
-        <i class="fa fa-medkit fa-fw"></i>&nbsp; Control
+        <!--<i class="fa fa-medkit fa-fw">--></i>&nbsp; Control
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
@@ -992,7 +992,7 @@
   <script id="diagnosis-panel" type="x-tmpl-mustache">
     <div data-stage="diagnosis" class="panel panel-diagnosis panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being diagnosed.">
-        <i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp; Diagnosis
+        <!--<i class="fa fa-exclamation-triangle fa-fw">--></i>&nbsp; Diagnosis
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
@@ -1008,7 +1008,7 @@
   <script id="exclusion-panel" type="x-tmpl-mustache">
     <div data-stage="exclusions" class="panel panel-exclusions panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="Whether patients are appropriately excluded from {{pathway}} quality standards.">
-        <i class="fa fa-times fa-fw"></i>&nbsp; Exclusions
+        <!--<i class="fa fa-times fa-fw">--></i>&nbsp; Exclusions
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
