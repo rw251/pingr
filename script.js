@@ -116,6 +116,8 @@
     var medPanel = createMedicationPanel(pathwayStage, patientId);
     $('#patient-panel-left').html("").append(qualPanel).append(trendPanel).append(medPanel);
 
+    wireUpQualStan(pathwayId, pathwayStage);
+
     drawTrendChart(patientId, pathwayId);
     //showTestTrendPanel($('#patient-panel-left'), pathwayId, pathwayStage, patientId);
     //showMedicationPanel(bottomRightPanel, pathwayStage, patientId);
@@ -287,10 +289,13 @@
       return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.item === item;
     });
 
+    var log = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
+
     if(items.length===1) {
       items[0].agree = agree;
+      items[0].history.push(log);
     } else if(items.length==0){
-      obj.agrees[patientId].push({"pathwayId":pathwayId, "pathwayStage":pathwayStage, "item":item, "agree":agree});
+      obj.agrees[patientId].push({"pathwayId":pathwayId, "pathwayStage":pathwayStage, "item":item, "agree":agree, "history" : [log]});
     } else {
       console.log("ERRORRR!!!!!!!");
     }
@@ -954,7 +959,6 @@
 			displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
 		}).on('change', '.btn-toggle input[type=checkbox]', function(){
       updateTeamSapRows();
-
     }).on('click', '.btn-undo', function(e){
       var ACTIONID = $(this).closest('tr').data('id');
       editAction("team", ACTIONID, null, false);
@@ -995,22 +999,31 @@
     populateTeamSuggestedActionsPanel();
   };
 
-  var showIndividualQualStanEtc = function(location, pathwayId, pathwayStage, patientId, isMultiple) {
-
-  };
-
 	var showIndividualActionPlanPanel = function(location, pathwayId, pathwayStage, patientId, isMultiple) {
 		createPanelShow($('#individual-action-plan-panel'),location,{"pathwayStage" : pathwayStage || "default", "noHeader" : true});
 
 		individualTab = $('#tab-plan-individual');
 
 		$('#advice-list').on('click', '.cr-styled input[type=checkbox]', function(){
-			var idx = $('#advice-list').find('.cr-styled input[type=checkbox]').index(this);
       var ACTIONID = $(this).closest('tr').data('id');
       editAction(local.patientId, ACTIONID, null, this.checked);
 
       if(this.checked) {
         recordEvent(pathwayId, local.patientId, "Item completed");
+        var self = this;
+        $(self).parent().attr("title","").attr("data-original-title","").tooltip('fixTitle').tooltip('hide');
+        setTimeout(function(e){
+          $(self).parent().fadeOut(300, function(){
+            var parent = $(this).parent();
+            $(this).replaceWith(createPanel($('#checkbox-template'),{"done":true}));
+            parent.find('button').on('click', function(){
+              ACTIONID = $(this).closest('tr').data('id');
+              editAction(local.patientId, ACTIONID, null, false);
+              $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+              updateIndividualSapRows();
+            });
+          });
+        },1000);
       }
 
 			updateIndividualSapRows();
@@ -1066,17 +1079,29 @@
 			displayPersonalisedIndividualActionPlan(local.patientId, $('#personalPlanIndividual'));
 		}).on('change', '#individual-suggested-actions-table .btn-toggle input[type=checkbox]', function(){
       updateIndividualSapRows();
-    }).on('click', '#individual-suggested-actions-table .btn-yes,#individual-suggested-actions-table .btn-no', function(){
-      var checkbox = $(this).find("input[type=checkbox]");
+    }).on('click', '.btn-undo', function(e){
       var ACTIONID = $(this).closest('tr').data('id');
-      if($(this).hasClass("active")){
+      editAction(local.patientId, ACTIONID, null, false);
+      $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+      updateIndividualSapRows();
+    }).on('click', '#individual-suggested-actions-table .btn-yes,#individual-suggested-actions-table .btn-no', function(e){
+      var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+      var ACTIONID = $(this).closest('tr').data('id');
+      if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
         //unselecting
   			var idx = Math.floor($('#advice-list').find('#individual-suggested-actions-table .btn-toggle input[type=checkbox]').index(checkbox)/2);
         ignoreAction(local.patientId, ACTIONID);
+        other.removeClass("inactive");
+      } else if((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
+        //prevent clicking on unselected option or if the row is complete
+        e.stopPropagation();
+        e.preventDefault();
+        return;
       } else {
+        $(this).removeClass("inactive");
         //unselect other
-        var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
-        other.removeClass("active");
+        other.removeClass("active").addClass("inactive");
         other.find("input[type=checkbox]").prop("checked", false);
 
         //selecting
@@ -1090,28 +1115,6 @@
       }
     });
 
-    individualTab.on('change', '#individual-panel-classification .btn-toggle input[type=checkbox]', function(){
-      updateIndividualSapRows();
-    }).on('click', '#individual-panel-classification .btn-yes,#individual-panel-classification .btn-no', function(){
-      var checkbox = $(this).find("input[type=checkbox]");
-      var isClassification = $(this).closest('.panel').children().index($(this).closest('table'))===1;
-
-      if($(this).hasClass("active")){
-        //unselecting
-        editPatientAgree(pathwayId, pathwayStage, local.patientId, isClassification ? "section" : "category", null);
-      } else {
-        //unselect other
-        var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
-        other.removeClass("active");
-        other.find("input[type=checkbox]").prop("checked", false);
-
-        //selecting
-        if(checkbox.val()==="no") launchPatientModal(pathwayId, pathwayStage, local.patientId, $(this).closest('tr').children(':first').text(), !isClassification);
-
-        editPatientAgree(pathwayId, pathwayStage, local.patientId, isClassification ? "section" : "category", checkbox.val()==="yes");
-
-      }
-		});
 
     populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, isMultiple);
 	};
@@ -1135,15 +1138,70 @@
     return createPanel($('#qual-standard'), data, {"chk" : $('#checkbox-template').html() });
   };
 
-  var wireUpQualStan = function(isMultiple){
-    //Wire up multiple patient alert
-    if(isMultiple){
-      $('#advice-list .alert.clickable').off('click').on('click', function(){
-        displaySelectedPatient($(this).data('id'));
-      });
-    }
+  var wireUpQualStan = function(pathwayId, pathwayStage){
+    $('#individual-panel-classification').on('change', '.btn-toggle input[type=checkbox]', function(){
+      updateQualStan();
+    }).on('click', '.btn-yes,.btn-no', function(e){
+      var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+      var isClassification = $(this).closest('.table').data("isClassification")!==undefined;
 
-    updateIndividualSapRows();
+      if($(this).hasClass("active") && other.hasClass("inactive")){
+        //unselecting
+        editPatientAgree(pathwayId, pathwayStage, local.patientId, isClassification ? "section" : "category", null);
+        other.removeClass("inactive");
+      } else if(!$(this).hasClass("active") && other.hasClass("active")) {
+        //prevent clicking on unselected option
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      } else {
+        $(this).removeClass("inactive");
+        //unselect other
+        other.removeClass("active").addClass("inactive");
+        other.find("input[type=checkbox]").prop("checked", false);
+
+        //selecting
+        if(checkbox.val()==="no") launchPatientModal(pathwayId, pathwayStage, local.patientId, $(this).closest('tr').children(':first').text(), !isClassification);
+
+        editPatientAgree(pathwayId, pathwayStage, local.patientId, isClassification ? "section" : "category", checkbox.val()==="yes");
+
+      }
+		});
+
+    updateQualStan();
+  };
+
+  var updateQualStan = function(){
+    $('#individual-panel-classification table').removeClass('panel-green').removeClass('panel-red');
+    $('#individual-panel-classification').find('tr').each(function(){
+      var self = $(this);
+      self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
+        var isClassification = $(this).closest(".table").data("isClassification")!==undefined;
+        var item = getObj().agrees[local.patientId].filter(function(i){return isClassification ? i.item==="section" : i.item!=="section" });
+        if(this.value==="yes"){
+          $(this).closest('table').addClass('panel-green');
+          if(item && item[0].history){
+            var tool = $(this).closest('tr').hasClass('success') ? "" : item[0].history[0] + " - click again to cancel";
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+          } else {
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle');
+          }
+        } else {
+          $(this).closest('table').addClass('panel-red');
+          if(item && item[0].history){
+            var tool = $(this).closest('tr').hasClass('success') ? "" : item[0].history[0] + " - click again to cancel";
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+          } else {
+            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle');
+          }
+        }
+      });
+
+      if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle');
+      }
+    });
   };
 
   var createTestTrendPanel = function(pathwayId, pathwayStage, patientId){
@@ -1377,7 +1435,7 @@
 
 			displayPersonalisedIndividualActionPlan(pathwayStage, $('#personalPlanTeam'));
 
-			updateIndividualSapRows();
+			createPanelShowvidualSapRows();
 		}
 	};
 
@@ -1514,7 +1572,6 @@
   			if(this.value==="yes"){
   				self.removeClass('danger');
   				self.addClass('active');
-  				//self.addClass('success');
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")].history){
             var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
@@ -1551,7 +1608,6 @@
     $('#advice-list').find('.suggestion').each(function(){
 			$(this).find('td').last().children().hide();
 		});
-    var anyIndividual = false;
 
     $('#advice-list').find('.cr-styled input[type=checkbox]').each(function(){
       if(this.checked){
@@ -1560,6 +1616,15 @@
         $(this).parent().parent().parent().removeClass('success');
       }
     });
+
+    $('#advice-list').find('.btn-undo').each(function(){
+      $(this).parent().parent().addClass('success');
+    });
+
+    //no class - user not yet agreed/disagreed - no background / muted text
+    //active - user agrees - green background / normal text
+    //success - user completed - green background / strikethrough text
+    //danger - user disagrees - red background / strikethrough text
 
     $('#advice-list').find('#individual-suggested-actions-table tr').each(function(){
       var self = $(this);
@@ -1570,31 +1635,35 @@
   				self.removeClass('danger');
   				self.addClass('active');
   				self.find('td').last().children().show();
-          anyIndividual = true;
+          if(getObj().actions[local.patientId][self.data("id")].history){
+            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to cancel";
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+          } else {
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle');
+          }
   			} else {
   				self.removeClass('active');
   				self.addClass('danger');
+          self.removeClass('success');
+          if(getObj().actions[local.patientId][self.data("id")].history){
+            $(this).parent().attr("title", getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to cancel").tooltip('fixTitle');
+          } else {
+            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle');
+          }
   			}
       });
+      if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle');
+      }
       if(!any){
         self.removeClass('danger');
         self.removeClass('active');
         self.removeClass('success');
+
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle');
       }
 		});
-
-    $('#individual-panel-classification table').removeClass('panel-green').removeClass('panel-red');
-    $('#individual-panel-classification').find('tr').each(function(){
-      var self = $(this);
-      self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
-  			if(this.value==="yes"){
-          $(this).closest('table').addClass('panel-green');
-  			} else {
-  				$(this).closest('table').addClass('panel-red');
-  			}
-      });
-    });
-    //$('#advice-list').find('table thead tr th').last().html( anyIndividual ? 'Action implemented' : '');
   };
 
   var suggestionList = function (ids){
@@ -2435,7 +2504,7 @@
 	};
 
 	window.bb = {
-    "version" : "1.16",
+    "version" : "1.18",
 		"init" : initialize,
     "_local":local
 	};

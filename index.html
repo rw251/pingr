@@ -713,7 +713,7 @@
 
   <script id="qual-standard" type="x-tmpl-mustache">
     <div id="individual-panel-classification" class="panel panel-default panel-grey">
-      <table class="table table-minimal">
+      <table class="table table-minimal" data-is-classification>
       <thead>
       <tr>
         <th>Improvement opportunity</th>
@@ -725,11 +725,11 @@
         <td>{{section.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
               <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}">
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
               <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
