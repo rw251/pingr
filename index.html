@@ -302,7 +302,7 @@
       </div>
 
       <div id="modal"></div>
-      <div id="thanks-message" class="flyover tooltip-inner">
+      <div id="saved-message" class="flyover tooltip-inner">
          <h1>Saved! </h1>
       </div>
     </div>
@@ -361,10 +361,15 @@
   <!-- /build -->
 
   <script id="checkbox-template" type="x-tmpl-mustache">
+    {{^done}}
     <label class="cr-styled" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">
       <input type="checkbox" {{#done}}checked="checked"{{/done}}>
       <i class="fa"></i>
     </label>
+    {{/done}}
+    {{#done}}
+    <button class="btn btn-warning btn-undo" data-toggle="tooltip" data-placement="bottom" title="You marked this as complete - click to undo">Undo</button>
+    {{/done}}
   </script>
 
   <script id="suggested-plan-item"  type="x-tmpl-mustache">

@@ -224,7 +224,7 @@
   };
 
   var editAction = function(id, actionId, agree, done){
-    var obj = getObj();
+    var obj = getObj(), log;
     if(!id) alert("ACTION TEAM/IND ID");
     if(!actionId) alert("ACTION ID");
 
@@ -232,14 +232,32 @@
       obj.actions[id] = {};
     }
 
+
+    if(agree && (!obj.actions[id][actionId] || obj.actions[id][actionId].agree===false)) {
+      log = "You agreed with this on " + (new Date()).toDateString();
+    } else if(agree===false && (!obj.actions[id][actionId] || obj.actions[id][actionId].agree===true)) {
+      log = "You disagreed with this on " + (new Date()).toDateString();
+    }
+
+    if(done && (!obj.actions[id][actionId] || obj.actions[id][actionId].done===false)) {
+      log = "You completed this on " + (new Date()).toDateString();
+    } else if(done===false && (!obj.actions[id][actionId] || obj.actions[id][actionId].done===true)) {
+      //log = "You disagreed with this on " + (new Date()).toDateString();
+    }
+
     if(!obj.actions[id][actionId]) {
-      obj.actions[id][actionId] = {"agree" : agree ? agree : false, "done" : done ? done : false};
+      obj.actions[id][actionId] = {"agree" : agree ? agree : false, "done" : done ? done : false, "history" : [log]};
     } else {
       if(agree===true || agree===false) obj.actions[id][actionId].agree=agree;
       if(done===true || done===false) obj.actions[id][actionId].done=done;
+      if(log){
+        if(obj.actions[id][actionId].history) obj.actions[id][actionId].history.unshift(log);
+        else obj.actions[id][actionId].done.history = [log];
+      }
     }
 
     setObj(obj);
+    showSaved();
   };
 
   var ignoreAction = function(id, actionId){
@@ -859,17 +877,28 @@
   var showTeamActionPlanPanel = function(location){
     createPanelShow($('#team-action-plan-panel'),location);
 
-    //$('.info-button')
-
 		suggestedPlanTeam = $('#suggestedPlanTeam');
 
 		suggestedPlanTeam.on('click', '.cr-styled input[type=checkbox]', function(){
-			var idx = suggestedPlanTeam.find('.cr-styled input[type=checkbox]').index(this);
       var ACTIONID = $(this).closest('tr').data('id');
       editAction("team", ACTIONID, null, this.checked);
 
       if(this.checked) {
         recordEvent(local.pathwayId, "team", "Item completed");
+        var self = this;
+        $(self).parent().attr("title","").attr("data-original-title","").tooltip('fixTitle').tooltip('hide');
+        setTimeout(function(e){
+          $(self).parent().fadeOut(300, function(){
+            var parent = $(this).parent();
+            $(this).replaceWith(createPanel($('#checkbox-template'),{"done":true}));
+            parent.find('button').on('click', function(){
+              ACTIONID = $(this).closest('tr').data('id');
+              editAction("team", ACTIONID, null, false);
+              $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+              updateTeamSapRows();
+            });
+          });
+        },1000);
       }
 
 			updateTeamSapRows();
@@ -925,16 +954,23 @@
 			displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
 		}).on('change', '.btn-toggle input[type=checkbox]', function(){
       updateTeamSapRows();
+
+    }).on('click', '.btn-undo', function(e){
+      var ACTIONID = $(this).closest('tr').data('id');
+      editAction("team", ACTIONID, null, false);
+      $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+      updateTeamSapRows();
     }).on('click', '.btn-yes,.btn-no', function(e){
       var checkbox = $(this).find("input[type=checkbox]");
       var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
       var ACTIONID = $(this).closest('tr').data('id');
-      if($(this).hasClass("active") && other.hasClass("inactive")){
+      if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
         //unselecting
   			idx = Math.floor(suggestedPlanTeam.find('.btn-toggle input[type=checkbox]').index(checkbox)/2);
         ignoreAction("team", ACTIONID);
         other.removeClass("inactive");
-      } else if(!$(this).hasClass("active") && other.hasClass("active")) {
+      } else if((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
+        //prevent clicking on unselected option or if the row is complete
         e.stopPropagation();
         e.preventDefault();
         return;
@@ -1453,7 +1489,6 @@
     suggestedPlanTeam.find('.suggestion').each(function(){
 			$(this).find('td').last().children().hide();
 		});
-    var anyTeam = false;
 
     suggestedPlanTeam.find('.cr-styled input[type=checkbox]').each(function(){
       if(this.checked){
@@ -1463,6 +1498,14 @@
       }
     });
 
+    suggestedPlanTeam.find('.btn-undo').each(function(){
+      $(this).parent().parent().addClass('success');
+    });
+
+    //no class - user not yet agreed/disagreed - no background / muted text
+    //active - user agrees - green background / normal text
+    //success - user completed - green background / strikethrough text
+    //danger - user disagrees - red background / strikethrough text
     suggestedPlanTeam.find('tr').each(function(){
       var self = $(this);
       var any = false;
@@ -1471,24 +1514,37 @@
   			if(this.value==="yes"){
   				self.removeClass('danger');
   				self.addClass('active');
+  				//self.addClass('success');
   				self.find('td').last().children().show();
-          anyTeam = true;
+          if(getObj().actions.team[self.data("id")].history){
+            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+          } else {
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle');
+          }
   			} else {
   				self.removeClass('active');
   				self.addClass('danger');
+  				self.removeClass('success');
+          if(getObj().actions.team[self.data("id")].history){
+            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to cancel").tooltip('fixTitle');
+          } else {
+            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle');
+          }
   			}
       });
       if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
-        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive");
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle');
       }
       if(!any){
         self.removeClass('danger');
         self.removeClass('active');
         self.removeClass('success');
+
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle');
       }
 		});
-
-    //suggestedPlanTeam.find('table thead tr th').last().html( anyTeam ? 'Action implemented' : '');
   };
 
   var updateIndividualSapRows = function(){
@@ -1676,6 +1732,14 @@
   /********************************
 	* Modals
 	********************************/
+  var showSaved = function(){
+    $("#saved-message").hide().toggleClass("in").fadeIn(300);
+    window.setTimeout(function(){
+      $("#saved-message").fadeOut(300, function(){
+        $(this).toggleClass("in");
+      });
+    }, 2000);
+  };
 
   var launchModal = function(data, label, value){
     var template = $('#modal-why').html();
@@ -1705,12 +1769,7 @@
     $('#modal').off('hidden.bs.modal').on('hidden.bs.modal', {"label" : label}, function(e) {
       if(local.modalSaved) {
         local.modalSaved = false;
-        $("#thanks-message").hide().toggleClass("in").fadeIn(300);
-        window.setTimeout(function(){
-          $("#thanks-message").fadeOut(300, function(){
-            $(this).toggleClass("in");
-          });
-        }, 2000);
+        showSaved();
       } else {
         //uncheck as cancelled. - but not if value is empty as this unchecks everything
         if(value !== "") $('tr:contains('+value+')').find(".btn-toggle input[type=checkbox]:checked").click();
@@ -2376,7 +2435,7 @@
 	};
 
 	window.bb = {
-    "version" : "1.15",
+    "version" : "1.16",
 		"init" : initialize,
     "_local":local
 	};

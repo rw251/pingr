@@ -288,8 +288,26 @@ header {
   padding: 15px 15px 0px 15px;
 }
 
-.suggestion.danger td span {
+.table>tbody>tr.suggestion.danger td span {
 	text-decoration: line-through;
+}
+
+.table>tbody>tr.suggestion.active > td {
+  background-color: rgb(223, 240, 216);
+  color:#222;
+}
+
+.table>tbody>tr.suggestion.success td span {
+	text-decoration: line-through;
+  color:#85868d;
+}
+
+.table>tbody>tr.suggestion.success td label.btn-toggle span{
+  color:#fff;
+}
+
+tr.suggestion.success label.btn-toggle.btn-success.active {
+  opacity: 0.5;
 }
 
 .thumb-up {
@@ -310,9 +328,7 @@ header {
    margin: 6px;
 }
 
-tr.active > td {
-  color:#222;
-}
+
 /*
  * Better file loading buttons#
  *  courtesy of Cory LaViska http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
