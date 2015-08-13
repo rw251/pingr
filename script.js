@@ -153,6 +153,8 @@
   };
 
   var showAllPatientView = function(patientId, reload){
+    updateTitle("All patients");
+
     if(!patientId) local.pathwayId="";
     if(!patientId || reload) {
 
@@ -380,7 +382,7 @@
 	};
 
   var updateTitle = function(title, tooltip){
-    $('.pagetitle').html(title).attr('title', tooltip).tooltip({delay: { "show": 500, "hide": 100 }});
+    $('.pagetitle').html(title).attr('title', tooltip).tooltip({delay: { "show": 1000, "hide": 100 }});
   }
 
 	var updateBreadcrumbs = function(items){
@@ -500,6 +502,9 @@
   					"n" : 'y2'
   				}
   			},
+        zoom: {
+            enabled: true
+        },
         tooltip: {
           format: {
             title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
@@ -510,7 +515,7 @@
   				x: {
   					type: 'timeseries',
   					tick: {
-  						format: '%Y-%m-%d',
+  						format: '%d-%m-%Y',
   						count: 7,
   						culling: {
   							max: 4
@@ -579,6 +584,9 @@
   					"n" : 'y2'
   				}
   			},
+        zoom: {
+            enabled: true
+        },
         tooltip: {
           format: {
             title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
@@ -589,7 +597,7 @@
   				x: {
   					type: 'timeseries',
   					tick: {
-  						format: '%Y-%m-%d',
+  						format: '%d-%m-%Y',
   						count: 7,
   						culling: {
   							max: 4
@@ -991,8 +999,10 @@
         other.find("input[type=checkbox]").prop("checked", false);
 
         //selecting
-        if(checkbox.val()==="no") launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text());
-        editAction("team", ACTIONID, checkbox.val()==="yes");
+        if(checkbox.val()==="no") launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), function(){
+          editAction("team", ACTIONID, false);
+        });
+        else editAction("team", ACTIONID, true);
       }
 		}).on('keyup', 'input[type=text]', function(e){
       if(e.which === 13) {
@@ -1178,32 +1188,43 @@
     $('#individual-panel-classification table').removeClass('panel-green').removeClass('panel-red');
     $('#individual-panel-classification').find('tr').each(function(){
       var self = $(this);
+      var any = false;
       self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
         var isClassification = $(this).closest(".table").data("isClassification")!==undefined;
+        any = true;
         var item = getObj().agrees[local.patientId].filter(function(i){return isClassification ? i.item==="section" : i.item!=="section" });
         if(this.value==="yes"){
           $(this).closest('table').addClass('panel-green');
           if(item && item[0].history){
             var tool = $(this).closest('tr').hasClass('success') ? "" : item[0].history[0] + " - click again to cancel";
-            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle');
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
         } else {
           $(this).closest('table').addClass('panel-red');
           if(item && item[0].history){
             var tool = $(this).closest('tr').hasClass('success') ? "" : item[0].history[0] + " - click again to cancel";
-            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle');
+            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
         }
       });
 
       if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
-        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle');
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
       }
+
+      if(!any){
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
+      }
+
+      wireUpTooltips();
     });
+
+    wireUpTooltips();
   };
 
   var createTestTrendPanel = function(pathwayId, pathwayStage, patientId){
@@ -1254,7 +1275,7 @@
   };
 
   var wireUpTooltips = function(){
-    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});//, container: 'body'});
+    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 1000, "hide": 100 }});//, container: 'body'});
   };
 
 	var populatePatientPanel = function (pathwayId, pathwayStage, subsection, sortField, sortAsc) {
@@ -1473,11 +1494,17 @@
 				x: 'x',
 				columns: local.data.patients[patientId][local.data[pathwayId]["value-label"]]
 			},
+      zoom: {
+          enabled: true
+      },
+      line: {
+        connectNull: false
+      },
 			axis: {
 				x: {
 					type: 'timeseries',
 					tick: {
-  					format: '%Y-%m-%d',
+  					format: '%d-%m-%Y',
   					count: 7,
   					culling: {
   						max: 3
@@ -1581,33 +1608,37 @@
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")].history){
             var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
-            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle');
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
   			} else {
   				self.removeClass('active');
   				self.addClass('danger');
   				self.removeClass('success');
-          if(getObj().actions.team[self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to cancel").tooltip('fixTitle');
+          if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
+            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to cancel").tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle');
+            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
   			}
       });
       if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
-        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle');
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
       }
       if(!any){
         self.removeClass('danger');
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle');
-        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
       }
+
+      wireUpTooltips();
 		});
+
+    wireUpTooltips();
   };
 
   var updateIndividualSapRows = function(){
@@ -1643,33 +1674,36 @@
   				self.find('td').last().children().show();
           if(getObj().actions[local.patientId][self.data("id")].history){
             var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to cancel";
-            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle');
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle');
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
   			} else {
   				self.removeClass('active');
   				self.addClass('danger');
           self.removeClass('success');
           if(getObj().actions[local.patientId][self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to cancel").tooltip('fixTitle');
+            $(this).parent().attr("title", getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to cancel").tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle');
+            $(this).parent().attr("title", "You disagreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
   			}
       });
       if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
-        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle');
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
       }
       if(!any){
         self.removeClass('danger');
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle');
-        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
       }
+
+      wireUpTooltips();
 		});
+    wireUpTooltips();
   };
 
   var suggestionList = function (ids){
@@ -1727,7 +1761,7 @@
     //Wire up any clipboard stuff in the suggestions
     $('#advice-list').find('span:contains("[COPY")').each(function(){
       var html = $(this).html();
-      $(this).html(html.replace(/\[COPY:([^\]]*)\]/g,'$1 <button type="button" data-clipboard-text="$1" data-content="Copied" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[COPY:([^\]]*)\]/g,'$1 <button type="button" data-clipboard-text="$1" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
 
     $('#advice-list').find('span:contains("[MED-SUGGESTION")').each(function(){
@@ -1738,6 +1772,7 @@
 
 
 		setupClipboard( $('.btn-copy'), true );
+    wireUpTooltips();
 
 		updateIndividualSapRows();
 
@@ -1816,7 +1851,7 @@
     }, 2000);
   };
 
-  var launchModal = function(data, label, value){
+  var launchModal = function(data, label, value, callbackOnSave, callbackOnCancel){
     var template = $('#modal-why').html();
     Mustache.parse(template);   // optional, speeds up future uses
 
@@ -1844,16 +1879,18 @@
     $('#modal').off('hidden.bs.modal').on('hidden.bs.modal', {"label" : label}, function(e) {
       if(local.modalSaved) {
         local.modalSaved = false;
-        showSaved();
+        if(callbackOnSave) callbackOnSave();
+        //showSaved();
       } else {
         //uncheck as cancelled. - but not if value is empty as this unchecks everything
+        if(callbackOnCancel) callbackOnCancel();
         if(value !== "") $('tr:contains('+value+')').find(".btn-toggle input[type=checkbox]:checked").click();
       }
     });
   };
 
-  var launchTeamModal = function(label, value){
-    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Enter free-text here...", "reasons" : [{"reason":"We've already done this","value":"done"},{"reason":"It wouldn't work","value":"nowork"},{"reason":"Other","value":"else"}]},label, value);
+  var launchTeamModal = function(label, value, callbackOnSave){
+    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Enter free-text here...", "reasons" : [{"reason":"We've already done this","value":"done"},{"reason":"It wouldn't work","value":"nowork"},{"reason":"Other","value":"else"}]},label, value, callbackOnSave);
   };
 
   var launchPatientModal = function(pathwayId, pathwayStage, label, value, justtext){
@@ -1923,6 +1960,7 @@
 		client.on( 'ready', function() {
 			client.on( 'aftercopy', function(event) {
 				console.log('Copied text to clipboard: ' + event.data['text/plain']);
+        $(event.target).tooltip('hide');
         $(event.target).popover({
           trigger: 'manual',
           template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>',
@@ -2275,6 +2313,11 @@
       }
     ).on('typeahead:selected', onSelected)
     .on('typeahead:autocompleted', onSelected);
+
+    $('#searchbtn').on('mousedown', function(){
+      var val = $('.typeahead').eq(0).val();
+      onSelected(null, {"id": val});
+    });
   };
 
   var preWireUpPages = function() {
@@ -2324,13 +2367,19 @@
 
 	var wireUpPages = function () {
 		$('#pick-nice').on('click', function(e){
-      $('body').removeClass('qof');
-      e.stopPropagation();
+      //load data
+      var currentColour = $('body').css('backgroundColor');
+      $('body').animate({ backgroundColor: "rgba(255,255,0,0.7)" },50).animate({backgroundColor : currentColour},1500);
+      //flash background
+      //$('body').removeClass('qof');
+      //e.stopPropagation();
 		});
 
 		$('#pick-qof').on('click', function(e){
-      $('body').addClass('qof');
-      e.stopPropagation();
+    var currentColour = $('body').css('backgroundColor');
+    $('body').animate({ backgroundColor: "rgba(255,255,0,0.7)" },50).animate({backgroundColor : currentColour},1500);
+      //$('body').addClass('qof');
+      //e.stopPropagation();
 		});
 
     wireUpTooltips();
@@ -2517,7 +2566,7 @@ $(document).on('ready', function () {
     localStorage.bb = JSON.stringify({"version" : bb.version});
   }
 
-	$('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }, container: 'body'});
+	$('[data-toggle="tooltip"]').tooltip({delay: { "show": 1000, "hide": 100 }, container: 'body'});
 
   //ensure on first load the login screen is cached to the history
   history.pushState(null, null, '');

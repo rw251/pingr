@@ -8,6 +8,10 @@ body.qof {
   background-color: #ddf9f9;
 }
 
+.btn-switch {
+  background-color: lightgrey;
+}
+
 hr{
   margin-top: 0px;
   margin-bottom: 40px;
@@ -571,10 +575,13 @@ th,td {
 .gist {
   font-size: 14px;
 }
+.twitter-typeahead, .tt-hint, .tt-input {
+   height: 36px;
+}
 
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
   width: 520.542px;
-  height: 36px;
+/*  height: 36px;*/
 }
 
 .twitter-typeahead {
