@@ -60,6 +60,7 @@
 
             <li class="hide-if-logged-out input-group pull-left" id="search-box">
               <input type="text" placeholder="Search for patients..." class="typeahead">
+              <i id="searchbtn" class="fa fa-lg fa-search" style="position: absolute;top: 20px;right: 22px;cursor: pointer;"></i><!--fudge to get search icon-->
             </li>
 
             <!--<li class="hide-if-logged-out">
@@ -79,10 +80,10 @@
 
             <li class="hide-if-logged-out">
               <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-primary active" id="pick-nice">
+                <label class="btn btn-primary btn-switch active" id="pick-nice">
                   <input type="radio" name="options" autocomplete="off" checked=""> NICE
                 </label>
-                <label class="btn btn-info" id="pick-qof">
+                <label class="btn btn-primary btn-switch" id="pick-qof">
                   <input type="radio" name="options" autocomplete="off"> QOF
                 </label>
 
@@ -351,6 +352,9 @@
   <!-- History polyfill -->
   <script src="assets/js/history/history.min.js"></script>
 
+  <!-- for colour animation -->
+  <script src="assets/js/jquery-color/jquery.color-2.1.2.min.js"></script>
+
   <!-- Custom JQuery -->
   <script src="assets/js/app/custom.js" type="text/javascript"></script>
 
@@ -485,7 +489,7 @@
         {{#patients}}
         <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
           <td>
-            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
             </button>
             {{nhsNumber}}
@@ -507,7 +511,7 @@
         {{#patients}}
         <tr class="list-item">
           <td>
-            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
             </button>
             {{nhsNumber}}
@@ -609,8 +613,8 @@
   <script id="team-action-plan-panel" type="x-tmpl-mustache">
     <div class="panel panel-default">
       <div class="panel-heading clearfix">
-        <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions
-        <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated from recommended actions in NICE clinical guidelines, peer-reviewed academic journals, and other users of this application"></i>
+        <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions &nbsp;
+        <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="These suggested actions were generated from recommended actions in NICE clinical guidelines, peer-reviewed academic journals, and other users of this application"></i>
       </div>
 
       <div class="panel-body" id="tab-plan-team">
@@ -755,11 +759,11 @@
         <td>{{category.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
               <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}">
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
               <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
@@ -781,8 +785,8 @@
     <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
-          <th>Suggested Actions
-            <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated by analysing data from the patients’ Electronic Health Records, then linking them to appropriate recommendations in NICE clinical guidelines and the British National Formulary."></i>
+          <th>Suggested Actions &nbsp;
+            <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="These suggested actions were generated by analysing data from the patients’ Electronic Health Records, then linking them to appropriate recommendations in NICE clinical guidelines and the British National Formulary."></i>
           </th>
           <th style="width: 65px">Agree?</th>
           <th data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented</th>
@@ -869,7 +873,7 @@
     <div class="panel panel-{{pathwayStage}}">
       <div class="panel-heading">
         <!--<i class="fa fa-file-text fa-fw"></i>-->&nbsp; Patient {{nhsNumber}}
-        <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+        <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
           <span class="fa fa-clipboard"></span>
         </button>
       </div>
