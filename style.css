@@ -12,12 +12,41 @@ body.qof {
   background-color: lightgrey;
 }
 
+hr{
+  margin-top: 0px;
+  margin-bottom: 40px;
+  border-top: 0px solid #7e818d;
+}
+
 .info-button {
   color: cornflowerblue;
 }
 
 .navigation ul li ul li.active a  {
   color: white;
+}
+
+.navigation ul li ul {
+  background-color: #4b4e5a;
+}
+
+.navigation ul li ul li a {
+  color: #9ea0a9;
+}
+
+.navigation ul li ul li.active a {
+  background-color: #9ea0a9;
+  box-shadow: inset -6px 0 8px -2px rgba(0,0,0,0.2);
+  border-left: 0;
+}
+
+.navigation ul li ul li a:hover {
+  color: white;
+  border-left: 0;
+}
+
+.navigation > ul > li > a {
+  border-bottom: 0;
 }
 
 /*support for slightly wider desktops */
@@ -551,7 +580,7 @@ th,td {
 }
 
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
-  width: 400px;
+  width: 520.542px;
 /*  height: 36px;*/
 }
 

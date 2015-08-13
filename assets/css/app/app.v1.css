@@ -321,9 +321,9 @@ Navigation
 	-o-transition: all 0.4s;}
 
 .navigation > ul:hover > li.active > a{
-	background-color:transparent;
+	/*background-color:transparent;*/
 	box-shadow:none;
-	color:#7a7e8a;}
+	color: white;}
 
 .navigation > ul > li:hover > a,
 .navigation > ul > li.active:hover > a,
