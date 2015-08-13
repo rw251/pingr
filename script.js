@@ -515,7 +515,7 @@
   				x: {
   					type: 'timeseries',
   					tick: {
-  						format: '%Y-%m-%d',
+  						format: '%d-%m-%Y',
   						count: 7,
   						culling: {
   							max: 4
@@ -597,7 +597,7 @@
   				x: {
   					type: 'timeseries',
   					tick: {
-  						format: '%Y-%m-%d',
+  						format: '%d-%m-%Y',
   						count: 7,
   						culling: {
   							max: 4
@@ -1497,11 +1497,14 @@
       zoom: {
           enabled: true
       },
+      line: {
+        connectNull: false
+      },
 			axis: {
 				x: {
 					type: 'timeseries',
 					tick: {
-  					format: '%Y-%m-%d',
+  					format: '%d-%m-%Y',
   					count: 7,
   					culling: {
   						max: 3
