@@ -2095,7 +2095,7 @@
       list[i].hasSubItems = true;
     }
     list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Home"});
-    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbove":true});
+    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbove": true});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; return v; });
 
