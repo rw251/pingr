@@ -8,8 +8,73 @@ body.qof {
   background-color: #ddf9f9;
 }
 
+.btn.btn-xs.btn-yes.btn-toggle.btn-success{
+  color: #e9e9e9;
+  background-color: rgb(68, 157, 68);
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
+  color: white;
+  background-color: rgb(68, 157, 68);
+  border-color: rgb(68, 157, 68);
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.active:hover{
+  background-color: rgb(68, 157, 68);
+  border-color: rgb(57, 132, 57);
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.active{
+  color: white;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.inactive{
+  color: #e9e9e9;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger{
+color: #e9e9e9;
+background-color: rgb(201, 48, 44)
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger:hover{
+color: white;
+background-color: rgb(201, 48, 44);
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.inactive:hover{
+  background-color: rgb(201, 48, 44);
+  border-color: rgb(201, 48, 44);
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.active{
+  color:white;
+  background-color: rgb(201, 48, 44);
+  border-color: rgb(201, 48, 44);
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.active:hover{
+  background-color: rgb(201, 48, 44);
+  border-color: rgb(201, 48, 44);
+}
+
 .btn-switch {
   background-color: lightgrey;
+  color: darkgrey;
+  box-shadow: inset -2px 0 8px -2px rgba(0,0,0,0.3);
+}
+
+.btn:hover {
+  color: white;
+  background-color: lightgrey;
+}
+
+.btn-switch.active {
+  box-shadow: inset -2px 0 8px -2px rgba(100,203,238,1);
+}
+
+.btn-switch.active:hover {
+  background-color: rgb(40, 96, 144);
 }
 
 .btn-hover-show-group{
@@ -34,6 +99,11 @@ hr{
   color: cornflowerblue;
 }
 
+.navigation ul li a:hover {
+  color: white;
+  background-color: rgb(43, 47, 62);
+}
+
 .navigation ul li ul li.active a  {
   color: white;
 }
@@ -52,9 +122,16 @@ hr{
   border-left: 0;
 }
 
+.navigation ul li ul li.active a:hover {
+  background-color: #9ea0a9;
+  box-shadow: inset -6px 0 8px -2px rgba(0,0,0,0.2);
+  border-left: 0;
+}
+
 .navigation ul li ul li a:hover {
   color: white;
   border-left: 0;
+  background-color: rgb(75, 78, 90);
 }
 
 .navigation > ul > li > a {
@@ -129,6 +206,12 @@ hr{
 
 .panel-green {
   background-color: #ccf3cc;
+}
+
+.user img {
+  border:0px;
+  width: 75px;
+  height: 75px;
 }
 
 /* Better widths for container */

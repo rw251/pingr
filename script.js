@@ -2593,7 +2593,7 @@
 		$('#pick-nice').on('click', function(e){
       //load data
       var currentColour = $('body').css('backgroundColor');
-      $('body').animate({ backgroundColor: "rgba(255,255,0,0.7)" },50).animate({backgroundColor : currentColour},1500);
+      $('body').animate({ backgroundColor: "rgba(255,255,0,0.7)" },100).animate({backgroundColor : currentColour},500);
       //flash background
       //$('body').removeClass('qof');
       //e.stopPropagation();
@@ -2601,7 +2601,7 @@
 
 		$('#pick-qof').on('click', function(e){
     var currentColour = $('body').css('backgroundColor');
-    $('body').animate({ backgroundColor: "rgba(255,255,0,0.7)" },50).animate({backgroundColor : currentColour},1500);
+    $('body').animate({ backgroundColor: "rgba(255,255,0,0.7)" },100).animate({backgroundColor : currentColour},800);
       //$('body').addClass('qof');
       //e.stopPropagation();
 		});
