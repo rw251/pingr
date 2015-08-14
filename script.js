@@ -1418,7 +1418,7 @@
   };
 
   var wireUpTooltips = function(){
-    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 1000, "hide": 100 }});//, container: 'body'});
+    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 1000, "hide": 100 }});//, container: 'body'});
   };
 
 	var populatePatientPanel = function (pathwayId, pathwayStage, subsection, sortField, sortAsc) {
@@ -2790,7 +2790,7 @@ $(document).on('ready', function () {
     localStorage.bb = JSON.stringify({"version" : bb.version});
   }
 
-	$('[data-toggle="tooltip"]').tooltip({delay: { "show": 1000, "hide": 100 }, container: 'body'});
+	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 1000, "hide": 100 }});
 
   //ensure on first load the login screen is cached to the history
   history.pushState(null, null, '');
