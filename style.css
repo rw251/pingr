@@ -12,6 +12,18 @@ body.qof {
   background-color: lightgrey;
 }
 
+.btn-hover-show-group{
+  display: none;
+}
+
+tr.suggestion:hover .btn-hover-show-group{
+  display: inline-block;
+}
+
+tr.suggestion.success:hover .btn-hover-show-group,tr.suggestion.danger:hover .btn-hover-show-group{
+  display: none;
+}
+
 hr{
   margin-top: 0px;
   margin-bottom: 40px;
