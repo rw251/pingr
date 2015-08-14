@@ -1696,11 +1696,11 @@
     var axisnum = 1;
 		if(local.data.patients[patientId].contacts){
       for(var i = 0; i< local.data.patients[patientId].contacts.length; i++){
+        chartOptions.data.classes[local.data.patients[patientId].contacts[i].text] = 'larger';
         if(!chartOptions.data.xs[local.data.patients[patientId].contacts[i].text]) {
           chartOptions.data.xs[local.data.patients[patientId].contacts[i].text] = "x"+axisnum;
           chartOptions.data.columns.push(["x"+axisnum,local.data.patients[patientId].contacts[i].value]);
           chartOptions.data.columns.push([local.data.patients[patientId].contacts[i].text, (maxValue*1.1).toString()]);
-          chartOptions.data.classes[local.data.patients[patientId].contacts[i].text] = 'larger';
           axisnum++;
         } else {
           var axis = chartOptions.data.xs[local.data.patients[patientId].contacts[i].text];
@@ -1722,6 +1722,7 @@
     if(patientEvents.length>0){
 
       for(var i = 0; i < patientEvents.length; i++){
+        chartOptions.data.classes[patientEvents[i].name] = 'larger';
         if(!chartOptions.data.xs[patientEvents[i].name]) {
           chartOptions.data.xs[patientEvents[i].name] = "x"+axisnum;
           chartOptions.data.columns.push(["x"+axisnum,patientEvents[i].date.substr(0,10)]);
