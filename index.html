@@ -309,6 +309,7 @@
     </div>
   </section>
 
+  <div style="display:none" id="temp-hidden"></div>
 
   <!-- jQuery from CDN  -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -575,11 +576,11 @@
       </td>
       <td>
         <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
             <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
             <span class="fa fa-thumbs-up"></span>
           </label>
-          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}">
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
             <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
             <span class="fa fa-thumbs-down"></span>
           </label>
@@ -807,11 +808,11 @@
           </td>
           <td>
             <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}">
+              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
                 <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
                 <span class="fa fa-thumbs-up"></span>
               </label>
-              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}">
+              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
                 <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
                 <span class="fa fa-thumbs-down"></span>
               </label>
@@ -880,7 +881,7 @@
     <div class="panel panel-{{pathwayStage}}">
       <div class="panel-heading">
         <!--<i class="fa fa-file-text fa-fw"></i>-->&nbsp; Improvement actions: &nbsp; <span style = "color: yellow;font-weight:bold"> Patient {{nhsNumber}} </span> &nbsp;
-        <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+        <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
           <span class="fa fa-clipboard"></span>
         </button>
       </div>

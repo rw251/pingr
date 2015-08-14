@@ -250,6 +250,14 @@ header {
 .unclickable {
   cursor: default;
 }
+
+.c3-target-larger path {
+    stroke-width: 0px;
+}
+
+.c3-target-larger circle {
+    r: 10px;
+}
 /*
 #chart-benchmark .c3-line {
 	stroke-width: 0px;
