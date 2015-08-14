@@ -77,6 +77,18 @@ background-color: rgb(201, 48, 44);
   background-color: rgb(40, 96, 144);
 }
 
+.btn-hover-show-group{
+  display: none;
+}
+
+tr.suggestion:hover .btn-hover-show-group{
+  display: inline-block;
+}
+
+tr.suggestion.success:hover .btn-hover-show-group,tr.suggestion.danger:hover .btn-hover-show-group{
+  display: none;
+}
+
 hr{
   margin-top: 0px;
   margin-bottom: 40px;
@@ -320,6 +332,14 @@ header {
 
 .unclickable {
   cursor: default;
+}
+
+.c3-target-larger path {
+    stroke-width: 0px;
+}
+
+.c3-target-larger circle {
+    r: 10px;
 }
 /*
 #chart-benchmark .c3-line {
