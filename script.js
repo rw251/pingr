@@ -116,7 +116,7 @@
     var qualPanel = createQualStanPanel(pathwayId, pathwayStage, patientId, isMultiple);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
-    var multPanel = local.data.patients[patientId].breach.length>1 ? createPanel($('#pathway-panel'), {"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()}) : "";
+    var multPanel = createPanel($('#pathway-panel'), {"multiple" : local.data.patients[patientId].breach.length>1,"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()});
     $('#temp-hidden #patient-panel-top').html(qualPanel);
     $('#temp-hidden #patient-panel-mid').html(multPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel);
@@ -173,7 +173,7 @@
     var qualPanel = createQualStanPanel(pathwayId, pathwayStage, patientId, isMultiple);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
-    var multPanel = local.data.patients[patientId].breach.length>1 ? createPanel($('#pathway-panel'), {"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()}) : "";
+    var multPanel = createPanel($('#pathway-panel'), {"multiple" : local.data.patients[patientId].breach.length>1,"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()});
     $('#temp-hidden #patient-panel-top').html(qualPanel);
     $('#temp-hidden #patient-panel-mid').html(multPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel);
@@ -1469,6 +1469,320 @@
     wireUpTooltips();
   };
 
+  var wireUpWelcomePage = function(pathwayId, pathwayStage){
+    $('#team-task-panel').on('click', '.cr-styled input[type=checkbox]', function(){
+      var ACTIONID = $(this).closest('tr').data('id');
+      editAction("team", ACTIONID, null, this.checked);
+
+      if(this.checked) {
+        recordEvent(local.pathwayId, "team", "Item completed");
+        var self = this;
+        $(self).parent().attr("title","").attr("data-original-title","").tooltip('fixTitle').tooltip('hide');
+        wireUpTooltips();
+        setTimeout(function(e){
+          $(self).parent().fadeOut(300, function(){
+            var parent = $(this).parent();
+            $(this).replaceWith(createPanel($('#checkbox-template'),{"done":true}));
+            parent.find('button').on('click', function(){
+              ACTIONID = $(this).closest('tr').data('id');
+              editAction("team", ACTIONID, null, false);
+              $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+              updateWelcomePage();
+            });
+          });
+        },1000);
+      }
+			updateWelcomePage();
+		}).on('change', '.btn-toggle input[type=checkbox]', function(){
+      updateWelcomePage();
+    }).on('click', '.edit-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[1]).find('span').text());
+
+      $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('shown.bs.modal').on('shown.bs.modal', function () {
+        $('#editActionPlanItem').focus();
+      }).off('click','.save-plan').on('click', '.save-plan',function(){
+
+        editPlan(PLANID, $('#editActionPlanItem').val());
+
+        $('#editPlan').modal('hide');
+      }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
+        if(e.which === 13) $('#editPlan .save-plan').click();
+      }).modal();
+		}).on('click', '.delete-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#team-delete-item').html($($(this).closest('tr').children('td')[1]).find('span').text());
+
+      $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('click','.delete-plan').on('click', '.delete-plan',function(){
+        deletePlan(PLANID);
+
+        $('#deletePlan').modal('hide');
+      }).modal();
+		}).on('click', '.btn-undo', function(e){
+      var ACTIONID = $(this).closest('tr').data('id');
+      editAction("team", ACTIONID, null, false);
+      $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+      updateWelcomePage();
+    }).on('click', '.btn-yes,.btn-no', function(e){
+      var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+      var ACTIONID = $(this).closest('tr').data('id');
+      if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
+        //unselecting
+        if(checkbox.val()==="no"){
+          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), function(){
+            editAction("team", ACTIONID, false, null, local.reason);
+            updateWelcomePage();
+            wireUpTooltips();
+          }, function(){
+            ignoreAction("team", ACTIONID);
+            other.removeClass("inactive");
+            checkbox.removeAttr("checked");
+            checkbox.parent().removeClass("active");
+            updateWelcomePage();
+            wireUpTooltips();
+          });
+          e.stopPropagation();
+          e.preventDefault();
+        } else {
+          ignoreAction("team", ACTIONID);
+          other.removeClass("inactive");
+        }
+      } else if((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
+        //prevent clicking on unselected option or if the row is complete
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      } else {
+        //selecting
+        var self = this;
+        if(checkbox.val()==="no") {
+          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), function(){
+            editAction("team", ACTIONID, false, null, local.reason);
+            $(self).removeClass("inactive");
+
+            checkbox.attr("checked","checked");
+            checkbox.parent().addClass("active");
+            //unselect other
+            other.removeClass("active").addClass("inactive");
+            other.find("input[type=checkbox]").prop("checked", false);
+            updateWelcomePage();
+            wireUpTooltips();
+          }), function(){
+
+          };
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        else {
+          editAction("team", ACTIONID, true);
+          $(this).removeClass("inactive");
+
+          //unselect other
+          other.removeClass("active").addClass("inactive");
+          other.find("input[type=checkbox]").prop("checked", false);
+        }
+      }
+		});
+
+    $('#individual-task-panel').on('click', '.cr-styled input[type=checkbox]', function(){
+      var ACTIONID = $(this).closest('tr').data('id');
+      var patientId = $(this).closest('tr').data('team-or-patient-id');
+      editAction(patientId, ACTIONID, null, this.checked);
+
+      if(this.checked) {
+        recordEvent(local.pathwayId, patientId, "Item completed");
+        var self = this;
+        $(self).parent().attr("title","").attr("data-original-title","").tooltip('fixTitle').tooltip('hide');
+        wireUpTooltips();
+        setTimeout(function(e){
+          $(self).parent().fadeOut(300, function(){
+            var parent = $(this).parent();
+            $(this).replaceWith(createPanel($('#checkbox-template'),{"done":true}));
+            parent.find('button').on('click', function(){
+              ACTIONID = $(this).closest('tr').data('id');
+              editAction(patientId, ACTIONID, null, false);
+              $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+              updateWelcomePage();
+            });
+          });
+        },1000);
+      }
+			updateWelcomePage();
+		}).on('change', '.btn-toggle input[type=checkbox]', function(){
+      updateWelcomePage();
+    }).on('click', '.edit-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[2]).find('span').text());
+
+      $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('shown.bs.modal').on('shown.bs.modal', function () {
+        $('#editActionPlanItem').focus();
+      }).off('click','.save-plan').on('click', '.save-plan',function(){
+
+        editPlan(PLANID, $('#editActionPlanItem').val());
+
+        $('#editPlan').modal('hide');
+      }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
+        if(e.which === 13) $('#editPlan .save-plan').click();
+      }).modal();
+		}).on('click', '.delete-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#team-delete-item').html($($(this).closest('tr').children('td')[2]).find('span').text());
+
+      $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('click','.delete-plan').on('click', '.delete-plan',function(){
+        deletePlan(PLANID);
+
+        $('#deletePlan').modal('hide');
+      }).modal();
+		}).on('click', '.btn-undo', function(e){
+      var ACTIONID = $(this).closest('tr').data('id');
+      var patientId = $(this).closest('tr').data('team-or-patient-id');
+      editAction(patientId, ACTIONID, null, false);
+      $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+      updateWelcomePage();
+    }).on('click', '.btn-yes,.btn-no', function(e){
+      var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+      var ACTIONID = $(this).closest('tr').data('id');
+      var patientId = $(this).closest('tr').data('team-or-patient-id');
+      if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
+        //unselecting
+        if(checkbox.val()==="no"){
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), function(){
+            editAction(patientId, ACTIONID, false, null, local.reason);
+            updateWelcomePage();
+            wireUpTooltips();
+          }, function(){
+            ignoreAction(patientId, ACTIONID);
+            other.removeClass("inactive");
+            checkbox.removeAttr("checked");
+            checkbox.parent().removeClass("active");
+            updateWelcomePage();
+            wireUpTooltips();
+          });
+          e.stopPropagation();
+          e.preventDefault();
+        } else {
+          ignoreAction(patientId, ACTIONID);
+          other.removeClass("inactive");
+        }
+      } else if((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
+        //prevent clicking on unselected option or if the row is complete
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      } else {
+        //selecting
+        var self = this;
+        if(checkbox.val()==="no") {
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), function(){
+            editAction(patientId, ACTIONID, false, null, local.reason);
+            $(self).removeClass("inactive");
+
+            checkbox.attr("checked","checked");
+            checkbox.parent().addClass("active");
+            //unselect other
+            other.removeClass("active").addClass("inactive");
+            other.find("input[type=checkbox]").prop("checked", false);
+            updateWelcomePage();
+            wireUpTooltips();
+          }), function(){
+
+          };
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        else {
+          editAction(patientId, ACTIONID, true);
+          $(this).removeClass("inactive");
+
+          //unselect other
+          other.removeClass("active").addClass("inactive");
+          other.find("input[type=checkbox]").prop("checked", false);
+        }
+      }
+		});
+
+    updateWelcomePage();
+  };
+
+  var updateWelcomePage = function(){
+    $('#team-task-panel').add('#individual-task-panel').find('.suggestion').each(function(){
+			$(this).find('td').last().children().hide();
+		});
+
+    $('#team-task-panel').add('#individual-task-panel').find('.cr-styled input[type=checkbox]').each(function(){
+      if(this.checked){
+        $(this).parent().parent().parent().addClass('success');
+      } else {
+        $(this).parent().parent().parent().removeClass('success');
+      }
+    });
+
+    $('#team-task-panel').add('#individual-task-panel').find('.btn-undo').each(function(){
+      $(this).parent().parent().addClass('success');
+    });
+
+    //no class - user not yet agreed/disagreed - no background / muted text
+    //active - user agrees - green background / normal text
+    //success - user completed - green background / strikethrough text
+    //danger - user disagrees - red background / strikethrough text
+    $('#team-task-panel').add('#individual-task-panel').find('tr').each(function(){
+      var self = $(this);
+      var any = false;
+      self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
+        any = true;
+  			if(this.value==="yes"){
+  				self.removeClass('danger');
+  				self.addClass('active');
+  				self.find('td').last().children().show();
+          if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
+            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
+          } else {
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
+          }
+  			} else {
+  				self.removeClass('active');
+  				self.addClass('danger');
+  				self.removeClass('success');
+          if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
+            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+          } else {
+            $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+          }
+  			}
+      });
+      if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+      }
+      if(!any){
+        self.removeClass('danger');
+        self.removeClass('active');
+        self.removeClass('success');
+
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
+      }
+
+      wireUpTooltips();
+		});
+
+    wireUpTooltips();
+  };
+
   var createTestTrendPanel = function(pathwayId, pathwayStage, patientId){
     return createPanel(valueTrendPanel, {"pathway": local.monitored[pathwayId], "pathwayStage" : pathwayStage, "noHeader" : true});
   };
@@ -1523,7 +1837,7 @@
 			return ret;
 		});
 
-    var data = {"patients": patients, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title" : "Standards missed", "isUnSortable" : true}]};
+    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title" : "Standards missed", "isUnSortable" : true}]};
 
     data.patients.sort(function(a, b){
       if(a.items[0] === b.items[0]) {
@@ -1600,7 +1914,7 @@
         }
       }
     }
-
+    pList = removeDuplicates(pList);
 		var patients = pList.map(function(patientId) {
 			var ret = local.data.patients[patientId];
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
@@ -1619,7 +1933,7 @@
 			return ret;
 		});
 
-		var data = {"patients": patients, "header" : header, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}]};
+		var data = {"patients": patients, "n" : patients.length, "header" : header, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}]};
 
     if(pathwayStage === local.categories.monitoring.name){
       data["header-items"].push({"title" : "Last BP Date", "isSorted":true, "direction":"sort-asc"});
@@ -2355,7 +2669,7 @@
 		});
 	};
 
-	var exportPlan = function(){
+	var exportPlan = function(what){
 		var doc = new jsPDF(), margin = 20, verticalOffset = margin;
 
 		var addHeading = function(text, size){
@@ -2384,6 +2698,10 @@
 		addHeading("Action Plan",24);
 		//Measured
 		addHeading("Monitoring",20);
+
+    addLine(what);
+    addLine(what);
+    addLine(what);
 
 	/*	var internalFunc = function(el) {
       var k;
@@ -2592,78 +2910,12 @@
         //hideAllPanels();
         showNavigation(local.diseases, -1, $('#welcome'));
 
-        //add tasks
-        var teamTasks = [];
-        var individualTasks = [];
+        $('#welcome-tabs li').removeClass('active');
+        $('#outstandingTasks').closest('li').addClass('active');
 
-        //Add the team tasks
-        for(var k in listActions("team")){
-          if(listActions("team")[k].agree && ! listActions("team")[k].done){
-            teamTasks.push({"pathway": "tba", "task": local.actionText[listActions("team")[k].id].text, "data":listActions("team")[k].id, "tpId":"team"});
-          }
-        }
+        populateWelcomeTasks();
 
-        //Add the user added team tasks
-        for(var k in listPlans("team")){
-          if(! listPlans("team")[k].done){
-            teamTasks.push({"pathway": local.pathwayNames[listPlans("team")[k].pathwayId], "task": listPlans("team")[k].text, "data": listPlans("team")[k].id});
-          }
-        }
 
-        //Add individual
-        for(var k in listActions()){
-          if(k==="team") continue;
-          for(var l in listActions()[k]){
-            if(listActions()[k][l].agree && !listActions()[k][l].done){
-              individualTasks.push({"pathway": "tba", "patientId":k, "task": local.actionText[l].text, "data":l, "tpId":k});
-            }
-          }
-        }
-
-        //Add custom individual
-        for(var k in listPlans()){
-          if(k==="team") continue;
-          for(var l in listPlans()[k]){
-            if(! listPlans()[k][l].done){
-              individualTasks.push({"pathway": local.pathwayNames[listPlans()[k][l].pathwayId], "patientId":k, "task": listPlans()[k][l].text, "data":l});
-            }
-          }
-        }
-
-        var addTemplate = $('#action-plan').html();
-        Mustache.parse(addTemplate);
-        var rendered = Mustache.render(addTemplate);
-        $('#team-add-plan').html(rendered);
-
-        $('#team-add-plan').off('click').on('click', '.add-plan', function(){
-          var plan = $(this).parent().parent().find('textarea').val();
-          recordPlan("team", plan, "custom");
-
-          $('#team-task-panel').find('table tbody').append('<tr><td></td><td>' + plan + '</td><td><label class="cr-styled"><input type="checkbox"><i class="fa"></i></label></td></tr>');
-    		});
-
-        var template = $('#welcome-task-items').html();
-        var itemTemplate = $('#welcome-task-item').html();
-        Mustache.parse(template);
-        Mustache.parse(itemTemplate);
-
-        rendered = Mustache.render(template, {"tasks": teamTasks, "hasTasks": teamTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
-        $('#team-task-panel').children().not(":first").remove();
-        $('#team-task-panel').append(rendered);
-
-        rendered = Mustache.render(template, {"tasks": individualTasks, "isPatientTable":true, "hasTasks": individualTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
-        $('#individual-task-panel').children().not(":first").remove();
-        $('#individual-task-panel').append(rendered);
-
-        $('#team-task-panel,#individual-task-panel').on('change', 'input[type=checkbox]', function(){
-          $(this).closest('tr').removeClass("success");
-          if($(this).is(':checked')) $(this).closest('tr').addClass("success");
-          var planId = $(this).closest('tr').data("id");
-          if((planId+"").length>=10)  editPlan(planId, null, $(this).is(':checked'));
-          else {
-            editAction($(this).closest('tr').data("teamOrPatientId"), planId, null, $(this).is(':checked'));
-          }
-        });
       } else {
         //if screen not in correct segment then select it
         alert("shouldn't get here");
@@ -2674,6 +2926,78 @@
         wireUpTooltips();
       }
     }
+  };
+
+  var populateWelcomeTasks = function(complete){
+
+    //add tasks
+    var teamTasks = [];
+    var individualTasks = [];
+
+    //Add the team tasks
+    for(var k in listActions("team")){
+      if(listActions("team")[k].agree && ( (!listActions("team")[k].done && !complete) || (listActions("team")[k].done && complete))){
+        teamTasks.push({"pathway": "N/A", "task": local.actionText[listActions("team")[k].id].text, "data":listActions("team")[k].id, "tpId":"team", "agree" :true, "done": complete});
+      }
+    }
+
+    //Add the user added team tasks
+    for(var k in listPlans("team")){
+      if((!listPlans("team")[k].done && !complete) || (listPlans("team")[k].done && complete)){
+        teamTasks.push({"canEdit":true,"pathway": local.pathwayNames[listPlans("team")[k].pathwayId], "pathwayId":listPlans("team")[k].pathwayId, "task": listPlans("team")[k].text, "data": listPlans("team")[k].id, "agree" :listPlans("team")[k].agree, "disagree" : listPlans("team")[k].agree===false, "done": complete});
+      }
+    }
+
+    //Add individual
+    for(var k in listActions()){
+      if(k==="team") continue;
+      for(var l in listActions()[k]){
+        if(local.actionText[l] && listActions()[k][l].agree && ( (!listActions()[k][l].done && !complete) || (listActions()[k][l].done && complete))){
+          individualTasks.push({"pathway": "N/A", "patientId":k, "task": local.actionText[l].text, "pathwayId":listPlans()[k][l].pathwayId, "data":l, "tpId":k, "agree" :true, "done": complete});
+        }
+      }
+    }
+
+    //Add custom individual
+    for(var k in listPlans()){
+      if(k==="team") continue;
+      for(var l in listPlans()[k]){
+        if(listPlans()[k][l].text && (!listPlans()[k][l].done && !complete) || (listPlans()[k][l].done && complete)){
+          individualTasks.push({"canEdit":true,"pathway": local.pathwayNames[listPlans()[k][l].pathwayId], "pathwayId":listPlans()[k][l].pathwayId, "patientId":k, "tpId":k, "task": listPlans()[k][l].text, "data":l, "agree" :true, "done": complete});
+        }
+      }
+    }
+
+    var listTemplate = $('#welcome-task-list').html();
+    Mustache.parse(listTemplate);
+    $('#welcome-tab-content').html(Mustache.render(listTemplate));
+
+    var addTemplate = $('#action-plan').html();
+    Mustache.parse(addTemplate);
+    var rendered = Mustache.render(addTemplate);
+    $('#team-add-plan').html(rendered);
+
+    var template = $('#welcome-task-items').html();
+    var itemTemplate = $('#welcome-task-item').html();
+    Mustache.parse(template);
+    Mustache.parse(itemTemplate);
+
+    $('#team-add-plan').off('click').on('click', '.add-plan', function(){
+      var plan = $(this).parent().parent().find('textarea').val();
+      var planId = recordPlan("team", plan, "custom");
+      var itemTemp
+      $('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {"pathway": "N/A", "task": plan, "data": planId, "agree" :null, "done": null}, {"chk" : $('#checkbox-template').html()}));
+    });
+
+    rendered = Mustache.render(template, {"tasks": teamTasks, "hasTasks": teamTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
+    $('#team-task-panel').children().not(":first").remove();
+    $('#team-task-panel').append(rendered);
+
+    rendered = Mustache.render(template, {"tasks": individualTasks, "isPatientTable":true, "hasTasks": individualTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
+    $('#individual-task-panel').children().not(":first").remove();
+    $('#individual-task-panel').append(rendered);
+
+    wireUpWelcomePage();
   };
 
   var wireUpSearchBox = function () {
@@ -2822,7 +3146,39 @@
     });
 
     //exportPlan
-    $('span.export-plan').on('click', exportPlan);
+    $('.download-outstanding').on('click', function(){
+      exportPlan('outstanding');
+    });
+    $('.download-completed').on('click', function(){
+      exportPlan('completed');
+    });
+    $('.download-all').on('click', function(){
+      exportPlan('all');
+    });
+
+    $('#outstandingTasks').on('click', function(e){
+      e.preventDefault();
+
+      $('#welcome-tabs li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      var template = $('#welcome-task-list').html();
+      var rendered = Mustache.render(template);
+      $('#welcome-tab-content').html(rendered);
+
+      populateWelcomeTasks();
+    });
+
+    $('#completedTasks').on('click', function(e){
+      e.preventDefault();
+
+      $('#welcome-tabs li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      var template = $('#welcome-task-list').html();
+      var rendered = Mustache.render(template);
+      $('#welcome-tab-content').html(rendered);
+
+      populateWelcomeTasks(true);
+    });
 
     if(bb.hash !== location.hash) location.hash = bb.hash;
     loadContent(location.hash, true);
