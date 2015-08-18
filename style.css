@@ -13,6 +13,15 @@ body.qof {
   background-color: rgb(68, 157, 68);
 }
 
+.row.row-top {
+  margin-top: -15px;
+  margin-bottom: 8px;
+}
+
+.row.row-mid>div {
+  margin-bottom: -15px;
+}
+
 .btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
   color: white;
   background-color: rgb(68, 157, 68);
@@ -359,6 +368,27 @@ header {
 /*.btn-toggle {
 	opacity:0.5;
 }*/
+
+.table.table-body-hidden tbody tr, .table.table-head-hidden thead tr,
+.table.table-body-hidden tbody tr td, .table.table-head-hidden thead tr th {
+  visibility: collapse;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.table.table-body-hidden tbody tr td button, .table.table-head-hidden thead tr th i {
+  height: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+}
+
+.table.table-body-hidden {
+  margin-bottom: 0px;
+}
 
 .btn-toggle.inactive {
 	opacity:0.5;

@@ -457,6 +457,7 @@
   <script id="patient-list-header-item" type="x-tmpl-mustache">
     <th class="sortable {{direction}}" title="Order patients">
       {{title}}
+      {{^isUnSortable}}
       {{#isSorted}}
       {{#isAsc}}<i class="fa fa-sort-asc"></i>{{/isAsc}}
       {{^isAsc}}<i class="fa fa-sort-desc"></i>{{/isAsc}}
@@ -464,6 +465,7 @@
       {{^isSorted}}
       <i class="fa fa-sort">
       {{/isSorted}}
+      {{/isUnSortable}}
     </th>
   </script>
 
@@ -472,6 +474,57 @@
   </script>
 
   <script id="patient-list" type="x-tmpl-mustache">
+    <h4>{{header}}</h4>
+
+    <table class="table patient-list table-body-hidden">
+      <thead>
+        <tr>
+          {{#header-items}}
+          {{>header-item}}
+          {{/header-items}}
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
+          <td>
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+              <span class="fa fa-clipboard"></span>
+            </button>
+            1234567890
+          </td>
+          <td>2014-06-10</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-scroll" style="max-height:380px">
+      <table class="table patient-list table-head-hidden">
+        <thead>
+          <tr>
+            {{#header-items}}
+            {{>header-item}}
+            {{/header-items}}
+          </tr>
+        </thead>
+        <tbody>
+          {{#patients}}
+          <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
+            <td>
+              <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+                <span class="fa fa-clipboard"></span>
+              </button>
+              {{nhsNumber}}
+            </td>
+            {{#items}}
+            {{>item}}
+            {{/items}}
+          </tr>
+          {{/patients}}
+        </tbody>
+      </table>
+    </div>
+  </script>
+
+  <script id="patient-list-old" type="x-tmpl-mustache">
     <h4>{{header}}</h4>
     <table class="table patient-list">
       <thead>
@@ -724,6 +777,39 @@
   </script>
 
   <script id="qual-standard" type="x-tmpl-mustache">
+    <div id="individual-panel-classification" class="panel-grey" style="padding: 3px 0px 3px 30px;">
+      <span>Improvement opportunity: </span>
+      <span><strong>{{section.name}}</strong></span>
+      <span> - Agree?</span>
+      <div class="btn-group" data-toggle="buttons" data-is-classification data-text="{{section.name}}">
+        <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+          <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
+          <span class="fa fa-thumbs-up"></span>
+        </label>
+        <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+          <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
+          <span class="fa fa-thumbs-down"></span>
+        </label>
+      </div>
+
+      <span>&nbsp;&nbsp; |&nbsp;&nbsp; Quality standard missed: </span>
+      <span><strong>{{category.name}}</strong></span>
+      <span> - Agree?</span>
+
+      <div class="btn-group" data-toggle="buttons" data-text="{{category.name}}">
+        <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+          <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
+          <span class="fa fa-thumbs-up"></span>
+        </label>
+        <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+          <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
+          <span class="fa fa-thumbs-down"></span>
+        </label>
+      </div>
+    </div>
+  </script>
+
+  <script id="qual-standard-old" type="x-tmpl-mustache">
     <div id="individual-panel-classification" class="panel panel-default panel-grey">
       <table class="table table-minimal" data-is-classification>
       <thead>
@@ -780,9 +866,9 @@
 
   <script id="individual-panel" type="x-tmpl-mustache">
     {{#isMultiple}}
-    <div class="alert alert-info clickable" role="alert" data-id={{patientId}}>
+    <!--<div class="alert alert-info clickable" role="alert" data-id={{patientId}}>
       <strong>This patient appears on multiple pathways - click to view</strong>
-    </div>
+    </div>-->
     {{/isMultiple}}
 
     <table id="individual-suggested-actions-table" class="table">
@@ -881,6 +967,12 @@
         </button>
       </div>
       <div class="panel-body">
+        <div id="patient-panel-top" class="row row-top">
+        </div>
+        <div class="row row-mid">
+          <div id="patient-panel-mid" class="col-sm-12">
+          </div>
+        </div>
         <div class="row">
           <div id="patient-panel-left" class="col-sm-6">
           </div>
@@ -892,23 +984,18 @@
   </script>
 
   <script id="pathway-panel-radio" type="x-tmpl-mustache">
-    <div class="radio">
-      <label>
-        <input type="radio" name="pathwayradio" value="{{pathwayId}}" {{#checked}}checked="checked"{{/checked}}>{{name}}
-      </label>
-    </div>
+    <label class="radio-inline">
+      <input type="radio" name="pathwayradio" value="{{pathwayId}}" {{#checked}}checked="checked"{{/checked}}>{{name}}
+    </label>
   </script>
 
   <script id="pathway-panel" type="x-tmpl-mustache">
     <div class="panel panel-default">
-      <!--<div class="panel-heading">
-        <i class="fa fa-sitemap fa-fw"></i>&nbsp; Pathway
-      </div>-->
       <div class="panel-body">
-      <p>This patient flags multiple pathways - please click to select:</p>
-          {{#pathways}}
-          {{>radio}}
-          {{/pathways}}
+        <span>This patient flags multiple pathways - please click to select: </span>
+        {{#pathways}}
+        {{>radio}}
+        {{/pathways}}
       </div>
     </div>
   </script>
@@ -936,7 +1023,7 @@
         </div>
         <div class="row">
           <div class="col-sm-12">
-            <div id="patients" style="max-height:400px"></div>
+            <div id="patients"></div>
           </div>
         </div>
       </div>
