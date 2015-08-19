@@ -13,8 +13,22 @@
           ["%",50,50,50,50,50,50,50,50,51,51,51,51,51,51,52,52,51,51,51,50,50,49,49,49,49,49,49,48,47,47,47,47,47,47,47,47,46,47,46,46,46,46,46,45,45,45,45,44,44,44,44,44,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,46,46,46,45,45,45,46,46,46,46,45,45,45,46,46,46],
           ["n",150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,149,149,149,148,148,148,148,148,148,148,148,146,146,146,146,146,146,146,146,146,146,144,144,145,145,145,143,143,143,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,141,142,142,142,141,141,141,141,139,139,139,139,139,139,139,139,138,138,138,139,139,139,138,136,136,136,136,136,136]
         ],
+        "text" :{
+          "page": {"text":"Hypertension - monitoring"},
+          "panel": {"text":"Patients who have not had their hypertension monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
+          "panelOk": {"text":"Monitored OK"},
+          "panelNotOk": {"text":"Improvement Opportunities"},
+          "panelOkHeader" : {"text" : "Patients with hypertension who have been monitored as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
+          "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
+          "header" : {"text": "Current opportunities to monitor hypertension"}
+        },
         "pageTitle" : "Hypertension - monitoring",
         "panelTitle" : "Patients who have not had their hypertension monitored",
+        "panelOkTitle" : "Monitored OK",
+        "panelNotOkTitle" : "Improvement Opportunities",
+        "panelOkHeader" : "Patients with hypertension who have been monitored as per clinical guidelines",
+        "panelOkHeaderInfo" : "Patients with a diagnosis...",
+        "patientsOk" : [5550069950,5550154103,5550242024,5550295217],
         "panelTitleTooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months",
         "header" : "Current opportunities to monitor hypertension",
         "patientListHeader" : "Current patients who have not had their hypertension monitored",
@@ -24,14 +38,14 @@
           { "title": "n" },
           { "title": "%" }
         ],
-        "items": [
+        "items":[
           {
             "name": "No opportunities",
             "desc": "Patients who have had no contact with the practice",
             "n": 40,
             "percentage": 55.6,
             "main": "These are patients that you have had no contact with.",
-            "patients": [5550000041,5550069950,5550154103,5550242024,5550295217,5550366599,5550462743,5550516099,5550551266,5550640777,5550660340,5550739385,5550747304,5550777945,5550801061,5550844372,5550891861,5550929608,5550984593,5551024247,5551064236,5551118156,5551208733,5551262910,5551287703,5551341104,5551345049,5551359435,5551437927,5551455155,5551535166,5551573870,5551650840,5551667997,5551668339,5551697645,5551725917,5551734551,5551773731,5551806647]
+            "patients": [5550000041,5550366599,5550462743,5550516099,5550551266,5550640777,5550660340,5550739385,5550747304,5550777945,5550801061,5550844372,5550891861,5550929608,5550984593,5551024247,5551064236,5551118156,5551208733,5551262910,5551287703,5551341104,5551345049,5551359435,5551437927,5551455155,5551535166,5551573870,5551650840,5551667997,5551668339,5551697645,5551725917,5551734551,5551773731,5551806647]
           },
           {
             "name": "Face-to-face",
@@ -49,7 +63,69 @@
             "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
             "patients": [5552423448,5552492315,5552530288,5552533866,5552563783,5552586748,5552661359,5552727859,5552765510,5552774478,5552803503,5552803965,5552860572,5552870948,5552902224,5552910216,5552990876,5553014733,5553098415,5553125053]
           }
-        ]
+        ],
+        "standards": {
+          "bp" : {
+            "tab" : "Blood pressure",
+            "title" : "Opportunities to improve blood pressure monitoring",
+            "opportunities" : [
+              {
+                "name": "No opportunities",
+                "desc": "Patients who have had no contact with the practice",
+                "n": 39,
+                "percentage": 55.6,
+                "main": "These are patients that you have had no contact with.",
+                "patients": [5550000041,5550462743,5550516099,5550551266,5550640777,5550660340,5550739385,5550747304,5550777945,5550801061,5550844372,5550891861,5550929608,5550984593,5551024247,5551064236,5551118156,5551208733,5551262910,5551287703,5551341104,5551345049,5551359435,5551437927,5551455155,5551535166,5551573870,5551650840,5551667997,5551668339,5551697645,5551725917,5551734551,5551773731,5551806647]
+              },
+              {
+                "name": "Face-to-face",
+                "desc": "Patients who have seen a clinician in the practice",
+                "n": 12,
+                "percentage": 16.7,
+                "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
+                "patients": [5551879011,5551960805,5551990261,5552036749,5552060899,5552115698,5552205620,5552211621,5552290255,5552290319,5552296308,5552378822]
+              },
+              {
+                "name": "Non face-to-face",
+                "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
+                "n": 20,
+                "percentage": 27.8,
+                "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
+                "patients": [5552423448,5552492315,5552530288,5552533866,5552563783,5552586748,5552661359,5552727859,5552765510,5552774478,5552803503,5552803965,5552860572,5552870948,5552902224,5552910216,5552990876,5553014733,5553098415,5553125053]
+              }
+            ]
+          },
+          "renal" : {
+            "tab" : "Renal function",
+            "title" : "Opportunities to improve renal function monitoring",
+            "opportunities" : [
+              {
+                "name": "No opportunities",
+                "desc": "Patients who have had no contact with the practice",
+                "n": 40,
+                "percentage": 55.6,
+                "main": "These are patients that you have had no contact with.",
+                "patients": [5550000041,5550366599,5550462743,5550516099,5550551266,5550640777,5550660340,5550739385,5550747304,5550777945,5550801061,5550844372,5550891861,5550929608,5550984593,5551024247,5551064236,5551118156,5551208733,5551262910,5551287703,5551341104,5551345049,5551359435,5551437927,5551455155,5551535166,5551573870,5551650840,5551667997,5551668339,5551697645,5551725917,5551734551,5551773731,5551806647]
+              },
+              {
+                "name": "Face-to-face",
+                "desc": "Patients who have seen a clinician in the practice",
+                "n": 12,
+                "percentage": 16.7,
+                "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
+                "patients": [5551879011,5551960805,5551990261,5552036749,5552060899,5552115698,5552205620,5552211621,5552290255,5552290319,5552296308,5552378822]
+              },
+              {
+                "name": "Non face-to-face",
+                "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
+                "n": 20,
+                "percentage": 27.8,
+                "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
+                "patients": [5552423448,5552492315,5552530288,5552533866,5552563783,5552586748,5552661359,5552727859,5552765510,5552774478,5552803503,5552803965,5552860572,5552870948,5552902224,5552910216,5552990876,5553014733,5553098415,5553125053]
+              }
+            ]
+          }
+        }
       },
       "treatment" : {
         "controlled" : 75,

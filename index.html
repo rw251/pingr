@@ -1013,31 +1013,56 @@
   </script>
 
   <script id="patients-panel" type="x-tmpl-mustache">
-    <div class="panel panel-default">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="{{panelTooltip}}">
-      {{panelTitle}}
-      </div>
+    <ul class="nav nav-tabs top-tabs" role="tablist">
+      <li {{#ok}}class="active"{{/ok}}><a {{^ok}}href="{{url}}/yes"{{/ok}}>{{text.panelOk.text}}</a></li>
+      <li {{^ok}}class="active"{{/ok}}><a {{#ok}}href="{{url}}/no"{{/ok}}>{{text.panelNotOk.text}}</a></li>
+    </ul>
+    <div>
+      {{>content}}
+    </div>
+  </script>
 
+  <script id="patients-panel-yes" type="x-tmpl-mustache">
+    <div class="row">
+      <div class="col-sm-12">
+        <h4>{{text.panelOkHeader.text}}</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div id="patients"></div>
+      </div>
+    </div>
+  </script>
+
+  <script id="patients-panel-no" type="x-tmpl-mustache">
+    <ul class="nav nav-tabs sub-tabs" role="tablist">
+      {{#tabs}}
+        {{>tab-header}}
+      {{/tabs}}
+    </ul>
+    <div>
+      {{>tab-content}}
+    </div>
+  </script>
+
+  <script id="patients-panel-no-tabs" type="x-tmpl-mustache">
+    <li {{#active}}class="active"{{/active}}>
+      <a {{^active}}href="{{url}}"{{/active}}>{{text}}</a>
+    </li>
+  </script>
+
+  <script id="patients-panel-no-page" type="x-tmpl-mustache">
+    <div class="panel panel-default">
       <div class="panel-body">
-        <div class="row">
-          <div class="col-sm-12">
-            <h4>{{header}}</h4>
-            <h6>(click sections to change patient list)</h6>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-12" style="padding:0">
-            <div style="height:200px" id="breakdown-chart"></div>
-          </div>
-          <!--<div class="col-sm-10" style="padding:0">
-            <div id="breakdown-table"></div>
-          </div>-->
-        </div>
-        <div class="row">
-          <div class="col-sm-12">
-            <div id="patients"></div>
-          </div>
-        </div>
+        <h4>{{header}}</h4>
+        <h6>(click sections to change patient list)</h6>
+        <div style="height:200px" id="breakdown-chart"></div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="patients"></div>
       </div>
     </div>
   </script>
@@ -1179,10 +1204,10 @@
   <script id="pathway-picker-sub-item" type="x-tmpl-mustache">
     <ul class="list-unstyled">
       <li><a href="#main/{{id}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overview</a></li>
-      <li><a href="#main/{{id}}/diagnosis">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnosis</a></li>
-      <li><a href="#main/{{id}}/monitoring">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monitoring</a></li>
-      <li><a href="#main/{{id}}/treatment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control</a></li>
-      <li><a href="#main/{{id}}/exclusions">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exclusions</a></li>
+      <li><a href="#main/{{id}}/diagnosis/yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnosis</a></li>
+      <li><a href="#main/{{id}}/monitoring/yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monitoring</a></li>
+      <li><a href="#main/{{id}}/treatment/yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control</a></li>
+      <li><a href="#main/{{id}}/exclusions/yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exclusions</a></li>
     </ul>
   </script>
 

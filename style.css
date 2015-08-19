@@ -556,6 +556,13 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 	opacity: 1 !important;
 }
 
+.c3-chart-bar path._unselected_ {
+	opacity: 0.3 !important;
+}
+.c3-chart-bar path._selected_ {
+	opacity: 1 !important;
+}
+
 .c3-chart-arc text {
 	fill: #000;
 }
