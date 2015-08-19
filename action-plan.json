@@ -124,7 +124,7 @@
   },
   "plans":{
     "0001":{"text":"Ensure the <strong>pop-ups in your patient record are working</strong> so clinicians are reminded to take a patient’s blood pressure when they see them. <strong>Customise</strong> them to demonstrate the consequences of suboptimal blood pressure treatment and that PINGR can be used for individualised patient medication decision support.", "info" : "This is becuase of x y and z."},
-    "0002":{"text":"Put a <strong>digital sphygmomanometer in your waiting room</strong> so patients can take their blood pressure and give their readings to your receptionists"},
+    "0002":{"text":"Put a <strong>digital sphygmomanometer in your waiting room</strong> so patients can take their own blood pressure whilst they wait and give their readings to your receptionists"},
     "0003":{"text":"Hold an <strong>educational session</strong> at your practice to highlight to colleagues: the importance of blood pressure measurement and control, your practice's current performance on hypertension care, and steps that could be taken to improve. <a href=\"powerpoint.pptx\" target=\"_blank\">Download your personalised presentation here.</a>", "info" : "This is becuase of x y and z."},
     "0004":{"text":"Provide an open access or a regular (e.g. monthly) nurse-led <strong> dedicated blood pressure surgery. </strong> "},
     "0005":{"text":"Work with your local pharmacy to enable them to take blood pressure readings and send the results directly to you."},

@@ -265,8 +265,8 @@
     if(agree) {
       log = "You agreed with this on " + (new Date()).toDateString();
     } else if(agree===false) {
-      var reasonText = local.reason.reason === "" && local.reason.reasonText === "" ? " - no reason given" : " because '" + local.reason.reason + " " + local.reason.reasonText +"'";
-      log = "You disagreed with this on " + (new Date()).toDateString() + reasonText;
+      var reasonText = local.reason.reason === "" && local.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + local.reason.reason + "; " + local.reason.reasonText +".'";
+      log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
     }
 
     if(done) {
@@ -2531,7 +2531,7 @@
       {name: 'patients', displayKey: 'value', source: local.states.ttAdapter(), templates: {
         empty: [
           '<div class="empty-message">',
-            'No matches',
+            '&nbsp; &nbsp; No matches',
           '</div>'
         ].join('\n')}
       }
