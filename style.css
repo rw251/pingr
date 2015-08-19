@@ -9,8 +9,17 @@ body.qof {
 }
 
 .btn.btn-xs.btn-yes.btn-toggle.btn-success{
-  color: white;
+  /*color: #e9e9e9;*/
   background-color: rgb(68, 157, 68);
+}
+
+.row.row-top {
+  margin-top: -15px;
+  margin-bottom: 8px;
+}
+
+.row.row-mid>div {
+  margin-bottom: -15px;
 }
 
 .btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
@@ -36,13 +45,13 @@ body.qof {
 }
 
 .btn.btn-xs.btn-no.btn-toggle.btn-danger{
-color: white;
+  /*color: #e9e9e9;*/
 background-color: rgb(201, 48, 44);
 }
 
 .btn.btn-xs.btn-no.btn-toggle.btn-danger:hover{
-color: white;
-background-color: #FF0000;
+  color: white;
+  background-color: rgb(201, 48, 44);
 border-color: #FF0000;
 }
 
@@ -365,6 +374,27 @@ header {
 	opacity:0.5;
 }*/
 
+.table.table-body-hidden tbody tr, .table.table-head-hidden thead tr,
+.table.table-body-hidden tbody tr td, .table.table-head-hidden thead tr th {
+  visibility: collapse;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.table.table-body-hidden tbody tr td button, .table.table-head-hidden thead tr th i {
+  height: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+}
+
+.table.table-body-hidden {
+  margin-bottom: 0px;
+}
+
 .btn-toggle.inactive {
 	opacity:0.5;
 }
@@ -405,7 +435,7 @@ header {
 }
 
 .navbar-nav>li>.btn-group {
-	padding: 10px 15px 10px 15px;
+	padding: 8px 15px 8px 15px;
 }
 
 .navbar-toggle {
@@ -466,7 +496,7 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .btn-padding {
    position: relative;
    overflow: hidden;
-   margin: 6px;
+   margin: 8px 0px;
 }
 
 
@@ -684,7 +714,7 @@ th,td {
   font-size: 14px;
 }
 .twitter-typeahead, .tt-hint, .tt-input {
-   height: 36px;
+  height: 36px;
 }
 
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
@@ -694,8 +724,8 @@ th,td {
 
 .twitter-typeahead {
   position: relative;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 7px;
+  margin-bottom: 7px;
   margin-right: 15px;
 }
 

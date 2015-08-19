@@ -9,9 +9,6 @@
  *  to all the others.
  */
 
- //The way to scroll nice scroll
- //$('#patients').getNiceScroll().doScrollPos(0,$('td:contains(555877)').position().top-100);
-
 (function () {
   'use strict';
 
@@ -85,16 +82,19 @@
 
     switchTo110Layout();
 
-    showPatientPanel(pathwayStage, farLeftPanel);
-    populatePatientPanel(local.pathwayId, pathwayStage, null);
-    //showTeamActionPlanPanel(farRightPanel);
+    var panel = createPatientPanel(pathwayStage);
+
+    farLeftPanel.fadeOut(100, function(){
+      $(this).html(panel);
+      wireUpPatientPanel(pathwayStage, farLeftPanel);
+      populatePatientPanel(local.pathwayId, pathwayStage, null);
+      updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
+      $(this).fadeIn(100, function(){
+        patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
+        farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
+      })
+    });
     farRightPanel.html("");
-
-    updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
-
-    //update panels
-    patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
-    farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
   };
 
   //Show patient view within the pathway stage view
@@ -119,46 +119,106 @@
     var qualPanel = createQualStanPanel(pathwayId, pathwayStage, patientId, isMultiple);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
-    $('#temp-hidden #patient-panel-left').html("").append(qualPanel).append(trendPanel).append(medPanel);
+    var multPanel = createPanel($('#pathway-panel'), {"multiple" : local.data.patients[patientId].breach.length>1,"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()});
+    $('#temp-hidden #patient-panel-top').html(qualPanel);
+    $('#temp-hidden #patient-panel-mid').html(multPanel);
+    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel);
 
-    farRightPanel.fadeOut("fast", function(){
-      $(this).html($('#temp-hidden').html());
+    if(farRightPanel.is(':visible')) {
+      farRightPanel.fadeOut(100, function(){
+        $(this).html($('#temp-hidden').html());
+          $('#temp-hidden').html("");
+          wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+          wireUpQualStan(pathwayId, pathwayStage);
+          drawTrendChart(patientId, pathwayId);
+          if(local.data.patients[patientId].breach.length>1){
+            $('input[name=pathwayradio]').off('change').on('change', function(){
+              //find breach $(this).val() = asthma, bp etc.
+              var value = $(this).val();
+              var breach = local.data.patients[patientId].breach.filter(function(val){ return val.pathwayId === value})[0];
+              showIndividualPatientPanel(breach.pathwayId, breach.pathwayStage, patientId,  false);
+            });
+          }
+          $(this).fadeIn(100, function(){
+        });
+      });
+    } else {
+      farRightPanel.html($('#temp-hidden').html());
         $('#temp-hidden').html("");
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
         wireUpQualStan(pathwayId, pathwayStage);
         drawTrendChart(patientId, pathwayId);
-        $(this).fadeIn("fast", function(){
+        if(local.data.patients[patientId].breach.length>1){
+          $('input[name=pathwayradio]').off('change').on('change', function(){
+            //find breach $(this).val() = asthma, bp etc.
+            var value = $(this).val();
+            var breach = local.data.patients[patientId].breach.filter(function(val){ return val.pathwayId === value})[0];
+            showIndividualPatientPanel(breach.pathwayId, breach.pathwayStage,patientId,  false);
+          });
+        }
+        farRightPanel.fadeIn(100, function(){
       });
-    });
+    }
   };
 
   //Show patient view from the all patient screen
   var showIndividualPatientView = function(patientId, pathwayId, pathwayStage, isMultiple){
     local.patientId = patientId;
+    var panel = createPanel($('#patient-panel'), {"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple});
 
-    switchTo110Layout();
+    farRightPanel.html("");
+    $('#temp-hidden').html(panel);
 
-    createPanelShow($('#patient-panel'),farRightPanel, {"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple});
-
-    showIndividualActionPlanPanel($('#patient-panel-right'), pathwayId, pathwayStage, patientId, isMultiple);
+    //showIndividualActionPlanPanel($('#patient-panel-right'), pathwayId, pathwayStage, patientId, isMultiple);
+    var actionPlan = createIndividualActionPlanPanel(pathwayStage);
+    $('#temp-hidden #patient-panel-right').html(actionPlan);
 
     var qualPanel = createQualStanPanel(pathwayId, pathwayStage, patientId, isMultiple);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
-    var multPanel = local.data.patients[patientId].breach.length>1 ? createPanel($('#pathway-panel'), {"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()}) : "";
+    var multPanel = createPanel($('#pathway-panel'), {"multiple" : local.data.patients[patientId].breach.length>1,"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()});
+    $('#temp-hidden #patient-panel-top').html(qualPanel);
+    $('#temp-hidden #patient-panel-mid').html(multPanel);
+    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel);
 
-    $('#patient-panel-left').html("").append(multPanel).append(qualPanel).append(trendPanel).append(medPanel);
+    if(farRightPanel.is(':visible')) {
+      farRightPanel.fadeOut(100, function(){
+        $(this).html($('#temp-hidden').html());
+          $('#temp-hidden').html("");
+          wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+          wireUpQualStan(pathwayId, pathwayStage);
+          drawTrendChart(patientId, pathwayId);
 
-    wireUpQualStan(pathwayId, pathwayStage);
+          if(local.data.patients[patientId].breach.length>1){
+            $('input[name=pathwayradio]').off('change').on('change', function(){
+              //find breach $(this).val() = asthma, bp etc.
+              var value = $(this).val();
+              var breach = local.data.patients[patientId].breach.filter(function(val){ return val.pathwayId === value})[0];
+              showIndividualPatientView(patientId, breach.pathwayId, breach.pathwayStage, false);
+            });
+          }
 
-    drawTrendChart(patientId, pathwayId);
+          $(this).fadeIn(100, function(){
+        });
+      });
+    } else {
+        farRightPanel.html($('#temp-hidden').html());
+        $('#temp-hidden').html("");
+        wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+        wireUpQualStan(pathwayId, pathwayStage);
+        drawTrendChart(patientId, pathwayId);
 
-    if(local.data.patients[patientId].breach.length>1){
-      $('input[name=pathwayradio]').off('change').on('change', function(){
-        //find breach $(this).val() = asthma, bp etc.
-        var value = $(this).val();
-        var breach = local.data.patients[patientId].breach.filter(function(val){ return val.pathwayId === value})[0];
-        showIndividualPatientView(patientId, breach.pathwayId, breach.pathwayStage, false);
+
+        if(local.data.patients[patientId].breach.length>1){
+          $('input[name=pathwayradio]').off('change').on('change', function(){
+            //find breach $(this).val() = asthma, bp etc.
+            var value = $(this).val();
+            var breach = local.data.patients[patientId].breach.filter(function(val){ return val.pathwayId === value})[0];
+            showIndividualPatientView(patientId, breach.pathwayId, breach.pathwayStage, false);
+          });
+        }
+
+        farRightPanel.fadeIn(100, function(){
       });
     }
   };
@@ -171,7 +231,7 @@
 
       showMainView(local.diseases.length);
 
-      switchTo121Layout();
+      switchTo110Layout();
       hideAllPanels();
 
       showAllPatientPanel(farLeftPanel);
@@ -674,51 +734,69 @@
 			numberChange: Math.abs(local.data[local.pathwayId].diagnosis.change)
     }, {"change-bar-number": $('#change-bar-number').html()});
 
-		setTimeout(function(){
-      c3.generate({
+    destroyCharts(['diagnosis-chart']);
+    setTimeout(function(){
+  		local.charts["diagnosis-chart"] = c3.generate({
   			bindto: '#diagnosis-chart',
   			data: {
-  				columns: [
-  					['Patients', 30, 200, 100, 400, 150]
-  				],
-  				type: 'bar',
-          labels: true,
-          color: function (color, d) {
-            return local.colors[d.index];
-          }
+  				x: 'x',
+  				columns: local.data[local.pathwayId].diagnosis.trend,
+  				axes: {
+  					"%" : 'y',
+  					"n" : 'y2'
+  				}
   			},
+        zoom: {
+            enabled: true
+        },
         tooltip: {
           format: {
-            title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
             value: function (value) { return  enableHover ? undefined : value;}*/
           }
         },
-        legend:{
-          show: false
-        },
-  			bar: {
-  				width: {
-  					ratio: 0.5 // this makes bar width 50% of length between ticks
-  				}
-  				// or
-  				//width: 100 // this makes bar width 100px
-  			},
   			axis: {
   				x: {
-  					type: 'category',
-  					categories: ['HTN', 'CKD', 'DM', 'Protein', 'McrA'],
+  					type: 'timeseries',
+  					tick: {
+  						format: '%d-%m-%Y',
+  						count: 7,
+  						culling: {
+  							max: 4
+  						}
+  					},
             label: {
-              text: 'Disease',
+              text: 'Date',
               position: 'outer-center'
             }
   				},
-          y : {
+  				y : {
+  					min : 0,
+            label: {
+              text: 'Proportion (%)',
+              position: 'outer-middle'
+            }
+  				},
+  				y2: {
+  					show: true,
+  					min: 0,
             label: {
               text: 'Patient count (n)',
               position: 'outer-middle'
             }
-          }
+  				}
+  			},
+  			point: {
+  				show: false
+  			},
+  			size: {
+  				height: null
   			}
+  			/*grid: {
+  			 x: {
+  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
+  			 }
+  			 }*/
   		});
     },1);
 	};
@@ -732,58 +810,184 @@
 			numberChange: Math.abs(local.data[local.pathwayId].exclusions.change)
     }, {"change-bar-number": $('#change-bar-number').html()});
 
-
+    destroyCharts(['exclusion-chart']);
     setTimeout(function(){
-  		c3.generate({
+  		local.charts["exclusion-chart"] = c3.generate({
   			bindto: '#exclusion-chart',
   			data: {
-  				columns: [
-  					['Patients', 122, 78]
-  				],
-  				type: 'bar',
-          labels: true,
-          color: function (color, d) {
-            return local.colors[d.index];
-          }
+  				x: 'x',
+  				columns: local.data[local.pathwayId].exclusions.trend,
+  				axes: {
+  					"%" : 'y',
+  					"n" : 'y2'
+  				}
   			},
+        zoom: {
+            enabled: true
+        },
         tooltip: {
           format: {
-            title: function (x) { return (enableHover ? 'Click for more detail' : ''); }/*,
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
             value: function (value) { return  enableHover ? undefined : value;}*/
-          }
+          }/*,
+          position: function (data, width, height, element) {
+            console.log(data,width, height, element);
+            return {top: height};
+          }*/
         },
-        legend: {
-          show: false
-        },
-  			bar: {
-  				width: {
-  					ratio: 0.5 // this makes bar width 50% of length between ticks
-  				}
-  				// or
-  				//width: 100 // this makes bar width 100px
-  			},
   			axis: {
   				x: {
-  					type: 'category',
-  					categories: ['Reasons we think', 'Exclusion code'],
+  					type: 'timeseries',
+  					tick: {
+  						format: '%d-%m-%Y',
+  						count: 7,
+  						culling: {
+  							max: 4
+  						}
+  					},
             label: {
-              text: 'Reason for exclusion',
+              text: 'Date',
               position: 'outer-center'
             }
   				},
-          y : {
+  				y : {
+  					min : 0,
+            label: {
+              text: 'Proportion (%)',
+              position: 'outer-middle'
+            }
+  				},
+  				y2: {
+  					show: true,
+  					min: 0,
             label: {
               text: 'Patient count (n)',
               position: 'outer-middle'
             }
-          }
+  				}
+  			},
+  			point: {
+  				show: false
+  			},
+  			size: {
+  				height: null
   			}
+  			/*grid: {
+  			 x: {
+  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
+  			 }
+  			 }*/
   		});
-    }, 1);
+    },1);
 	};
 
   var showPatientDropdownPanel = function(location){
     createPanelShow($('#patient-dropdown-panel'),location, {"patients" : Object.keys(local.data.patients)});
+  };
+
+  var createPatientPanel = function(pathwayStage){
+    return createPanel(patientsPanelTemplate,{"pathwayStage" : pathwayStage, "panelTitle" : local.data[local.pathwayId][pathwayStage].panelTitle, "panelTooltip" : local.data[local.pathwayId][pathwayStage].panelTitleTooltip, "patientHeader": local.data[local.pathwayId][pathwayStage].patientListHeader,"header": local.data[local.pathwayId][pathwayStage] ? local.data[local.pathwayId][pathwayStage].header : ""});
+  };
+
+  var wireUpPatientPanel = function(pathwayStage, location){
+    patientsPanel = $('#patients');
+
+		patientsPanel.on('click', 'thead tr th.sortable', function(){	//Sort columns when column header clicked
+			var sortAsc = !$(this).hasClass('sort-asc');
+			if(sortAsc) {
+				$(this).removeClass('sort-desc').addClass('sort-asc');
+			} else {
+				$(this).removeClass('sort-asc').addClass('sort-desc');
+			}
+			populatePatientPanel(local.pathwayId, local.selected, local.subselected, $(this).index(), sortAsc);
+		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+			$('.list-item').removeClass('highlighted');
+			$(this).addClass('highlighted');
+
+      var patientId = $(this).find('td button').attr('data-patient-id');
+
+      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, local.data.patients[patientId].breach.length>1);
+
+			e.preventDefault();
+      e.stopPropagation();
+		}).on('click', 'tbody tr button', function(e){
+			//don't want row selected if just button pressed?
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+    local.selected = pathwayStage;
+    local.subselected = null;
+
+		location.off('click','.panel-body');
+		location.on('click', '.panel-body', function(){
+			if(!local.chartClicked){
+        /*jshint unused: true*/
+				$('path.c3-arc').attr('class', function(index, classNames) {
+					return classNames.replace(/_unselected_/g, '');
+				});
+        /*jshint unused: false*/
+
+				if(local.charts['breakdown-chart']) local.charts['breakdown-chart'].unselect();
+
+        populatePatientPanel(local.pathwayId, pathwayStage, null);
+        local.subselected = null;
+
+        farRightPanel.fadeOut(200);
+				//hideAllPanels();
+			}
+			local.chartClicked=false;
+		});
+
+		destroyCharts(['breakdown-chart']);
+
+    //pie or column data driven
+    //todo but not for usability testing
+
+    setTimeout(function(){
+  		local.charts['breakdown-chart'] = c3.generate({
+  			bindto: '#breakdown-chart',
+  			tooltip: {
+  				format: {
+            name: function (name) { return name + ':<br>' +local.data[local.pathwayId][local.selected].bdown[name].desc; },
+  					value: function (value, ratio) { //function(value, ratio, id, index) {
+  						return value + ' (' + (ratio * 100).toFixed(2) + '%)';
+  					}
+  				}
+  			},
+  			data: {
+  				columns: local.data[local.pathwayId][pathwayStage].breakdown,
+  				type: 'pie',
+  				selection: { enabled: true },
+  				order: null,
+  				onclick: function (d) {
+  					selectPieSlice('breakdown-chart', d.id);
+  					populatePatientPanel(local.pathwayId, pathwayStage, d.id);
+  					local.subselected = d.id
+
+            //colour table appropriately - need to add opacity
+            var sliceColourHex = local.charts['breakdown-chart'].color(d.id);
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            sliceColourHex = sliceColourHex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sliceColourHex);
+            var opacity = 0.2;
+            var sliceColour = 'rgba(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ',' + opacity + ')';
+
+            $('.table.patient-list.table-head-hidden').css({"backgroundColor": sliceColour});
+  				}
+  			},
+  			pie: {
+  				label: {
+            show: false
+  				}
+  			},
+  			legend: {
+  				show: true
+  			}
+  		});
+    },1);
   };
 
   var showPatientPanel = function(pathwayStage, location){
@@ -815,17 +1019,6 @@
 			e.stopPropagation();
 		});
 
-    var c = patientsPanel.getNiceScroll();
-    if(c && c.length>0){
-      c.resize();
-    } else {
-      patientsPanel.niceScroll({
-  			cursoropacitymin: 0.3,
-  			cursorwidth: "7px",
-  			horizrailenabled: false
-  		});
-    }
-
     local.selected = pathwayStage;
     local.subselected = null;
 
@@ -842,6 +1035,8 @@
 
         populatePatientPanel(local.pathwayId, pathwayStage, null);
         local.subselected = null;
+
+        farRightPanel.fadeOut(200);
 				//hideAllPanels();
 			}
 			local.chartClicked=false;
@@ -871,7 +1066,19 @@
   				onclick: function (d) {
   					selectPieSlice('breakdown-chart', d.id);
   					populatePatientPanel(local.pathwayId, pathwayStage, d.id);
-  					local.subselected = d.id;
+  					local.subselected = d.id
+
+            //colour table appropriately - need to add opacity
+            var sliceColourHex = local.charts['breakdown-chart'].color(d.id);
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            sliceColourHex = sliceColourHex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sliceColourHex);
+            var opacity = 0.2;
+            var sliceColour = 'rgba(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ',' + opacity + ')';
+
+            $('.table.patient-list.table-head-hidden').css({"backgroundColor": sliceColour});
   				}
   			},
   			pie: {
@@ -907,7 +1114,7 @@
 			e.stopPropagation();
 		});
 
-    var c = patientsPanel.getNiceScroll();
+    /*var c = patientsPanel.getNiceScroll();
     if(c && c.length>0){
       c.resize();
     } else {
@@ -916,7 +1123,7 @@
   			cursorwidth: "7px",
   			horizrailenabled: false
   		});
-    }
+    }*/
 	};
 
   var showTeamActionPlanPanel = function(location){
@@ -1299,7 +1506,7 @@
     }).on('click', '.btn-yes,.btn-no', function(e){
       var checkbox = $(this).find("input[type=checkbox]");
       var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
-      var isClassification = $(this).closest('.table').data("isClassification")!==undefined;
+      var isClassification = $(this).closest('div').data("isClassification")!==undefined;
 
       if($(this).hasClass("active") && other.hasClass("inactive")){
         //unselecting
@@ -1317,7 +1524,7 @@
         other.find("input[type=checkbox]").prop("checked", false);
 
         //selecting
-        if(checkbox.val()==="no") launchPatientModal(pathwayId, pathwayStage, local.patientId, $(this).closest('tr').children(':first').text(), !isClassification);
+        if(checkbox.val()==="no") launchPatientModal(pathwayId, pathwayStage, local.patientId, $(this).closest('div').data('text'), !isClassification);
 
         editPatientAgree(pathwayId, pathwayStage, local.patientId, isClassification ? "section" : "category", checkbox.val()==="yes");
 
@@ -1328,26 +1535,26 @@
   };
 
   var updateQualStan = function(){
-    $('#individual-panel-classification table').removeClass('panel-green').removeClass('panel-red');
-    $('#individual-panel-classification').find('tr').each(function(){
+    //$('#individual-panel-classification table').removeClass('panel-green').removeClass('panel-red');
+    $('#individual-panel-classification').find('div').each(function(){
       var self = $(this);
       var any = false;
       self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
-        var isClassification = $(this).closest(".table").data("isClassification")!==undefined;
+        var isClassification = $(this).closest("div").data("isClassification")!==undefined;
         any = true;
         var item = getObj().agrees[local.patientId].filter(function(i){return isClassification ? i.item==="section" : i.item!=="section" });
         if(this.value==="yes"){
-          $(this).closest('table').addClass('panel-green');
+          //$(this).closest('table').addClass('panel-green');
           if(item && item[0].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : item[0].history[0] + " - click again to cancel";
+            var tool = item[0].history[0] + " - click again to cancel";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
         } else {
-          $(this).closest('table').addClass('panel-red');
+          //$(this).closest('table').addClass('panel-red');
           if(item && item[0].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : item[0].history[0] + " - click again to edit/cancel";
+            var tool = item[0].history[0] + " - click again to edit/cancel";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
@@ -1366,6 +1573,320 @@
 
       wireUpTooltips();
     });
+
+    wireUpTooltips();
+  };
+
+  var wireUpWelcomePage = function(pathwayId, pathwayStage){
+    $('#team-task-panel').on('click', '.cr-styled input[type=checkbox]', function(){
+      var ACTIONID = $(this).closest('tr').data('id');
+      editAction("team", ACTIONID, null, this.checked);
+
+      if(this.checked) {
+        recordEvent(local.pathwayId, "team", "Item completed");
+        var self = this;
+        $(self).parent().attr("title","").attr("data-original-title","").tooltip('fixTitle').tooltip('hide');
+        wireUpTooltips();
+        setTimeout(function(e){
+          $(self).parent().fadeOut(300, function(){
+            var parent = $(this).parent();
+            $(this).replaceWith(createPanel($('#checkbox-template'),{"done":true}));
+            parent.find('button').on('click', function(){
+              ACTIONID = $(this).closest('tr').data('id');
+              editAction("team", ACTIONID, null, false);
+              $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+              updateWelcomePage();
+            });
+          });
+        },1000);
+      }
+			updateWelcomePage();
+		}).on('change', '.btn-toggle input[type=checkbox]', function(){
+      updateWelcomePage();
+    }).on('click', '.edit-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[1]).find('span').text());
+
+      $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('shown.bs.modal').on('shown.bs.modal', function () {
+        $('#editActionPlanItem').focus();
+      }).off('click','.save-plan').on('click', '.save-plan',function(){
+
+        editPlan(PLANID, $('#editActionPlanItem').val());
+
+        $('#editPlan').modal('hide');
+      }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
+        if(e.which === 13) $('#editPlan .save-plan').click();
+      }).modal();
+		}).on('click', '.delete-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#team-delete-item').html($($(this).closest('tr').children('td')[1]).find('span').text());
+
+      $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('click','.delete-plan').on('click', '.delete-plan',function(){
+        deletePlan(PLANID);
+
+        $('#deletePlan').modal('hide');
+      }).modal();
+		}).on('click', '.btn-undo', function(e){
+      var ACTIONID = $(this).closest('tr').data('id');
+      editAction("team", ACTIONID, null, false);
+      $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+      updateWelcomePage();
+    }).on('click', '.btn-yes,.btn-no', function(e){
+      var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+      var ACTIONID = $(this).closest('tr').data('id');
+      if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
+        //unselecting
+        if(checkbox.val()==="no"){
+          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), function(){
+            editAction("team", ACTIONID, false, null, local.reason);
+            updateWelcomePage();
+            wireUpTooltips();
+          }, function(){
+            ignoreAction("team", ACTIONID);
+            other.removeClass("inactive");
+            checkbox.removeAttr("checked");
+            checkbox.parent().removeClass("active");
+            updateWelcomePage();
+            wireUpTooltips();
+          });
+          e.stopPropagation();
+          e.preventDefault();
+        } else {
+          ignoreAction("team", ACTIONID);
+          other.removeClass("inactive");
+        }
+      } else if((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
+        //prevent clicking on unselected option or if the row is complete
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      } else {
+        //selecting
+        var self = this;
+        if(checkbox.val()==="no") {
+          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), function(){
+            editAction("team", ACTIONID, false, null, local.reason);
+            $(self).removeClass("inactive");
+
+            checkbox.attr("checked","checked");
+            checkbox.parent().addClass("active");
+            //unselect other
+            other.removeClass("active").addClass("inactive");
+            other.find("input[type=checkbox]").prop("checked", false);
+            updateWelcomePage();
+            wireUpTooltips();
+          }), function(){
+
+          };
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        else {
+          editAction("team", ACTIONID, true);
+          $(this).removeClass("inactive");
+
+          //unselect other
+          other.removeClass("active").addClass("inactive");
+          other.find("input[type=checkbox]").prop("checked", false);
+        }
+      }
+		});
+
+    $('#individual-task-panel').on('click', '.cr-styled input[type=checkbox]', function(){
+      var ACTIONID = $(this).closest('tr').data('id');
+      var patientId = $(this).closest('tr').data('team-or-patient-id');
+      editAction(patientId, ACTIONID, null, this.checked);
+
+      if(this.checked) {
+        recordEvent(local.pathwayId, patientId, "Item completed");
+        var self = this;
+        $(self).parent().attr("title","").attr("data-original-title","").tooltip('fixTitle').tooltip('hide');
+        wireUpTooltips();
+        setTimeout(function(e){
+          $(self).parent().fadeOut(300, function(){
+            var parent = $(this).parent();
+            $(this).replaceWith(createPanel($('#checkbox-template'),{"done":true}));
+            parent.find('button').on('click', function(){
+              ACTIONID = $(this).closest('tr').data('id');
+              editAction(patientId, ACTIONID, null, false);
+              $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+              updateWelcomePage();
+            });
+          });
+        },1000);
+      }
+			updateWelcomePage();
+		}).on('change', '.btn-toggle input[type=checkbox]', function(){
+      updateWelcomePage();
+    }).on('click', '.edit-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[2]).find('span').text());
+
+      $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('shown.bs.modal').on('shown.bs.modal', function () {
+        $('#editActionPlanItem').focus();
+      }).off('click','.save-plan').on('click', '.save-plan',function(){
+
+        editPlan(PLANID, $('#editActionPlanItem').val());
+
+        $('#editPlan').modal('hide');
+      }).off('keyup','#editActionPlanItem').on('keyup', '#editActionPlanItem',function(e){
+        if(e.which === 13) $('#editPlan .save-plan').click();
+      }).modal();
+		}).on('click', '.delete-plan', function(){
+      var PLANID = $(this).closest('tr').data("id");
+
+      $('#team-delete-item').html($($(this).closest('tr').children('td')[2]).find('span').text());
+
+      $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+        populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+      }).off('click','.delete-plan').on('click', '.delete-plan',function(){
+        deletePlan(PLANID);
+
+        $('#deletePlan').modal('hide');
+      }).modal();
+		}).on('click', '.btn-undo', function(e){
+      var ACTIONID = $(this).closest('tr').data('id');
+      var patientId = $(this).closest('tr').data('team-or-patient-id');
+      editAction(patientId, ACTIONID, null, false);
+      $(this).replaceWith(createPanel($('#checkbox-template'),{"done":false}));
+      updateWelcomePage();
+    }).on('click', '.btn-yes,.btn-no', function(e){
+      var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+      var ACTIONID = $(this).closest('tr').data('id');
+      var patientId = $(this).closest('tr').data('team-or-patient-id');
+      if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
+        //unselecting
+        if(checkbox.val()==="no"){
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), function(){
+            editAction(patientId, ACTIONID, false, null, local.reason);
+            updateWelcomePage();
+            wireUpTooltips();
+          }, function(){
+            ignoreAction(patientId, ACTIONID);
+            other.removeClass("inactive");
+            checkbox.removeAttr("checked");
+            checkbox.parent().removeClass("active");
+            updateWelcomePage();
+            wireUpTooltips();
+          });
+          e.stopPropagation();
+          e.preventDefault();
+        } else {
+          ignoreAction(patientId, ACTIONID);
+          other.removeClass("inactive");
+        }
+      } else if((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
+        //prevent clicking on unselected option or if the row is complete
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      } else {
+        //selecting
+        var self = this;
+        if(checkbox.val()==="no") {
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), function(){
+            editAction(patientId, ACTIONID, false, null, local.reason);
+            $(self).removeClass("inactive");
+
+            checkbox.attr("checked","checked");
+            checkbox.parent().addClass("active");
+            //unselect other
+            other.removeClass("active").addClass("inactive");
+            other.find("input[type=checkbox]").prop("checked", false);
+            updateWelcomePage();
+            wireUpTooltips();
+          }), function(){
+
+          };
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        else {
+          editAction(patientId, ACTIONID, true);
+          $(this).removeClass("inactive");
+
+          //unselect other
+          other.removeClass("active").addClass("inactive");
+          other.find("input[type=checkbox]").prop("checked", false);
+        }
+      }
+		});
+
+    updateWelcomePage();
+  };
+
+  var updateWelcomePage = function(){
+    $('#team-task-panel').add('#individual-task-panel').find('.suggestion').each(function(){
+			$(this).find('td').last().children().hide();
+		});
+
+    $('#team-task-panel').add('#individual-task-panel').find('.cr-styled input[type=checkbox]').each(function(){
+      if(this.checked){
+        $(this).parent().parent().parent().addClass('success');
+      } else {
+        $(this).parent().parent().parent().removeClass('success');
+      }
+    });
+
+    $('#team-task-panel').add('#individual-task-panel').find('.btn-undo').each(function(){
+      $(this).parent().parent().addClass('success');
+    });
+
+    //no class - user not yet agreed/disagreed - no background / muted text
+    //active - user agrees - green background / normal text
+    //success - user completed - green background / strikethrough text
+    //danger - user disagrees - red background / strikethrough text
+    $('#team-task-panel').add('#individual-task-panel').find('tr').each(function(){
+      var self = $(this);
+      var any = false;
+      self.find('.btn-toggle input[type=checkbox]:checked').each(function(){
+        any = true;
+  			if(this.value==="yes"){
+  				self.removeClass('danger');
+  				self.addClass('active');
+  				self.find('td').last().children().show();
+          if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
+            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
+          } else {
+            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
+          }
+  			} else {
+  				self.removeClass('active');
+  				self.addClass('danger');
+  				self.removeClass('success');
+          if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
+            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+          } else {
+            $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+          }
+  			}
+      });
+      if(self.find('.btn-toggle input[type=checkbox]:not(:checked)').length==1){
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+      }
+      if(!any){
+        self.removeClass('danger');
+        self.removeClass('active');
+        self.removeClass('success');
+
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
+      }
+
+      wireUpTooltips();
+		});
 
     wireUpTooltips();
   };
@@ -1390,6 +1911,19 @@
     createPanelShow(medicationPanel, location, {"areMedications" : medications.length>0, "medications": medications, "pathwayStage" : pathwayStage, "noHeader" : true},{"medicationRow":$('#medication-row').html()});
   };
 
+  var removeDuplicates = function(array){
+    var arrResult = {};
+    var rtn = [];
+    for (var i = 0; i < array.length; i++) {
+        var item = array[i];
+        arrResult[array[i]] = array[i];
+    }
+    for(var item in arrResult) {
+        rtn.push(arrResult[item]);
+    }
+    return rtn;
+  };
+
   var populateAllPatientPanel = function(){
     var pList=[], i,k, prop;
     for(k=0; k < local.diseases.length; k++){
@@ -1401,24 +1935,61 @@
         }
       }
     }
+    pList = removeDuplicates(pList);
     var patients = pList.map(function(patientId) {
 			var ret = local.data.patients[patientId];
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
+      ret.items = []; //The fields in the patient list table
+      ret.items.push(local.data.patients[patientId].breach.length);
 			return ret;
 		});
 
-		createPanelShow(patientList, patientsPanel, {"patients": patients});
+    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title" : "Standards missed", "isUnSortable" : true}]};
+
+    data.patients.sort(function(a, b){
+      if(a.items[0] === b.items[0]) {
+        return 0;
+      }
+      var A = Number(a.items[0]);
+      var B = Number(b.items[0]);
+      if(isNaN(A) || isNaN(B)){
+        A = a.items[0];
+        B = b.items[0];
+      }
+      if(A > B) {
+        return -1;
+      } else if (A < B) {
+        return 1;
+      }
+    });
+
+		createPanelShow(patientList, patientsPanel, data, {"header-item" : $("#patient-list-header-item").html(), "item" : $('#patient-list-item').html()});
 
 		$('#patients-placeholder').hide();
 
 		setupClipboard($('.btn-copy'), true);
 
     wireUpTooltips();
+
+    var c = patientsPanel.find('div.table-scroll').getNiceScroll();
+    if(c && c.length>0){
+      c.resize();
+    } else {
+      patientsPanel.find('div.table-scroll').niceScroll({
+  			cursoropacitymin: 0.3,
+  			cursorwidth: "7px",
+  			horizrailenabled: false
+  		});
+    }
   };
 
   var wireUpTooltips = function(){
-    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 1000, "hide": 100 }});//, container: 'body'});
+    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 1000, "hide": 100 }});
+    $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 700, "hide": 100 }});
+    $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
+      $('[data-toggle="tooltip"]').not(this).tooltip('hide');
+    });
   };
 
 	var populatePatientPanel = function (pathwayId, pathwayStage, subsection, sortField, sortAsc) {
@@ -1455,7 +2026,7 @@
         }
       }
     }
-
+    pList = removeDuplicates(pList);
 		var patients = pList.map(function(patientId) {
 			var ret = local.data.patients[patientId];
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
@@ -1474,7 +2045,7 @@
 			return ret;
 		});
 
-		var data = {"patients": patients, "header" : header, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}]};
+		var data = {"patients": patients, "n" : patients.length, "header" : header, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}]};
 
     if(pathwayStage === local.categories.monitoring.name){
       data["header-items"].push({"title" : "Last BP Date", "isSorted":true, "direction":"sort-asc"});
@@ -1538,6 +2109,17 @@
 		setupClipboard($('.btn-copy'), true);
 
     wireUpTooltips();
+
+    var c = patientsPanel.find('div.table-scroll').getNiceScroll();
+    if(c && c.length>0){
+      c.resize();
+    } else {
+      patientsPanel.find('div.table-scroll').niceScroll({
+  			cursoropacitymin: 0.3,
+  			cursorwidth: "7px",
+  			horizrailenabled: false
+  		});
+    }
 	};
 
   var addDisagreePersonalTeam = function(plans){
@@ -1756,6 +2338,8 @@
     /*jshint unused: false*/
 		local.charts[chart].unselect();
 		local.charts[chart].select(id);
+
+    farRightPanel.fadeOut(200);
 	};
 
 	var destroyCharts = function(charts){
@@ -2027,7 +2611,7 @@
     //}
 
     //scroll to patients
-    $('#patients').getNiceScroll().doScrollPos(0,$('#patients td:contains(' + nhs + ')').position().top-100);
+    $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0,$('#patients td:contains(' + nhs + ')').position().top-140);
 	};
 
 	var showPage = function (page) {
@@ -2197,7 +2781,7 @@
 		});
 	};
 
-	var exportPlan = function(){
+	var exportPlan = function(what){
 		var doc = new jsPDF(), margin = 20, verticalOffset = margin;
 
 		var addHeading = function(text, size){
@@ -2226,6 +2810,10 @@
 		addHeading("Action Plan",24);
 		//Measured
 		addHeading("Monitoring",20);
+
+    addLine(what);
+    addLine(what);
+    addLine(what);
 
 	/*	var internalFunc = function(el) {
       var k;
@@ -2316,11 +2904,15 @@
 		//Hide the suggestions panel
 		$('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
-		//Clear the patient search box
-    $('.typeahead').typeahead('val', '');
+    clearBox();
 
 		displaySelectedPatient(nhsNumberObject.id);
 	};
+
+  var clearBox = function(){
+    //Clear the patient search box
+    $('.typeahead').typeahead('val', '');
+  };
 
   var clearNavigation = function(){
     $("aside.left-panel nav.navigation > ul > li > ul").slideUp(300);
@@ -2420,6 +3012,12 @@
         showAllPatientView(patientId, true);
 
         wireUpTooltips();
+
+        if(patientId) {
+          var nhs = local.patLookup ? local.patLookup[patientId] : patientId;
+          $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0,$('#patients td:contains(' + nhs + ')').position().top-140);
+          $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
+        }
       } else if (urlBits[0] === "#welcome") {
         showPage('welcome');
 
@@ -2428,78 +3026,12 @@
         //hideAllPanels();
         showNavigation(local.diseases, -1, $('#welcome'));
 
-        //add tasks
-        var teamTasks = [];
-        var individualTasks = [];
+        $('#welcome-tabs li').removeClass('active');
+        $('#outstandingTasks').closest('li').addClass('active');
 
-        //Add the team tasks
-        for(var k in listActions("team")){
-          if(listActions("team")[k].agree && ! listActions("team")[k].done){
-            teamTasks.push({"pathway": "tba", "task": local.actionText[listActions("team")[k].id].text, "data":listActions("team")[k].id, "tpId":"team"});
-          }
-        }
+        populateWelcomeTasks();
 
-        //Add the user added team tasks
-        for(var k in listPlans("team")){
-          if(! listPlans("team")[k].done){
-            teamTasks.push({"pathway": local.pathwayNames[listPlans("team")[k].pathwayId], "task": listPlans("team")[k].text, "data": listPlans("team")[k].id});
-          }
-        }
 
-        //Add individual
-        for(var k in listActions()){
-          if(k==="team") continue;
-          for(var l in listActions()[k]){
-            if(listActions()[k][l].agree && !listActions()[k][l].done){
-              individualTasks.push({"pathway": "tba", "patientId":k, "task": local.actionText[l].text, "data":l, "tpId":k});
-            }
-          }
-        }
-
-        //Add custom individual
-        for(var k in listPlans()){
-          if(k==="team") continue;
-          for(var l in listPlans()[k]){
-            if(! listPlans()[k][l].done){
-              individualTasks.push({"pathway": local.pathwayNames[listPlans()[k][l].pathwayId], "patientId":k, "task": listPlans()[k][l].text, "data":l});
-            }
-          }
-        }
-
-        var addTemplate = $('#action-plan').html();
-        Mustache.parse(addTemplate);
-        var rendered = Mustache.render(addTemplate);
-        $('#team-add-plan').html(rendered);
-
-        $('#team-add-plan').off('click').on('click', '.add-plan', function(){
-          var plan = $(this).parent().parent().find('textarea').val();
-          recordPlan("team", plan, "custom");
-
-          $('#team-task-panel').find('table tbody').append('<tr><td></td><td>' + plan + '</td><td><label class="cr-styled"><input type="checkbox"><i class="fa"></i></label></td></tr>');
-    		});
-
-        var template = $('#welcome-task-items').html();
-        var itemTemplate = $('#welcome-task-item').html();
-        Mustache.parse(template);
-        Mustache.parse(itemTemplate);
-
-        rendered = Mustache.render(template, {"tasks": teamTasks, "hasTasks": teamTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
-        $('#team-task-panel').children().not(":first").remove();
-        $('#team-task-panel').append(rendered);
-
-        rendered = Mustache.render(template, {"tasks": individualTasks, "isPatientTable":true, "hasTasks": individualTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
-        $('#individual-task-panel').children().not(":first").remove();
-        $('#individual-task-panel').append(rendered);
-
-        $('#team-task-panel,#individual-task-panel').on('change', 'input[type=checkbox]', function(){
-          $(this).closest('tr').removeClass("success");
-          if($(this).is(':checked')) $(this).closest('tr').addClass("success");
-          var planId = $(this).closest('tr').data("id");
-          if((planId+"").length>=10)  editPlan(planId, null, $(this).is(':checked'));
-          else {
-            editAction($(this).closest('tr').data("teamOrPatientId"), planId, null, $(this).is(':checked'));
-          }
-        });
       } else {
         //if screen not in correct segment then select it
         alert("shouldn't get here");
@@ -2510,6 +3042,78 @@
         wireUpTooltips();
       }
     }
+  };
+
+  var populateWelcomeTasks = function(complete){
+
+    //add tasks
+    var teamTasks = [];
+    var individualTasks = [];
+
+    //Add the team tasks
+    for(var k in listActions("team")){
+      if(listActions("team")[k].agree && ( (!listActions("team")[k].done && !complete) || (listActions("team")[k].done && complete))){
+        teamTasks.push({"pathway": "N/A", "task": local.actionText[listActions("team")[k].id].text, "data":listActions("team")[k].id, "tpId":"team", "agree" :true, "done": complete});
+      }
+    }
+
+    //Add the user added team tasks
+    for(var k in listPlans("team")){
+      if((!listPlans("team")[k].done && !complete) || (listPlans("team")[k].done && complete)){
+        teamTasks.push({"canEdit":true,"pathway": local.pathwayNames[listPlans("team")[k].pathwayId], "pathwayId":listPlans("team")[k].pathwayId, "task": listPlans("team")[k].text, "data": listPlans("team")[k].id, "agree" :listPlans("team")[k].agree, "disagree" : listPlans("team")[k].agree===false, "done": complete});
+      }
+    }
+
+    //Add individual
+    for(var k in listActions()){
+      if(k==="team") continue;
+      for(var l in listActions()[k]){
+        if(local.actionText[l] && listActions()[k][l].agree && ( (!listActions()[k][l].done && !complete) || (listActions()[k][l].done && complete))){
+          individualTasks.push({"pathway": "N/A", "patientId":k, "task": local.actionText[l].text, "pathwayId":listPlans()[k][l].pathwayId, "data":l, "tpId":k, "agree" :true, "done": complete});
+        }
+      }
+    }
+
+    //Add custom individual
+    for(var k in listPlans()){
+      if(k==="team") continue;
+      for(var l in listPlans()[k]){
+        if(listPlans()[k][l].text && (!listPlans()[k][l].done && !complete) || (listPlans()[k][l].done && complete)){
+          individualTasks.push({"canEdit":true,"pathway": local.pathwayNames[listPlans()[k][l].pathwayId], "pathwayId":listPlans()[k][l].pathwayId, "patientId":k, "tpId":k, "task": listPlans()[k][l].text, "data":l, "agree" :true, "done": complete});
+        }
+      }
+    }
+
+    var listTemplate = $('#welcome-task-list').html();
+    Mustache.parse(listTemplate);
+    $('#welcome-tab-content').html(Mustache.render(listTemplate));
+
+    var addTemplate = $('#action-plan').html();
+    Mustache.parse(addTemplate);
+    var rendered = Mustache.render(addTemplate);
+    $('#team-add-plan').html(rendered);
+
+    var template = $('#welcome-task-items').html();
+    var itemTemplate = $('#welcome-task-item').html();
+    Mustache.parse(template);
+    Mustache.parse(itemTemplate);
+
+    $('#team-add-plan').off('click').on('click', '.add-plan', function(){
+      var plan = $(this).parent().parent().find('textarea').val();
+      var planId = recordPlan("team", plan, "custom");
+      var itemTemp
+      $('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {"pathway": "N/A", "task": plan, "data": planId, "agree" :null, "done": null}, {"chk" : $('#checkbox-template').html()}));
+    });
+
+    rendered = Mustache.render(template, {"tasks": teamTasks, "hasTasks": teamTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
+    $('#team-task-panel').children().not(":first").remove();
+    $('#team-task-panel').append(rendered);
+
+    rendered = Mustache.render(template, {"tasks": individualTasks, "isPatientTable":true, "hasTasks": individualTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
+    $('#individual-task-panel').children().not(":first").remove();
+    $('#individual-task-panel').append(rendered);
+
+    wireUpWelcomePage();
   };
 
   var wireUpSearchBox = function () {
@@ -2536,7 +3140,8 @@
         ].join('\n')}
       }
     ).on('typeahead:selected', onSelected)
-    .on('typeahead:autocompleted', onSelected);
+    .on('typeahead:autocompleted', onSelected)
+    .on('typeahead:closed', clearBox);
 
     $('#searchbtn').on('mousedown', function(){
       var val = $('.typeahead').eq(0).val();
@@ -2658,7 +3263,43 @@
     });
 
     //exportPlan
-    $('span.export-plan').on('click', exportPlan);
+    $('.download-outstanding').on('click', function(){
+      exportPlan('outstanding');
+    });
+    $('.download-completed').on('click', function(){
+      exportPlan('completed');
+    });
+    $('.download-all').on('click', function(){
+      exportPlan('all');
+    });
+
+    $('#outstandingTasks').on('click', function(e){
+      e.preventDefault();
+
+      $('#welcome-tabs li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      var template = $('#welcome-task-list').html();
+      var rendered = Mustache.render(template);
+      $('#welcome-tab-content').fadeOut(100, function(){
+        $(this).html(rendered);
+        populateWelcomeTasks();
+        $(this).fadeIn(100);
+      });
+    });
+
+    $('#completedTasks').on('click', function(e){
+      e.preventDefault();
+
+      $('#welcome-tabs li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      var template = $('#welcome-task-list').html();
+      var rendered = Mustache.render(template);
+      $('#welcome-tab-content').fadeOut(100, function(){
+        $(this).html(rendered);
+        populateWelcomeTasks(true);
+        $(this).fadeIn(100);
+      });
+    });
 
     if(bb.hash !== location.hash) location.hash = bb.hash;
     loadContent(location.hash, true);
@@ -2791,6 +3432,10 @@ $(document).on('ready', function () {
   }
 
 	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 1000, "hide": 100 }});
+  $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 700, "hide": 100 }});
+  $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
+    $('[data-toggle="tooltip"]').not(this).tooltip('hide');
+  });
 
   //ensure on first load the login screen is cached to the history
   history.pushState(null, null, '');
