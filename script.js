@@ -82,16 +82,19 @@
 
     switchTo110Layout();
 
-    showPatientPanel(pathwayStage, farLeftPanel);
-    populatePatientPanel(local.pathwayId, pathwayStage, null);
-    //showTeamActionPlanPanel(farRightPanel);
+    var panel = createPatientPanel(pathwayStage);
+
+    farLeftPanel.fadeOut(100, function(){
+      $(this).html(panel);
+      wireUpPatientPanel(pathwayStage, farLeftPanel);
+      populatePatientPanel(local.pathwayId, pathwayStage, null);
+      updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
+      $(this).fadeIn(100, function(){
+        patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
+        farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
+      })
+    });
     farRightPanel.html("");
-
-    updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
-
-    //update panels
-    patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
-    farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
   };
 
   //Show patient view within the pathway stage view
@@ -880,6 +883,111 @@
 
   var showPatientDropdownPanel = function(location){
     createPanelShow($('#patient-dropdown-panel'),location, {"patients" : Object.keys(local.data.patients)});
+  };
+
+  var createPatientPanel = function(pathwayStage){
+    return createPanel(patientsPanelTemplate,{"pathwayStage" : pathwayStage, "panelTitle" : local.data[local.pathwayId][pathwayStage].panelTitle, "panelTooltip" : local.data[local.pathwayId][pathwayStage].panelTitleTooltip, "patientHeader": local.data[local.pathwayId][pathwayStage].patientListHeader,"header": local.data[local.pathwayId][pathwayStage] ? local.data[local.pathwayId][pathwayStage].header : ""});
+  };
+
+  var wireUpPatientPanel = function(pathwayStage, location){
+    patientsPanel = $('#patients');
+
+		patientsPanel.on('click', 'thead tr th.sortable', function(){	//Sort columns when column header clicked
+			var sortAsc = !$(this).hasClass('sort-asc');
+			if(sortAsc) {
+				$(this).removeClass('sort-desc').addClass('sort-asc');
+			} else {
+				$(this).removeClass('sort-asc').addClass('sort-desc');
+			}
+			populatePatientPanel(local.pathwayId, local.selected, local.subselected, $(this).index(), sortAsc);
+		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+			$('.list-item').removeClass('highlighted');
+			$(this).addClass('highlighted');
+
+      var patientId = $(this).find('td button').attr('data-patient-id');
+
+      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, local.data.patients[patientId].breach.length>1);
+
+			e.preventDefault();
+      e.stopPropagation();
+		}).on('click', 'tbody tr button', function(e){
+			//don't want row selected if just button pressed?
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+    local.selected = pathwayStage;
+    local.subselected = null;
+
+		location.off('click','.panel-body');
+		location.on('click', '.panel-body', function(){
+			if(!local.chartClicked){
+        /*jshint unused: true*/
+				$('path.c3-arc').attr('class', function(index, classNames) {
+					return classNames.replace(/_unselected_/g, '');
+				});
+        /*jshint unused: false*/
+
+				if(local.charts['breakdown-chart']) local.charts['breakdown-chart'].unselect();
+
+        populatePatientPanel(local.pathwayId, pathwayStage, null);
+        local.subselected = null;
+
+        farRightPanel.fadeOut(200);
+				//hideAllPanels();
+			}
+			local.chartClicked=false;
+		});
+
+		destroyCharts(['breakdown-chart']);
+
+    //pie or column data driven
+    //todo but not for usability testing
+
+    setTimeout(function(){
+  		local.charts['breakdown-chart'] = c3.generate({
+  			bindto: '#breakdown-chart',
+  			tooltip: {
+  				format: {
+            name: function (name) { return name + ':<br>' +local.data[local.pathwayId][local.selected].bdown[name].desc; },
+  					value: function (value, ratio) { //function(value, ratio, id, index) {
+  						return value + ' (' + (ratio * 100).toFixed(2) + '%)';
+  					}
+  				}
+  			},
+  			data: {
+  				columns: local.data[local.pathwayId][pathwayStage].breakdown,
+  				type: 'pie',
+  				selection: { enabled: true },
+  				order: null,
+  				onclick: function (d) {
+  					selectPieSlice('breakdown-chart', d.id);
+  					populatePatientPanel(local.pathwayId, pathwayStage, d.id);
+  					local.subselected = d.id
+
+            //colour table appropriately - need to add opacity
+            var sliceColourHex = local.charts['breakdown-chart'].color(d.id);
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            sliceColourHex = sliceColourHex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sliceColourHex);
+            var opacity = 0.2;
+            var sliceColour = 'rgba(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ',' + opacity + ')';
+
+            $('.table.patient-list.table-head-hidden').css({"backgroundColor": sliceColour});
+  				}
+  			},
+  			pie: {
+  				label: {
+            show: false
+  				}
+  			},
+  			legend: {
+  				show: true
+  			}
+  		});
+    },1);
   };
 
   var showPatientPanel = function(pathwayStage, location){
@@ -2792,11 +2900,15 @@
 		//Hide the suggestions panel
 		$('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
-		//Clear the patient search box
-    $('.typeahead').typeahead('val', '');
+    clearBox();
 
 		displaySelectedPatient(nhsNumberObject.id);
 	};
+
+  var clearBox = function(){
+    //Clear the patient search box
+    $('.typeahead').typeahead('val', '');
+  };
 
   var clearNavigation = function(){
     $("aside.left-panel nav.navigation > ul > li > ul").slideUp(300);
@@ -3024,7 +3136,8 @@
         ].join('\n')}
       }
     ).on('typeahead:selected', onSelected)
-    .on('typeahead:autocompleted', onSelected);
+    .on('typeahead:autocompleted', onSelected)
+    .on('typeahead:closed', clearBox);
 
     $('#searchbtn').on('mousedown', function(){
       var val = $('.typeahead').eq(0).val();
@@ -3163,9 +3276,11 @@
       $(this).closest('li').addClass('active');
       var template = $('#welcome-task-list').html();
       var rendered = Mustache.render(template);
-      $('#welcome-tab-content').html(rendered);
-
-      populateWelcomeTasks();
+      $('#welcome-tab-content').fadeOut(100, function(){
+        $(this).html(rendered);
+        populateWelcomeTasks();
+        $(this).fadeIn(100);
+      });
     });
 
     $('#completedTasks').on('click', function(e){
@@ -3175,9 +3290,11 @@
       $(this).closest('li').addClass('active');
       var template = $('#welcome-task-list').html();
       var rendered = Mustache.render(template);
-      $('#welcome-tab-content').html(rendered);
-
-      populateWelcomeTasks(true);
+      $('#welcome-tab-content').fadeOut(100, function(){
+        $(this).html(rendered);
+        populateWelcomeTasks(true);
+        $(this).fadeIn(100);
+      });
     });
 
     if(bb.hash !== location.hash) location.hash = bb.hash;
