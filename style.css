@@ -24,17 +24,20 @@ body.qof {
 
 .btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
   color: white;
-  background-color: rgb(68, 157, 68);
-  border-color: rgb(68, 157, 68);
-}
-
-.btn.btn-xs.btn-yes.btn-toggle.btn-success.active:hover{
-  background-color: rgb(68, 157, 68);
-  border-color: rgb(57, 132, 57);
+  background-color: #00b20b;
+  border-color: #00b20b;
 }
 
 .btn.btn-xs.btn-yes.btn-toggle.btn-success.active{
   color: white;
+  background-color: #00b20b;
+  border-color: #00b20b;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.active:hover{
+  color: #e5e5e5;
+  background-color: #00b20b;
+  border-color: #00b20b;
 }
 
 .btn.btn-xs.btn-yes.btn-toggle.btn-success.inactive{
@@ -43,28 +46,30 @@ body.qof {
 
 .btn.btn-xs.btn-no.btn-toggle.btn-danger{
   /*color: #e9e9e9;*/
-  background-color: rgb(201, 48, 44)
+background-color: rgb(201, 48, 44);
 }
 
 .btn.btn-xs.btn-no.btn-toggle.btn-danger:hover{
   color: white;
   background-color: rgb(201, 48, 44);
+border-color: #FF0000;
 }
 
 .btn.btn-xs.btn-no.btn-toggle.btn-danger.inactive:hover{
   background-color: rgb(201, 48, 44);
-  border-color: rgb(201, 48, 44);
+  border-color: transparent;
 }
 
 .btn.btn-xs.btn-no.btn-toggle.btn-danger.active{
   color:white;
-  background-color: rgb(201, 48, 44);
-  border-color: rgb(201, 48, 44);
+  background-color: #FF0000;
+  border-color: #FF0000;
 }
 
 .btn.btn-xs.btn-no.btn-toggle.btn-danger.active:hover{
-  background-color: rgb(201, 48, 44);
-  border-color: rgb(201, 48, 44);
+  background-color: #FF0000;
+  border-color: #FF0000;
+  color: #e5e5e5;
 }
 
 .btn-switch {

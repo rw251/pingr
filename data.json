@@ -96,7 +96,7 @@
             "patients": [5554109536,5554144142,5554212758,5554282657,5554302828,5554367625,5554390911,5554406296,5554456339,5554528017,5554551966,5554632673,5554723924]
           },
           {
-            "name": "One-off high BP reading",
+            "name": "One-off high blood pressure reading",
             "desc": "Patients who had a high blood pressure reading in the last 2 months that previously had controlled blood pressure",
             "n": 6,
             "percentage": 12,

@@ -166,7 +166,7 @@
             <!--<form role="form" _lpchecked="1">-->
             <div class="form-group input-group">
             	<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-              <input type="email" class="form-control" placeholder="Email Address">
+              <input type="email" class="form-control" placeholder="Email address">
             </div>
             <div class="form-group input-group">
             	<span class="input-group-addon"><i class="fa fa-key"></i></span>
@@ -264,24 +264,22 @@
           <li><strong>Control:</strong> How well a condition is treated.</li>
           <li><strong>Exclusions:</strong> Whether patients are appropriately excluded from quality standards.</li>
         </ul>
-        <p>Based on this information, PINGR then suggests quality improvement actions a GP practice could undertake as a team / organisation and for individual patients.</p>
+        <p>Based on this information, PINGR then suggests quality improvement actions a GP practice could undertake as a practice and for individual patients.</p>
         <h2>How to use PINGR</h2>
         <ul>
           <li>Select the <strong>clinical area</strong> you wish to look at from the left hand menu. When you’ve done this, the analysis of the 4 aspects of care for that condition in your practice will be displayed.</li>
           <li>How PINGR thinks care <strong>could be improved</strong> can be found by clicking on any of the 4 panels. These are split into 2 areas:
             <ul>
-              <li>Suggested actions that a GP practice could undertake as a <strong>team / organisation.</strong></li>
-              <li>Suggested actions for <strong>individual patients</strong> (by selecting a patient from the panel on the right).</li>
+              <li>Suggested actions that a GP practice could undertake as a <strong>team.</strong></li>
+              <li>Suggested actions for <strong>individual patients</strong> (by selecting a patient from the panel on the left).</li>
             </ul>
           </li>
           <li>Choose whether you want to use <strong>NICE</strong> or <strong>QOF</strong> standards from the drop-down menu at the top of the page.</li>
-          <li>If you <strong>agree</strong> with a suggestion PINGR makes, please click the <strong>green thumbs up</strong> <label class="btn btn-xs btn-success"><span class="fa fa-thumbs-up"></span></label> – this will save this suggestion for you to your <strong>personal action plan log</strong> (this can be <strong>downloaded</strong> as a PDF document at any time for printing or sharing with others).</li>
-          <li>If you <strong>do not agree</strong> with a suggestion that PINGR makes, please click the <strong>red thumbs down</strong> <label class="btn btn-xs btn-danger"><span class="fa fa-thumbs-down"></span></label> – this will remove the suggestion from your screen and provide us with important feedback on how to improve PINGR. The <strong>more you can tell us</strong> why you don’t agree with the suggestion the <strong>more we can improve</strong>.</li>
+          <li>If you <strong>agree</strong> with a suggestion PINGR makes, please click the <strong>green thumbs up</strong> <label class="btn btn-xs btn-success"><span class="fa fa-thumbs-up"></span></label> – this will save this suggestion for you (this can be <strong>downloaded</strong> as a PDF document at any time for printing or sharing with others).</li>
+          <li>If you <strong>do not agree</strong> with a suggestion that PINGR makes, please click the <strong>red thumbs down</strong> <label class="btn btn-xs btn-danger"><span class="fa fa-thumbs-down"></span></label> – this will remove the suggestion from your screen and provide us with important feedback. The <strong>more you can tell us</strong> why you don’t agree with the suggestion the better.</li>
           <li>You can also <strong>add your own action plans</strong> in addition to the ones suggested by PINGR at the bottom of the suggested action plan lists.</li>
         </ul>
-        <h2>Contact us</h2>
-        <p>If you have any questions or problems please send us an email <a href="mailto:Benjamin.brown@manchester.ac.uk">Benjamin.brown@manchester.ac.uk</a></p>
-      </div>
+        </div>
     </div>
 
     <div class="starter-template page" id="main-dashboard">
@@ -393,7 +391,7 @@
             <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
             <span class="fa fa-thumbs-up"></span>
           </label>
-          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with this action">
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="top" title="Click to disagree with this action">
             <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
             <span class="fa fa-thumbs-down"></span>
           </label>
