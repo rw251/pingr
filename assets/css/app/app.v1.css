@@ -1,9 +1,10 @@
 @import url('../fontawesome/font-awesome.min.css'); /*Icons Fonts*/
+@import url('../fontpingr/font-pingr.css'); /*Icons Fonts*/
 
 body{
 	background-color:#f9f9f9;
 	color:#85868d;
-	font-family: 'Raleway', sans-serif;
+	font-family: 'Roboto', sans-serif;
 	position:relative;}
 
 body, html{
@@ -150,7 +151,7 @@ Left Panel (aside navigation)
 
 aside.left-panel{
 	background-color:#2b2f3e;
-	width:230px;
+	width:190px;
 	position:fixed;
 	padding:25px 0px;
 	box-shadow:inset -5px 0px 8px rgba(0,0,0,0.3);
@@ -320,9 +321,9 @@ Navigation
 	-o-transition: all 0.4s;}
 
 .navigation > ul:hover > li.active > a{
-	background-color:transparent;
+	/*background-color:transparent;*/
 	box-shadow:none;
-	color:#7a7e8a;}
+	color: white;}
 
 .navigation > ul > li:hover > a,
 .navigation > ul > li.active:hover > a,
@@ -528,7 +529,7 @@ Content Area (right)
 *****************************/
 
 .content{
-	margin-left:230px;}
+	margin-left:190px;}
 
 .content > .container-fluid{
 	padding-left:25px;

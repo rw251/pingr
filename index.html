@@ -16,7 +16,7 @@
   <!-- Bootstrap Select2 -->
   <link href="assets/css/select2/select2.min.css" rel="stylesheet" />
   <!-- Fonts  -->
-  <link href='https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,300' rel='stylesheet' type='text/css'>
   <!-- Base Brio Styling  -->
   <link href="assets/css/app/app.v1.css" rel="stylesheet">
   <!-- My styling -->
@@ -53,24 +53,17 @@
   </div>
 
   <section id="main">
-    <nav class="navbar navbar-fixed-top hide-if-logged-out" id="topnavbar">
-      <div class="container">
-        <div class="navbar-header">
-          <button class="navbar-toggle pull-left collapsed" id="aside-toggle" type="button">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a href="#welcome" class="navbar-brand hide-if-logged-out history">Home</a>
-        </div>
-
+    <nav class="navbar navbar-fixed-top hide-if-logged-out" id="topnavbar"style="display: block;padding-left: 0px;">
+      <div class="container" style="padding-left: 40px;">
         <div class="collapse navbar-collapse" id="navbar">
           <ul class="nav navbar-nav">
-            <li class="active hide-if-logged-out" id="help">
-              <a class="hidden-xs history" href="#help">Instructions</a> <a class="visible-xs" data-target="#navbar" data-toggle="collapse" href="#">Instructions</a>
+
+            <li class="hide-if-logged-out input-group pull-left" id="search-box">
+              <input type="text" placeholder="Search for patients..." class="typeahead">
+              <i id="searchbtn" class="fa fa-lg fa-search" style="position: absolute;top: 20px;right: 22px;cursor: pointer;"></i><!--fudge to get search icon-->
             </li>
-            <li class="hide-if-logged-out">
+
+            <!--<li class="hide-if-logged-out">
               <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Switch quality standards">
                 <button type="button" id="pick-button" class="btn btn-default btn-sm btn-circle" data-toggle="dropdown">NICE
                   <span class="caret"></span>
@@ -79,11 +72,24 @@
                   <li><a id="pick-nice" href="#">NICE</a></li>
                   <li><a id="pick-qof" href="#">QOF</a></li>
                 </ul>
-              </div>
-              <span> | </span>
+              </div>-->
+              <!--<span> | </span>
               <div class="btn-group" id="breadcrumb">
+              </div>--><!--
+            </li>-->
+
+            <li class="hide-if-logged-out">
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary btn-switch active" id="pick-nice">
+                  <input type="radio" name="options" autocomplete="off" checked=""> NICE
+                </label>
+                <label class="btn btn-primary btn-switch" id="pick-qof">
+                  <input type="radio" name="options" autocomplete="off"> QOF
+                </label>
+
               </div>
             </li>
+
 
             <!-- Single button -->
             <div class="hide-if-logged-out btn-group pull-right">
@@ -104,15 +110,43 @@
               </ul>
             </div>
 
-            <div class="hide-if-logged-out input-group pull-right">
-              <span class="btn btn-primary btn-padding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document" id="export-plan">
-                <span class="fa fa-download"></span> Download Action Plan
-              </span>
-            </div>
+            <li class="active hide-if-logged-out pull-right">
+              <a class="history" href="/">Sign out</a>
+            </li>
 
-            <div class="hide-if-logged-out input-group pull-right" id="search-box">
-              <input type="text" placeholder="Search for patients..." class="typeahead">
+            <li class="active hide-if-logged-out pull-right">
+              <a href="mailto:benjamin.brown@manchester.ac.uk">Contact us</a>
+            </li>
+
+            <li class="active hide-if-logged-out pull-right" id="help">
+              <a class="history" href="#help">Help</a>
+            </li>
+
+            <!--<div class="hide-if-logged-out input-group pull-right">
+              <span class="btn btn-primary btn-padding export-plan" data-toggle="tooltip" data-placement="top" title="Download your planned actions as a PDF document">
+                <span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span>
+              </span>
+            </div>-->
+
+            <!-- Split button -->
+            <div class="hide-if-logged-out pull-right btn-group">
+              <button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span></button>
+              <button type="button" class="btn btn-danger dropdown-toggle btn-padding" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="download-outstanding clickable">Download Outstanding Tasks</a></li>
+                <li><a class="download-completed clickable">Download Completed Tasks</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a class="download-all clickable">Download All Tasks</a></li>
+              </ul>
             </div>
+            <!--<div class="hide-if-logged-out input-group pull-right">
+              <span class="btn btn-primary btn-padding export-plan" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document" >
+                <span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span>
+              </span>
+            </div>-->
           </ul>
         </div>
       </div>
@@ -122,17 +156,17 @@
       <div class="container login-container">
         <div class="login-panel panel panel-default plain animated bounceIn">
           <div class="panel-body">
-            <h1>The
-              <br> Performance
+            <img alt="..." width="200" height="200" src="assets/images/icons/PINGR_logo-250px.png" style="display: block; margin-left: auto;margin-right: auto">
+            <h2 style="text-align: center;">The Performance
               <br> Improvement plaN
-              <br> GeneratoR
-            </h1>
-            <br>
+              <br> GeneratoR (PINGR)
+            </h2>
+            <p style="font-size: 1.5em;font-style: italic;text-align: center">Improvement actions <br> for GP practices</p>
             <br>
             <!--<form role="form" _lpchecked="1">-->
             <div class="form-group input-group">
             	<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-              <input type="email" class="form-control" placeholder="Email Adress">
+              <input type="email" class="form-control" placeholder="Email address">
             </div>
             <div class="form-group input-group">
             	<span class="input-group-addon"><i class="fa fa-key"></i></span>
@@ -140,7 +174,7 @@
             </div>
             <div class="form-group">
               <label class="cr-styled">
-                  <input type="checkbox" ng-model="todo.done">
+                  <input type="checkbox">
                   <i class="fa"></i>
               </label>
               Remember me
@@ -154,58 +188,34 @@
       </div>
     </div>
 
+    <aside id="aside-toggle" class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
+      <div class="user text-center clickable">
+        <!--<img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">-->
+        <!--<i class="fa fa-camera-retro fa-2x"></i>-->
+        <img alt="..." width="52" height="52" src="assets/images/icons/PINGR_logo-52px.png">
+        <h3 style="margin-top: 10px">PINGR</h3>
+        <p style="font-size: 0.9em;font-style: italic;">Improvement actions <br> for GP practices</p>
+        <!--<h4 class="user-name">Hello Dr Brown</h4>-->
+      </div>
+
+      <nav class="navigation"></nav>
+
+    </aside>
+
     <div class="starter-template page welcome-page" id="welcome">
-      <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
-        <div class="user text-center">
-          <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
-
-          <h4 class="user-name">Ben Brown</h4>
-
-          <div class="dropdown user-login">
-            <button class="btn btn-xs dropdown-toggle btn-rounded" data-toggle="dropdown" type="button"><i class="fa fa-circle status-icon available"></i> Available <i class="fa fa-angle-down"></i></button>
-
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon busy"></i> Busy</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon invisibled"></i> Invisible</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon signout"></i> Sign out</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <nav class="navigation"></nav>
-
-      </aside>
       <div class="container">
         <div class="row">
-          <h1>Welcome!</h1>
-          <h3>You can now either:</h3>
+          <h1>Hello, Dr Brown.</h1>
         </div>
         <div class="row">
-          <h2><i class="fa fa-hand-o-left"></i> Select an area to get started</h2>
-          <h3>or</h3>
-          <h2><i class="fa fa-hand-o-down"></i> Review your planned actions</h2>
+          <h3>To see your suggested improvement actions, select a clinical area <i class="fa fa-hand-o-left"></i> or review actions you have previously agreed with <i class="fa fa-hand-o-down"></i> </h3> <br>
         </div>
-        <div class="row">
-          <div id="team-task-panel" class="panel panel-info">
-            <div class="panel-heading">Team / organisational planned actions</div>
-          </div>
-        </div>
-        <div class="row">
-          <div id="team-add-plan" style="padding-bottom: 15px;margin-top: -10px;">
-          </div>
-        </div>
-        <div class="row">
-          <div id="individual-task-panel" class="panel panel-warning">
-            <div class="panel-heading">Individual patient planned actions</div>
-          </div>
+
+        <ul id="welcome-tabs" class="nav nav-tabs">
+            <li class="active"><a id="outstandingTasks" href="#outstandingTasks">Outstanding Tasks</a></li>
+            <li><a id="completedTasks" href="#completedTasks">Completed Tasks</a></li>
+        </ul>
+        <div id="welcome-tab-content">
         </div>
       </div>
     </div>
@@ -213,7 +223,7 @@
     <nav class="navbar navbar-fixed-bottom" id="bottomnavbar">
       <div class="container">
 
-        <div class="collapse navbar-collapse" id="navbar">
+        <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <table style="width:100%">
               <tr>
@@ -245,120 +255,64 @@
 
     <div class="starter-template page" id="help-page">
 
-      <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
-        <div class="user text-center">
-          <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
-
-          <h4 class="user-name">Ben Brown</h4>
-
-          <div class="dropdown user-login">
-            <button class="btn btn-xs dropdown-toggle btn-rounded" data-toggle="dropdown" type="button"><i class="fa fa-circle status-icon available"></i> Available <i class="fa fa-angle-down"></i></button>
-
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon busy"></i> Busy</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon invisibled"></i> Invisible</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon signout"></i> Sign out</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <nav class="navigation"></nav>
-
-      </aside>
       <div class="container-fluid">
         <h2>About PINGR</h2>
         <p>PINGR analyses coded data from primary care electronic health records to suggest quality improvements GP practices could make in the way they care for long-term conditions. Health record data are compared against quality standards from the National Institute for Health and Care Excellence (NICE) or the Quality and Outcomes Framework (QOF) according to 4 aspects of care:</p>
         <ul>
           <li><strong>Diagnosis:</strong> How well a condition is diagnosed.</li>
           <li><strong>Monitoring:</strong> How well a condition is monitored.</li>
-          <li><strong>Treatment:</strong> How well a condition is treated.</li>
+          <li><strong>Control:</strong> How well a condition is treated.</li>
           <li><strong>Exclusions:</strong> Whether patients are appropriately excluded from quality standards.</li>
         </ul>
-        <p>Based on this information, PINGR then suggests quality improvement actions a GP practice could undertake as a team / organisation and for individual patients.</p>
+        <p>Based on this information, PINGR then suggests quality improvement actions a GP practice could undertake as a practice and for individual patients.</p>
         <h2>How to use PINGR</h2>
         <ul>
           <li>Select the <strong>clinical area</strong> you wish to look at from the left hand menu. When you’ve done this, the analysis of the 4 aspects of care for that condition in your practice will be displayed.</li>
           <li>How PINGR thinks care <strong>could be improved</strong> can be found by clicking on any of the 4 panels. These are split into 2 areas:
             <ul>
-              <li>Suggested actions that a GP practice could undertake as a <strong>team / organisation.</strong></li>
-              <li>Suggested actions for <strong>individual patients</strong> (by selecting a patient from the panel on the right).</li>
+              <li>Suggested actions that a GP practice could undertake as a <strong>team.</strong></li>
+              <li>Suggested actions for <strong>individual patients</strong> (by selecting a patient from the panel on the left).</li>
             </ul>
           </li>
           <li>Choose whether you want to use <strong>NICE</strong> or <strong>QOF</strong> standards from the drop-down menu at the top of the page.</li>
-          <li>If you <strong>agree</strong> with a suggestion PINGR makes, please click the <strong>green thumbs up</strong> <label class="btn btn-xs btn-success"><span class="fa fa-thumbs-up"></span></label> – this will save this suggestion for you to your <strong>personal action plan log</strong> (this can be <strong>downloaded</strong> as a PDF document at any time for printing or sharing with others).</li>
-          <li>If you <strong>do not agree</strong> with a suggestion that PINGR makes, please click the <strong>red thumbs down</strong> <label class="btn btn-xs btn-danger"><span class="fa fa-thumbs-down"></span></label> – this will remove the suggestion from your screen and provide us with important feedback on how to improve PINGR. The <strong>more you can tell us</strong> why you don’t agree with the suggestion the <strong>more we can improve</strong>.</li>
+          <li>If you <strong>agree</strong> with a suggestion PINGR makes, please click the <strong>green thumbs up</strong> <label class="btn btn-xs btn-success"><span class="fa fa-thumbs-up"></span></label> – this will save this suggestion for you (this can be <strong>downloaded</strong> as a PDF document at any time for printing or sharing with others).</li>
+          <li>If you <strong>do not agree</strong> with a suggestion that PINGR makes, please click the <strong>red thumbs down</strong> <label class="btn btn-xs btn-danger"><span class="fa fa-thumbs-down"></span></label> – this will remove the suggestion from your screen and provide us with important feedback. The <strong>more you can tell us</strong> why you don’t agree with the suggestion the better.</li>
           <li>You can also <strong>add your own action plans</strong> in addition to the ones suggested by PINGR at the bottom of the suggested action plan lists.</li>
         </ul>
-        <h2>Contact us</h2>
-        <p>If you have any questions or problems please send us an email <a href="mailto:Benjamin.brown@manchester.ac.uk">Benjamin.brown@manchester.ac.uk</a></p>
-      </div>
+        </div>
     </div>
 
     <div class="starter-template page" id="main-dashboard">
-      <aside class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
-        <div class="user text-center">
-          <img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">
 
-          <h4 class="user-name">Ben Brown</h4>
-
-          <div class="dropdown user-login">
-            <button class="btn btn-xs dropdown-toggle btn-rounded" data-toggle="dropdown" type="button"><i class="fa fa-circle status-icon available"></i> Available <i class="fa fa-angle-down"></i></button>
-
-            <ul class="dropdown-menu">
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon busy"></i> Busy</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon invisibled"></i> Invisible</a>
-              </li>
-
-              <li>
-                <a href="#"><i class="fa fa-circle status-icon signout"></i> Sign out</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <nav class="navigation"></nav>
-        <div class="pathway-holder"></div>
-        <nav class="navigation"></nav>
-      </aside>
-
-      <div class="container-fluid">
+      <div class="container-fluid" style="padding-left: 30px;">
         <div class="row">
-          <div class="col-sm-8">
-            <div class="row" style="max-height:400px">
-              <div id="top-left-panel" class="col-sm-6"></div>
-              <div id="top-right-panel" class="col-sm-6"></div>
-            </div>
+          <h2 class="pagetitle" data-toggle="tooltip" data-placement="right" style="padding-left: 15px; padding-bottom: 15px; padding-top: 15px"></h2>
+        </div>
+        <div class="row">
+          <div class="col-xl-4 col-lg-3" id="left-panel"></div>
+          <div class="col-xl-8 col-lg-6" id="mid-panel">
+            <!--<div class="row" style="max-height:400px">
+            </div>-->
             <div class="row">
-              <div id="bottom-left-panel" class="col-sm-6"></div>
-              <div id="bottom-right-panel" class="col-sm-6"></div>
+              <div id="top-panel" class="col-xl-12"></div>
+              <div id="top-left-panel" class="col-xl-6"></div>
+              <div id="top-right-panel" class="col-xl-6"></div>
+              <div id="bottom-left-panel" class="col-xl-6"></div>
+              <div id="bottom-right-panel" class="col-xl-6"></div>
             </div>
           </div>
-          <div class="col-sm-4" id="right-panel"></div>
+          <div class="col-xl-4 col-lg-6" id="right-panel"></div>
         </div>
       </div>
 
-      <div id="modal"></div>
-      <div id="thanks-message" class="jumbotron flyover flyover-centered">
-         <h1>Thanks! <i class="fa fa-smile-o text-success"></i></h1>
-         <p>
-            Thanks for telling us - we'll now use it to improve.
-         </p>
+      <div id="saved-message" class="flyover tooltip-inner">
+         <h1>Saved! </h1>
       </div>
     </div>
+    <div id="modal"></div>
   </section>
 
+  <div style="display:none" id="temp-hidden"></div>
 
   <!-- jQuery from CDN  -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -402,114 +356,184 @@
   <!-- History polyfill -->
   <script src="assets/js/history/history.min.js"></script>
 
+  <!-- for colour animation -->
+  <script src="assets/js/jquery-color/jquery.color-2.1.2.min.js"></script>
+
   <!-- Custom JQuery -->
   <script src="assets/js/app/custom.js" type="text/javascript"></script>
 
   <script src="script.js?8"></script>
 
+  <!-- build:remove:dev -->
+  <!--<script src="//localhost:9091"></script>-->
+  <!-- /build -->
+
   <script id="checkbox-template" type="x-tmpl-mustache">
-    <label class="cr-styled">
-      <input type="checkbox">
+    {{^done}}
+    <label class="cr-styled" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">
+      <input type="checkbox" {{#done}}checked="checked"{{/done}}>
       <i class="fa"></i>
     </label>
+    {{/done}}
+    {{#done}}
+    <button class="btn btn-xs btn-warning btn-undo" data-toggle="tooltip" data-placement="bottom" title="You marked this as complete - click to undo">Undo</button>
+    {{/done}}
   </script>
 
   <script id="suggested-plan-item"  type="x-tmpl-mustache">
-  <tr class="suggestion">
-    <td>
-      <span>{{{text}}}</span>
-      {{#improvement}}
-      <span class='text-danger'> - this could improve your performance by {{ improvement }}%.</span>{{/improvement}}
-    </td>
-    <td>
-      <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-xs btn-yes btn-toggle btn-success">
-          <input type="checkbox" name="action-agree-{{index}}" value="yes" autocomplete="off">
-          <span class="fa fa-thumbs-up"></span>
-        </label>
-        <label class="btn btn-xs btn-no btn-toggle btn-danger">
-          <input type="checkbox" name="action-agree-{{lastIndex}}" value="no" autocomplete="off">
-          <span class="fa fa-thumbs-down"></span>
-        </label>
-      </div>
-    </td>
-    <td>{{>chk}}</td>
-  </tr>
+    <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
+      <td>
+        <span>{{{text}}}</span>
+      </td>
+      <td>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with this action">
+            <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+            <span class="fa fa-thumbs-up"></span>
+          </label>
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="top" title="Click to disagree with this action">
+            <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+            <span class="fa fa-thumbs-down"></span>
+          </label>
+        </div>
+      </td>
+      <td>{{>chk}}</td>
+    </tr>
   </script>
 
   <script id="modal-why-item" type="x-tmpl-mustache">
-  <div class="radio">
-    <label>
-      <input type="radio" name="reason" value="{{value}}" required>
-      {{reason}}
-    </label>
-  </div>
+    <div class="radio">
+      <label>
+        <input type="radio" name="reason" value="{{reason}}" {{#checked}}checked="checked"{{/checked}} required>
+        {{reason}}
+      </label>
+    </div>
   </script>
 
   <script id="modal-why" type="x-tmpl-mustache">
-  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="modalLabel">{{header}}</h4>
-        </div>
-        <div class="modal-body">
-        <form>
-          <div class = "form-group">
-          {{#reasons}}
-          {{>item}}
-          {{/reasons}}
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="modalLabel">{{header}}</h4>
           </div>
-          <div class = "form-group">
-          <textarea rows="3" style="resize:none" class="form-control" placeholder="{{placeholder}}"></textarea>
+          <div class="modal-body">
+          <label>You have disagreed with the following suggested action:</label>
+          <p></p>
+          <span style="font-style:italic">{{item}}</span>
+          <form>
+            <div class = "form-group">
+            <p></p>
+            <label>Why?</label>
+            {{#reasons}}
+            {{>item}}
+            {{/reasons}}
+            </div>
+            <div class = "form-group">
+            <label>Please tell us more - whatever your selection above:</label>
+            <textarea rows="3" style="resize:none" class="form-control" placeholder="{{placeholder}}"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary save-plan">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </form>
           </div>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary save-plan">Save</button>
-        </form>
-        </div>
-        <div class="modal-footer">
+          <div class="modal-footer">
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </script>
 
   <script id="suggested-plan-template" type="x-tmpl-mustache">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Suggested Actions</th>
-        <th style="width: 65px">Agree?</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#suggestions}}
-      {{>item}}
-      {{/suggestions}} {{resetIndex}}
-    </tbody>
-  </table>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Suggested by PINGR &nbsp;<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated from recommended actions in NICE clinical guidelines, peer-reviewed academic journals, and other users of this application"></i> </th>
+          <th style="width: 65px">Agree?</th>
+          <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#suggestions}}
+        {{>item}}
+        {{/suggestions}}
+      </tbody>
+    </table>
   </script>
 
   <script id="patient-list-header-item" type="x-tmpl-mustache">
-  <th class="sortable {{direction}}" title="Order patients">
-    {{title}}
-    {{#isSorted}}
-    {{#isAsc}}<i class="fa fa-caret-up"></i>{{/isAsc}}
-    {{^isAsc}}<i class="fa fa-caret-down"></i>{{/isAsc}}
-    {{/isSorted}}
-    {{^isSorted}}
-    <i class="fa fa-caret-down fa-caret-invisible">
-    {{/isSorted}}
-  </th>
+    <th class="sortable {{direction}}" title="Order patients">
+      {{title}}
+      {{^isUnSortable}}
+      {{#isSorted}}
+      {{#isAsc}}<i class="fa fa-sort-asc"></i>{{/isAsc}}
+      {{^isAsc}}<i class="fa fa-sort-desc"></i>{{/isAsc}}
+      {{/isSorted}}
+      {{^isSorted}}
+      <i class="fa fa-sort">
+      {{/isSorted}}
+      {{/isUnSortable}}
+    </th>
   </script>
 
   <script id="patient-list-item" type="x-tmpl-mustache">
-  <td>{{.}}</td>
+    <td>{{.}}</td>
   </script>
 
   <script id="patient-list" type="x-tmpl-mustache">
+    <h4>{{header}} (n={{n}})</h4>
+
+    <table class="table patient-list table-body-hidden">
+      <thead>
+        <tr>
+          {{#header-items}}
+          {{>header-item}}
+          {{/header-items}}
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
+          <td>
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+              <span class="fa fa-clipboard"></span>
+            </button>
+            1234567890
+          </td>
+          <td>2014-06-10</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-scroll" style="max-height:380px">
+      <table class="table patient-list table-head-hidden">
+        <thead>
+          <tr>
+            {{#header-items}}
+            {{>header-item}}
+            {{/header-items}}
+          </tr>
+        </thead>
+        <tbody>
+          {{#patients}}
+          <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
+            <td>
+              <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="lone-tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+                <span class="fa fa-clipboard"></span>
+              </button>
+              {{nhsNumber}}
+            </td>
+            {{#items}}
+            {{>item}}
+            {{/items}}
+          </tr>
+          {{/patients}}
+        </tbody>
+      </table>
+    </div>
+  </script>
+
+  <script id="patient-list-old" type="x-tmpl-mustache">
+    <h4>{{header}}</h4>
     <table class="table patient-list">
       <thead>
         <tr>
@@ -520,9 +544,9 @@
       </thead>
       <tbody>
         {{#patients}}
-        <tr class="list-item">
+        <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
           <td>
-            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
             </button>
             {{nhsNumber}}
@@ -534,6 +558,46 @@
         {{/patients}}
       </tbody>
     </table>
+  </script>
+
+  <script id="patient-list-simple" type="x-tmpl-mustache">
+    <table class="table patient-list">
+      <thead>
+      </thead>
+      <tbody>
+        {{#patients}}
+        <tr class="list-item">
+          <td>
+            <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+              <span class="fa fa-clipboard"></span>
+            </button>
+            {{nhsNumber}}
+          </td>
+        </tr>
+        {{/patients}}
+      </tbody>
+    </table>
+  </script>
+
+  <script id="patient-dropdown-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default" id="panel-right">
+      <div class="panel-heading">
+        <i class="fa fa-users fa-fw"></i>&nbsp; Patients
+      </div>
+
+      <div class="panel-body" id="panel-patients" style="max-height:380px">
+        <!--<select class="form-control">
+        {{#patients}}
+        <option>{{.}}</option>
+        {{/patients}}
+        </select>-->
+        <table class="table">
+        {{#patients}}
+        <tr><td>{{.}}</td></tr>
+        {{/patients}}
+        </table>
+      </div>
+    </div>
   </script>
 
   <script id="breakdown-table-template" type="x-tmpl-mustache">
@@ -558,94 +622,124 @@
   </script>
 
   <script id="action-plan-item" type="x-tmpl-mustache">
-  <tr class="suggestion active">
-    <td>
-      <span>{{{text}}}</span>
-    </td>
-    <td>
-      <div class="btn-group" data-toggle="buttons">
-        <button class="btn btn-xs btn-warning edit-plan" data-toggle="tooltip" data-placement="top" title="Edit plan">
-          <span class="fa fa-edit"></span>
-        </button>
-        <button class="btn btn-xs btn-danger delete-plan" data-toggle="tooltip" data-placement="top" title="Delete plan">
-          <span class="fa fa-trash"></span>
-        </button>
-      </div>
-    </td>
-    <td>{{>chk}}</td>
-  </tr>
+    <tr class="suggestion active {{#done}}success{{/done}}" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
+      <td>
+        <span>{{{text}}}</span>
+        <div class="btn-group btn-hover-show-group pull-right" data-toggle="buttons">
+          <i class="fa fa-pencil edit-plan clickable" data-toggle="tooltip" data-placement="top" title="Edit plan"></i>
+          <i class="fa fa-trash delete-plan clickable" data-toggle="tooltip" data-placement="top" title="Delete plan"></i>
+        </div>
+      </td>
+      <td>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+            <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+            <span class="fa fa-thumbs-up"></span>
+          </label>
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+            <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+            <span class="fa fa-thumbs-down"></span>
+          </label>
+        </div>
+      </td>
+      <td>{{>chk}}</td>
+    </tr>
   </script>
 
   <script id="action-plan-list" type="x-tmpl-mustache">
-  <table class="table">
-    <thead>
-      <tr>
-        <th style="width:70%;">Your Own Actions</th>
-        <th>Edit/ Delete</th>
-        <th>Completed</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#suggestions}}
-      {{>action-plan-item}}
-      {{/suggestions}} {{resetIndex}}
-    </tbody>
-  </table>
-  {{>action-plan}}
+    {{#hasSuggestions}}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Suggested by you</th>
+          <th style="width: 65px">Agree?</th>
+          <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#suggestions}}
+        {{>action-plan-item}}
+        {{/suggestions}}
+      </tbody>
+    </table>
+    {{/hasSuggestions}}
+    {{>action-plan}}
   </script>
 
   <script id="action-plan" type="x-tmpl-mustache">
-  <div class="input-group">
-    <textarea class="form-control" rows="3" style="resize:none" placeholder="Enter your own action plan..."></textarea>
-    <span class="input-group-addon btn add-plan">
-      Add
-    </span>
-  </div>
+    <div class="input-group">
+      <textarea class="form-control" rows="3" style="resize:none" placeholder="Enter your own action plan..."></textarea>
+      <span class="input-group-addon btn add-plan">
+        Add
+      </span>
+    </div>
   </script>
 
-  <script id="action-plan-panel" type="x-tmpl-mustache">
-    <div class="panel panel-{{pathwayStage}}">
+  <script id="team-action-plan-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
       <div class="panel-heading clearfix">
-        <h3 class="panel-title">Suggested action plan</h3>
+        <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions: &nbsp; <span style = "color: yellow;font-weight:bold"> Practice-level </span> &nbsp;
       </div>
 
-      <div class="panel-body">
-        <div class="tab-pane fade active in">
-          <div class="tabbable">
-            <ul class="nav nav-tabs" id="action-plan-tabs">
-              <li class="active">
-                <a href="#tab-plan-team">Team / Organisation</a>
-              </li>
+      <div class="panel-body" id="tab-plan-team">
+        <div id="suggestedPlanTeam"></div>
+        <div id="personalPlanTeam"></div>
+      </div>
+    </div>
 
-              <li>
-                <a href="#tab-plan-individual">Individual Patient</a>
-              </li>
-            </ul>
-            <div class="tab-content">
-              <div class="panel panel-default padd-t-sm tab-pane tabs-up active" id="tab-plan-team">
-                <div class="panel-body">
-                  <div id="suggestedPlanTeam"></div>
-                  <div id="personalPlanTeam"></div>
-                </div>
-              </div>
-
-              <div class="panel panel-default tab-pane tabs-up" id="tab-plan-individual">
-                <div class="panel-body">
-                  <div id="advice-placeholder">
-                    Select an individual patient from the patient panel to view advice
-                  </div>
-                  <div id="advice" class="row">
-                    <div class="col-sm-6" id="advice-list">
-                    </div>
-                    <div class="col-sm-6" id="patient-info">
-                    </div>
-                  </div>
-                  <div id="personalPlanIndividual"></div>
-                </div>
-              </div>
+    <div class="modal fade" id="editPlan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">Edit Plan</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="text" class="form-control" id="editActionPlanItem">
             </div>
           </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary save-plan">Save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
         </div>
+      </div>
+    </div>
+    <div class="modal fade" id="deletePlan" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="deleteModalLabel">Delete a suggested action you added</h4>
+          </div>
+          <div class="modal-body">
+            <span id="team-delete-item" style="font-style:italic"></span>
+            <p>Are you sure?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger delete-plan">Delete</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="individual-action-plan-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      {{^noHeader}}
+      <div class="panel-heading clearfix">
+        <i class="fa fa-list-ul fa-fw"></i>&nbsp; Improvement actions
+      </div>
+      {{/noHeader}}
+
+      <div class="panel-body" id="tab-plan-individual">
+        <div id="advice-placeholder">
+          Select an individual patient from the patient panel to view advice
+        </div>
+        <div id="advice-list"></div>
+        <div id="personalPlanIndividual"></div>
       </div>
     </div>
 
@@ -663,8 +757,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary save-plan">Save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -674,30 +768,57 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+            <h4 class="modal-title" id="deleteModalLabel">Delete a suggested action you added</h4>
           </div>
           <div class="modal-body">
+            <span id="individual-delete-item" style="font-style:italic"></span>
             <p>Are you sure?</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-danger delete-plan">Delete</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
     </div>
   </script>
 
-  <script id="individual-panel" type="x-tmpl-mustache">
-    <div id="individual-panel-classification" class="panel panel-default panel-grey">
-      <div class="panel-body">
-        <h4>Patient <strong>{{nhsNumber}}</strong>
-          <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default btn-copy">
-            <span class="fa fa-clipboard"></span>
-          </button>
-        </h4>
+  <script id="qual-standard" type="x-tmpl-mustache">
+    <div id="individual-panel-classification" class="panel-grey" style="padding: 3px 0px 3px 30px;">
+      <span>Improvement opportunity: </span>
+      <span><strong>{{section.name}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the opportunity"></i></span>
+      <span> - Agree?</span>
+      <div class="btn-group" data-toggle="buttons" data-is-classification data-text="{{section.name}}">
+        <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+          <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
+          <span class="fa fa-thumbs-up"></span>
+        </label>
+        <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+          <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
+          <span class="fa fa-thumbs-down"></span>
+        </label>
       </div>
-      <table class="table table-minimal">
+
+      <span>&nbsp;&nbsp; |&nbsp;&nbsp; Quality standard missed: </span>
+      <span><strong>{{category.name}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the standard?"></i></span>
+      <span> - Agree?</span>
+
+      <div class="btn-group" data-toggle="buttons" data-text="{{category.name}}">
+        <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+          <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
+          <span class="fa fa-thumbs-up"></span>
+        </label>
+        <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+          <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
+          <span class="fa fa-thumbs-down"></span>
+        </label>
+      </div>
+    </div>
+  </script>
+
+  <script id="qual-standard-old" type="x-tmpl-mustache">
+    <div id="individual-panel-classification" class="panel panel-default panel-grey">
+      <table class="table table-minimal" data-is-classification>
       <thead>
       <tr>
         <th>Improvement opportunity</th>
@@ -706,15 +827,15 @@
       </thead>
       <tbody>
       <tr>
-        <td style="font-size:1.25em">{{section}}</td>
+        <td>{{section.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-yes btn-toggle btn-success">
-              <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+              <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-no btn-toggle btn-danger">
-              <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off">
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+              <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
           </div>
@@ -731,15 +852,15 @@
       </thead>
       <tbody>
       <tr>
-        <td style="font-size:1.25em">{{category}}</td>
+        <td>{{category.name}}</td>
         <td>
           <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-yes btn-toggle btn-success">
-              <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+              <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
               <span class="fa fa-thumbs-up"></span>
             </label>
-            <label class="btn btn-no btn-toggle btn-danger">
-              <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off">
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+              <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
               <span class="fa fa-thumbs-down"></span>
             </label>
           </div>
@@ -748,66 +869,203 @@
       </tbody>
       </table>
     </div>
-    {{#isReadCode}}
-    <div>We suggest you add the following exclusion code to their record: 9h3..
-      <button type="button" data-clipboard-text="9h3.." data-content="Copied" title="Copy to clipboard." class="btn btn-xs btn-default">
-        <span class="fa fa-clipboard"></span>
-      </button>
-    </div>
-    {{/isReadCode}}
+  </script>
+
+  <script id="individual-panel" type="x-tmpl-mustache">
+    {{#isMultiple}}
+    <!--<div class="alert alert-info clickable" role="alert" data-id={{patientId}}>
+      <strong>This patient appears on multiple pathways - click to view</strong>
+    </div>-->
+    {{/isMultiple}}
+
     <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
-          <th>Suggested Actions</th>
+          <th>Suggested by PINGR &nbsp;
+            <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="These suggested actions were generated by analysing data from the patients’ Electronic Health Records, then linking them to appropriate recommendations in NICE clinical guidelines and the British National Formulary."></i>
+          </th>
           <th style="width: 65px">Agree?</th>
-          <th></th>
+          <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented?</th>
         </tr>
       </thead>
       <tbody>
         {{#suggestions}}
-        <tr class="suggestion">
+        <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
           <td>
             <span>{{{text}}}</span>
           </td>
           <td>
             <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-xs btn-yes btn-toggle btn-success">
-                <input type="checkbox" name="individual-action-agree-{{index}}" value="yes" autocomplete="off">
+              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
                 <span class="fa fa-thumbs-up"></span>
               </label>
-              <label class="btn btn-xs btn-no btn-toggle btn-danger">
-                <input type="checkbox" name="individual-action-agree-{{lastIndex}}" value="no" autocomplete="off">
+              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
                 <span class="fa fa-thumbs-down"></span>
               </label>
             </div>
           </td>
           <td>{{>chk}}</td>
         </tr>
-        {{/suggestions}} {{resetIndex}}
+        {{/suggestions}}
       </tbody>
     </table>
   </script>
 
-  <script id="bp-trend-panel" type="x-tmpl-mustache">
-    <div id="demographic-content">
-      <h4>{{pathway}}</h4>
-      <div id="chart-demo-trend" style="max-height:100px"></div>
+  <script id="value-trend-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      {{^noHeader}}
+      <div class="panel-heading">
+        <i class="fa fa-line-chart fa-fw"></i>&nbsp; {{pathway}}
+      </div>
+      {{/noHeader}}
+      <div class="panel-body" style="max-height:380px">
+        <div id="chart-demo-trend" style="max-height:100px"></div>
+      </div>
+    </div>
+  </script>
+
+  <script id="medication-row" type="x-tmpl-mustache">
+    <tr>
+      <td>{{name}}</td>
+      <td>{{dose}}</td>
+      <td>{{last}}</td>
+    </tr>
+  </script>
+
+  <script id="medications-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      {{^noHeader}}
+      <div class="panel-heading">
+        <i class="fa fa-file-text fa-fw"></i>&nbsp; Medications
+      </div>
+      {{/noHeader}}
+      <div class="panel-body" style="max-height:380px">
+      {{#areMedications}}
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Medication</th>
+            <th>Dose</th>
+            <th>Last Rx</th>
+          </tr>
+          </thead>
+          <tbody>
+          {{#medications}}
+          {{>medicationRow}}
+          {{/medications}}
+          </tbody>
+        </table>
+      {{/areMedications}}
+      {{^areMedications}}
+      No medications
+      {{/areMedications}}
+      </div>
+    </div>
+  </script>
+
+  <script id="patient-panel" type="x-tmpl-mustache">
+    <div class="panel panel-{{pathwayStage}}">
+      <div class="panel-heading">
+        <!--<i class="fa fa-file-text fa-fw"></i>-->&nbsp; Improvement actions: &nbsp; <span style = "color: yellow;font-weight:bold"> Patient {{nhsNumber}} </span> &nbsp;
+        <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+          <span class="fa fa-clipboard"></span>
+        </button>
+      </div>
+      <div class="panel-body">
+        <div id="patient-panel-top" class="row row-top">
+        </div>
+        <div class="row row-mid">
+          <div id="patient-panel-mid" class="col-sm-12">
+          </div>
+        </div>
+        <div class="row">
+          <div id="patient-panel-left" class="col-sm-6">
+          </div>
+          <div id="patient-panel-right" class="col-sm-6">
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="pathway-panel-radio" type="x-tmpl-mustache">
+    <label class="radio-inline">
+      <input type="radio" name="pathwayradio" value="{{pathwayId}}" {{#checked}}checked="checked"{{/checked}}>{{name}}
+    </label>
+  </script>
+
+  <script id="pathway-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {{#multiple}}
+        <span>This patient flags multiple pathways - please click to select: </span>
+        {{/multiple}}
+        {{^multiple}}
+        <span>This patient only flags one pathway: </span>
+        {{/multiple}}
+        {{#pathways}}
+        {{>radio}}
+        {{/pathways}}
+      </div>
     </div>
   </script>
 
   <script id="patients-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="{{panelTooltip}}">
+      {{panelTitle}}
+      </div>
+
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <h4>{{header}}</h4>
+            <h6>(click sections to change patient list)</h6>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12" style="padding:0">
+            <div style="height:200px" id="breakdown-chart"></div>
+          </div>
+          <!--<div class="col-sm-10" style="padding:0">
+            <div id="breakdown-table"></div>
+          </div>-->
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div id="patients"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="all-patients-panel" type="x-tmpl-mustache">
     <div class="panel panel-default" id="panel-right">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="bottom" title="List of patients not achieving the selected quality standard">
-        <h4 class="panel-title">Patients</h4>
+      <div class="panel-heading">
+      <i class="fa fa-users fa-fw"></i>&nbsp; Patients
       </div>
 
       <div class="panel-body" id="panel-patients">
-        <div id="patients-placeholder">
-          Select a patient group to display affected patients
-        </div>
         <div id="patients" style="max-height:800px"></div>
       </div>
     </div>
+  </script>
+
+  <script id="change-bar-number" type="x-tmpl-mustache">
+    <span class="pull-right" data-toggle="tooltip" data-placement="bottom" title="Current number of patients meeting this standard and how this has changed from last month">
+      n={{number}} ( {{#numberUp}}
+      <span class="text-green">
+        <i class="fa fa-caret-up"></i> {{numberChange}}
+      </span>
+      {{/numberUp}} {{^numberUp}}
+      <span class="text-red">
+        <i class="fa fa-caret-down"></i> {{numberChange}}
+      </span>
+      {{/numberUp}} )
+    </span>
   </script>
 
   <script id="change-bar" type="x-tmpl-mustache">
@@ -834,7 +1092,7 @@
   <script id="monitoring-panel" type="x-tmpl-mustache">
     <div data-stage="monitoring" class="panel panel-monitoring panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being monitored.">
-        <i class="fa fa-stethoscope fa-fw"></i>&nbsp; Monitoring
+        <!--<i class="fa fa-stethoscope fa-fw">--></i>&nbsp; Monitoring
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
@@ -850,7 +1108,7 @@
   <script id="treatment-panel" type="x-tmpl-mustache">
     <div data-stage="treatment" class="panel panel-treatment panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being treated.">
-        <i class="fa fa-medkit fa-fw"></i>&nbsp; Treatment
+        <!--<i class="fa fa-medkit fa-fw">--></i>&nbsp; Control
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
@@ -866,11 +1124,11 @@
   <script id="diagnosis-panel" type="x-tmpl-mustache">
     <div data-stage="diagnosis" class="panel panel-diagnosis panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being diagnosed.">
-        <i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp; Diagnosis
+        <!--<i class="fa fa-exclamation-triangle fa-fw">--></i>&nbsp; Diagnosis
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>{{title}}</p>
+          <p>{{title}} {{>change-bar-number}}</p>
         </div>
         <div>
           <div id="diagnosis-chart"></div>
@@ -882,11 +1140,11 @@
   <script id="exclusion-panel" type="x-tmpl-mustache">
     <div data-stage="exclusions" class="panel panel-exclusions panel-default clickable">
       <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="Whether patients are appropriately excluded from {{pathway}} quality standards.">
-        <i class="fa fa-times fa-fw"></i>&nbsp; Exclusions
+        <!--<i class="fa fa-times fa-fw">--></i>&nbsp; Exclusions
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
-          <p>{{title}}</p>
+          <p>{{title}} {{>change-bar-number}}</p>
         </div>
         <div>
           <div id="exclusion-chart"></div>
@@ -918,104 +1176,151 @@
     </div>
   </script>
 
+  <script id="pathway-picker-sub-item" type="x-tmpl-mustache">
+    <ul class="list-unstyled">
+      <li><a href="#main/{{id}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overview</a></li>
+      <li><a href="#main/{{id}}/diagnosis">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnosis</a></li>
+      <li><a href="#main/{{id}}/monitoring">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monitoring</a></li>
+      <li><a href="#main/{{id}}/treatment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control</a></li>
+      <li><a href="#main/{{id}}/exclusions">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exclusions</a></li>
+    </ul>
+  </script>
+
   <script id="pathway-picker-item" type="x-tmpl-mustache">
-  <li {{#isSelected}}class="active"{{/isSelected}}>
-    <a href="#{{link}}">
-      <i class="fa {{faIcon}}"></i>
-      <span class="nav-label">{{name}}</span>
-    </a>
-  </li>
+    {{#isBreakAbove}}<hr>{{/isBreakAbove}}
+    <li {{#isSelected}}class="active"{{/isSelected}}>
+      <a href="#{{link}}">
+        <i class="fa {{faIcon}}"></i>
+        <span class="nav-label">{{name}}</span>
+      </a>
+      {{#hasSubItems}}
+      {{>subItem}}
+      {{/hasSubItems}}
+    </li>
   </script>
 
   <script id="pathway-picker" type="x-tmpl-mustache">
-  <ul class="list-unstyled">
-    {{#items}}
-    {{>item}}
-    {{/items}}
-  </ul>
-  </script>
-
-  <script id="pathway-map" type="x-tmpl-mustache">
-  <section class="cd-container" id="cd-timeline">
-    <div class="cd-timeline-block">
-      <div style="text-align: center;">
-        <span data-stage="diagnosis" data-toggle="tooltip" data-placement="top" title="Diagnosis: How well {{pathway}} is being diagnosed" class="fa-stack fa-2x fa-stack-mod clickable">
-          <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-          <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-success"></i>
-          <i class="fa fa-exclamation-triangle fa-stack-1x icon-success"></i>
-        </span>
-      </div>
-    </div>
-
-    <div class="cd-timeline-block">
-      <div style="text-align: center;">
-        <span data-stage="monitoring" data-toggle="tooltip" data-placement="top" title="Monitoring: How well {{pathway}} is being monitored" class="fa-stack fa-2x fa-stack-mod clickable">
-          <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-          <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-info"></i>
-          <i class="fa fa-stethoscope fa-stack-1x icon-info"></i>
-        </span>
-      </div>
-    </div>
-
-    <div class="cd-timeline-block">
-      <div style="text-align: center;">
-        <span data-stage="treatment" data-toggle="tooltip" data-placement="top" title="Treatment: How well {{pathway}} is being treated" class="fa-stack fa-2x fa-stack-mod clickable">
-          <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-          <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-warning"></i>
-          <i class="fa fa-medkit fa-stack-1x icon-warning"></i>
-        </span>
-      </div>
-    </div>
-  </section>
-
-  <div class="cd-timeline-block">
-    <div style="text-align: center;">
-      <span data-stage="exclusions" data-toggle="tooltip" data-placement="top" title="Exclusions: Whether patients are appropriately excluded from {{pathway}} quality standards" class="fa-stack fa-2x fa-stack-mod clickable">
-        <i class="fa fa-circle fa-stack-2x fa-stack-mod icon-background"></i>
-        <i class="fa fa-circle-thin fa-stack-2x fa-stack-2-2x fa-stack-mod icon-background-border icon-background-border-danger"></i>
-        <i class="fa fa-times fa-stack-1x icon-danger"></i>
-      </span>
-    </div>
-  </div>
+    <ul class="list-unstyled">
+      {{#items}}
+      {{>item}}
+      {{/items}}
+    </ul>
   </script>
 
   <script id="welcome-task-item" type="x-tmpl-mustache">
-  <tr>
-    <td>{{pathway}}</td>
-    {{#patientId}}
-    <td>{{patientId}}</td>
-    {{/patientId}}
-    <td>{{{task}}}</td>
-    <td>{{>chk}}</td>
-  </td>
+    <tr class="suggestion" data-pathway-id="{{pathwayId}}" data-id="{{data}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
+      <td><span>{{pathway}}</span></td>
+      {{#patientId}}
+      <td><span>{{patientId}}</span></td>
+      {{/patientId}}
+      <td>
+        <span>{{{task}}}</span>
+        {{#canEdit}}
+        <div class="btn-group btn-hover-show-group pull-right" data-toggle="buttons">
+          <i class="fa fa-pencil edit-plan clickable" data-toggle="tooltip" data-placement="top" title="Edit plan"></i>
+          <i class="fa fa-trash delete-plan clickable" data-toggle="tooltip" data-placement="top" title="Delete plan"></i>
+        </div>
+        {{/canEdit}}
+      </td>
+      <td>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with this action">
+            <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+            <span class="fa fa-thumbs-up"></span>
+          </label>
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with this action">
+            <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+            <span class="fa fa-thumbs-down"></span>
+          </label>
+        </div>
+      </td>
+      <td>{{>chk}}</td>
+    </tr>
   </script>
 
   <script id="welcome-task-items" type="x-tmpl-mustache">
-  {{#hasTasks}}
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Condition</th>
-        {{#isPatientTable}}
-        <th>NHS number</th>
-        {{/isPatientTable}}
-        <th>Planned action</th>
-        <th>Completed</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#tasks}}
-      {{>task-item}}
-      {{/tasks}}
-    </tbody>
-  </table>
-  {{/hasTasks}}
-  {{^hasTasks}}
-  <div class="panel-body">
-  You currently have no outstanding planned actions
-  </div>
-  {{/hasTasks}}
+    {{#hasTasks}}
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width: 150px">Condition</th>
+            {{#isPatientTable}}
+            <th>NHS number</th>
+            {{/isPatientTable}}
+            <th>Planned action</th>
+            <th style="width: 65px">Agree?</th>
+            <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#tasks}}
+          {{>task-item}}
+          {{/tasks}}
+        </tbody>
+      </table>
+    {{/hasTasks}}
+    {{^hasTasks}}
+      <div class="panel-body">
+      You currently have no outstanding planned actions
+      </div>
+    {{/hasTasks}}
+  </script>
 
+  <script id="welcome-task-list" type="x-tmpl-mustache">
+    <div class="container">
+      <div class="row">
+        <div id="team-task-panel" class="panel panel-info">
+          <div class="panel-heading">Team / organisational planned actions</div>
+        </div>
+      </div>
+      <div class="row">
+        <div id="team-add-plan" style="padding-bottom: 15px;margin-top: -10px;">
+        </div>
+      </div>
+      <div class="row">
+        <div id="individual-task-panel" class="panel panel-warning">
+          <div class="panel-heading">Individual patient planned actions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editPlan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">Edit Plan</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="text" class="form-control" id="editActionPlanItem">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary save-plan">Save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="deletePlan" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="deleteModalLabel">Delete a suggested action you added</h4>
+          </div>
+          <div class="modal-body">
+            <span id="team-delete-item" style="font-style:italic"></span>
+            <p>Are you sure?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger delete-plan">Delete</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </script>
 </body>
 </html>

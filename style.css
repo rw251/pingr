@@ -1,30 +1,201 @@
 /* Put your css in here */
 body {
   padding-top: 50px;
+  overflow-y: hidden;
 }
 
 body.qof {
   background-color: #ddf9f9;
 }
 
-/* thanks fly in message */
-.flyover {
-   left: 150%;
-   overflow: hidden;
-   position: fixed;
-   width: 50%;
-   opacity: 0.9;
-   z-index: 1050;
-   /*transition: left 0.6s ease-out 0s;*/
+.btn.btn-xs.btn-yes.btn-toggle.btn-success{
+  /*color: #e9e9e9;*/
+  background-color: rgb(68, 157, 68);
 }
 
-.flyover-centered {
-   top: 50%;
-   transform: translate(-50%, -50%);
+.row.row-top {
+  margin-top: -15px;
+  margin-bottom: 8px;
+}
+
+.row.row-mid>div {
+  margin-bottom: -15px;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
+  color: white;
+  background-color: #00b20b;
+  border-color: #00b20b;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.active{
+  color: white;
+  background-color: #00b20b;
+  border-color: #00b20b;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.active:hover{
+  color: #e5e5e5;
+  background-color: #00b20b;
+  border-color: #00b20b;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.inactive{
+  color: #e9e9e9;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger{
+  /*color: #e9e9e9;*/
+background-color: rgb(201, 48, 44);
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger:hover{
+  color: white;
+  background-color: rgb(201, 48, 44);
+border-color: #FF0000;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.inactive:hover{
+  background-color: rgb(201, 48, 44);
+  border-color: transparent;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.active{
+  color:white;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.active:hover{
+  background-color: #FF0000;
+  border-color: #FF0000;
+  color: #e5e5e5;
+}
+
+.btn-switch {
+  background-color: lightgrey;
+  color: darkgrey;
+  box-shadow: inset -2px 0 8px -2px rgba(0,0,0,0.3);
+}
+
+.btn:hover {
+  color: white;
+  background-color: lightgrey;
+}
+
+.btn-switch.active {
+  box-shadow: inset -2px 0 8px -2px rgba(100,203,238,1);
+}
+
+.btn-switch.active:hover {
+  background-color: rgb(40, 96, 144);
+}
+
+.btn-hover-show-group{
+  display: none;
+}
+
+tr.suggestion:hover .btn-hover-show-group{
+  display: inline-block;
+}
+
+tr.suggestion.success:hover .btn-hover-show-group,tr.suggestion.danger:hover .btn-hover-show-group{
+  display: none;
+}
+
+hr{
+  margin-top: 0px;
+  margin-bottom: 40px;
+  border-top: 0px solid #7e818d;
+}
+
+.info-button {
+  color: cornflowerblue;
+}
+
+.navigation ul li a:hover {
+  color: white;
+  background-color: rgb(43, 47, 62);
+}
+
+.navigation ul li ul li.active a  {
+  color: white;
+}
+
+.navigation ul li ul {
+  background-color: #4b4e5a;
+}
+
+.navigation ul li ul li a {
+  color: #9ea0a9;
+}
+
+.navigation ul li ul li.active a {
+  background-color: #9ea0a9;
+  box-shadow: inset -6px 0 8px -2px rgba(0,0,0,0.2);
+  border-left: 0;
+}
+
+.navigation ul li ul li.active a:hover {
+  background-color: #9ea0a9;
+  box-shadow: inset -6px 0 8px -2px rgba(0,0,0,0.2);
+  border-left: 0;
+}
+
+.navigation ul li ul li a:hover {
+  color: white;
+  border-left: 0;
+  background-color: rgb(75, 78, 90);
+}
+
+.navigation > ul > li > a {
+  border-bottom: 0;
+}
+
+/*support for slightly wider desktops */
+.col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12{
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 1300px) {
+  .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12{
+    float: left;
+  }
+  .col-xl-12 {
+    width: 100%;
+  }
+  .col-xl-8 {
+    width: 66.66666667%;
+  }
+  .col-xl-6 {
+    width: 50%;
+  }
+  .col-xl-4 {
+    width: 33.33333333%;
+  }
+  .col-xl-3 {
+    width: 25%;
+  }
+}
+.btn-copy {
+  color:orange;
+}
+/* thanks fly in message */
+.flyover {
+  position: fixed;
+  left:150%;
+  bottom: 20px;
+  padding: 5px 15px;
+  z-index:999;
+  opacity: 0.8;
 }
 
 .flyover.in {
-   left: 50%;
+   left: auto;
+   right: 20px;
 }
 
 .hide-if-logged-out {
@@ -49,6 +220,12 @@ body.qof {
 
 .panel-green {
   background-color: #ccf3cc;
+}
+
+.user img {
+  border:0px;
+  width: 75px;
+  height: 75px;
 }
 
 /* Better widths for container */
@@ -116,7 +293,7 @@ mod
 }
 
 nav.full{
-	left:230px;
+	left:190px;
 }
 
 nav.part{
@@ -170,6 +347,14 @@ header {
 .unclickable {
   cursor: default;
 }
+
+.c3-target-larger path {
+    stroke-width: 0px;
+}
+
+.c3-target-larger circle {
+    r: 10px;
+}
 /*
 #chart-benchmark .c3-line {
 	stroke-width: 0px;
@@ -185,12 +370,33 @@ header {
 	background-color: rgb(244,244,255);
 }
 
-.btn-toggle {
+/*.btn-toggle {
 	opacity:0.5;
+}*/
+
+.table.table-body-hidden tbody tr, .table.table-head-hidden thead tr,
+.table.table-body-hidden tbody tr td, .table.table-head-hidden thead tr th {
+  visibility: collapse;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-top: 0;
+  border-bottom: 0;
 }
 
-.btn-toggle.active {
-	opacity:1;
+.table.table-body-hidden tbody tr td button, .table.table-head-hidden thead tr th i {
+  height: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+}
+
+.table.table-body-hidden {
+  margin-bottom: 0px;
+}
+
+.btn-toggle.inactive {
+	opacity:0.5;
 }
 
 #breakdown-table tbody tr:hover {
@@ -229,7 +435,7 @@ header {
 }
 
 .navbar-nav>li>.btn-group {
-	padding: 10px 15px 10px 15px;
+	padding: 8px 15px 8px 15px;
 }
 
 .navbar-toggle {
@@ -246,15 +452,33 @@ header {
 }
 
 .starter-template {
-  padding: 20px 15px 0px 15px;
+  padding: 0px 15px 0px 15px;
 }
 
 .starter-template-high {
   padding: 15px 15px 0px 15px;
 }
 
-.suggestion.danger td span {
+.table>tbody>tr.suggestion.danger td span {
 	text-decoration: line-through;
+}
+
+.table>tbody>tr.suggestion.active > td {
+  background-color: rgb(223, 240, 216);
+  color:#222;
+}
+
+.table>tbody>tr.suggestion.success td span {
+	text-decoration: line-through;
+  color:#85868d;
+}
+
+.table>tbody>tr.suggestion.success td label.btn-toggle span{
+  color:#fff;
+}
+
+tr.suggestion.success label.btn-toggle.btn-success.active {
+  opacity: 0.5;
 }
 
 .thumb-up {
@@ -266,18 +490,16 @@ header {
 }
 
 .navbar-nav {
-  width: 85%;
+  width: 100%;
 }
 
 .btn-padding {
    position: relative;
    overflow: hidden;
-   margin: 6px;
+   margin: 8px 0px;
 }
 
-tr.active > td {
-  color:#222;
-}
+
 /*
  * Better file loading buttons#
  *  courtesy of Cory LaViska http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
@@ -491,15 +713,19 @@ th,td {
 .gist {
   font-size: 14px;
 }
+.twitter-typeahead, .tt-hint, .tt-input {
+  height: 36px;
+}
 
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
-  width: 150px;
+  width: 520.542px;
+/*  height: 36px;*/
 }
 
 .twitter-typeahead {
   position: relative;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 7px;
+  margin-bottom: 7px;
   margin-right: 15px;
 }
 
