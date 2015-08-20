@@ -463,7 +463,7 @@
   </script>
 
   <script id="patient-list-header-item" type="x-tmpl-mustache">
-    <th class="sortable {{direction}}" title="Order patients">
+    <th style="min-width:90px" class="sortable {{direction}}" title="Order patients">
       {{title}}
       {{^isUnSortable}}
       {{#isSorted}}
@@ -494,7 +494,7 @@
       </thead>
       <tbody>
         <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
-          <td>
+          <td style="min-width:130px">
             <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
             </button>
@@ -504,7 +504,7 @@
         </tr>
       </tbody>
     </table>
-    <div class="table-scroll" style="max-height:380px">
+    <div class="table-scroll">
       <table class="table patient-list table-head-hidden">
         <thead>
           <tr>
@@ -516,7 +516,7 @@
         <tbody>
           {{#patients}}
           <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
-            <td>
+            <td style="min-width:130px">
               <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="lone-tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
                 <span class="fa fa-clipboard"></span>
               </button>
@@ -992,7 +992,8 @@
 
   <script id="pathway-panel-radio" type="x-tmpl-mustache">
     <label class="radio-inline">
-      <input type="radio" name="pathwayradio" value="{{pathwayId}}" {{#checked}}checked="checked"{{/checked}}>{{name}}
+      <input type="radio" name="pathwayradio" value="{{pathwayId}}" data-pathway-id="{{pathwayId}}" data-pathway-stage="{{pathwayStage}}"
+             data-standard="{{standard}}" {{#checked}}checked="checked"{{/checked}}>{{name}}
     </label>
   </script>
 
@@ -1017,32 +1018,30 @@
       <li {{#ok}}class="active"{{/ok}}><a {{^ok}}href="{{url}}/yes"{{/ok}}>{{text.panelOk.text}}</a></li>
       <li {{^ok}}class="active"{{/ok}}><a {{#ok}}href="{{url}}/no"{{/ok}}>{{text.panelNotOk.text}}</a></li>
     </ul>
-    <div>
+    <div class="top-tab-pane">
       {{>content}}
     </div>
   </script>
 
   <script id="patients-panel-yes" type="x-tmpl-mustache">
-    <div class="row">
-      <div class="col-sm-12">
-        <h4>{{text.panelOkHeader.text}}</h4>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div id="patients"></div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+          <h4>{{text.panelOkHeader.text}}</h4>
+          <div id="patients"></div>
       </div>
     </div>
   </script>
 
   <script id="patients-panel-no" type="x-tmpl-mustache">
-    <ul class="nav nav-tabs sub-tabs" role="tablist">
-      {{#tabs}}
-        {{>tab-header}}
-      {{/tabs}}
-    </ul>
-    <div>
-      {{>tab-content}}
+    <div class="panel panel-default">
+      <ul class="nav nav-tabs sub-tabs" role="tablist">
+        {{#tabs}}
+          {{>tab-header}}
+        {{/tabs}}
+      </ul>
+      <div class="sub-tab-pane">
+        {{>tab-content}}
+      </div>
     </div>
   </script>
 
@@ -1055,14 +1054,18 @@
   <script id="patients-panel-no-page" type="x-tmpl-mustache">
     <div class="panel panel-default">
       <div class="panel-body">
-        <h4>{{header}}</h4>
-        <h6>(click sections to change patient list)</h6>
-        <div style="height:200px" id="breakdown-chart"></div>
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div id="patients"></div>
+        <div class="panel panel-default">
+          <div id="chart-panel" class="panel-body">
+            <h4>{{header}}</h4>
+            <h6>(click sections to change patient list)</h6>
+            <div style="height:200px" id="breakdown-chart"></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div id="patients"></div>
+          </div>
+        </div>
       </div>
     </div>
   </script>
