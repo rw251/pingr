@@ -84,12 +84,12 @@
 
     var panel = createPatientPanel(pathwayStage);
 
-    farLeftPanel.fadeOut(100, function(){
+    farLeftPanel.fadeOut(200, function(){
       $(this).html(panel);
       wireUpPatientPanel(pathwayStage, farLeftPanel);
       populatePatientPanel(local.pathwayId, pathwayStage, null);
       updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
-      $(this).fadeIn(100, function(){
+      $(this).fadeIn(300, function(){
         patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
         farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
       })
@@ -125,7 +125,7 @@
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel);
 
     if(farRightPanel.is(':visible')) {
-      farRightPanel.fadeOut(100, function(){
+      farRightPanel.fadeOut(500, function(){
         $(this).html($('#temp-hidden').html());
           $('#temp-hidden').html("");
           wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
@@ -139,7 +139,7 @@
               showIndividualPatientPanel(breach.pathwayId, breach.pathwayStage, patientId,  false);
             });
           }
-          $(this).fadeIn(100, function(){
+          $(this).fadeIn(500, function(){
         });
       });
     } else {
@@ -156,7 +156,7 @@
             showIndividualPatientPanel(breach.pathwayId, breach.pathwayStage,patientId,  false);
           });
         }
-        farRightPanel.fadeIn(100, function(){
+        farRightPanel.fadeIn(500, function(){
       });
     }
   };

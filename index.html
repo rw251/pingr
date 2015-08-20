@@ -130,16 +130,16 @@
 
             <!-- Split button -->
             <div class="hide-if-logged-out pull-right btn-group">
-              <button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download Action Plan</span></button>
+              <button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="fa fa-download"></span> <span class="hidden-xs hidden-sm hidden-md">Download actions</span></button>
               <button type="button" class="btn btn-danger dropdown-toggle btn-padding" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
               <ul class="dropdown-menu">
-                <li><a class="download-outstanding clickable">Download Outstanding Tasks</a></li>
-                <li><a class="download-completed clickable">Download Completed Tasks</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a class="download-all clickable">Download All Tasks</a></li>
+                <li><a class="download-outstanding clickable">Download agreed actions <strong>awaiting implementation</strong></a></li>
+                <li><a class="download-completed clickable">Download agreed actions <strong>that have been implemented </strong></a></li>
+                <!---<li role="separator" class="divider"></li>
+                <li><a class="download-all clickable">Download all agreed actions - <strong>implemented or not</strong></a></li>-->
               </ul>
             </div>
             <!--<div class="hide-if-logged-out input-group pull-right">
@@ -212,8 +212,8 @@
         </div>
 
         <ul id="welcome-tabs" class="nav nav-tabs">
-            <li class="active"><a id="outstandingTasks" href="#outstandingTasks">Outstanding Tasks</a></li>
-            <li><a id="completedTasks" href="#completedTasks">Completed Tasks</a></li>
+            <li class="active"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awating implementation</a></li>
+            <li><a id="completedTasks" href="#completedTasks">Agreed actions that have been implemented</a></li>
         </ul>
         <div id="welcome-tab-content">
         </div>
@@ -1270,7 +1270,7 @@
     <div class="container">
       <div class="row">
         <div id="team-task-panel" class="panel panel-info">
-          <div class="panel-heading">Team / organisational planned actions</div>
+          <div class="panel-heading">Practice-level</div>
         </div>
       </div>
       <div class="row">
@@ -1279,7 +1279,7 @@
       </div>
       <div class="row">
         <div id="individual-task-panel" class="panel panel-warning">
-          <div class="panel-heading">Individual patient planned actions</div>
+          <div class="panel-heading">Individual patient</div>
         </div>
       </div>
     </div>
