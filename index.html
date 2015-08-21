@@ -965,13 +965,27 @@
     </div>
   </script>
 
+
+  <script id="patient-panel-drop-down-options" type="x-tmpl-mustache">
+    <option value="{{value}}" data-pathway-id={{pathwayId}} data-pathway-stage={{pathwayStage}} data-standard={{standard}}>{{text}}</option>
+  </script>
+
   <script id="patient-panel" type="x-tmpl-mustache">
     <div class="panel panel-{{pathwayStage}}">
       <div class="panel-heading">
-        <!--<i class="fa fa-file-text fa-fw"></i>-->&nbsp; Improvement actions: &nbsp; <span style = "color: yellow;font-weight:bold"> Patient {{nhsNumber}} </span> &nbsp;
-        <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
-          <span class="fa fa-clipboard"></span>
-        </button>
+        <span class="pull-left">
+          &nbsp; Improvement actions: &nbsp; <span style = "color: yellow;font-weight:bold"> Patient {{nhsNumber}} </span> &nbsp;
+          <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
+            <span class="fa fa-clipboard"></span>
+          </button>
+        </span>
+        <span style="display: block;overflow: hidden;padding-right: 5px;padding-left: 10px;">
+          <select style="width:100%">
+            {{#options}}
+            {{>option}}
+            {{/options}}
+          </select>
+        </span>
       </div>
       <div class="panel-body">
         <div id="patient-panel-top" class="row row-top">
@@ -1047,7 +1061,7 @@
 
   <script id="patients-panel-no-tabs" type="x-tmpl-mustache">
     <li {{#active}}class="active"{{/active}}>
-      <a {{^active}}href="{{url}}"{{/active}}>{{text}}</a>
+      <a {{^active}}href="{{url}}"{{/active}}>{{header.title}}</a>
     </li>
   </script>
 

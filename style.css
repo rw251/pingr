@@ -652,6 +652,10 @@ th,td {
   max-height: 220px;
 }
 
+.table-scroll .table {
+  margin-bottom:0;
+}
+
 .top-tab-pane>.panel>.panel-body>div>.table-scroll {
   max-height: 500px;
 }
