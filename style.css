@@ -116,6 +116,13 @@ hr{
 .navigation ul li a:hover {
   color: white;
   background-color: rgb(43, 47, 62);
+  border-bottom: 0;
+  border-top: 0;
+  box-shadow: 0;
+  border-width: 0;
+  border: 0;
+  border-color: rgb(43, 47, 62);
+  border-bottom-color: white;
 }
 
 .navigation ul li ul li.active a  {
@@ -149,6 +156,11 @@ hr{
 }
 
 .navigation > ul > li > a {
+  border-bottom: 0;
+}
+
+.nav-tabs>li a {
+  border: 1px solid #ddd;
   border-bottom: 0;
 }
 
@@ -198,6 +210,15 @@ hr{
    right: 20px;
 }
 
+.headerDivider {
+     border-left:1px solid #38546d; 
+     border-right:1px solid #16222c; 
+     height:2000px;
+     position: relative;
+     right:1200px;
+     top:10px; 
+}
+
 .hide-if-logged-out {
   display: none;
 }
@@ -226,6 +247,11 @@ hr{
   border:0px;
   width: 75px;
   height: 75px;
+}
+
+.user.text-center.clickable:hover {
+  color: white;
+  transition: color .2s ease;
 }
 
 /* Better widths for container */
