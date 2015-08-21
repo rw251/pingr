@@ -28,7 +28,7 @@
 			"exclusions": {"name": "exclusions", "display": "Exclusions"}
 		},
 		"page" : "",
-		"pathwayId" : "bp",
+		"pathwayId" : "htn",
     "colors" : ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
     "diseases" : [],
     "pathwayNames" : {},
@@ -160,7 +160,7 @@
           $('#temp-hidden').html("");
           wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
           wireUpQualStan(pathwayId, pathwayStage);
-          drawTrendChart(patientId, pathwayId);
+          drawTrendChart(patientId, pathwayId, pathwayStage, standard);
           if(local.data.patients[patientId].breach.length>1){
             $('input[name=pathwayradio]').off('change').on('change', function(){
               //find breach $(this).val() = asthma, bp etc.
@@ -176,7 +176,7 @@
         $('#temp-hidden').html("");
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
         wireUpQualStan(pathwayId, pathwayStage);
-        drawTrendChart(patientId, pathwayId);
+        drawTrendChart(patientId, pathwayId, pathwayStage, standard);
         if(local.data.patients[patientId].breach.length>1){
           $('input[name=pathwayradio]').off('change').on('change', function(){
             //find breach $(this).val() = asthma, bp etc.
@@ -215,7 +215,7 @@
           $('#temp-hidden').html("");
           wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
           wireUpQualStan(pathwayId, pathwayStage);
-          drawTrendChart(patientId, pathwayId);
+          drawTrendChart(patientId, pathwayId, pathwayStage, standard);
 
           if(local.data.patients[patientId].breach.length>1){
             $('input[name=pathwayradio]').off('change').on('change', function(){
@@ -233,7 +233,7 @@
         $('#temp-hidden').html("");
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
         wireUpQualStan(pathwayId, pathwayStage);
-        drawTrendChart(patientId, pathwayId);
+        drawTrendChart(patientId, pathwayId, pathwayStage, standard);
 
 
         if(local.data.patients[patientId].breach.length>1){
@@ -897,9 +897,9 @@
   var createPatientPanel = function(pathwayStage, standard){
     var tabData = [];
     for(var key in local.data[local.pathwayId][pathwayStage].standards){
-      tabData.push({"text": local.data[local.pathwayId][pathwayStage].standards[key].tab, "active" : key===standard ,"url": window.location.hash.replace(/\/no.*/g,'\/no/'+key)});
+      tabData.push({"header": local.data[local.pathwayId][pathwayStage].standards[key].tab, "active" : key===standard ,"url": window.location.hash.replace(/\/no.*/g,'\/no/'+key)});
     }
-    return createPanel(patientsPanelTemplate,{"pathwayStage" : pathwayStage,"header": local.data[local.pathwayId][pathwayStage].standards[standard].title,"url":window.location.hash.replace(/\/yes.*/g,'').replace(/\/no.*/g,''), "tabs": tabData, "text" : local.data[local.pathwayId][pathwayStage].text},{"content" : $('#patients-panel-no').html(),"tab-header" : $('#patients-panel-no-tabs').html(),"tab-content" : $('#patients-panel-no-page').html()});
+    return createPanel(patientsPanelTemplate,{"pathwayStage" : pathwayStage,"header": local.data[local.pathwayId][pathwayStage].standards[standard].chartTitle,"url":window.location.hash.replace(/\/yes.*/g,'').replace(/\/no.*/g,''), "tabs": tabData, "text" : local.data[local.pathwayId][pathwayStage].text},{"content" : $('#patients-panel-no').html(),"tab-header" : $('#patients-panel-no-tabs').html(),"tab-content" : $('#patients-panel-no-page').html()});
   };
 
   var createPatientPanelOk = function(pathwayStage){
@@ -1864,10 +1864,10 @@
     return createPanel(valueTrendPanel, {"pathway": local.monitored[pathwayId], "pathwayStage" : pathwayStage, "noHeader" : true});
   };
 
-  var showTestTrendPanel = function(location, pathwayId, pathwayStage, patientId){
+  var showTestTrendPanel = function(location, pathwayId, pathwayStage, standard, patientId){
     createPanelShow(valueTrendPanel, location, {"pathway": local.monitored[pathwayId], "pathwayStage" : pathwayStage, "noHeader" : true});
 
-    drawTrendChart(patientId, pathwayId);
+    drawTrendChart(patientId, pathwayId, pathwayStage, standard);
   };
 
   var createMedicationPanel = function(pathwayStage, patientId) {
@@ -2012,12 +2012,11 @@
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
       ret.items = []; //The fields in the patient list table
-			if(ret[local.data[local.pathwayId]["value-label"]]) {
-        if(pathwayStage === local.categories.monitoring.name){
-          ret.items.push(ret[local.data[local.pathwayId]["value-label"]][0][ret[local.data[local.pathwayId]["value-label"]][0].length-1]);
-        }
-        else{
-          ret.items.push(ret[local.data[local.pathwayId]["value-label"]][1][ret[local.data[local.pathwayId]["value-label"]][1].length-1]);
+			if(ret[local.data[local.pathwayId][pathwayStage].standards[standard].valueId]) {
+        if(local.data[local.pathwayId][pathwayStage].standards[standard].dateORvalue==="date"){
+          ret.items.push(ret[local.data[local.pathwayId][pathwayStage].standards[standard].valueId][0][ret[local.data[local.pathwayId][pathwayStage].standards[standard].valueId][0].length-1]);
+        } else {
+          ret.items.push(ret[local.data[local.pathwayId][pathwayStage].standards[standard].valueId][1][ret[local.data[local.pathwayId][pathwayStage].standards[standard].valueId][1].length-1]);
         }
 			} else {
         ret.items.push("?");
@@ -2288,16 +2287,20 @@
 	* Charts - draw
 	********************************/
 
-	var drawTrendChart = function(patientId, pathwayId){
+	var drawTrendChart = function(patientId, pathwayId, pathwayStage, standard){
 		destroyCharts(['chart-demo-trend']);
-		if(!local.data.patients || !local.data.patients[patientId] || !local.data.patients[patientId][local.data[pathwayId]["value-label"]]) return;
+		if(!local.data.patients[patientId][local.data[pathwayId][pathwayStage].standards[standard].chart[0]]) return;
 
+    var chartData = local.data.patients[patientId][local.data[pathwayId][pathwayStage].standards[standard].chart[0]];
+    for(var i = 1 ; i < local.data[pathwayId][pathwayStage].standards[standard].chart.length; i++){
+      chartData.push(local.data.patients[patientId][local.data[pathwayId][pathwayStage].standards[standard].chart[i]][1]);//RW TODO assumption here that all dates are the same
+    }
 		var chartOptions = {
 			bindto: '#chart-demo-trend',
 			data: {
         xs :{},
         classes : {},
-				columns: local.data.patients[patientId][local.data[pathwayId]["value-label"]].slice()
+				columns: chartData.slice()
 			},
       zoom: {
           enabled: true
@@ -3407,28 +3410,26 @@
       $.extend(local.data[d].exclusions, {"breakdown":[], "bdown":{}});
 
       if(!local.data[d].monitoring.header) continue;
-      for(j=0; j < local.data[d].monitoring.items.length; j++) {
-        local.data[d].monitoring.breakdown.push([local.data[d].monitoring.items[j].name, local.data[d].monitoring.items[j].n]);
+      /*for(j=0; j < local.data[d].monitoring.items.length; j++) {
         local.data[d].monitoring.bdown[local.data[d].monitoring.items[j].name] = local.data[d].monitoring.items[j];
         local.data[d].monitoring.bdown[local.data[d].monitoring.items[j].name].suggestions = local.actionPlan[d].monitoring.individual[local.data[d].monitoring.items[j].name];
       }
       for(j=0; j < local.data[d].treatment.items.length; j++) {
-        local.data[d].treatment.breakdown.push([local.data[d].treatment.items[j].name, local.data[d].treatment.items[j].n]);
         local.data[d].treatment.bdown[local.data[d].treatment.items[j].name] = local.data[d].treatment.items[j];
         local.data[d].treatment.bdown[local.data[d].treatment.items[j].name].suggestions = local.actionPlan[d].treatment.individual[local.data[d].treatment.items[j].name];
       }
       for(j=0; j < local.data[d].exclusions.items.length; j++) {
-        local.data[d].exclusions.breakdown.push([local.data[d].exclusions.items[j].name, local.data[d].exclusions.items[j].n]);
         local.data[d].exclusions.bdown[local.data[d].exclusions.items[j].name] = local.data[d].exclusions.items[j];
         local.data[d].exclusions.bdown[local.data[d].exclusions.items[j].name].suggestions = local.actionPlan[d].exclusions.individual[local.data[d].exclusions.items[j].name];
       }
       for(j=0; j < local.data[d].diagnosis.items.length; j++) {
-        local.data[d].diagnosis.breakdown.push([local.data[d].diagnosis.items[j].name, local.data[d].diagnosis.items[j].n]);
         local.data[d].diagnosis.bdown[local.data[d].diagnosis.items[j].name] = local.data[d].diagnosis.items[j];
         local.data[d].diagnosis.bdown[local.data[d].diagnosis.items[j].name].suggestions = local.actionPlan[d].diagnosis.individual[local.data[d].diagnosis.items[j].name];
-      }
+      }*/
       for(key in local.data[d].monitoring.standards){
         for(var j = 0; j < local.data[d].monitoring.standards[key].opportunities.length; j++){
+          local.data[d].monitoring.bdown[local.data[d].monitoring.standards[key].opportunities[j].name] = local.data[d].monitoring.standards[key].opportunities[j];
+          local.data[d].monitoring.bdown[local.data[d].monitoring.standards[key].opportunities[j].name].suggestions = local.actionPlan[d].monitoring.individual[local.data[d].monitoring.standards[key].opportunities[j].name];
           for(k=0; k < local.data[d].monitoring.standards[key].opportunities[j].patients.length; k++) {
             if(!local.data.patients[local.data[d].monitoring.standards[key].opportunities[j].patients[k]].breach) local.data.patients[local.data[d].monitoring.standards[key].opportunities[j].patients[k]].breach = [];
             local.data.patients[local.data[d].monitoring.standards[key].opportunities[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"monitoring", "standard": key, "subsection":local.data[d].monitoring.standards[key].opportunities[j].name});
@@ -3437,6 +3438,8 @@
       }
       for(key in local.data[d].diagnosis.standards){
         for(var j = 0; j < local.data[d].diagnosis.standards[key].opportunities.length; j++){
+          local.data[d].diagnosis.bdown[local.data[d].diagnosis.standards[key].opportunities[j].name] = local.data[d].diagnosis.standards[key].opportunities[j];
+          local.data[d].diagnosis.bdown[local.data[d].diagnosis.standards[key].opportunities[j].name].suggestions = local.actionPlan[d].diagnosis.individual[local.data[d].diagnosis.standards[key].opportunities[j].name];
           for(k=0; k < local.data[d].diagnosis.standards[key].opportunities[j].patients.length; k++) {
             if(!local.data.patients[local.data[d].diagnosis.standards[key].opportunities[j].patients[k]].breach) local.data.patients[local.data[d].diagnosis.standards[key].opportunities[j].patients[k]].breach = [];
             local.data.patients[local.data[d].diagnosis.standards[key].opportunities[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"diagnosis", "standard": key, "subsection":local.data[d].diagnosis.standards[key].opportunities[j].name});
@@ -3445,6 +3448,8 @@
       }
       for(key in local.data[d].treatment.standards){
         for(var j = 0; j < local.data[d].treatment.standards[key].opportunities.length; j++){
+          local.data[d].treatment.bdown[local.data[d].treatment.standards[key].opportunities[j].name] = local.data[d].treatment.standards[key].opportunities[j];
+          local.data[d].treatment.bdown[local.data[d].treatment.standards[key].opportunities[j].name].suggestions = local.actionPlan[d].treatment.individual[local.data[d].treatment.standards[key].opportunities[j].name];
           for(k=0; k < local.data[d].treatment.standards[key].opportunities[j].patients.length; k++) {
             if(!local.data.patients[local.data[d].treatment.standards[key].opportunities[j].patients[k]].breach) local.data.patients[local.data[d].treatment.standards[key].opportunities[j].patients[k]].breach = [];
             local.data.patients[local.data[d].treatment.standards[key].opportunities[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"treatment", "standard": key, "subsection":local.data[d].treatment.standards[key].opportunities[j].name});
@@ -3453,6 +3458,8 @@
       }
       for(key in local.data[d].exclusions.standards){
         for(var j = 0; j < local.data[d].exclusions.standards[key].opportunities.length; j++){
+          local.data[d].exclusions.bdown[local.data[d].exclusions.standards[key].opportunities[j].name] = local.data[d].exclusions.standards[key].opportunities[j];
+          local.data[d].exclusions.bdown[local.data[d].exclusions.standards[key].opportunities[j].name].suggestions = local.actionPlan[d].exclusions.individual[local.data[d].exclusions.standards[key].opportunities[j].name];
           for(k=0; k < local.data[d].exclusions.standards[key].opportunities[j].patients.length; k++) {
             if(!local.data.patients[local.data[d].exclusions.standards[key].opportunities[j].patients[k]].breach) local.data.patients[local.data[d].exclusions.standards[key].opportunities[j].patients[k]].breach = [];
             local.data.patients[local.data[d].exclusions.standards[key].opportunities[j].patients[k]].breach.push({"pathwayId":d, "pathwayStage":"exclusions", "standard": key, "subsection":local.data[d].exclusions.standards[key].opportunities[j].name});
@@ -3484,6 +3491,62 @@
       getData(wireUpPages);
     });
 	};
+
+  /*var generateTestPatients = function(n, diseases){
+    var patients = {};
+    var arr = [];
+    var probOfDisease = 0.25;
+    var probOfAllOk = 0.2;
+    var stages = ["diagnosis", "monitoring", "treatment", "exclusions"];
+
+    for(var i = 0; i < n; i++){
+      var id = Math.floor(Math.random() * 10000000000);
+      while(arr.indexOf(id)>-1) id = Math.floor(Math.random() * 10000000000);
+      arr.push(id);
+      patients[id]={};
+
+      for(var d in diseases){
+        if(Math.random() < probOfDisease) {
+          patients[id][d] = {};
+
+          if(Math.random()>probOfAllOk){
+            var stage = stages[Math.floor(Math.random()*4)];
+            patients[id][d][stage]={};
+          }
+        }
+      }
+    }
+
+    return patients;
+  };*/
+
+  /*var generateTestData = function(data){
+    var diseases = {};}
+    var patients = local.patients.slice();
+
+    for(var dId in data){
+      if(dId==="patients" || dId==="patientsArray") continue;
+      diseases[dId] = {"diseaseId" : dId, "display-name":data[dId]["display-name"], "icon":data[dId].icon};
+
+      //monitoring
+      diseases[dId].monitoring = data[dId].monitoring;
+      //rtn.monitoring.trend = generateTrendData("2015-03-01", "2015-06-01", 1, [{"name":"%","start":50,"Pup":0.1,"Pdown":0.3},{"name":"n","start":150,"Pup":0.1,"Pdown":0.3}]);
+
+
+      //monitoring
+      diseases[dId].monitoring = {};
+
+      //monitoring
+      diseases[dId].monitoring = {};
+
+      //monitoring
+      diseases[dId].monitoring = {};
+    }
+
+
+    localStorage.testData = JSON.stringify({"diseases":diseases, "patients":patients});
+    return {"diseases":diseases, "patients":patients};
+  };*/
 
 	window.bb = {
     "version" : "1.25",
