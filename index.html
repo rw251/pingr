@@ -785,34 +785,38 @@
 
   <script id="qual-standard" type="x-tmpl-mustache">
     <div id="individual-panel-classification" class="panel-grey" style="padding: 3px 0px 3px 30px;">
-      <span>Improvement opportunity: </span>
-      <span><strong>{{section.name}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the opportunity"></i></span>
-      <span> - Agree?</span>
-      <div class="btn-group" data-toggle="buttons" data-is-classification data-text="{{section.name}}">
-        <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
-          <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
-          <span class="fa fa-thumbs-up"></span>
-        </label>
-        <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
-          <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
-          <span class="fa fa-thumbs-down"></span>
-        </label>
-      </div>
+      {{#section.name}}
+        <span>Improvement opportunity: </span>
+        <span><strong>{{section.name}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the opportunity"></i></span>
+        <span> - Agree?</span>
+        <div class="btn-group" data-toggle="buttons" data-is-classification data-text="{{section.name}}">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#section.agree}}active{{/section.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+            <input type="checkbox" name="patient-classification-agree" value="yes" autocomplete="off" {{#section.agree}}checked="checked"{{/section.agree}}>
+            <span class="fa fa-thumbs-up"></span>
+          </label>
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#section.disagree}}active{{/section.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+            <input type="checkbox" name="patient-classification-agree" value="no" autocomplete="off" {{#section.disagree}}checked="checked"{{/section.disagree}}>
+            <span class="fa fa-thumbs-down"></span>
+          </label>
+        </div>
+      {{/section.name}}
 
-      <span>&nbsp;&nbsp; |&nbsp;&nbsp; Quality standard missed: </span>
-      <span><strong>{{category.name}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the standard?"></i></span>
-      <span> - Agree?</span>
+      {{#category.name}}
+        <span>&nbsp;&nbsp; |&nbsp;&nbsp; Quality standard missed: </span>
+        <span><strong>{{category.name}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the standard?"></i></span>
+        <span> - Agree?</span>
 
-      <div class="btn-group" data-toggle="buttons" data-text="{{category.name}}">
-        <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
-          <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
-          <span class="fa fa-thumbs-up"></span>
-        </label>
-        <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
-          <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
-          <span class="fa fa-thumbs-down"></span>
-        </label>
-      </div>
+        <div class="btn-group" data-toggle="buttons" data-text="{{category.name}}">
+          <label class="btn btn-xs btn-yes btn-toggle btn-success {{#category.agree}}active{{/category.agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+            <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#category.agree}}checked="checked"{{/category.agree}}>
+            <span class="fa fa-thumbs-up"></span>
+          </label>
+          <label class="btn btn-xs btn-no btn-toggle btn-danger {{#category.disagree}}active{{/category.disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+            <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#category.disagree}}checked="checked"{{/category.disagree}}>
+            <span class="fa fa-thumbs-down"></span>
+          </label>
+        </div>
+      {{/category.name}}
     </div>
   </script>
 
@@ -872,45 +876,44 @@
   </script>
 
   <script id="individual-panel" type="x-tmpl-mustache">
-    {{#isMultiple}}
-    <!--<div class="alert alert-info clickable" role="alert" data-id={{patientId}}>
-      <strong>This patient appears on multiple pathways - click to view</strong>
-    </div>-->
-    {{/isMultiple}}
-
-    <table id="individual-suggested-actions-table" class="table">
-      <thead>
-        <tr>
-          <th>Suggested by PINGR &nbsp;
-            <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="These suggested actions were generated by analysing data from the patients’ Electronic Health Records, then linking them to appropriate recommendations in NICE clinical guidelines and the British National Formulary."></i>
-          </th>
-          <th style="width: 65px">Agree?</th>
-          <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented?</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#suggestions}}
-        <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
-          <td>
-            <span>{{{text}}}</span>
-          </td>
-          <td>
-            <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
-                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
-                <span class="fa fa-thumbs-up"></span>
-              </label>
-              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
-                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
-                <span class="fa fa-thumbs-down"></span>
-              </label>
-            </div>
-          </td>
-          <td>{{>chk}}</td>
-        </tr>
-        {{/suggestions}}
-      </tbody>
-    </table>
+    {{#noSuggestions}}
+    <p>No suggestions from PINGR</p>
+    {{/noSuggestions}}
+    {{^noSuggestions}}
+      <table id="individual-suggested-actions-table" class="table">
+        <thead>
+          <tr>
+            <th>Suggested by PINGR &nbsp;
+              <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="These suggested actions were generated by analysing data from the patients’ Electronic Health Records, then linking them to appropriate recommendations in NICE clinical guidelines and the British National Formulary."></i>
+            </th>
+            <th style="width: 65px">Agree?</th>
+            <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click when you have implemented this action in your practice">Action implemented?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#suggestions}}
+          <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}"{{/tpId}}>
+            <td>
+              <span>{{{text}}}</span>
+            </td>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action">
+                  <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+                  <span class="fa fa-thumbs-up"></span>
+                </label>
+                <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action">
+                  <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+                  <span class="fa fa-thumbs-down"></span>
+                </label>
+              </div>
+            </td>
+            <td>{{>chk}}</td>
+          </tr>
+          {{/suggestions}}
+        </tbody>
+      </table>
+    {{/noSuggestions}}
   </script>
 
   <script id="value-trend-panel" type="x-tmpl-mustache">
@@ -1091,7 +1094,7 @@
       </div>
 
       <div class="panel-body" id="panel-patients">
-        <div id="patients" style="max-height:800px"></div>
+        <div id="patients" class="all-patients" style="max-height:800px"></div>
       </div>
     </div>
   </script>
