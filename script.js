@@ -93,7 +93,7 @@
       $(this).html(panel);
       wireUpPatientPanel(pathwayStage, farLeftPanel, standard);
       populatePatientPanel(local.pathwayId, pathwayStage, standard, null);
-      updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
+      updateTitle(local.data[local.pathwayId][pathwayStage].text.page.text,local.data[local.pathwayId][pathwayStage].text.page.tooltip);
       $(this).fadeIn(100, function(){
         //patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
         farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
@@ -119,7 +119,7 @@
       $(this).html(panel);
       wireUpPatientPanelOk(pathwayStage, farLeftPanel);
       populatePatientPanelOk(local.pathwayId, pathwayStage, null);
-      updateTitle(local.data[local.pathwayId][pathwayStage].pageTitle);
+      updateTitle(local.data[local.pathwayId][pathwayStage].text.page.text, local.data[local.pathwayId][pathwayStage].text.page.tooltip);
       $(this).fadeIn(300, function(){
         //patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
         farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
@@ -155,6 +155,11 @@
   var showIndividualPatientPanel = function(pathwayId, pathwayStage, standard, patientId, isMultiple){
     var panel = createPanel($('#patient-panel'), {"options":local.options,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple},{"option":$('#patient-panel-drop-down-options').html()});
 
+    if(standard === null){
+      //Must be a patient from the *** OK group
+      standard = local.options.filter(function(val){return val.pathwayId===pathwayId && val.pathwayStage === pathwayStage;})[0].standard;
+    }
+
     farRightPanel.html("");
     $('#temp-hidden').html(panel);
 
@@ -164,9 +169,7 @@
     var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId, isMultiple);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
-    var multPanel = createPanel($('#pathway-panel'), {"multiple" : local.data.patients[patientId].breach.length>1,"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()});
     $('#temp-hidden #patient-panel-top').html(qualPanel);
-    $('#temp-hidden #patient-panel-mid').html(multPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel);
 
     if(farRightPanel.is(':visible')) {
@@ -176,13 +179,6 @@
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
         wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         drawTrendChart(patientId, pathwayId, pathwayStage, standard);
-        if(local.data.patients[patientId].breach.length>1){
-          $('input[name=pathwayradio]').off('change').on('change', function(){
-            //find breach $(this).val() = asthma, bp etc.
-            var breachData = $(this).data();
-            showIndividualPatientPanel(breachData.pathwayId, breachData.pathwayStage, breachData.standard, patientId,  false);
-          });
-        }
         $(this).fadeIn(500, function(){});
       });
     } else {
@@ -191,13 +187,6 @@
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
         wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         drawTrendChart(patientId, pathwayId, pathwayStage, standard);
-        if(local.data.patients[patientId].breach.length>1){
-          $('input[name=pathwayradio]').off('change').on('change', function(){
-            //find breach $(this).val() = asthma, bp etc.
-            var breachData = $(this).data();
-            showIndividualPatientPanel(breachData.pathwayId, breachData.pathwayStage,breachData.standard, patientId,  false);
-          });
-        }
         farRightPanel.fadeIn(500, function(){
       });
     }
@@ -206,7 +195,7 @@
   //Show patient view from the all patient screen
   var showIndividualPatientView = function(pathwayId, pathwayStage, standard, patientId, isMultiple){
     local.patientId = patientId;
-    var panel = createPanel($('#patient-panel'), {"options":local.options,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple});
+    var panel = createPanel($('#patient-panel'), {"options":local.options,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple},{"option":$('#patient-panel-drop-down-options').html()});
 
     farRightPanel.html("");
     $('#temp-hidden').html(panel);
@@ -218,9 +207,7 @@
     var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId, isMultiple);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
-    var multPanel = createPanel($('#pathway-panel'), {"multiple" : local.data.patients[patientId].breach.length>1,"pathways":local.data.patients[patientId].breach.map(function(val, i){val.name=local.pathwayNames[val.pathwayId]; val.checked = val.pathwayId===pathwayId; return val;})},{"radio":$('#pathway-panel-radio').html()});
     $('#temp-hidden #patient-panel-top').html(qualPanel);
-    $('#temp-hidden #patient-panel-mid').html(multPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel);
 
     if(farRightPanel.is(':visible')) {
@@ -230,15 +217,6 @@
           wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
           wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientView);
           drawTrendChart(patientId, pathwayId, pathwayStage, standard);
-
-          if(local.data.patients[patientId].breach.length>1){
-            $('input[name=pathwayradio]').off('change').on('change', function(){
-              //find breach $(this).val() = asthma, bp etc.
-              var breachData = $(this).data();
-              showIndividualPatientView(breachData.pathwayId, breachData.pathwayStage, breachData.standard, patientId, false);
-            });
-          }
-
           $(this).fadeIn(100, function(){
         });
       });
@@ -248,16 +226,6 @@
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
         wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientView);
         drawTrendChart(patientId, pathwayId, pathwayStage, standard);
-
-
-        if(local.data.patients[patientId].breach.length>1){
-          $('input[name=pathwayradio]').off('change').on('change', function(){
-            //find breach $(this).val() = asthma, bp etc.
-            var breachData = $(this).data();
-            showIndividualPatientView(breachData.pathwayId, breachData.pathwayStage, breachData.standard, patientId, false);
-          });
-        }
-
         farRightPanel.fadeIn(100, function(){
       });
     }
@@ -595,7 +563,7 @@
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange),
       pathway: local.pathwayNames[local.pathwayId],
-      title: local.data[local.pathwayId].monitoring.panelTitle
+      title: local.data[local.pathwayId].monitoring.text.panel.text
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -677,7 +645,7 @@
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange),
       pathway: local.pathwayNames[local.pathwayId],
-      title: local.data[local.pathwayId].treatment.panelTitle
+      title: local.data[local.pathwayId].treatment.text.panel.text
 			}, {"change-bar": $('#change-bar').html()}
 		);
 
@@ -751,7 +719,7 @@
 	var showDiagnosisPanel = function(location, enableHover) {
 		createPanelShow(diagnosisPanel, location, {
       pathway: local.pathwayNames[local.pathwayId],
-      title: local.data[local.pathwayId].diagnosis.panelTitle,
+      title: local.data[local.pathwayId].diagnosis.text.panel.text,
       number: local.data[local.pathwayId].diagnosis.n,
 			numberUp: local.data[local.pathwayId].diagnosis.change>=0,
 			numberChange: Math.abs(local.data[local.pathwayId].diagnosis.change)
@@ -827,7 +795,7 @@
 	var showExclusionsPanel = function(location, enableHover) {
 		createPanelShow(exclusionPanel, location, {
       pathway: local.pathwayNames[local.pathwayId],
-      title: local.data[local.pathwayId].exclusions.panelTitle,
+      title: local.data[local.pathwayId].exclusions.text.panel.text,
       number: local.data[local.pathwayId].exclusions.n,
 			numberUp: local.data[local.pathwayId].exclusions.change>=0,
 			numberChange: Math.abs(local.data[local.pathwayId].exclusions.change)
@@ -1055,13 +1023,12 @@
 			}
 			populatePatientPanelOk(local.pathwayId, local.selected, local.subselected, $(this).index(), sortAsc);
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
-			/*$('.list-item').removeClass('highlighted');
+			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted');
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
-      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, local.data.patients[patientId].breach.length>1);
-*/
+      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, null, local.data.patients[patientId].breach.length>1);
 			e.preventDefault();
       e.stopPropagation();
 		}).on('click', 'tbody tr button', function(e){
@@ -1465,19 +1432,21 @@
   var createQualStanPanel = function(pathwayId, pathwayStage, standard, patientId, isMultiple){
     var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple};
 
-    var subsection = local.data.patients[patientId].breach.filter(function(v) {
+    var breaches = local.data.patients[patientId].breach.filter(function(v) {
       return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
-    })[0].subsection;
+    });
 
-    data.section = {
-      "name" : local.data[pathwayId][pathwayStage].bdown[subsection].name,
-      "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
-      "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
-    }
-    data.category = {
-      "name" : local.data.patients[patientId].standards[pathwayId][pathwayStage][standard],
-      "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
-      "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
+    if(breaches.length>0){
+      data.section = {
+        "name" : local.data[pathwayId][pathwayStage].bdown[breaches[0].subsection].name,
+        "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
+        "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
+      }
+      data.category = {
+        "name" : local.data.patients[patientId].standards[pathwayId][pathwayStage][standard],
+        "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
+        "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
+      }
     }
 
     return createPanel($('#qual-standard'), data, {"chk" : $('#checkbox-template').html() });
@@ -1514,9 +1483,11 @@
       }
 		});
 
-    $('select').val(local.options.filter(function(val){
+    var breaches = local.options.filter(function(val){
       return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard;
-    })[0].value);
+    });
+
+    if(breaches.length>0)  $('select').val(breaches[0].value);
 
     $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity});
     $('select').on('change', function(){
@@ -1917,6 +1888,15 @@
     return rtn;
   };
 
+  var numberOfStandardsMissed = function(patientId){
+    var a = local.data.patients[patientId].breach.map(function(val){return val.pathwayId + val.pathwayStage + val.standard;});
+    var obj = {};
+    for(var i = 0; i < a.length; i++){
+      obj[a[i]]="";
+    }
+    return Object.keys(obj).length;
+  };
+
   var populateAllPatientPanel = function(){
     var pList=[], i,k, prop;
     for(k=0; k < local.diseases.length; k++){
@@ -1934,7 +1914,7 @@
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
       ret.items = []; //The fields in the patient list table
-      ret.items.push(local.data.patients[patientId].breach.length);
+      ret.items.push(numberOfStandardsMissed(patientId));
 			return ret;
 		});
 
@@ -2045,7 +2025,7 @@
 			} else {
         ret.items.push("?");
 			}
-      ret.items.push(local.data.patients[patientId].breach.length);
+      ret.items.push(numberOfStandardsMissed(patientId));
 			return ret;
 		});
 
@@ -2064,7 +2044,7 @@
     }
 
     //add qual standard column
-    data["header-items"].push({"title" : "# of improvement opportunities", "isSorted":true, "direction":"sort-desc"});
+    data["header-items"].push({"title" : "# of standards missed", "isSorted":true, "direction":"sort-desc"});
 
     if(sortField === undefined) sortField = 2;
 		if(sortField !== undefined) {
@@ -2144,10 +2124,10 @@
 			ret.nhsNumber = local.patLookup ? local.patLookup[patientId] : patientId;
       ret.patientId = patientId;
       ret.items = []; //The fields in the patient list table
-      ret.items.push(local.data.patients[patientId].breach ? local.data.patients[patientId].breach.length : 0);
+      ret.items.push(local.data.patients[patientId].breach ? numberOfStandardsMissed(patientId) : 0);
 			return ret;
 		});
-    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title" : "# of improvement opportunities", "isSorted":true, "direction":"sort-desc"}]};
+    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title" : "# of standards missed", "isSorted":true, "direction":"sort-desc"}]};
 
     if(sortField === undefined) sortField = 1;
 
@@ -2608,19 +2588,24 @@
 
 	var populateIndividualSuggestedActions = function (patientId, pathwayId, pathwayStage, isMultiple) {
 		var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple};
+    var breaches = local.data.patients[patientId].breach.filter(function(v) {return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage;});
 
-    var subsection = local.data.patients[patientId].breach.filter(function(v) {return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage;})[0].subsection;
+    if(breaches.length===0){
+      data.noSuggestions = true;
+    } else {
+      var subsection = breaches[0].subsection;
 
-    data.suggestions = sortSuggestions(mergeIndividualStuff(suggestionList(local.data[pathwayId][pathwayStage].bdown[subsection].suggestions), patientId));
-    data.section = {
-      "name" : local.data[pathwayId][pathwayStage].bdown[subsection].name,
-      "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
-      "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
-    }
-    data.category = {
-      "name" : local.data.patients[patientId].category,
-      "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
-      "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
+      data.suggestions = sortSuggestions(mergeIndividualStuff(suggestionList(local.data[pathwayId][pathwayStage].bdown[subsection].suggestions), patientId));
+      data.section = {
+        "name" : local.data[pathwayId][pathwayStage].bdown[subsection].name,
+        "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
+        "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
+      }
+      data.category = {
+        "name" : local.data.patients[patientId].category,
+        "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
+        "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
+      }
     }
 
 		$('#advice-placeholder').hide();
