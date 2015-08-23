@@ -215,7 +215,12 @@
             <li class="active"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awating implementation</a></li>
             <li><a id="completedTasks" href="#completedTasks">Agreed actions that have been implemented</a></li>
         </ul>
-        <div id="welcome-tab-content">
+        <div class="top-tab-pane">
+          <div class="panel panel-default">
+             <div class="panel-body">
+              <div id="welcome-tab-content"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -286,7 +291,7 @@
 
       <div class="container-fluid" style="padding-left: 30px;">
         <div class="row">
-          <h2 class="pagetitle" data-toggle="tooltip" data-placement="right" style="padding-left: 15px; padding-bottom: 15px; padding-top: 15px"></h2>
+          <h2 class="pagetitle pagetitle-{{pathwayNameShort}}" data-toggle="tooltip" data-placement="right" style="padding-left: 15px; padding-bottom: 15px; padding-top: 15px"></h2>
         </div>
         <div class="row">
           <div class="col-xl-4 col-lg-3" id="left-panel"></div>
@@ -676,8 +681,8 @@
   </script>
 
   <script id="team-action-plan-panel" type="x-tmpl-mustache">
-    <div class="panel panel-default">
-      <div class="panel-heading clearfix">
+    <div class="panel panel-default panel-improvementopps">
+      <div class="clearfix panel-heading-improvementopps">
         <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions: &nbsp; <span style = "color: yellow;font-weight:bold"> Practice-level </span> &nbsp;
       </div>
 
@@ -1043,7 +1048,7 @@
   <script id="patients-panel-yes" type="x-tmpl-mustache">
     <div class="panel panel-default">
       <div class="panel-body">
-          <h4>{{text.panelOkHeader.text}}</h4>
+          <h4>{{text.panelOkHeader.text}} <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="" data-original-title={{text.panelOkHeaderiButton.tooltip}}></i> (n={{n}}) </h4>
           <div id="patients"></div>
       </div>
     </div>
@@ -1073,7 +1078,7 @@
       <div class="panel-body">
         <div class="panel panel-default">
           <div id="chart-panel" class="panel-body">
-            <h4>{{header}}</h4>
+            <h4>{{header}} <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="{{text.iButtonACMonitor.tooltip}}" data-original-title=""></i></h4>
             <h6>(click sections to change patient list)</h6>
             <div style="height:200px" id="breakdown-chart"></div>
           </div>
@@ -1135,9 +1140,9 @@
   </script>
 
   <script id="monitoring-panel" type="x-tmpl-mustache">
-    <div data-stage="monitoring" class="panel panel-monitoring panel-default clickable">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being monitored.">
-        <i class="fa fa-stethoscope fa-fw"></i>&nbsp; Monitoring
+    <div data-stage="monitoring" class="panel panel-{{pathwayNameShort}} panel-default clickable">
+      <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip"> <!--data-placement="right" title="How well {{pathway}} is being monitored.">-->
+        <!--<i class="fa fa-stethoscope fa-fw">--></i>&nbsp; <strong>Monitoring</strong> &nbsp; <font size="0.5"> (click to see improvement opportunities) </font>
       </div>
       <div class="panel-body" style="max-height:380px">
         <div>
@@ -1151,8 +1156,8 @@
   </script>
 
   <script id="treatment-panel" type="x-tmpl-mustache">
-    <div data-stage="treatment" class="panel panel-treatment panel-default clickable">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being treated.">
+    <div data-stage="treatment" class="panel panel-{{pathwayNameShort}} panel-default clickable">
+      <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being treated.">
         <!--<i class="fa fa-medkit fa-fw">--></i>&nbsp; Control
       </div>
       <div class="panel-body" style="max-height:380px">
@@ -1167,8 +1172,8 @@
   </script>
 
   <script id="diagnosis-panel" type="x-tmpl-mustache">
-    <div data-stage="diagnosis" class="panel panel-diagnosis panel-default clickable">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being diagnosed.">
+    <div data-stage="diagnosis" class="panel panel-{{pathwayNameShort}} panel-default clickable">
+      <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being diagnosed.">
         <!--<i class="fa fa-exclamation-triangle fa-fw">--></i>&nbsp; Diagnosis
       </div>
       <div class="panel-body" style="max-height:380px">
@@ -1183,8 +1188,8 @@
   </script>
 
   <script id="exclusion-panel" type="x-tmpl-mustache">
-    <div data-stage="exclusions" class="panel panel-exclusions panel-default clickable">
-      <div class="panel-heading" data-toggle="tooltip" data-placement="right" title="Whether patients are appropriately excluded from {{pathway}} quality standards.">
+    <div data-stage="exclusions" class="panel panel--{{pathwayNameShort}} panel-default clickable">
+      <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip" data-placement="right" title="Whether patients are appropriately excluded from {{pathway}} quality standards.">
         <!--<i class="fa fa-times fa-fw">--></i>&nbsp; Exclusions
       </div>
       <div class="panel-body" style="max-height:380px">
