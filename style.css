@@ -243,6 +243,62 @@ hr{
   background-color: #ccf3cc;
 }
 
+.panel-improvementopps {
+  border-color: rgb(217, 83, 79);
+}
+
+.panel-heading-improvementopps {
+  background-color: rgb(217, 83, 79);
+  color: white;
+  border-color: #70ba63;
+  font-size: 14px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
+.panel-heading-htn{
+  background-color: #70ba63;
+  color: white;
+  border-color: #70ba63;
+  font-size: 14px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
+.panel-htn{
+  border-color: #70ba63;
+}
+
+.panel-htn.clickable:hover{
+  background-color: #edfbed;
+  border-style: dashed;
+}
+
+.panel-heading-af{
+  background-color: #7f7fff;
+  color: white;
+  border-color: #7f7fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
+.panel-af{
+  border-color: #7f7fff;
+}
+
+.panel-af.clickable:hover{
+  background-color: #f7f7ff;
+  border-style: dashed;
+}
+
 .user img {
   border:0px;
   width: 75px;
@@ -477,6 +533,11 @@ header {
 	background-color: rgb(242,242,244);
 }
 
+.pagetitle-htn {
+  color: #70ba63;
+  background-color: #70ba63;
+}
+
 .starter-template {
   padding: 0px 15px 0px 15px;
 }
@@ -551,6 +612,13 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
     display: block;
 }
 
+.table-no-margin {
+  margin-bottom: 0;
+}
+
+.table-small-margin {
+  margin-bottom: 10px;
+}
 /*
 .form-horizontal .control-label {
   padding-top: 4px;
