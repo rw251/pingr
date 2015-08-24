@@ -207,6 +207,7 @@
         //wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         wireUpStandardDropDown(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         wireUpTrendPanel(pathwayId, pathwayStage, standard, patientId);
+        //wireUpCodesPanel();
         drawTrendChart(patientId, pathwayId, pathwayStage, standard);
         $(this).fadeIn(500, function(){});
       });
@@ -418,13 +419,25 @@
     return arr;
   };
 
-  var editPatientAgree = function(pathwayId, pathwayStage, patientId, item, agree){
+  var getAgreeReason = function(pathwayId, pathwayStage, standard, patientId, item) {
     var obj = getObj();
     if(!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
 
     if(!obj.agrees[patientId]) obj.agrees[patientId] = [];
     var items = obj.agrees[patientId].filter(function(val){
-      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.item === item;
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
+    });
+
+    return items.length===1 ? items[0].reason || {} : {};
+  };
+
+  var editPatientAgree = function(pathwayId, pathwayStage, standard, patientId, item, agree, reason){
+    var obj = getObj();
+    if(!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
+
+    if(!obj.agrees[patientId]) obj.agrees[patientId] = [];
+    var items = obj.agrees[patientId].filter(function(val){
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
     });
 
     var log = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
@@ -432,8 +445,9 @@
     if(items.length===1) {
       items[0].agree = agree;
       items[0].history.push(log);
+      items[0].reason = reason;
     } else if(items.length==0){
-      obj.agrees[patientId].push({"pathwayId":pathwayId, "pathwayStage":pathwayStage, "item":item, "agree":agree, "history" : [log]});
+      obj.agrees[patientId].push({"pathwayId":pathwayId, "pathwayStage":pathwayStage, "standard": standard,"item":item, "agree":agree, "reason":reason, "history" : [log]});
     } else {
       console.log("ERRORRR!!!!!!!");
     }
@@ -441,12 +455,24 @@
     setObj(obj);
   };
 
-  var getPatientAgree = function(pathwayId, pathwayStage, patientId, item){
+  var getPatientAgreeObject = function(pathwayId, pathwayStage, standard, patientId, item){
+    var obj = getObj();
+    if(!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
+
+    if(!obj.agrees[patientId]) obj.agrees[patientId] = [];
+    var items = obj.agrees[patientId].filter(function(val){
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
+    });
+    if(items.length===1) return items[0];
+    return {};
+  };
+
+  var getPatientAgree = function(pathwayId, pathwayStage, standard, patientId, item){
     var obj = getObj();
 
     if(!obj.agrees[patientId]) return null;
     var item = obj.agrees[patientId].filter(function(val){
-      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.item === item;
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
     });
 
     if(item.length===1) {
@@ -640,19 +666,19 @@
   			bindto: '#monitoring-chart',
   			data: {
   				x: 'x',
-  				columns: local.data[local.pathwayId].monitoring.trend,
+  				columns: local.data[local.pathwayId].monitoring.trend/*,
   				axes: {
   					"%" : 'y',
   					"n" : 'y2'
-  				}
+  				}*/
   			},
         zoom: {
             enabled: true
         },
         tooltip: {
           format: {
-            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
-            value: function (value) { return  enableHover ? undefined : value;}*/
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); },
+            value: function (value) { return  enableHover ? value+'%':undefined;}
           }
         },
   			axis: {
@@ -676,7 +702,7 @@
               text: 'Proportion (%)',
               position: 'outer-middle'
             }
-  				},
+  				}/*,
   				y2: {
   					show: true,
   					min: 0,
@@ -684,7 +710,7 @@
               text: 'Patient count (n)',
               position: 'outer-middle'
             }
-  				}
+  				}*/
   			},
   			point: {
   				show: false
@@ -753,19 +779,19 @@
   			bindto: '#treatment-chart',
   			data: {
   				x: 'x',
-  				columns: local.data[local.pathwayId].treatment.trend,
+  				columns: local.data[local.pathwayId].treatment.trend/*,
   				axes: {
   					"%" : 'y',
   					"n" : 'y2'
-  				}
+  				}*/
   			},
         zoom: {
             enabled: true
         },
         tooltip: {
           format: {
-            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
-            value: function (value) { return  enableHover ? undefined : value;}*/
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); },
+            value: function (value) { return  enableHover ? value+'%':undefined;}
           }
         },
   			axis: {
@@ -789,7 +815,7 @@
               text: 'Proportion (%)',
               position: 'outer-middle'
             }
-  				},
+  				}/*,
   				y2: {
   					show: true,
   					min: 0,
@@ -797,7 +823,7 @@
               text: 'Patient count (n)',
               position: 'outer-middle'
             }
-  				}
+  				}*/
   			},
   			point: {
   				show: false
@@ -861,19 +887,19 @@
   			bindto: '#diagnosis-chart',
   			data: {
   				x: 'x',
-  				columns: local.data[local.pathwayId].diagnosis.trend,
+  				columns: local.data[local.pathwayId].diagnosis.trend/*,
   				axes: {
   					"%" : 'y',
   					"n" : 'y2'
-  				}
+  				}*/
   			},
         zoom: {
             enabled: true
         },
         tooltip: {
           format: {
-            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
-            value: function (value) { return  enableHover ? undefined : value;}*/
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); },
+            value: function (value) { return  enableHover ? value+'%':undefined;}
           }
         },
   			axis: {
@@ -897,7 +923,7 @@
               text: 'Proportion (%)',
               position: 'outer-middle'
             }
-  				},
+  				}/*,
   				y2: {
   					show: true,
   					min: 0,
@@ -905,7 +931,7 @@
               text: 'Patient count (n)',
               position: 'outer-middle'
             }
-  				}
+  				}*/
   			},
   			point: {
   				show: false
@@ -969,19 +995,19 @@
   			bindto: '#exclusion-chart',
   			data: {
   				x: 'x',
-  				columns: local.data[local.pathwayId].exclusions.trend,
+  				columns: local.data[local.pathwayId].exclusions.trend/*,
   				axes: {
   					"%" : 'y',
   					"n" : 'y2'
-  				}
+  				}*/
   			},
         zoom: {
             enabled: true
         },
         tooltip: {
           format: {
-            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); }/*,
-            value: function (value) { return  enableHover ? undefined : value;}*/
+            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); },
+            value: function (value) { return  enableHover ? value+'%':undefined;}
           }/*,
           position: function (data, width, height, element) {
             console.log(data,width, height, element);
@@ -1009,7 +1035,7 @@
               text: 'Proportion (%)',
               position: 'outer-middle'
             }
-  				},
+  				}/*,
   				y2: {
   					show: true,
   					min: 0,
@@ -1017,7 +1043,7 @@
               text: 'Patient count (n)',
               position: 'outer-middle'
             }
-  				}
+  				}*/
   			},
   			point: {
   				show: false
@@ -1643,7 +1669,7 @@
 
       if($(this).hasClass("active") && other.hasClass("inactive")){
         //unselecting
-        editPatientAgree(pathwayId, pathwayStage, local.patientId, isClassification ? "section" : "category", null);
+        editPatientAgree(pathwayId, pathwayStage, standard, local.patientId, isClassification ? "section" : "category", null);
         other.removeClass("inactive");
       } else if(!$(this).hasClass("active") && other.hasClass("active")) {
         //prevent clicking on unselected option
@@ -1659,7 +1685,7 @@
         //selecting
         if(checkbox.val()==="no") launchPatientModal(pathwayId, pathwayStage, local.patientId, $(this).closest('div').data('text'), !isClassification);
 
-        editPatientAgree(pathwayId, pathwayStage, local.patientId, isClassification ? "section" : "category", checkbox.val()==="yes");
+        editPatientAgree(pathwayId, pathwayStage, standard, local.patientId, isClassification ? "section" : "category", checkbox.val()==="yes");
 
       }
 		});
@@ -2026,8 +2052,27 @@
     wireUpTooltips();
   };
 
+  var wireUpAgreeDisagree = function(selector, agreeObject){
+    if(agreeObject.agree===true){
+      selector.children(':nth(0)').addClass('active');
+      selector.children(':nth(1)').addClass('inactive');
+      selector.children(':nth(0)').attr("title",agreeObject.history[0]).attr("data-original-title", agreeObject.history[0]).tooltip('fixTitle').tooltip('hide');
+      selector.children(':nth(1)').attr("title","").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+    } else if(agreeObject.agree===false){
+      selector.children(':nth(0)').addClass('inactive');
+      selector.children(':nth(1)').addClass('active');
+      selector.children(':nth(0)').attr("title","").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+      selector.children(':nth(1)').attr("title",agreeObject.history[0]).attr("data-original-title", agreeObject.history[0]).tooltip('fixTitle').tooltip('hide');
+    } else {
+      selector.children(':nth(0)').attr("title","Click to agree").attr("data-original-title", "Click to agree").tooltip('fixTitle').tooltip('hide');
+      selector.children(':nth(1)').attr("title","Click to disagree").attr("data-original-title", "Click to disagree").tooltip('fixTitle').tooltip('hide');
+    }
+  };
+
   var wireUpTrendPanel = function(pathwayId, pathwayStage, standard, patientId){
-    $('#trend-panel').on('click', '.btn-toggle', function(){
+    wireUpAgreeDisagree($('#trend-agree-disagree'), getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend"));
+
+    $('#trend-panel').on('click', '.table-chart-toggle', function(){
       if($(this).text()==="Table") {
         $(this).text("Chart");
         $('#chart-demo-trend').hide();
@@ -2047,6 +2092,69 @@
         $(this).text("Table");
         $('#chart-demo-trend').show();
         $('#table-demo-trend').hide();
+      }
+    }).on('click', '.btn-toggle', function(e){
+      var checkbox = $(this).find("input[type=checkbox]");
+      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
+      var ACTIONID = $(this).closest('tr').data('id');
+      if($(this).hasClass("active") && other.hasClass("inactive")){
+        //unselecting
+        if(checkbox.val()==="no"){
+          launchStandardModal("Disagree with trend data", "?", getAgreeReason(pathwayId, pathwayStage, standard, patientId, "trend"), function(){
+            editPatientAgree(pathwayId, pathwayStage, standard, patientId, "trend", false, local.reason.reasonText);
+            wireUpAgreeDisagree($('#trend-agree-disagree'), getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend"));
+            wireUpTooltips();
+          }, function(){
+            editPatientAgree(pathwayId, pathwayStage, standard, patientId, "trend", null, "");
+            other.removeClass("inactive");
+            checkbox.removeAttr("checked");
+            checkbox.parent().removeClass("active");
+            wireUpAgreeDisagree($('#trend-agree-disagree'), getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend"));
+            wireUpTooltips();
+          });
+          e.stopPropagation();
+          e.preventDefault();
+        } else {
+          editPatientAgree(pathwayId, pathwayStage, standard, patientId, "trend", null);
+          wireUpAgreeDisagree($('#trend-agree-disagree'), getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend"));
+          wireUpTooltips();
+          other.removeClass("inactive");
+        }
+      } else if(!$(this).hasClass("active") && other.hasClass("active")) {
+        //prevent clicking on unselected option or if the row is complete
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      } else {
+        //selecting
+        var self = this;
+        if(checkbox.val()==="no") {
+          launchStandardModal("Disagree with trend data", "?", "", function(){
+            editPatientAgree(pathwayId, pathwayStage, standard, patientId, "trend", false, local.reason.reasonText);
+            $(self).removeClass("inactive");
+            checkbox.attr("checked","checked");
+            checkbox.parent().addClass("active");
+            //unselect other
+            other.removeClass("active").addClass("inactive");
+            other.find("input[type=checkbox]").prop("checked", false);
+            wireUpAgreeDisagree($('#trend-agree-disagree'), getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend"));
+            wireUpTooltips();
+          }), function(){
+
+          };
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        else {
+          editPatientAgree(pathwayId, pathwayStage, standard, patientId, "trend", true);
+          $(this).removeClass("inactive");
+          wireUpAgreeDisagree($('#trend-agree-disagree'), getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend"));
+          wireUpTooltips();
+
+          //unselect other
+          other.removeClass("active").addClass("inactive");
+          other.find("input[type=checkbox]").prop("checked", false);
+        }
       }
     });
   };
@@ -3028,6 +3136,10 @@
       header = "Disagree with improvement opportunity";
     }
     launchModal({"header" : header, "item" : value, "placeholder":"Provide more information here...", "reasons" : reasons},label, value);
+  };
+
+  var launchStandardModal = function(header, value, reason, callbackOnSave, callbackOnCancel){
+    launchModal({"header" : header, "item": value, "placeholder":"Provide more information here..."},null, value, reason, callbackOnSave, callbackOnCancel);
   };
 
   var launchPatientActionModal = function(label, value, reason, callbackOnSave, callbackOnCancel){
