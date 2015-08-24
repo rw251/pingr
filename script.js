@@ -591,6 +591,22 @@
 	var showMonitoringPanel = function(location, enableHover) {
 		var percentChange = local.data[local.pathwayId].monitoring.trend[1][1]-local.data[local.pathwayId].monitoring.trend[1][30];
 		var numberChange = local.data[local.pathwayId].monitoring.trend[2][1]-local.data[local.pathwayId].monitoring.trend[2][30];
+
+    var standards = [];
+    for(var key in local.data[local.pathwayId].monitoring.standards){
+      var num = removeDuplicates(local.data[local.pathwayId].monitoring.standards[key].opportunities.reduce(function(a,b){
+        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
+      })).length;
+      var denom = num + local.data[local.pathwayId].monitoring.patientsOk.length;
+      standards.push({
+        "standard" : local.data[local.pathwayId].monitoring.standards[key].tab.title,
+        "tooltip" : local.data[local.pathwayId].monitoring.standards[key].tab.tooltip,
+        "numerator":num,
+        "denominator":denom,
+        "percentage": (num*100/denom).toFixed(0)
+      });
+    }
+
 		createPanelShow(monitoringPanel, location, {
 			percent: local.data[local.pathwayId].monitoring.trend[1][1],
 			percentChange: Math.abs(percentChange),
@@ -600,9 +616,23 @@
 			numberChange: Math.abs(numberChange),
       pathway: local.pathwayNames[local.pathwayId],
       pathwayNameShort: local.pathwayId,
-      title: local.data[local.pathwayId].monitoring.text.panel.text
-			}, {"change-bar": $('#change-bar').html()}
+      title: local.data[local.pathwayId].monitoring.text.panel.text,
+      standards: standards
+    }, {"change-bar": $('#change-bar').html(), "row": $('#overview-panel-table-row').html()}
 		);
+
+    $('#monitoring-trend-toggle').on('click', function(e){
+      if($(this).text()==="Trend"){
+        $(this).text("Table");
+        $('#monitoring-chart-table').hide();
+        $('#monitoring-chart').show();
+      } else {
+        $(this).text("Trend");
+        $('#monitoring-chart-table').show();
+        $('#monitoring-chart').hide();
+      }
+      e.stopPropagation();
+    });
 
 		destroyCharts(['monitoring-chart']);
     setTimeout(function(){
@@ -674,6 +704,22 @@
 	var showTreatmentPanel = function(location, enableHover) {
 		var percentChange = local.data[local.pathwayId].treatment.trend[1][1]-local.data[local.pathwayId].treatment.trend[1][30];
 		var numberChange = local.data[local.pathwayId].treatment.trend[2][1]-local.data[local.pathwayId].treatment.trend[2][30];
+
+    var standards = [];
+    for(var key in local.data[local.pathwayId].treatment.standards){
+      var num = removeDuplicates(local.data[local.pathwayId].treatment.standards[key].opportunities.reduce(function(a,b){
+        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
+      })).length;
+      var denom = num + local.data[local.pathwayId].treatment.patientsOk.length;
+      standards.push({
+        "standard" : local.data[local.pathwayId].treatment.standards[key].tab.title,
+        "tooltip" : local.data[local.pathwayId].treatment.standards[key].tab.tooltip,
+        "numerator":num,
+        "denominator":denom,
+        "percentage": (num*100/denom).toFixed(0)
+      });
+    }
+
 		createPanelShow(treatmentPanel, location, {
 			percent: local.data[local.pathwayId].treatment.trend[1][1],
 			percentChange: Math.abs(percentChange),
@@ -683,9 +729,23 @@
 			numberChange: Math.abs(numberChange),
       pathway: local.pathwayNames[local.pathwayId],
       pathwayNameShort: local.pathwayId,
-      title: local.data[local.pathwayId].treatment.text.panel.text
-			}, {"change-bar": $('#change-bar').html()}
-		);
+      title: local.data[local.pathwayId].treatment.text.panel.text,
+      standards: standards
+			}, {"change-bar": $('#change-bar').html(), "row": $('#overview-panel-table-row').html()}
+  		);
+
+    $('#treatment-trend-toggle').on('click', function(e){
+      if($(this).text()==="Trend"){
+        $(this).text("Table");
+        $('#treatment-chart-table').hide();
+        $('#treatment-chart').show();
+      } else {
+        $(this).text("Trend");
+        $('#treatment-chart-table').show();
+        $('#treatment-chart').hide();
+      }
+      e.stopPropagation();
+    });
 
 		destroyCharts(['treatment-chart']);
     setTimeout(function(){
@@ -755,14 +815,45 @@
 	};
 
 	var showDiagnosisPanel = function(location, enableHover) {
+
+    var standards = [];
+    for(var key in local.data[local.pathwayId].diagnosis.standards){
+      var num = removeDuplicates(local.data[local.pathwayId].diagnosis.standards[key].opportunities.reduce(function(a,b){
+        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
+      })).length;
+      var denom = num + local.data[local.pathwayId].diagnosis.patientsOk.length;
+      standards.push({
+        "standard" : local.data[local.pathwayId].diagnosis.standards[key].tab.title,
+        "tooltip" : local.data[local.pathwayId].diagnosis.standards[key].tab.tooltip,
+        "numerator":num,
+        "denominator":denom,
+        "percentage": (num*100/denom).toFixed(0)
+      });
+    }
+
 		createPanelShow(diagnosisPanel, location, {
       pathway: local.pathwayNames[local.pathwayId],
       pathwayNameShort: local.pathwayId,
       title: local.data[local.pathwayId].diagnosis.text.panel.text,
       number: local.data[local.pathwayId].diagnosis.n,
 			numberUp: local.data[local.pathwayId].diagnosis.change>=0,
-			numberChange: Math.abs(local.data[local.pathwayId].diagnosis.change)
-    }, {"change-bar-number": $('#change-bar-number').html()});
+			numberChange: Math.abs(local.data[local.pathwayId].diagnosis.change),
+      standards: standards
+    }, {"change-bar-number": $('#change-bar-number').html(), "row": $('#overview-panel-table-row').html()}
+		);
+
+    $('#diagnosis-trend-toggle').on('click', function(e){
+      if($(this).text()==="Trend"){
+        $(this).text("Table");
+        $('#diagnosis-chart-table').hide();
+        $('#diagnosis-chart').show();
+      } else {
+        $(this).text("Trend");
+        $('#diagnosis-chart-table').show();
+        $('#diagnosis-chart').hide();
+      }
+      e.stopPropagation();
+    });
 
     destroyCharts(['diagnosis-chart']);
     setTimeout(function(){
@@ -832,14 +923,45 @@
 	};
 
 	var showExclusionsPanel = function(location, enableHover) {
+
+    var standards = [];
+    for(var key in local.data[local.pathwayId].exclusions.standards){
+      var num = removeDuplicates(local.data[local.pathwayId].exclusions.standards[key].opportunities.reduce(function(a,b){
+        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
+      })).length;
+      var denom = num + local.data[local.pathwayId].exclusions.patientsOk.length;
+      standards.push({
+        "standard" : local.data[local.pathwayId].exclusions.standards[key].tab.title,
+        "tooltip" : local.data[local.pathwayId].exclusions.standards[key].tab.tooltip,
+        "numerator":num,
+        "denominator":denom,
+        "percentage": (num*100/denom).toFixed(0)
+      });
+    }
+
 		createPanelShow(exclusionPanel, location, {
       pathway: local.pathwayNames[local.pathwayId],
       pathwayNameShort: local.pathwayId,
       title: local.data[local.pathwayId].exclusions.text.panel.text,
       number: local.data[local.pathwayId].exclusions.n,
 			numberUp: local.data[local.pathwayId].exclusions.change>=0,
-			numberChange: Math.abs(local.data[local.pathwayId].exclusions.change)
-    }, {"change-bar-number": $('#change-bar-number').html()});
+			numberChange: Math.abs(local.data[local.pathwayId].exclusions.change),
+      standards: standards
+    }, {"change-bar-number": $('#change-bar-number').html(), "row": $('#overview-panel-table-row').html()}
+		);
+
+    $('#exclusion-trend-toggle').on('click', function(e){
+      if($(this).text()==="Trend"){
+        $(this).text("Table");
+        $('#exclusion-chart-table').hide();
+        $('#exclusion-chart').show();
+      } else {
+        $(this).text("Trend");
+        $('#exclusion-chart-table').show();
+        $('#exclusion-chart').hide();
+      }
+      e.stopPropagation();
+    });
 
     destroyCharts(['exclusion-chart']);
     setTimeout(function(){
@@ -1030,6 +1152,11 @@
   			legend: {
   				show: false
   			},
+        grid:{
+          focus: {
+              show:false
+          }
+        },
         axis: {
   				x: {
   					type: 'category',
@@ -3667,6 +3794,28 @@
     localStorage.testData = JSON.stringify({"diseases":diseases, "patients":patients});
     return {"diseases":diseases, "patients":patients};
   };*/
+
+  window.generateTrendData = function(labels, endDate, endValues, minValue, maxValue, changeProbs, favourUpProbs, days){
+    var rtn = [["x", endDate.toISOString().substr(0,10)]],i,j;
+    for(i=0;i<labels.length;i++){
+      rtn.push([labels[i], endValues[i]]);
+    }
+    for(i=0;i<days;i++){
+      endDate.setDate(endDate.getDate()-1);
+      rtn[0].push(endDate.toISOString().substr(0,10));
+      for(j=0;j<labels.length;j++){
+        if(Math.random() < changeProbs[j]){
+          if(Math.random() < favourUpProbs[j]){
+            endValues[j] = Math.min(maxValue, endValues[j] + 1);
+          } else {
+            endValues[j] = Math.max(minValue, endValues[j] - 1);
+          }
+        }
+        rtn[j+1].push(endValues[j]);
+      }
+    }
+    return rtn;
+  };
 
 	window.bb = {
     "version" : "1.25",

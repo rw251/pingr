@@ -1184,17 +1184,42 @@
     </div>
   </script>
 
+  <script id="overview-panel-table-row" type="x-tmpl-mustache">
+    <tr>
+      <td>{{standard}} {{#tooltip}}<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="{{tooltip}}"></i>{{/tooltip}}</td>
+      <td>{{numerator}} / {{denominator}}</td>
+      <td>{{percentage}}</td>
+    </tr>
+  </script>
+
   <script id="monitoring-panel" type="x-tmpl-mustache">
     <div data-stage="monitoring" class="panel panel-{{pathwayNameShort}} panel-default clickable">
       <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip"> <!--data-placement="right" title="How well {{pathway}} is being monitored.">-->
         <!--<i class="fa fa-stethoscope fa-fw">--></i>&nbsp; <strong>Monitoring</strong> &nbsp; <font size="0.5"> (click to see improvement opportunities) </font>
+        <span class="pull-right">View as <button id="monitoring-trend-toggle" class="btn btn-xs btn-default">Trend</button></span>
       </div>
-      <div class="panel-body" style="max-height:380px">
+      <div class="panel-body" style="max-height:380px; min-height:380px">
         <div>
           <p>{{title}} {{>change-bar}}</p>
         </div>
         <div>
-          <div id="monitoring-chart"></div>
+          <div id="monitoring-chart-table">
+            <table class="table table-no-margin">
+              <thead>
+                <tr>
+                  <th>Quality Standard</th>
+                  <th>No. of patients</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#standards}}
+                  {{>row}}
+                {{/standards}}
+              </tbody>
+            </table>
+          </div>
+          <div id="monitoring-chart" style="display:none"></div>
         </div>
       </div>
     </div>
@@ -1204,13 +1229,30 @@
     <div data-stage="treatment" class="panel panel-{{pathwayNameShort}} panel-default clickable">
       <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being treated.">
         <!--<i class="fa fa-medkit fa-fw">--></i>&nbsp; <strong>Control</strong> &nbsp; <font size="0.5"> (click to see improvement opportunities) </font>
+        <span class="pull-right">View as <button id="treatment-trend-toggle" class="btn btn-xs btn-default">Trend</button></span>
       </div>
-      <div class="panel-body" style="max-height:380px">
+      <div class="panel-body" style="max-height:380px;min-height:380px">
         <div>
           <p>{{title}} {{>change-bar}}</p>
         </div>
         <div>
-          <div id="treatment-chart"></div>
+          <div id="treatment-chart-table">
+            <table class="table table-no-margin">
+              <thead>
+                <tr>
+                  <th>Quality Standard</th>
+                  <th>No. of patients</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#standards}}
+                  {{>row}}
+                {{/standards}}
+              </tbody>
+            </table>
+          </div>
+          <div id="treatment-chart" style="display:none"></div>
         </div>
       </div>
     </div>
@@ -1220,29 +1262,63 @@
     <div data-stage="diagnosis" class="panel panel-{{pathwayNameShort}} panel-default clickable">
       <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip" data-placement="right" title="How well {{pathway}} is being diagnosed.">
         <!--<i class="fa fa-exclamation-triangle fa-fw">--></i>&nbsp; <strong>Diagnosis</strong> &nbsp; <font size="0.5"> (click to see improvement opportunities) </font>
+        <span class="pull-right">View as <button id="diagnosis-trend-toggle" class="btn btn-xs btn-default">Trend</button></span>
       </div>
-      <div class="panel-body" style="max-height:380px">
+      <div class="panel-body" style="max-height:380px;min-height:380px">
         <div>
           <p>{{title}} {{>change-bar-number}}</p>
         </div>
         <div>
-          <div id="diagnosis-chart"></div>
+          <div id="diagnosis-chart-table">
+            <table class="table table-no-margin">
+              <thead>
+                <tr>
+                  <th>Quality Standard</th>
+                  <th>No. of patients</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#standards}}
+                  {{>row}}
+                {{/standards}}
+              </tbody>
+            </table>
+          </div>
+          <div id="diagnosis-chart" style="display:none"></div>
         </div>
       </div>
     </div>
   </script>
 
   <script id="exclusion-panel" type="x-tmpl-mustache">
-    <div data-stage="exclusions" class="panel panel--{{pathwayNameShort}} panel-default clickable">
+    <div data-stage="exclusions" class="panel panel-{{pathwayNameShort}} panel-default clickable">
       <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip" data-placement="right" title="Whether patients are appropriately excluded from {{pathway}} quality standards.">
         <!--<i class="fa fa-times fa-fw">--></i>&nbsp; <strong>Exclusions</strong> &nbsp; <font size="0.5"> (click to see improvement opportunities) </font>
+        <span class="pull-right">View as <button id="exclusion-trend-toggle" class="btn btn-xs btn-default">Trend</button></span>
       </div>
-      <div class="panel-body" style="max-height:380px">
+      <div class="panel-body" style="max-height:380px;min-height:380px">
         <div>
           <p>{{title}} {{>change-bar-number}}</p>
         </div>
         <div>
-          <div id="exclusion-chart"></div>
+          <div id="exclusion-chart-table">
+            <table class="table table-no-margin">
+              <thead>
+                <tr>
+                  <th>Quality Standard</th>
+                  <th>No. of patients</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#standards}}
+                  {{>row}}
+                {{/standards}}
+              </tbody>
+            </table>
+          </div>
+          <div id="exclusion-chart" style="display:none"></div>
         </div>
       </div>
     </div>
