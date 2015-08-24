@@ -612,6 +612,9 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
     display: block;
 }
 
+.table-no-margin {
+  margin-bottom: 0;
+}
 /*
 .form-horizontal .control-label {
   padding-top: 4px;
