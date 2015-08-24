@@ -563,6 +563,7 @@
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange),
       pathway: local.pathwayNames[local.pathwayId],
+      pathwayNameShort: local.pathwayId,
       title: local.data[local.pathwayId].monitoring.text.panel.text
 			}, {"change-bar": $('#change-bar').html()}
 		);
