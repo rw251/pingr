@@ -3219,8 +3219,7 @@
     $('#team-add-plan').off('click').on('click', '.add-plan', function(){
       var plan = $(this).parent().parent().find('textarea').val();
       var planId = recordPlan("team", plan, "custom");
-      var itemTemp
-      $('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {"pathway": "N/A", "task": plan, "data": planId, "agree" :null, "done": null}, {"chk" : $('#checkbox-template').html()}));
+      $('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {"pathway": "", "pathwayId":"custom", "canEdit":true, "task": plan, "data": planId, "agree" :null, "done": null}, {"chk" : $('#checkbox-template').html()}));
     });
 
     rendered = Mustache.render(template, {"tasks": teamTasks, "hasTasks": teamTasks.length>0}, {"task-item" : itemTemplate, "chk" : $('#checkbox-template').html()});
