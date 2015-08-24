@@ -18,6 +18,7 @@
 	 *******************************/
 	var local= {
 		"charts" : {},
+    "currentUrl" : "",
 		"data" : {},
     "options":[],
     "elements" : {},
@@ -72,7 +73,7 @@
   };
 
   //Show the pathway stage for a disease
-  var showPathwayStageView = function(disease, pathwayStage, standard){
+  var showPathwayStageView = function(disease, pathwayStage, standard, shouldFade){
     showMainView(local.diseases.map(function(v){ return v.id; }).indexOf(disease));
 
     $('aside li ul li').removeClass('active');
@@ -89,20 +90,30 @@
 
     var panel = createPatientPanel(pathwayStage, standard);
 
-    farLeftPanel.fadeOut(100, function(){
-      $(this).html(panel);
+    if(shouldFade){
+      farLeftPanel.fadeOut(100, function(){
+        $(this).html(panel);
+        wireUpPatientPanel(pathwayStage, farLeftPanel, standard);
+        populatePatientPanel(local.pathwayId, pathwayStage, standard, null);
+        updateTitle(local.data[local.pathwayId][pathwayStage].text.page.text,local.data[local.pathwayId][pathwayStage].text.page.tooltip);
+        $(this).fadeIn(100, function(){
+          //patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
+          farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
+        })
+      });
+    } else {
+      farLeftPanel.html(panel);
       wireUpPatientPanel(pathwayStage, farLeftPanel, standard);
       populatePatientPanel(local.pathwayId, pathwayStage, standard, null);
       updateTitle(local.data[local.pathwayId][pathwayStage].text.page.text,local.data[local.pathwayId][pathwayStage].text.page.tooltip);
-      $(this).fadeIn(100, function(){
-        //patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
-        farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
-      })
-    });
-    farRightPanel.html("");
+      farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
+    }
+
+    var template = $('#patient-panel-placeholder').html();
+    farRightPanel.html(Mustache.render(template));
   };
 
-  var showPathwayStageViewOk = function(disease, pathwayStage){
+  var showPathwayStageViewOk = function(disease, pathwayStage, shouldFade){
     showMainView(local.diseases.map(function(v){ return v.id; }).indexOf(disease));
 
     $('aside li ul li').removeClass('active');
@@ -115,27 +126,36 @@
 
     var panel = createPatientPanelOk(pathwayStage);
 
-    farLeftPanel.fadeOut(200, function(){
-      $(this).html(panel);
-      wireUpPatientPanelOk(pathwayStage, farLeftPanel);
-      populatePatientPanelOk(local.pathwayId, pathwayStage, null);
-      updateTitle(local.data[local.pathwayId][pathwayStage].text.page.text, local.data[local.pathwayId][pathwayStage].text.page.tooltip);
-      $(this).fadeIn(300, function(){
-        //patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
+    if(shouldFade){
+      farLeftPanel.fadeOut(200, function(){
+        $(this).html(panel);
+        wireUpPatientPanelOk(pathwayStage, farLeftPanel);
+        populatePatientPanelOk(local.pathwayId, pathwayStage, null);
+        updateTitle(local.data[local.pathwayId][pathwayStage].text.page.text, local.data[local.pathwayId][pathwayStage].text.page.tooltip);
+        $(this).fadeIn(300, function(){
+          //patientsPanel.parent().parent().parent().parent().removeClass('panel-default').addClass('panel-' + pathwayStage);
+          farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
+        })
+      });
+      var template = $('#patient-panel-placeholder').html();
+      farRightPanel.html(Mustache.render(template));
+    } else {
+        farLeftPanel.html(panel);
+        wireUpPatientPanelOk(pathwayStage, farLeftPanel);
+        populatePatientPanelOk(local.pathwayId, pathwayStage, null);
+        updateTitle(local.data[local.pathwayId][pathwayStage].text.page.text, local.data[local.pathwayId][pathwayStage].text.page.tooltip);
         farRightPanel.children(':first').removeClass('panel-default').addClass('panel-' + pathwayStage);
-      })
-    });
-    farRightPanel.html("");
+    }
   };
 
+
   //Show patient view within the pathway stage view
-  var showPathwayStagePatientView = function(patientId, pathwayId, pathwayStage, standard, isMultiple){
+  var showPathwayStagePatientView = function(patientId, pathwayId, pathwayStage, standard){
     local.patientId = patientId;
 
-    //switchTo121Layout();
     switchTo110Layout();
 
-    showIndividualPatientPanel(pathwayId, pathwayStage, standard, patientId, isMultiple);
+    showIndividualPatientPanel(pathwayId, pathwayStage, standard, patientId);
   };
 
   var formatStandard = function (standard) {
@@ -152,8 +172,8 @@
     return $standard;
   };
 
-  var showIndividualPatientPanel = function(pathwayId, pathwayStage, standard, patientId, isMultiple){
-    var panel = createPanel($('#patient-panel'), {"options":local.options,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple},{"option":$('#patient-panel-drop-down-options').html()});
+  var showIndividualPatientPanel = function(pathwayId, pathwayStage, standard, patientId){
+    var panel = createPanel($('#patient-panel'), {"options":local.options,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
 
     if(standard === null){
       //Must be a patient from the *** OK group
@@ -166,7 +186,7 @@
     var actionPlan = createIndividualActionPlanPanel(pathwayStage);
     $('#temp-hidden #patient-panel-right').html(actionPlan);
 
-    var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId, isMultiple);
+    var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
     $('#temp-hidden #patient-panel-top').html(qualPanel);
@@ -176,7 +196,7 @@
       farRightPanel.fadeOut(500, function(){
         $(this).html($('#temp-hidden').html());
         $('#temp-hidden').html("");
-        wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+        wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
         wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         drawTrendChart(patientId, pathwayId, pathwayStage, standard);
         $(this).fadeIn(500, function(){});
@@ -184,7 +204,7 @@
     } else {
       farRightPanel.html($('#temp-hidden').html());
         $('#temp-hidden').html("");
-        wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+        wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
         wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         drawTrendChart(patientId, pathwayId, pathwayStage, standard);
         farRightPanel.fadeIn(500, function(){
@@ -193,18 +213,17 @@
   };
 
   //Show patient view from the all patient screen
-  var showIndividualPatientView = function(pathwayId, pathwayStage, standard, patientId, isMultiple){
+  var showIndividualPatientView = function(pathwayId, pathwayStage, standard, patientId){
     local.patientId = patientId;
-    var panel = createPanel($('#patient-panel'), {"options":local.options,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple},{"option":$('#patient-panel-drop-down-options').html()});
+    var panel = createPanel($('#patient-panel'), {"options":local.options,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
 
     farRightPanel.html("");
     $('#temp-hidden').html(panel);
 
-    //showIndividualActionPlanPanel($('#patient-panel-right'), pathwayId, pathwayStage, patientId, isMultiple);
     var actionPlan = createIndividualActionPlanPanel(pathwayStage);
     $('#temp-hidden #patient-panel-right').html(actionPlan);
 
-    var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId, isMultiple);
+    var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
     var trendPanel = createTestTrendPanel(pathwayId, pathwayStage, patientId);
     var medPanel = createMedicationPanel(pathwayStage, patientId);
     $('#temp-hidden #patient-panel-top').html(qualPanel);
@@ -214,7 +233,7 @@
       farRightPanel.fadeOut(100, function(){
         $(this).html($('#temp-hidden').html());
           $('#temp-hidden').html("");
-          wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+          wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
           wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientView);
           drawTrendChart(patientId, pathwayId, pathwayStage, standard);
           $(this).fadeIn(100, function(){
@@ -223,7 +242,7 @@
     } else {
         farRightPanel.html($('#temp-hidden').html());
         $('#temp-hidden').html("");
-        wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+        wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
         wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientView);
         drawTrendChart(patientId, pathwayId, pathwayStage, standard);
         farRightPanel.fadeIn(100, function(){
@@ -247,7 +266,7 @@
     }
 
     if(patientId){
-      showIndividualPatientView(local.data.patients[patientId].breach[0].pathwayId, local.data.patients[patientId].breach[0].pathwayStage,local.data.patients[patientId].breach[0].standard, patientId, false);
+      showIndividualPatientView(local.data.patients[patientId].breach[0].pathwayId, local.data.patients[patientId].breach[0].pathwayStage,local.data.patients[patientId].breach[0].standard, patientId);
     }
   };
 
@@ -646,6 +665,7 @@
 			numberUp: numberChange>=0,
 			numberChange: Math.abs(numberChange),
       pathway: local.pathwayNames[local.pathwayId],
+      pathwayNameShort: local.pathwayId,
       title: local.data[local.pathwayId].treatment.text.panel.text
 			}, {"change-bar": $('#change-bar').html()}
 		);
@@ -720,6 +740,7 @@
 	var showDiagnosisPanel = function(location, enableHover) {
 		createPanelShow(diagnosisPanel, location, {
       pathway: local.pathwayNames[local.pathwayId],
+      pathwayNameShort: local.pathwayId,
       title: local.data[local.pathwayId].diagnosis.text.panel.text,
       number: local.data[local.pathwayId].diagnosis.n,
 			numberUp: local.data[local.pathwayId].diagnosis.change>=0,
@@ -796,6 +817,7 @@
 	var showExclusionsPanel = function(location, enableHover) {
 		createPanelShow(exclusionPanel, location, {
       pathway: local.pathwayNames[local.pathwayId],
+      pathwayNameShort: local.pathwayId,
       title: local.data[local.pathwayId].exclusions.text.panel.text,
       number: local.data[local.pathwayId].exclusions.n,
 			numberUp: local.data[local.pathwayId].exclusions.change>=0,
@@ -906,7 +928,7 @@
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
-      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, standard, local.data.patients[patientId].breach.length>1);
+      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, standard);
 
 			e.preventDefault();
       e.stopPropagation();
@@ -1029,7 +1051,7 @@
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
-      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, null, local.data.patients[patientId].breach.length>1);
+      showPathwayStagePatientView(patientId, local.pathwayId, local.selected, null);
 			e.preventDefault();
       e.stopPropagation();
 		}).on('click', 'tbody tr button', function(e){
@@ -1256,7 +1278,7 @@
     createPanelShow($('#individual-action-plan-panel'),location,{"pathwayStage" : pathwayStage || "default", "noHeader" : true});
   };
 
-  var wireUpIndividualActionPlanPanel = function(pathwayId, pathwayStage, patientId, isMultiple) {
+  var wireUpIndividualActionPlanPanel = function(pathwayId, pathwayStage, standard, patientId) {
     individualTab = $('#tab-plan-individual');
 
     $('#advice-list').on('click', '.cr-styled input[type=checkbox]', function(){
@@ -1422,16 +1444,16 @@
       }
     });
 
-    populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, isMultiple);
+    populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard);
   };
 
-	var showIndividualActionPlanPanel = function(location, pathwayId, pathwayStage, patientId, isMultiple) {
+	var showIndividualActionPlanPanel = function(location, pathwayId, pathwayStage, standard, patientId) {
     createIndividualActionPlanPanelShow(location, pathwayStage);
-    wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, patientId, isMultiple);
+    wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
 	};
 
-  var createQualStanPanel = function(pathwayId, pathwayStage, standard, patientId, isMultiple){
-    var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple};
+  var createQualStanPanel = function(pathwayId, pathwayStage, standard, patientId){
+    var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId};
 
     var breaches = local.data.patients[patientId].breach.filter(function(v) {
       return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
@@ -1493,7 +1515,7 @@
     $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity});
     $('select').on('change', function(){
       var data = $(this).find(':selected').data();
-      callback(data.pathwayId, data.pathwayStage, data.standard, local.patientId, false);
+      callback(data.pathwayId, data.pathwayStage, data.standard, local.patientId);
     });
 
     updateQualStan();
@@ -1981,7 +2003,7 @@
       pList = local.data[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a,b){
         return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
       });
-      header = "";
+      header = local.data[pathwayId][pathwayStage].standards[standard].tableTitle;
     } else if(pathwayId && pathwayStage && subsection) {
       pList = local.data[pathwayId][pathwayStage].bdown[subsection].patients;
       header = local.data[pathwayId][pathwayStage].bdown[subsection].name;
@@ -2111,13 +2133,14 @@
 	};
 
 	var populatePatientPanelOk = function (pathwayId, pathwayStage, subsection, sortField, sortAsc) {
-    var pList=[], i,k, prop, header;
+    var pList=[], i,k, prop, header, tooltip;
     patientsPanel.fadeOut(200, function(){
       $(this).fadeIn(200);
     });
 
     pList = local.data[pathwayId][pathwayStage].patientsOk;
     header = local.data[pathwayId][pathwayStage].text.panelOkHeader.text;
+    tooltip = local.data[pathwayId][pathwayStage].text.panelOkHeader.tooltip;
 
     pList = removeDuplicates(pList);
 		var patients = pList.map(function(patientId) {
@@ -2128,7 +2151,7 @@
       ret.items.push(local.data.patients[patientId].breach ? numberOfStandardsMissed(patientId) : 0);
 			return ret;
 		});
-    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title" : "# of standards missed", "isSorted":true, "direction":"sort-desc"}]};
+    var data = {"patients": patients, "n" : patients.length, "header":header, "tooltip":tooltip, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title" : "# of standards missed", "isSorted":true, "direction":"sort-desc"}]};
 
     if(sortField === undefined) sortField = 1;
 
@@ -2411,7 +2434,10 @@
 		});
 		local.charts[chart].select([d.id], [d.index], true);
 
-    farRightPanel.fadeOut(200);
+    farRightPanel.fadeOut(200, function(){
+      var template = $('#patient-panel-placeholder').html();
+      farRightPanel.html(Mustache.render(template)).show();
+    });
 	};
 
 	var destroyCharts = function(charts){
@@ -2587,16 +2613,22 @@
     return suggestions;
   };
 
-	var populateIndividualSuggestedActions = function (patientId, pathwayId, pathwayStage, isMultiple) {
-		var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId, "isMultiple" : isMultiple};
-    var breaches = local.data.patients[patientId].breach.filter(function(v) {return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage;});
+	var populateIndividualSuggestedActions = function (patientId, pathwayId, pathwayStage, standard) {
+		var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId};
+    var breaches = local.data.patients[patientId].breach.filter(function(v) {
+      return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
+    });
 
     if(breaches.length===0){
       data.noSuggestions = true;
     } else {
-      var subsection = breaches[0].subsection;
+      var suggestions = [], subsection = "";
+      for(var i = 0; i < breaches.length; i++){
+        subsection = breaches[i].subsection;
+        suggestions = suggestions.concat(local.data[pathwayId][pathwayStage].bdown[subsection].suggestions);
+      }
 
-      data.suggestions = sortSuggestions(mergeIndividualStuff(suggestionList(local.data[pathwayId][pathwayStage].bdown[subsection].suggestions), patientId));
+      data.suggestions = sortSuggestions(mergeIndividualStuff(suggestionList(suggestions), patientId));
       data.section = {
         "name" : local.data[pathwayId][pathwayStage].bdown[subsection].name,
         "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
@@ -2613,13 +2645,6 @@
 		$('#advice').show();
 
 		createPanelShow(individualPanel, $('#advice-list'), data, {"chk" : $('#checkbox-template').html() });
-
-    //Wire up multiple patient alert
-    if(isMultiple){
-      $('#advice-list .alert.clickable').off('click').on('click', function(){
-        displaySelectedPatient($(this).data('id'));
-      });
-    }
 
     //Wire up any clipboard stuff in the suggestions
     $('#advice-list').find('span:contains("[COPY")').each(function(){
@@ -3040,6 +3065,14 @@
     local.elements.navigation = true;
   };
 
+  var shouldWeFade = function(oldHash, newHash){
+      oldHash = oldHash.split('/');
+      newHash = newHash.split('/');
+
+      if(oldHash[0] === newHash[0] && oldHash[1] === newHash[1] && oldHash[0] && newHash[0]) return false;
+      return true;
+  };
+
   var loadContent = function(hash, isPoppingState){
     var i;
     if(!isPoppingState) {
@@ -3069,9 +3102,9 @@
 
         if(pathwayStage) {
           if(yesPeople){
-            showPathwayStageViewOk(pathwayId, pathwayStage);
+            showPathwayStageViewOk(pathwayId, pathwayStage, shouldWeFade(local.currentUrl, hash));
           } else {
-            showPathwayStageView(pathwayId, pathwayStage, standard);
+            showPathwayStageView(pathwayId, pathwayStage, standard, shouldWeFade(local.currentUrl, hash));
           }
         } else {
           showOverview(pathwayId);
@@ -3125,6 +3158,8 @@
         wireUpTooltips();
       }
     }
+
+    local.currentUrl = hash;
   };
 
   var populateWelcomeTasks = function(complete){

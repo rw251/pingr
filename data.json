@@ -25,6 +25,7 @@
           "bp" : {
             "tab" : {"title":"Blood pressure","tooltip":""},
             "chartTitle" : "Opportunities to improve blood pressure monitoring",
+            "tableTitle" : "Patients with opportunities to improve blood pressure monitoring",
             "valueId" : "sbp",
             "valueName" : "Last SBP date",
             "dateORvalue" : "date",
@@ -53,6 +54,7 @@
           "renal" : {
             "tab" : {"title":"Renal function","tooltip":""},
             "chartTitle" : "Opportunities to improve renal function monitoring",
+            "tableTitle" : "Patients with opportunities to improve renal function monitoring",
             "valueId" : "egfr",
             "valueName" : "Last eGFR date",
             "dateORvalue" : "date",
@@ -101,6 +103,7 @@
           "bp" : {
             "tab" : {"title":"Blood pressure","tooltip":""},
             "chartTitle" : "Opportunities to improve blood pressure control",
+            "tableTitle" : "Patients with opportunities to improve blood pressure control",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
             "dateORvalue" : "value",
@@ -146,7 +149,8 @@
           },
           "hba1c" : {
             "tab" : {"title":"Hba1c","tooltip":""},
-            "chartTitle" : "Opportunities to improve Hba1c monitoring",
+            "chartTitle" : "Opportunities to improve Hba1c control",
+            "tableTitle" : "Patients with opportunities to improve Hba1c control",
             "valueId" : "hba1c",
             "valueName" : "Last Hba1c",
             "dateORvalue" : "value",
@@ -201,6 +205,7 @@
           "excl" : {
             "tab" : {"title":"Exclusions","tooltip":""},
             "chartTitle" : "",
+            "tableTitle" : "",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
             "dateORvalue" : "value",
@@ -251,6 +256,7 @@
           "htn":{
             "tab" : {"title":"Diagnosis","tooltip":""},
             "chartTitle" : "",
+            "tableTitle" : "",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
             "dateORvalue" : "value",
@@ -303,8 +309,8 @@
           "panelOk": {"text":"Monitored OK"},
           "panelNotOk": {"text":"Improvement opportunities"},
           "panelNotOkHeader": {"text":"Improvement opportunities"},
-          "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been monitored (in terms of need for anticoagulation, pulse and INR) as per clinical guidelines"},
-          "panelOkHeaderiButton": {"tooltip": "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"}, 
+          "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been monitored (in terms of need for anticoagulation, pulse and INR) as per clinical guidelines", "tooltip" : "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
+          "panelOkHeaderiButton": {"tooltip": "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
           "iButtonACMonitor": {"tooltip": "Patients with an atrial fibrillation Read code who do not have a CHA2DS2Vasc score recorded in the past 12 months"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
@@ -365,7 +371,7 @@
                 "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
                 "patients": [6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965,6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053]
               }
-            ]  
+            ]
           },
           "INR-monitor" :{
             "tab" : {"title":"INR","tooltip":"test"},
@@ -409,7 +415,7 @@
           "panel": {"text":""},
           "panelOk": {"text":"Treated OK"},
           "panelNotOk": {"text":"Improvement opportunities"},
-          "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been treated (in terms of anticoagulation, pulse rate and INR) as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
+          "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been treated (in terms of anticoagulation, pulse rate and INR) as per clinical guidelines"},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
         },
@@ -463,7 +469,7 @@
         },
         "patientsOk" : [],
         "standards": {
-          "asthma" :{
+          "excl" :{
             "tab" : {"title":"tba","tooltip":""},
             "chartTitle" : "tba",
             "valueId" : "pefr",
@@ -521,7 +527,7 @@
         },
         "patientsOk" : [],
         "standards": {
-          "asthma" :{
+          "af" :{
             "tab" : {"title":"tba","tooltip":""},
             "chartTitle" : "tba",
             "valueId" : "pefr",
@@ -575,8 +581,13 @@
       "diagnosis": {}
     }
   },
+  "codes": {
+    "G2..." : "Hypertension",
+    "C10F." : "Type II Diabetes",
+    "1Z1.." : "Chronic Kidney Disease"
+  },
   "patients" : {
-    "5550000041": { "medications":[{"name":"Fenoterol", "dose":"200mcrg", "last":"2013-07-12"},{"name":"Propranolol", "dose":"160mg", "last":"2014-09-28"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]], "asthma" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["PEFR", "109", "117", "125", "105", "110", "105"] ], "sbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["SBP", "145", "136", "134", "151", "159", "171"] ], "dbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["DBP", "109", "117", "125", "105", "110", "105"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months", "renal" : "Measure every 9 months" } }, "af" : { "treatment" : { "asthma" : "Untreated" } } }, "contacts": [{"value": "2013-01-29", "text": "Mediation changed"}, {"value": "2014-01-30", "text": "Face-to-face encounter"}] },
+    "5550000041": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Fenoterol", "dose":"200mcrg", "last":"2013-07-12"},{"name":"Propranolol", "dose":"160mg", "last":"2014-09-28"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]], "asthma" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["PEFR", "109", "117", "125", "105", "110", "105"] ], "sbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["SBP", "145", "136", "134", "151", "159", "171"] ], "dbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["DBP", "109", "117", "125", "105", "110", "105"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months", "renal" : "Measure every 9 months" } }, "af" : { "treatment" : { "asthma" : "Untreated" } } }, "contacts": [{"value": "2013-01-29", "text": "Mediation changed"}, {"value": "2014-01-30", "text": "Face-to-face encounter"}] },
     "5550069950": { "sbp" : [ ["x", "2012-05-12", "2012-10-16", "2013-02-19", "2013-06-19", "2013-12-26", "2014-03-16"], ["SBP", "107", "117", "114", "99", "109", "119"] ], "dbp" : [ ["x", "2012-05-12", "2012-10-16", "2013-02-19", "2013-06-19", "2013-12-26", "2014-03-16"], ["DBP", "53", "66", "59", "75", "61", "43"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-10-11", "text": "Face-to-face encounter"}, {"value": "2013-08-10", "text": "Mediation decreased"}] },
     "5550154103": { "sbp" : [ ["x", "2012-06-19", "2012-12-23", "2013-04-03", "2013-09-18", "2013-11-12", "2014-01-29"], ["SBP", "106", "116", "125", "144", "124", "114"] ], "dbp" : [ ["x", "2012-06-19", "2012-12-23", "2013-04-03", "2013-09-18", "2013-11-12", "2014-01-29"], ["DBP", "86", "106", "93", "88", "89", "70"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-11-29", "text": "Face-to-face encounter"}, {"value": "2013-01-19", "text": "Face-to-face encounter"}] },
     "5550242024": { "sbp" : [ ["x", "2012-06-15", "2012-12-04", "2013-03-03", "2013-06-17", "2013-08-15", "2013-12-21"], ["SBP", "138", "137", "126", "146", "153", "144"] ], "dbp" : [ ["x", "2012-06-15", "2012-12-04", "2013-03-03", "2013-06-17", "2013-08-15", "2013-12-21"], ["DBP", "90", "70", "86", "100", "85", "100"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-10-21", "text": "Face-to-face encounter"}, {"value": "2013-11-28", "text": "Mediation changed"}] },
@@ -646,8 +657,8 @@
     "5552910216": { "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-09-04", "2012-12-09", "2013-02-24", "2013-07-09", "2013-11-28", "2014-05-04"], ["SBP", "135", "116", "115", "128", "137", "127"] ], "dbp" : [ ["x", "2012-09-04", "2012-12-09", "2013-02-24", "2013-07-09", "2013-11-28", "2014-05-04"], ["DBP", "89", "70", "65", "84", "83", "82"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2013-01-07", "text": "Face-to-face encounter"}, {"value": "2013-03-20", "text": "Face-to-face encounter"}] },
     "5552990876": { "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-07-11", "2012-10-05", "2013-04-17", "2013-10-12", "2014-02-20", "2014-07-10"], ["SBP", "99", "109", "119", "113", "121", "108"] ], "dbp" : [ ["x", "2012-07-11", "2012-10-05", "2013-04-17", "2013-10-12", "2014-02-20", "2014-07-10"], ["DBP", "31", "41", "51", "32", "42", "52"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-07-14", "text": "Face-to-face encounter"}, {"value": "2014-04-09", "text": "Mediation increased"}] },
     "5553014733": { "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-09-18", "2013-03-17", "2013-06-14", "2013-10-22", "2014-01-08", "2014-03-05"], ["SBP", "142", "124", "136", "132", "132", "141"] ], "dbp" : [ ["x", "2012-09-18", "2013-03-17", "2013-06-14", "2013-10-22", "2014-01-08", "2014-03-05"], ["DBP", "107", "99", "83", "96", "97", "116"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2013-06-13", "text": "Face-to-face encounter"}, {"value": "2013-12-18", "text": "Mediation decreased"}] },
-    "5553098415": { "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-06-15", "2012-11-18", "2013-02-07", "2013-07-05", "2013-12-26", "2014-05-25"], ["SBP", "123", "117", "114", "99", "109", "119"] ], "dbp" : [ ["x", "2012-06-15", "2012-11-18", "2013-02-07", "2013-07-05", "2013-12-26", "2014-05-25"], ["DBP", "70", "56", "39", "49", "59", "40"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-07-12", "text": "Mediation changed"}, {"value": "2014-03-22", "text": "Mediation increased"}] },
-    "5553125053": { "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-06-13", "2012-11-14", "2013-02-02", "2013-08-20", "2014-01-22", "2014-06-14"], ["SBP", "149", "163", "143", "131", "114", "132"] ], "dbp" : [ ["x", "2012-06-13", "2012-11-14", "2013-02-02", "2013-08-20", "2014-01-22", "2014-06-14"], ["DBP", "119", "123", "103", "96", "91", "83"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2013-02-01", "text": "Mediation decreased"}, {"value": "2014-05-11", "text": "Face-to-face encounter"}] },
+    "5553098415": { "codes": [{"code":"C10F.","date":"2012-01-15"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-06-15", "2012-11-18", "2013-02-07", "2013-07-05", "2013-12-26", "2014-05-25"], ["SBP", "123", "117", "114", "99", "109", "119"] ], "dbp" : [ ["x", "2012-06-15", "2012-11-18", "2013-02-07", "2013-07-05", "2013-12-26", "2014-05-25"], ["DBP", "70", "56", "39", "49", "59", "40"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-07-12", "text": "Mediation changed"}, {"value": "2014-03-22", "text": "Mediation increased"}] },
+    "5553125053": { "codes": [{"code":"1Z1..","date":"2004-11-05"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-06-13", "2012-11-14", "2013-02-02", "2013-08-20", "2014-01-22", "2014-06-14"], ["SBP", "149", "163", "143", "131", "114", "132"] ], "dbp" : [ ["x", "2012-06-13", "2012-11-14", "2013-02-02", "2013-08-20", "2014-01-22", "2014-06-14"], ["DBP", "119", "123", "103", "96", "91", "83"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2013-02-01", "text": "Mediation decreased"}, {"value": "2014-05-11", "text": "Face-to-face encounter"}] },
     "5553175806": { "hba1c":[["x","2012-01-03","2014-03-03"],["Hba1c","8.4","6.5"]],"medications":[{"name":"Propranolol", "dose":"160mg", "last":"2014-09-28"}], "sbp" : [ ["x", "2012-06-09", "2012-08-20", "2013-01-09", "2013-06-13", "2013-12-10", "2014-04-04"], ["SBP", "98", "108", "118", "104", "114", "109"] ], "dbp" : [ ["x", "2012-06-09", "2012-08-20", "2013-01-09", "2013-06-13", "2013-12-10", "2014-04-04"], ["DBP", "70", "61", "77", "66", "68", "67"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-08-20", "text": "Face-to-face encounter"}, {"value": "2013-10-21", "text": "Face-to-face encounter"}] },
     "5553261095": { "medications":[{"name":"Ramipril", "dose":"5mg", "last":"2014-04-09"},{"name":"Propranolol", "dose":"80mg", "last":"2014-04-09"}], "sbp" : [ ["x", "2012-07-29", "2013-01-22", "2013-07-25", "2013-11-28", "2014-03-28", "2014-09-21"], ["SBP", "133", "135", "154", "173", "153", "164"] ], "dbp" : [ ["x", "2012-07-29", "2013-01-22", "2013-07-25", "2013-11-28", "2014-03-28", "2014-09-21"], ["DBP", "110", "92", "97", "110", "126", "106"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-14", "text": "Face-to-face encounter"}, {"value": "2014-08-03", "text": "Face-to-face encounter"}] },
     "5553284844": { "hba1c":[["x","2012-01-03","2014-03-03"],["Hba1c","8.4","6.5"]],"medications":[{"name":"Propranolol", "dose":"320mg", "last":"2014-08-22"}], "sbp" : [ ["x", "2012-07-31", "2012-09-24", "2013-03-31", "2013-10-02", "2014-01-20", "2014-05-11"], ["SBP", "92", "102", "112", "128", "138", "127"] ], "dbp" : [ ["x", "2012-07-31", "2012-09-24", "2013-03-31", "2013-10-02", "2014-01-20", "2014-05-11"], ["DBP", "49", "59", "51", "67", "70", "75"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-08-23", "text": "Mediation changed"}, {"value": "2014-05-11", "text": "Mediation increased"}] },
