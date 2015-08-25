@@ -171,7 +171,7 @@
     // <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity
     // Not relevant
     var $standard = $(
-      '<span>' + standard.text + (local.data.patients[local.patientId].breach.filter(function(val){
+      '<span>' + standard.text + (local.data.patients[local.patientId].breach && local.data.patients[local.patientId].breach.filter(function(val){
         return val.pathwayId===data.pathwayId && val.pathwayStage===data.pathwayStage && val.standard===data.standard;
       }).length>0 ? ' <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity' : ' <i class="fa fa-smile-o" style="color:green"></i> OK') +'</span>'
     );
@@ -1663,7 +1663,7 @@
     if(breaches.length>0)  $('select').val(breaches[0].value);
 
     $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity});
-    //$('span.')
+    $('span.select2-selection__rendered').attr("title","");
     $('select').on('change', function(){
       var data = $(this).find(':selected').data();
       callback(data.pathwayId, data.pathwayStage, data.standard, local.patientId);
@@ -2969,9 +2969,9 @@
 
 	var populateIndividualSuggestedActions = function (patientId, pathwayId, pathwayStage, standard) {
 		var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId};
-    var breaches = local.data.patients[patientId].breach.filter(function(v) {
+    var breaches = local.data.patients[patientId].breach ? local.data.patients[patientId].breach.filter(function(v) {
       return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
-    });
+    }) : [];
 
     if(breaches.length===0){
       data.noSuggestions = true;
@@ -3375,7 +3375,7 @@
 		//Hide the suggestions panel
 		$('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
-    clearBox();
+    //clearBox();
 
 		displaySelectedPatient(nhsNumberObject.id);
 	};
@@ -3626,8 +3626,8 @@
         ].join('\n')}
       }
     ).on('typeahead:selected', onSelected)
-    .on('typeahead:autocompleted', onSelected)
-    .on('typeahead:closed', clearBox);
+    .on('typeahead:autocompleted', onSelected);
+    //.on('typeahead:closed', clearBox);
 
     $('#searchbtn').on('mousedown', function(){
       var val = $('.typeahead').eq(0).val();
