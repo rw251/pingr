@@ -939,7 +939,7 @@
         <div id="table-demo-trend" style="max-height:260px;display:none"></div>
         <div class="panel panel-default" style="margin-bottom:0">
           <div class="panel-body">
-            <span>Agree?</span>
+            <span>Do you agree with these data? &nbsp</span>
             <div id="trend-agree-disagree" class="btn-group" data-toggle="buttons">
               <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these values">
                 <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
@@ -967,14 +967,14 @@
   <script id="medications-panel" type="x-tmpl-mustache">
     <div id="medication-panel" class="panel panel-default">
       <div class="panel-body" style="max-height:380px">
-      <h4>{{pathway}} medications</h4>
+      <h4>Current medications</h4>
         {{#areMedications}}
           <table class="table table-small-margin">
             <thead>
             <tr>
               <th>Medication</th>
               <th>Dose</th>
-              <th>Last Rx</th>
+              <th>Last issued</th>
             </tr>
             </thead>
             <tbody>
@@ -989,7 +989,7 @@
         {{/areMedications}}
         <div class="panel panel-default" style="margin-bottom:0">
           <div class="panel-body">
-            <span>Agree?</span>
+            <span>Do you agree with this medication list? &nbsp</span>
             <div id="medication-agree-disagree" class="btn-group" data-toggle="buttons">
               <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these medications">
                 <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
@@ -1017,7 +1017,7 @@
   <script id="other-codes-panel" type="x-tmpl-mustache">
     <div id="other-codes-panel"class="panel panel-default">
       <div class="panel-body" style="max-height:380px">
-      <span class="h4">Relevant other data</span>
+      <span class="h4">Relevant other information</span>
       <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="Other Read codes that PINGR thinks are relevant to {{standard}}"></i>
         {{#areCodes}}
           <table class="table table-small-margin">
@@ -1040,7 +1040,7 @@
         {{/areCodes}}
         <div class="panel panel-default" style="margin-bottom:0">
           <div class="panel-body">
-            <span>Agree?</span>
+            <span>Do you agree with this other information? &nbsp</span>
             <div id="other-codes-agree-disagree" class="btn-group" data-toggle="buttons">
               <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these codes">
                 <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
