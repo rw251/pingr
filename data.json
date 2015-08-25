@@ -14,8 +14,8 @@
         "text" :{
           "page": {"text":"Hypertension - monitoring"},
           "panel": {"text":"Patients who have not had their hypertension monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK"},
-          "panelNotOk": {"text":"Improvement Opportunities"},
+          "panelOk": {"text":"Monitored OK", "tooltip":"Monitored ok"},
+          "panelNotOk": {"text":"Improvement Opportunities", "tooltip":"Monitored not ok"},
           "panelOkHeader" : {"text" : "Patients with hypertension who have been monitored as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
@@ -52,7 +52,7 @@
             ]
           },
           "renal" : {
-            "tab" : {"title":"Renal function","tooltip":""},
+            "tab" : {"title":"Renal function","tooltip":"The renal function tooltip"},
             "chartTitle" : "Opportunities to improve renal function monitoring",
             "tableTitle" : "Patients with opportunities to improve renal function monitoring",
             "valueId" : "egfr",
@@ -304,8 +304,8 @@
         "text" :{
           "page": {"text":"Atrial fibrillation - monitoring"},
           "panel": {"text":"Patients who have not had their asthma monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK"},
-          "panelNotOk": {"text":"Improvement opportunities"},
+          "panelOk": {"text":"Monitored OK", "tooltip":"Monitored ok"},
+          "panelNotOk": {"text":"Improvement opportunities", "tooltip":"Monitored not ok"},
           "panelNotOkHeader": {"text":"Improvement opportunities"},
           "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been monitored (in terms of need for anticoagulation, pulse and INR) as per clinical guidelines", "tooltip" : "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
           "panelOkHeaderiButton": {"tooltip": "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
@@ -321,19 +321,19 @@
             "valueId" : "chads",
             "valueName" : "Last CHA2DS2Vasc date",
             "dateORvalue" : "date",
-            "chart" : ["pefr"],
+            "chart" : ["CHA2DS2Vasc"],
             "opportunities": [
               {
                 "name": "No opportunities",
                 "desc": "Patients who have had no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
-                "patients": [6660000041,6660069950,6660154103,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
+                "patients": [6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
               },
               {
                 "name": "Face-to-face",
                 "desc": "Patients who have seen a clinician in GP practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
-                "patients": [6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
+                "patients": [123,6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
               },
               {
                 "name": "Non face-to-face",
@@ -349,19 +349,19 @@
             "valueId" : "pulse",
             "valueName" : "Last pulse date",
             "dateORvalue" : "date",
-            "chart" : ["pefr"],
+            "chart" : ["CHA2DS2Vasc"],
             "opportunities": [
               {
                 "name": "No opportunities",
                 "desc": "Patients who have had no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
-                "patients": [6660000041,6660069950,6660154103,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
+                "patients": [6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
               },
               {
                 "name": "Face-to-face",
                 "desc": "Patients who have seen a clinician in GP practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
-                "patients": [6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
+                "patients": [123, 6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
               },
               {
                 "name": "Non face-to-face",
@@ -377,19 +377,19 @@
             "valueId" : "INR date",
             "valueName" : "Last INR date",
             "dateORvalue" : "date",
-            "chart" : ["pefr"],
+            "chart" : ["CHA2DS2Vasc"],
             "opportunities": [
               {
                 "name": "No opportunities",
                 "desc": "Patients who have had no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
-                "patients": [6660000041,6660069950,6660154103,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
+                "patients": [6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
               },
               {
                 "name": "Face-to-face",
                 "desc": "Patients who have seen a clinician in GP practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
-                "patients": [6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
+                "patients": [123,6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
               },
               {
                 "name": "Non face-to-face",
@@ -428,22 +428,28 @@
             "chart" : ["pefr"],
             "opportunities": [
               {
-                "name": "Suboptimal medication",
+                "name": "A/C recommended: nil prescribed",
                 "desc": "Patients who could have their medication optimised",
                 "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
                 "patients": [5550000041,6663175806,6663261095,6663284844,6663308051,6663395446,6663482379,6663577971,6663617291,6663623847,6663697995]
               },
               {
-                "name": "Medication non-adherence",
+                "name": "A/C recommended: AP only prescribed",
                 "desc": "Patients who may not be picking up their repeat medication regularly",
                 "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
                 "patients": [6663776929,6663846192,6663902625,6663976396,6664010860,6664015794,6664043449]
               },
               {
-                "name": "Referral to secondary care",
+                "name": "A/C NOT recommended: A/C prescribed",
                 "desc": "Patients who are on maximal anti-hypertensive medication",
                 "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
                 "patients": [6664109536,6664144142,6664212758,6664282657,6664302828,6664367625,6664390911,6664406296,6664456339,6664528017,6664551966,6664632673,6664723924]
+              },
+              {
+                "name": "Contraindication to anticoagulation – anticoagulant prescribed***",
+                "desc": "Patients who are on maximal anti-hypertensive medication",
+                "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
+                "patients": []
               }
             ]
           }
@@ -787,7 +793,7 @@
     "5559995772": { "sbp" : [ ["x", "2012-05-07", "2012-08-02", "2012-11-03", "2013-03-13", "2013-06-16", "2013-11-26"], ["SBP", "133", "131", "116", "111", "101", "111"] ], "dbp" : [ ["x", "2012-05-07", "2012-08-02", "2012-11-03", "2013-03-13", "2013-06-16", "2013-11-26"], ["DBP", "77", "93", "74", "80", "96", "76"] ], "standards" : { "htn" : { "diagnosis" : { "htn" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-30", "text": "Face-to-face encounter"}, {"value": "2013-07-07", "text": "Mediation changed"}] },
     "6660000041": { "asthma" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["PEFR", "109", "117", "125", "105", "110", "105"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2013-01-29", "text": "Mediation changed"}, {"value": "2014-01-30", "text": "Face-to-face encounter"}] },
     "6660069950": { "asthma" : [ ["x", "2012-05-12", "2012-10-16", "2013-02-19", "2013-06-19", "2013-12-26", "2014-03-16"], ["PEFR", "53", "66", "59", "75", "61", "43"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-10-11", "text": "Face-to-face encounter"}, {"value": "2013-08-10", "text": "Mediation decreased"}] },
-    "6660154103": { "asthma" : [ ["x", "2012-06-19", "2012-12-23", "2013-04-03", "2013-09-18", "2013-11-12", "2014-01-29"],  ["PEFR", "86", "106", "93", "88", "89", "70"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-11-29", "text": "Face-to-face encounter"}, {"value": "2013-01-19", "text": "Face-to-face encounter"}] },
+    "123": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Aspirin", "dose":"75 mg OD", "last":"2013-07-12"}], "sbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Systolic blood pressure", "121", "141", "122", "138", "152", "137"] ], "dbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Diastolic blood pressure", "98", "79", "98", "80", "99", "103"] ], "CHA2DS2Vasc" : [ ["x", "2012-06-19", "2015-08-03"],  ["CHA2DS2Vasc", "0", "1"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2014-11-29", "text": "Face-to-face encounter"}, {"value": "2015-01-19", "text": "Face-to-face encounter"}] },
     "6660242024": { "asthma" : [ ["x", "2012-06-15", "2012-12-04", "2013-03-03", "2013-06-17", "2013-08-15", "2013-12-21"],  ["PEFR", "90", "70", "86", "100", "85", "100"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-10-21", "text": "Face-to-face encounter"}, {"value": "2013-11-28", "text": "Mediation changed"}] },
     "6660295217": { "asthma" : [ ["x", "2012-05-12", "2012-11-11", "2013-05-07", "2013-10-18", "2014-04-19", "2014-07-26"], ["PEFR", "43", "53", "37", "47", "57", "59"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-08-15", "text": "Mediation decreased"}, {"value": "2014-01-21", "text": "Face-to-face encounter"}] },
     "6660366599": { "asthma" : [ ["x", "2012-05-23", "2012-07-24", "2012-10-12", "2013-04-10", "2013-09-25", "2014-04-09"], ["PEFR", "122", "102", "92", "106", "113", "120"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-06-06", "text": "Face-to-face encounter"}, {"value": "2013-12-19", "text": "Face-to-face encounter"}] },
