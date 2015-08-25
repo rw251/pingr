@@ -3395,7 +3395,7 @@
       oldHash = oldHash.split('/');
       newHash = newHash.split('/');
 
-      if(oldHash[0] === newHash[0] && oldHash[1] === newHash[1] && oldHash[0] && newHash[0]) return false;
+      if(oldHash[0] === newHash[0] && oldHash[1] === newHash[1] && oldHash[2] === newHash[2] && oldHash[0] && newHash[0]) return false;
       return true;
   };
 

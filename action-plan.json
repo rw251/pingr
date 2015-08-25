@@ -150,7 +150,7 @@
     "0025":{"text":""},
     "0026":{"text":"Put a note on this patient’s record to remind the next clinician they see to take their blood pressure <br> e.g. [COPY: 'PLEASE MEASURE THIS PATIENT'S BLOOD PRESSURE NEXT TIME THEY ARE SEEN']."},
     "0027":{"text":"Exclude this patient if they have been invited 3 times or declined a blood pressure check – we suggest using these codes [COPY:9h32] [COPY:8I3Y]."},
-    "0028":{"text":"[MED-SUGGESTION]"},
+    "0028":{"text":"Add an ACE-inhibitor"},
     "0029":{"text":"Advise this patient on lifestyle changes such as:<ul><li><a href=\"http://www.bmj.com/content/346/bmj.f1325\" target=\"_blank\">A low salt diet</a> e.g. <a href=\"http://dashdiet.org/sample_menu.asp\" target=\"_blank\">DASH</a> / <a href=\"http://dashdiet.org/sample_menu.asp\" target=\"_blank\">Blood Pressure UK</a></li><li>Increased exercise</li><li>Weight loss</li><li>Smoking cessation</li><li>Alcohol reduction</li></ul>"},
     "0030":{"text":"Arrange for this patient to have their blood pressure measured by a nurse or clinical assistant – <a href=\"http://bjgp.org/content/64/621/e223\" target=\"_blank\">the white coat effect is smaller than when measured by doctors</a>."},
     "0031":{"text":"Measure this patient’s blood pressure at home as the readings may be more representative – either advise the patient to buy their own monitor (<a href=\"http://www.bloodpressureuk.org/HealthProfessionals/Resources/main_content/BPAMeasuringBPathomeLoRes.pdf\" target=\"_blank\">patient leaflet</a>) or use an Ambulatory Blood Pressure Monitor purchased by the practice."},
