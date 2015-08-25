@@ -547,7 +547,7 @@
 	};
 
   var updateTitle = function(title, tooltip){
-    $('.pagetitle').html(title).attr('title', tooltip).tooltip({delay: { "show": 1000, "hide": 100 }});
+    $('.pagetitle').html(title).attr('title', tooltip).tooltip({delay: { "show": 500, "hide": 100 }});
   }
 
 	var showSidePanel = function() {
@@ -1662,6 +1662,7 @@
     if(breaches.length>0)  $('select').val(breaches[0].value);
 
     $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity});
+    //$('span.')
     $('select').on('change', function(){
       var data = $(this).find(':selected').data();
       callback(data.pathwayId, data.pathwayStage, data.standard, local.patientId);
@@ -2300,8 +2301,8 @@
   };
 
   var wireUpTooltips = function(){
-    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 1000, "hide": 100 }});
-    $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 700, "hide": 100 }});
+    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }});
+    $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
     $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
       $('[data-toggle="tooltip"]').not(this).tooltip('hide');
     });
@@ -4001,8 +4002,8 @@ $(document).on('ready', function () {
     localStorage.bb = JSON.stringify({"version" : bb.version});
   }
 
-	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 1000, "hide": 100 }});
-  $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 700, "hide": 100 }});
+	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }});
+  $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
   $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
     $('[data-toggle="tooltip"]').not(this).tooltip('hide');
   });

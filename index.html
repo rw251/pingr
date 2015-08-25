@@ -1058,7 +1058,8 @@
           <span class="fa fa-clipboard"></span>
         </button>
       </span>
-      <span style="display: block;overflow: hidden;padding-right: 5px;padding-left: 10px;padding-top:2px">
+      <span style="display: block;overflow: hidden;padding-right: 5px;padding-left: 10px;padding-top:2px"
+            data-toggle="tooltip" data-placement="top" title="Use this to select other quality standards for this patient">
         <select style="width:100%">
           {{#options}}
           {{>option}}
@@ -1116,8 +1117,8 @@
   <script id="patients-panel" type="x-tmpl-mustache">
     <h2 class="pagetitle" data-toggle="tooltip" data-placement="right" style="padding-bottom: 15px;"></h2>
     <ul class="nav nav-tabs top-tabs" role="tablist">
-      <li {{^ok}}class="active"{{/ok}}><a {{#ok}}href="{{url}}/no"{{/ok}}>{{text.panelNotOk.text}}</a></li>
-      <li {{#ok}}class="active"{{/ok}}><a {{^ok}}href="{{url}}/yes"{{/ok}}>{{text.panelOk.text}}</a></li>
+      <li {{^ok}}class="active"{{/ok}} data-toggle="tooltip" data-placement="top" title="{{text.panelNotOk.tooltip}}"><a {{#ok}}href="{{url}}/no"{{/ok}}>{{text.panelNotOk.text}}</a></li>
+      <li {{#ok}}class="active"{{/ok}} data-toggle="tooltip" data-placement="top" title="{{text.panelOk.tooltip}}"><a {{^ok}}href="{{url}}/yes"{{/ok}}>{{text.panelOk.text}}</a></li>
     </ul>
     <div class="top-tab-pane">
       {{>content}}
@@ -1146,7 +1147,7 @@
   </script>
 
   <script id="patients-panel-no-tabs" type="x-tmpl-mustache">
-    <li {{#active}}class="active"{{/active}}>
+    <li {{#active}}class="active"{{/active}} data-toggle="tooltip" data-placement="top" title="{{header.tooltip}}">
       <a {{^active}}href="{{url}}"{{/active}}>{{header.title}}</a>
     </li>
   </script>
@@ -1234,7 +1235,7 @@
 
   <script id="monitoring-panel" type="x-tmpl-mustache">
     <div data-stage="monitoring" class="panel panel-{{pathwayNameShort}} panel-default clickable">
-      <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip"> <!--data-placement="right" title="How well {{pathway}} is being monitored.">-->
+      <div class="panel-heading-{{pathwayNameShort}}" data-toggle="tooltip"data-placement="right" title="How well {{pathway}} is being monitored.">
         <!--<i class="fa fa-stethoscope fa-fw">--></i>&nbsp; <strong>Monitoring</strong> &nbsp; <font size="0.5"> (click to see improvement opportunities) </font>
         <span class="pull-right">View as <button id="monitoring-trend-toggle" class="btn btn-xs btn-default">Trend</button></span>
       </div>
@@ -1389,11 +1390,11 @@
 
   <script id="pathway-picker-sub-item" type="x-tmpl-mustache">
     <ul class="list-unstyled">
-      <li><a href="#main/{{id}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overview</a></li>
-      <li><a href="#main/{{id}}/diagnosis/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnosis</a></li>
-      <li><a href="#main/{{id}}/monitoring/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monitoring</a></li>
-      <li><a href="#main/{{id}}/treatment/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control</a></li>
-      <li><a href="#main/{{id}}/exclusions/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exclusions</a></li>
+      <li data-toggle="tooltip"data-placement="right" title="An overview of {{name}}"><a href="#main/{{id}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overview</a></li>
+      <li data-toggle="tooltip"data-placement="right" title="How well {{name}} is being diagnosed."><a href="#main/{{id}}/diagnosis/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnosis</a></li>
+      <li data-toggle="tooltip"data-placement="right" title="How well {{name}} is being monitored."><a href="#main/{{id}}/monitoring/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monitoring</a></li>
+      <li data-toggle="tooltip"data-placement="right" title="How well {{name}} is being treated."><a href="#main/{{id}}/treatment/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control</a></li>
+      <li data-toggle="tooltip"data-placement="right" title="Whether patients are appropriately excluded from {{name}} quality standards."><a href="#main/{{id}}/exclusions/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exclusions</a></li>
     </ul>
   </script>
 

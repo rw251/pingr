@@ -14,8 +14,8 @@
         "text" :{
           "page": {"text":"Hypertension - monitoring"},
           "panel": {"text":"Patients who have not had their hypertension monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK"},
-          "panelNotOk": {"text":"Improvement Opportunities"},
+          "panelOk": {"text":"Monitored OK", "tooltip":"Monitored ok"},
+          "panelNotOk": {"text":"Improvement Opportunities", "tooltip":"Monitored not ok"},
           "panelOkHeader" : {"text" : "Patients with hypertension who have been monitored as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
@@ -52,7 +52,7 @@
             ]
           },
           "renal" : {
-            "tab" : {"title":"Renal function","tooltip":""},
+            "tab" : {"title":"Renal function","tooltip":"The renal function tooltip"},
             "chartTitle" : "Opportunities to improve renal function monitoring",
             "tableTitle" : "Patients with opportunities to improve renal function monitoring",
             "valueId" : "egfr",
@@ -304,8 +304,8 @@
         "text" :{
           "page": {"text":"Atrial fibrillation - monitoring"},
           "panel": {"text":"Patients who have not had their asthma monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK"},
-          "panelNotOk": {"text":"Improvement opportunities"},
+          "panelOk": {"text":"Monitored OK", "tooltip":"Monitored ok"},
+          "panelNotOk": {"text":"Improvement opportunities", "tooltip":"Monitored not ok"},
           "panelNotOkHeader": {"text":"Improvement opportunities"},
           "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been monitored (in terms of need for anticoagulation, pulse and INR) as per clinical guidelines", "tooltip" : "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
           "panelOkHeaderiButton": {"tooltip": "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
