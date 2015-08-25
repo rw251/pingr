@@ -195,7 +195,7 @@
 
     //var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
-    var medPanel = createMedicationPanel(pathwayId, pathwayStage, patientId);
+    var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
     //$('#temp-hidden #patient-panel-top').html(qualPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
@@ -242,7 +242,7 @@
 
     //var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
-    var medPanel = createMedicationPanel(pathwayId, pathwayStage, patientId);
+    var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
     //$('#temp-hidden #patient-panel-top').html(qualPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
@@ -2072,14 +2072,17 @@
       selector.children(':nth(1)').addClass('inactive');
       selector.children(':nth(0)').attr("title",getAgreeTooltip(agreeObject)).attr("data-original-title", getAgreeTooltip(agreeObject)).tooltip('fixTitle').tooltip('hide');
       selector.children(':nth(1)').attr("title","").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+      selector.parent().addClass('success').removeClass('danger');
     } else if(agreeObject.agree===false){
       selector.children(':nth(0)').addClass('inactive');
       selector.children(':nth(1)').addClass('active');
       selector.children(':nth(0)').attr("title","").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
       selector.children(':nth(1)').attr("title",getDisgreeTooltip(agreeObject)).attr("data-original-title", getDisgreeTooltip(agreeObject)).tooltip('fixTitle').tooltip('hide');
+      selector.parent().addClass('danger').removeClass('success');
     } else {
       selector.children(':nth(0)').attr("title","Click to agree").attr("data-original-title", "Click to agree").tooltip('fixTitle').tooltip('hide');
       selector.children(':nth(1)').attr("title","Click to disagree").attr("data-original-title", "Click to disagree").tooltip('fixTitle').tooltip('hide');
+      selector.parent().removeClass('success').removeClass('danger');
     }
   };
 
@@ -2177,7 +2180,8 @@
   };
 
   var createTrendPanel = function(pathwayId, pathwayStage, standard, patientId){
-    return createPanel(valueTrendPanel, {"pathway": local.monitored[pathwayId], "standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title, "pathwayStage" : pathwayStage});
+    var agree = getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend");
+    return createPanel(valueTrendPanel, {"pathway": local.monitored[pathwayId], "agree" : agree && agree.agree, "disagree":agree && agree.agree===false, "standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title, "pathwayStage" : pathwayStage});
   };
 
   var showTrendPanel = function(location, pathwayId, pathwayStage, standard, patientId){
@@ -2194,9 +2198,10 @@
     wireUpAgreeDisagreePanel($('#other-codes-agree-disagree'),$('#other-codes-panel'),pathwayId, pathwayStage, standard, patientId, "codes", "other codes");
   };
 
-  var createMedicationPanel = function(pathwayId, pathwayStage, patientId) {
+  var createMedicationPanel = function(pathwayId, pathwayStage, standard, patientId) {
     var medications = local.data.patients[patientId].medications || [];
-    return createPanel(medicationPanel, {"areMedications" : medications.length>0, "pathway":local.pathwayNames[pathwayId], "medications": medications, "pathwayStage" : pathwayStage},{"medicationRow":$('#medication-row').html()});
+    var agree = getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "medication");
+    return createPanel(medicationPanel, {"areMedications" : medications.length>0, "agree" : agree && agree.agree, "disagree":agree && agree.agree===false, "pathway":local.pathwayNames[pathwayId], "medications": medications, "pathwayStage" : pathwayStage},{"medicationRow":$('#medication-row').html()});
   };
 
   var showMedicationPanel = function(location, pathwayId, pathwayStage, patientId) {
@@ -2209,7 +2214,8 @@
       val.description = local.data.codes[val.code];
       return val;
     });
-    return createPanel($('#other-codes-panel'), {"areCodes" : codes.length>0, "pathway":local.pathwayNames[pathwayId], "standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title , "codes": codes, "pathwayStage" : pathwayStage},{"codeRow":$('#other-codes-row').html()});
+    var agree = getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "codes");
+    return createPanel($('#other-codes-panel'), {"areCodes" : codes.length>0, "agree" : agree && agree.agree, "disagree":agree && agree.agree===false, "pathway":local.pathwayNames[pathwayId], "standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title , "codes": codes, "pathwayStage" : pathwayStage},{"codeRow":$('#other-codes-row').html()});
   };
 
   var removeDuplicates = function(array){
