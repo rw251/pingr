@@ -393,9 +393,11 @@
             <h4 class="modal-title" id="modalLabel">{{header}}</h4>
           </div>
           <div class="modal-body">
+          {{#item}}
           <label>You have disagreed with the following suggested action:</label>
           <p></p>
           <span style="font-style:italic">{{item}}</span>
+          {{/item}}
           <form>
             <div class = "form-group">
             <p></p>
@@ -405,10 +407,11 @@
             {{/reasons}}
             </div>
             <div class = "form-group">
-            <label>Please tell us more - whatever your selection above:</label>
+            <label>Please tell us more{{#hasReasons}} - whatever your selection above:{{/hasReasons}}</label>
             <textarea rows="3" style="resize:none" class="form-control" placeholder="{{placeholder}}"></textarea>
             </div>
             <button type="submit" class="btn btn-primary save-plan">Save</button>
+            {{#isUndo}}<button type="button" class="btn btn-warning undo-plan" data-dismiss="modal">Undo disagree</button>{{/isUndo}}
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </form>
           </div>
@@ -909,7 +912,7 @@
         {{/items}}
       </tbody>
     </table>
-    <div class="tableScroll" style="max-height:250px">
+    <div class="tableScroll" style="max-height:220px">
       <table class="table table-head-hidden">
         <thead>
           <tr>
@@ -929,22 +932,24 @@
 
   <script id="value-trend-panel" type="x-tmpl-mustache">
     <div id="trend-panel" class="panel panel-default">
-      <div class="panel-body" style="max-height:380px">
+      <div class="panel-body" style="max-height:420px">
         <span class="h4">{{standard}} data</span>
         <span class="pull-right btn btn-xs btn-default table-chart-toggle">Table</span>
         <div id="chart-demo-trend" style="max-height:100px"></div>
-        <div id="table-demo-trend" style="max-height:300px;display:none"></div>
-        <div>
-          <span>Agree?</span>
-          <div id="trend-agree-disagree" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these values">
-              <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
-              <span class="fa fa-thumbs-up"></span>
-            </label>
-            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these values">
-              <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
-              <span class="fa fa-thumbs-down"></span>
-            </label>
+        <div id="table-demo-trend" style="max-height:260px;display:none"></div>
+        <div class="panel panel-default" style="margin-bottom:0">
+          <div class="panel-body">
+            <span>Agree?</span>
+            <div id="trend-agree-disagree" class="btn-group" data-toggle="buttons">
+              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these values">
+                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+                <span class="fa fa-thumbs-up"></span>
+              </label>
+              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these values">
+                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+                <span class="fa fa-thumbs-down"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -982,17 +987,19 @@
         {{^areMedications}}
         No medications
         {{/areMedications}}
-        <div>
-          <span>Agree?</span>
-          <div id="medication-agree-disagree" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these medications">
-              <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
-              <span class="fa fa-thumbs-up"></span>
-            </label>
-            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these medications">
-              <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
-              <span class="fa fa-thumbs-down"></span>
-            </label>
+        <div class="panel panel-default" style="margin-bottom:0">
+          <div class="panel-body">
+            <span>Agree?</span>
+            <div id="medication-agree-disagree" class="btn-group" data-toggle="buttons">
+              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these medications">
+                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+                <span class="fa fa-thumbs-up"></span>
+              </label>
+              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these medications">
+                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+                <span class="fa fa-thumbs-down"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -1031,17 +1038,19 @@
         {{^areCodes}}
         <div>No codes</div>
         {{/areCodes}}
-        <div>
-          <span>Agree?</span>
-          <div id="other-codes-agree-disagree" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these codes">
-              <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
-              <span class="fa fa-thumbs-up"></span>
-            </label>
-            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these codes">
-              <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
-              <span class="fa fa-thumbs-down"></span>
-            </label>
+        <div class="panel panel-default" style="margin-bottom:0">
+          <div class="panel-body">
+            <span>Agree?</span>
+            <div id="other-codes-agree-disagree" class="btn-group" data-toggle="buttons">
+              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these codes">
+                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+                <span class="fa fa-thumbs-up"></span>
+              </label>
+              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these codes">
+                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+                <span class="fa fa-thumbs-down"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>

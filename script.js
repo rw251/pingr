@@ -1098,6 +1098,7 @@
 			}
 			populatePatientPanel(pathwayId, local.selected, standard, local.subselected, $(this).index(), sortAsc);
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+      clearBox();
 			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted');
 
@@ -1226,6 +1227,7 @@
 			}
 			populatePatientPanelOk(pathwayId, local.selected, local.subselected, $(this).index(), sortAsc);
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+      clearBox();
 			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted');
 
@@ -1250,6 +1252,7 @@
 		patientsPanel = $('#patients');
 
 		patientsPanel.on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+      clearBox();
 			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted');
 
@@ -1388,11 +1391,11 @@
       if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
         //unselecting
         if(checkbox.val()==="no"){
-          launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason("team", ACTIONID), function(){
+          launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason("team", ACTIONID), true, function(){
             editAction("team", ACTIONID, false, null, local.reason);
             updateTeamSapRows();
             wireUpTooltips();
-          }, function(){
+          }, null,function(){
             ignoreAction("team", ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
@@ -1415,7 +1418,7 @@
         //selecting
         var self = this;
         if(checkbox.val()==="no") {
-          launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason("team", ACTIONID), function(){
+          launchTeamModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason("team", ACTIONID), false, function(){
             editAction("team", ACTIONID, false, null, local.reason);
             $(self).removeClass("inactive");
 
@@ -1426,9 +1429,7 @@
             other.find("input[type=checkbox]").prop("checked", false);
             updateTeamSapRows();
             wireUpTooltips();
-          }), function(){
-
-          };
+          });
           e.stopPropagation();
           e.preventDefault();
         }
@@ -1565,11 +1566,11 @@
       if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
         //unselecting
         if(checkbox.val()==="no"){
-          launchPatientActionModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason(local.patientId, ACTIONID), function(){
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason(local.patientId, ACTIONID), true, function(){
             editAction(local.patientId, ACTIONID, false, null, local.reason);
             updateIndividualSapRows();
             wireUpTooltips();
-          }, function(){
+          }, null,function(){
             ignoreAction(local.patientId, ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
@@ -1592,7 +1593,7 @@
         //selecting
         var self = this;
         if(checkbox.val()==="no") {
-          launchPatientActionModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason(local.patientId, ACTIONID), function(){
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children().first().children().first().text(), getReason(local.patientId, ACTIONID), false, function(){
             editAction(local.patientId, ACTIONID, false, null, local.reason);
             $(self).removeClass("inactive");
 
@@ -1603,9 +1604,7 @@
             other.find("input[type=checkbox]").prop("checked", false);
             updateIndividualSapRows();
             wireUpTooltips();
-          }), function(){
-
-          };
+          });
           e.stopPropagation();
           e.preventDefault();
         }
@@ -1816,11 +1815,11 @@
       if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
         //unselecting
         if(checkbox.val()==="no"){
-          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), function(){
+          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), true, function(){
             editAction("team", ACTIONID, false, null, local.reason);
             updateWelcomePage();
             wireUpTooltips();
-          }, function(){
+          },null, function(){
             ignoreAction("team", ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
@@ -1843,7 +1842,7 @@
         //selecting
         var self = this;
         if(checkbox.val()==="no") {
-          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), function(){
+          launchTeamModal(local.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), getReason("team", ACTIONID), false, function(){
             editAction("team", ACTIONID, false, null, local.reason);
             $(self).removeClass("inactive");
 
@@ -1854,9 +1853,7 @@
             other.find("input[type=checkbox]").prop("checked", false);
             updateWelcomePage();
             wireUpTooltips();
-          }), function(){
-
-          };
+          });
           e.stopPropagation();
           e.preventDefault();
         }
@@ -1940,11 +1937,11 @@
       if($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')){
         //unselecting
         if(checkbox.val()==="no"){
-          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), function(){
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), true, function(){
             editAction(patientId, ACTIONID, false, null, local.reason);
             updateWelcomePage();
             wireUpTooltips();
-          }, function(){
+          }, null, function(){
             ignoreAction(patientId, ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
@@ -1967,7 +1964,7 @@
         //selecting
         var self = this;
         if(checkbox.val()==="no") {
-          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), function(){
+          launchPatientActionModal(local.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), getReason(patientId, ACTIONID), false, function(){
             editAction(patientId, ACTIONID, false, null, local.reason);
             $(self).removeClass("inactive");
 
@@ -1978,9 +1975,7 @@
             other.find("input[type=checkbox]").prop("checked", false);
             updateWelcomePage();
             wireUpTooltips();
-          }), function(){
-
-          };
+          });
           e.stopPropagation();
           e.preventDefault();
         }
@@ -2101,11 +2096,11 @@
       if($(this).hasClass("active") && other.hasClass("inactive")){
         //unselecting
         if(checkbox.val()==="no"){
-          launchStandardModal("Disagree with " + disagreeText, "?", getAgreeReason(pathwayId, pathwayStage, standard, patientId, item), function(){
+          launchStandardModal("Disagree with " + disagreeText, "?", getAgreeReason(pathwayId, pathwayStage, standard, patientId, item), true, function(){
             editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, local.reason.reasonText);
             wireUpAgreeDisagree(agreeDivSelector, getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             wireUpTooltips();
-          }, function(){
+          }, null, function(){
             editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null, "");
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
@@ -2128,7 +2123,7 @@
         //selecting
         var self = this;
         if(checkbox.val()==="no") {
-          launchStandardModal("Disagree with " + disagreeText, "?", "", function(){
+          launchStandardModal("Disagree with " + disagreeText, "", "", false, function(){
             editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, local.reason.reasonText);
             $(self).removeClass("inactive");
             checkbox.attr("checked","checked");
@@ -2138,9 +2133,7 @@
             other.find("input[type=checkbox]").prop("checked", false);
             wireUpAgreeDisagree(agreeDivSelector, getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             wireUpTooltips();
-          }), function(){
-
-          };
+          });
           e.stopPropagation();
           e.preventDefault();
         }
@@ -2639,7 +2632,11 @@
 	var drawTrendChart = function(patientId, pathwayId, pathwayStage, standard){
     var i,j;
 		destroyCharts(['chart-demo-trend']);
-		if(!local.data.patients[patientId][local.data[pathwayId][pathwayStage].standards[standard].chart[0]]) return;
+		if(!local.data.patients[patientId][local.data[pathwayId][pathwayStage].standards[standard].chart[0]]) {
+      $('#chart-demo-trend').html('No data for this patients');
+      $('#chart-demo-trend').parent().find('.table-chart-toggle').hide();
+      return;
+    }
 
     var chartData = local.data.patients[patientId][local.data[pathwayId][pathwayStage].standards[standard].chart[0]];
     var tableData = [];
@@ -3105,12 +3102,14 @@
     }, 2000);
   };
 
-  var launchModal = function(data, label, value, reasonText, callbackOnSave, callbackOnCancel){
+  var launchModal = function(data, label, value, reasonText, callbackOnSave, callbackOnCancel, callbackOnUndo){
     var template = $('#modal-why').html();
     Mustache.parse(template);   // optional, speeds up future uses
 
     var reasonTemplate = $('#modal-why-item').html();
     Mustache.parse(reasonTemplate);
+
+    if(data.reasons && data.reasons.length>0) data.hasReasons = true;
 
     var rendered = Mustache.render(template, data, {"item" : reasonTemplate});
     $('#modal').html(rendered);
@@ -3119,8 +3118,11 @@
       $('#modal textarea').val(reasonText);
     }
     local.modalSaved = false;
+    local.modalUndo = false;
 
-    $('#modal .modal').off('submit','form').on('submit', 'form', {"label" : label}, function(e){
+    $('#modal .modal').off('click', '.undo-plan').on('click', '.undo-plan', function(e){
+      local.modalUndo = true;
+    }).off('submit','form').on('submit', 'form', {"label" : label}, function(e){
       if(!e.data.label) e.data.label = "team";
       var reason = $('input:radio[name=reason]:checked').val();
       var reasonText = $('#modal textarea').val();
@@ -3138,6 +3140,9 @@
         local.modalSaved = false;
         if(callbackOnSave) callbackOnSave();
         //showSaved();
+      } else if(local.modalUndo){
+        local.modalUndo = false;
+        if(callbackOnUndo) callbackOnUndo();
       } else {
         //uncheck as cancelled. - but not if value is empty as this unchecks everything - or if already checked
         if(callbackOnCancel) callbackOnCancel();
@@ -3146,7 +3151,7 @@
     });
   };
 
-  var launchTeamModal = function(label, value, reason, callbackOnSave, callbackOnCancel){
+  var launchTeamModal = function(label, value, reason, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo){
     var reasons = [{"reason":"We've already done this","value":"done"},{"reason":"It wouldn't work","value":"nowork"},{"reason":"Other","value":"else"}];
     if(reason && reason.reason) {
       for(var i = 0; i < reasons.length; i++) {
@@ -3156,7 +3161,7 @@
         }
       }
     }
-    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Enter free-text here...", "reasons" : reasons},label, value, reason ? reason.reasonText : null, callbackOnSave, callbackOnCancel);
+    launchModal({"header" : "Disagree with a suggested action", "isUndo":isUndo, "item": value, "placeholder":"Enter free-text here...", "reasons" : reasons},label, value, reason ? reason.reasonText : null, callbackOnSave, callbackOnCancel, callbackOnUndo);
   };
 
   var launchPatientModal = function(pathwayId, pathwayStage, label, value, justtext){
@@ -3181,11 +3186,11 @@
     launchModal({"header" : header, "item" : value, "placeholder":"Provide more information here...", "reasons" : reasons},label, value);
   };
 
-  var launchStandardModal = function(header, value, reason, callbackOnSave, callbackOnCancel){
-    launchModal({"header" : header, "item": value, "placeholder":"Provide more information here..."},null, value, reason, callbackOnSave, callbackOnCancel);
+  var launchStandardModal = function(header, value, reason, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo){
+    launchModal({"header" : header, "isUndo":isUndo, "item": value, "placeholder":"Provide more information here..."},null, value, reason, callbackOnSave, callbackOnCancel, callbackOnUndo);
   };
 
-  var launchPatientActionModal = function(label, value, reason, callbackOnSave, callbackOnCancel){
+  var launchPatientActionModal = function(label, value, reason, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo){
     var reasons = [{"reason":"Already done this","value":"done"},{"reason":"Wouldn't work","value":"nowork"},{"reason":"Something else","value":"else"}];
     if(reason && reason.reason) {
       for(var i = 0; i < reasons.length; i++) {
@@ -3195,7 +3200,7 @@
         }
       }
     }
-    launchModal({"header" : "Disagree with a suggested action", "item": value, "placeholder":"Provide more information here...", "reasons" : reasons},label, value, reason ? reason.reasonText : null, callbackOnSave, callbackOnCancel);
+    launchModal({"header" : "Disagree with a suggested action", "isUndo":isUndo, "item": value, "placeholder":"Provide more information here...", "reasons" : reasons},label, value, reason ? reason.reasonText : null, callbackOnSave, callbackOnCancel, callbackOnUndo);
   };
 
   /*******************
@@ -3449,12 +3454,14 @@
     }
 
     if(hash === ''){
+      clearBox();
       showPage('login');
       $('html').removeClass('scroll-bar');
     } else {
       $('html').addClass('scroll-bar');
       var urlBits = hash.split('/');
       if(urlBits[0]==="#main") {
+        clearBox();
         var pathwayId = urlBits[1];
         var pathwayStage = urlBits[2];
         var yesPeople = urlBits[3] !== "no";
@@ -3482,6 +3489,7 @@
         wireUpTooltips();
 
       } else if (urlBits[0] === "#help") {
+        clearBox();
         showPage('help-page');
 
         showSidePanel();
@@ -3504,6 +3512,7 @@
           $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
         }
       } else if (urlBits[0] === "#welcome") {
+        clearBox();
         showPage('welcome');
 
         showSidePanel();
