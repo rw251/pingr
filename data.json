@@ -424,22 +424,28 @@
             "chart" : ["pefr"],
             "opportunities": [
               {
-                "name": "Suboptimal medication",
+                "name": "A/C recommended: nil prescribed",
                 "desc": "Patients who could have their medication optimised",
                 "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
                 "patients": [5550000041,6663175806,6663261095,6663284844,6663308051,6663395446,6663482379,6663577971,6663617291,6663623847,6663697995]
               },
               {
-                "name": "Medication non-adherence",
+                "name": "A/C recommended: AP only prescribed",
                 "desc": "Patients who may not be picking up their repeat medication regularly",
                 "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
                 "patients": [6663776929,6663846192,6663902625,6663976396,6664010860,6664015794,6664043449]
               },
               {
-                "name": "Referral to secondary care",
+                "name": "A/C NOT recommended: A/C prescribed",
                 "desc": "Patients who are on maximal anti-hypertensive medication",
                 "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
                 "patients": [6664109536,6664144142,6664212758,6664282657,6664302828,6664367625,6664390911,6664406296,6664456339,6664528017,6664551966,6664632673,6664723924]
+              },
+              {
+                "name": "Contraindication to anticoagulation – anticoagulant prescribed***",
+                "desc": "Patients who are on maximal anti-hypertensive medication",
+                "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
+                "patients": []
               }
             ]
           }
