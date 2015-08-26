@@ -170,16 +170,61 @@
     // <i class="fa fa-smile-o" style="color:green"></i> OK
     // <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity
     // Not relevant
-    var $standard = $(
-      '<span>' + standard.text + (local.data.patients[local.patientId].breach && local.data.patients[local.patientId].breach.filter(function(val){
-        return val.pathwayId===data.pathwayId && val.pathwayStage===data.pathwayStage && val.standard===data.standard;
-      }).length>0 ? ' <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity' : ' <i class="fa fa-smile-o" style="color:green"></i> OK') +'</span>'
-    );
+    var standardHtml = '';
+    //if diagnosis opportunity then not relevant for other stages
+    //if no mention anywhere then not relevant for that disease
+    switch(getPatientStatus(local.patientId, data.pathwayId, data.pathwayStage, data.standard)){
+      case "ok":
+        standardHtml = ' <i class="fa fa-smile-o" style="color:green"></i> OK';
+        break;
+      case "missed":
+        standardHtml = ' <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity';
+        break;
+      case "not":
+        standardHtml = ' <i class="fa fa-meh-o" style="color:gray"></i> Not relevant';
+        break;
+    }
+    var $standard = $('<span>' + standard.text + standardHtml +'</span>');
     return $standard;
+  };
+
+  var getPatientStatus = function(patientId, pathwayId, pathwayStage, standard){
+    if(local.data.patients[patientId].breach){
+      if(local.data.patients[patientId].breach.filter(function(val){
+        return val.pathwayId===pathwayId && val.pathwayStage===pathwayStage && val.standard===standard;
+      }).length>0) {
+        return "missed";
+      } else if(local.data.patients[patientId].breach.filter(function(val){
+        return val.pathwayId===pathwayId && val.pathwayStage==="diagnosis";
+      }).length>0 && pathwayStage!=="diagnosis"){
+        return "not";
+      } else if(local.data.patients[patientId].breach.filter(function(val){
+        return val.pathwayId===pathwayId;
+      }).length>0){
+        return "ok";
+      } else {
+        return "not";
+      }
+    } else {
+      return "not";
+    }
   };
 
   var showIndividualPatientPanel = function(pathwayId, pathwayStage, standard, patientId){
     var stan = local.data[pathwayId][pathwayStage].standards[standard] ? local.data[pathwayId][pathwayStage].standards[standard].tab.title : "UNSPECIFIED";
+
+    local.options.sort(function(a,b){
+      a = getPatientStatus(patientId, a.pathwayId, a.pathwayStage, a.standard);
+      b = getPatientStatus(patientId, b.pathwayId, b.pathwayStage, b.standard);
+
+      if(a===b) return 0;
+      if(a==="not") return 1;
+      if(b==="not") return -1;
+      if(a==="ok") return 1;
+      if(b==="ok") return -1;
+      alert("!!!!!!!");
+    });
+
     var panel = createPanel($('#patient-panel'), {"options":local.options,"standard":stan,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
 
     if(standard === null){
@@ -193,11 +238,11 @@
     var actionPlan = createIndividualActionPlanPanel(pathwayStage);
     $('#temp-hidden #patient-panel-right').html(actionPlan);
 
-    //var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
+    var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
     var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
-    //$('#temp-hidden #patient-panel-top').html(qualPanel);
+    $('#temp-hidden #patient-panel-top').html(qualPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
 
     if(farRightPanel.is(':visible')) {
@@ -205,7 +250,7 @@
         $(this).html($('#temp-hidden').html());
         $('#temp-hidden').html("");
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
-        //wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
+        wireUpQualStan(pathwayId, pathwayStage, standard, patientId);
         wireUpStandardDropDown(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         wireUpTrendPanel(pathwayId, pathwayStage, standard, patientId);
         wireUpMedicationPanel(pathwayId, pathwayStage, standard, patientId);
@@ -218,7 +263,7 @@
       farRightPanel.html($('#temp-hidden').html());
         $('#temp-hidden').html("");
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
-        //wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
+        wireUpQualStan(pathwayId, pathwayStage, standard, patientId);
         wireUpStandardDropDown(pathwayId, pathwayStage, standard, showIndividualPatientPanel);
         wireUpTrendPanel(pathwayId, pathwayStage, standard, patientId);
         wireUpMedicationPanel(pathwayId, pathwayStage, standard, patientId);
@@ -232,6 +277,19 @@
   //Show patient view from the all patient screen
   var showIndividualPatientView = function(pathwayId, pathwayStage, standard, patientId){
     local.patientId = patientId;
+    
+    local.options.sort(function(a,b){
+      a = getPatientStatus(patientId, a.pathwayId, a.pathwayStage, a.standard);
+      b = getPatientStatus(patientId, b.pathwayId, b.pathwayStage, b.standard);
+
+      if(a===b) return 0;
+      if(a==="not") return 1;
+      if(b==="not") return -1;
+      if(a==="ok") return 1;
+      if(b==="ok") return -1;
+      alert("!!!!!!!");
+    });
+
     var panel = createPanel($('#patient-panel'), {"options":local.options,"standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
 
     farRightPanel.html("");
@@ -240,11 +298,11 @@
     var actionPlan = createIndividualActionPlanPanel(pathwayStage);
     $('#temp-hidden #patient-panel-right').html(actionPlan);
 
-    //var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
+    var qualPanel = createQualStanPanel(pathwayId, pathwayStage, standard, patientId);
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
     var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
-    //$('#temp-hidden #patient-panel-top').html(qualPanel);
+    $('#temp-hidden #patient-panel-top').html(qualPanel);
     $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
 
     if(farRightPanel.is(':visible')) {
@@ -252,7 +310,7 @@
         $(this).html($('#temp-hidden').html());
           $('#temp-hidden').html("");
           wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
-          //wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientView);
+          wireUpQualStan(pathwayId, pathwayStage, standard, patientId);
           wireUpStandardDropDown(pathwayId, pathwayStage, standard, showIndividualPatientView);
           wireUpTrendPanel(pathwayId, pathwayStage, standard, patientId);
           wireUpMedicationPanel(pathwayId, pathwayStage, standard, patientId);
@@ -265,7 +323,7 @@
         farRightPanel.html($('#temp-hidden').html());
         $('#temp-hidden').html("");
         wireUpIndividualActionPlanPanel(pathwayId, pathwayStage, standard, patientId);
-        //wireUpQualStan(pathwayId, pathwayStage, standard, showIndividualPatientView);
+        wireUpQualStan(pathwayId, pathwayStage, standard, patientId);
         wireUpStandardDropDown(pathwayId, pathwayStage, standard, showIndividualPatientView);
         wireUpTrendPanel(pathwayId, pathwayStage, standard, patientId);
         wireUpMedicationPanel(pathwayId, pathwayStage, standard, patientId);
@@ -1633,25 +1691,32 @@
 
   var createQualStanPanel = function(pathwayId, pathwayStage, standard, patientId){
     var data = {"nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId};
-
-    var breaches = local.data.patients[patientId].breach.filter(function(v) {
-      return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
-    });
-
-    if(breaches.length>0){
-      data.section = {
-        "name" : local.data[pathwayId][pathwayStage].bdown[breaches[0].subsection].name,
-        "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
-        "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
-      }
-      data.category = {
-        "name" : local.data.patients[patientId].standards[pathwayId][pathwayStage][standard],
-        "agree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
-        "disagree" : getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
-      }
+    data.standard = local.pathwayNames[pathwayId] + ' - ' + pathwayStage;
+    if(local.data.patients[patientId].standards && local.data.patients[patientId].standards[pathwayId]
+      && local.data.patients[patientId].standards[pathwayId][pathwayStage]
+      && local.data.patients[patientId].standards[pathwayId][pathwayStage][standard]){
+        data.standard = local.data.patients[patientId].standards[pathwayId][pathwayStage][standard];
     }
 
-    return createPanel($('#qual-standard'), data, {"chk" : $('#checkbox-template').html() });
+    switch(getPatientStatus(patientId, pathwayId, pathwayStage, standard)){
+      case "ok":
+        data.achieved = true;
+        data.relevant = true;
+        break;
+      case "missed":
+        data.relevant = true;
+        data.achieved = false;
+        break;
+      case "not":
+        data.relevant = false;
+        break;
+    }
+
+    var agObj = getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "standard");
+    if(agObj && agObj.agree) data.agree = true;
+    else if(agObj && agObj.agree===false) data.disagree = true;
+
+    return createPanel($('#qual-standard'), data);
   };
 
   var wireUpStandardDropDown = function(pathwayId, pathwayStage, standard, callback){
@@ -1669,40 +1734,8 @@
     });
   };
 
-  var wireUpQualStan = function(pathwayId, pathwayStage, standard, callback){
-    $('#individual-panel-classification').on('change', '.btn-toggle input[type=checkbox]', function(){
-      updateQualStan();
-    }).on('click', '.btn-yes,.btn-no', function(e){
-      var checkbox = $(this).find("input[type=checkbox]");
-      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
-      var isClassification = $(this).closest('div').data("isClassification")!==undefined;
-
-      if($(this).hasClass("active") && other.hasClass("inactive")){
-        //unselecting
-        editPatientAgree(pathwayId, pathwayStage, standard, local.patientId, isClassification ? "section" : "category", null);
-        other.removeClass("inactive");
-      } else if(!$(this).hasClass("active") && other.hasClass("active")) {
-        //prevent clicking on unselected option
-        e.stopPropagation();
-        e.preventDefault();
-        return;
-      } else {
-        $(this).removeClass("inactive");
-        //unselect other
-        other.removeClass("active").addClass("inactive");
-        other.find("input[type=checkbox]").prop("checked", false);
-
-        //selecting
-        if(checkbox.val()==="no") launchPatientModal(pathwayId, pathwayStage, local.patientId, $(this).closest('div').data('text'), !isClassification);
-
-        editPatientAgree(pathwayId, pathwayStage, standard, local.patientId, isClassification ? "section" : "category", checkbox.val()==="yes");
-
-      }
-		});
-
-    wireUpStandardDropDown(pathwayId, pathwayStage, standard, callback);
-
-    updateQualStan();
+  var wireUpQualStan = function(pathwayId, pathwayStage, standard, patientId){
+    wireUpAgreeDisagreePanel($('#qual-agree-disagree'),$('#individual-panel-classification'),pathwayId, pathwayStage, standard, patientId, "standard", "quality standard");
   };
 
   var updateQualStan = function(){
@@ -3453,7 +3486,13 @@
       return true;
   };
 
+  var hideTooltips = function(){
+    $('[data-toggle="tooltip"]').tooltip('hide');
+  };
+
   var loadContent = function(hash, isPoppingState){
+    hideTooltips();
+
     var i;
     if(!isPoppingState) {
       window.location.hash = hash;
