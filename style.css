@@ -22,6 +22,14 @@ body.qof {
   margin-bottom: -15px;
 }
 
+.panel-body.success {
+  background-color: rgb(223, 240, 216);
+}
+
+.panel-body.danger {
+  background-color: #f2dede;
+}
+
 .btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
   color: white;
   background-color: #00b20b;
@@ -871,7 +879,7 @@ th,td {
 }
 
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
-  width: 520.542px;
+  width: 370.542px;
 /*  height: 36px;*/
 }
 
