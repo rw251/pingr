@@ -925,6 +925,15 @@ body > svg {
 }
 
 /* Allow column to stretch to height of container*/
+
+
+.tooltip-inner-saved {
+  color: white;
+  background: #00b20b;
+  border: solid 2px white;
+  border-radius: 15px;
+}
+
 .full-height-col-container {
 	overflow: hidden;
 	position: relative;
