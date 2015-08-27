@@ -13,6 +13,28 @@ body.qof {
   background-color: rgb(68, 157, 68);
 }
 
+span.standard-missed {
+  background-color: lightsalmon;
+}
+span.standard-achieved {
+  background-color: lightgreen;
+}
+span.standard-not-relevant {
+  background-color: lightgrey;
+}
+
+div.standard-missed-page {
+  background-color: lightsalmon;
+}
+
+div.standard-achieved-page {
+  background-color: lightgreen;
+}
+
+div.standard-not-relevant-page {
+  background-color: lightgrey;
+}
+
 .row.row-top {
   margin-top: -15px;
   margin-bottom: 8px;

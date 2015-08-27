@@ -175,16 +175,16 @@
     //if no mention anywhere then not relevant for that disease
     switch(getPatientStatus(local.patientId, data.pathwayId, data.pathwayStage, data.standard)){
       case "ok":
-        standardHtml = ' <i class="fa fa-smile-o" style="color:green"></i> OK';
+        standardHtml = '<span class="standard-achieved">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i> OK</span>';
         break;
       case "missed":
-        standardHtml = ' <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity';
+        standardHtml = '<span class="standard-missed">' + standard.text + ' <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity</span>';
         break;
       case "not":
-        standardHtml = ' <i class="fa fa-meh-o" style="color:gray"></i> Not relevant';
+        standardHtml = '<span class="standard-not-relevant">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i> Not relevant</span>';
         break;
     }
-    var $standard = $('<span>' + standard.text + standardHtml +'</span>');
+    var $standard = $(standardHtml);
     return $standard;
   };
 
@@ -294,6 +294,7 @@
       //Show patient but don't select
       var p = createPanel($('#patient-panel'), {"options":local.options, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
       farRightPanel.html(p).show();
+      farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
 
       $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity, placeholder: "Please select a quality standard..."});
       $('span.select2-selection__rendered').attr("title","");
@@ -1713,16 +1714,21 @@
         data.standard = local.data.patients[patientId].standards[pathwayId][pathwayStage][standard];
     }
 
+    data.tooltip = local.data[pathwayId][pathwayStage].standards[standard].tab.tooltip;
+
     switch(getPatientStatus(patientId, pathwayId, pathwayStage, standard)){
       case "ok":
+        farRightPanel.removeClass('standard-missed-page').addClass('standard-achieved-page').removeClass('standard-not-relevant-page');
         data.achieved = true;
         data.relevant = true;
         break;
       case "missed":
+        farRightPanel.addClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
         data.relevant = true;
         data.achieved = false;
         break;
       case "not":
+        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').addClass('standard-not-relevant-page');
         data.relevant = false;
         break;
     }

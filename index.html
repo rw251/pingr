@@ -761,7 +761,7 @@
       <div id="individual-panel-classification" class="panel-grey panel-body" style="padding: 3px 0px 3px 30px;">
         {{#relevant}}
           <span> Quality standard: </span>
-          <span><strong>{{standard}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the standard?"></i></span>
+          <span><strong>{{standard}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="{{tooltip}}"></i></span>
           <span>{{#achieved}} -  <i class="fa fa-smile-o" style="color:green"></i> Achieved{{/achieved}}{{^achieved}} - <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity{{/achieved}}</span>
         {{/relevant}}
         {{^relevant}}
