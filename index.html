@@ -761,7 +761,7 @@
       <div id="individual-panel-classification" class="panel-grey panel-body" style="padding: 3px 0px 3px 30px;">
         {{#relevant}}
           <span> Quality standard: </span>
-          <span><strong>{{standard}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="This text needs populating - will it be the same for all or is it specific to the standard?"></i></span>
+          <span><strong>{{standard}}</strong> <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="{{tooltip}}"></i></span>
           <span>{{#achieved}} -  <i class="fa fa-smile-o" style="color:green"></i> Achieved{{/achieved}}{{^achieved}} - <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity{{/achieved}}</span>
         {{/relevant}}
         {{^relevant}}
@@ -1062,12 +1062,14 @@
       <span style="display: block;overflow: hidden;padding-right: 5px;padding-left: 10px;padding-top:2px"
             data-toggle="tooltip" data-placement="top" title="Use this to select other quality standards for this patient">
         <select style="width:100%">
+          <option></option>
           {{#options}}
           {{>option}}
           {{/options}}
         </select>
       </span>
     </div>
+    {{#pathwayStage}}
     <div class="container-fluid">
       <div id="patient-panel-top">
       </div>
@@ -1092,6 +1094,12 @@
         </div>
       </div>
     </div>
+    {{/pathwayStage}}
+    {{^pathwayStage}}
+    <div style="text-align:center;font-size:20px;margin-top:300px">
+      <h3><i class="fa fa-hand-o-up"></i>&nbsp; Please select a quality standard from the drop-down menu above</h3>
+    </div>
+    {{/pathwayStage}}
   </script>
 
   <script id="pathway-panel-radio" type="x-tmpl-mustache">
