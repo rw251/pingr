@@ -13,6 +13,28 @@ body.qof {
   background-color: rgb(68, 157, 68);
 }
 
+span.standard-missed {
+  background-color: lightsalmon;
+}
+span.standard-achieved {
+  background-color: lightgreen;
+}
+span.standard-not-relevant {
+  background-color: lightgrey;
+}
+
+div.standard-missed-page {
+  background-color: lightsalmon;
+}
+
+div.standard-achieved-page {
+  background-color: lightgreen;
+}
+
+div.standard-not-relevant-page {
+  background-color: lightgrey;
+}
+
 .row.row-top {
   margin-top: -15px;
   margin-bottom: 8px;
@@ -20,6 +42,14 @@ body.qof {
 
 .row.row-mid>div {
   margin-bottom: -15px;
+}
+
+.panel-body.success {
+  background-color: rgb(223, 240, 216);
+}
+
+.panel-body.danger {
+  background-color: #f2dede;
 }
 
 .btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
@@ -107,6 +137,7 @@ hr{
   margin-top: 0px;
   margin-bottom: 40px;
   border-top: 0px solid #7e818d;
+  border-bottom: 3px solid #7e818d;
 }
 
 .info-button {
@@ -871,7 +902,7 @@ th,td {
 }
 
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
-  width: 520.542px;
+  width: 370.542px;
 /*  height: 36px;*/
 }
 
