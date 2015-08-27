@@ -277,7 +277,7 @@
   //Show patient view from the all patient screen
   var showIndividualPatientView = function(pathwayId, pathwayStage, standard, patientId){
     local.patientId = patientId;
-    
+
     local.options.sort(function(a,b){
       a = getPatientStatus(patientId, a.pathwayId, a.pathwayStage, a.standard);
       b = getPatientStatus(patientId, b.pathwayId, b.pathwayStage, b.standard);
@@ -289,6 +289,20 @@
       if(b==="ok") return -1;
       alert("!!!!!!!");
     });
+
+    if(pathwayId===null){
+      //Show patient but don't select
+      var p = createPanel($('#patient-panel'), {"options":local.options, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
+      farRightPanel.html(p).show();
+
+      $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity, placeholder: "Please select a quality standard..."});
+      $('span.select2-selection__rendered').attr("title","");
+      $('select').on('change', function(){
+        var data = $(this).find(':selected').data();
+        showIndividualPatientView(data.pathwayId, data.pathwayStage, data.standard, local.patientId);
+      });
+      return;
+    }
 
     var panel = createPanel($('#patient-panel'), {"options":local.options,"standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
 
@@ -351,7 +365,8 @@
     }
 
     if(patientId){
-      showIndividualPatientView(local.data.patients[patientId].breach[0].pathwayId, local.data.patients[patientId].breach[0].pathwayStage,local.data.patients[patientId].breach[0].standard, patientId);
+      //showIndividualPatientView(local.data.patients[patientId].breach[0].pathwayId, local.data.patients[patientId].breach[0].pathwayStage,local.data.patients[patientId].breach[0].standard, patientId);
+      showIndividualPatientView(null, null, null, patientId);
     }
   };
 
@@ -3084,34 +3099,11 @@
 	var displaySelectedPatient = function(id){
     var nhs = local.patLookup ? local.patLookup[id] : id;
 
-    /*if(local.data.patients[id].breach.length===1){
-      //only one match so can go straight to that page
-
-      local.pathwayId = local.data.patients[id].breach[0].pathwayId;
-      var pathwayStage = local.data.patients[id].breach[0].pathwayStage;
-      var subsection = local.data.patients[id].breach[0].subsection;
-
-      // keep the link in the browser history
-      history.pushState(null, null, '#main/'+local.pathwayId+'/'+pathwayStage);
-      loadContent('#main/'+local.pathwayId+'/'+pathwayStage, true);
-
-      populatePatientPanel(local.pathwayId, pathwayStage, subsection);
-      local.subselected = subsection;
-
-      showPathwayStageView(local.pathwayId, pathwayStage);
-      showPathwayStagePatientView(id, local.pathwayId, local.selected, false);
-
-      $('.list-item').removeClass('highlighted');
-      $('.list-item:has(button[data-clipboard-text=' + nhs +'])').addClass('highlighted');
-    }
-    else {*/
-      // keep the link in the browser history
     history.pushState(null, null, '#patients/'+id);
     loadContent('#patients/'+id, true);
 
     $('.list-item').removeClass('highlighted');
     $('.list-item:has(button[data-clipboard-text=' + nhs +'])').addClass('highlighted');
-    //}
 
     //scroll to patients
     $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0,$('#patients td:contains(' + nhs + ')').position().top-140);

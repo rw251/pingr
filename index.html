@@ -1062,12 +1062,14 @@
       <span style="display: block;overflow: hidden;padding-right: 5px;padding-left: 10px;padding-top:2px"
             data-toggle="tooltip" data-placement="top" title="Use this to select other quality standards for this patient">
         <select style="width:100%">
+          <option></option>
           {{#options}}
           {{>option}}
           {{/options}}
         </select>
       </span>
     </div>
+    {{#pathwayStage}}
     <div class="container-fluid">
       <div id="patient-panel-top">
       </div>
@@ -1092,6 +1094,12 @@
         </div>
       </div>
     </div>
+    {{/pathwayStage}}
+    {{^pathwayStage}}
+    <div style="text-align:center;font-size:20px;margin-top:300px">
+      <h3><i class="fa fa-hand-o-up"></i>&nbsp; Please select a quality standard from the drop-down menu above</h3>
+    </div>
+    {{/pathwayStage}}
   </script>
 
   <script id="pathway-panel-radio" type="x-tmpl-mustache">
