@@ -137,6 +137,7 @@ hr{
   margin-top: 0px;
   margin-bottom: 40px;
   border-top: 0px solid #7e818d;
+  border-bottom: 3px solid #7e818d;
 }
 
 .info-button {
