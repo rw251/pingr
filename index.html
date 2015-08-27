@@ -1405,7 +1405,8 @@
   </script>
 
   <script id="pathway-picker-item" type="x-tmpl-mustache">
-    {{#isBreakAbove}}<hr>{{/isBreakAbove}}
+    {{#isBreakAbovePractice}}<hr>PRACTICE-LEVEL DATA{{/isBreakAbovePractice}}
+    {{#isBreakAbovePatient}}<hr>PATIENT-LEVEL DATA{{/isBreakAbovePatient}}
     <li {{#isSelected}}class="active"{{/isSelected}}>
       <a href="#{{link}}">
         <i class="fa {{faIcon}}"></i>

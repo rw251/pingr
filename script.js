@@ -3459,12 +3459,12 @@
     Mustache.parse(itemTemplate);
 
     list = list.slice();
-    list[0].isBreakAbove = true;
+    list[0].isBreakAbovePractice = true;
     for(var i = 0; i < list.length; i++){
       list[i].hasSubItems = true;
     }
     list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Home"});
-    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbove":true});
+    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; return v; });
 
