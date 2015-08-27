@@ -71,10 +71,12 @@
     //Show overview panels
     showOverviewPanels();
     showTeamActionPlanPanel(farRightPanel);
+    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
   };
 
   //Show the pathway stage for a disease
   var showPathwayStageView = function(pathwayId, pathwayStage, standard, shouldFade){
+    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
     local.pathwayId = pathwayId;
     showMainView(local.diseases.map(function(v){ return v.id; }).indexOf(pathwayId));
 
@@ -118,6 +120,7 @@
   };
 
   var showPathwayStageViewOk = function(pathwayId, pathwayStage, shouldFade){
+    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
     showMainView(local.diseases.map(function(v){ return v.id; }).indexOf(pathwayId));
 
     $('aside li ul li').removeClass('active');
@@ -1218,9 +1221,18 @@
   			tooltip: {
   				format: {
             name: function (name,a,b) {
-              return "n";
+              var text=local.data[pathwayId][pathwayStage].standards[standard].opportunities[local.index].desc;
+              var html = "";
+              while(text.length>40) {
+                if(text.indexOf(' ', 40) < 0) break;
+                html += text.substr(0,text.indexOf(' ', 40)) + '<br>';
+                text = text.substr(text.indexOf(' ', 40)+1);
+              }
+              html += text;
+              return html;
             },
-  					value: function (value) { //function(value, ratio, id, index) {
+  					value: function (value, ratio, id, index) {
+              local.index = index;
   						return value;
   					}
   				}
