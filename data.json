@@ -259,7 +259,7 @@
         "patientsOk" :[5556359342,5556445952,5556474770,5556560995,5556658291,5557057422,5557142142,5557162124,5557195403,5557292078,5557335333,5557427267,5557476564],
         "standards":{
           "excl" : {
-            "tab" : {"title":"Exclusions","tooltip":""},
+            "tab" : {"title":"Exclusions","tooltip":"Additional patients who may benefit from exclusion from hypertension quality standards"},
             "chartTitle" : "Categories of patients with hypertension who may benefit from being excluded from quality standards",
             "tableTitle" : "Patients with hypertension who may benefit from being excluded from quality standards",
             "valueId" : "sbp",
@@ -389,7 +389,7 @@
             "tab" : {"title":"Stroke risk","tooltip":"Patients with atrial fibrillation who have not had their stroke risk assessed using the CHA2DS2Vasc score in the last 12 months (unless their previous score was >1)"},
             "chartTitle" : "Improvement opportunity categories for patients with AF who have not had a CHA2DS2Vasc score in the last 12 months (unless previous score >1)",
             "tableTitle" : "Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months (unless previous score >1)",
-            "valueId" : "chads",
+            "valueId" : "CHA2DS2Vasc",
             "valueName" : "Last CHA2DS2Vasc date",
             "dateORvalue" : "date",
             "chart" : ["CHA2DS2Vasc"],
@@ -496,12 +496,13 @@
         "patientsOk" : [6669227708,6669293812,6669296816,6669345201,6669401992],
         "standards": {
           "anticoag-rx" :{
-            "tab" : {"title":"Anticoagulation","tooltip":""},
-            "chartTitle" : "Opportunities to improve anticoagulation treatment",
-            "valueId" : "pefr",
+            "tab" : {"title":"Anticoagulation","tooltip":"Patients with AF who have a CHA2DS2Vasc score >1 that are not prescribed anticoagulants"},
+            "chartTitle" : "Improvement opportunity categories for patients with AF who have a CHA2DS2Vasc score >1 that are not prescribed anticoagulants",
+            "tableTitle" : "Patients with AF who have a CHA2DS2Vasc score >1 that are not prescribed anticoagulants",
+            "valueId" : "CHA2DS2Vasc",
             "valueName" : "CHA2DS2Vasc",
             "dateORvalue" : "value",
-            "chart" : ["pefr"],
+            "chart" : ["CHA2DS2Vasc"],
             "opportunities": [
               {
                 "name": "A/C recommended: nil prescribed",
@@ -532,30 +533,30 @@
         }
       },
       "exclusions": {
-        "header":"Patients who have not had their hypertension monitored",
+        "header":"Additional patients who may benefit from exclusion from atrial fibrillation quality standards",
         "trend" : [
           ["x","2015-05-01","2015-04-30","2015-04-29","2015-04-28","2015-04-27","2015-04-26","2015-04-25","2015-04-24","2015-04-23","2015-04-22","2015-04-21","2015-04-20","2015-04-19","2015-04-18","2015-04-17","2015-04-16","2015-04-15","2015-04-14","2015-04-13","2015-04-12","2015-04-11","2015-04-10","2015-04-09","2015-04-08","2015-04-07","2015-04-06","2015-04-05","2015-04-04","2015-04-03","2015-04-02","2015-04-01","2015-03-31","2015-03-30","2015-03-29","2015-03-28","2015-03-27","2015-03-26","2015-03-25","2015-03-24","2015-03-23","2015-03-22","2015-03-21","2015-03-20","2015-03-19","2015-03-18","2015-03-17","2015-03-16","2015-03-15","2015-03-14","2015-03-13","2015-03-12","2015-03-11","2015-03-10","2015-03-09","2015-03-08","2015-03-07","2015-03-06","2015-03-05","2015-03-04","2015-03-03","2015-03-02","2015-03-01","2015-02-28","2015-02-27","2015-02-26","2015-02-25","2015-02-24","2015-02-23","2015-02-22","2015-02-21","2015-02-20","2015-02-19","2015-02-18","2015-02-17","2015-02-16","2015-02-15","2015-02-14","2015-02-13","2015-02-12","2015-02-11","2015-02-10","2015-02-09","2015-02-08","2015-02-07","2015-02-06","2015-02-05","2015-02-04","2015-02-03","2015-02-02","2015-02-01"],
           ["%",60,60,60,61,61,61,62,63,64,64,63,63,63,63,65,65,66,67,66,66,66,68,66,68,68,68,69,71,72,73,75,74,73,75,73,73,72,70,73,72,73,74,72,73,74,73,72,70,67,66,67,65,66,63,64,62,63,62,62,58,59,59,59,58,55,52,50,50,47,47,48,48,48,50,50,50,50,50,50,50,51,51,50,50,47,47,48,45,45,42],
           ["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
         ],
         "text" :{
-          "page": {"text":"Atrial fibrillation - monitoring (practice-level data)"},
-          "panel": {"text":"Patients who have not had their asthma monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK"},
-          "panelNotOk": {"text":"Improvement Opportunities"},
-          "panelOkHeader" : {"text" : "Patients with hypertension who have been monitored as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
-          "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
+          "page": {"text":"Atrial fibrillation: Exclusions (practice-level data)"},
+          "panel": {"text":"Additional patients who may benefit from exclusion from atrial fibrrilation quality standards", "tooltip" : "Patients at your practice with diagnosis of atrial fibrillation and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
+          "panelOk": {"text":"Excluded already","tooltip": "Patients with atrial fibrillation who have an exclusion code in their medical record"},
+          "panelNotOk": {"text" : "Opportunities for exclusion", "tooltip": "Patients with atrial fibrillation who may benefit from being excluded from quality standards"},
+          "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have an exclusion code in their medical record"},
+          "patientListHeader" : {"text":"Current patients who have not had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
         },
         "patientsOk" : [],
         "standards": {
           "excl" :{
-            "tab" : {"title":"","tooltip":""},
-            "chartTitle" : "",
-            "valueId" : "pefr",
-            "valueName" : "Last PEFR",
+            "tab" : {"title":"Exclusions","tooltip":"Additional patients who may benefit from exclusion from atrial fibrillation quality standards"},
+            "chartTitle" : "Categories of patients with atrial fibrillation who may benefit from being excluded from quality standards",
+            "valueId" : "CHA2DS2Vasc",
+            "valueName" : "Last CHA2DS2Vasc",
             "dateORvalue" : "value",
-            "chart" : ["pefr"],
+            "chart" : ["CHA2DS2Vasc"],
             "opportunities": [
               {
                 "name": "Palliative Care",
@@ -565,75 +566,51 @@
                 "patients":[6665994176,6666051664,6666073709,6666149338,6666159822,6666190660,6666241997,6666242352,6666284912,6666340645]
               },
               {
-                "name": "Exclusion code",
-                "desc": "Exclusion code",
-                "n": 20,
-                "percentage": 41.7,
-                "patients": [6666359342,6666445952,6666474770,6666560995,6666658291,6666671587,6666753852,6666799251,6666845192,6666879657,6666956733,6667018373,6667057422,6667142142,6667162124,6667195403,6667292078,6667335333,6667427267,6667476564]
-              },
-              {
-                "name": "Hypotension",
-                "desc": "Patients who have a postural hypotension code",
+                "name": "Haemorrhagic CVA",
+                "desc": "Patients who have previously experienced a haemorrha stroke that may be contraindicated to anticoagulants",
                 "n": 14,
                 "percentage": 29.2,
-                "patients": [6667492389,6667516551,6667606489,6667685811,6667741611,6667782914,6667818889,6667887258,6667950983,6667989507,6668043481,6668079663,6668155912,6668167715]
-              },
-              {
-                "name": "White coat hypertension",
-                "desc": "White coat hypertension",
-                "n": 4,
-                "percentage": 8.3,
-                "patients": [6668176883,6668224981,6668318019,6668343811]
+                "patients": [6667492389,6667516551,6667606489]
               }
             ]
           }
         }
       },
       "diagnosis": {
-        "header":"Patients who have not had their hypertension monitored",
+        "header":"Undiagnosed atrial fibrillation",
         "trend" : [
           ["x","2015-05-01","2015-04-30","2015-04-29","2015-04-28","2015-04-27","2015-04-26","2015-04-25","2015-04-24","2015-04-23","2015-04-22","2015-04-21","2015-04-20","2015-04-19","2015-04-18","2015-04-17","2015-04-16","2015-04-15","2015-04-14","2015-04-13","2015-04-12","2015-04-11","2015-04-10","2015-04-09","2015-04-08","2015-04-07","2015-04-06","2015-04-05","2015-04-04","2015-04-03","2015-04-02","2015-04-01","2015-03-31","2015-03-30","2015-03-29","2015-03-28","2015-03-27","2015-03-26","2015-03-25","2015-03-24","2015-03-23","2015-03-22","2015-03-21","2015-03-20","2015-03-19","2015-03-18","2015-03-17","2015-03-16","2015-03-15","2015-03-14","2015-03-13","2015-03-12","2015-03-11","2015-03-10","2015-03-09","2015-03-08","2015-03-07","2015-03-06","2015-03-05","2015-03-04","2015-03-03","2015-03-02","2015-03-01","2015-02-28","2015-02-27","2015-02-26","2015-02-25","2015-02-24","2015-02-23","2015-02-22","2015-02-21","2015-02-20","2015-02-19","2015-02-18","2015-02-17","2015-02-16","2015-02-15","2015-02-14","2015-02-13","2015-02-12","2015-02-11","2015-02-10","2015-02-09","2015-02-08","2015-02-07","2015-02-06","2015-02-05","2015-02-04","2015-02-03","2015-02-02","2015-02-01"],
           ["%",60,60,60,61,61,61,62,63,64,64,63,63,63,63,65,65,66,67,66,66,66,68,66,68,68,68,69,71,72,73,75,74,73,75,73,73,72,70,73,72,73,74,72,73,74,73,72,70,67,66,67,65,66,63,64,62,63,62,62,58,59,59,59,58,55,52,50,50,47,47,48,48,48,50,50,50,50,50,50,50,51,51,50,50,47,47,48,45,45,42],
           ["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
         ],
         "text" :{
-          "page": {"text":"Atrial fibrillation - diagnosis (practice-level data)"},
-          "panel": {"text":"Patients who have not had their asthma monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK"},
-          "panelNotOk": {"text":"Improvement Opportunities"},
-          "panelOkHeader" : {"text" : "Patients with hypertension who have been monitored as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
-          "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
+          "page": {"text":"Atrial fibrillation: Diagnosis (practice-level data)"},
+          "panel": {"text":"Undiagnosed atrial fibrillation", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
+          "panelOk": {"text":"Patients diagnosed OK","tooltip":"Patients who have been diagnosed with atrial fibrillation"},
+          "panelNotOk": {"text":"Patients with improvement opportunities","tooltip":"Patients with opportunities to have atrial fibrillation diagnosed"},
+          "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been diagnosed as per clinical guidelines"},
+          "patientListHeader" : {"text":"Current patients who have not had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
         },
-        "patientsOk" : [],
+        "patientsOk" : [6660777945,6660891861,6661024247,6661262910],
         "standards": {
           "af" :{
-            "tab" : {"title":"tba","tooltip":""},
-            "chartTitle" : "tba",
-            "valueId" : "pefr",
-            "valueName" : "Last PEFR",
+            "tab" : {"title":"Undiagnosed atrial fibrillation","tooltip":"Patients with potentially undiagnosed atrial fibrillation"},
+            "chartTitle" : "Types of patient with potentially undiagnosed atrial fibrillation",
+            "valueId" : "pulse",
+            "valueName" : "Last pulse date",
             "dateORvalue" : "value",
-            "chart" : ["pefr"],
+            "chart" : ["pulse"],
             "opportunities":  [
               {
-                "name": "HTN",
-                "desc": "Patients who likely have hypertension",
+                "name": "AF likeley",
+                "desc": "Patients who likely have atrial fibrillation because they are already prescibed an abticoagulant but do not have a diagnostic code in their medical record",
                 "patients":[6668427022,6668488560,6668534144,6668632333,6668649101,6668678386,6668698566,6668701500,6668775716,6668822253,6668833890,6668916157]
               },
               {
-                "name": "CKD",
-                "desc": "Patients who likely have Chronic Kidney Disease",
+                "name": "Require further testing",
+                "desc": "Patients who require further testing (e.g. ECGs) because they have an irregular pulse code in their medical record",
                 "patients": [6668943913,6669033587,6669122609,6669136270,6669154739]
-              },
-              {
-                "name": "DM",
-                "desc": "Patients who likely have Diabetes",
-                "patients": [6669227708,6669293812,6669296816,6669345201,6669401992,6669490326,6669545413,6669596469]
-              },
-              {
-                "name": "PROT",
-                "desc": "Patients who likely have Proteinuria",
-                "patients": []
               }
             ]
           }
@@ -656,7 +633,7 @@
     "1Z1.." : "Chronic Kidney Disease"
   },
   "patients" : {
-    "5550000041": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Fenoterol", "dose":"200mcrg", "last":"2013-07-12"},{"name":"Propranolol", "dose":"160mg", "last":"2014-09-28"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]], "asthma" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["PEFR", "109", "117", "125", "105", "110", "105"] ], "sbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["SBP", "145", "136", "134", "151", "159", "171"] ], "dbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["DBP", "109", "117", "125", "105", "110", "105"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months", "renal" : "Measure every 9 months" } }, "af" : { "treatment" : { "asthma" : "Untreated" } } }, "contacts": [{"value": "2013-01-29", "text": "Mediation changed"}, {"value": "2014-01-30", "text": "Face-to-face encounter"}] },
+    "5550000041": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Fenoterol", "dose":"200mcrg", "last":"2013-07-12"},{"name":"Propranolol", "dose":"160mg", "last":"2014-09-28"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]], "CHA2DS2Vasc" : [ ["x", "2012-06-19", "2015-08-03"],  ["CHA2DS2Vasc", "0", "1"] ], "asthma" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["PEFR", "109", "117", "125", "105", "110", "105"] ], "sbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["SBP", "145", "136", "134", "151", "159", "171"] ], "dbp" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["DBP", "109", "117", "125", "105", "110", "105"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months", "renal" : "Measure every 9 months" } }, "af" : { "treatment" : { "asthma" : "Untreated" } } }, "contacts": [{"value": "2013-01-29", "text": "Mediation changed"}, {"value": "2014-01-30", "text": "Face-to-face encounter"}] },
     "5550069950": { "sbp" : [ ["x", "2012-05-12", "2012-10-16", "2013-02-19", "2013-06-19", "2013-12-26", "2014-03-16"], ["SBP", "107", "117", "114", "99", "109", "119"] ], "dbp" : [ ["x", "2012-05-12", "2012-10-16", "2013-02-19", "2013-06-19", "2013-12-26", "2014-03-16"], ["DBP", "53", "66", "59", "75", "61", "43"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-10-11", "text": "Face-to-face encounter"}, {"value": "2013-08-10", "text": "Mediation decreased"}] },
     "5550154103": { "sbp" : [ ["x", "2012-06-19", "2012-12-23", "2013-04-03", "2013-09-18", "2013-11-12", "2014-01-29"], ["SBP", "106", "116", "125", "144", "124", "114"] ], "dbp" : [ ["x", "2012-06-19", "2012-12-23", "2013-04-03", "2013-09-18", "2013-11-12", "2014-01-29"], ["DBP", "86", "106", "93", "88", "89", "70"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-11-29", "text": "Face-to-face encounter"}, {"value": "2013-01-19", "text": "Face-to-face encounter"}] },
     "5550242024": { "sbp" : [ ["x", "2012-06-15", "2012-12-04", "2013-03-03", "2013-06-17", "2013-08-15", "2013-12-21"], ["SBP", "138", "137", "126", "146", "153", "144"] ], "dbp" : [ ["x", "2012-06-15", "2012-12-04", "2013-03-03", "2013-06-17", "2013-08-15", "2013-12-21"], ["DBP", "90", "70", "86", "100", "85", "100"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-10-21", "text": "Face-to-face encounter"}, {"value": "2013-11-28", "text": "Mediation changed"}] },
@@ -809,7 +786,7 @@
     "5557516551": { "sbp" : [ ["x", "2012-06-02", "2012-11-07", "2013-04-06", "2013-10-03", "2014-01-16", "2014-04-14"], ["SBP", "133", "142", "148", "141", "156", "156"] ], "dbp" : [ ["x", "2012-06-02", "2012-11-07", "2013-04-06", "2013-10-03", "2014-01-16", "2014-04-14"], ["DBP", "91", "76", "70", "68", "74", "90"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-12-09", "text": "Face-to-face encounter"}, {"value": "2013-03-06", "text": "Face-to-face encounter"}] },
     "5557606489": { "sbp" : [ ["x", "2012-08-03", "2012-10-09", "2013-04-03", "2013-10-18", "2013-12-14", "2014-05-02"], ["SBP", "126", "135", "147", "155", "150", "160"] ], "dbp" : [ ["x", "2012-08-03", "2012-10-09", "2013-04-03", "2013-10-18", "2013-12-14", "2014-05-02"], ["DBP", "89", "85", "101", "99", "101", "111"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-08-17", "text": "Face-to-face encounter"}, {"value": "2014-03-16", "text": "Mediation increased"}] },
     "5557685811": { "sbp" : [ ["x", "2012-03-24", "2012-07-25", "2013-01-09", "2013-05-04", "2013-08-19", "2014-02-12"], ["SBP", "146", "128", "119", "118", "136", "132"] ], "dbp" : [ ["x", "2012-03-24", "2012-07-25", "2013-01-09", "2013-05-04", "2013-08-19", "2014-02-12"], ["DBP", "105", "117", "111", "108", "104", "93"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-06-10", "text": "Mediation decreased"}, {"value": "2013-09-17", "text": "Mediation changed"}] },
-    "5557741611": { "sbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11"], ["SBP", "138", "155", "153", "139", "150", "182"] ], "dbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11"], ["DBP", "101", "91", "71", "77", "85", "83"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-06-06", "text": "Mediation increased"}, {"value": "2013-08-03", "text": "Face-to-face encounter"}] },
+    "5557741611": { "sbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11", "2015-03-11"], ["SBP", "138", "155", "153", "139", "150", "142", "182"] ], "dbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11", "2015-03-11"], ["DBP", "101", "91", "71", "77", "85", "83", "91"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-06-06", "text": "Medication increased"}, {"value": "2013-08-18", "text": "Face-to-face encounter"}] },
     "5557782914": { "sbp" : [ ["x", "2012-09-14", "2012-12-07", "2013-04-19", "2013-08-17", "2014-01-03", "2014-03-25"], ["SBP", "91", "101", "111", "100", "110", "110"] ], "dbp" : [ ["x", "2012-09-14", "2012-12-07", "2013-04-19", "2013-08-17", "2014-01-03", "2014-03-25"], ["DBP", "55", "55", "49", "59", "50", "33"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-10-02", "text": "Face-to-face encounter"}, {"value": "2012-10-02", "text": "Mediation decreased"}] },
     "5557818889": { "sbp" : [ ["x", "2012-06-16", "2012-11-20", "2013-02-15", "2013-07-29", "2013-09-28", "2014-01-10"], ["SBP", "142", "152", "144", "135", "116", "130"] ], "dbp" : [ ["x", "2012-06-16", "2012-11-20", "2013-02-15", "2013-07-29", "2013-09-28", "2014-01-10"], ["DBP", "118", "125", "105", "97", "103", "107"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-08", "text": "Mediation changed"}, {"value": "2013-06-23", "text": "Mediation increased"}] },
     "5557887258": { "sbp" : [ ["x", "2012-06-24", "2012-09-10", "2012-11-29", "2013-05-21", "2013-12-06", "2014-06-08"], ["SBP", "131", "115", "108", "118", "138", "119"] ], "dbp" : [ ["x", "2012-06-24", "2012-09-10", "2012-11-29", "2013-05-21", "2013-12-06", "2014-06-08"], ["DBP", "101", "92", "112", "113", "114", "122"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-10-28", "text": "Mediation decreased"}, {"value": "2014-05-26", "text": "Face-to-face encounter"}] },
@@ -858,7 +835,7 @@
     "5559995772": { "sbp" : [ ["x", "2012-05-07", "2012-08-02", "2012-11-03", "2013-03-13", "2013-06-16", "2013-11-26"], ["SBP", "133", "131", "116", "111", "101", "111"] ], "dbp" : [ ["x", "2012-05-07", "2012-08-02", "2012-11-03", "2013-03-13", "2013-06-16", "2013-11-26"], ["DBP", "77", "93", "74", "80", "96", "76"] ], "standards" : { "htn" : { "diagnosis" : { "htn" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-30", "text": "Face-to-face encounter"}, {"value": "2013-07-07", "text": "Mediation changed"}] },
     "6660000041": { "asthma" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["PEFR", "109", "117", "125", "105", "110", "105"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2013-01-29", "text": "Mediation changed"}, {"value": "2014-01-30", "text": "Face-to-face encounter"}] },
     "6660069950": { "asthma" : [ ["x", "2012-05-12", "2012-10-16", "2013-02-19", "2013-06-19", "2013-12-26", "2014-03-16"], ["PEFR", "53", "66", "59", "75", "61", "43"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-10-11", "text": "Face-to-face encounter"}, {"value": "2013-08-10", "text": "Mediation decreased"}] },
-    "123": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Aspirin", "dose":"75 mg OD", "last":"2013-07-12"}], "sbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Systolic blood pressure", "121", "141", "122", "138", "152", "176"] ], "dbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Diastolic blood pressure", "98", "79", "98", "80", "99", "103"] ], "CHA2DS2Vasc" : [ ["x", "2012-06-19", "2015-08-03"],  ["CHA2DS2Vasc", "0", "1"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2014-11-29", "text": "Face-to-face encounter"}, {"value": "2015-01-19", "text": "Face-to-face encounter"}] },
+    "123": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Aspirin", "dose":"75 mg OD", "last":"2013-07-12"}], "sbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18", "2015-02-18"], ["Systolic blood pressure", "121", "141", "122", "138", "152", "176", "182"] ], "dbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18", "2015-02-18"], ["Diastolic blood pressure", "98", "79", "98", "80", "99", "103", "95"] ], "CHA2DS2Vasc" : [ ["x", "2012-06-19", "2013-08-03"],  ["CHA2DS2Vasc", "0", "1"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2014-11-29", "text": "Face-to-face encounter"}, {"value": "2015-01-19", "text": "Face-to-face encounter"}] },
     "6660242024": { "asthma" : [ ["x", "2012-06-15", "2012-12-04", "2013-03-03", "2013-06-17", "2013-08-15", "2013-12-21"],  ["PEFR", "90", "70", "86", "100", "85", "100"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-10-21", "text": "Face-to-face encounter"}, {"value": "2013-11-28", "text": "Mediation changed"}] },
     "6660295217": { "asthma" : [ ["x", "2012-05-12", "2012-11-11", "2013-05-07", "2013-10-18", "2014-04-19", "2014-07-26"], ["PEFR", "43", "53", "37", "47", "57", "59"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-08-15", "text": "Mediation decreased"}, {"value": "2014-01-21", "text": "Face-to-face encounter"}] },
     "6660366599": { "asthma" : [ ["x", "2012-05-23", "2012-07-24", "2012-10-12", "2013-04-10", "2013-09-25", "2014-04-09"], ["PEFR", "122", "102", "92", "106", "113", "120"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-06-06", "text": "Face-to-face encounter"}, {"value": "2013-12-19", "text": "Face-to-face encounter"}] },
