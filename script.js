@@ -66,7 +66,7 @@
     $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
 
     $('#mainTitle').show();
-    updateTitle(local.data[local.pathwayId]["display-name"] + " - overview");
+    updateTitle(local.data[local.pathwayId]["display-name"] + ": overview (practice-level data)");
 
     //Show overview panels
     showOverviewPanels();
@@ -178,13 +178,13 @@
     //if no mention anywhere then not relevant for that disease
     switch(getPatientStatus(local.patientId, data.pathwayId, data.pathwayStage, data.standard)){
       case "ok":
-        standardHtml = '<span class="standard-achieved">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i> OK</span>';
+        standardHtml = '<span class="standard-achieved">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
         break;
       case "missed":
-        standardHtml = '<span class="standard-missed">' + standard.text + ' <i class="fa fa-flag" style="color:orange"></i> Improvement opportunity</span>';
+        standardHtml = '<span class="standard-missed">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
         break;
       case "not":
-        standardHtml = '<span class="standard-not-relevant">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i> Not relevant</span>';
+        standardHtml = '<span class="standard-not-relevant">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i></span>';
         break;
     }
     var $standard = $(standardHtml);
@@ -299,7 +299,7 @@
       farRightPanel.html(p).show();
       farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
 
-      $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity, placeholder: "Please select a quality standard..."});
+      $('select').select2({templateResult: formatStandard, minimumResultsForSearch: Infinity, placeholder: "Please select an improvement opportunity area..."});
       $('span.select2-selection__rendered').attr("title","");
       $('select').on('change', function(){
         var data = $(this).find(':selected').data();
@@ -353,8 +353,8 @@
   };
 
   var showAllPatientView = function(patientId, reload){
-    $('#mainTitle').show();
-    updateTitle("All patients");
+    $('#mainTitle').hide();
+    updateTitle("List of all patients at your practice");
 
     if(!patientId) local.pathwayId="";
     if(!patientId || reload) {
@@ -1156,7 +1156,7 @@
     for(var key in local.data[pathwayId][pathwayStage].standards){
       tabData.push({"header": local.data[pathwayId][pathwayStage].standards[key].tab, "active" : key===standard ,"url": window.location.hash.replace(/\/no.*/g,'\/no/'+key)});
     }
-    return createPanel(patientsPanelTemplate,{"pathwayStage" : pathwayStage,"header": local.data[pathwayId][pathwayStage].standards[standard].chartTitle,"url":window.location.hash.replace(/\/yes.*/g,'').replace(/\/no.*/g,''), "tabs": tabData, "text" : local.data[pathwayId][pathwayStage].text},{"content" : $('#patients-panel-no').html(),"tab-header" : $('#patients-panel-no-tabs').html(),"tab-content" : $('#patients-panel-no-page').html()});
+    return createPanel(patientsPanelTemplate,{"pathwayStage" : pathwayStage,"header": local.data[pathwayId][pathwayStage].standards[standard].chartTitle,"tooltip":local.data[pathwayId][pathwayStage].standards[standard].tooltip,"url":window.location.hash.replace(/\/yes.*/g,'').replace(/\/no.*/g,''), "tabs": tabData, "text" : local.data[pathwayId][pathwayStage].text},{"content" : $('#patients-panel-no').html(),"tab-header" : $('#patients-panel-no-tabs').html(),"tab-content" : $('#patients-panel-no-page').html()});
   };
 
   var createPatientPanelOk = function(pathwayId, pathwayStage){
@@ -1177,7 +1177,7 @@
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
       clearBox();
 			$('.list-item').removeClass('highlighted');
-			$(this).addClass('highlighted');
+			$(this).addClass('highlighted').removeAttr("title");
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
@@ -1315,7 +1315,7 @@
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
       clearBox();
 			$('.list-item').removeClass('highlighted');
-			$(this).addClass('highlighted');
+			$(this).addClass('highlighted').removeAttr('title');
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
@@ -1340,7 +1340,7 @@
 		patientsPanel.on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
       clearBox();
 			$('.list-item').removeClass('highlighted');
-			$(this).addClass('highlighted');
+			$(this).addClass('highlighted').removeAttr('title');
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
@@ -1804,8 +1804,8 @@
       }
 
       if(!any){
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
-        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
       wireUpTooltips();
@@ -2114,8 +2114,8 @@
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
-        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
       wireUpTooltips();
@@ -2327,7 +2327,7 @@
 			return ret;
 		});
 
-    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title" : "Standards missed", "isUnSortable" : true}]};
+    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title" : "All opportunities", "isUnSortable" : true, "tooltip":"Total number of improvement opprtunities available across all conditions"}]};
 
     data.patients.sort(function(a, b){
       if(a.items[0] === b.items[0]) {
@@ -2438,22 +2438,22 @@
 			return ret;
 		});
 
-		var data = {"patients": patients, "n" : patients.length, "header" : header, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}]};
+		var data = {"patients": patients, "n" : patients.length, "header" : header, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc", "tooltip":"NHS number of each patient"}]};
 
     //middle column is either value or date
     if(local.data[pathwayId][pathwayStage].standards[standard].dateORvalue){
       data["header-items"].push({"title" : local.data[pathwayId][pathwayStage].standards[standard].valueName, "isSorted":false, "direction":"sort-asc"});
     } else {
       if(pathwayStage === local.categories.monitoring.name){
-        data["header-items"].push({"title" : "Last BP Date", "isSorted":false, "direction":"sort-asc"});
+        data["header-items"].push({"title" : "Last BP Date", "isSorted":false, "direction":"sort-asc", "tooltip":"Last date BP was measured"});
       }
       else{
-        data["header-items"].push({"title" : "Last SBP", "isSorted":false, "direction":"sort-asc"});
+        data["header-items"].push({"title" : "Last SBP", "tooltip":"Last systolic BP reading", "isSorted":false, "direction":"sort-asc"});
       }
     }
 
     //add qual standard column
-    data["header-items"].push({"title" : "# of standards missed", "isSorted":true, "direction":"sort-desc"});
+    data["header-items"].push({"title" : "All opportunities", "isSorted":true, "direction":"sort-desc", "tooltip":"Total number of improvement opprtunities available across all conditions"});
 
     if(sortField === undefined) sortField = 2;
 		if(sortField !== undefined) {
@@ -2537,7 +2537,7 @@
       ret.items.push(local.data.patients[patientId].breach ? numberOfStandardsMissed(patientId) : 0);
 			return ret;
 		});
-    var data = {"patients": patients, "n" : patients.length, "header":header, "tooltip":tooltip, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title" : "# of standards missed", "isSorted":true, "direction":"sort-desc"}]};
+    var data = {"patients": patients, "n" : patients.length, "header":header, "tooltip":tooltip, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title" : "All opportunities", "isSorted":true, "direction":"sort-desc","tooltip":"Total number of improvement opprtunities available across all conditions"}]};
 
     if(sortField === undefined) sortField = 1;
 
@@ -2938,8 +2938,8 @@
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
-        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
       wireUpTooltips();
@@ -3004,8 +3004,8 @@
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action").tooltip('fixTitle').tooltip('hide');
-        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
       wireUpTooltips();
@@ -3473,7 +3473,7 @@
     for(var i = 0; i < list.length; i++){
       list[i].hasSubItems = true;
     }
-    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Home"});
+    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Home", "isBreakAboveHome":true});
     list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; return v; });
@@ -3813,7 +3813,7 @@
     });
 
     //exportPlan
-    $('.download-outstanding').on('click', function(){
+    /*$('.download-outstanding').on('click', function(){
       exportPlan('outstanding');
     });
     $('.download-completed').on('click', function(){
@@ -3835,7 +3835,7 @@
         populateWelcomeTasks();
         $(this).fadeIn(100);
       });
-    });
+    });*/
 
     $('#completedTasks').on('click', function(e){
       e.preventDefault();

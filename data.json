@@ -12,49 +12,54 @@
           ["eGFR",35,33,33,32,31,30,29,29,29,28,27,28,28,28,28,28,28,29,30,30,31,31,31,30,29,28,29,30,29,29,29,28,27,26,27,27,27,27,26,26,27,27,28,28,28,28,27,28,28,28,29,29,28,28,28,29,29,29,30,31,30,29,28,29,29,28,28,28,28,28,27,27,27,26,25,25,26,27,27,28,28,29,29,29,29,29,28,29,30,30,31,30,30,30,30,30,31,31,31,31,31]
         ],
         "text" :{
-          "page": {"text":"Hypertension - monitoring"},
+          "page": {"text":"Hypertension: Monitoring (practice-level data)"},
           "panel": {"text":"Patients who have not had their hypertension monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK", "tooltip":"Monitored ok"},
-          "panelNotOk": {"text":"Improvement Opportunities", "tooltip":"Monitored not ok"},
+          "panelOk": {"text":"Patients monitored OK", "tooltip":"Patients with hypertension whose BP and renal function have been monitored according to QOF and NICE guidelines"},
+          "panelNotOk": {"text":"Patients with improvement opportunities", "tooltip":"Patients with hypertension who have opportunities to improve their BP and/or renal function monitoring in accordance with QOF and/or NICE guidelines"},
           "panelOkHeader" : {"text" : "Patients with hypertension who have been monitored as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension monitored","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
         },
-        "patientsOk" : [5550069950,5550154103,5550242024,5550295217,5553175806,5553261095,5553284844,5553308051,5553395446,5553482379,5553577971,5553617291,5553623847,5553697995,5553776929,5553846192,5553902625,5553976396,5554010860,5554015794,5554043449,5554109536,5554144142,5554212758,5554282657,5554302828,5554367625,5554390911,5554406296,5554456339,5554528017,5554551966,5554632673,5554723924,5554782969,5554873972,5554933431,5555021906,5555110107,5555162133,5555256064,5555351913,5555355306,5555373501,5555382894,5555433795,5555446560,5555677963,5555755859,5555825945,5555912205],
+        "patientsOk" : [5550069950,5550154103,5550242024,5550295217,5553175806,345,5553284844,5553308051,5553395446,5553482379,5553577971,5553617291,5553623847,5553697995,5553776929,5553846192,5553902625,5553976396,5554010860,5554015794,5554043449,5554109536,5554144142,5554212758,5554282657,5554302828,5554367625,5554390911,5554406296,5554456339,5554528017,5554551966,5554632673,5554723924,5554782969,5554873972,5554933431,5555021906,5555110107,5555162133,5555256064,5555351913,5555355306,5555373501,5555382894,5555433795,5555446560,5555677963,5555755859,5555825945,5555912205],
         "standards": {
           "bp" : {
-            "tab" : {"title":"Blood pressure","tooltip":"Some extra bp info"},
-            "chartTitle" : "Opportunities to improve blood pressure monitoring",
-            "tableTitle" : "Patients with opportunities to improve blood pressure monitoring",
+            "tab" : {"title":"BP monitoring - QOF / NICE","tooltip":"Patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who have not had their BP measured in the last 12 months (QOF and NICE guideline)"},
+            "chartTitle" : "Improvement opportunity categories for patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who have not had their BP measured in the last 12 months",
+            "tableTitle" : "Patients with hypertension who have not had their BP measured in the last 12 months",
             "valueId" : "sbp",
-            "valueName" : "Last SBP date",
+            "valueName" : "Last BP date",
             "dateORvalue" : "date",
             "chart" : ["sbp","dbp"],
             "opportunities" : [
               {
                 "name": "No opportunities",
-                "desc": "Patients who have had no contact with the practice",
+                "desc": "Patients with hypertension who have not had their BP measured in the last 12 months and no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
                 "patients": [5550000041,5550462743,5550516099,5550551266,5550640777,5550660340,5550739385,5550747304,5550777945,5550801061,5550844372,5550891861,5550929608,5550984593,5551024247,5551064236,5551118156,5551208733,5551262910,5551287703,5551341104,5551345049,5551359435,5551437927,5551455155,5551535166,5551573870,5551650840,5551667997,5551668339,5551697645,5551725917,5551734551,5551773731,5551806647]
               },
               {
                 "name": "Face-to-face",
-                "desc": "Patients who have seen a clinician in the practice",
+                "desc": "Patients with hypertension who have not had their BP measured in the last 12 months who have seen a clinician in the practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
                 "patients": [5551879011,5551960805,5551990261,5552036749,5552060899,5552115698,5552205620,5552211621,5552290255,5552290319,5552296308,5552378822]
               },
               {
                 "name": "Non face-to-face",
-                "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
+                "desc": "Patients with hypertension who have not had their BP measured in the last 12 months who have had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
                 "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
                 "patients": [5552423448,5552492315,5552530288,5552533866,5552563783,5552586748,5552661359,5552727859,5552765510,5552774478,5552803503,5552803965,5552860572,5552870948,5552902224,5552910216,5552990876,5553014733,5553098415,5553125053]
+              },
+              {
+                "name": "Palliative",
+                "desc": "Patients who are receiving palliative care treatment that may benefit from exclusion from hypertension quality standards",
+                "patients":[5556242352,5556284912,5556340645,5556671587]
               }
             ]
           },
           "renal" : {
-            "tab" : {"title":"Renal function","tooltip":"The renal function tooltip"},
-            "chartTitle" : "Opportunities to improve renal function monitoring",
-            "tableTitle" : "Patients with opportunities to improve renal function monitoring",
+            "tab" : {"title":"Renal function monitoring - NICE","tooltip":"Patients with hypertension who have not had their renal function measured in the last 12 months"},
+            "chartTitle" : "Improvement opportunity categories for patients with hypertension who have not had their renal function measured in the last 12 months",
+            "tableTitle" : "Patients with hypertension who have not had their renal function measured in the last 12 months",
             "valueId" : "egfr",
             "valueName" : "Last eGFR date",
             "dateORvalue" : "date",
@@ -62,21 +67,31 @@
             "opportunities" : [
               {
                 "name": "No opportunities",
-                "desc": "Patients who have had no contact with the practice",
+                "desc": "Patients with hypertension who have not had their renal function measured in the last 12 months and no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
                 "patients": [5550000041,5550366599,5551573870,5551650840,5551667997,5551668339,5551697645,5551725917,5551734551,5551773731,5551806647]
               },
               {
                 "name": "Face-to-face",
-                "desc": "Patients who have seen a clinician in the practice",
+                "desc": "Patients with hypertension who have not had their renal function measured in the last 12 months who have seen a clinician in the practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
                 "patients": [5551879011,5551960805,5552290319,5552296308,5552378822]
               },
               {
                 "name": "Non face-to-face",
-                "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
+                "desc": "Patients with hypertension who have not had their BP measured in the last 12 months who have had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
                 "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
                 "patients": [5552423448,5552492315,5552803965,5552860572,5552870948,5552902224,5552910216,5552990876,5553014733,5553098415,5553125053]
+              },
+              {
+                "name": "Frail",
+                "desc": "Patients with a frailty code in their record who may benefit from being excluded from hypertension quality standards",
+                "patients": [5556879657,5556956733,5557018373]
+              },
+              {
+                "name": "Palliative",
+                "desc": "Patients who are receiving palliative care treatment that may benefit from exclusion from hypertension quality standards",
+                "patients":[5556242352,5556284912,5556340645,5556671587]
               }
             ]
           }
@@ -90,10 +105,10 @@
           ["Hba1c",40,40,40,40,41,41,41,41,41,41,41,41,41,41,41,40,40,40,40,40,40,40,40,40,40,39,39,39,39,39,39,40,39,39,39,39,39,39,39,40,39,40,40,40,40,41,41,41,41,41,42,42,42,42,42,42,42,42,41,41,40,40,40,41,41,42,41,41,42,41,41,41,41,40,40,40,40,39,39,39,39,39,40,40,41,41,41,41,41,41,41,41,40,39,39,39,39,39,39,39,39]
         ],
         "text" :{
-          "page": {"text":"Hypertension - treatment"},
+          "page": {"text":"Hypertension: Treatment (practice-level data)"},
           "panel": {"text":"Patients who have not had their hypertension treated", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Treated OK"},
-          "panelNotOk": {"text":"Improvement Opportunities"},
+          "panelOk": {"text":"Patients treated OK", "tooltip":"Patients with hypertension whose BP is controlled according to QOF and NICE guidelines"},
+          "panelNotOk": {"text":"Patients with improvement opportunities", "tooltip": "Patients with hypertension who have opportunities to have their BP control improved"},
           "panelOkHeader" : {"text" : "Patients with hypertension who have been treated as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to treat hypertension"}
@@ -101,9 +116,9 @@
         "patientsOk" : [6664109536,6664144142,6664212758,6664282657,6664302828,6664367625,6664390911,6664406296,6664456339,6664528017,6664551966,6664632673,6664723924],
         "standards": {
           "bp" : {
-            "tab" : {"title":"Blood pressure","tooltip":"Some extra info"},
-            "chartTitle" : "Opportunities to improve blood pressure control",
-            "tableTitle" : "Patients with opportunities to improve blood pressure control",
+            "tab" : {"title":"BP control - QOF targets","tooltip":"Patients with hypertension (not DM) where latest BP in last 12m is >150/90 mmHg"},
+            "chartTitle" : "Improvement opportunity categories for patients with hypertension (not DM) where latest BP in last 12m is >150/90 mmHg",
+            "tableTitle" : "Patients with hypertension, PAD, CHD, TIA or stroke (not DM) where latest BP in last 12m is >150/90 mmHg",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
             "dateORvalue" : "value",
@@ -112,73 +127,115 @@
               {
                 "name": "Suboptimal medication",
                 "desc": "Patients who could have their medication optimised",
-                "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
-                "patients": [5554144142,5553261095,5553308051,5553482379,5553577971,5553617291,5553623847,5553697995]
+                "main": "These are patients who have had a high blood pressure reading taken in the last 2 months",
+                "patients": [5554144142,345,5553308051,5553482379,5553577971,5553617291,5553623847,5553697995,5557606489,5557741611]
               },
               {
-                "name": "Medication non-adherence",
-                "desc": "Patients who may not be picking up their repeat medication regularly",
+                "name": "Adherence",
+                "desc": "Patients who are not picking up their repeat medication regularly",
                 "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
-                "patients": [5553261095,5553846192,5553976396,5554010860,5554015794,5554043449]
+                "patients": [123,345,5553846192,5553976396,5554010860,5554015794,5554043449]
               },
               {
-                "name": "Referral to secondary care",
-                "desc": "Patients who are on maximal anti-hypertensive medication",
-                "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
-                "patients": [5554144142,5554282657,5554367625,5554406296,5554528017,5554551966,5554632673,5554723924]
+                "name": "Referral",
+                "desc": "Patients on maximal anti-hypertensive medication who may benefit from referral to secondary care",
+                "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised",
+                "patients": [123,5554144142,5554282657,5554367625,5554406296,5554528017,5554551966,5554632673,5554723924]
               },
               {
-                "name": "One-off high blood pressure reading",
-                "desc": "Patients who had a high blood pressure reading in the last 2 months that previously had controlled blood pressure",
+                "name": "One-off high BP",
+                "desc": "Patients who had a solitary high BP reading in the last 2 months that previously had controlled blood pressure",
                 "main": "",
-                "patients": [5554873972,5555021906,5555110107,5555162133,5555912205]
+                "patients": [5554873972,5555021906,5555110107,5555162133,5555912205,5553482379]
               },
               {
-                "name": "Recently optimised medication",
-                "desc": "Patients who had a high blood pressure reading and then had their medication increased",
+                "name": "Recently optimised",
+                "desc": "Patients who had their medication optimised following their most recent high BP reading",
                 "main": "",
                 "patients": [5555351913,5555373501,5555433795,5555446560,5555755859]
               },
               {
-                "name": "White coat hypertension",
-                "desc": "Patients who may have high blood pressure because they are anxious when they come to the practice",
+                "name": "White coat",
+                "desc": "Patients who may have high blood pressure because they have white-coat hypertension who may benefit from exclusion from hypertension quality standards",
                 "main": "",
-                "patients": [5554144142,5555677963,5555755859,5555825945,5555912205]
+                "patients": [5554144142,5555677963,5555755859,5555825945,5555912205,5553482379]
+              },
+               {
+                "name": "Hypotension",
+                "desc": "Patients who have postural hypotension that may benefit from exclusion from hypertension quality standards",
+                "patients": [5557492389,5557516551,5557606489,5557685811,5557741611]
+              },
+              {
+                "name": "Frail",
+                "desc": "Patients with a frailty code in their record that may benefit from exclusion from hypertension quality standards",
+                "patients": [5556753852,5556799251,5556845192]
+              },
+              {
+                "name": "Palliative",
+                "desc": "Patients who are receiving palliative care that may benefit from exclusion from hypertension quality standards",
+                "patients":[5555994176,5556051664,5556073709,5556149338]
               }
             ]
           },
           "hba1c" : {
-            "tab" : {"title":"Hba1c","tooltip":""},
-            "chartTitle" : "Opportunities to improve Hba1c control",
-            "tableTitle" : "Patients with opportunities to improve Hba1c control",
-            "valueId" : "hba1c",
-            "valueName" : "Last Hba1c",
+            "tab" : {"title":"BP control - NICE targets","tooltip":"Patients with hypertension (not DM or CKD) where latest BP in last 12m is >139/89 mmHg (or >149/89 mmHg > 79 years old)"},
+            "chartTitle" : "Improvement opportunity categories for patients with hypertension (not DM or CKD) where latest BP in last 12m is >139/89 mmHg (or >149/89 mmHg > 79 years old)",
+            "tableTitle" : "Patients with hypertension (not DM or CKD) where latest BP in last 12m >139/89 mmHg (or >149/89 mmHg > 79 years old",
+            "valueId" : "sbp",
+            "valueName" : "Last SBP",
             "dateORvalue" : "value",
-            "chart" : ["hba1c"],
+            "chart" : ["sbp", "dbp"],
             "opportunities" : [
               {
                 "name": "Suboptimal medication",
                 "desc": "Patients who could have their medication optimised",
-                "main": "These are patients who have had a high blood pressure reading taken in the last 2 months.",
-                "patients": [5553175806,5553284844,5555355306,5553395446,5553577971,5553623847]
+                "main": "These are patients who have had a high blood pressure reading taken in the last 2 months",
+                "patients": [5553175806,5553284844,5555355306,5553395446,5554144142,345,5553308051,5553482379,5553577971,5553617291,5553623847,5553697995,5557741611]
               },
               {
-                "name": "Referral to secondary care",
-                "desc": "Patients who are on maximal anti-hypertensive medication",
-                "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised. ",
-                "patients": [5554109536,5554212758,5555355306,5554302828,5554390911,5554456339,5554551966,5554723924]
+                "name": "Adherence",
+                "desc": "Patients who are not picking up their repeat medication regularly",
+                "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
+                "patients": [345,5553846192,5553976396,5554010860,5554015794,5554043449]
               },
               {
-                "name": "One-off high blood sugar reading",
-                "desc": "Patients who had a high blood pressure reading in the last 2 months that previously had controlled blood pressure",
+                "name": "Referral",
+                "desc": "Patients on maximal anti-hypertensive medication who may benefit from referral to secondary care",
+                "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised",
+                "patients": [5554109536,5554212758,5555355306,5554302828,5554390911,5554456339,5554144142,5554282657,5554367625,5554406296,5554528017,5554551966,5554632673,5554723924]
+              },
+              {
+                "name": "One-off high BP",
+                "desc": "Patients who had a solitary high BP reading in the last 2 months that previously had controlled blood pressure",
                 "main": "",
-                "patients": [5554782969,5554933431,5555110107]
+                "patients": [5554782969,5554933431,5554873972,5555021906,5555110107,5555162133,5555912205,5553482379]
               },
               {
-                "name": "Recently optimised medication",
-                "desc": "Patients who had a high blood pressure reading and then had their medication increased",
+                "name": "Recently optimised",
+                "desc": "Patients who had their medication optimised following their most recent high BP reading",
                 "main": "",
-                "patients": [5555256064,5555355306,5555382894,5555446560]
+                "patients": [5555256064,5555355306,5555382894,5555351913,5555373501,5555433795,5555446560,5555755859]
+              },
+              {
+                "name": "White coat",
+                "desc": "Patients who may have high blood pressure because they have white-coat hypertension",
+                "main": "",
+                "patients": [5554144142,5555677963,5555755859,5555825945,5555912205,5553482379]
+              },
+               {
+                "name": "Hypotension",
+                "desc": "Patients who have postural hypotension that may benefit from exclusion from hypertension quality standards",
+                "patients": [5557492389,5557516551,5557606489,5557685811,5557741611]
+              },
+              {
+                "name": "Frail",
+                "desc": "Patients with a frailty code in their record that may benefit from exclusion from hypertension quality standards",
+                "patients": [5556753852,5556799251,5556845192]
+              },
+              {
+                "name": "Palliative",
+                "desc": "Patients who are receiving palliative care that may benefit from exclusion from hypertension quality standards",
+                "patients":[5555994176,5556051664,5556073709,5556149338]
               }
             ]
           }
@@ -191,44 +248,45 @@
           ["Exclusions",83,82,82,82,81,81,81,81,80,79,79,79,78,78,77,77,77,77,77,76,76,75,75,75,75,75,74,74,74,74,75,75,75,76,76,76,76,76,75,75,74,73,73,73,73,73,73,72,73,74,74,74,74,74,74,74,74,73,73,73,74,74,74,74,74,73,73,73,73,73,73,73,73,73,73,73,73,72,72,72,71,70,69,69,69,69,69,69,69,69,69,69,68,67,66,67,67,67,66,66,66]
         ],
         "text" :{
-          "page": {"text":"Hypertension - exclusions"},
+          "page": {"text":"Hypertension: Exclusions (practice-level data)"},
           "panel": {"text":"Additional patients who may benefit from exclusion from hypertension quality standards", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Excluded OK"},
-          "panelNotOk": {"text":"Improvement Opportunities"},
-          "panelOkHeader" : {"text" : "Patients with hypertension who have been excluded as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
+          "panelOk": {"text":"Excluded already", "tooltip": "Patients with hypertension who have an exclusion code in their medical record"},
+          "panelNotOk": {"text":"Opportunities for exclusion", "tooltip": "Patients with hypertension who may benefit from being excluded from hypertension quality standards"},
+          "panelOkHeader" : {"text" : "Patients with hypertension who have an exclusion code in their medical record"},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to treat hypertension"}
         },
-        "patientsOk" :[5556359342,5556445952,5556474770,5556560995,5556658291,5556671587,5556753852,5556799251,5556845192,5556879657],
+        "patientsOk" :[5556359342,5556445952,5556474770,5556560995,5556658291,5557057422,5557142142,5557162124,5557195403,5557292078,5557335333,5557427267,5557476564],
         "standards":{
           "excl" : {
             "tab" : {"title":"Exclusions","tooltip":""},
-            "chartTitle" : "",
-            "tableTitle" : "testy",
+            "chartTitle" : "Categories of patients with hypertension who may benefit from being excluded from quality standards",
+            "tableTitle" : "Patients with hypertension who may benefit from being excluded from quality standards",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
             "dateORvalue" : "value",
             "chart" : ["sbp","dbp"],
             "opportunities" : [
               {
-                "name": "Palliative Care",
+                "name": "Palliative",
                 "desc": "Patients who are receiving palliative care",
-                "patients":[5555994176,5556051664,5556073709,5556149338,5556159822,5556190660,5556241997,5556242352,5556284912,5556340645]
-              },
-              {
-                "name": "Exclusion code",
-                "desc": "Exclusion code",
-                "patients": [5556359342,5556445952,5556474770,5556560995,5556658291,5556671587,5556753852,5556799251,5556845192,5556879657,5556956733,5557018373,5557057422,5557142142,5557162124,5557195403,5557292078,5557335333,5557427267,5557476564]
+                "patients":[5555994176,5556051664,5556073709,5556149338,5556159822,5556190660,5556241997,5556242352,5556284912,5556340645,5556671587]
               },
               {
                 "name": "Hypotension",
-                "desc": "Patients who have a postural hypotension code",
-                "patients": [5557492389,5557516551,5557606489,5557685811,5557741611,5557782914,5557818889,5557887258,5557950983,5557989507,5558043481,5558079663,5558155912,5558167715]
+                "desc": "Patients who have postural hypotension",
+                "patients": [5557492389,5557516551,5557606489,5557685811,5557741611]
               },
               {
-                "name": "White coat hypertension",
-                "desc": "White coat hypertension",
-                "patients": [5558176883,5558224981,5558318019,5558343811]
+                "name": "White coat",
+                "desc": "Patients who may have high blood pressure because they have white-coat hypertension",
+                "main": "",
+                "patients": [5554144142,5555677963,5555755859,5555825945,5555912205,5553482379]
+              },
+              {
+                "name": "Frail",
+                "desc": "Patients with a frailty code in their record",
+                "patients": [5556753852,5556799251,5556845192,5556879657,5556956733,5557018373]
               }
             ]
           }
@@ -241,10 +299,10 @@
           ["Diagnosis",85,85,85,84,83,83,82,81,81,81,81,81,81,81,81,80,80,80,80,80,80,81,81,80,79,78,78,77,77,77,77,77,77,77,78,78,78,78,77,77,77,77,77,77,77,76,76,76,76,76,76,76,75,75,76,76,76,75,75,75,74,73,73,73,73,73,73,73,73,73,72,71,71,71,71,72,72,72,72,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,70]
         ],
         "text" :{
-          "page": {"text":"Hypertension - diagnosis"},
+          "page": {"text":"Hypertension: Diagnosis (practice-level data)"},
           "panel": {"text":"Undiagnosed hypertension", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Diagnosed OK"},
-          "panelNotOk": {"text":"Improvement Opportunities"},
+          "panelOk": {"text":"Patients diagnosed OK","tooltip":"Patients who have been diagnosed with hypertension"},
+          "panelNotOk": {"text":"Patients with improvement opportunities","tooltip":"Patients who have opportunities to have hypertension diagnosed"},
           "panelOkHeader" : {"text" : "Patients with hypertension who have been diagnosed as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to treat hypertension"}
@@ -252,37 +310,49 @@
         "patientsOk" : [5558427022,5558488560,5558534144,5558632333,5558649101,5558678386],
         "standards":{
           "htn":{
-            "tab" : {"title":"Diagnosis","tooltip":""},
-            "chartTitle" : "",
-            "tableTitle" : "",
+            "tab" : {"title":"Undiagnosed hypertension","tooltip":"Patients with potentially undiagnosed hypertension"},
+            "chartTitle" : "Types of patient with potentially undiagnosed hypertension",
+            "tableTitle" : "Patients with potentially undiagnosed hypertension",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
             "dateORvalue" : "value",
             "chart" : ["sbp","dbp"],
             "opportunities":[
               {
-                "name": "Likely have hypertension",
-                "desc": "Patients without a hypertension diagnostic Read code with more than 2 consecutive blood pressure readings > 160/100 mmHg in the last 2 years and no recent readings < 140 / 90 mmHg",
+                "name": "Hypertension likely",
+                "desc": "Patients with >2 consecutive BP readings >160/100 mmHg in the last 2 years and no recent readings <140/90 mmHg",
                 "patients":[5558427022,5558488560,5558534144,5558632333,5558649101,5558678386,5558698566,5558701500,5558775716,5558822253,5558833890,5558916157]
               },
               {
-                "name": "Require further testing to confirm hypertension",
-                "desc": "Patients without a hypertension diagnostic Read code and at least 1 blood pressure reading > 140/ 90 mmHg in the last 2 years",
+                "name": "Requires further testing",
+                "desc": "Patients with at least 1 BP reading >140/90 mmHg in the last 2 years",
                 "patients": [5558943913,5559033587,5559122609,5559136270,5559154739]
-              },
+              }
+            ]
+          },
+          "screen":{
+            "tab" : {"title":"Unscreened hypertension","tooltip":"Patients at risk of hypertension who have not been screened"},
+            "chartTitle" : "Opportunities to improve hypertension screening",
+            "tableTitle" : "Patients with opportunities to improve hypertension screening",
+            "valueId" : "sbp",
+            "tooltip": "test",
+            "valueName" : "Last SBP",
+            "dateORvalue" : "value",
+            "chart" : ["sbp","dbp"],
+            "opportunities":[
               {
-                "name": "No reading - no opportunities",
-                "desc": "Patients aged 45 and over that have no blood pressure measurement record in the last 5 years and had no contact with the practice",
+                "name": "No opportunities",
+                "desc": "Patients >45 years with no BP measurement in the last 5 years and no contact with the practice",
                 "patients": [5559919369,5559995772,5559545413,5559596469]
               },
               {
-                "name": "No reading – face-to-face opportunities",
-                "desc": "Patients aged 45 and over that have no blood pressure measurement record in the last 5 years but have seen a clinician in the practice",
+                "name": "Face-to-face opportunities",
+                "desc": "Patients >45 years with no BP measurement in the last 5 years who have seen a clinician in the practice",
                 "patients": [5559227708,5559293812,5559296816,5559345201,5559401992,5559490326]
               },
               {
-                "name": "No reading – non face-to-face opportunities",
-                "desc": "Patients aged 45 and over that have no blood pressure measurement record in the last 5 years but have had non face-to-face contact e.g. telephone calls, picking up repeat prescriptions, letters",
+                "name": "Non face-to-face opportunities",
+                "desc": "Patients >45 years with no BP measurement in the last 5 years who have had non face-to-face contact with the practice e.g. telephone calls, picking up repeat prescriptions",
                 "patients": [5559648060,5559718903,5559766361,5559804595,5559869820,5559893119]
               }
             ]
@@ -293,7 +363,7 @@
     "af": {
       "diseaseId": "af",
       "display-name": "Atrial Fibrillation",
-      "icon":"PINGR-COPD_o",
+      "icon":"fa-heartbeat",
       "monitoring" : {
         "header":"Patients who have not had their hypertension monitored",
         "trend" : [
@@ -302,10 +372,10 @@
           ["n",50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,47,50,50,48,48,45,45,45,45,45,45,45,45,45,45,45,45,48,48,45,44,44,45,44,42,43,43,43,43,43,43,42,41,41,42,45,45,44,44,44,42,42,41,44,44,44,44,44,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,44,44,44,44,44,44,43,43,43,46]
         ],
         "text" :{
-          "page": {"text":"Atrial fibrillation - monitoring"},
+          "page": {"text":"Atrial fibrillation: Monitoring (practice-level data)"},
           "panel": {"text":"Patients who have not had their asthma monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Monitored OK", "tooltip":"Monitored ok"},
-          "panelNotOk": {"text":"Improvement opportunities", "tooltip":"Monitored not ok"},
+          "panelOk": {"text":"Patients monitored OK", "tooltip":"Patients with atrial fibrillation whose stroke risk, pulse and INR (where relevant) have been monitored in accordance with QOF and NICE clinical guidelines"},
+          "panelNotOk": {"text":"Patients with improvement opportunities", "tooltip":"Patients with atrial fibrillation who have opportunities to improve their stroke risk, pulse and/or INR (where relevant) monitoring in accordance with QOF and/or NICE clinical guidelines"},
           "panelNotOkHeader": {"text":"Improvement opportunities"},
           "panelOkHeader" : {"text" : "Patients with atrial fibrillation who have been monitored (in terms of need for anticoagulation, pulse and INR) as per clinical guidelines", "tooltip" : "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
           "panelOkHeaderiButton": {"tooltip": "Patients with a diagnostic Read code for atrial fibrillation that have been monitored according to clinical guidelines"},
@@ -313,11 +383,12 @@
           "iButtonACMonitor": {"tooltip": "Patients with an atrial fibrillation Read code who do not have a CHA2DS2Vasc score recorded in the past 12 months"},
           "header" : {"text": "Current opportunities to monitor hypertension"}
         },
-        "patientsOk" : [6669648060,6669718903,6669766361,6669804595,6669869820,6669893119,6669919369,6669995772],
+        "patientsOk" : [6669648060,6669718903,6669766361,6669804595,6669869820,6669893119,6669919369,6669995772,5557741611],
         "standards": {
           "anticoag-monitor" :{
-            "tab" : {"title":"CHA2DS2Vasc scores","tooltip":"test2"},
-            "chartTitle" : "Opportunities to improve anticoagulation monitoring",
+            "tab" : {"title":"Stroke risk","tooltip":"Patients with atrial fibrillation who have not had their stroke risk assessed using the CHA2DS2Vasc score in the last 12 months (unless their previous score was >1)"},
+            "chartTitle" : "Improvement opportunity categories for patients with AF who have not had a CHA2DS2Vasc score in the last 12 months (unless previous score >1)",
+            "tableTitle" : "Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months (unless previous score >1)",
             "valueId" : "chads",
             "valueName" : "Last CHA2DS2Vasc date",
             "dateORvalue" : "date",
@@ -325,21 +396,26 @@
             "opportunities": [
               {
                 "name": "No opportunities",
-                "desc": "Patients who have had no contact with the practice",
+                "desc": "Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months and had no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
                 "patients": [6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
               },
               {
                 "name": "Face-to-face",
-                "desc": "Patients who have seen a clinician in GP practice",
+                "desc": "Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months who have seen a clinician in the practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
-                "patients": [123,6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
+                "patients": [6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
               },
               {
                 "name": "Non face-to-face",
-                "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, picking up repeat prescriptions, letters",
+                "desc": "Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months who have had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
                 "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
-                "patients": [6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965,6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053]
+                "patients": [6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965]
+              },
+              {
+                "name": "Palliative",
+                "desc": " Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months who are receiving palliative care treatment and may benefit from exclusion from hypertension quality standards",
+                "patients": [6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053,5557741611]
               }
             ]
           },
@@ -361,7 +437,7 @@
                 "name": "Face-to-face",
                 "desc": "Patients who have seen a clinician in GP practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
-                "patients": [123, 6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
+                "patients": [6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
               },
               {
                 "name": "Non face-to-face",
@@ -409,7 +485,7 @@
           ["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
         ],
         "text" :{
-          "page": {"text":"Atrial fibrillation - treatment"},
+          "page": {"text":"Atrial fibrillation - treatment (practice-level data)"},
           "panel": {"text":""},
           "panelOk": {"text":"Treated OK"},
           "panelNotOk": {"text":"Improvement opportunities"},
@@ -463,7 +539,7 @@
           ["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
         ],
         "text" :{
-          "page": {"text":"AF - monitoring"},
+          "page": {"text":"Atrial fibrillation - monitoring (practice-level data)"},
           "panel": {"text":"Patients who have not had their asthma monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
           "panelOk": {"text":"Monitored OK"},
           "panelNotOk": {"text":"Improvement Opportunities"},
@@ -474,8 +550,8 @@
         "patientsOk" : [],
         "standards": {
           "excl" :{
-            "tab" : {"title":"tba","tooltip":""},
-            "chartTitle" : "tba",
+            "tab" : {"title":"","tooltip":""},
+            "chartTitle" : "",
             "valueId" : "pefr",
             "valueName" : "Last PEFR",
             "dateORvalue" : "value",
@@ -521,7 +597,7 @@
           ["n",75,75,75,76,75,75,75,75,75,76,75,75,75,75,77,77,77,77,77,77,77,77,77,77,77,77,79,79,79,79,79,79,79,80,80,80,79,78,80,80,82,82,81,81,81,79,78,75,72,72,72,72,72,69,68,68,69,69,69,66,67,67,67,67,64,61,59,59,56,56,56,56,56,57,57,57,57,57,57,57,57,57,56,56,54,54,54,51,51,48]
         ],
         "text" :{
-          "page": {"text":"AF - monitoring"},
+          "page": {"text":"Atrial fibrillation - diagnosis (practice-level data)"},
           "panel": {"text":"Patients who have not had their asthma monitored", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
           "panelOk": {"text":"Monitored OK"},
           "panelNotOk": {"text":"Improvement Opportunities"},
@@ -564,21 +640,10 @@
         }
       }
     },
-    "copd": {
-      "diseaseId": "copd",
-      "display-name": "COPD",
-      "icon":"fa-stethoscope",
-      "link" : "welcome",
-      "monitoring": {},
-      "treatment": {},
-      "exclusions": {},
-      "diagnosis": {}
-    },
     "ckd": {
       "diseaseId": "ckd",
-      "display-name": "Kidney Health",
+      "display-name": "CKD",
       "icon":"PINGR-renal_k_o",
-      "link" : "welcome",
       "monitoring": {},
       "treatment": {},
       "exclusions": {},
@@ -664,7 +729,7 @@
     "5553098415": { "codes": [{"code":"C10F.","date":"2012-01-15"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-06-15", "2012-11-18", "2013-02-07", "2013-07-05", "2013-12-26", "2014-05-25"], ["SBP", "123", "117", "114", "99", "109", "119"] ], "dbp" : [ ["x", "2012-06-15", "2012-11-18", "2013-02-07", "2013-07-05", "2013-12-26", "2014-05-25"], ["DBP", "70", "56", "39", "49", "59", "40"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2012-07-12", "text": "Mediation changed"}, {"value": "2014-03-22", "text": "Mediation increased"}] },
     "5553125053": { "codes": [{"code":"1Z1..","date":"2004-11-05"}], "egfr":[["x","2012-01-03","2014-03-03"],["eGFR","62","52"]],"sbp" : [ ["x", "2012-06-13", "2012-11-14", "2013-02-02", "2013-08-20", "2014-01-22", "2014-06-14"], ["SBP", "149", "163", "143", "131", "114", "132"] ], "dbp" : [ ["x", "2012-06-13", "2012-11-14", "2013-02-02", "2013-08-20", "2014-01-22", "2014-06-14"], ["DBP", "119", "123", "103", "96", "91", "83"] ], "standards" : { "htn" : { "monitoring" : { "bp" : "Measure every 12 months" } } }, "contacts": [{"value": "2013-02-01", "text": "Mediation decreased"}, {"value": "2014-05-11", "text": "Face-to-face encounter"}] },
     "5553175806": { "hba1c":[["x","2012-01-03","2014-03-03"],["Hba1c","8.4","6.5"]],"medications":[{"name":"Propranolol", "dose":"160mg", "last":"2014-09-28"}], "sbp" : [ ["x", "2012-06-09", "2012-08-20", "2013-01-09", "2013-06-13", "2013-12-10", "2014-04-04"], ["SBP", "98", "108", "118", "104", "114", "109"] ], "dbp" : [ ["x", "2012-06-09", "2012-08-20", "2013-01-09", "2013-06-13", "2013-12-10", "2014-04-04"], ["DBP", "70", "61", "77", "66", "68", "67"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-08-20", "text": "Face-to-face encounter"}, {"value": "2013-10-21", "text": "Face-to-face encounter"}] },
-    "5553261095": { "medications":[{"name":"Ramipril", "dose":"5mg", "last":"2014-04-09"},{"name":"Propranolol", "dose":"80mg", "last":"2014-04-09"}], "sbp" : [ ["x", "2012-07-29", "2013-01-22", "2013-07-25", "2013-11-28", "2014-03-28", "2014-09-21"], ["SBP", "133", "135", "154", "173", "153", "164"] ], "dbp" : [ ["x", "2012-07-29", "2013-01-22", "2013-07-25", "2013-11-28", "2014-03-28", "2014-09-21"], ["DBP", "110", "92", "97", "110", "126", "106"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-14", "text": "Face-to-face encounter"}, {"value": "2014-08-03", "text": "Face-to-face encounter"}] },
+    "345": { "medications":[{"name":"Ramipril", "dose":"5mg", "last":"2014-04-09"},{"name":"Propranolol", "dose":"80mg", "last":"2014-04-09"}], "sbp" : [ ["x", "2012-07-29", "2013-01-22", "2013-07-25", "2013-11-28", "2014-03-28", "2014-09-21"], ["SBP", "133", "135", "154", "173", "153", "164"] ], "dbp" : [ ["x", "2012-07-29", "2013-01-22", "2013-07-25", "2013-11-28", "2014-03-28", "2014-09-21"], ["DBP", "110", "92", "97", "110", "126", "106"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-14", "text": "Face-to-face encounter"}, {"value": "2014-08-03", "text": "Face-to-face encounter"}] },
     "5553284844": { "hba1c":[["x","2012-01-03","2014-03-03"],["Hba1c","8.4","6.5"]],"medications":[{"name":"Propranolol", "dose":"320mg", "last":"2014-08-22"}], "sbp" : [ ["x", "2012-07-31", "2012-09-24", "2013-03-31", "2013-10-02", "2014-01-20", "2014-05-11"], ["SBP", "92", "102", "112", "128", "138", "127"] ], "dbp" : [ ["x", "2012-07-31", "2012-09-24", "2013-03-31", "2013-10-02", "2014-01-20", "2014-05-11"], ["DBP", "49", "59", "51", "67", "70", "75"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-08-23", "text": "Mediation changed"}, {"value": "2014-05-11", "text": "Mediation increased"}] },
     "5553308051": { "medications":[{"name":"Ramipril", "dose":"10mg", "last":"2015-04-28"},{"name":"Propranolol", "dose":"40mg", "last":"2015-04-28"}], "sbp" : [ ["x", "2012-07-07", "2012-12-11", "2013-06-19", "2013-09-15", "2014-01-16", "2014-07-14"], ["SBP", "115", "126", "121", "135", "153", "144"] ], "dbp" : [ ["x", "2012-07-07", "2012-12-11", "2013-06-19", "2013-09-15", "2014-01-16", "2014-07-14"], ["DBP", "77", "85", "80", "64", "49", "59"] ], "standards" : { "htn" : { "treatment" : { "bp" : "HTN target 140/90" } } }, "contacts": [{"value": "2013-03-31", "text": "Face-to-face encounter"}, {"value": "2013-10-03", "text": "Mediation decreased"}] },
     "5553395446": { "hba1c":[["x","2012-01-03","2014-03-03"],["Hba1c","8.4","6.5"]],"medications":[{"name":"Propranolol", "dose":"160mg", "last":"2015-01-18"}], "sbp" : [ ["x", "2012-08-20", "2012-12-26", "2013-04-22", "2013-08-08", "2014-01-11", "2014-06-25"], ["SBP", "92", "102", "112", "123", "127", "127"] ], "dbp" : [ ["x", "2012-08-20", "2012-12-26", "2013-04-22", "2013-08-08", "2014-01-11", "2014-06-25"], ["DBP", "40", "50", "52", "55", "68", "86"] ], "standards" : { "htn" : { "treatment" : { "bp" : "CKD target 135/85" } } }, "contacts": [{"value": "2013-04-04", "text": "Mediation changed"}, {"value": "2014-04-09", "text": "Mediation increased"}] },
@@ -744,7 +809,7 @@
     "5557516551": { "sbp" : [ ["x", "2012-06-02", "2012-11-07", "2013-04-06", "2013-10-03", "2014-01-16", "2014-04-14"], ["SBP", "133", "142", "148", "141", "156", "156"] ], "dbp" : [ ["x", "2012-06-02", "2012-11-07", "2013-04-06", "2013-10-03", "2014-01-16", "2014-04-14"], ["DBP", "91", "76", "70", "68", "74", "90"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-12-09", "text": "Face-to-face encounter"}, {"value": "2013-03-06", "text": "Face-to-face encounter"}] },
     "5557606489": { "sbp" : [ ["x", "2012-08-03", "2012-10-09", "2013-04-03", "2013-10-18", "2013-12-14", "2014-05-02"], ["SBP", "126", "135", "147", "155", "150", "160"] ], "dbp" : [ ["x", "2012-08-03", "2012-10-09", "2013-04-03", "2013-10-18", "2013-12-14", "2014-05-02"], ["DBP", "89", "85", "101", "99", "101", "111"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-08-17", "text": "Face-to-face encounter"}, {"value": "2014-03-16", "text": "Mediation increased"}] },
     "5557685811": { "sbp" : [ ["x", "2012-03-24", "2012-07-25", "2013-01-09", "2013-05-04", "2013-08-19", "2014-02-12"], ["SBP", "146", "128", "119", "118", "136", "132"] ], "dbp" : [ ["x", "2012-03-24", "2012-07-25", "2013-01-09", "2013-05-04", "2013-08-19", "2014-02-12"], ["DBP", "105", "117", "111", "108", "104", "93"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-06-10", "text": "Mediation decreased"}, {"value": "2013-09-17", "text": "Mediation changed"}] },
-    "5557741611": { "sbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11"], ["SBP", "138", "155", "153", "139", "150", "164"] ], "dbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11"], ["DBP", "101", "91", "71", "77", "85", "83"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-06-06", "text": "Mediation increased"}, {"value": "2013-08-03", "text": "Face-to-face encounter"}] },
+    "5557741611": { "sbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11"], ["SBP", "138", "155", "153", "139", "150", "182"] ], "dbp" : [ ["x", "2012-06-05", "2012-09-08", "2013-01-15", "2013-05-15", "2013-08-18", "2013-12-11"], ["DBP", "101", "91", "71", "77", "85", "83"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-06-06", "text": "Mediation increased"}, {"value": "2013-08-03", "text": "Face-to-face encounter"}] },
     "5557782914": { "sbp" : [ ["x", "2012-09-14", "2012-12-07", "2013-04-19", "2013-08-17", "2014-01-03", "2014-03-25"], ["SBP", "91", "101", "111", "100", "110", "110"] ], "dbp" : [ ["x", "2012-09-14", "2012-12-07", "2013-04-19", "2013-08-17", "2014-01-03", "2014-03-25"], ["DBP", "55", "55", "49", "59", "50", "33"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-10-02", "text": "Face-to-face encounter"}, {"value": "2012-10-02", "text": "Mediation decreased"}] },
     "5557818889": { "sbp" : [ ["x", "2012-06-16", "2012-11-20", "2013-02-15", "2013-07-29", "2013-09-28", "2014-01-10"], ["SBP", "142", "152", "144", "135", "116", "130"] ], "dbp" : [ ["x", "2012-06-16", "2012-11-20", "2013-02-15", "2013-07-29", "2013-09-28", "2014-01-10"], ["DBP", "118", "125", "105", "97", "103", "107"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-08", "text": "Mediation changed"}, {"value": "2013-06-23", "text": "Mediation increased"}] },
     "5557887258": { "sbp" : [ ["x", "2012-06-24", "2012-09-10", "2012-11-29", "2013-05-21", "2013-12-06", "2014-06-08"], ["SBP", "131", "115", "108", "118", "138", "119"] ], "dbp" : [ ["x", "2012-06-24", "2012-09-10", "2012-11-29", "2013-05-21", "2013-12-06", "2014-06-08"], ["DBP", "101", "92", "112", "113", "114", "122"] ], "standards" : { "htn" : { "exclusions" : { "excl" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-10-28", "text": "Mediation decreased"}, {"value": "2014-05-26", "text": "Face-to-face encounter"}] },
@@ -793,7 +858,7 @@
     "5559995772": { "sbp" : [ ["x", "2012-05-07", "2012-08-02", "2012-11-03", "2013-03-13", "2013-06-16", "2013-11-26"], ["SBP", "133", "131", "116", "111", "101", "111"] ], "dbp" : [ ["x", "2012-05-07", "2012-08-02", "2012-11-03", "2013-03-13", "2013-06-16", "2013-11-26"], ["DBP", "77", "93", "74", "80", "96", "76"] ], "standards" : { "htn" : { "diagnosis" : { "htn" : "HTN target 140/90" } } }, "contacts": [{"value": "2012-09-30", "text": "Face-to-face encounter"}, {"value": "2013-07-07", "text": "Mediation changed"}] },
     "6660000041": { "asthma" : [ ["x", "2012-08-24", "2012-12-22", "2013-06-24", "2013-09-03", "2014-01-23", "2014-06-10"], ["PEFR", "109", "117", "125", "105", "110", "105"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2013-01-29", "text": "Mediation changed"}, {"value": "2014-01-30", "text": "Face-to-face encounter"}] },
     "6660069950": { "asthma" : [ ["x", "2012-05-12", "2012-10-16", "2013-02-19", "2013-06-19", "2013-12-26", "2014-03-16"], ["PEFR", "53", "66", "59", "75", "61", "43"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-10-11", "text": "Face-to-face encounter"}, {"value": "2013-08-10", "text": "Mediation decreased"}] },
-    "123": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Aspirin", "dose":"75 mg OD", "last":"2013-07-12"}], "sbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Systolic blood pressure", "121", "141", "122", "138", "152", "137"] ], "dbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Diastolic blood pressure", "98", "79", "98", "80", "99", "103"] ], "CHA2DS2Vasc" : [ ["x", "2012-06-19", "2015-08-03"],  ["CHA2DS2Vasc", "0", "1"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2014-11-29", "text": "Face-to-face encounter"}, {"value": "2015-01-19", "text": "Face-to-face encounter"}] },
+    "123": { "codes": [{"code":"C10F.","date":"2009-03-15"}], "medications":[{"name":"Aspirin", "dose":"75 mg OD", "last":"2013-07-12"}], "sbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Systolic blood pressure", "121", "141", "122", "138", "152", "176"] ], "dbp" : [ ["x", "2012-06-14", "2012-09-20", "2013-01-24", "2013-03-17", "2013-06-14", "2013-11-18"], ["Diastolic blood pressure", "98", "79", "98", "80", "99", "103"] ], "CHA2DS2Vasc" : [ ["x", "2012-06-19", "2015-08-03"],  ["CHA2DS2Vasc", "0", "1"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2014-11-29", "text": "Face-to-face encounter"}, {"value": "2015-01-19", "text": "Face-to-face encounter"}] },
     "6660242024": { "asthma" : [ ["x", "2012-06-15", "2012-12-04", "2013-03-03", "2013-06-17", "2013-08-15", "2013-12-21"],  ["PEFR", "90", "70", "86", "100", "85", "100"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-10-21", "text": "Face-to-face encounter"}, {"value": "2013-11-28", "text": "Mediation changed"}] },
     "6660295217": { "asthma" : [ ["x", "2012-05-12", "2012-11-11", "2013-05-07", "2013-10-18", "2014-04-19", "2014-07-26"], ["PEFR", "43", "53", "37", "47", "57", "59"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-08-15", "text": "Mediation decreased"}, {"value": "2014-01-21", "text": "Face-to-face encounter"}] },
     "6660366599": { "asthma" : [ ["x", "2012-05-23", "2012-07-24", "2012-10-12", "2013-04-10", "2013-09-25", "2014-04-09"], ["PEFR", "122", "102", "92", "106", "113", "120"] ], "standards" : { "af" : { "monitoring" : { "asthma" : "Annual review" } } }, "contacts": [{"value": "2012-06-06", "text": "Face-to-face encounter"}, {"value": "2013-12-19", "text": "Face-to-face encounter"}] },

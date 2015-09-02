@@ -14,25 +14,28 @@ body.qof {
 }
 
 span.standard-missed {
-  background-color: lightsalmon;
+  background-color: #ff9999;
 }
 span.standard-achieved {
-  background-color: lightgreen;
+  background-color: #d2f8d2;
 }
 span.standard-not-relevant {
-  background-color: lightgrey;
+  background-color: #FAFCFF;
 }
 
 div.standard-missed-page {
-  background-color: lightsalmon;
+  background-color: #ff9999;
+  min-height: 1000px;
 }
 
 div.standard-achieved-page {
-  background-color: lightgreen;
+  background-color: #d2f8d2;
+  min-height: 1000px;
 }
 
 div.standard-not-relevant-page {
-  background-color: lightgrey;
+  background-color: #FAFCFF;
+  min-height: 1000px;
 }
 
 .row.row-top {
@@ -50,6 +53,14 @@ div.standard-not-relevant-page {
 
 .panel-body.danger {
   background-color: #f2dede;
+}
+
+.btn-trend{
+  background-color: yellow;
+}
+
+.btn-trend:focus{
+  background-color: yellow;
 }
 
 .btn.btn-xs.btn-yes.btn-toggle.btn-success:hover{
@@ -134,10 +145,10 @@ tr.suggestion.success:hover .btn-hover-show-group,tr.suggestion.danger:hover .bt
 }
 
 hr{
-  margin-top: 0px;
-  margin-bottom: 40px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   border-top: 0px solid #7e818d;
-  border-bottom: 3px solid #7e818d;
+  border-bottom: 2px solid #7e818d;
 }
 
 .info-button {
@@ -193,6 +204,21 @@ hr{
 .nav-tabs>li a {
   border: 1px solid #ddd;
   border-bottom: 0;
+  background-color: #F9F9F9;
+}
+
+.nav-tabs>li a:hover {
+  border: 1px solid #ddd;
+  border-bottom: 0;
+}
+
+.nav-tabs>li a.active {
+  border-bottom: 2px solid white;
+}
+
+.nav-tabs a.active {
+  border-bottom: 2px solid white;
+  background-color: blue;
 }
 
 /*support for slightly wider desktops */
@@ -201,6 +227,10 @@ hr{
   min-height: 1px;
   padding-right: 15px;
   padding-left: 15px;
+}
+
+.col-xl-8{
+  background-color: #FAFCFF;
 }
 
 @media (min-width: 1300px) {
@@ -564,7 +594,7 @@ header {
 	background-color: rgb(242,242,244);
 }
 
-.pagetitle-htn {
+.pagetitle-small {
   color: #70ba63;
   background-color: #70ba63;
 }
@@ -719,6 +749,7 @@ th,td {
   border-top-width: 0;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  height: 750px;
 }
 
 .top-tab-pane .sub-tabs {
@@ -735,6 +766,7 @@ th,td {
   border-top-width: 0;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  height: 680px;
   margin-bottom:10px;
 }
 
@@ -748,7 +780,7 @@ th,td {
 }
 
 .table-scroll {
-  max-height: 220px;
+  max-height: 270px;
 }
 
 .table-scroll .table {
