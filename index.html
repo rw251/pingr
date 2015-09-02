@@ -777,17 +777,17 @@
   <!--QS BOX-->
   <script id="qual-standard" type="x-tmpl-mustache">
     <!--<div class="panel panel-default" style="margin-top:20px;margin-left:15px;margin-bottom:10px;padding-bottom:18px;float:left">-->
-      <div id="individual-panel-classification" class="panel-grey panel-body" style="background-color: white;margin-top:0px;margin-left:0px;margin-bottom:15px;padding-top:20px;padding-bottom:22px;float:left;border-top: solid red 3px;border-right: solid red 3px;border-bottom: solid red 3px;width:580px; text-align: center">
+      <div id="individual-panel-classification" class="panel-grey panel-body" style="background-color: white;margin-top:0px;margin-left:0px;margin-bottom:15px;padding-top:20px;padding-bottom:22px;float:left;border-top: solid red 3px;border-right: solid red 3px;border-bottom: solid red 3px;width:440px; text-align: center">
       <!--<div style="panel panel-default panel-grey panel-body margin-top:20px;margin-left:15px;margin-bottom:10px;padding-bottom:18px;padding-left: 10px;float:left;width:450px;background-color: white; border-top: solid gray 2px; border-left: solid gray 2px;border-bottom: solid gray 2px">-->
         {{#relevant}}
           <!--<span> Quality standard: </span>-->
           <!--<span><strong>{{standard}}</strong>--> <span class="h4"><br><i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="{{tooltip}}"></i></span>
-          <span class="h4">{{#achieved}} <i class="fa fa-smile-o clickable" style="color:green" data-toggle="tooltip" data-placement="bottom" title="This quality standard has been achieved"></i> Achieved:{{/achieved}}{{^achieved}} <i class="fa fa-flag" style="color:red"></i> Improvement opportunity exists:{{/achieved}}</span>
+          <span class="h5">{{#achieved}} <i class="fa fa-smile-o clickable" style="color:green" data-toggle="tooltip" data-placement="bottom" title="This quality standard has been achieved"></i> Achieved:{{/achieved}}{{^achieved}} <i class="fa fa-flag" style="color:red"></i> Improvement opportunity exists:{{/achieved}}</span>
         {{/relevant}}
         {{^relevant}}
           <!--<span>{{standard}}--> <span class="h4"><br><i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="{{tooltip}}">&nbsp;</i><i class="fa fa-meh-o" style="color:gray"></i>&nbsp;Quality standard not relevant:</span>
         {{/relevant}}
-          <span class="h4"> Do you agree?</span>
+          <span class="h5"> Do you agree?</span>
 
           <div id="qual-agree-disagree" class="btn-group" data-toggle="buttons" data-text="{{standard}}">
             <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action and store it in your saved actions list ">
