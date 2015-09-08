@@ -228,7 +228,7 @@
       alert("!!!!!!!");
     });
 
-    var panel = createPanel($('#patient-panel'), {"options":local.options,"standard":stan,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
+    var panel = createPanel($('#patient-panel'), {"options":local.options, "numberOfStandardsMissed": numberOfStandardsMissed(patientId), "standard":stan,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
 
     if(standard === null){
       //Must be a patient from the *** OK group
@@ -295,7 +295,7 @@
 
     if(pathwayId===null){
       //Show patient but don't select
-      var p = createPanel($('#patient-panel'), {"options":local.options, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
+      var p = createPanel($('#patient-panel'), {"options":local.options, "numberOfStandardsMissed": numberOfStandardsMissed(patientId), "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
       farRightPanel.html(p).show();
       farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
 
