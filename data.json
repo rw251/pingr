@@ -26,6 +26,8 @@
         "standards": {
           "bp" : {
             "tab" : {"title":"BP monitoring - QOF / NICE","tooltip":"Patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who have not had their BP measured in the last 12 months (QOF and NICE guideline)"},
+            "standard-met-tooltip" : "bp is met",
+            "dropdown-tooltip" : "This patient bla bp blah",
             "chartTitle" : "Improvement opportunity categories for patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who have not had their BP measured in the last 12 months",
             "tableTitle" : "Patients with hypertension who have not had their BP measured in the last 12 months",
             "valueId" : "sbp",
@@ -60,6 +62,8 @@
           },
           "renal" : {
             "tab" : {"title":"Renal function monitoring - NICE","tooltip":"Patients with hypertension who have not had their renal function measured in the last 12 months"},
+            "standard-met-tooltip" : "renal is met",
+            "dropdown-tooltip" : "This patient bla renal blah",
             "chartTitle" : "Improvement opportunity categories for patients with hypertension who have not had their renal function measured in the last 12 months",
             "tableTitle" : "Patients with hypertension who have not had their renal function measured in the last 12 months",
             "valueId" : "egfr",
@@ -120,6 +124,8 @@
         "standards": {
           "bp" : {
             "tab" : {"title":"BP control - QOF targets","tooltip":"Patients with hypertension (not DM) where latest BP in last 12m is >150/90 mmHg"},
+            "standard-met-tooltip" : "bp is met",
+            "dropdown-tooltip" : "This patient bla bp blah",
             "chartTitle" : "Improvement opportunity categories for patients with hypertension (not DM) where latest BP in last 12m is >150/90 mmHg",
             "tableTitle" : "Patients with hypertension, PAD, CHD, TIA or stroke (not DM) where latest BP in last 12m is >150/90 mmHg",
             "valueId" : "sbp",
@@ -182,6 +188,8 @@
           },
           "hba1c" : {
             "tab" : {"title":"BP control - NICE targets","tooltip":"Patients with hypertension (not DM or CKD) where latest BP in last 12m is >139/89 mmHg (or >149/89 mmHg > 79 years old)"},
+            "standard-met-tooltip" : "hb is met",
+            "dropdown-tooltip" : "This patient bla hb blah",
             "chartTitle" : "Improvement opportunity categories for patients with hypertension (not DM or CKD) where latest BP in last 12m is >139/89 mmHg (or >149/89 mmHg > 79 years old)",
             "tableTitle" : "Patients with hypertension (not DM or CKD) where latest BP in last 12m >139/89 mmHg (or >149/89 mmHg > 79 years old",
             "valueId" : "sbp",
@@ -264,6 +272,8 @@
         "standards":{
           "excl" : {
             "tab" : {"title":"Exclusions","tooltip":"Additional patients who may benefit from exclusion from hypertension quality standards"},
+            "standard-met-tooltip" : "excl is met",
+            "dropdown-tooltip" : "This patient bla escv blah",
             "chartTitle" : "Categories of patients with hypertension who may benefit from being excluded from quality standards",
             "tableTitle" : "Patients with hypertension who may benefit from being excluded from quality standards",
             "valueId" : "sbp",
@@ -316,6 +326,8 @@
         "standards":{
           "htn":{
             "tab" : {"title":"Undiagnosed hypertension","tooltip":"Patients with potentially undiagnosed hypertension"},
+            "standard-met-tooltip" : "HTn is met",
+            "dropdown-tooltip" : "This patient bla htn blah",
             "chartTitle" : "Types of patient with potentially undiagnosed hypertension",
             "tableTitle" : "Patients with potentially undiagnosed hypertension",
             "valueId" : "sbp",
@@ -337,6 +349,8 @@
           },
           "screen":{
             "tab" : {"title":"Unscreened hypertension","tooltip":"Patients at risk of hypertension who have not been screened"},
+            "standard-met-tooltip" : "screen is met",
+            "dropdown-tooltip" : "This patient bla scren blah",
             "chartTitle" : "Opportunities to improve hypertension screening",
             "tableTitle" : "Patients with opportunities to improve hypertension screening",
             "valueId" : "sbp",

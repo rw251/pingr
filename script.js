@@ -178,13 +178,13 @@
     //if no mention anywhere then not relevant for that disease
     switch(getPatientStatus(local.patientId, data.pathwayId, data.pathwayStage, data.standard)){
       case "ok":
-        standardHtml = '<span class="standard-achieved">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
+        standardHtml = '<span class="standard-achieved" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD ACHIEVED">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
         break;
       case "missed":
-        standardHtml = '<span class="standard-missed">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
+        standardHtml = '<span class="standard-missed" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD MISSED">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
         break;
       case "not":
-        standardHtml = '<span class="standard-not-relevant">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i></span>';
+        standardHtml = '<span class="standard-not-relevant" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD NOT RELEVANT">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i></span>';
         break;
     }
     var $standard = $(standardHtml);
@@ -304,6 +304,8 @@
       $('select').on('change', function(){
         var data = $(this).find(':selected').data();
         showIndividualPatientView(data.pathwayId, data.pathwayStage, data.standard, local.patientId);
+      }).on("select2:open", function (e) {
+        wireUpTooltips();
       });
       return;
     }
@@ -713,7 +715,7 @@
       var denom = num + local.data[local.pathwayId].monitoring.patientsOk.length;
       standards.push({
         "standard" : local.data[local.pathwayId].monitoring.standards[key].tab.title,
-        "tooltip" : local.data[local.pathwayId].monitoring.standards[key].tab.tooltip,
+        "tooltip" : local.data[local.pathwayId].monitoring.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -826,7 +828,7 @@
       var denom = num + local.data[local.pathwayId].treatment.patientsOk.length;
       standards.push({
         "standard" : local.data[local.pathwayId].treatment.standards[key].tab.title,
-        "tooltip" : local.data[local.pathwayId].treatment.standards[key].tab.tooltip,
+        "tooltip" : local.data[local.pathwayId].treatment.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -937,7 +939,7 @@
       var denom = num + local.data[local.pathwayId].diagnosis.patientsOk.length;
       standards.push({
         "standard" : local.data[local.pathwayId].diagnosis.standards[key].tab.title,
-        "tooltip" : local.data[local.pathwayId].diagnosis.standards[key].tab.tooltip,
+        "tooltip" : local.data[local.pathwayId].diagnosis.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -1045,7 +1047,7 @@
       var denom = num + local.data[local.pathwayId].exclusions.patientsOk.length;
       standards.push({
         "standard" : local.data[local.pathwayId].exclusions.standards[key].tab.title,
-        "tooltip" : local.data[local.pathwayId].exclusions.standards[key].tab.tooltip,
+        "tooltip" : local.data[local.pathwayId].exclusions.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -1764,6 +1766,8 @@
     $('select').on('change', function(){
       var data = $(this).find(':selected').data();
       callback(data.pathwayId, data.pathwayStage, data.standard, local.patientId);
+    }).on("select2:open", function (e) {
+      wireUpTooltips();
     });
   };
 
