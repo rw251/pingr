@@ -109,7 +109,7 @@
           "panel": {"text":"Patients who have not had their hypertension treated", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have not had their blood pressure measured in the last 12 months"},
           "panelOk": {"text":"Patients treated OK", "tooltip":"Patients with hypertension whose BP is controlled according to QOF and NICE guidelines"},
           "panelNotOk": {"text":"Patients with improvement opportunities", "tooltip": "Patients with hypertension who have opportunities to have their BP control improved"},
-          "panelOkHeader" : {"text" : "Patients with hypertension who have been treated as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
+          "panelOkHeader" : {"text" : "Patients with hypertension whose BP is controlled according to QOF and NICE guidelines", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have not had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to treat hypertension"}
         },

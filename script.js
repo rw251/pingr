@@ -454,14 +454,14 @@
 
 
     if(agree) {
-      log = "You agreed with this on " + (new Date()).toDateString();
+      log = "You agreed with this suggested action on " + (new Date()).toDateString();
     } else if(agree===false) {
       var reasonText = local.reason.reason === "" && local.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + local.reason.reason + "; " + local.reason.reasonText +".'";
       log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
     }
 
     if(done) {
-      log = "You completed this on " + (new Date()).toDateString();
+      log = "You agreed with this suggested action on " + (new Date()).toDateString();
     }
 
     if(!obj.actions[id][actionId]) {
@@ -3473,7 +3473,7 @@
     for(var i = 0; i < list.length; i++){
       list[i].hasSubItems = true;
     }
-    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Home", "isBreakAboveHome":true});
+    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Saved actions", "isBreakAboveHome":true});
     list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; return v; });

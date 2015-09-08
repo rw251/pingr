@@ -160,13 +160,13 @@
       </div>
     </div>
 
-    <aside id="aside-toggle" class="left-panel" style="overflow: hidden; outline: none;" tabindex="5003">
+    <aside id="aside-toggle" class="left-panel" style="overflow: hidden; outline: none;color: #C2C3C6" tabindex="5003">
       <div class="user text-center clickable">
         <!--<img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">-->
         <!--<i class="fa fa-camera-retro fa-2x"></i>-->
         <img alt="..." width="52" height="52" src="assets/images/icons/PINGR_logo-52px.png">
         <h3 style="margin-top: 10px">PINGR</h3>
-        <p style="font-size: 0.9em;font-style: italic;">Improvement actions <br> for GP practices</p>
+        <p style="font-size: 0.9em;font-style: italic">Improvement actions <br> for GP practices</p>
         <!--<h4 class="user-name">Hello Dr Brown</h4>-->
       </div>
 
@@ -177,16 +177,16 @@
     <div class="starter-template page welcome-page" id="welcome">
       <div class="container">
         <div class="row">
-          <h1>Hello, Dr Brown.</h1>
+          <h1>Saved actions</h1>
         </div>
         <div class="row">
-          <h3>To see your suggested improvement actions, select a clinical area <i class="fa fa-hand-o-left"></i> or review actions you have previously agreed with <i class="fa fa-hand-o-down"></i> </h3> <br>
+          <h4>To see more suggested improvement actions, select a clinical area from the menu on the left <i class="fa fa-hand-o-left"></i><!-- or review actions you have previously agreed with <i class="fa fa-hand-o-down"></i>--> or search for a patient above <i class="fa fa-hand-o-up"></i>. </h4> <br>
         </div>
 
         <div class="hide-if-logged-out pull-right btn-group">
               <!--<button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="hidden-xs hidden-sm hidden-md">Download agreed actions </span></button>-->
-              <button type="button" class="btn btn-danger dropdown-toggle " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="hidden-xs hidden-sm hidden-md">Download agreed actions &nbsp; </span>
+              <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="hidden-xs hidden-sm hidden-md">Download saved actions &nbsp; </span>
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
               </button>
@@ -199,8 +199,8 @@
         </div>
 
         <ul id="welcome-tabs" class="nav nav-tabs">
-            <li class="active"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awaiting implementation</a></li>
-            <li><a id="completedTasks" href="#completedTasks">Agreed actions that have been implemented</a></li>
+            <li class="active" data-toggle="tooltip" title="Improvement actions with which you have previously already in PINGR that have not yet been implemented in practice"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awaiting implementation</a></li>
+            <li  data-toggle="tooltip" title="Improvement actions with which you have previously already in PINGR and then implemented in practice"><a id="completedTasks" href="#completedTasks">Agreed actions that have been implemented</a></li>
         </ul>
         <div class="top-tab-pane">
           <div class="panel panel-default">
@@ -1438,9 +1438,9 @@
   </script>
 
   <script id="pathway-picker-item" type="x-tmpl-mustache">
-    {{#isBreakAboveHome}}<hr><span style ="color:rgb(51, 122, 183);font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>SAVED ACTIONS</strong></span>{{/isBreakAboveHome}}
-    {{#isBreakAbovePractice}}<hr><span style ="color:rgb(51, 122, 183);font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>PRACTICE-LEVEL DATA</strong></span>{{/isBreakAbovePractice}}
-    {{#isBreakAbovePatient}}<hr><span style ="color:rgb(51, 122, 183); font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>PATIENT-LEVEL DATA</strong></span>{{/isBreakAbovePatient}}
+    <!--{{#isBreakAboveHome}}<hr><span style ="color:rgb(51, 122, 183);font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>SAVED ACTIONS</strong></span>{{/isBreakAboveHome}}-->
+    {{#isBreakAbovePractice}}<hr><span style ="color:#C2C3C6;font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>PRACTICE-LEVEL DATA</strong></span>{{/isBreakAbovePractice}}
+    <!--{{#isBreakAbovePatient}}<hr><span style ="color:rgb(51, 122, 183); font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>PATIENT-LEVEL DATA</strong></span>{{/isBreakAbovePatient}}-->
     <li {{#isSelected}}class="active"{{/isSelected}}>
       <a href="#{{link}}">
         <i class="fa {{faIcon}}"></i>
