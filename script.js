@@ -2090,7 +2090,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + "\n" + " - click again to cancel";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2100,7 +2100,7 @@
   				self.addClass('danger');
   				self.removeClass('success');
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + "\n" + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -2914,7 +2914,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + "\n" + " - click again to cancel";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2924,7 +2924,7 @@
   				self.addClass('danger');
   				self.removeClass('success');
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - Click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
