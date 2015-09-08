@@ -183,7 +183,7 @@
           <h4>To see more suggested improvement actions, select a clinical area from the menu on the left <i class="fa fa-hand-o-left"></i><!-- or review actions you have previously agreed with <i class="fa fa-hand-o-down"></i>--> or search for a patient above <i class="fa fa-hand-o-up"></i>. </h4> <br>
         </div>
 
-        <div class="hide-if-logged-out pull-right btn-group">
+        <div class="hide-if-logged-out pull-right btn-group" data-toggle="tooltip" data-placement="top" title="Download your planned actions as a PDF document" >
               <!--<button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="hidden-xs hidden-sm hidden-md">Download agreed actions </span></button>-->
               <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="hidden-xs hidden-sm hidden-md">Download saved actions &nbsp; </span>
@@ -459,7 +459,12 @@
 
   <script id="patient-list-header-item" type="x-tmpl-mustache">
     <th style="min-width:90px" class="sortable {{direction}}" data-toggle="tooltip" title="{{tooltip}}">
-      {{title}}
+      {{#titleHTML}}
+        {{{titleHTML}}}
+      {{/titleHTML}}
+      {{^titleHTML}}
+        {{title}}
+      {{/titleHTML}}
       {{^isUnSortable}}
       {{#isSorted}}
       {{#isAsc}}<i class="fa fa-sort-asc" data-toggle="tooltip" title="Order patients by {{title}}"></i>{{/isAsc}}

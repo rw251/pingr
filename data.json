@@ -32,8 +32,10 @@
             "tableTitle" : "Patients with hypertension who have not had their BP measured in the last 12 months",
             "valueId" : "sbp",
             "valueName" : "Last BP date",
+            "value" : "systolic blood pressure",
             "dateORvalue" : "date",
             "chart" : ["sbp","dbp"],
+            "chartUnits" : "mmHg",
             "opportunities" : [
               {
                 "name": "No opportunities",
@@ -68,8 +70,10 @@
             "tableTitle" : "Patients with hypertension who have not had their renal function measured in the last 12 months",
             "valueId" : "egfr",
             "valueName" : "Last eGFR date",
+            "value" : "eGFR",
             "dateORvalue" : "date",
             "chart" : ["egfr"],
+            "chartUnits" : "egfr units",
             "opportunities" : [
               {
                 "name": "No opportunities",
@@ -130,8 +134,10 @@
             "tableTitle" : "Patients with hypertension, PAD, CHD, TIA or stroke (not DM) where latest BP in last 12m is >150/90 mmHg",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
+            "value" : "systolic blood pressure",
             "dateORvalue" : "value",
             "chart" : ["sbp", "dbp"],
+            "chartUnits" : "mmHg",
             "opportunities" :[
               {
                 "name": "Suboptimal medication",
@@ -194,8 +200,10 @@
             "tableTitle" : "Patients with hypertension (not DM or CKD) where latest BP in last 12m >139/89 mmHg (or >149/89 mmHg > 79 years old",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
+            "value" : "systolic blood pressure",
             "dateORvalue" : "value",
             "chart" : ["sbp", "dbp"],
+            "chartUnits" : "mmHg",
             "opportunities" : [
               {
                 "name": "Suboptimal medication",
@@ -278,8 +286,10 @@
             "tableTitle" : "Patients with hypertension who may benefit from being excluded from quality standards",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
+            "value" : "systolic blood pressure",
             "dateORvalue" : "value",
             "chart" : ["sbp","dbp"],
+            "chartUnits" : "mmHg",
             "opportunities" : [
               {
                 "name": "Palliative",
@@ -332,6 +342,7 @@
             "tableTitle" : "Patients with potentially undiagnosed hypertension",
             "valueId" : "sbp",
             "valueName" : "Last SBP",
+            "value" : "systolic blood pressure",
             "dateORvalue" : "value",
             "chart" : ["sbp","dbp"],
             "opportunities":[
@@ -356,6 +367,7 @@
             "valueId" : "sbp",
             "tooltip": "test",
             "valueName" : "Last SBP",
+            "value" : "systolic blood pressure",
             "dateORvalue" : "value",
             "chart" : ["sbp","dbp"],
             "opportunities":[

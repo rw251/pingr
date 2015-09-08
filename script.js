@@ -1181,6 +1181,8 @@
 			}
 			populatePatientPanel(pathwayId, local.selected, standard, local.subselected, $(this).index(), sortAsc);
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+      $('[data-toggle="tooltip"]').tooltip('hide');
+      $(this).tooltip('destroy');
       clearBox();
 			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted').removeAttr("title");
@@ -2341,7 +2343,7 @@
   var populateAllPatientPanel = function(){
     var patients = getAllPatients();
 
-    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title" : "All opportunities", "isUnSortable" : true, "tooltip":"Total number of improvement opprtunities available across all conditions"}]};
+    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isUnSortable" : true, "tooltip":"Total number of improvement opprtunities available across all conditions"}]};
 
     data.patients.sort(function(a, b){
       if(a.items[0] === b.items[0]) {
@@ -2381,6 +2383,9 @@
   };
 
   var wireUpTooltips = function(){
+    $('[data-toggle="tooltip"]').tooltip('hide');
+    $('.tooltip').remove();
+
     $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }});
     $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
     $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
@@ -2456,7 +2461,7 @@
 
     //middle column is either value or date
     if(local.data[pathwayId][pathwayStage].standards[standard].dateORvalue){
-      data["header-items"].push({"title" : local.data[pathwayId][pathwayStage].standards[standard].valueName, "isSorted":false, "direction":"sort-asc"});
+      data["header-items"].push({"title" : local.data[pathwayId][pathwayStage].standards[standard].valueName, "tooltip": local.data[pathwayId][pathwayStage].standards[standard].dateORvalue==="date" ? "Last date " +local.data[pathwayId][pathwayStage].standards[standard].value + " was measured" :"Last " +local.data[pathwayId][pathwayStage].standards[standard].value + " reading", "isSorted":false, "direction":"sort-asc"});
     } else {
       if(pathwayStage === local.categories.monitoring.name){
         data["header-items"].push({"title" : "Last BP Date", "isSorted":false, "direction":"sort-asc", "tooltip":"Last date BP was measured"});
@@ -2467,7 +2472,7 @@
     }
 
     //add qual standard column
-    data["header-items"].push({"title" : "All opportunities", "isSorted":true, "direction":"sort-desc", "tooltip":"Total number of improvement opprtunities available across all conditions"});
+    data["header-items"].push({"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isSorted":true, "direction":"sort-desc", "tooltip":"Total number of improvement opprtunities available across all conditions"});
 
     if(sortField === undefined) sortField = 2;
 		if(sortField !== undefined) {
@@ -2551,7 +2556,7 @@
       ret.items.push(local.data.patients[patientId].breach ? numberOfStandardsMissed(patientId) : 0);
 			return ret;
 		});
-    var data = {"patients": patients, "n" : patients.length, "header":header, "tooltip":tooltip, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title" : "All opportunities", "isSorted":true, "direction":"sort-desc","tooltip":"Total number of improvement opprtunities available across all conditions"}]};
+    var data = {"patients": patients, "n" : patients.length, "header":header, "tooltip":tooltip, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isSorted":true, "direction":"sort-desc","tooltip":"Total number of improvement opprtunities available across all conditions"}]};
 
     if(sortField === undefined) sortField = 1;
 
@@ -2767,7 +2772,13 @@
   					}
 					},
           max: new Date()
-				}
+				},
+        y: {
+          label: {
+            text: local.data[pathwayId][pathwayStage].standards[standard].chartUnits,
+            position: 'outer-middle'
+          }
+        }
 			}
 		};
 
@@ -3095,7 +3106,9 @@
     $('#advice-list').find('span:contains("[INFO")').each(function(){
       var html = $(this).html();
       var subsection = $(this).data().subsection;
-      var tooltip = subsection ? "We recommended this because we think this patient is categorised as '" + subsection + "'" : '';
+      var desc = local.data[pathwayId][pathwayStage].standards[standard].opportunities.filter(function(val){ return val.name===subsection}).length>0 ?
+                local.data[pathwayId][pathwayStage].standards[standard].opportunities.filter(function(val){ return val.name===subsection})[0].desc : subsection;
+      var tooltip = subsection ? "We recommended this because we think this patient is categorised as '" + desc + "'" : '';
       var newHtml = ' <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="' + tooltip + '"></i>';
       $(this).html(html.replace(/\[INFO\]/g, newHtml));
     });
