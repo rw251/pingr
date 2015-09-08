@@ -3822,7 +3822,7 @@
     $('.download-all').on('click', function(){
       exportPlan('all');
     });
-
+*/
     $('#outstandingTasks').on('click', function(e){
       e.preventDefault();
 
@@ -3835,7 +3835,7 @@
         populateWelcomeTasks();
         $(this).fadeIn(100);
       });
-    });*/
+    });
 
     $('#completedTasks').on('click', function(e){
       e.preventDefault();
