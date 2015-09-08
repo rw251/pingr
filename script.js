@@ -3822,7 +3822,7 @@
     $('.download-all').on('click', function(){
       exportPlan('all');
     });
-
+*/
     $('#outstandingTasks').on('click', function(e){
       e.preventDefault();
 
@@ -3835,7 +3835,7 @@
         populateWelcomeTasks();
         $(this).fadeIn(100);
       });
-    });*/
+    });
 
     $('#completedTasks').on('click', function(e){
       e.preventDefault();
@@ -3880,7 +3880,8 @@
 
     for(d in data){
       local.pathwayNames[d] = data[d]["display-name"];
-      local.diseases.push({"id":d,"link": data[d].link ? data[d].link : "main/"+d, "faIcon":data[d].icon, "name":data[d]["display-name"]});
+      var diseaseObject = {"id":d,"link": data[d].link ? data[d].link : "main/"+d, "faIcon":data[d].icon, "name":data[d]["display-name"], "tooltip":data[d]["side-panel-tooltip"]};
+      local.diseases.push(diseaseObject);
       local.data[d].suggestions = local.actionPlan[d].team;
       $.extend(local.data[d].monitoring, {"breakdown":[], "bdown":{}});
       $.extend(local.data[d].treatment, {"breakdown":[], "bdown":{}});
@@ -4013,6 +4014,82 @@
     localStorage.testData = JSON.stringify({"diseases":diseases, "patients":patients});
     return {"diseases":diseases, "patients":patients};
   };*/
+
+  var getDates = function(n){
+    var arr = [];
+
+    var today = new Date();
+    var freqInterval = Math.random() < 0.33 ? 50 : (Math.random() < 0.5 ? 100 : 200);
+
+    for(var i = 0; i < n; i++){
+      today.setDate(today.getDate() - ((Math.random() * freqInterval) + freqInterval/2));
+      arr.unshift(today.toISOString().substr(0,10));
+    }
+
+    arr.unshift("x");
+
+    return arr;
+  };
+
+  var getValues = function(name, n, low, high){
+    var arr = [name];
+
+    var start = Math.floor(Math.random()*(high-low) + low);
+    for(var i = 0; i < n; i++){
+      start += Math.floor((Math.random()-0.5)*(high-low)/10);
+      arr.push(start);
+    }
+
+    return arr;
+  };
+
+  //0 occasionally 1-9
+  var getChadValues = function(n){
+    var arr = ["Chad2Vasc"];
+
+    var start = Math.random() < 0.2 ? 0 : 1+Math.floor(Math.random()*8);
+    for(var i = 0; i < n; i++){
+      start += Math.floor(Math.random()*1.25);
+      arr.push(start);
+    }
+    return arr;
+  };
+
+  window.generatePatientData = function(){
+    var r = Math.random();
+    $.getJSON("data.json?v="+r, function(file) {
+        for(var id in file.patients){
+          //get 6 dates
+          var dateArray = getDates(6);
+
+          if(!file.patients[id].sbp) {
+            file.patients[id].sbp = [dateArray,getValues("SBP", 6, 100,180)];
+          }
+
+          if(!file.patients[id].dbp) {
+            file.patients[id].dbp = [dateArray,getValues("DBP", 6, 50,120)];
+          }
+
+          if(!file.patients[id].egfr) {
+            file.patients[id].egfr = [dateArray,getValues("EGFR", 6, 15,150)];
+          }
+
+          if(file.patients[id].CHA2DS2Vasc.length>2) {
+            file.patients[id].CHA2DS2Vasc = [dateArray, getChadValues(6)];
+          }
+
+          if(!file.patients[id].pulse) {
+            file.patients[id].pulse = [dateArray,getValues("PULSE", 6, 45,95)];
+          }
+
+          if(!file.patients[id].INR) {
+            file.patients[id].INR = [dateArray,getValues("INR", 6, 100,180)];
+          }
+        }
+
+        console.log(JSON.stringify(file.patients));
+    });
+  };
 
   window.generateTrendData = function(labels, endDate, endValues, minValue, maxValue, changeProbs, favourUpProbs, days){
     var rtn = [["x", endDate.toISOString().substr(0,10)]],i,j;
