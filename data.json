@@ -411,7 +411,7 @@
               },
               {
                 "name": "Non face-to-face",
-                "desc": "Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months who have had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
+                "desc": "Patients with AF who have not had a CHA2DS2Vasc score in the last 12 months who have had some sort of contact with the practice e.g. telephone calls, or picking up repeat prescriptions",
                 "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
                 "patients": [6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965]
               },
@@ -423,8 +423,9 @@
             ]
           },
           "pulse-monitor" :{
-            "tab" : {"title":"Pulse rate","tooltip":"test"},
-            "chartTitle" : "Opportunities to improve pulse rate monitoring",
+            "tab" : {"title":"Pulse rate","tooltip":"Patients with atrial fibrillation who have not had their pulse rate measured in the last 12 months"},
+            "chartTitle" : "Improvement opportunity categories for patients with AF who have not had their pulse rate measured in the last 12 months",
+            "tableTitle" : "Patients with AF who have not had their pulse rate measured in the last 12 months",
             "valueId" : "pulse",
             "valueName" : "Last pulse date",
             "dateORvalue" : "date",
@@ -432,27 +433,33 @@
             "opportunities": [
               {
                 "name": "No opportunities",
-                "desc": "Patients who have had no contact with the practice",
+                "desc": "Patients with AF who have not had their pulse rate measured in the last 12 months and had no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
                 "patients": [6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
               },
               {
                 "name": "Face-to-face",
-                "desc": "Patients who have seen a clinician in GP practice",
+                "desc": "Patients with AF who have not had their pulse rate measured in the last 12 months and who have seen a clinician in the practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
                 "patients": [6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
               },
               {
                 "name": "Non face-to-face",
-                "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, picking up repeat prescriptions, letters",
+                "desc": "Patients with AF who have not had their pulse rate measured in the last 12 months who have had some sort of contact with the practice e.g. telephone calls, or picking up repeat prescriptions",
                 "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
                 "patients": [6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965,6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053]
+              },
+              {
+                "name": "Palliative",
+                "desc": "Patients with AF who have not had their pulse rate measured in the last 12 months who are receiving palliative care treatment and may benefit from exclusion from AF quality standards",
+                "patients": [6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053,5557741611]
               }
             ]
           },
           "INR-monitor" :{
-            "tab" : {"title":"INR","tooltip":"test"},
-            "chartTitle" : "Opportunities to improve INR monitoring",
+            "tab" : {"title":"INR","tooltip":"Patients with atrial fibrillation prescribed warfarin in the last 3 months who have not had their INR measured in the last 3 months"},
+            "chartTitle" : "Improvement opportunity categories for patients with AF prescribed warfarin in the last 3 months who have not had their INR measured in the last 3 months",
+            "tableTitle" : "Patients with AF prescribed warfarin in the last 3 months who have not had their INR measured in the last 3 months",
             "valueId" : "INR",
             "valueName" : "Last INR date",
             "dateORvalue" : "date",
@@ -460,19 +467,19 @@
             "opportunities": [
               {
                 "name": "No opportunities",
-                "desc": "Patients who have had no contact with the practice",
+                "desc": "Patients with atrial fibrillation prescribed warfarin in the last 3 months who have not had their INR measured in the last 3 months AND had no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
                 "patients": [6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647]
               },
               {
                 "name": "Face-to-face",
-                "desc": "Patients who have seen a clinician in GP practice",
+                "desc": "Patients with atrial fibrillation prescribed warfarin in the last 3 months who have not had their INR measured in the last 3 months AND seen a clinician in the practice",
                 "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
                 "patients": [123,6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822]
               },
               {
                 "name": "Non face-to-face",
-                "desc": "Patients who have not seen a clinician in the practice but had some sort of contact e.g. telephone calls, picking up repeat prescriptions, letters",
+                "desc": "Patients with atrial fibrillation prescribed warfarin in the last 3 months who have not had their INR measured in the last 3 months AND had some sort of contact with the practice e.g. telephone calls, picking up repeat prescriptions",
                 "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
                 "patients": [6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965,6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053]
               }
