@@ -713,6 +713,7 @@
         return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
       })).length;
       var denom = num + local.data[local.pathwayId].monitoring.patientsOk.length;
+      num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].monitoring.standards[key].tab.title,
         "tooltip" : local.data[local.pathwayId].monitoring.standards[key]["standard-met-tooltip"],
@@ -740,11 +741,11 @@
       if($(this).text()==="Trend"){
         $(this).text("Table");
         $('#monitoring-chart-table').hide();
-        $('#monitoring-chart').show();
+        $('#monitoring-chart-wrapper').show();
       } else {
         $(this).text("Trend");
         $('#monitoring-chart-table').show();
-        $('#monitoring-chart').hide();
+        $('#monitoring-chart-wrapper').hide();
       }
       e.stopPropagation();
     });
@@ -826,6 +827,7 @@
         return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
       })).length;
       var denom = num + local.data[local.pathwayId].treatment.patientsOk.length;
+      num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].treatment.standards[key].tab.title,
         "tooltip" : local.data[local.pathwayId].treatment.standards[key]["standard-met-tooltip"],
@@ -853,11 +855,11 @@
       if($(this).text()==="Trend"){
         $(this).text("Table");
         $('#treatment-chart-table').hide();
-        $('#treatment-chart').show();
+        $('#treatment-chart-wrapper').show();
       } else {
         $(this).text("Trend");
         $('#treatment-chart-table').show();
-        $('#treatment-chart').hide();
+        $('#treatment-chart-wrapper').hide();
       }
       e.stopPropagation();
     });
@@ -937,6 +939,7 @@
         return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
       })).length;
       var denom = num + local.data[local.pathwayId].diagnosis.patientsOk.length;
+      num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].diagnosis.standards[key].tab.title,
         "tooltip" : local.data[local.pathwayId].diagnosis.standards[key]["standard-met-tooltip"],
@@ -961,11 +964,11 @@
       if($(this).text()==="Trend"){
         $(this).text("Table");
         $('#diagnosis-chart-table').hide();
-        $('#diagnosis-chart').show();
+        $('#diagnosis-chart-wrapper').show();
       } else {
         $(this).text("Trend");
         $('#diagnosis-chart-table').show();
-        $('#diagnosis-chart').hide();
+        $('#diagnosis-chart-wrapper').hide();
       }
       e.stopPropagation();
     });
@@ -1045,6 +1048,7 @@
         return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
       })).length;
       var denom = num + local.data[local.pathwayId].exclusions.patientsOk.length;
+      num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].exclusions.standards[key].tab.title,
         "tooltip" : local.data[local.pathwayId].exclusions.standards[key]["standard-met-tooltip"],
@@ -1069,11 +1073,11 @@
       if($(this).text()==="Trend"){
         $(this).text("Table");
         $('#exclusion-chart-table').hide();
-        $('#exclusion-chart').show();
+        $('#exclusion-chart-wrapper').show();
       } else {
         $(this).text("Trend");
         $('#exclusion-chart-table').show();
-        $('#exclusion-chart').hide();
+        $('#exclusion-chart-wrapper').hide();
       }
       e.stopPropagation();
     });
