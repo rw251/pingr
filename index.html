@@ -477,7 +477,7 @@
   </script>
 
   <script id="patient-list" type="x-tmpl-mustache">
-    <h4>{{header}} {{#tooltip}}<!--<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="{{tooltip}}"></i>-->{{/tooltip}}(n={{n}})</h4>
+    <h4>{{header}} {{#header}}(n={{n}}){{/header}}</h4>
 
     <table class="table patient-list table-body-hidden">
       <thead>
@@ -1214,7 +1214,7 @@
   </script>
 
   <script id="all-patients-panel" type="x-tmpl-mustache">
-    <h3>All patients at your practice</h3>
+    <h3>All patients at your practice (n={{n}})</h3>
     <div class="panel panel-default" id="panel-right">
       <!--<div class="panel-heading"><i class="fa fa-users fa-fw"></i>&nbsp; Patients</div>-->
 

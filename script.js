@@ -1333,7 +1333,7 @@
   };
 
   var showAllPatientPanel = function(location) {
-		createPanelShow($('#all-patients-panel'),location);
+		createPanelShow($('#all-patients-panel'),location, {"n" : getAllPatients().length});
 
 		patientsPanel = $('#patients');
 
@@ -2306,7 +2306,7 @@
     return Object.keys(obj).length;
   };
 
-  var populateAllPatientPanel = function(){
+  var getAllPatients = function(){
     var pList=[], i,k, prop;
     for(k=0; k < local.diseases.length; k++){
       for(i in local.categories){
@@ -2326,6 +2326,12 @@
       ret.items.push(numberOfStandardsMissed(patientId));
 			return ret;
 		});
+
+    return patients;
+  };
+
+  var populateAllPatientPanel = function(){
+    var patients = getAllPatients();
 
     var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title" : "All opportunities", "isUnSortable" : true, "tooltip":"Total number of improvement opprtunities available across all conditions"}]};
 
