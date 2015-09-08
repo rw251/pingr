@@ -3880,7 +3880,8 @@
 
     for(d in data){
       local.pathwayNames[d] = data[d]["display-name"];
-      local.diseases.push({"id":d,"link": data[d].link ? data[d].link : "main/"+d, "faIcon":data[d].icon, "name":data[d]["display-name"]});
+      var diseaseObject = {"id":d,"link": data[d].link ? data[d].link : "main/"+d, "faIcon":data[d].icon, "name":data[d]["display-name"], "tooltip":data[d]["side-panel-tooltip"]};
+      local.diseases.push(diseaseObject);
       local.data[d].suggestions = local.actionPlan[d].team;
       $.extend(local.data[d].monitoring, {"breakdown":[], "bdown":{}});
       $.extend(local.data[d].treatment, {"breakdown":[], "bdown":{}});

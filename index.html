@@ -1433,11 +1433,11 @@
 
   <script id="pathway-picker-sub-item" type="x-tmpl-mustache">
     <ul class="list-unstyled">
-      <li data-toggle="tooltip"data-placement="right" title="An overview of {{name}} care at practice-level"><a href="#main/{{id}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overview</a></li>
-      <li data-toggle="tooltip"data-placement="right" title="Patients with potentially undiagnosed {{name}} at your practice"><a href="#main/{{id}}/diagnosis/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnosis</a></li>
-      <li data-toggle="tooltip"data-placement="right" title="Patients with opportunities to improve their {{name}} monitoring at your practice"><a href="#main/{{id}}/monitoring/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monitoring</a></li>
-      <li data-toggle="tooltip"data-placement="right" title="Patients with opportunities to improve their {{name}} treatment at your practice"><a href="#main/{{id}}/treatment/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Treatment</a></li>
-      <li data-toggle="tooltip"data-placement="right" title="Patients that may benefit from exclusion from {{name}} quality standards at your practice"><a href="#main/{{id}}/exclusions/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exclusions</a></li>
+      <li data-toggle="tooltip" data-placement="right" title="An overview of {{name}} care at practice-level"><a href="#main/{{id}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overview</a></li>
+      <li data-toggle="tooltip" data-placement="right" title="Patients with potentially undiagnosed {{name}} at your practice"><a href="#main/{{id}}/diagnosis/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagnosis</a></li>
+      <li data-toggle="tooltip" data-placement="right" title="Patients with opportunities to improve their {{name}} monitoring at your practice"><a href="#main/{{id}}/monitoring/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Monitoring</a></li>
+      <li data-toggle="tooltip" data-placement="right" title="Patients with opportunities to improve their {{name}} treatment at your practice"><a href="#main/{{id}}/treatment/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Treatment</a></li>
+      <li data-toggle="tooltip" data-placement="right" title="Patients that may benefit from exclusion from {{name}} quality standards at your practice"><a href="#main/{{id}}/exclusions/no">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exclusions</a></li>
     </ul>
   </script>
 
@@ -1446,7 +1446,7 @@
     {{#isBreakAbovePractice}}<hr><span style ="color:#C2C3C6;font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>PRACTICE-LEVEL DATA</strong></span>{{/isBreakAbovePractice}}
     <!--{{#isBreakAbovePatient}}<hr><span style ="color:rgb(51, 122, 183); font-style:italic;margin-bottom:10px;display:inline-block">&nbsp;&nbsp;&nbsp;<strong>PATIENT-LEVEL DATA</strong></span>{{/isBreakAbovePatient}}-->
     <li {{#isSelected}}class="active"{{/isSelected}}>
-      <a href="#{{link}}">
+      <a href="#{{link}}" data-toggle="tooltip" data-placement="right" title="{{tooltip}}">
         <i class="fa {{faIcon}}"></i>
         <span class="nav-label">{{name}}</span>
       </a>
