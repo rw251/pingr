@@ -13,6 +13,10 @@ body.qof {
   background-color: rgb(68, 157, 68);
 }
 
+tr.standard-row:hover {
+  background-color: white;
+}
+
 span.standard-missed {
   background-color: #ff9999;
 }

@@ -720,6 +720,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].monitoring.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].monitoring.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -834,6 +835,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].treatment.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].treatment.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -946,6 +948,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].diagnosis.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].diagnosis.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -1055,6 +1058,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].exclusions.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].exclusions.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -2709,15 +2713,23 @@
 	var highlightOnHoverAndEnableSelectByClick = function(panelSelector) {
 		panelSelector.children('div').removeClass('unclickable').on('mouseover',function(){
 			$(this).removeClass('panel-default');
-		}).on('mouseout',function(){
+		}).on('mouseout',function(e){
       $(this).addClass('panel-default');
-    }).on('click', function(){
-        // keep the link in the browser history
-        history.pushState(null, null, '#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no');
-        loadContent('#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no', true);
-        // do not give a default action
-        return false;
+    }).on('click', 'tr.standard-row', function(){
+      history.pushState(null, null, '#main/'+local.pathwayId+'/'+$(this).closest('.panel').data('stage')+'/no/' + $(this).data('standard'));
+      loadContent('#main/'+local.pathwayId+'/'+$(this).closest('.panel').data('stage')+'/no/' + $(this).data('standard'), true);
+      // do not give a default action
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }).on('click', function(e){
+      // keep the link in the browser history
+      history.pushState(null, null, '#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no');
+      loadContent('#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no', true);
+      // do not give a default action
+      return false;
 		});
+
 	};
 
 	/********************************

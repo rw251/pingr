@@ -1279,7 +1279,7 @@
   </script>
 
   <script id="overview-panel-table-row" type="x-tmpl-mustache">
-    <tr>
+    <tr class="standard-row" data-standard="{{standardKey}}">
       <td>{{standard}} {{#tooltip}}<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="{{tooltip}}"></i>{{/tooltip}}</td>
       <td>{{numerator}} / {{denominator}}</td>
       <td>{{percentage}}</td>
