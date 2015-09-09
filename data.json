@@ -25,9 +25,9 @@
         "patientsOk" : [5550069950,5550154103,5550242024,5550295217,5553175806,345,5553284844,5553308051,5553395446,5553482379,5553577971,5553617291,5553623847,5553697995,5553776929,5553846192,5553902625,5553976396,5554010860,5554015794,5554043449,5554109536,5554144142,5554212758,5554282657,5554302828,5554367625,5554390911,5554406296,5554456339,5554528017,5554551966,5554632673,5554723924,5554782969,5554873972,5554933431,5555021906,5555110107,5555162133,5555256064,5555351913,5555355306,5555373501,5555382894,5555433795,5555446560,5555677963,5555755859,5555825945,5555912205],
         "standards": {
           "bp" : {
-            "tab" : {"title":"BP monitoring - QOF / NICE","tooltip":"Patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who have NOT had their BP measured in the last 12 months (QOF and NICE guideline)"},
+            "tab" : {"title":"BP monitoring","tooltip":"Patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who have NOT had their BP measured in the last 12 months (QOF and NICE guideline)"},
             "standard-met-tooltip" : "Patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who HAVE had their BP measured in the last 12 months (QOF and NICE guideline)",
-            "dropdown-tooltip" : "BP monitoring - QOF / NICE",
+            "dropdown-tooltip" : "BP monitoring",
             "chartTitle" : "Improvement opportunity categories for patients with hypertension, PAD, CHD, TIA or stroke (NOT diabetes or CKD) who have NOT had their BP measured in the last 12 months",
             "tableTitle" : "Patients with hypertension who have NOT had their BP measured in the last 12 months",
             "valueId" : "sbp",
@@ -63,9 +63,9 @@
             ]
           },
           "renal" : {
-            "tab" : {"title":"Renal function monitoring - NICE","tooltip":"Patients with hypertension who have NOT had their renal function measured in the last 12 months"},
+            "tab" : {"title":"Renal function monitoring","tooltip":"Patients with hypertension who have NOT had their renal function measured in the last 12 months (NICE guidelines)"},
             "standard-met-tooltip" : "Patients with hypertension who HAVE had their renal function measured in the last 12 months",
-            "dropdown-tooltip" : "Renal function monitoring - NICE",
+            "dropdown-tooltip" : "Renal function monitoring (NICE)",
             "chartTitle" : "Improvement opportunity categories for patients with hypertension who have NOT had their renal function measured in the last 12 months",
             "tableTitle" : "Patients with hypertension who have NOT had their renal function measured in the last 12 months",
             "valueId" : "egfr",
@@ -360,7 +360,7 @@
             ]
           },
           "screen":{
-            "tab" : {"title":"Hypertension - screening","tooltip":"Patients at risk of hypertension who have not been screened"},
+            "tab" : {"title":"Hypertension - Screening","tooltip":"Patients at risk of hypertension who have not been screened"},
             "standard-met-tooltip" : "Patients at risk of hypertension who HAVE been screened",
             "dropdown-tooltip" : "Hypertension - screening",
             "chartTitle" : "Opportunities to improve hypertension screening",
