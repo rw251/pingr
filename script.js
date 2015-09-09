@@ -1746,7 +1746,7 @@
         data.standard = local.data.patients[patientId].standards[pathwayId][pathwayStage][standard];
     }
 
-    data.tooltip = local.data[pathwayId][pathwayStage].standards[standard].tab.tooltip;
+    data.tooltip = local.data[pathwayId][pathwayStage].standards[standard]["standard-met-tooltip"];
 
     switch(getPatientStatus(patientId, pathwayId, pathwayStage, standard)){
       case "ok":
