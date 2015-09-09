@@ -245,8 +245,10 @@
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
     var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
+    var medCodeWrapperPanel = createPanel($('#other-codes-and-meds-wrapper-panel'));
     $('#temp-hidden #patient-panel-top').html(qualPanel);
-    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
+    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medCodeWrapperPanel);
+    $('#temp-hidden #medCodeWrapperPanel').append(medPanel).append(codesPanel);
 
     if(farRightPanel.is(':visible')) {
       farRightPanel.fadeOut(500, function(){
@@ -310,7 +312,7 @@
       return;
     }
 
-    var panel = createPanel($('#patient-panel'), {"options":local.options,"standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
+    var panel = createPanel($('#patient-panel'), {"options":local.options,"numberOfStandardsMissed": numberOfStandardsMissed(patientId), "standard":local.data[pathwayId][pathwayStage].standards[standard].tab.title,"pathwayStage" : pathwayStage, "nhsNumber" : local.patLookup ? local.patLookup[patientId] : patientId, "patientId" : patientId},{"option":$('#patient-panel-drop-down-options').html()});
 
     farRightPanel.html("");
     $('#temp-hidden').html(panel);
@@ -322,8 +324,10 @@
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
     var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
+    var medCodeWrapperPanel = createPanel($('#other-codes-and-meds-wrapper-panel'));
     $('#temp-hidden #patient-panel-top').html(qualPanel);
-    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
+    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medCodeWrapperPanel);
+    $('#temp-hidden #medCodeWrapperPanel').append(medPanel).append(codesPanel);
 
     if(farRightPanel.is(':visible')) {
       farRightPanel.fadeOut(100, function(){
@@ -716,6 +720,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].monitoring.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].monitoring.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -830,6 +835,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].treatment.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].treatment.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -942,6 +948,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].diagnosis.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].diagnosis.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -1051,6 +1058,7 @@
       num = denom-num; //switched
       standards.push({
         "standard" : local.data[local.pathwayId].exclusions.standards[key].tab.title,
+        "standardKey" : key,
         "tooltip" : local.data[local.pathwayId].exclusions.standards[key]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
@@ -1321,6 +1329,8 @@
 			}
 			populatePatientPanelOk(pathwayId, local.selected, local.subselected, $(this).index(), sortAsc);
 		}).on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+      $('[data-toggle="tooltip"]').tooltip('hide');
+      $(this).tooltip('destroy');
       clearBox();
 			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted').removeAttr('title');
@@ -1346,6 +1356,8 @@
 		patientsPanel = $('#patients');
 
 		patientsPanel.on('click', 'tbody tr', function(e){	//Select individual patient when row clicked
+      $('[data-toggle="tooltip"]').tooltip('hide');
+      $(this).tooltip('destroy');
       clearBox();
 			$('.list-item').removeClass('highlighted');
 			$(this).addClass('highlighted').removeAttr('title');
@@ -1734,7 +1746,7 @@
         data.standard = local.data.patients[patientId].standards[pathwayId][pathwayStage][standard];
     }
 
-    data.tooltip = local.data[pathwayId][pathwayStage].standards[standard].tab.tooltip;
+    data.tooltip = local.data[pathwayId][pathwayStage].standards[standard]["standard-met-tooltip"];
 
     switch(getPatientStatus(patientId, pathwayId, pathwayStage, standard)){
       case "ok":
@@ -1793,7 +1805,7 @@
         if(this.value==="yes"){
           //$(this).closest('table').addClass('panel-green');
           if(item && item[0].history){
-            var tool = item[0].history[0] + " - click again to cancel";
+            var tool = "<p>" + item[0].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -1801,7 +1813,7 @@
         } else {
           //$(this).closest('table').addClass('panel-red');
           if(item && item[0].history){
-            var tool = item[0].history[0] + " - click again to edit/cancel";
+            var tool = "<p>" + item[0].history[0] + "</p><p>Click again to edit/cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
@@ -2100,7 +2112,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2110,7 +2122,7 @@
   				self.addClass('danger');
   				self.removeClass('success');
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -2386,7 +2398,7 @@
     $('[data-toggle="tooltip"]').tooltip('hide');
     $('.tooltip').remove();
 
-    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }});
+    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }, html: true});
     $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
     $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
       $('[data-toggle="tooltip"]').not(this).tooltip('hide');
@@ -2705,15 +2717,23 @@
 	var highlightOnHoverAndEnableSelectByClick = function(panelSelector) {
 		panelSelector.children('div').removeClass('unclickable').on('mouseover',function(){
 			$(this).removeClass('panel-default');
-		}).on('mouseout',function(){
+		}).on('mouseout',function(e){
       $(this).addClass('panel-default');
-    }).on('click', function(){
-        // keep the link in the browser history
-        history.pushState(null, null, '#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no');
-        loadContent('#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no', true);
-        // do not give a default action
-        return false;
+    }).on('click', 'tr.standard-row', function(){
+      history.pushState(null, null, '#main/'+local.pathwayId+'/'+$(this).closest('.panel').data('stage')+'/no/' + $(this).data('standard'));
+      loadContent('#main/'+local.pathwayId+'/'+$(this).closest('.panel').data('stage')+'/no/' + $(this).data('standard'), true);
+      // do not give a default action
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }).on('click', function(e){
+      // keep the link in the browser history
+      history.pushState(null, null, '#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no');
+      loadContent('#main/'+local.pathwayId+'/'+$(this).data('stage')+'/no', true);
+      // do not give a default action
+      return false;
 		});
+
 	};
 
 	/********************************
@@ -2765,11 +2785,12 @@
 				x: {
 					type: 'timeseries',
 					tick: {
+            fit: false,
   					format: '%d-%m-%Y',
-  					count: 7,
+  					count: 5/*,
   					culling: {
-  						max: 3
-  					}
+  						max: 5
+  					}*/
 					},
           max: new Date()
 				},
@@ -2939,7 +2960,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2949,7 +2970,7 @@
   				self.addClass('danger');
   				self.removeClass('success');
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -3005,7 +3026,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions[local.patientId][self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + getObj().actions[local.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -3015,7 +3036,7 @@
   				self.addClass('danger');
           self.removeClass('success');
           if(getObj().actions[local.patientId][self.data("id")] && getObj().actions[local.patientId][self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + getObj().actions[local.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -3151,7 +3172,7 @@
     $('.list-item:has(button[data-clipboard-text=' + nhs +'])').addClass('highlighted');
 
     //scroll to patients
-    $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0,$('#patients td:contains(' + nhs + ')').position().top-140);
+    $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0,$('#patients td').filter(function(){return $(this).text().trim()===nhs;}).position().top-140);
 	};
 
 	var showPage = function (page) {
@@ -3456,8 +3477,6 @@
 		//Hide the suggestions panel
 		$('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
-    //clearBox();
-
 		displaySelectedPatient(nhsNumberObject.id);
 	};
 
@@ -3590,7 +3609,7 @@
 
         if(patientId) {
           var nhs = local.patLookup ? local.patLookup[patientId] : patientId;
-          $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0,$('#patients td:contains(' + nhs + ')').position().top-140);
+          $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0,$('#patients td').filter(function(){return $(this).text().trim()===nhs;}).position().top-140);
           $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
         }
       } else if (urlBits[0] === "#welcome") {
@@ -3718,10 +3737,10 @@
       }
     ).on('typeahead:selected', onSelected)
     .on('typeahead:autocompleted', onSelected);
-    //.on('typeahead:closed', clearBox);
 
     $('#searchbtn').on('mousedown', function(){
       var val = $('.typeahead').eq(0).val();
+      if(!val || val==="") val = $('.typeahead').eq(1).val();
       onSelected(null, {"id": val});
     });
   };
@@ -4062,12 +4081,17 @@
     return arr;
   };
 
-  var getValues = function(name, n, low, high){
+  var getValues = function(name, n, low, high, isDecimal){
     var arr = [name];
 
-    var start = Math.floor(Math.random()*(high-low) + low);
+    var start = Math.random()*(high-low) + low;
+    if(!isDecimal) start = Math.floor(start);
+    else start = Math.round(start * 100) / 100;
     for(var i = 0; i < n; i++){
-      start += Math.floor((Math.random()-0.5)*(high-low)/10);
+      start += (Math.random()-0.5)*(high-low)/10;
+      start = Math.max(low, Math.min(start, high));
+      if(!isDecimal) start = Math.floor(start);
+      else start = Math.round(start * 100) / 100;
       arr.push(start);
     }
 
@@ -4081,6 +4105,7 @@
     var start = Math.random() < 0.2 ? 0 : 1+Math.floor(Math.random()*8);
     for(var i = 0; i < n; i++){
       start += Math.floor(Math.random()*1.25);
+      start = Math.max(1, Math.min(9, start));
       arr.push(start);
     }
     return arr;
@@ -4105,16 +4130,16 @@
             file.patients[id].egfr = [dateArray,getValues("EGFR", 6, 15,150)];
           }
 
-          if(file.patients[id].CHA2DS2Vasc.length>2) {
+          if(!file.patients[id].CHA2DS2Vasc) {
             file.patients[id].CHA2DS2Vasc = [dateArray, getChadValues(6)];
           }
 
-          if(!file.patients[id].pulse) {
-            file.patients[id].pulse = [dateArray,getValues("PULSE", 6, 45,95)];
+          if(file.patients[id].pulse.length===2 && file.patients[id].pulse[0].length==7) {
+            file.patients[id].pulse = [dateArray,getValues("PULSE", 6, 45,150)];
           }
 
-          if(!file.patients[id].INR) {
-            file.patients[id].INR = [dateArray,getValues("INR", 6, 100,180)];
+          if(file.patients[id].INR.length===2 && file.patients[id].INR[0].length==7) {
+            file.patients[id].INR = [dateArray,getValues("INR", 6, 1,4, true)];
           }
         }
 
@@ -4176,7 +4201,7 @@ $(document).on('ready', function () {
     localStorage.bb = JSON.stringify({"version" : bb.version});
   }
 
-	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }});
+	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }, html: true});
   $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
   $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
     $('[data-toggle="tooltip"]').not(this).tooltip('hide');
