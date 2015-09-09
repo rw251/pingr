@@ -178,13 +178,13 @@
     //if no mention anywhere then not relevant for that disease
     switch(getPatientStatus(local.patientId, data.pathwayId, data.pathwayStage, data.standard)){
       case "ok":
-        standardHtml = '<span class="standard-achieved" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD ACHIEVED">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
+        standardHtml = '<span class="standard-achieved" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD ACHIEVED BY THIS PATIENT">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
         break;
       case "missed":
-        standardHtml = '<span class="standard-missed" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD MISSED">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
+        standardHtml = '<span class="standard-missed" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD MISSED BY THIS PATIENT">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
         break;
       case "not":
-        standardHtml = '<span class="standard-not-relevant" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD NOT RELEVANT">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i></span>';
+        standardHtml = '<span class="standard-not-relevant" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD NOT RELEVANT TO THIS PATIENT">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i></span>';
         break;
     }
     var $standard = $(standardHtml);
@@ -2343,7 +2343,7 @@
   var populateAllPatientPanel = function(){
     var patients = getAllPatients();
 
-    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isUnSortable" : true, "tooltip":"Total number of improvement opprtunities available across all conditions"}]};
+    var data = {"patients": patients, "n" : patients.length, "header-items" : [{"title" : "NHS no.", "isUnSortable" : true}, {"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isUnSortable" : true, "tooltip":"Total number of improvement opportunities available across all conditions"}]};
 
     data.patients.sort(function(a, b){
       if(a.items[0] === b.items[0]) {
@@ -2472,7 +2472,7 @@
     }
 
     //add qual standard column
-    data["header-items"].push({"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isSorted":true, "direction":"sort-desc", "tooltip":"Total number of improvement opprtunities available across all conditions"});
+    data["header-items"].push({"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isSorted":true, "direction":"sort-desc", "tooltip":"Total number of improvement opportunities available across all conditions"});
 
     if(sortField === undefined) sortField = 2;
 		if(sortField !== undefined) {
@@ -2556,7 +2556,7 @@
       ret.items.push(local.data.patients[patientId].breach ? numberOfStandardsMissed(patientId) : 0);
 			return ret;
 		});
-    var data = {"patients": patients, "n" : patients.length, "header":header, "tooltip":tooltip, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isSorted":true, "direction":"sort-desc","tooltip":"Total number of improvement opprtunities available across all conditions"}]};
+    var data = {"patients": patients, "n" : patients.length, "header":header, "tooltip":tooltip, "header-items" : [{"title" : "NHS no.", "isSorted":false, "direction":"sort-asc"}, {"title":"All Opportunities", "titleHTML" : '# of <i class="fa fa-flag" style="color:red"></i>', "isSorted":true, "direction":"sort-desc","tooltip":"Total number of improvement opportunities available across all conditions"}]};
 
     if(sortField === undefined) sortField = 1;
 
@@ -3500,7 +3500,7 @@
     for(var i = 0; i < list.length; i++){
       list[i].hasSubItems = true;
     }
-    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Saved actions", "isBreakAboveHome":true});
+    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Agreed actions", "isBreakAboveHome":true});
     list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; return v; });
