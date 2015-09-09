@@ -245,8 +245,10 @@
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
     var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
+    var medCodeWrapperPanel = createPanel($('#other-codes-and-meds-wrapper-panel'));
     $('#temp-hidden #patient-panel-top').html(qualPanel);
-    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
+    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medCodeWrapperPanel);
+    $('#temp-hidden #medCodeWrapperPanel').append(medPanel).append(codesPanel);
 
     if(farRightPanel.is(':visible')) {
       farRightPanel.fadeOut(500, function(){
@@ -322,8 +324,10 @@
     var trendPanel = createTrendPanel(pathwayId, pathwayStage, standard, patientId);
     var medPanel = createMedicationPanel(pathwayId, pathwayStage, standard, patientId);
     var codesPanel = createOtherCodesPanel(pathwayId, pathwayStage, standard, patientId);
+    var medCodeWrapperPanel = createPanel($('#other-codes-and-meds-wrapper-panel'));
     $('#temp-hidden #patient-panel-top').html(qualPanel);
-    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medPanel).append(codesPanel);
+    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medCodeWrapperPanel);
+    $('#temp-hidden #medCodeWrapperPanel').append(medPanel).append(codesPanel);
 
     if(farRightPanel.is(':visible')) {
       farRightPanel.fadeOut(100, function(){
@@ -1793,7 +1797,7 @@
         if(this.value==="yes"){
           //$(this).closest('table').addClass('panel-green');
           if(item && item[0].history){
-            var tool = item[0].history[0] + " - click again to cancel";
+            var tool = "<p>" + item[0].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -1801,7 +1805,7 @@
         } else {
           //$(this).closest('table').addClass('panel-red');
           if(item && item[0].history){
-            var tool = item[0].history[0] + " - click again to edit/cancel";
+            var tool = "<p>" + item[0].history[0] + "</p><p>Click again to edit/cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
@@ -2100,7 +2104,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2110,7 +2114,7 @@
   				self.addClass('danger');
   				self.removeClass('success');
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -2386,7 +2390,7 @@
     $('[data-toggle="tooltip"]').tooltip('hide');
     $('.tooltip').remove();
 
-    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }});
+    $('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }, html: true});
     $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
     $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
       $('[data-toggle="tooltip"]').not(this).tooltip('hide');
@@ -2765,11 +2769,12 @@
 				x: {
 					type: 'timeseries',
 					tick: {
+            fit: false,
   					format: '%d-%m-%Y',
-  					count: 7,
+  					count: 5/*,
   					culling: {
-  						max: 3
-  					}
+  						max: 5
+  					}*/
 					},
           max: new Date()
 				},
@@ -2939,7 +2944,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions.team[self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions.team[self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2949,7 +2954,7 @@
   				self.addClass('danger');
   				self.removeClass('success');
           if(getObj().actions.team[self.data("id")] && getObj().actions.team[self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions.team[self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -3005,7 +3010,7 @@
   				self.addClass('active');
   				self.find('td').last().children().show();
           if(getObj().actions[local.patientId][self.data("id")].history){
-            var tool = $(this).closest('tr').hasClass('success') ? "" : getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to cancel";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + getObj().actions[local.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -3015,7 +3020,7 @@
   				self.addClass('danger');
           self.removeClass('success');
           if(getObj().actions[local.patientId][self.data("id")] && getObj().actions[local.patientId][self.data("id")].history){
-            $(this).parent().attr("title", getObj().actions[local.patientId][self.data("id")].history[0] + " - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + getObj().actions[local.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -4062,12 +4067,17 @@
     return arr;
   };
 
-  var getValues = function(name, n, low, high){
+  var getValues = function(name, n, low, high, isDecimal){
     var arr = [name];
 
-    var start = Math.floor(Math.random()*(high-low) + low);
+    var start = Math.random()*(high-low) + low;
+    if(!isDecimal) start = Math.floor(start);
+    else start = Math.round(start * 100) / 100;
     for(var i = 0; i < n; i++){
-      start += Math.floor((Math.random()-0.5)*(high-low)/10);
+      start += (Math.random()-0.5)*(high-low)/10;
+      start = Math.max(low, Math.min(start, high));
+      if(!isDecimal) start = Math.floor(start);
+      else start = Math.round(start * 100) / 100;
       arr.push(start);
     }
 
@@ -4081,6 +4091,7 @@
     var start = Math.random() < 0.2 ? 0 : 1+Math.floor(Math.random()*8);
     for(var i = 0; i < n; i++){
       start += Math.floor(Math.random()*1.25);
+      start = Math.max(1, Math.min(9, start));
       arr.push(start);
     }
     return arr;
@@ -4105,16 +4116,16 @@
             file.patients[id].egfr = [dateArray,getValues("EGFR", 6, 15,150)];
           }
 
-          if(file.patients[id].CHA2DS2Vasc.length>2) {
+          if(!file.patients[id].CHA2DS2Vasc) {
             file.patients[id].CHA2DS2Vasc = [dateArray, getChadValues(6)];
           }
 
-          if(!file.patients[id].pulse) {
-            file.patients[id].pulse = [dateArray,getValues("PULSE", 6, 45,95)];
+          if(file.patients[id].pulse.length===2 && file.patients[id].pulse[0].length==7) {
+            file.patients[id].pulse = [dateArray,getValues("PULSE", 6, 45,150)];
           }
 
-          if(!file.patients[id].INR) {
-            file.patients[id].INR = [dateArray,getValues("INR", 6, 100,180)];
+          if(file.patients[id].INR.length===2 && file.patients[id].INR[0].length==7) {
+            file.patients[id].INR = [dateArray,getValues("INR", 6, 1,4, true)];
           }
         }
 
@@ -4176,7 +4187,7 @@ $(document).on('ready', function () {
     localStorage.bb = JSON.stringify({"version" : bb.version});
   }
 
-	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }});
+	$('[data-toggle="tooltip"]').tooltip({container: 'body', delay: { "show": 500, "hide": 100 }, html: true});
   $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
   $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
     $('[data-toggle="tooltip"]').not(this).tooltip('hide');

@@ -947,10 +947,12 @@
   </script>
 
   <script id="value-trend-panel" type="x-tmpl-mustache">
-    <div id="trend-panel" class="panel panel-default" style="margin-bottom:10px">
-      <div class="panel-body" style="max-height:420px">
-        <span class="h4">{{standard}} data</span>
+    <div id="trend-panel" class="panel panel-default panel-improvementopps" style="margin-bottom:10px">
+      <div class="panel-heading-improvementopps">
+        <span>{{standard}} data</span>
         <span class="pull-right btn btn-xs btn-default table-chart-toggle btn-trend">Table</span>
+      </div>
+      <div class="panel-body" style="max-height:420px">
         <div id="chart-demo-trend" style="max-height:100px"></div>
         <div id="table-demo-trend" style="max-height:260px;display:none"></div>
         <div class="panel panel-default" style="margin-bottom:0">
@@ -981,46 +983,43 @@
   </script>
 
   <script id="medications-panel" type="x-tmpl-mustache">
-    <div id="medication-panel" class="panel panel-default" style="margin-bottom:10px">
-      <div class="panel-body" style="max-height:380px;padding-top:5px">
-      <h4>Current medications</h4>
-        {{#areMedications}}
-          <table class="table table-small-margin">
-            <thead>
+    <div id="medication-panel" class="panel-body">
+      {{#areMedications}}
+        <table class="table table-small-margin">
+          <thead>
             <tr>
               <th>Medication</th>
               <th>Dose</th>
               <th>Last issued</th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             {{#medications}}
             {{>medicationRow}}
             {{/medications}}
-            </tbody>
-          </table>
-        {{/areMedications}}
-        {{^areMedications}}
+          </tbody>
+        </table>
+      {{/areMedications}}
+      {{^areMedications}}
         No medications
-        {{/areMedications}}
-        <div class="panel panel-default" style="margin-bottom:0;border-color:red;margin-top:5px; margin-bottom:5px">
-          <div class="panel-body" style="padding:5px; margin:0px; border:0">
-            <span style="color:red">Allergies: Nil known &nbsp</span>
-          </div>
+      {{/areMedications}}
+      <div class="panel panel-default" style="margin-bottom:0;border-color:red;margin-top:5px; margin-bottom:5px">
+        <div class="panel-body" style="padding:5px; margin:0px; border:0">
+          <span style="color:red">Allergies: Nil known &nbsp</span>
         </div>
-        <div class="panel panel-default" style="margin-bottom:0">
-          <div class="panel-body" style="padding:5px; text-align:center">
-            <span>Do you agree with this medication list? &nbsp</span>
-            <div id="medication-agree-disagree" class="btn-group" data-toggle="buttons">
-              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these medications">
-                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
-                <span class="fa fa-thumbs-up"></span>
-              </label>
-              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these medications">
-                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
-                <span class="fa fa-thumbs-down"></span>
-              </label>
-            </div>
+      </div>
+      <div class="panel panel-default" style="margin-bottom:0">
+        <div class="panel-body" style="padding:5px; text-align:center">
+          <span>Do you agree with this medication list? &nbsp</span>
+          <div id="medication-agree-disagree" class="btn-group" data-toggle="buttons">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these medications">
+              <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+              <span class="fa fa-thumbs-up"></span>
+            </label>
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these medications">
+              <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+              <span class="fa fa-thumbs-down"></span>
+            </label>
           </div>
         </div>
       </div>
@@ -1036,44 +1035,49 @@
   </script>
 
   <script id="other-codes-panel" type="x-tmpl-mustache">
-    <div id="other-codes-panel"class="panel panel-default">
-      <div class="panel-body" style="max-height:380px">
-      <span class="h4">Relevant other information</span>
-      <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="Other Read codes that PINGR thinks are relevant to {{standard}}"></i>
-        {{#areCodes}}
-          <table class="table table-small-margin">
-            <thead>
-            <tr>
-              <th>Code</th>
-              <th>Description</th>
-              <th>Date</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{#codes}}
-              {{>codeRow}}
-            {{/codes}}
-            </tbody>
-          </table>
-        {{/areCodes}}
-        {{^areCodes}}
+    <div id="other-codes-panel" class="panel-body">
+      {{#areCodes}}
+        <table class="table table-small-margin">
+          <thead>
+          <tr>
+            <th>Code</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+          <tbody>
+          {{#codes}}
+            {{>codeRow}}
+          {{/codes}}
+          </tbody>
+        </table>
+      {{/areCodes}}
+      {{^areCodes}}
         <div>No codes</div>
-        {{/areCodes}}
-        <div class="panel panel-default" style="margin-bottom:0">
-          <div class="panel-body" style="padding:5px; text-align:center">
-            <span>Do you agree with this other information? &nbsp</span>
-            <div id="other-codes-agree-disagree" class="btn-group" data-toggle="buttons">
-              <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these codes">
-                <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
-                <span class="fa fa-thumbs-up"></span>
-              </label>
-              <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these codes">
-                <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
-                <span class="fa fa-thumbs-down"></span>
-              </label>
-            </div>
+      {{/areCodes}}
+      <div class="panel panel-default" style="margin-bottom:0">
+        <div class="panel-body" style="padding:5px; text-align:center">
+          <span>Do you agree with this other information? &nbsp</span>
+          <div id="other-codes-agree-disagree" class="btn-group" data-toggle="buttons">
+            <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these codes">
+              <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
+              <span class="fa fa-thumbs-up"></span>
+            </label>
+            <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these codes">
+              <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
+              <span class="fa fa-thumbs-down"></span>
+            </label>
           </div>
         </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="other-codes-and-meds-wrapper-panel" type="x-tmpl-mustache">
+    <div id="medCodeWrapperPanel" class="panel panel-default panel-improvementopps">
+      <div class="panel-heading-improvementopps">
+        <span>Current medications and relevant other information</span>
+        <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="Other Read codes that PINGR thinks are relevant"></i>
       </div>
     </div>
   </script>
