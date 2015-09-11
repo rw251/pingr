@@ -707,21 +707,39 @@
     else location.children('div').addClass('unclickable');
 	};
 
+  var getPatietListForStandard = function(pathwayId, pathwayStage, standard){
+    var patients = removeDuplicates(local.data[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a,b){
+      return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
+    }));
+    return patients;
+  };
+
+  var getNumeratorForStandard = function(pathwayId, pathwayStage, standard){
+    var patients = getPatietListForStandard(pathwayId, pathwayStage, standard);
+    return patients.length;
+  };
+
+  var getDenominatorForStandard = function(pathwayId, pathwayStage){
+    var patients = local.data[pathwayId][pathwayStage].patientsOk;
+    for(var standard in local.data[pathwayId][pathwayStage].standards){
+      var newPatients = getPatietListForStandard(pathwayId, pathwayStage, standard);
+      patients = patients.concat(newPatients);
+    }
+    return removeDuplicates(patients).length;
+  };
+
 	var showMonitoringPanel = function(location, enableHover) {
 		var percentChange = local.data[local.pathwayId].monitoring.trend[1][1]-local.data[local.pathwayId].monitoring.trend[1][30];
 		var numberChange = local.data[local.pathwayId].monitoring.trend[2][1]-local.data[local.pathwayId].monitoring.trend[2][30];
 
     var standards = [];
-    for(var key in local.data[local.pathwayId].monitoring.standards){
-      var num = removeDuplicates(local.data[local.pathwayId].monitoring.standards[key].opportunities.reduce(function(a,b){
-        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
-      })).length;
-      var denom = num + local.data[local.pathwayId].monitoring.patientsOk.length;
-      num = denom-num; //switched
+    for(var standard in local.data[local.pathwayId].monitoring.standards){
+      var denom = getDenominatorForStandard(local.pathwayId, "monitoring");
+      var num = denom - getNumeratorForStandard(local.pathwayId, "monitoring", standard);
       standards.push({
-        "standard" : local.data[local.pathwayId].monitoring.standards[key].tab.title,
-        "standardKey" : key,
-        "tooltip" : local.data[local.pathwayId].monitoring.standards[key]["standard-met-tooltip"],
+        "standard" : local.data[local.pathwayId].monitoring.standards[standard].tab.title,
+        "standardKey" : standard,
+        "tooltip" : local.data[local.pathwayId].monitoring.standards[standard]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -827,16 +845,13 @@
 		var numberChange = local.data[local.pathwayId].treatment.trend[2][1]-local.data[local.pathwayId].treatment.trend[2][30];
 
     var standards = [];
-    for(var key in local.data[local.pathwayId].treatment.standards){
-      var num = removeDuplicates(local.data[local.pathwayId].treatment.standards[key].opportunities.reduce(function(a,b){
-        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
-      })).length;
-      var denom = num + local.data[local.pathwayId].treatment.patientsOk.length;
-      num = denom-num; //switched
+    for(var standard in local.data[local.pathwayId].treatment.standards){
+      var denom = getDenominatorForStandard(local.pathwayId, "treatment");
+      var num = denom - getNumeratorForStandard(local.pathwayId, "treatment", standard);
       standards.push({
-        "standard" : local.data[local.pathwayId].treatment.standards[key].tab.title,
-        "standardKey" : key,
-        "tooltip" : local.data[local.pathwayId].treatment.standards[key]["standard-met-tooltip"],
+        "standard" : local.data[local.pathwayId].treatment.standards[standard].tab.title,
+        "standardKey" : standard,
+        "tooltip" : local.data[local.pathwayId].treatment.standards[standard]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -940,16 +955,13 @@
 	var showDiagnosisPanel = function(location, enableHover) {
 
     var standards = [];
-    for(var key in local.data[local.pathwayId].diagnosis.standards){
-      var num = removeDuplicates(local.data[local.pathwayId].diagnosis.standards[key].opportunities.reduce(function(a,b){
-        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
-      })).length;
-      var denom = num + local.data[local.pathwayId].diagnosis.patientsOk.length;
-      num = denom-num; //switched
+    for(var standard in local.data[local.pathwayId].diagnosis.standards){
+      var denom = getDenominatorForStandard(local.pathwayId, "diagnosis");
+      var num = denom - getNumeratorForStandard(local.pathwayId, "diagnosis", standard);
       standards.push({
-        "standard" : local.data[local.pathwayId].diagnosis.standards[key].tab.title,
-        "standardKey" : key,
-        "tooltip" : local.data[local.pathwayId].diagnosis.standards[key]["standard-met-tooltip"],
+        "standard" : local.data[local.pathwayId].diagnosis.standards[standard].tab.title,
+        "standardKey" : standard,
+        "tooltip" : local.data[local.pathwayId].diagnosis.standards[standard]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -1050,16 +1062,13 @@
 	var showExclusionsPanel = function(location, enableHover) {
 
     var standards = [];
-    for(var key in local.data[local.pathwayId].exclusions.standards){
-      var num = removeDuplicates(local.data[local.pathwayId].exclusions.standards[key].opportunities.reduce(function(a,b){
-        return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
-      })).length;
-      var denom = num + local.data[local.pathwayId].exclusions.patientsOk.length;
-      num = denom-num; //switched
+    for(var standard in local.data[local.pathwayId].exclusions.standards){
+      var denom = getDenominatorForStandard(local.pathwayId, "exclusions");
+      var num = denom - getNumeratorForStandard(local.pathwayId, "exclusions", standard);
       standards.push({
-        "standard" : local.data[local.pathwayId].exclusions.standards[key].tab.title,
-        "standardKey" : key,
-        "tooltip" : local.data[local.pathwayId].exclusions.standards[key]["standard-met-tooltip"],
+        "standard" : local.data[local.pathwayId].exclusions.standards[standard].tab.title,
+        "standardKey" : standard,
+        "tooltip" : local.data[local.pathwayId].exclusions.standards[standard]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
@@ -2402,6 +2411,12 @@
     $('[data-toggle="lone-tooltip"]').tooltip({container: 'body', delay: { "show": 300, "hide": 100 }});
     $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip',function(e){
       $('[data-toggle="tooltip"]').not(this).tooltip('hide');
+    });
+    $('.patient-row-tooltip').on('show.bs.tooltip',function(e){
+      if($(this).hasClass('highlighted')){
+        e.stopPropagation();
+        e.preventDefault();
+      }
     });
   };
 
@@ -4118,7 +4133,26 @@
           //get 6 dates
           var dateArray = getDates(6);
 
-          if(!file.patients[id].sbp) {
+          if(!file.patients[id].acr) {
+            file.patients[id].acr = [dateArray,getValues("ACR", 4, 0,70)];
+          }
+
+          if(file.patients[id].sbp && file.patients[id].dbp){
+            for(var i = 1; i < file.patients[id].sbp[0].length; i++){
+              if(file.patients[id].dbp[1][i] >= file.patients[id].sbp[1][i]-5) {
+                console.log("X","ID:",id,"DBP:",file.patients[id].dbp[1][i],"SBP:",file.patients[id].sbp[1][i]-5)
+                file.patients[id].dbp[1][i]-=5;
+                file.patients[id].sbp[1][i]+=5;
+              }
+
+              if(file.patients[id].dbp[1][i] < 20 || file.patients[id].sbp[1][i] < 60){
+                console.log("Y","ID:",id,"DBP:",file.patients[id].dbp[1][i],"SBP:",file.patients[id].sbp[1][i]-5)
+              }
+
+            }
+          }
+
+          /*if(!file.patients[id].sbp) {
             file.patients[id].sbp = [dateArray,getValues("SBP", 6, 100,180)];
           }
 
@@ -4140,7 +4174,7 @@
 
           if(file.patients[id].INR.length===2 && file.patients[id].INR[0].length==7) {
             file.patients[id].INR = [dateArray,getValues("INR", 6, 1,4, true)];
-          }
+          }*/
         }
 
         console.log(JSON.stringify(file.patients));
