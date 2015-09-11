@@ -38,9 +38,9 @@
     "tmp" : null
 	};
 
-	var bottomLeftPanel, bottomRightPanel, topPanel, topLeftPanel, topRightPanel, midPanel, farLeftPanel, farRightPanel, monitoringPanel, treatmentPanel,
-		diagnosisPanel,	exclusionPanel, patientsPanelTemplate, breakdownPanel, actionPlanPanel, patientList, patientListSimple, suggestedPlanTemplate,
-		breakdownTableTemplate,	individualPanel, valueTrendPanel, medicationPanel, patientsPanel,	suggestedPlanTeam, adviceList, breakdownTable,
+	var bottomLeftPanel, bottomRightPanel, topPanel, topLeftPanel, topRightPanel, midPanel, farLeftPanel, farRightPanel,
+  	patientsPanelTemplate, actionPlanPanel, patientList, suggestedPlanTemplate,
+		individualPanel, valueTrendPanel, medicationPanel, patientsPanel,	suggestedPlanTeam, adviceList, breakdownTable,
     patientInfo, teamTab, individualTab, actionPlanList;
 
 
@@ -698,10 +698,11 @@
 	};
 
 	var showPanel = function(pathwayStage, location, enableHover) {
-		if(pathwayStage === local.categories.monitoring.name) showMonitoringPanel(location, enableHover);
+    showPathwayStageOverviewPanel(location, enableHover, local.pathwayId, pathwayStage);
+		/*if(pathwayStage === local.categories.monitoring.name)
 		if(pathwayStage === local.categories.treatment.name) showTreatmentPanel(location, enableHover);
 		if(pathwayStage === local.categories.diagnosis.name) showDiagnosisPanel(location, enableHover);
-		if(pathwayStage === local.categories.exclusions.name) showExclusionsPanel(location, enableHover);
+		if(pathwayStage === local.categories.exclusions.name) showExclusionsPanel(location, enableHover);*/
 
 		if(enableHover) highlightOnHoverAndEnableSelectByClick(location);
     else location.children('div').addClass('unclickable');
@@ -728,62 +729,59 @@
     return removeDuplicates(patients).length;
   };
 
-	var showMonitoringPanel = function(location, enableHover) {
-		var percentChange = local.data[local.pathwayId].monitoring.trend[1][1]-local.data[local.pathwayId].monitoring.trend[1][30];
-		var numberChange = local.data[local.pathwayId].monitoring.trend[2][1]-local.data[local.pathwayId].monitoring.trend[2][30];
+  var showPathwayStageOverviewPanel = function(location, enableHover, pathwayId, pathwayStage){
+    //var percentChange = local.data[pathwayId][pathwayStage].trend[1][1]-local.data[pathwayId][pathwayStage].trend[1][30];
+		//var numberChange = local.data[pathwayId][pathwayStage].trend[2][1]-local.data[pathwayId][pathwayStage].trend[2][30];
 
     var standards = [];
-    for(var standard in local.data[local.pathwayId].monitoring.standards){
-      var denom = getDenominatorForStandard(local.pathwayId, "monitoring");
-      var num = denom - getNumeratorForStandard(local.pathwayId, "monitoring", standard);
+    for(var standard in local.data[pathwayId][pathwayStage].standards){
+      var denom = getDenominatorForStandard(pathwayId, pathwayStage);
+      var num = denom - getNumeratorForStandard(pathwayId, pathwayStage, standard);
       standards.push({
-        "standard" : local.data[local.pathwayId].monitoring.standards[standard].tab.title,
+        "standard" : local.data[pathwayId][pathwayStage].standards[standard].tab.title,
         "standardKey" : standard,
-        "tooltip" : local.data[local.pathwayId].monitoring.standards[standard]["standard-met-tooltip"],
+        "tooltip" : local.data[pathwayId][pathwayStage].standards[standard]["standard-met-tooltip"],
         "numerator":num,
         "denominator":denom,
         "percentage": (num*100/denom).toFixed(0)
       });
     }
 
-		createPanelShow(monitoringPanel, location, {
-			percent: local.data[local.pathwayId].monitoring.trend[1][1],
-			percentChange: Math.abs(percentChange),
-			percentUp: percentChange>=0,
-			number: local.data[local.pathwayId].monitoring.trend[2][1],
-			numberUp: numberChange>=0,
-			numberChange: Math.abs(numberChange),
-      pathway: local.pathwayNames[local.pathwayId],
-      pathwayNameShort: local.pathwayId,
-      title: local.data[local.pathwayId].monitoring.text.panel.text,
-      standards: standards
-    }, /*{"change-bar": $('#change-bar').html(), */{"row": $('#overview-panel-table-row').html()}
-		);
+		createPanelShow($('#pathway-stage-overview-panel'), location, {
+  			//percent: local.data[pathwayId][pathwayStage].trend[1][1],
+  			//percentChange: Math.abs(percentChange),
+  			//percentUp: percentChange>=0,
+  			//number: local.data[pathwayId][pathwayStage].trend[2][1],
+  			//numberUp: numberChange>=0,
+  			//numberChange: Math.abs(numberChange),
+        pathway: local.pathwayNames[pathwayId],
+        pathwayStage: pathwayStage,
+        pathwayStageName: local.categories[pathwayStage].display,
+        pathwayNameShort: pathwayId,
+        title: local.data[pathwayId][pathwayStage].text.panel.text,
+        standards: standards
+      }, {"row": $('#overview-panel-table-row').html()});
 
-    $('#monitoring-trend-toggle').on('click', function(e){
+    $('#' + pathwayStage + '-trend-toggle').on('click', function(e){
       if($(this).text()==="Trend"){
         $(this).text("Table");
-        $('#monitoring-chart-table').hide();
-        $('#monitoring-chart-wrapper').show();
+        $('#' + pathwayStage + '-chart-table').hide();
+        $('#' + pathwayStage + '-chart-wrapper').show();
       } else {
         $(this).text("Trend");
-        $('#monitoring-chart-table').show();
-        $('#monitoring-chart-wrapper').hide();
+        $('#' + pathwayStage + '-chart-table').show();
+        $('#' + pathwayStage + '-chart-wrapper').hide();
       }
       e.stopPropagation();
     });
 
-		destroyCharts(['monitoring-chart']);
+		destroyCharts([pathwayStage + '-chart']);
     setTimeout(function(){
-  		local.charts["monitoring-chart"] = c3.generate({
-  			bindto: '#monitoring-chart',
+  		local.charts[pathwayStage + '-chart'] = c3.generate({
+  			bindto: '#' + pathwayStage + '-chart',
   			data: {
   				x: 'x',
-  				columns: local.data[local.pathwayId].monitoring.trend/*,
-  				axes: {
-  					"%" : 'y',
-  					"n" : 'y2'
-  				}*/
+  				columns: local.data[pathwayId][pathwayStage].trend
   			},
         zoom: {
             enabled: true
@@ -815,15 +813,7 @@
               text: 'Proportion (%)',
               position: 'outer-middle'
             }
-  				}/*,
-  				y2: {
-  					show: true,
-  					min: 0,
-            label: {
-              text: 'Patient count (n)',
-              position: 'outer-middle'
-            }
-  				}*/
+  				}
   			},
   			point: {
   				show: false
@@ -831,347 +821,8 @@
   			size: {
   				height: null
   			}
-  			/*grid: {
-  			 x: {
-  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
-  			 }
-  			 }*/
   		});
     },1);
-	};
-
-	var showTreatmentPanel = function(location, enableHover) {
-		var percentChange = local.data[local.pathwayId].treatment.trend[1][1]-local.data[local.pathwayId].treatment.trend[1][30];
-		var numberChange = local.data[local.pathwayId].treatment.trend[2][1]-local.data[local.pathwayId].treatment.trend[2][30];
-
-    var standards = [];
-    for(var standard in local.data[local.pathwayId].treatment.standards){
-      var denom = getDenominatorForStandard(local.pathwayId, "treatment");
-      var num = denom - getNumeratorForStandard(local.pathwayId, "treatment", standard);
-      standards.push({
-        "standard" : local.data[local.pathwayId].treatment.standards[standard].tab.title,
-        "standardKey" : standard,
-        "tooltip" : local.data[local.pathwayId].treatment.standards[standard]["standard-met-tooltip"],
-        "numerator":num,
-        "denominator":denom,
-        "percentage": (num*100/denom).toFixed(0)
-      });
-    }
-
-		createPanelShow(treatmentPanel, location, {
-			percent: local.data[local.pathwayId].treatment.trend[1][1],
-			percentChange: Math.abs(percentChange),
-			percentUp: percentChange>=0,
-			number: local.data[local.pathwayId].treatment.trend[2][1],
-			numberUp: numberChange>=0,
-			numberChange: Math.abs(numberChange),
-      pathway: local.pathwayNames[local.pathwayId],
-      pathwayNameShort: local.pathwayId,
-      title: local.data[local.pathwayId].treatment.text.panel.text,
-      standards: standards
-    }, /*{"change-bar": $('#change-bar').html(),*/ {"row": $('#overview-panel-table-row').html()}
-  		);
-
-    $('#treatment-trend-toggle').on('click', function(e){
-      if($(this).text()==="Trend"){
-        $(this).text("Table");
-        $('#treatment-chart-table').hide();
-        $('#treatment-chart-wrapper').show();
-      } else {
-        $(this).text("Trend");
-        $('#treatment-chart-table').show();
-        $('#treatment-chart-wrapper').hide();
-      }
-      e.stopPropagation();
-    });
-
-		destroyCharts(['treatment-chart']);
-    setTimeout(function(){
-  		local.charts["treatment-chart"] = c3.generate({
-  			bindto: '#treatment-chart',
-  			data: {
-  				x: 'x',
-  				columns: local.data[local.pathwayId].treatment.trend/*,
-  				axes: {
-  					"%" : 'y',
-  					"n" : 'y2'
-  				}*/
-  			},
-        zoom: {
-            enabled: true
-        },
-        tooltip: {
-          format: {
-            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); },
-            value: function (value) { return  enableHover ? value+'%':undefined;}
-          }
-        },
-  			axis: {
-  				x: {
-  					type: 'timeseries',
-  					tick: {
-  						format: '%d-%m-%Y',
-  						count: 7,
-  						culling: {
-  							max: 4
-  						}
-  					},
-            label: {
-              text: 'Date',
-              position: 'outer-center'
-            }
-  				},
-  				y : {
-  					min : 0,
-            label: {
-              text: 'Proportion (%)',
-              position: 'outer-middle'
-            }
-  				}/*,
-  				y2: {
-  					show: true,
-  					min: 0,
-            label: {
-              text: 'Patient count (n)',
-              position: 'outer-middle'
-            }
-  				}*/
-  			},
-  			point: {
-  				show: false
-  			},
-  			size: {
-  				height: null
-  			}/*,
-  			 grid: {
-  			 x: {
-  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
-  			 }
-  			 }*/
-  		});
-    },1);
-	};
-
-	var showDiagnosisPanel = function(location, enableHover) {
-
-    var standards = [];
-    for(var standard in local.data[local.pathwayId].diagnosis.standards){
-      var denom = getDenominatorForStandard(local.pathwayId, "diagnosis");
-      var num = denom - getNumeratorForStandard(local.pathwayId, "diagnosis", standard);
-      standards.push({
-        "standard" : local.data[local.pathwayId].diagnosis.standards[standard].tab.title,
-        "standardKey" : standard,
-        "tooltip" : local.data[local.pathwayId].diagnosis.standards[standard]["standard-met-tooltip"],
-        "numerator":num,
-        "denominator":denom,
-        "percentage": (num*100/denom).toFixed(0)
-      });
-    }
-
-		createPanelShow(diagnosisPanel, location, {
-      pathway: local.pathwayNames[local.pathwayId],
-      pathwayNameShort: local.pathwayId,
-      title: local.data[local.pathwayId].diagnosis.text.panel.text,
-      number: local.data[local.pathwayId].diagnosis.n,
-			numberUp: local.data[local.pathwayId].diagnosis.change>=0,
-			numberChange: Math.abs(local.data[local.pathwayId].diagnosis.change),
-      standards: standards
-    }, /*{"change-bar-number": $('#change-bar-number').html(),*/ {"row": $('#overview-panel-table-row').html()}
-		);
-
-    $('#diagnosis-trend-toggle').on('click', function(e){
-      if($(this).text()==="Trend"){
-        $(this).text("Table");
-        $('#diagnosis-chart-table').hide();
-        $('#diagnosis-chart-wrapper').show();
-      } else {
-        $(this).text("Trend");
-        $('#diagnosis-chart-table').show();
-        $('#diagnosis-chart-wrapper').hide();
-      }
-      e.stopPropagation();
-    });
-
-    destroyCharts(['diagnosis-chart']);
-    setTimeout(function(){
-  		local.charts["diagnosis-chart"] = c3.generate({
-  			bindto: '#diagnosis-chart',
-  			data: {
-  				x: 'x',
-  				columns: local.data[local.pathwayId].diagnosis.trend/*,
-  				axes: {
-  					"%" : 'y',
-  					"n" : 'y2'
-  				}*/
-  			},
-        zoom: {
-            enabled: true
-        },
-        tooltip: {
-          format: {
-            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); },
-            value: function (value) { return  enableHover ? value+'%':undefined;}
-          }
-        },
-  			axis: {
-  				x: {
-  					type: 'timeseries',
-  					tick: {
-  						format: '%d-%m-%Y',
-  						count: 7,
-  						culling: {
-  							max: 4
-  						}
-  					},
-            label: {
-              text: 'Date',
-              position: 'outer-center'
-            }
-  				},
-  				y : {
-  					min : 0,
-            label: {
-              text: 'Proportion (%)',
-              position: 'outer-middle'
-            }
-  				}/*,
-  				y2: {
-  					show: true,
-  					min: 0,
-            label: {
-              text: 'Patient count (n)',
-              position: 'outer-middle'
-            }
-  				}*/
-  			},
-  			point: {
-  				show: false
-  			},
-  			size: {
-  				height: null
-  			}
-  			/*grid: {
-  			 x: {
-  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
-  			 }
-  			 }*/
-  		});
-    },1);
-	};
-
-	var showExclusionsPanel = function(location, enableHover) {
-
-    var standards = [];
-    for(var standard in local.data[local.pathwayId].exclusions.standards){
-      var denom = getDenominatorForStandard(local.pathwayId, "exclusions");
-      var num = denom - getNumeratorForStandard(local.pathwayId, "exclusions", standard);
-      standards.push({
-        "standard" : local.data[local.pathwayId].exclusions.standards[standard].tab.title,
-        "standardKey" : standard,
-        "tooltip" : local.data[local.pathwayId].exclusions.standards[standard]["standard-met-tooltip"],
-        "numerator":num,
-        "denominator":denom,
-        "percentage": (num*100/denom).toFixed(0)
-      });
-    }
-
-		createPanelShow(exclusionPanel, location, {
-      pathway: local.pathwayNames[local.pathwayId],
-      pathwayNameShort: local.pathwayId,
-      title: local.data[local.pathwayId].exclusions.text.panel.text,
-      number: local.data[local.pathwayId].exclusions.n,
-			numberUp: local.data[local.pathwayId].exclusions.change>=0,
-			numberChange: Math.abs(local.data[local.pathwayId].exclusions.change),
-      standards: standards
-    },/* {"change-bar-number": $('#change-bar-number').html(), */{"row": $('#overview-panel-table-row').html()}
-		);
-
-    $('#exclusion-trend-toggle').on('click', function(e){
-      if($(this).text()==="Trend"){
-        $(this).text("Table");
-        $('#exclusion-chart-table').hide();
-        $('#exclusion-chart-wrapper').show();
-      } else {
-        $(this).text("Trend");
-        $('#exclusion-chart-table').show();
-        $('#exclusion-chart-wrapper').hide();
-      }
-      e.stopPropagation();
-    });
-
-    destroyCharts(['exclusion-chart']);
-    setTimeout(function(){
-  		local.charts["exclusion-chart"] = c3.generate({
-  			bindto: '#exclusion-chart',
-  			data: {
-  				x: 'x',
-  				columns: local.data[local.pathwayId].exclusions.trend/*,
-  				axes: {
-  					"%" : 'y',
-  					"n" : 'y2'
-  				}*/
-  			},
-        zoom: {
-            enabled: true
-        },
-        tooltip: {
-          format: {
-            title: function (x) { return x.toDateString() + (enableHover ? '<br>Click for more detail' : ''); },
-            value: function (value) { return  enableHover ? value+'%':undefined;}
-          }/*,
-          position: function (data, width, height, element) {
-            console.log(data,width, height, element);
-            return {top: height};
-          }*/
-        },
-  			axis: {
-  				x: {
-  					type: 'timeseries',
-  					tick: {
-  						format: '%d-%m-%Y',
-  						count: 7,
-  						culling: {
-  							max: 4
-  						}
-  					},
-            label: {
-              text: 'Date',
-              position: 'outer-center'
-            }
-  				},
-  				y : {
-  					min : 0,
-            label: {
-              text: 'Proportion (%)',
-              position: 'outer-middle'
-            }
-  				}/*,
-  				y2: {
-  					show: true,
-  					min: 0,
-            label: {
-              text: 'Patient count (n)',
-              position: 'outer-middle'
-            }
-  				}*/
-  			},
-  			point: {
-  				show: false
-  			},
-  			size: {
-  				height: null
-  			}
-  			/*grid: {
-  			 x: {
-  			 lines: [{value: data[0][60], text: 'Action plan downloaded'}, {value: data[0][330], text: 'Action plan downloaded'}]
-  			 }
-  			 }*/
-  		});
-    },1);
-	};
-
-  var showPatientDropdownPanel = function(location){
-    createPanelShow($('#patient-dropdown-panel'),location, {"patients" : Object.keys(local.data.patients)});
   };
 
   var createPatientPanel = function(pathwayId, pathwayStage, standard){
@@ -2734,7 +2385,7 @@
 			$(this).removeClass('panel-default');
 		}).on('mouseout',function(e){
       $(this).addClass('panel-default');
-    }).on('click', 'tr.standard-row', function(){
+    }).on('click', 'tr.standard-row', function(e){
       history.pushState(null, null, '#main/'+local.pathwayId+'/'+$(this).closest('.panel').data('stage')+'/no/' + $(this).data('standard'));
       loadContent('#main/'+local.pathwayId+'/'+$(this).closest('.panel').data('stage')+'/no/' + $(this).data('standard'), true);
       // do not give a default action
@@ -3778,17 +3429,10 @@
     });
 
 		//Templates
-		monitoringPanel = $('#monitoring-panel');
-		treatmentPanel = $('#treatment-panel');
-		diagnosisPanel = $('#diagnosis-panel');
-		exclusionPanel = $('#exclusion-panel');
 		patientsPanelTemplate = $('#patients-panel');
-		breakdownPanel = $('#breakdown-panel');
 		actionPlanPanel = $('#action-plan-panel');
 		patientList = $('#patient-list');
-		patientListSimple = $('#patient-list-simple');
 		suggestedPlanTemplate = $('#suggested-plan-template');
-		breakdownTableTemplate = $('#breakdown-table-template');
 		individualPanel = $('#individual-panel');
 		valueTrendPanel = $('#value-trend-panel');
     medicationPanel = $('#medications-panel');
