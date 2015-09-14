@@ -356,11 +356,53 @@ hr{
   padding-top: 10px;
 }
 
+.panel-heading-ckd{
+  background-color: #7f7fff;
+  color: white;
+  border-color: #7f7fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
+.panel-heading-asthma{
+  background-color: #7f7fff;
+  color: white;
+  border-color: #7f7fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
 .panel-af{
   border-color: #7f7fff;
 }
 
+.panel-ckd{
+  border-color: #7f7fff;
+}
+
+.panel-asthma{
+  border-color: #7f7fff;
+}
+
 .panel-af.clickable:hover{
+  background-color: #f7f7ff;
+  border-style: dashed;
+}
+
+.panel-ckd.clickable:hover{
+  background-color: #f7f7ff;
+  border-style: dashed;
+}
+
+.panel-asthma.clickable:hover{
   background-color: #f7f7ff;
   border-style: dashed;
 }
