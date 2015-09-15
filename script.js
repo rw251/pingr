@@ -1888,6 +1888,7 @@
   };
 
   var numberOfStandardsMissed = function(patientId){
+    if(!local.data.patients[patientId].breach) return 0;
     var a = local.data.patients[patientId].breach.map(function(val){return val.pathwayId + val.pathwayStage + val.standard;});
     var obj = {};
     for(var i = 0; i < a.length; i++){
