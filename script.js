@@ -365,6 +365,9 @@
 
     if(patientId){
       showIndividualPatientView(null, null, null, patientId);
+    } else {
+      var template = $('#patient-panel-placeholder').html();
+      farRightPanel.html(Mustache.render(template)).show();
     }
   };
 
@@ -1906,6 +1909,7 @@
             pList = pList.concat(local.data[local.diseases[k].id][i].bdown[prop].patients);
           }
         }
+        pList = pList.concat(local.data[local.diseases[k].id][i].patientsOk);
       }
     }
     pList = removeDuplicates(pList);
@@ -3087,8 +3091,8 @@
     for(var i = 0; i < list.length; i++){
       list[i].hasSubItems = true;
     }
-    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Agreed actions", "isBreakAboveHome":true});
-    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true});
+    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Agreed actions", "isBreakAboveHome":true, "text" : {"main" : {"tooltip":"Agreed tooltip - edit in script.js"}}});
+    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true, "text" : {"main" : {"tooltip":"All patients tooltip - edit in script.js"}}});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; return v; });
 
@@ -3627,11 +3631,16 @@
           if(!file.patients[id].dbp) {
             file.patients[id].dbp = [dateArray,getValues("DBP", 6, 50,120)];
           }
-
-          if(!file.patients[id].egfr) {
-            file.patients[id].egfr = [dateArray,getValues("EGFR", 6, 15,150)];
+*/
+          if(file.patients[id].egfr) {
+            for(var i = 1; i < file.patients[id].egfr[0].length; i++){
+               file.patients[id].egfr[1][i] = Math.max(5, file.patients[id].egfr[1][i]);
+             }
           }
-
+          if(file.patients[id].asthma) {
+            file.patients[id].asthma = [dateArray,getValues("PEFR", 6, 200,800)];
+          }
+/*
           if(!file.patients[id].CHA2DS2Vasc) {
             file.patients[id].CHA2DS2Vasc = [dateArray, getChadValues(6)];
           }
