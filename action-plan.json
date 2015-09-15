@@ -87,30 +87,43 @@
       }
     },
     "ckd" :{
-      "team":[],
+      "team":["0104","0105"],
       "monitoring":{
         "individual":{
-
+          "No opportunities": ["0013","0014","0015"],
+          "Non face-to-face": ["0016","0020","0014","0015"],
+          "Face-to-face": ["0026","0016","0020","0014","0015"],
+          "Palliative": ["0050"]
         }
       },
       "treatment":{
         "individual":{
-
+          "Suboptimal medication":  ["0028","0029","0030","0031"],
+          "Adherence":  ["0033"],
+          "Referral":  ["0036"],
+          "One-off high BP":  ["0039"],
+          "Recently optimised": ["0039"],
+          "White coat": ["0030","0031", "0050"],
+          "Hypotension": ["0087"],
+          "Palliative": ["0050"],
+          "Frail": ["0050"]        
         }
       },
       "exclusions":{
         "individual":{
-
+          "Palliative": ["0050"],
+          "Frail": ["0050"]
         }
       },
       "diagnosis":{
         "individual":{
-
+          "CKD likely":  ["0051","0052"],
+          "Requires further testing":  ["0051","0052"]
         }
       }
     },
-    "copd" :{
-      "team":[]   ,
+    "asthma" :{
+      "team":["0106","0107"],
       "monitoring":{
         "individual":{
 
@@ -236,6 +249,11 @@
     "0100":{"text":"Invite the patient via letter or phone call to discuss starting an anticoagulant. <a href=\"http://cks.nice.org.uk/atrial-fibrillation#!scenariorecommendation:4\" target=\"_blank\">Link to NICE Clinical Knowledge Summary</a> [INFO]"},
     "0101":{"text":"This patient has a contraindication to anticoagulation (e.g. hypersensitivity to anticoagulants, oesophageal varices, thrombocytopenia (platelet count < 50 x 109/L), baseline INR > 1.5). Add the code [COPY: 8I2R.] (anticoagulation contraindicated). <a href=\"http://cks.nice.org.uk/anticoagulation-oral#!management\" target=\"_blank\">Link to NICE Clinical Knowledge Summary</a> [INFO]"},
     "0102":{"text":"Discuss with the patient how to control some of their modifiable bleeding risk factors e.g. uncontrolled blood pressure, labile INRs, alcohol intake [INFO]"},
-    "0103":{"text":"Discuss with the patient about stopping anticoagulation treatment [INFO]"}
+    "0103":{"text":"Discuss with the patient about stopping anticoagulation treatment [INFO]"},
+    "0104":{"text":"Nominate a CKD lead in your practice who can drive quality improvement changes forward."},
+    "0105":{"text":"Hold an <strong>educational session</strong> at your practice to highlight to colleagues: the importance of CKD, your practice’s current performance on CKD care, and steps that could be taken to improve."},
+    "0106":{"text":"Synchronise asthma annual reviews of patients with annual reviews of other long-term conditions (e.g. hypertension) – for example this could be done on each patient’s birthday."},
+    "0107":{"text":"<strong>Work with your local pharmacy </strong>to enable them to monitor asthma patient’s symptoms and send their findings results to you."}
+
   }
 }

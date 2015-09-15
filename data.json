@@ -704,9 +704,9 @@
         "patientsOk" : [6660777945,6660891861,6661024247,6661262910,6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647,6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822,6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965,6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053,6662860572,6662870948,6662902224,6662910216,6660000041,6660069950,6660242024,6660295217,6660366599,6660462743,6660516099,6660551266,6660640777,6660660340,6660739385,6660747304,6660777945,6660801061,6660844372,6660891861,6660929608,6660984593,6661024247,6661064236,6661118156,6661208733,6661262910,6661287703,6661341104,6661345049,6661359435,6661437927,6661455155,6661535166,6661573870,6661650840,6661667997,6661668339,6661697645,6661725917,6661734551,6661773731,6661806647,123,6661879011,6661960805,6661990261,6662036749,6662060899,6662115698,6662205620,6662211621,6662290255,6662290319,6662296308,6662378822,6662423448,6662492315,6662530288,6662533866,6662563783,6662586748,6662661359,6662727859,6662765510,6662774478,6662803503,6662803965,6662860572,6662870948,6662902224,6662910216,6662990876,6663014733,6663098415,6663125053,6662990876,6663014733,6663098415,6663125053,5557741611,6669227708,6669293812],
         "standards": {
           "af" :{
-            "tab" : {"title":"Atrial fibrillation - diagnosis","tooltip":"Patients with potentially undiagnosed atrial fibrillation"},
+            "tab" : {"title":"Atrial fibrillation - Diagnosis","tooltip":"Patients with potentially undiagnosed atrial fibrillation"},
             "standard-met-tooltip" : "Patients diagnosed with atrial fibrillation",
-            "dropdown-tooltip" : "Atrial fibrillation - diagnosis",
+            "dropdown-tooltip" : "Atrial fibrillation - Diagnosis",
             "chartTitle" : "Types of patient with potentially undiagnosed atrial fibrillation",
             "tableTitle" : "Patients with potentially undiagnosed atrial fibrillation",
             "valueId" : "pulse",
@@ -717,7 +717,7 @@
             "chartUnits" : "Beats per minute",
             "opportunities":  [
               {
-                "name": "AF likely",
+                "name": "Prescribed A/C",
                 "desc": "Patients who likely have atrial fibrillation because they are already prescibed an anticoagulant but do not have a diagnostic code in their medical record",
                 "patients":[6668427022,6668488560,6668534144,6668632333,6668649101,6668678386,6668698566,6668701500,6668775716,6668822253,6668833890,6668916157]
               },
@@ -909,7 +909,7 @@
             "valueName" : "eGFR",
             "value" : "egfr",
             "dateORvalue" : "value",
-            "chart" : ["EGFR"],
+            "chart" : ["egfr"],
             "chartUnits" : "mls/min/1.73m2",
             "opportunities" : [
               {
@@ -1012,7 +1012,7 @@
                 "name": "No contact",
                 "desc": "Patients with asthma who have NOT had their symptoms monitored in the last 12 months using the RCP 3 questions AND had no contact with the practice",
                 "main": "These are patients that you have had no contact with.",
-                "patients": [6660000041,6660069950,6660242024]
+                "patients": [6660000041,6660069950,6660242024,5550000041]
               },
               {
                 "name": "Face-to-face",
@@ -1042,25 +1042,25 @@
           "page": {"text":"Asthma: Symptom control (practice-level data)"},
           "panel": {"text":"Patients who have NOT had their hypertension controlled", "tooltip" : "Patients at your practice with a CKD diagnostic Read code and no valid exclusion codes, who have NOT had their blood pressure measured in the last 12 months"},
           "panelOk": {"text":"Patients controlled OK", "tooltip":"Patients with asthma whose symptoms are controlled according to the RCP 3 questions"},
-          "panelNotOk": {"text":"Patients with improvement opportunities", "tooltip": "Patients with CKD with proteinuria (not DM) who have opportunities to have their BP control improved"},
-          "panelOkHeader" : {"text" : "Patients with CKD with proteinuria (not DM) whose BP is controlled according to NICE guidelines", "tooltip" : "Patients with a diagnosis..."},
+          "panelNotOk": {"text":"Patients with improvement opportunities", "tooltip": "Patients with asthma whose symptoms are NOT controlled according to the RCP 3 questions"},
+          "panelOkHeader" : {"text" : "Patients with asthma whose symptoms are controlled according to the RCP 3 questions", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have NOT had their hypertension controlled","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to treat hypertension"}
         },
         "patientsOk" : [6664109536,6664144142,6664212758],
         "standards": {
           "bp" : {
-            "tab" : {"title":"CKD with proteinuria BP control","tooltip":"Patients with CKD with proteinuria (not DM) where latest BP in last 12m is >129/79 mmHg"},
-            "standard-met-tooltip" : "Patients with CKD with proteinuria (not DM) where latest BP in last 12m is <130/80 mmHg",
-            "dropdown-tooltip" : "CKD with proteinuria BP control",
-            "chartTitle" : "Improvement opportunity categories for patients with CKD with proteinuria (not DM) where latest BP in last 12m is >129/79 mmHg",
-            "tableTitle" : "Patients with CKD with proteinuria (not DM) where latest BP in last 12m is >129/79 mmHg",
-            "valueId" : "sbp",
-            "valueName" : "Last SBP",
-            "value" : "systolic blood pressure",
+            "tab" : {"title":"Symptom control","tooltip":"Patients with asthma whose symptoms are NOT controlled according to the RCP 3 questions"},
+            "standard-met-tooltip" : "Patients with asthma whose symptoms are controlled according to the RCP 3 questions",
+            "dropdown-tooltip" : "Asthma symptom control",
+            "chartTitle" : "Improvement opportunity categories for patients with asthma whose symptoms are NOT controlled according to the RCP 3 questions",
+            "tableTitle" : "Patients with asthma whose symptoms are NOT controlled according to the RCP 3 questions",
+            "valueId" : "asthma",
+            "valueName" : "Last PEFR",
+            "value" : "peak expiratory flow rate",
             "dateORvalue" : "value",
-            "chart" : ["sbp", "dbp"],
-            "chartUnits" : "mmHg",
+            "chart" : ["asthma"],
+            "chartUnits" : "L/min",
             "opportunities" :[
               {
                 "name": "Suboptimal medication",
@@ -1073,45 +1073,6 @@
                 "desc": "Patients who are not picking up their repeat medication regularly",
                 "main": "These are patients who have had a high blood pressure reading and their medication has been changed over 2 months ago, but they have not yet had their blood pressure measured again.",
                 "patients": [5554015794,5554043449]
-              },
-              {
-                "name": "Referral",
-                "desc": "Patients on maximal anti-hypertensive medication who may benefit from referral to secondary care",
-                "main": "These are patients who have had a high blood pressure reading taken and could have their medication optimised",
-                "patients": [5554551966,5554632673,5554723924]
-              },
-              {
-                "name": "One-off high BP",
-                "desc": "Patients who had a solitary high BP reading in the last 2 months that previously had controlled blood pressure",
-                "main": "",
-                "patients": [5555912205,5553482379]
-              },
-              {
-                "name": "Recently optimised",
-                "desc": "Patients who had their medication optimised following their most recent high BP reading",
-                "main": "",
-                "patients": [5555433795,5555446560,5555755859]
-              },
-              {
-                "name": "White coat",
-                "desc": "Patients who may have high blood pressure because they have white-coat hypertension who may benefit from exclusion from hypertension quality standards",
-                "main": "",
-                "patients": [5555825945,5555912205,5553482379]
-              },
-               {
-                "name": "Hypotension",
-                "desc": "Patients who have postural hypotension that may benefit from exclusion from hypertension quality standards",
-                "patients": [5557492389,5557516551]
-              },
-              {
-                "name": "Frail",
-                "desc": "Patients with a frailty code in their record that may benefit from exclusion from hypertension quality standards",
-                "patients": [5556799251,5556845192]
-              },
-              {
-                "name": "Palliative",
-                "desc": "Patients who are receiving palliative care that may benefit from exclusion from hypertension quality standards",
-                "patients":[5555994176,5556051664,5556073709,5556149338]
               }
             ]
           }
@@ -1124,34 +1085,34 @@
           ["Exclusions",83,82,82,82,81,81,81,81,80,79,79,79,78,78,77,77,77,77,77,76,76,75,75,75,75,75,74,74,74,74,75,75,75,76,76,76,76,76,75,75,74,73,73,73,73,73,73,72,73,74,74,74,74,74,74,74,74,73,73,73,74,74,74,74,74,73,73,73,73,73,73,73,73,73,73,73,73,72,72,72,71,70,69,69,69,69,69,69,69,69,69,69,68,67,66,67,67,67,66,66,66]
         ],
         "text" :{
-          "sidePanel" : {"text": "Exclusions", "tooltip": "CKD patients who may benefit from exclusion from CKD quality standards at your practice"},
-          "page": {"text":"CKD: Exclusions (practice-level data)"},
-          "panel": {"text":"Additional patients who may benefit from exclusion from CKD quality standards", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have NOT had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Excluded already", "tooltip": "Patients with CKD who have an exclusion code in their medical record"},
-          "panelNotOk": {"text":"Opportunities for exclusion", "tooltip": "Patients with CKD who may benefit from being excluded from CKD quality standards"},
-          "panelOkHeader" : {"text" : "Patients with CKD who have an exclusion code in their medical record"},
+          "sidePanel" : {"text": "Exclusions", "tooltip": "Asthma patients who may benefit from exclusion from asthma quality standards at your practice"},
+          "page": {"text":"Asthma: Exclusions (practice-level data)"},
+          "panel": {"text":"Additional patients who may benefit from exclusion from asthma quality standards", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have NOT had their blood pressure measured in the last 12 months"},
+          "panelOk": {"text":"Excluded already", "tooltip": "Patients with asthma who have an exclusion code in their medical record"},
+          "panelNotOk": {"text":"Opportunities for exclusion", "tooltip": "Patients with asthma who may benefit from being excluded from asthma quality standards"},
+          "panelOkHeader" : {"text" : "Patients with asthma who have an exclusion code in their medical record"},
           "patientListHeader" : {"text":"Current patients who have NOT had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to treat hypertension"}
         },
         "patientsOk" :[5556359342,5556445952,5556474770],
         "standards":{
           "excl" : {
-            "tab" : {"title":"Exclusion from CKD standards","tooltip":"Additional patients who may benefit from exclusion from CKD quality standards"},
-            "standard-met-tooltip" : "Patients with CKD who have an exclusion code in their medical record",
-            "dropdown-tooltip" : "Exclusion from CKD standards",
-            "chartTitle" : "Categories of patients with CKD who may benefit from being excluded from quality standards",
-            "tableTitle" : "Patients with CKD who may benefit from being excluded from quality standards",
-            "valueId" : "egfr",
-            "valueName" : "eGFR",
-            "value" : "estimated Glomerular Filtration Rate",
+            "tab" : {"title":"Exclusion from asthma standards","tooltip":"Additional patients who may benefit from exclusion from asthma quality standards"},
+            "standard-met-tooltip" : "Patients with asthma who have an exclusion code in their medical record",
+            "dropdown-tooltip" : "Exclusion from asthma standards",
+            "chartTitle" : "Categories of patients with asthma who may benefit from being excluded from quality standards",
+            "tableTitle" : "Patients with asthma who may benefit from being excluded from quality standards",
+            "valueId" : "asthma",
+            "valueName" : "PEFR",
+            "value" : "peak expiratory flow rate",
             "dateORvalue" : "value",
-            "chart" : ["EGFR"],
-            "chartUnits" : "mls/min/1.73m2",
+            "chart" : ["asthma"],
+            "chartUnits" : "mL/min",
             "opportunities" : [
               {
                 "name": "Palliative",
                 "desc": "Patients who are receiving palliative care",
-                "patients":[5555994176,5556051664]
+                "patients":[5555994176]
               },
               {
                 "name": "Frail",
@@ -1163,44 +1124,44 @@
         }
       },
       "diagnosis": {
-        "header":"Undiagnosed hypertension",
+        "header":"Undiagnosed asthma",
         "trend" : [
           ["x","2015-08-24","2015-08-23","2015-08-22","2015-08-21","2015-08-20","2015-08-19","2015-08-18","2015-08-17","2015-08-16","2015-08-15","2015-08-14","2015-08-13","2015-08-12","2015-08-11","2015-08-10","2015-08-09","2015-08-08","2015-08-07","2015-08-06","2015-08-05","2015-08-04","2015-08-03","2015-08-02","2015-08-01","2015-07-31","2015-07-30","2015-07-29","2015-07-28","2015-07-27","2015-07-26","2015-07-25","2015-07-24","2015-07-23","2015-07-22","2015-07-21","2015-07-20","2015-07-19","2015-07-18","2015-07-17","2015-07-16","2015-07-15","2015-07-14","2015-07-13","2015-07-12","2015-07-11","2015-07-10","2015-07-09","2015-07-08","2015-07-07","2015-07-06","2015-07-05","2015-07-04","2015-07-03","2015-07-02","2015-07-01","2015-06-30","2015-06-29","2015-06-28","2015-06-27","2015-06-26","2015-06-25","2015-06-24","2015-06-23","2015-06-22","2015-06-21","2015-06-20","2015-06-19","2015-06-18","2015-06-17","2015-06-16","2015-06-15","2015-06-14","2015-06-13","2015-06-12","2015-06-11","2015-06-10","2015-06-09","2015-06-08","2015-06-07","2015-06-06","2015-06-05","2015-06-04","2015-06-03","2015-06-02","2015-06-01","2015-05-31","2015-05-30","2015-05-29","2015-05-28","2015-05-27","2015-05-26","2015-05-25","2015-05-24","2015-05-23","2015-05-22","2015-05-21","2015-05-20","2015-05-19","2015-05-18","2015-05-17","2015-05-16"],
           ["Diagnosis",85,85,85,84,83,83,82,81,81,81,81,81,81,81,81,80,80,80,80,80,80,81,81,80,79,78,78,77,77,77,77,77,77,77,78,78,78,78,77,77,77,77,77,77,77,76,76,76,76,76,76,76,75,75,76,76,76,75,75,75,74,73,73,73,73,73,73,73,73,73,72,71,71,71,71,72,72,72,72,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,71,70]
         ],
         "text" :{
-          "sidePanel" : {"text": "Diagnosis", "tooltip": "Patients who may have undiagnosed CKD"},
-          "page": {"text":"CKD: Diagnosis (practice-level data)"},
-          "panel": {"text":"Undiagnosed CKD", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have NOT had their blood pressure measured in the last 12 months"},
-          "panelOk": {"text":"Patients diagnosed OK","tooltip":"Patients who have been diagnosed with CKD"},
-          "panelNotOk": {"text":"Patients with improvement opportunities","tooltip":"Patients who have opportunities to have CKD diagnosed"},
-          "panelOkHeader" : {"text" : "Patients with CKD who have been diagnosed as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
+          "sidePanel" : {"text": "Diagnosis", "tooltip": "Patients who may have undiagnosed asthma"},
+          "page": {"text":"Asthma: Diagnosis (practice-level data)"},
+          "panel": {"text":"Undiagnosed asthma", "tooltip" : "Patients at your practice with a hypertension diagnostic Read code and no valid exclusion codes, who have NOT had their blood pressure measured in the last 12 months"},
+          "panelOk": {"text":"Patients diagnosed OK","tooltip":"Patients who have been diagnosed with asthma"},
+          "panelNotOk": {"text":"Patients with improvement opportunities","tooltip":"Patients who have opportunities to have asthma diagnosed"},
+          "panelOkHeader" : {"text" : "Patients with asthma who have been diagnosed as per clinical guidelines", "tooltip" : "Patients with a diagnosis..."},
           "patientListHeader" : {"text":"Current patients who have NOT had their hypertension treated","tooltip":"Patients with potentially undiagnosed hypertension"},
           "header" : {"text": "Current opportunities to treat hypertension"}
         },
         "patientsOk" : [5558427022,5558488560,5558534144,5558632333,5558649101,5558678386],
         "standards":{
           "htn":{
-            "tab" : {"title":"CKD - Diagnosis","tooltip":"Patients with potentially undiagnosed CKD"},
+            "tab" : {"title":"Asthma - Diagnosis","tooltip":"Patients with potentially undiagnosed CKD"},
             "standard-met-tooltip" : "Patients who have been diagnosed with CKD",
-            "dropdown-tooltip" : "CKD - Diagnosis",
-            "chartTitle" : "Types of patient with potentially undiagnosed CKD",
-            "tableTitle" : "Patients with potentially undiagnosed CKD",
-            "valueId" : "egfr",
-            "valueName" : "Last eGFR",
-            "value" : "estimated Glomerular Filtration Rate",
+            "dropdown-tooltip" : "Asthma - Diagnosis",
+            "chartTitle" : "Types of patient with potentially undiagnosed asthma",
+            "tableTitle" : "Patients with potentially undiagnosed asthma",
+            "valueId" : "asthma",
+            "valueName" : "Last PEFR",
+            "value" : "peak expiratory flow rate",
             "dateORvalue" : "value",
-            "chart" : ["egfr"],
-            "chartUnits" : "mls/min/1.73m2",
+            "chart" : ["asthma"],
+            "chartUnits" : "L/min",
             "opportunities":[
               {
-                "name": "CKD likely",
-                "desc": "Patients with >2 consecutive eGFR readings <60 mL/min/1.73m2 measured >90 days apart",
+                "name": "Prescribed asthma medication",
+                "desc": "Patients prescribed inhalers for asthma that do not have a coded diagnosis",
                 "patients":[5558427022,5558488560,5558534144]
               },
               {
-                "name": "Requires further testing",
-                "desc": "Patients with <3 consecutive eGFR readings <60 mL/min/1.73m2 measured >90 days apart",
+                "name": "Symptoms of asthma",
+                "desc": "Patients with symptoms of asthma e.g. chronic dry cough, wheeze",
                 "patients": [5558943913,5559033587]
               }
             ]
