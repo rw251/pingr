@@ -66,7 +66,7 @@
     $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
 
     $('#mainTitle').show();
-    updateTitle(local.data[local.pathwayId]["display-name"] + ": overview (practice-level data)");
+    updateTitle(local.data[local.pathwayId]["display-name"] + ": Overview (practice-level data)");
 
     //Show overview panels
     showOverviewPanels();
@@ -168,10 +168,10 @@
     //if no mention anywhere then not relevant for that disease
     switch(getPatientStatus(local.patientId, data.pathwayId, data.pathwayStage, data.standard)){
       case "ok":
-        standardHtml = '<span class="standard-achieved" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD ACHIEVED BY THIS PATIENT">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
+        standardHtml = '<span class="standard-achieved" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - QUALITY INDICATOR ACHIEVED">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
         break;
       case "missed":
-        standardHtml = '<span class="standard-missed" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD MISSED BY THIS PATIENT">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
+        standardHtml = '<span class="standard-missed" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - IMPROVEMENT OPPORTUNITY EXISTS FOR THIS PATIENT">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
         break;
       case "not":
         standardHtml = '<span class="standard-not-relevant" data-toggle="tooltip" data-placement="left" title="' + local.data[data.pathwayId][data.pathwayStage].standards[data.standard]["dropdown-tooltip"] + ' - STANDARD NOT RELEVANT TO THIS PATIENT">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i></span>';
@@ -1405,7 +1405,7 @@
       }
 
       if(!any){
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list  ").tooltip('fixTitle').tooltip('hide');
         self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
@@ -1715,7 +1715,7 @@
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list  ").tooltip('fixTitle').tooltip('hide');
         self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
@@ -2554,7 +2554,7 @@
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list  ").tooltip('fixTitle').tooltip('hide');
         self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
@@ -2620,7 +2620,7 @@
         self.removeClass('active');
         self.removeClass('success');
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and store it in your saved actions list ").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list  ").tooltip('fixTitle').tooltip('hide');
         self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
@@ -2699,7 +2699,7 @@
       var subsection = $(this).data().subsection;
       var desc = local.data[pathwayId][pathwayStage].standards[standard].opportunities.filter(function(val){ return val.name===subsection}).length>0 ?
                 local.data[pathwayId][pathwayStage].standards[standard].opportunities.filter(function(val){ return val.name===subsection})[0].desc : subsection;
-      var tooltip = subsection ? "We recommended this because we think this patient is categorised as '" + desc + "'" : '';
+      var tooltip = subsection ? "This action is suggested because PINGR classified this patient as:'" + desc + "'" : '';
       var newHtml = ' <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="' + tooltip + '"></i>';
       $(this).html(html.replace(/\[INFO\]/g, newHtml));
     });
