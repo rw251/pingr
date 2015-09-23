@@ -3091,8 +3091,8 @@
     for(var i = 0; i < list.length; i++){
       list[i].hasSubItems = true;
     }
-    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Agreed actions", "isBreakAboveHome":true, "text" : {"main" : {"tooltip":"Agreed tooltip - edit in script.js"}}});
-    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true, "text" : {"main" : {"tooltip":"All patients tooltip - edit in script.js"}}});
+    list.unshift({"link":"welcome", "faIcon":"fa-home", "name":"Agreed actions", "isBreakAboveHome":true, "text" : {"main" : {"tooltip":"All suggested actions that you have agreed with and saved - both that are awaiting implementation and have already been implemented"}}});
+    list.push({"link":"patients", "faIcon":"fa-users", "name":"All Patients", "isBreakAbovePatient":true, "text" : {"main" : {"tooltip":"All patients at your practice regardless of what clinical conditions they have"}}});
 
     list.map(function(v, i, arr){ v.isSelected = i===idx+1; return v; });
 
