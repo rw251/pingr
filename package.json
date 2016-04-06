@@ -10,6 +10,7 @@
     "postclean": "mkdir dist",
     "prebuild": "npm run clean",
     "build": "browserify script.js -o dist/script.js",
+    "postbuild": "uglifyjs dist/script.js --output dist/script.min.js",
     "serve": "http-server -o -p 9090 .",
     "serve:x": "http-server -p 9090 .",
     "predemo": "npm run build",
@@ -40,6 +41,7 @@
     "jshint": "^2.7.0",
     "mv": "^2.0.3",
     "nodemon": "^1.9.1",
-    "rimraf": "^2.3.4"
+    "rimraf": "^2.3.4",
+    "uglify-js": "^2.6.2"
   }
 }
