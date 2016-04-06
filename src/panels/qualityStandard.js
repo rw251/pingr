@@ -54,7 +54,7 @@ var qs = {
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
         var isClassification = $(this).closest("div").data("isClassification") !== undefined;
         any = true;
-        var item = local.getObj().agrees[data.patientId].filter(function(i) {
+        var item = actions.getAgrees()[data.patientId].filter(function(i) {
           return isClassification ? i.item === "section" : i.item !== "section";
         });
         var tool;

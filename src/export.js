@@ -1,4 +1,4 @@
-var local = require('./local.js');
+var actions = require('./actionplan.js');
 
 var doc, margin = 20,
   verticalOffset = margin;
@@ -27,7 +27,7 @@ module.exports = {
     doc = new jsPDF();
 
     //create doctype
-    var data = local.getObj(),
+    var data = actions.getObj(),
       i, j, mainId, suggs;
 
 

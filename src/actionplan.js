@@ -1,20 +1,38 @@
-var local = require('./local.js'),
-  notify = require('./notify.js');
+var notify = require('./notify.js');
 
-var actions = {
+var act = {
   reason: {},
+
+  getObj: function(options) {
+    var obj = JSON.parse(localStorage.bb);
+
+    if (options && options.length > 0) {
+      options.forEach(function(opt) {
+        if (!obj[opt.name]) {
+          obj[opt.name] = opt.value;
+          main.setObj(obj);
+        }
+      });
+    }
+
+    return obj;
+  },
+
+  setObj: function(obj) {
+    localStorage.bb = JSON.stringify(obj);
+  },
 
   load: function(callback) {
     var r = Math.random();
     $.getJSON("action-plan.json?v=" + r, function(file) {
-      actions.plan = file.diseases;
-      actions.text = file.plans;
+      act.plan = file.diseases;
+      act.text = file.plans;
       callback();
     });
   },
 
   editAction: function(id, actionId, agree, done, reason) {
-    var log, obj = local.getObj([{
+    var log, obj = act.getObj([{
       name: "actions",
       value: {}
     }]);
@@ -29,7 +47,7 @@ var actions = {
     if (agree) {
       log = "You agreed with this suggested action on " + (new Date()).toDateString();
     } else if (agree === false) {
-      var reasonText = actions.reason.reason === "" && actions.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + actions.reason.reason + "; " + actions.reason.reasonText + ".'";
+      var reasonText = act.reason.reason === "" && act.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + act.reason.reason + "; " + act.reason.reasonText + ".'";
       log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
     }
 
@@ -58,22 +76,29 @@ var actions = {
       delete obj.actions[id][actionId].reason;
     }
 
-    local.setObj(obj);
+    act.setObj(obj);
     notify.showSaved();
   },
 
   ignoreAction: function(id, actionId) {
-    var obj = local.getObj([{
+    var obj = act.getObj([{
       name: "actions",
       value: {}
     }]);
     obj.actions[id][actionId].agree = null;
     delete obj.actions[id][actionId].reason;
-    local.setObj(obj);
+    act.setObj(obj);
+  },
+
+  getActions: function() {
+    return act.getObj([{
+      name: "actions",
+      value: {}
+    }]).actions;
   },
 
   listActions: function(id, pathwayId) {
-    var obj = local.getObj([{
+    var obj = act.getObj([{
       name: "actions",
       value: {}
     }]);
@@ -90,11 +115,14 @@ var actions = {
 
   //id is either "team" or the patientId
   recordFeedback: function(pathwayId, id, suggestion, reason, reasonText) {
-    actions.reason = {
+    act.reason = {
       "reason": reason,
       "reasonText": reasonText
     };
-    var obj = local.getObj([{name: "feedback", value: []}]);
+    var obj = act.getObj([{
+      name: "feedback",
+      value: []
+    }]);
 
     var item = {
       "pathwayId": pathwayId,
@@ -104,23 +132,36 @@ var actions = {
     if (reasonText !== "") item.reasonText = reasonText;
     if (reason !== "") item.reason = reason;
     obj.feedback.push(item);
-    local.setObj(obj);
+    act.setObj(obj);
+  },
+
+  getEvents: function() {
+    return act.getObj([{
+      name: "events",
+      value: []
+    }]).events;
   },
 
   recordEvent: function(pathwayId, id, name) {
-    var obj = local.getObj([{name: "events", value: []}]);
+    var obj = act.getObj([{
+      name: "events",
+      value: []
+    }]);
     obj.events.push({
       "pathwayId": pathwayId,
       "id": id,
       "name": name,
       "date": new Date()
     });
-    local.setObj(obj);
+    act.setObj(obj);
   },
 
   recordPlan: function(id, text, pathwayId) {
     if (!id) alert("PLAN");
-    var obj = local.getObj([{name: "actions", value: {}}]);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
 
     if (!obj.actions[id]) obj.actions[id] = {};
     var planId = Date.now() + "";
@@ -132,7 +173,7 @@ var actions = {
       "history": ["You added this on " + (new Date()).toDateString()]
     };
 
-    local.setObj(obj);
+    act.setObj(obj);
     return planId;
   },
 
@@ -144,22 +185,31 @@ var actions = {
   },
 
   editPlan: function(planId, text, done) {
-    var obj = local.getObj([{name: "actions", value: {}}]);
-    var id = findPlan(obj, planId);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    var id = act.findPlan(obj, planId);
     if (text) obj.actions[id][planId].text = text;
     if (done === true || done === false) obj.actions[id][planId].done = done;
-    local.setObj(obj);
+    act.setObj(obj);
   },
 
   deletePlan: function(planId) {
-    var obj = local.getObj([{name: "actions", value: {}}]);
-    var id = findPlan(obj, planId);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    var id = act.findPlan(obj, planId);
     delete obj.actions[id][planId];
-    local.setObj(obj);
+    act.setObj(obj);
   },
 
   listPlans: function(id, pathwayId) {
-    var obj = local.getObj([{name: "actions", value: {}}]),
+    var obj = act.getObj([{
+        name: "actions",
+        value: {}
+      }]),
       arr = [];
     if (!id) return obj.actions;
     for (var prop in obj.actions[id]) {
@@ -170,14 +220,20 @@ var actions = {
   },
 
   getReason: function(id, actionId) {
-    var obj = local.getObj([{name: "actions", value: {}}]);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
 
     if (obj.actions[id] && obj.actions[id][actionId]) return obj.actions[id][actionId].reason;
     return null;
   },
 
   getAgreeReason: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = local.getObj([{name: "agrees", value: {}}]);
+    var obj = act.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
     if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
 
     if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
@@ -189,7 +245,7 @@ var actions = {
   },
 
   editPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item, agree, reason) {
-    var obj = local.getObj();
+    var obj = act.getObj();
     if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
 
     if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
@@ -217,12 +273,22 @@ var actions = {
       console.log("ERRORRR!!!!!!!");
     }
 
-    local.setObj(obj);
+    act.setObj(obj);
     notify.showSaved();
   },
 
+  getAgrees: function(){
+    return act.getObj([{
+      name: "agrees",
+      value: {}
+    }]).agrees;
+  },
+
   getPatientAgreeObject: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = local.getObj([{name: "agrees", value: {}}]);
+    var obj = act.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
     if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
 
     if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
@@ -234,7 +300,10 @@ var actions = {
   },
 
   getPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = local.getObj([{name: "agrees", value: {}}]);
+    var obj = act.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
 
     if (!obj.agrees[patientId]) return null;
     var item2 = obj.agrees[patientId].filter(function(val) {
@@ -249,4 +318,4 @@ var actions = {
 
 };
 
-module.exports = actions;
+module.exports = act;

@@ -66,24 +66,42 @@ $(document).on('ready', function() {
   history.pushState(null, null, '');
 });
 
-},{"./src/main.js":9,"./src/template.js":20}],2:[function(require,module,exports){
-var local = require('./local.js'),
-  notify = require('./notify.js');
+},{"./src/main.js":8,"./src/template.js":20}],2:[function(require,module,exports){
+var notify = require('./notify.js');
 
-var actions = {
+var act = {
   reason: {},
+
+  getObj: function(options) {
+    var obj = JSON.parse(localStorage.bb);
+
+    if (options && options.length > 0) {
+      options.forEach(function(opt) {
+        if (!obj[opt.name]) {
+          obj[opt.name] = opt.value;
+          main.setObj(obj);
+        }
+      });
+    }
+
+    return obj;
+  },
+
+  setObj: function(obj) {
+    localStorage.bb = JSON.stringify(obj);
+  },
 
   load: function(callback) {
     var r = Math.random();
     $.getJSON("action-plan.json?v=" + r, function(file) {
-      actions.plan = file.diseases;
-      actions.text = file.plans;
+      act.plan = file.diseases;
+      act.text = file.plans;
       callback();
     });
   },
 
   editAction: function(id, actionId, agree, done, reason) {
-    var log, obj = local.getObj([{
+    var log, obj = act.getObj([{
       name: "actions",
       value: {}
     }]);
@@ -98,7 +116,7 @@ var actions = {
     if (agree) {
       log = "You agreed with this suggested action on " + (new Date()).toDateString();
     } else if (agree === false) {
-      var reasonText = actions.reason.reason === "" && actions.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + actions.reason.reason + "; " + actions.reason.reasonText + ".'";
+      var reasonText = act.reason.reason === "" && act.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + act.reason.reason + "; " + act.reason.reasonText + ".'";
       log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
     }
 
@@ -127,22 +145,29 @@ var actions = {
       delete obj.actions[id][actionId].reason;
     }
 
-    local.setObj(obj);
+    act.setObj(obj);
     notify.showSaved();
   },
 
   ignoreAction: function(id, actionId) {
-    var obj = local.getObj([{
+    var obj = act.getObj([{
       name: "actions",
       value: {}
     }]);
     obj.actions[id][actionId].agree = null;
     delete obj.actions[id][actionId].reason;
-    local.setObj(obj);
+    act.setObj(obj);
+  },
+
+  getActions: function() {
+    return act.getObj([{
+      name: "actions",
+      value: {}
+    }]).actions;
   },
 
   listActions: function(id, pathwayId) {
-    var obj = local.getObj([{
+    var obj = act.getObj([{
       name: "actions",
       value: {}
     }]);
@@ -159,11 +184,14 @@ var actions = {
 
   //id is either "team" or the patientId
   recordFeedback: function(pathwayId, id, suggestion, reason, reasonText) {
-    actions.reason = {
+    act.reason = {
       "reason": reason,
       "reasonText": reasonText
     };
-    var obj = local.getObj([{name: "feedback", value: []}]);
+    var obj = act.getObj([{
+      name: "feedback",
+      value: []
+    }]);
 
     var item = {
       "pathwayId": pathwayId,
@@ -173,23 +201,36 @@ var actions = {
     if (reasonText !== "") item.reasonText = reasonText;
     if (reason !== "") item.reason = reason;
     obj.feedback.push(item);
-    local.setObj(obj);
+    act.setObj(obj);
+  },
+
+  getEvents: function() {
+    return act.getObj([{
+      name: "events",
+      value: []
+    }]).events;
   },
 
   recordEvent: function(pathwayId, id, name) {
-    var obj = local.getObj([{name: "events", value: []}]);
+    var obj = act.getObj([{
+      name: "events",
+      value: []
+    }]);
     obj.events.push({
       "pathwayId": pathwayId,
       "id": id,
       "name": name,
       "date": new Date()
     });
-    local.setObj(obj);
+    act.setObj(obj);
   },
 
   recordPlan: function(id, text, pathwayId) {
     if (!id) alert("PLAN");
-    var obj = local.getObj([{name: "actions", value: {}}]);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
 
     if (!obj.actions[id]) obj.actions[id] = {};
     var planId = Date.now() + "";
@@ -201,7 +242,7 @@ var actions = {
       "history": ["You added this on " + (new Date()).toDateString()]
     };
 
-    local.setObj(obj);
+    act.setObj(obj);
     return planId;
   },
 
@@ -213,22 +254,31 @@ var actions = {
   },
 
   editPlan: function(planId, text, done) {
-    var obj = local.getObj([{name: "actions", value: {}}]);
-    var id = findPlan(obj, planId);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    var id = act.findPlan(obj, planId);
     if (text) obj.actions[id][planId].text = text;
     if (done === true || done === false) obj.actions[id][planId].done = done;
-    local.setObj(obj);
+    act.setObj(obj);
   },
 
   deletePlan: function(planId) {
-    var obj = local.getObj([{name: "actions", value: {}}]);
-    var id = findPlan(obj, planId);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    var id = act.findPlan(obj, planId);
     delete obj.actions[id][planId];
-    local.setObj(obj);
+    act.setObj(obj);
   },
 
   listPlans: function(id, pathwayId) {
-    var obj = local.getObj([{name: "actions", value: {}}]),
+    var obj = act.getObj([{
+        name: "actions",
+        value: {}
+      }]),
       arr = [];
     if (!id) return obj.actions;
     for (var prop in obj.actions[id]) {
@@ -239,14 +289,20 @@ var actions = {
   },
 
   getReason: function(id, actionId) {
-    var obj = local.getObj([{name: "actions", value: {}}]);
+    var obj = act.getObj([{
+      name: "actions",
+      value: {}
+    }]);
 
     if (obj.actions[id] && obj.actions[id][actionId]) return obj.actions[id][actionId].reason;
     return null;
   },
 
   getAgreeReason: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = local.getObj([{name: "agrees", value: {}}]);
+    var obj = act.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
     if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
 
     if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
@@ -258,7 +314,7 @@ var actions = {
   },
 
   editPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item, agree, reason) {
-    var obj = local.getObj();
+    var obj = act.getObj();
     if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
 
     if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
@@ -286,12 +342,22 @@ var actions = {
       console.log("ERRORRR!!!!!!!");
     }
 
-    local.setObj(obj);
+    act.setObj(obj);
     notify.showSaved();
   },
 
+  getAgrees: function(){
+    return act.getObj([{
+      name: "agrees",
+      value: {}
+    }]).agrees;
+  },
+
   getPatientAgreeObject: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = local.getObj([{name: "agrees", value: {}}]);
+    var obj = act.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
     if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
 
     if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
@@ -303,7 +369,10 @@ var actions = {
   },
 
   getPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = local.getObj([{name: "agrees", value: {}}]);
+    var obj = act.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
 
     if (!obj.agrees[patientId]) return null;
     var item2 = obj.agrees[patientId].filter(function(val) {
@@ -318,9 +387,9 @@ var actions = {
 
 };
 
-module.exports = actions;
+module.exports = act;
 
-},{"./local.js":7,"./notify.js":10}],3:[function(require,module,exports){
+},{"./notify.js":9}],3:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   chart = require('./chart.js'),
@@ -665,10 +734,10 @@ var base = {
 
 module.exports = base;
 
-},{"./actionplan.js":2,"./chart.js":4,"./data.js":5,"./lookup.js":8}],4:[function(require,module,exports){
+},{"./actionplan.js":2,"./chart.js":4,"./data.js":5,"./lookup.js":7}],4:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
-  local = require('./local.js');
+  actions = require('./actionplan.js');
 
 console.log("chart.js: data.lastloader= " + data.lastloader);
 data.lastloader = "chart.js";
@@ -793,11 +862,7 @@ var cht = {
       }
     }
 
-    var obj = local.getObj([{
-      name: "events",
-      value: []
-    }]);
-    var patientEvents = obj.events.filter(function(val) {
+    var patientEvents = actions.getEvents().filter(function(val) {
       return val.id === patientId;
     });
     if (patientEvents.length > 0) {
@@ -916,7 +981,7 @@ var cht = {
 
 module.exports = cht;
 
-},{"./data.js":5,"./local.js":7,"./lookup.js":8}],5:[function(require,module,exports){
+},{"./actionplan.js":2,"./data.js":5,"./lookup.js":7}],5:[function(require,module,exports){
 var actions = require('./actionplan.js'),
   lookup = require('./lookup.js');
 
@@ -1188,7 +1253,7 @@ var main = {
 
 module.exports = main;
 
-},{"./actionplan.js":2,"./lookup.js":8}],6:[function(require,module,exports){
+},{"./actionplan.js":2,"./lookup.js":7}],6:[function(require,module,exports){
 var data = require('./data.js');
 
 var layout = {
@@ -1331,52 +1396,6 @@ var layout = {
 module.exports = layout;
 
 },{"./data.js":5}],7:[function(require,module,exports){
-var main = {
-
-  getObj: function(options) {
-    var obj = JSON.parse(localStorage.bb);
-
-    if(options && options.length>0){
-      options.forEach(function(opt){
-        if(!obj[opt.name]) {
-          obj[opt.name] = opt.value;
-          main.setObj(obj);
-        }
-      });
-    }
-
-    /*if (!obj.actions) {
-      obj.actions = {};
-      setObj(obj);
-    }
-    if (!obj.plans) {
-      obj.plans = {};
-      setObj(obj);
-    }
-    if (!obj.agrees) {
-      obj.agrees = {};
-      setObj(obj);
-    }
-    if (!obj.feedback) {
-      obj.feedback = [];
-      setObj(obj);
-    }
-    if (!obj.events) {
-      obj.events = [];
-      setObj(obj);
-    }*/
-    return obj;
-  },
-
-  setObj: function(obj) {
-    localStorage.bb = JSON.stringify(obj);
-  }
-
-};
-
-module.exports = main;
-
-},{}],8:[function(require,module,exports){
 module.exports = {
   "currentUrl": "",
   "options": [],
@@ -1407,14 +1426,15 @@ module.exports = {
   }
 };
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 //getData, wireuppages, showPage, history??, loadContent
 
 var actions = require('./actionplan.js'),
   template = require('./template.js'),
   data = require('./data.js'),
   base = require('./base.js'),
-  layout = require('./layout.js');
+  layout = require('./layout.js'),
+  welcome = require('./panels/welcome.js');
 
 var states, patLookup, page, hash;
 
@@ -1547,7 +1567,7 @@ var main = {
       var rendered = Mustache.render(tempMust);
       $('#welcome-tab-content').fadeOut(100, function() {
         $(this).html(rendered);
-        template.populateWelcomeTasks();
+        welcome.populate();
         $(this).fadeIn(100);
       });
     });
@@ -1561,7 +1581,7 @@ var main = {
       var rendered = Mustache.render(tempMust);
       $('#welcome-tab-content').fadeOut(100, function() {
         $(this).html(rendered);
-        template.populateWelcomeTasks(true);
+        welcome.populate(true);
         $(this).fadeIn(100);
       });
     });
@@ -1613,7 +1633,7 @@ var main = {
 
 module.exports = main;
 
-},{"./actionplan.js":2,"./base.js":3,"./data.js":5,"./layout.js":6,"./template.js":20}],10:[function(require,module,exports){
+},{"./actionplan.js":2,"./base.js":3,"./data.js":5,"./layout.js":6,"./panels/welcome.js":19,"./template.js":20}],9:[function(require,module,exports){
 module.exports = {
 
   showSaved: function() {
@@ -1627,7 +1647,7 @@ module.exports = {
 
 };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   qualityStandard = require('./qualityStandard.js'),
@@ -1849,7 +1869,7 @@ var all = {
 
 module.exports = all;
 
-},{"../base.js":3,"../chart.js":4,"../data.js":5,"../layout.js":6,"./individualActionPlan.js":13,"./medication.js":14,"./otherCodes.js":15,"./qualityStandard.js":17,"./trend.js":19}],12:[function(require,module,exports){
+},{"../base.js":3,"../chart.js":4,"../data.js":5,"../layout.js":6,"./individualActionPlan.js":12,"./medication.js":13,"./otherCodes.js":14,"./qualityStandard.js":16,"./trend.js":18}],11:[function(require,module,exports){
 var base = require('../base.js'),
 actions = require('../actionplan.js');
 /*
@@ -1965,13 +1985,12 @@ var confirm = {
 
 module.exports = confirm;
 
-},{"../actionplan.js":2,"../base.js":3}],13:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3}],12:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
   actions = require('../actionplan.js'),
-  lookup = require('../lookup.js'),
-  local = require('../local.js');
+  lookup = require('../lookup.js');
 
 var iap = {
 
@@ -2191,8 +2210,8 @@ var iap = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (local.getObj().actions[data.patientId][self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + local.getObj().actions[data.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (actions.getActions()[data.patientId][self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2201,8 +2220,8 @@ var iap = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (local.getObj().actions[data.patientId][self.data("id")] && local.getObj().actions[data.patientId][self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + local.getObj().actions[data.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (actions.getActions()[data.patientId][self.data("id")] && actions.getActions()[data.patientId][self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + actions.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -2351,7 +2370,7 @@ var iap = {
 
 module.exports = iap;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../local.js":7,"../lookup.js":8,"./confirm.js":12}],14:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../lookup.js":7,"./confirm.js":11}],13:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -2382,7 +2401,7 @@ var med = {
 
 module.exports = med;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":12}],15:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],14:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -2417,7 +2436,7 @@ var other = {
 
 module.exports = other;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":12}],16:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],15:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   lookup = require('../lookup.js'),
@@ -3010,7 +3029,7 @@ var pt = {
 
 module.exports = pt;
 
-},{"../base.js":3,"../chart.js":4,"../data.js":5,"../lookup.js":8,"./individualActionPlan.js":13,"./medication.js":14,"./otherCodes.js":15,"./qualityStandard.js":17,"./trend.js":19}],17:[function(require,module,exports){
+},{"../base.js":3,"../chart.js":4,"../data.js":5,"../lookup.js":7,"./individualActionPlan.js":12,"./medication.js":13,"./otherCodes.js":14,"./qualityStandard.js":16,"./trend.js":18}],16:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   actions = require('../actionplan.js'),
@@ -3067,7 +3086,7 @@ var qs = {
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
         var isClassification = $(this).closest("div").data("isClassification") !== undefined;
         any = true;
-        var item = local.getObj().agrees[data.patientId].filter(function(i) {
+        var item = actions.getAgrees()[data.patientId].filter(function(i) {
           return isClassification ? i.item === "section" : i.item !== "section";
         });
         var tool;
@@ -3107,13 +3126,12 @@ var qs = {
 
 module.exports = qs;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":12}],18:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],17:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
   actions = require('../actionplan.js'),
-  lookup = require('../lookup.js'),
-  local = require('../local.js');
+  lookup = require('../lookup.js');
 
 var tap = {
 
@@ -3344,8 +3362,8 @@ var tap = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (local.getObj().actions.team[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + local.getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (actions.getActions().team[self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -3354,8 +3372,8 @@ var tap = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (local.getObj().actions.team[self.data("id")] && local.getObj().actions.team[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + local.getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -3451,7 +3469,7 @@ var tap = {
 
 module.exports = tap;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../local.js":7,"../lookup.js":8,"./confirm.js":12}],19:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../lookup.js":7,"./confirm.js":11}],18:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -3502,24 +3520,14 @@ var trnd = {
 
 module.exports = trnd;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../lookup.js":8,"./confirm.js":12}],20:[function(require,module,exports){
-var data = require('./data.js'),
-  actions = require('./actionplan.js'),
-  lookup = require('./lookup.js'),
-  local = require('./local.js'),
-  chart = require('./chart.js'),
-  base = require('./base.js'),
-  patients = require('./panels/patients.js'),
-  individualActionPlan = require('./panels/individualActionPlan.js'),
-  teamActionPlan = require('./panels/teamActionPlan.js'),
-  allPatients = require('./panels/allPatients.js'),
-  confirm = require('./panels/confirm.js'),
-  layout = require('./layout.js');
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../lookup.js":7,"./confirm.js":11}],19:[function(require,module,exports){
+var base = require('../base.js'),
+  data = require('../data.js'),
+  actions = require('../actionplan.js'),
+  individualActionPlan = require('./individualActionPlan.js'),
+  teamActionPlan = require('./teamActionPlan.js');
 
-console.log("template.js: data.lastloader= " + data.lastloader);
-data.lastloader = "template.js";
-
-var template = {
+var welcome = {
 
   wireUpWelcomePage: function(pathwayId, pathwayStage) {
     $('#team-task-panel').on('click', '.cr-styled input[type=checkbox]', function() {
@@ -3543,21 +3551,21 @@ var template = {
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
-              template.updateWelcomePage();
+              welcome.updateWelcomePage();
             });
           });
         }, 1000);
       }
-      template.updateWelcomePage();
+      welcome.updateWelcomePage();
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
-      template.updateWelcomePage();
+      welcome.updateWelcomePage();
     }).on('click', '.edit-plan', function() {
       var PLANID = $(this).closest('tr').data("id");
 
       $('#editActionPlanItem').val($($(this).closest('tr').children('td')[1]).find('span').text());
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        template.populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+        welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('shown.bs.modal').on('shown.bs.modal', function() {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
@@ -3574,7 +3582,7 @@ var template = {
       $('#team-delete-item').html($($(this).closest('tr').children('td')[1]).find('span').text());
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        template.populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+        welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
         actions.deletePlan(PLANID);
 
@@ -3586,7 +3594,7 @@ var template = {
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
-      template.updateWelcomePage();
+      welcome.updateWelcomePage();
     }).on('click', '.btn-yes,.btn-no', function(e) {
       var checkbox = $(this).find("input[type=checkbox]");
       var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
@@ -3596,14 +3604,14 @@ var template = {
         if (checkbox.val() === "no") {
           teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), actions.getReason("team", ACTIONID), true, function() {
             actions.editAction("team", ACTIONID, false, null, actions.reason);
-            template.updateWelcomePage();
+            welcome.updateWelcomePage();
             base.wireUpTooltips();
           }, null, function() {
             actions.ignoreAction("team", ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
-            template.updateWelcomePage();
+            welcome.updateWelcomePage();
             base.wireUpTooltips();
           });
           e.stopPropagation();
@@ -3630,7 +3638,7 @@ var template = {
             //unselect other
             other.removeClass("active").addClass("inactive");
             other.find("input[type=checkbox]").prop("checked", false);
-            template.updateWelcomePage();
+            welcome.updateWelcomePage();
             base.wireUpTooltips();
           });
           e.stopPropagation();
@@ -3668,21 +3676,21 @@ var template = {
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
-              template.updateWelcomePage();
+              welcome.updateWelcomePage();
             });
           });
         }, 1000);
       }
-      template.updateWelcomePage();
+      welcome.updateWelcomePage();
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
-      template.updateWelcomePage();
+      welcome.updateWelcomePage();
     }).on('click', '.edit-plan', function() {
       var PLANID = $(this).closest('tr').data("id");
 
       $('#editActionPlanItem').val($($(this).closest('tr').children('td')[2]).find('span').text());
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        template.populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+        welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('shown.bs.modal').on('shown.bs.modal', function() {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
@@ -3699,7 +3707,7 @@ var template = {
       $('#team-delete-item').html($($(this).closest('tr').children('td')[2]).find('span').text());
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        template.populateWelcomeTasks(!$('#outstandingTasks').parent().hasClass("active"));
+        welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
         actions.deletePlan(PLANID);
 
@@ -3712,7 +3720,7 @@ var template = {
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
-      template.updateWelcomePage();
+      welcome.updateWelcomePage();
     }).on('click', '.btn-yes,.btn-no', function(e) {
       var checkbox = $(this).find("input[type=checkbox]");
       var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
@@ -3723,14 +3731,14 @@ var template = {
         if (checkbox.val() === "no") {
           individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), actions.getReason(patientId, ACTIONID), true, function() {
             actions.editAction(patientId, ACTIONID, false, null, actions.reason);
-            template.updateWelcomePage();
+            welcome.updateWelcomePage();
             base.wireUpTooltips();
           }, null, function() {
             actions.ignoreAction(patientId, ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
-            template.updateWelcomePage();
+            welcome.updateWelcomePage();
             base.wireUpTooltips();
           });
           e.stopPropagation();
@@ -3757,7 +3765,7 @@ var template = {
             //unselect other
             other.removeClass("active").addClass("inactive");
             other.find("input[type=checkbox]").prop("checked", false);
-            template.updateWelcomePage();
+            welcome.updateWelcomePage();
             base.wireUpTooltips();
           });
           e.stopPropagation();
@@ -3773,7 +3781,7 @@ var template = {
       }
     });
 
-    template.updateWelcomePage();
+    welcome.updateWelcomePage();
   },
 
   updateWelcomePage: function() {
@@ -3806,8 +3814,8 @@ var template = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (local.getObj().actions.team[self.data("id")] && local.getObj().actions.team[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + local.getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -3816,8 +3824,8 @@ var template = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (local.getObj().actions.team[self.data("id")] && local.getObj().actions.team[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + local.getObj().actions.team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -3840,6 +3848,153 @@ var template = {
 
     base.wireUpTooltips();
   },
+
+  populate: function(complete) {
+
+    var k,l;
+    //add tasks
+    var teamTasks = [];
+    var individualTasks = [];
+
+    //Add the team tasks
+    for (k in actions.listActions("team")) {
+      if (actions.listActions("team")[k].agree && ((!actions.listActions("team")[k].done && !complete) || (actions.listActions("team")[k].done && complete))) {
+        teamTasks.push({
+          "pathway": "N/A",
+          "task": actions.text[actions.listActions("team")[k].id].text,
+          "data": actions.listActions("team")[k].id,
+          "tpId": "team",
+          "agree": true,
+          "done": complete
+        });
+      }
+    }
+
+    //Add the user added team tasks
+    for (k in actions.listPlans("team")) {
+      if ((!actions.listPlans("team")[k].done && !complete) || (actions.listPlans("team")[k].done && complete)) {
+        teamTasks.push({
+          "canEdit": true,
+          "pathway": data.pathwayNames[actions.listPlans("team")[k].pathwayId],
+          "pathwayId": actions.listPlans("team")[k].pathwayId,
+          "task": actions.listPlans("team")[k].text,
+          "data": actions.listPlans("team")[k].id,
+          "agree": actions.listPlans("team")[k].agree,
+          "disagree": actions.listPlans("team")[k].agree === false,
+          "done": complete
+        });
+      }
+    }
+
+    //Add individual
+    for (k in actions.listActions()) {
+      if (k === "team") continue;
+      for (l in actions.listActions()[k]) {
+        if (actions.text[l] && actions.listActions()[k][l].agree && ((!actions.listActions()[k][l].done && !complete) || (actions.listActions()[k][l].done && complete))) {
+          individualTasks.push({
+            "pathway": "N/A",
+            "patientId": k,
+            "task": actions.text[l].text,
+            "pathwayId": actions.listPlans()[k][l].pathwayId,
+            "data": l,
+            "tpId": k,
+            "agree": true,
+            "done": complete
+          });
+        }
+      }
+    }
+
+    //Add custom individual
+    for (k in actions.listPlans()) {
+      if (k === "team") continue;
+      for (l in actions.listPlans()[k]) {
+        if (actions.listPlans()[k][l].text && (!actions.listPlans()[k][l].done && !complete) || (actions.listPlans()[k][l].done && complete)) {
+          individualTasks.push({
+            "canEdit": true,
+            "pathway": data.pathwayNames[actions.listPlans()[k][l].pathwayId],
+            "pathwayId": actions.listPlans()[k][l].pathwayId,
+            "patientId": k,
+            "tpId": k,
+            "task": actions.listPlans()[k][l].text,
+            "data": l,
+            "agree": true,
+            "done": complete
+          });
+        }
+      }
+    }
+
+    var listTemplate = $('#welcome-task-list').html();
+    Mustache.parse(listTemplate);
+    $('#welcome-tab-content').html(Mustache.render(listTemplate));
+
+    var addTemplate = $('#action-plan').html();
+    Mustache.parse(addTemplate);
+    var rendered = Mustache.render(addTemplate);
+    $('#team-add-plan').html(rendered);
+
+    var tempMust = $('#welcome-task-items').html();
+    var itemTemplate = $('#welcome-task-item').html();
+    Mustache.parse(tempMust);
+    Mustache.parse(itemTemplate);
+
+    $('#team-add-plan').off('click').on('click', '.add-plan', function() {
+      var plan = $(this).parent().parent().find('textarea').val();
+      var planId = recordPlan("team", plan, "custom");
+      $('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {
+        "pathway": "",
+        "pathwayId": "custom",
+        "canEdit": true,
+        "task": plan,
+        "data": planId,
+        "agree": null,
+        "done": null
+      }, {
+        "chk": $('#checkbox-template').html()
+      }));
+    });
+
+    rendered = Mustache.render(tempMust, {
+      "tasks": teamTasks,
+      "hasTasks": teamTasks.length > 0
+    }, {
+      "task-item": itemTemplate,
+      "chk": $('#checkbox-template').html()
+    });
+    $('#team-task-panel').children().not(":first").remove();
+    $('#team-task-panel').append(rendered);
+
+    rendered = Mustache.render(tempMust, {
+      "tasks": individualTasks,
+      "isPatientTable": true,
+      "hasTasks": individualTasks.length > 0
+    }, {
+      "task-item": itemTemplate,
+      "chk": $('#checkbox-template').html()
+    });
+    $('#individual-task-panel').children().not(":first").remove();
+    $('#individual-task-panel').append(rendered);
+
+    welcome.wireUpWelcomePage();
+  }
+
+};
+
+module.exports = welcome;
+
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./individualActionPlan.js":12,"./teamActionPlan.js":17}],20:[function(require,module,exports){
+var data = require('./data.js'),
+  lookup = require('./lookup.js'),
+  base = require('./base.js'),
+  patients = require('./panels/patients.js'),
+  teamActionPlan = require('./panels/teamActionPlan.js'),
+  allPatients = require('./panels/allPatients.js'),
+  welcome = require('./panels/welcome.js'),
+  layout = require('./layout.js');
+
+var template = {
+
   //Show the overview page for a disease
   showOverview: function(disease) {
     data.pathwayId = disease;
@@ -3939,7 +4094,7 @@ var template = {
         $('#welcome-tabs li').removeClass('active');
         $('#outstandingTasks').closest('li').addClass('active');
 
-        template.populateWelcomeTasks();
+        welcome.populate();
 
 
       } else {
@@ -3966,6 +4121,7 @@ var template = {
 
     base.wireUpTooltips();
   },
+
   //Show the pathway stage for a disease
   showPathwayStageView: function(pathwayId, pathwayStage, standard, shouldFade) {
     farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
@@ -4043,135 +4199,6 @@ var template = {
       $('#mainTitle').hide();
       base.updateTitle(data[pathwayId][pathwayStage].text.page.text, data[pathwayId][pathwayStage].text.page.tooltip);
     }
-  },
-
-  populateWelcomeTasks: function(complete) {
-
-    //add tasks
-    var teamTasks = [];
-    var individualTasks = [];
-
-    //Add the team tasks
-    for (var k in actions.listActions("team")) {
-      if (actions.listActions("team")[k].agree && ((!actions.listActions("team")[k].done && !complete) || (actions.listActions("team")[k].done && complete))) {
-        teamTasks.push({
-          "pathway": "N/A",
-          "task": actions.text[actions.listActions("team")[k].id].text,
-          "data": actions.listActions("team")[k].id,
-          "tpId": "team",
-          "agree": true,
-          "done": complete
-        });
-      }
-    }
-
-    //Add the user added team tasks
-    for (k in actions.listPlans("team")) {
-      if ((!actions.listPlans("team")[k].done && !complete) || (actions.listPlans("team")[k].done && complete)) {
-        teamTasks.push({
-          "canEdit": true,
-          "pathway": data.pathwayNames[actions.listPlans("team")[k].pathwayId],
-          "pathwayId": actions.listPlans("team")[k].pathwayId,
-          "task": actions.listPlans("team")[k].text,
-          "data": actions.listPlans("team")[k].id,
-          "agree": actions.listPlans("team")[k].agree,
-          "disagree": actions.listPlans("team")[k].agree === false,
-          "done": complete
-        });
-      }
-    }
-
-    //Add individual
-    for (k in actions.listActions()) {
-      if (k === "team") continue;
-      for (var l in actions.listActions()[k]) {
-        if (actions.text[l] && actions.listActions()[k][l].agree && ((!actions.listActions()[k][l].done && !complete) || (actions.listActions()[k][l].done && complete))) {
-          individualTasks.push({
-            "pathway": "N/A",
-            "patientId": k,
-            "task": actions.text[l].text,
-            "pathwayId": actions.listPlans()[k][l].pathwayId,
-            "data": l,
-            "tpId": k,
-            "agree": true,
-            "done": complete
-          });
-        }
-      }
-    }
-
-    //Add custom individual
-    for (k in actions.listPlans()) {
-      if (k === "team") continue;
-      for (var l in actions.listPlans()[k]) {
-        if (actions.listPlans()[k][l].text && (!actions.listPlans()[k][l].done && !complete) || (actions.listPlans()[k][l].done && complete)) {
-          individualTasks.push({
-            "canEdit": true,
-            "pathway": data.pathwayNames[actions.listPlans()[k][l].pathwayId],
-            "pathwayId": actions.listPlans()[k][l].pathwayId,
-            "patientId": k,
-            "tpId": k,
-            "task": actions.listPlans()[k][l].text,
-            "data": l,
-            "agree": true,
-            "done": complete
-          });
-        }
-      }
-    }
-
-    var listTemplate = $('#welcome-task-list').html();
-    Mustache.parse(listTemplate);
-    $('#welcome-tab-content').html(Mustache.render(listTemplate));
-
-    var addTemplate = $('#action-plan').html();
-    Mustache.parse(addTemplate);
-    var rendered = Mustache.render(addTemplate);
-    $('#team-add-plan').html(rendered);
-
-    var tempMust = $('#welcome-task-items').html();
-    var itemTemplate = $('#welcome-task-item').html();
-    Mustache.parse(tempMust);
-    Mustache.parse(itemTemplate);
-
-    $('#team-add-plan').off('click').on('click', '.add-plan', function() {
-      var plan = $(this).parent().parent().find('textarea').val();
-      var planId = recordPlan("team", plan, "custom");
-      $('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {
-        "pathway": "",
-        "pathwayId": "custom",
-        "canEdit": true,
-        "task": plan,
-        "data": planId,
-        "agree": null,
-        "done": null
-      }, {
-        "chk": $('#checkbox-template').html()
-      }));
-    });
-
-    rendered = Mustache.render(tempMust, {
-      "tasks": teamTasks,
-      "hasTasks": teamTasks.length > 0
-    }, {
-      "task-item": itemTemplate,
-      "chk": $('#checkbox-template').html()
-    });
-    $('#team-task-panel').children().not(":first").remove();
-    $('#team-task-panel').append(rendered);
-
-    rendered = Mustache.render(tempMust, {
-      "tasks": individualTasks,
-      "isPatientTable": true,
-      "hasTasks": individualTasks.length > 0
-    }, {
-      "task-item": itemTemplate,
-      "chk": $('#checkbox-template').html()
-    });
-    $('#individual-task-panel').children().not(":first").remove();
-    $('#individual-task-panel').append(rendered);
-
-    template.wireUpWelcomePage();
   },
 
   highlightOnHoverAndEnableSelectByClick: function(panelSelector) {
@@ -4275,4 +4302,4 @@ var template = {
 
 module.exports = template;
 
-},{"./actionplan.js":2,"./base.js":3,"./chart.js":4,"./data.js":5,"./layout.js":6,"./local.js":7,"./lookup.js":8,"./panels/allPatients.js":11,"./panels/confirm.js":12,"./panels/individualActionPlan.js":13,"./panels/patients.js":16,"./panels/teamActionPlan.js":18}]},{},[1]);
+},{"./base.js":3,"./data.js":5,"./layout.js":6,"./lookup.js":7,"./panels/allPatients.js":10,"./panels/patients.js":15,"./panels/teamActionPlan.js":17,"./panels/welcome.js":19}]},{},[1]);

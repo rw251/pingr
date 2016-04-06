@@ -1,6 +1,6 @@
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
-  local = require('./local.js');
+  actions = require('./actionplan.js');
 
 console.log("chart.js: data.lastloader= " + data.lastloader);
 data.lastloader = "chart.js";
@@ -125,11 +125,7 @@ var cht = {
       }
     }
 
-    var obj = local.getObj([{
-      name: "events",
-      value: []
-    }]);
-    var patientEvents = obj.events.filter(function(val) {
+    var patientEvents = actions.getEvents().filter(function(val) {
       return val.id === patientId;
     });
     if (patientEvents.length > 0) {

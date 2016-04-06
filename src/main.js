@@ -4,7 +4,8 @@ var actions = require('./actionplan.js'),
   template = require('./template.js'),
   data = require('./data.js'),
   base = require('./base.js'),
-  layout = require('./layout.js');
+  layout = require('./layout.js'),
+  welcome = require('./panels/welcome.js');
 
 var states, patLookup, page, hash;
 
@@ -137,7 +138,7 @@ var main = {
       var rendered = Mustache.render(tempMust);
       $('#welcome-tab-content').fadeOut(100, function() {
         $(this).html(rendered);
-        template.populateWelcomeTasks();
+        welcome.populate();
         $(this).fadeIn(100);
       });
     });
@@ -151,7 +152,7 @@ var main = {
       var rendered = Mustache.render(tempMust);
       $('#welcome-tab-content').fadeOut(100, function() {
         $(this).html(rendered);
-        template.populateWelcomeTasks(true);
+        welcome.populate(true);
         $(this).fadeIn(100);
       });
     });

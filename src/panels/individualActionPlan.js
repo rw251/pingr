@@ -2,8 +2,7 @@ var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
   actions = require('../actionplan.js'),
-  lookup = require('../lookup.js'),
-  local = require('../local.js');
+  lookup = require('../lookup.js');
 
 var iap = {
 
@@ -223,8 +222,8 @@ var iap = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (local.getObj().actions[data.patientId][self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + local.getObj().actions[data.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (actions.getActions()[data.patientId][self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -233,8 +232,8 @@ var iap = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (local.getObj().actions[data.patientId][self.data("id")] && local.getObj().actions[data.patientId][self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + local.getObj().actions[data.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (actions.getActions()[data.patientId][self.data("id")] && actions.getActions()[data.patientId][self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + actions.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
