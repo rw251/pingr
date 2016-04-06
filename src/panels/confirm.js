@@ -1,9 +1,5 @@
 var base = require('../base.js'),
 actions = require('../actionplan.js');
-/*
-  data = require('../data.js'),
-  lookup = require('./lookup.js'),
-  chart = require('./chart.js')*/
 
 var confirm = {
 

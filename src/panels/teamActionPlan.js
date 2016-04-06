@@ -1,8 +1,7 @@
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
-  lookup = require('../lookup.js');
+  actions = require('../actionplan.js');
 
 var tap = {
 

@@ -1872,10 +1872,6 @@ module.exports = all;
 },{"../base.js":3,"../chart.js":4,"../data.js":5,"../layout.js":6,"./individualActionPlan.js":12,"./medication.js":13,"./otherCodes.js":14,"./qualityStandard.js":16,"./trend.js":18}],11:[function(require,module,exports){
 var base = require('../base.js'),
 actions = require('../actionplan.js');
-/*
-  data = require('../data.js'),
-  lookup = require('./lookup.js'),
-  chart = require('./chart.js')*/
 
 var confirm = {
 
@@ -1989,8 +1985,7 @@ module.exports = confirm;
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
-  lookup = require('../lookup.js');
+  actions = require('../actionplan.js');
 
 var iap = {
 
@@ -2370,7 +2365,7 @@ var iap = {
 
 module.exports = iap;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../lookup.js":7,"./confirm.js":11}],13:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],13:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -3130,8 +3125,7 @@ module.exports = qs;
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
-  lookup = require('../lookup.js');
+  actions = require('../actionplan.js');
 
 var tap = {
 
@@ -3469,7 +3463,7 @@ var tap = {
 
 module.exports = tap;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../lookup.js":7,"./confirm.js":11}],18:[function(require,module,exports){
+},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],18:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
