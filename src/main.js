@@ -3,7 +3,8 @@
 var actions = require('./actionplan.js'),
   template = require('./template.js'),
   data = require('./data.js'),
-  base = require('./base.js');
+  base = require('./base.js'),
+  layout = require('./layout.js');
 
 var states, patLookup, page, hash;
 
@@ -11,7 +12,7 @@ console.log("main.js: data.lastloader= " + data.lastloader);
 data.lastloader = "main.js";
 
 var main = {
-  "version": "1.25",
+  "version": "2.0.0",
   hash: hash,
   init: function() {
     main.preWireUpPages();
@@ -160,7 +161,7 @@ var main = {
   },
 
   preWireUpPages: function() {
-    template.showPage('login');
+    layout.showPage('login');
 
     //Every link element stores href in history
     $(document).on('click', 'a.history', function() {

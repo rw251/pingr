@@ -127,7 +127,7 @@ var cht = {
 
     var obj = local.getObj([{
       name: "events",
-      value: {}
+      value: []
     }]);
     var patientEvents = obj.events.filter(function(val) {
       return val.id === patientId;

@@ -187,6 +187,155 @@ var base = {
         if (callbackOnCancel) callbackOnCancel();
       }
     });
+  },
+
+  sortSuggestions: function(suggestions) {
+    suggestions.sort(function(a, b) {
+      if (a.agree && !a.done) {
+        if (b.agree && !b.done) return 0;
+        return -1;
+      } else if (!a.agree && !a.disagree) {
+        if (!b.agree && !b.disagree) return 0;
+        if (b.agree && !b.done) return 1;
+        return -1;
+      } else if (a.agree && a.done) {
+        if (b.agree && b.done) return 0;
+        if (b.disagree) return -1;
+        return 1;
+      } else {
+        if (b.disagree) return 0;
+        return 1;
+      }
+    });
+
+    return suggestions;
+  },
+
+  addDisagreePersonalTeam: function(plans) {
+    for (var i = 0; i < plans.length; i++) {
+      if (plans[i].agree) {
+        plans[i].disagree = false;
+      } else if (plans[i].agree === false) {
+        plans[i].disagree = true;
+      }
+    }
+    return plans;
+  },
+
+  suggestionList: function(ids) {
+    return ids.map(function(val) {
+      return {
+        "id": val.id || val,
+        "text": actions.text[val.id || val].text,
+        "subsection": val.subsection
+      };
+    });
+  },
+
+  mergeIndividualStuff: function(suggestions, patientId) {
+    var localActions = actions.listActions();
+    if (!localActions[patientId]) return suggestions;
+
+    for (var i = 0; i < suggestions.length; i++) {
+      if (localActions[patientId][suggestions[i].id]) {
+        if (localActions[patientId][suggestions[i].id].agree) {
+          suggestions[i].agree = true;
+        } else if (localActions[patientId][suggestions[i].id].agree === false) {
+          suggestions[i].disagree = true;
+        }
+        if (localActions[patientId][suggestions[i].id].done) suggestions[i].done = localActions[patientId][suggestions[i].id].done;
+      }
+    }
+    return suggestions;
+  },
+
+  switchTo110Layout: function() {
+    if (base.layout === "110") return;
+    base.layout = "110";
+    farLeftPanel.removeClass('col-lg-3').addClass('col-lg-6').show();
+    topPanel.hide();
+    topLeftPanel.hide();
+    bottomLeftPanel.hide();
+    topRightPanel.hide();
+    bottomRightPanel.hide();
+    midPanel.hide();
+    farRightPanel.removeClass('col-xl-4').addClass('col-xl-8').show();
+  },
+
+  switchTo221Layout: function() {
+    if (base.layout === "221") return;
+    base.layout = "221";
+    farLeftPanel.hide();
+    topPanel.hide();
+    topLeftPanel.addClass('col-xl-6').show();
+    bottomLeftPanel.addClass('col-xl-6').show();
+    topRightPanel.removeClass('col-xl-12').addClass('col-xl-6').show();
+    bottomRightPanel.removeClass('col-xl-12').addClass('col-xl-6').show();
+    midPanel.removeClass('col-xl-4').addClass('col-xl-8').show();
+    farRightPanel.removeClass('col-xl-8').addClass('col-xl-4').show();
+  },
+
+  wireUpStandardDropDown: function(pathwayId, pathwayStage, standard, callback) {
+    var breaches = data.options.filter(function(val) {
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard;
+    });
+
+    if (breaches.length > 0) $('select').val(breaches[0].value);
+
+    $('select').select2({
+      templateResult: base.formatStandard,
+      minimumResultsForSearch: Infinity
+    });
+    $('span.select2-selection__rendered').attr("title", "");
+    $('select').on('change', function() {
+      var localData = $(this).find(':selected').data();
+      callback(localData.pathwayId, localData.pathwayStage, localData.standard, data.patientId);
+    }).on("select2:open", function(e) {
+      base.wireUpTooltips();
+    });
+  },
+
+  formatStandard: function(standard) {
+    if (!standard.id) {
+      return standard.text;
+    }
+    var localData = $(standard.element).data();
+    // Not relevant
+    var standardHtml = '';
+    //if diagnosis opportunity then not relevant for other stages
+    //if no mention anywhere then not relevant for that disease
+    switch (data.getPatientStatus(data.patientId, localData.pathwayId, localData.pathwayStage, localData.standard)) {
+      case "ok":
+        standardHtml = '<span class="standard-achieved" data-toggle="tooltip" data-placement="left" title="' + data[localData.pathwayId][localData.pathwayStage].standards[localData.standard]["dropdown-tooltip"] + ' - QUALITY INDICATOR ACHIEVED">' + standard.text + ' <i class="fa fa-smile-o" style="color:green"></i></span>';
+        break;
+      case "missed":
+        standardHtml = '<span class="standard-missed" data-toggle="tooltip" data-placement="left" title="' + data[localData.pathwayId][localData.pathwayStage].standards[localData.standard]["dropdown-tooltip"] + ' - IMPROVEMENT OPPORTUNITY EXISTS FOR THIS PATIENT">' + standard.text + ' <i class="fa fa-flag" style="color:red"></i></span>';
+        break;
+      case "not":
+        standardHtml = '<span class="standard-not-relevant" data-toggle="tooltip" data-placement="left" title="' + data[localData.pathwayId][localData.pathwayStage].standards[localData.standard]["dropdown-tooltip"] + ' - STANDARD NOT RELEVANT TO THIS PATIENT">' + standard.text + ' <i class="fa fa-meh-o" style="color:gray"></i></span>';
+        break;
+    }
+    var $standard = $(standardHtml);
+    return $standard;
+  },
+
+  updateTitle: function(title, tooltip) {
+    $('.pagetitle').html(title).attr('title', tooltip).tooltip({
+      delay: {
+        "show": 500,
+        "hide": 100
+      }
+    });
+  },
+
+  hideAllPanels: function() {
+    topLeftPanel.hide();
+    bottomLeftPanel.hide();
+    topRightPanel.hide();
+    bottomRightPanel.hide();
+    farLeftPanel.hide();
+    farRightPanel.hide();
+    topPanel.hide();
   }
 
 };

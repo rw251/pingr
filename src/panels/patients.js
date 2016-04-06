@@ -1,7 +1,12 @@
 var base = require('../base.js'),
   data = require('../data.js'),
   lookup = require('../lookup.js'),
-  chart = require('../chart.js');
+  chart = require('../chart.js'),
+  qualityStandard = require('./qualityStandard.js'),
+  otherCodes = require('./otherCodes.js'),
+  medication = require('./medication.js'),
+  trend = require('./trend.js'),
+  individualActionPlan = require('./individualActionPlan.js');
 
 var pt = {
 
@@ -39,7 +44,7 @@ var pt = {
     });
   },
 
-  wireUpPatientPanel: function(pathwayId, pathwayStage, location, standard) {
+  wireUp: function(pathwayId, pathwayStage, location, standard) {
     patientsPanel = $('#patients');
 
     patientsPanel.on('click', 'thead tr th.sortable', function() { //Sort columns when column header clicked
@@ -49,7 +54,7 @@ var pt = {
       } else {
         $(this).removeClass('sort-asc').addClass('sort-desc');
       }
-      pt.populatePatientPanel(pathwayId, data.selected, standard, data.subselected, $(this).index(), sortAsc);
+      pt.populate(pathwayId, data.selected, standard, data.subselected, $(this).index(), sortAsc);
     }).on('click', 'tbody tr', function(e) { //Select individual patient when row clicked
       $('[data-toggle="tooltip"]').tooltip('hide');
       $(this).tooltip('destroy');
@@ -59,7 +64,7 @@ var pt = {
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
-      //template.showPathwayStagePatientView(patientId, pathwayId, data.selected, standard);//TODO
+      pt.showPathwayStagePatientView(patientId, pathwayId, data.selected, standard);
 
       e.preventDefault();
       e.stopPropagation();
@@ -83,7 +88,7 @@ var pt = {
 
         if (lookup.charts['breakdown-chart']) lookup.charts['breakdown-chart'].unselect();
 
-        pt.populatePatientPanel(pathwayId, pathwayStage, standard, null);
+        pt.populate(pathwayId, pathwayStage, standard, null);
         data.subselected = null;
 
         farRightPanel.fadeOut(200);
@@ -130,7 +135,7 @@ var pt = {
           },
           onclick: function(d) {
             chart.selectPieSlice('breakdown-chart', d);
-            pt.populatePatientPanel(pathwayId, pathwayStage, standard, data[pathwayId][pathwayStage].standards[standard].opportunities[d.index].name);
+            pt.populate(pathwayId, pathwayStage, standard, data[pathwayId][pathwayStage].standards[standard].opportunities[d.index].name);
             data.subselected = data[pathwayId][pathwayStage].standards[standard].opportunities[d.index].name;
 
             //colour table appropriately - need to add opacity
@@ -180,7 +185,7 @@ var pt = {
     }, 1);
   },
 
-  wireUpPatientPanelOk: function(pathwayId, pathwayStage, location) {
+  wireUpOk: function(pathwayId, pathwayStage, location) {
     patientsPanel = $('#patients');
 
     patientsPanel.on('click', 'thead tr th.sortable', function() { //Sort columns when column header clicked
@@ -190,7 +195,7 @@ var pt = {
       } else {
         $(this).removeClass('sort-asc').addClass('sort-desc');
       }
-      pt.populatePatientPanelOk(pathwayId, data.selected, data.subselected, $(this).index(), sortAsc);
+      pt.populateOk(pathwayId, data.selected, data.subselected, $(this).index(), sortAsc);
     }).on('click', 'tbody tr', function(e) { //Select individual patient when row clicked
       $('[data-toggle="tooltip"]').tooltip('hide');
       $(this).tooltip('destroy');
@@ -200,7 +205,7 @@ var pt = {
 
       var patientId = $(this).find('td button').attr('data-patient-id');
 
-      //template.showPathwayStagePatientView(patientId, pathwayId, data.selected, null);//TODO
+      pt.showPathwayStagePatientView(patientId, pathwayId, data.selected, null);
       e.preventDefault();
       e.stopPropagation();
     }).on('click', 'tbody tr button', function(e) {
@@ -212,7 +217,8 @@ var pt = {
     data.selected = pathwayStage;
     data.subselected = null;
   },
-  populatePatientPanel: function(pathwayId, pathwayStage, standard, subsection, sortField, sortAsc) {
+
+  populate: function(pathwayId, pathwayStage, standard, subsection, sortField, sortAsc) {
     //Remove scroll if exists
     patientsPanel.find('div.table-scroll').getNiceScroll().remove();
 
@@ -392,7 +398,7 @@ var pt = {
     });
   },
 
-  populatePatientPanelOk: function(pathwayId, pathwayStage, subsection, sortField, sortAsc) {
+  populateOk: function(pathwayId, pathwayStage, subsection, sortField, sortAsc) {
     var pList = [],
       i, k, prop, header, tooltip;
     patientsPanel.fadeOut(200, function() {
@@ -493,6 +499,90 @@ var pt = {
         cursorwidth: "7px",
         horizrailenabled: false
       });
+    }
+  },
+
+  //Show patient view within the pathway stage view
+  showPathwayStagePatientView: function(patientId, pathwayId, pathwayStage, standard) {
+    data.patientId = patientId;
+
+    base.switchTo110Layout();
+
+    pt.showIndividualPatientPanel(pathwayId, pathwayStage, standard, patientId);
+  },
+
+  showIndividualPatientPanel: function(pathwayId, pathwayStage, standard, patientId) {
+    var stan = data[pathwayId][pathwayStage].standards[standard] ? data[pathwayId][pathwayStage].standards[standard].tab.title : "UNSPECIFIED";
+
+    data.options.sort(function(a, b) {
+      a = data.getPatientStatus(patientId, a.pathwayId, a.pathwayStage, a.standard);
+      b = data.getPatientStatus(patientId, b.pathwayId, b.pathwayStage, b.standard);
+
+      if (a === b) return 0;
+      if (a === "not") return 1;
+      if (b === "not") return -1;
+      if (a === "ok") return 1;
+      if (b === "ok") return -1;
+      alert("!!!!!!!");
+    });
+
+    var panel = base.createPanel($('#patient-panel'), {
+      "options": data.options,
+      "numberOfStandardsMissed": data.numberOfStandardsMissed(patientId),
+      "standard": stan,
+      "pathwayStage": pathwayStage,
+      "nhsNumber": data.patLookup ? data.patLookup[patientId] : patientId,
+      "patientId": patientId
+    }, {
+      "option": $('#patient-panel-drop-down-options').html()
+    });
+
+    if (standard === null) {
+      //Must be a patient from the *** OK group
+      standard = data.options.filter(function(val) {
+        return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage;
+      })[0].standard;
+    }
+
+    farRightPanel.html("");
+    $('#temp-hidden').html(panel);
+
+    var actionPlan = individualActionPlan.create(pathwayStage);
+    $('#temp-hidden #patient-panel-right').html(actionPlan);
+
+    var qualPanel = qualityStandard.create(pathwayId, pathwayStage, standard, patientId);
+    var trendPanel = trend.create(pathwayId, pathwayStage, standard, patientId);
+    var medPanel = medication.create(pathwayId, pathwayStage, standard, patientId);
+    var codesPanel = otherCodes.create(pathwayId, pathwayStage, standard, patientId);
+    var medCodeWrapperPanel = base.createPanel($('#other-codes-and-meds-wrapper-panel'));
+    $('#temp-hidden #patient-panel-top').html(qualPanel);
+    $('#temp-hidden #patient-panel-left').html("").append(trendPanel).append(medCodeWrapperPanel);
+    $('#temp-hidden #medCodeWrapperPanel').append(medPanel).append(codesPanel);
+
+    if (farRightPanel.is(':visible')) {
+      farRightPanel.fadeOut(500, function() {
+        $(this).html($('#temp-hidden').html());
+        $('#temp-hidden').html("");
+        individualActionPlan.wireUp(pathwayId, pathwayStage, standard, patientId);
+        qualityStandard.wireUp(pathwayId, pathwayStage, standard, patientId);
+        base.wireUpStandardDropDown(pathwayId, pathwayStage, standard, pt.showIndividualPatientPanel);
+        trend.wireUp(pathwayId, pathwayStage, standard, patientId);
+        medication.wireUp(pathwayId, pathwayStage, standard, patientId);
+        otherCodes.wireUp(pathwayId, pathwayStage, standard, patientId);
+        chart.drawTrendChart(patientId, pathwayId, pathwayStage, standard);
+        $(this).fadeIn(500, function() {});
+      });
+    } else {
+      farRightPanel.html($('#temp-hidden').html());
+      $('#temp-hidden').html("");
+      individualActionPlan.wireUp(pathwayId, pathwayStage, standard, patientId);
+      qualityStandard.wireUp(pathwayId, pathwayStage, standard, patientId);
+      base.wireUpStandardDropDown(pathwayId, pathwayStage, standard, pt.showIndividualPatientPanel);
+      trend.wireUp(pathwayId, pathwayStage, standard, patientId);
+      medication.wireUp(pathwayId, pathwayStage, standard, patientId);
+      otherCodes.wireUp(pathwayId, pathwayStage, standard, patientId);
+      chart.drawTrendChart(patientId, pathwayId, pathwayStage, standard);
+      farRightPanel.fadeIn(500, function() {});
     }
   }
 
