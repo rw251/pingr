@@ -1,11 +1,9 @@
-//getData, wireuppages, showPage, history??, loadContent
-
-var actions = require('./actionplan.js'),
-  template = require('./template.js'),
+var template = require('./template.js'),
   data = require('./data.js'),
   base = require('./base.js'),
   layout = require('./layout.js'),
-  welcome = require('./panels/welcome.js');
+  welcome = require('./panels/welcome.js'),
+  log = require('./log.js');
 
 var states, patLookup, page, hash;
 
@@ -14,11 +12,12 @@ data.lastloader = "main.js";
 
 var main = {
   "version": "2.0.0",
+
   hash: hash,
   init: function() {
     main.preWireUpPages();
 
-    actions.load(function() {
+    log.loadActions(function() {
       data.get(main.wireUpPages);
     });
   },

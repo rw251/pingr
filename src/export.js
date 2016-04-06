@@ -1,4 +1,4 @@
-var actions = require('./actionplan.js');
+var log = require('./log.js');
 
 var doc, margin = 20,
   verticalOffset = margin;
@@ -27,7 +27,7 @@ module.exports = {
     doc = new jsPDF();
 
     //create doctype
-    var data = actions.getObj(),
+    var data = log.getObj(),
       i, j, mainId, suggs;
 
 
@@ -57,7 +57,7 @@ module.exports = {
             if(data.actions[el].done.length>k && data.actions[el].done[k] ){
               //Completed so ignore
             } else if(data.actions[el].agree.length>k && data.actions[el].agree[k] ){
-              addLine(actions.plan[pathSec].individual[pathSub][k].text);
+              addLine(log.plan[pathSec].individual[pathSub][k].text);
             }
           }   //
         }
@@ -67,9 +67,9 @@ module.exports = {
     addHeading("Team plan",14);
     suggs = local.data[local.pathwayId].monitoring.suggestions;
     for(i=0; i<suggs.length; i++){
-      if(data.actions.monitoring && data.actions.monitoring.done && data.actions.monitoring.done.length>i && data.actions.monitoring.done[i] ){
+      if(data.log.monitoring && data.log.monitoring.done && data.log.monitoring.done.length>i && data.log.monitoring.done[i] ){
         //Completed so ignore
-      } else if(data.actions.monitoring && data.actions.monitoring.agree && data.actions.monitoring.agree.length>i && data.actions.monitoring.agree[i] ){
+      } else if(data.log.monitoring && data.log.monitoring.agree && data.log.monitoring.agree.length>i && data.log.monitoring.agree[i] ){
         addLine(suggs[i].text);
       }
     }
@@ -94,9 +94,9 @@ module.exports = {
     addHeading("Team plan",14);
     suggs = local.data[local.pathwayId].treatment.suggestions;
     for(i=0; i<suggs.length; i++){
-      if(data.actions.treatment && data.actions.treatment.done && data.actions.treatment.done.length>i && data.actions.treatment.done[i] ){
+      if(data.log.treatment && data.log.treatment.done && data.log.treatment.done.length>i && data.log.treatment.done[i] ){
         //Completed so ignore
-      } else if(data.actions.treatment && data.actions.treatment.agree && data.actions.treatment.agree.length>i && data.actions.treatment.agree[i] ){
+      } else if(data.log.treatment && data.log.treatment.agree && data.log.treatment.agree.length>i && data.log.treatment.agree[i] ){
         addLine(suggs[i].text);
       }
     }

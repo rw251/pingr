@@ -1,13 +1,13 @@
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js');
+  log = require('../log.js');
 
 var med = {
 
   create: function(pathwayId, pathwayStage, standard, patientId) {
     var medications = data.patients[patientId].medications || [];
-    var agree = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "medication");
+    var agree = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "medication");
     return base.createPanel(medicationPanel, {
       "areMedications": medications.length > 0,
       "agree": agree && agree.agree,

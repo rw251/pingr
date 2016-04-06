@@ -1,6 +1,6 @@
 var base = require('../base.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
+  log = require('../log.js'),
   individualActionPlan = require('./individualActionPlan.js'),
   teamActionPlan = require('./teamActionPlan.js');
 
@@ -9,10 +9,10 @@ var welcome = {
   wireUpWelcomePage: function(pathwayId, pathwayStage) {
     $('#team-task-panel').on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, this.checked);
+      log.editAction("team", ACTIONID, null, this.checked);
 
       if (this.checked) {
-        actions.recordEvent(pathwayId, "team", "Item completed");
+        log.recordEvent(pathwayId, "team", "Item completed");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         base.wireUpTooltips();
@@ -24,7 +24,7 @@ var welcome = {
             }));
             parent.find('button').on('click', function() {
               ACTIONID = $(this).closest('tr').data('id');
-              actions.editAction("team", ACTIONID, null, false);
+              log.editAction("team", ACTIONID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -47,7 +47,7 @@ var welcome = {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
 
-        actions.editPlan(PLANID, $('#editActionPlanItem').val());
+        log.editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
@@ -61,13 +61,13 @@ var welcome = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        actions.deletePlan(PLANID);
+        log.deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.btn-undo', function(e) {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, false);
+      log.editAction("team", ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -79,12 +79,12 @@ var welcome = {
       if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
         //unselecting
         if (checkbox.val() === "no") {
-          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), actions.getReason("team", ACTIONID), true, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), log.getReason("team", ACTIONID), true, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             welcome.updateWelcomePage();
             base.wireUpTooltips();
           }, null, function() {
-            actions.ignoreAction("team", ACTIONID);
+            log.ignoreAction("team", ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
@@ -94,7 +94,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.ignoreAction("team", ACTIONID);
+          log.ignoreAction("team", ACTIONID);
           other.removeClass("inactive");
         }
       } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
@@ -106,8 +106,8 @@ var welcome = {
         //selecting
         var self = this;
         if (checkbox.val() === "no") {
-          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), actions.getReason("team", ACTIONID), false, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), log.getReason("team", ACTIONID), false, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             $(self).removeClass("inactive");
 
             checkbox.attr("checked", "checked");
@@ -121,7 +121,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editAction("team", ACTIONID, true);
+          log.editAction("team", ACTIONID, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -134,10 +134,10 @@ var welcome = {
     $('#individual-task-panel').on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
       var patientId = $(this).closest('tr').data('team-or-patient-id');
-      actions.editAction(patientId, ACTIONID, null, this.checked);
+      log.editAction(patientId, ACTIONID, null, this.checked);
 
       if (this.checked) {
-        actions.recordEvent(pathwayId, patientId, "Item completed");
+        log.recordEvent(pathwayId, patientId, "Item completed");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         base.wireUpTooltips();
@@ -149,7 +149,7 @@ var welcome = {
             }));
             parent.find('button').on('click', function() {
               ACTIONID = $(this).closest('tr').data('id');
-              actions.editAction(patientId, ACTIONID, null, false);
+              log.editAction(patientId, ACTIONID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -172,7 +172,7 @@ var welcome = {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
 
-        actions.editPlan(PLANID, $('#editActionPlanItem').val());
+        log.editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
@@ -186,14 +186,14 @@ var welcome = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        actions.deletePlan(PLANID);
+        log.deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.btn-undo', function(e) {
       var ACTIONID = $(this).closest('tr').data('id');
       var patientId = $(this).closest('tr').data('team-or-patient-id');
-      actions.editAction(patientId, ACTIONID, null, false);
+      log.editAction(patientId, ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -206,12 +206,12 @@ var welcome = {
       if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
         //unselecting
         if (checkbox.val() === "no") {
-          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), actions.getReason(patientId, ACTIONID), true, function() {
-            actions.editAction(patientId, ACTIONID, false, null, actions.reason);
+          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), log.getReason(patientId, ACTIONID), true, function() {
+            log.editAction(patientId, ACTIONID, false, null, log.reason);
             welcome.updateWelcomePage();
             base.wireUpTooltips();
           }, null, function() {
-            actions.ignoreAction(patientId, ACTIONID);
+            log.ignoreAction(patientId, ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
@@ -221,7 +221,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.ignoreAction(patientId, ACTIONID);
+          log.ignoreAction(patientId, ACTIONID);
           other.removeClass("inactive");
         }
       } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
@@ -233,8 +233,8 @@ var welcome = {
         //selecting
         var self = this;
         if (checkbox.val() === "no") {
-          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), actions.getReason(patientId, ACTIONID), false, function() {
-            actions.editAction(patientId, ACTIONID, false, null, actions.reason);
+          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), log.getReason(patientId, ACTIONID), false, function() {
+            log.editAction(patientId, ACTIONID, false, null, log.reason);
             $(self).removeClass("inactive");
 
             checkbox.attr("checked", "checked");
@@ -248,7 +248,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editAction(patientId, ACTIONID, true);
+          log.editAction(patientId, ACTIONID, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -291,8 +291,8 @@ var welcome = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (log.getActions().team[self.data("id")] && log.getActions().team[self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -301,8 +301,8 @@ var welcome = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (log.getActions().team[self.data("id")] && log.getActions().team[self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -334,12 +334,12 @@ var welcome = {
     var individualTasks = [];
 
     //Add the team tasks
-    for (k in actions.listActions("team")) {
-      if (actions.listActions("team")[k].agree && ((!actions.listActions("team")[k].done && !complete) || (actions.listActions("team")[k].done && complete))) {
+    for (k in log.listActions("team")) {
+      if (log.listActions("team")[k].agree && ((!log.listActions("team")[k].done && !complete) || (log.listActions("team")[k].done && complete))) {
         teamTasks.push({
           "pathway": "N/A",
-          "task": actions.text[actions.listActions("team")[k].id].text,
-          "data": actions.listActions("team")[k].id,
+          "task": log.text[log.listActions("team")[k].id].text,
+          "data": log.listActions("team")[k].id,
           "tpId": "team",
           "agree": true,
           "done": complete
@@ -348,31 +348,31 @@ var welcome = {
     }
 
     //Add the user added team tasks
-    for (k in actions.listPlans("team")) {
-      if ((!actions.listPlans("team")[k].done && !complete) || (actions.listPlans("team")[k].done && complete)) {
+    for (k in log.listPlans("team")) {
+      if ((!log.listPlans("team")[k].done && !complete) || (log.listPlans("team")[k].done && complete)) {
         teamTasks.push({
           "canEdit": true,
-          "pathway": data.pathwayNames[actions.listPlans("team")[k].pathwayId],
-          "pathwayId": actions.listPlans("team")[k].pathwayId,
-          "task": actions.listPlans("team")[k].text,
-          "data": actions.listPlans("team")[k].id,
-          "agree": actions.listPlans("team")[k].agree,
-          "disagree": actions.listPlans("team")[k].agree === false,
+          "pathway": data.pathwayNames[log.listPlans("team")[k].pathwayId],
+          "pathwayId": log.listPlans("team")[k].pathwayId,
+          "task": log.listPlans("team")[k].text,
+          "data": log.listPlans("team")[k].id,
+          "agree": log.listPlans("team")[k].agree,
+          "disagree": log.listPlans("team")[k].agree === false,
           "done": complete
         });
       }
     }
 
     //Add individual
-    for (k in actions.listActions()) {
+    for (k in log.listActions()) {
       if (k === "team") continue;
-      for (l in actions.listActions()[k]) {
-        if (actions.text[l] && actions.listActions()[k][l].agree && ((!actions.listActions()[k][l].done && !complete) || (actions.listActions()[k][l].done && complete))) {
+      for (l in log.listActions()[k]) {
+        if (log.text[l] && log.listActions()[k][l].agree && ((!log.listActions()[k][l].done && !complete) || (log.listActions()[k][l].done && complete))) {
           individualTasks.push({
             "pathway": "N/A",
             "patientId": k,
-            "task": actions.text[l].text,
-            "pathwayId": actions.listPlans()[k][l].pathwayId,
+            "task": log.text[l].text,
+            "pathwayId": log.listPlans()[k][l].pathwayId,
             "data": l,
             "tpId": k,
             "agree": true,
@@ -383,17 +383,17 @@ var welcome = {
     }
 
     //Add custom individual
-    for (k in actions.listPlans()) {
+    for (k in log.listPlans()) {
       if (k === "team") continue;
-      for (l in actions.listPlans()[k]) {
-        if (actions.listPlans()[k][l].text && (!actions.listPlans()[k][l].done && !complete) || (actions.listPlans()[k][l].done && complete)) {
+      for (l in log.listPlans()[k]) {
+        if (log.listPlans()[k][l].text && (!log.listPlans()[k][l].done && !complete) || (log.listPlans()[k][l].done && complete)) {
           individualTasks.push({
             "canEdit": true,
-            "pathway": data.pathwayNames[actions.listPlans()[k][l].pathwayId],
-            "pathwayId": actions.listPlans()[k][l].pathwayId,
+            "pathway": data.pathwayNames[log.listPlans()[k][l].pathwayId],
+            "pathwayId": log.listPlans()[k][l].pathwayId,
             "patientId": k,
             "tpId": k,
-            "task": actions.listPlans()[k][l].text,
+            "task": log.listPlans()[k][l].text,
             "data": l,
             "agree": true,
             "done": complete

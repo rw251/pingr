@@ -9,26 +9,6 @@ var data = require('./data.js'),
 
 var template = {
 
-  //Show the overview page for a disease
-  showOverview: function(disease) {
-    data.pathwayId = disease;
-
-    layout.showMainView(data.diseases.map(function(v) {
-      return v.id;
-    }).indexOf(disease));
-
-    $('aside li ul li').removeClass('active');
-    $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
-
-    $('#mainTitle').show();
-    base.updateTitle(data[data.pathwayId]["display-name"] + ": Overview (practice-level data)");
-
-    //Show overview panels
-    template.showOverviewPanels();
-    teamActionPlan.show(farRightPanel);
-    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
-  },
-
   loadContent: function(hash, isPoppingState) {
     base.hideTooltips();
 
@@ -125,6 +105,26 @@ var template = {
     lookup.currentUrl = hash;
   },
 
+  //Show the overview page for a disease
+  showOverview: function(disease) {
+    data.pathwayId = disease;
+
+    layout.showMainView(data.diseases.map(function(v) {
+      return v.id;
+    }).indexOf(disease));
+
+    $('aside li ul li').removeClass('active');
+    $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
+
+    $('#mainTitle').show();
+    base.updateTitle(data[data.pathwayId]["display-name"] + ": Overview (practice-level data)");
+
+    //Show overview panels
+    template.showOverviewPanels();
+    teamActionPlan.show(farRightPanel);
+    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
+  },
+
   showOverviewPanels: function() {
     base.switchTo221Layout();
 
@@ -134,6 +134,13 @@ var template = {
     template.showPanel(lookup.categories.exclusions.name, bottomRightPanel, true);
 
     base.wireUpTooltips();
+  },
+
+  showPanel: function(pathwayStage, location, enableHover) {
+    base.showPathwayStageOverviewPanel(location, enableHover, data.pathwayId, pathwayStage);
+
+    if (enableHover) template.highlightOnHoverAndEnableSelectByClick(location);
+    else location.children('div').addClass('unclickable');
   },
 
   //Show the pathway stage for a disease
@@ -237,13 +244,6 @@ var template = {
 
   },
 
-  showPanel: function(pathwayStage, location, enableHover) {
-    base.showPathwayStageOverviewPanel(location, enableHover, data.pathwayId, pathwayStage);
-
-    if (enableHover) template.highlightOnHoverAndEnableSelectByClick(location);
-    else location.children('div').addClass('unclickable');
-  },
-
   displaySelectedPatient: function(id) {
     var nhs = data.patLookup ? data.patLookup[id] : id;
 
@@ -257,51 +257,6 @@ var template = {
     $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
       return $(this).text().trim() === nhs;
     }).position().top - 140);
-  },
-
-  launchPatientModal: function(pathwayId, pathwayStage, label, value, justtext) {
-    var reasons = [],
-      header;
-    if (justtext !== true && (pathwayStage === lookup.categories.monitoring.name || pathwayStage === lookup.categories.treatment.name)) {
-      if (pathwayStage === lookup.categories.monitoring.name) reasons.push({
-        "reason": "Has actually already been monitored",
-        "value": "alreadymonitored"
-      });
-      else if (pathwayStage === lookup.categories.treatment.name) reasons.push({
-        "reason": "Is actually treated to target",
-        "value": "treated"
-      });
-      reasons.push({
-        "reason": "Should be excluded – please see the suggested way on how to do this below in the 'suggested actions panel'",
-        "value": "shouldexclude"
-      });
-      var breach = data.patients[data.patientId].breach.filter(function(val) {
-        return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage;
-      })[0];
-      for (var prop in data[pathwayId][pathwayStage].bdown) {
-        if (breach.subsection !== prop) {
-          reasons.push({
-            "reason": "Should be in the '" + prop + "' group",
-            "value": "shouldbe_" + prop.replace(/\s+/g, '')
-          });
-        }
-      }
-      reasons.push({
-        "reason": "Something else",
-        "value": "else"
-      });
-    }
-    if (justtext) {
-      header = "Disagree with quality standard missed";
-    } else {
-      header = "Disagree with improvement opportunity";
-    }
-    base.launchModal({
-      "header": header,
-      "item": value,
-      "placeholder": "Provide more information here...",
-      "reasons": reasons
-    }, label, value);
   },
 
   shouldWeFade: function(oldHash, newHash) {

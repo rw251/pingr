@@ -1,7 +1,7 @@
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js');
+  log = require('../log.js');
 
 var other = {
 
@@ -10,7 +10,7 @@ var other = {
       val.description = data.codes[val.code];
       return val;
     });
-    var agree = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "codes");
+    var agree = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "codes");
     return base.createPanel($('#other-codes-panel'), {
       "areCodes": codes.length > 0,
       "agree": agree && agree.agree,

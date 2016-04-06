@@ -1,7 +1,7 @@
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   chart = require('./chart.js'),
-  actions = require('./actionplan.js');
+  log = require('./log.js');
 
 var base = {
 
@@ -165,7 +165,7 @@ var base = {
       var reason = $('input:radio[name=reason]:checked').val();
       var reasonText = $('#modal textarea').val();
 
-      actions.recordFeedback(data.pathwayId, e.data.label, value, reason, reasonText);
+      log.recordFeedback(data.pathwayId, e.data.label, value, reason, reasonText);
 
       lookup.modalSaved = true;
 
@@ -226,14 +226,14 @@ var base = {
     return ids.map(function(val) {
       return {
         "id": val.id || val,
-        "text": actions.text[val.id || val].text,
+        "text": log.text[val.id || val].text,
         "subsection": val.subsection
       };
     });
   },
 
   mergeIndividualStuff: function(suggestions, patientId) {
-    var localActions = actions.listActions();
+    var localActions = log.listActions();
     if (!localActions[patientId]) return suggestions;
 
     for (var i = 0; i < suggestions.length; i++) {

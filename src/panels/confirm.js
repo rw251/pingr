@@ -1,13 +1,13 @@
 var base = require('../base.js'),
-actions = require('../actionplan.js');
+log = require('../log.js');
 
 var confirm = {
 
   wireUp: function(agreeDivSelector, panelSelector, pathwayId, pathwayStage, standard, patientId, item, disagreeText) {
-    confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+    confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
 
     panelSelector.on('change', '.btn-toggle input[type=checkbox]', function() {
-      confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+      confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
       base.wireUpTooltips();
     }).on('click', '.btn-toggle', function(e) {
       var checkbox = $(this).find("input[type=checkbox]");
@@ -16,22 +16,22 @@ var confirm = {
       if ($(this).hasClass("active") && other.hasClass("inactive")) {
         //unselecting
         if (checkbox.val() === "no") {
-          confirm.launchStandardModal("Disagree with " + disagreeText, "?", actions.getAgreeReason(pathwayId, pathwayStage, standard, patientId, item), true, function() {
-            actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, actions.reason.reasonText);
-            confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+          confirm.launchStandardModal("Disagree with " + disagreeText, "?", log.getAgreeReason(pathwayId, pathwayStage, standard, patientId, item), true, function() {
+            log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, log.reason.reasonText);
+            confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             base.wireUpTooltips();
           }, null, function() {
-            actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null, "");
+            log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null, "");
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
-            confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+            confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             base.wireUpTooltips();
           });
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null);
+          log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null);
           other.removeClass("inactive");
         }
       } else if (!$(this).hasClass("active") && other.hasClass("active")) {
@@ -44,20 +44,20 @@ var confirm = {
         var self = this;
         if (checkbox.val() === "no") {
           confirm.launchStandardModal("Disagree with " + disagreeText, "", "", false, function() {
-            actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, actions.reason.reasonText);
+            log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, log.reason.reasonText);
             $(self).removeClass("inactive");
             checkbox.attr("checked", "checked");
             checkbox.parent().addClass("active");
             //unselect other
             other.removeClass("active").addClass("inactive");
             other.find("input[type=checkbox]").prop("checked", false);
-            confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+            confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             base.wireUpTooltips();
           });
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, true);
+          log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, true);
           $(this).removeClass("inactive");
 
           //unselect other

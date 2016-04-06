@@ -1,13 +1,13 @@
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
+  log = require('../log.js'),
   lookup = require('../lookup.js');
 
 var trnd = {
 
   create: function(pathwayId, pathwayStage, standard, patientId) {
-    var agree = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend");
+    var agree = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend");
     return base.createPanel(valueTrendPanel, {
       "pathway": lookup.monitored[pathwayId],
       "agree": agree && agree.agree,

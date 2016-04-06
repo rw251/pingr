@@ -67,333 +67,10 @@ $(document).on('ready', function() {
 });
 
 },{"./src/main.js":8,"./src/template.js":20}],2:[function(require,module,exports){
-var notify = require('./notify.js');
-
-var act = {
-  reason: {},
-
-  getObj: function(options) {
-    var obj = JSON.parse(localStorage.bb);
-
-    if (options && options.length > 0) {
-      options.forEach(function(opt) {
-        if (!obj[opt.name]) {
-          obj[opt.name] = opt.value;
-          main.setObj(obj);
-        }
-      });
-    }
-
-    return obj;
-  },
-
-  setObj: function(obj) {
-    localStorage.bb = JSON.stringify(obj);
-  },
-
-  load: function(callback) {
-    var r = Math.random();
-    $.getJSON("action-plan.json?v=" + r, function(file) {
-      act.plan = file.diseases;
-      act.text = file.plans;
-      callback();
-    });
-  },
-
-  editAction: function(id, actionId, agree, done, reason) {
-    var log, obj = act.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-    if (!id) alert("ACTION TEAM/IND ID");
-    if (!actionId) alert("ACTION ID");
-
-    if (!obj.actions[id]) {
-      obj.actions[id] = {};
-    }
-
-
-    if (agree) {
-      log = "You agreed with this suggested action on " + (new Date()).toDateString();
-    } else if (agree === false) {
-      var reasonText = act.reason.reason === "" && act.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + act.reason.reason + "; " + act.reason.reasonText + ".'";
-      log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
-    }
-
-    if (done) {
-      log = "You agreed with this suggested action on " + (new Date()).toDateString();
-    }
-
-    if (!obj.actions[id][actionId]) {
-      obj.actions[id][actionId] = {
-        "agree": agree ? agree : false,
-        "done": done ? done : false,
-        "history": [log]
-      };
-    } else {
-      if (agree === true || agree === false) obj.actions[id][actionId].agree = agree;
-      if (done === true || done === false) obj.actions[id][actionId].done = done;
-      if (log) {
-        if (obj.actions[id][actionId].history) obj.actions[id][actionId].history.unshift(log);
-        else obj.actions[id][actionId].done.history = [log];
-      }
-    }
-
-    if (reason && obj.actions[id][actionId].agree === false) {
-      obj.actions[id][actionId].reason = reason;
-    } else {
-      delete obj.actions[id][actionId].reason;
-    }
-
-    act.setObj(obj);
-    notify.showSaved();
-  },
-
-  ignoreAction: function(id, actionId) {
-    var obj = act.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-    obj.actions[id][actionId].agree = null;
-    delete obj.actions[id][actionId].reason;
-    act.setObj(obj);
-  },
-
-  getActions: function() {
-    return act.getObj([{
-      name: "actions",
-      value: {}
-    }]).actions;
-  },
-
-  listActions: function(id, pathwayId) {
-    var obj = act.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-    arr = [];
-    if (!id) return obj.actions;
-    if (!obj.actions[id]) return arr;
-    for (var prop in obj.actions[id]) {
-      obj.actions[id][prop].id = prop;
-      if (!obj.actions[id][prop].text)
-        arr.push(obj.actions[id][prop]);
-    }
-    return arr;
-  },
-
-  //id is either "team" or the patientId
-  recordFeedback: function(pathwayId, id, suggestion, reason, reasonText) {
-    act.reason = {
-      "reason": reason,
-      "reasonText": reasonText
-    };
-    var obj = act.getObj([{
-      name: "feedback",
-      value: []
-    }]);
-
-    var item = {
-      "pathwayId": pathwayId,
-      "id": id,
-      "val": suggestion
-    };
-    if (reasonText !== "") item.reasonText = reasonText;
-    if (reason !== "") item.reason = reason;
-    obj.feedback.push(item);
-    act.setObj(obj);
-  },
-
-  getEvents: function() {
-    return act.getObj([{
-      name: "events",
-      value: []
-    }]).events;
-  },
-
-  recordEvent: function(pathwayId, id, name) {
-    var obj = act.getObj([{
-      name: "events",
-      value: []
-    }]);
-    obj.events.push({
-      "pathwayId": pathwayId,
-      "id": id,
-      "name": name,
-      "date": new Date()
-    });
-    act.setObj(obj);
-  },
-
-  recordPlan: function(id, text, pathwayId) {
-    if (!id) alert("PLAN");
-    var obj = act.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-
-    if (!obj.actions[id]) obj.actions[id] = {};
-    var planId = Date.now() + "";
-    obj.actions[id][planId] = {
-      "text": text,
-      "agree": null,
-      "done": false,
-      "pathwayId": pathwayId,
-      "history": ["You added this on " + (new Date()).toDateString()]
-    };
-
-    act.setObj(obj);
-    return planId;
-  },
-
-  findPlan: function(obj, planId) {
-    for (var k in obj.actions) {
-      if (obj.actions[k][planId] && obj.actions[k][planId].text) return k;
-    }
-    return -1;
-  },
-
-  editPlan: function(planId, text, done) {
-    var obj = act.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-    var id = act.findPlan(obj, planId);
-    if (text) obj.actions[id][planId].text = text;
-    if (done === true || done === false) obj.actions[id][planId].done = done;
-    act.setObj(obj);
-  },
-
-  deletePlan: function(planId) {
-    var obj = act.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-    var id = act.findPlan(obj, planId);
-    delete obj.actions[id][planId];
-    act.setObj(obj);
-  },
-
-  listPlans: function(id, pathwayId) {
-    var obj = act.getObj([{
-        name: "actions",
-        value: {}
-      }]),
-      arr = [];
-    if (!id) return obj.actions;
-    for (var prop in obj.actions[id]) {
-      obj.actions[id][prop].id = prop;
-      if ((!pathwayId || pathwayId === obj.actions[id][prop].pathwayId) && obj.actions[id][prop].text) arr.push(obj.actions[id][prop]);
-    }
-    return arr;
-  },
-
-  getReason: function(id, actionId) {
-    var obj = act.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-
-    if (obj.actions[id] && obj.actions[id][actionId]) return obj.actions[id][actionId].reason;
-    return null;
-  },
-
-  getAgreeReason: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = act.getObj([{
-      name: "agrees",
-      value: {}
-    }]);
-    if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
-
-    if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
-    var items = obj.agrees[patientId].filter(function(val) {
-      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
-    });
-
-    return items.length === 1 ? items[0].reason || {} : {};
-  },
-
-  editPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item, agree, reason) {
-    var obj = act.getObj();
-    if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
-
-    if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
-    var items = obj.agrees[patientId].filter(function(val) {
-      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
-    });
-
-    var log = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
-
-    if (items.length === 1) {
-      items[0].agree = agree;
-      items[0].history.push(log);
-      items[0].reason = reason;
-    } else if (items.length === 0) {
-      obj.agrees[patientId].push({
-        "pathwayId": pathwayId,
-        "pathwayStage": pathwayStage,
-        "standard": standard,
-        "item": item,
-        "agree": agree,
-        "reason": reason,
-        "history": [log]
-      });
-    } else {
-      console.log("ERRORRR!!!!!!!");
-    }
-
-    act.setObj(obj);
-    notify.showSaved();
-  },
-
-  getAgrees: function(){
-    return act.getObj([{
-      name: "agrees",
-      value: {}
-    }]).agrees;
-  },
-
-  getPatientAgreeObject: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = act.getObj([{
-      name: "agrees",
-      value: {}
-    }]);
-    if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
-
-    if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
-    var items = obj.agrees[patientId].filter(function(val) {
-      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
-    });
-    if (items.length === 1) return items[0];
-    return {};
-  },
-
-  getPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item) {
-    var obj = act.getObj([{
-      name: "agrees",
-      value: {}
-    }]);
-
-    if (!obj.agrees[patientId]) return null;
-    var item2 = obj.agrees[patientId].filter(function(val) {
-      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
-    });
-
-    if (item.length === 1) {
-      return item[0].agree;
-    }
-    return null;
-  }
-
-};
-
-module.exports = act;
-
-},{"./notify.js":9}],3:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   chart = require('./chart.js'),
-  actions = require('./actionplan.js');
+  log = require('./log.js');
 
 var base = {
 
@@ -557,7 +234,7 @@ var base = {
       var reason = $('input:radio[name=reason]:checked').val();
       var reasonText = $('#modal textarea').val();
 
-      actions.recordFeedback(data.pathwayId, e.data.label, value, reason, reasonText);
+      log.recordFeedback(data.pathwayId, e.data.label, value, reason, reasonText);
 
       lookup.modalSaved = true;
 
@@ -618,14 +295,14 @@ var base = {
     return ids.map(function(val) {
       return {
         "id": val.id || val,
-        "text": actions.text[val.id || val].text,
+        "text": log.text[val.id || val].text,
         "subsection": val.subsection
       };
     });
   },
 
   mergeIndividualStuff: function(suggestions, patientId) {
-    var localActions = actions.listActions();
+    var localActions = log.listActions();
     if (!localActions[patientId]) return suggestions;
 
     for (var i = 0; i < suggestions.length; i++) {
@@ -734,10 +411,10 @@ var base = {
 
 module.exports = base;
 
-},{"./actionplan.js":2,"./chart.js":4,"./data.js":5,"./lookup.js":7}],4:[function(require,module,exports){
+},{"./chart.js":3,"./data.js":4,"./log.js":6,"./lookup.js":7}],3:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
-  actions = require('./actionplan.js');
+  log = require('./log.js');
 
 console.log("chart.js: data.lastloader= " + data.lastloader);
 data.lastloader = "chart.js";
@@ -862,7 +539,7 @@ var cht = {
       }
     }
 
-    var patientEvents = actions.getEvents().filter(function(val) {
+    var patientEvents = log.getEvents().filter(function(val) {
       return val.id === patientId;
     });
     if (patientEvents.length > 0) {
@@ -981,8 +658,8 @@ var cht = {
 
 module.exports = cht;
 
-},{"./actionplan.js":2,"./data.js":5,"./lookup.js":7}],5:[function(require,module,exports){
-var actions = require('./actionplan.js'),
+},{"./data.js":4,"./log.js":6,"./lookup.js":7}],4:[function(require,module,exports){
+var log = require('./log.js'),
   lookup = require('./lookup.js');
 
 var main = {
@@ -1140,7 +817,7 @@ var main = {
         diseaseObject.text.exclusions = data[d].exclusions.text.sidePanel;
       }
       this.diseases.push(diseaseObject);
-      main[d].suggestions = actions.plan[d].team;
+      main[d].suggestions = log.plan[d].team;
       $.extend(main[d].monitoring, {
         "breakdown": [],
         "bdown": {}
@@ -1169,7 +846,7 @@ var main = {
         });
         for (var j = 0; j < main[d].monitoring.standards[key].opportunities.length; j++) {
           main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name] = main[d].monitoring.standards[key].opportunities[j];
-          main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name].suggestions = actions.plan[d].monitoring.individual[main[d].monitoring.standards[key].opportunities[j].name];
+          main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name].suggestions = log.plan[d].monitoring.individual[main[d].monitoring.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].monitoring.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach.push({
@@ -1191,7 +868,7 @@ var main = {
         });
         for (var j = 0; j < main[d].diagnosis.standards[key].opportunities.length; j++) {
           main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name] = main[d].diagnosis.standards[key].opportunities[j];
-          main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name].suggestions = actions.plan[d].diagnosis.individual[main[d].diagnosis.standards[key].opportunities[j].name];
+          main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name].suggestions = log.plan[d].diagnosis.individual[main[d].diagnosis.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].diagnosis.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach.push({
@@ -1213,7 +890,7 @@ var main = {
         });
         for (var j = 0; j < main[d].treatment.standards[key].opportunities.length; j++) {
           main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name] = main[d].treatment.standards[key].opportunities[j];
-          main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name].suggestions = actions.plan[d].treatment.individual[main[d].treatment.standards[key].opportunities[j].name];
+          main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name].suggestions = log.plan[d].treatment.individual[main[d].treatment.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].treatment.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach.push({
@@ -1235,7 +912,7 @@ var main = {
         });
         for (var j = 0; j < main[d].exclusions.standards[key].opportunities.length; j++) {
           main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name] = main[d].exclusions.standards[key].opportunities[j];
-          main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name].suggestions = actions.plan[d].exclusions.individual[main[d].exclusions.standards[key].opportunities[j].name];
+          main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name].suggestions = log.plan[d].exclusions.individual[main[d].exclusions.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].exclusions.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach.push({
@@ -1253,7 +930,7 @@ var main = {
 
 module.exports = main;
 
-},{"./actionplan.js":2,"./lookup.js":7}],6:[function(require,module,exports){
+},{"./log.js":6,"./lookup.js":7}],5:[function(require,module,exports){
 var data = require('./data.js');
 
 var layout = {
@@ -1395,7 +1072,330 @@ var layout = {
 
 module.exports = layout;
 
-},{"./data.js":5}],7:[function(require,module,exports){
+},{"./data.js":4}],6:[function(require,module,exports){
+var notify = require('./notify.js');
+
+var log = {
+  reason: {},
+
+  getObj: function(options) {
+    var obj = JSON.parse(localStorage.bb);
+
+    if (options && options.length > 0) {
+      options.forEach(function(opt) {
+        if (!obj[opt.name]) {
+          obj[opt.name] = opt.value;
+          main.setObj(obj);
+        }
+      });
+    }
+
+    return obj;
+  },
+
+  setObj: function(obj) {
+    localStorage.bb = JSON.stringify(obj);
+  },
+
+  loadActions: function(callback) {
+    var r = Math.random();
+    $.getJSON("action-plan.json?v=" + r, function(file) {
+      log.plan = file.diseases;
+      log.text = file.plans;
+      callback();
+    });
+  },
+
+  editAction: function(id, actionId, agree, done, reason) {
+    var log, obj = log.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    if (!id) alert("ACTION TEAM/IND ID");
+    if (!actionId) alert("ACTION ID");
+
+    if (!obj.actions[id]) {
+      obj.actions[id] = {};
+    }
+
+
+    if (agree) {
+      log = "You agreed with this suggested action on " + (new Date()).toDateString();
+    } else if (agree === false) {
+      var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
+      log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
+    }
+
+    if (done) {
+      log = "You agreed with this suggested action on " + (new Date()).toDateString();
+    }
+
+    if (!obj.actions[id][actionId]) {
+      obj.actions[id][actionId] = {
+        "agree": agree ? agree : false,
+        "done": done ? done : false,
+        "history": [log]
+      };
+    } else {
+      if (agree === true || agree === false) obj.actions[id][actionId].agree = agree;
+      if (done === true || done === false) obj.actions[id][actionId].done = done;
+      if (log) {
+        if (obj.actions[id][actionId].history) obj.actions[id][actionId].history.unshift(log);
+        else obj.actions[id][actionId].done.history = [log];
+      }
+    }
+
+    if (reason && obj.actions[id][actionId].agree === false) {
+      obj.actions[id][actionId].reason = reason;
+    } else {
+      delete obj.actions[id][actionId].reason;
+    }
+
+    log.setObj(obj);
+    notify.showSaved();
+  },
+
+  ignoreAction: function(id, actionId) {
+    var obj = log.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    obj.actions[id][actionId].agree = null;
+    delete obj.actions[id][actionId].reason;
+    log.setObj(obj);
+  },
+
+  getActions: function() {
+    return log.getObj([{
+      name: "actions",
+      value: {}
+    }]).actions;
+  },
+
+  listActions: function(id, pathwayId) {
+    var obj = log.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    arr = [];
+    if (!id) return obj.actions;
+    if (!obj.actions[id]) return arr;
+    for (var prop in obj.actions[id]) {
+      obj.actions[id][prop].id = prop;
+      if (!obj.actions[id][prop].text)
+        arr.push(obj.actions[id][prop]);
+    }
+    return arr;
+  },
+
+  //id is either "team" or the patientId
+  recordFeedback: function(pathwayId, id, suggestion, reason, reasonText) {
+    log.reason = {
+      "reason": reason,
+      "reasonText": reasonText
+    };
+    var obj = log.getObj([{
+      name: "feedback",
+      value: []
+    }]);
+
+    var item = {
+      "pathwayId": pathwayId,
+      "id": id,
+      "val": suggestion
+    };
+    if (reasonText !== "") item.reasonText = reasonText;
+    if (reason !== "") item.reason = reason;
+    obj.feedback.push(item);
+    log.setObj(obj);
+  },
+
+  getEvents: function() {
+    return log.getObj([{
+      name: "events",
+      value: []
+    }]).events;
+  },
+
+  recordEvent: function(pathwayId, id, name) {
+    var obj = log.getObj([{
+      name: "events",
+      value: []
+    }]);
+    obj.events.push({
+      "pathwayId": pathwayId,
+      "id": id,
+      "name": name,
+      "date": new Date()
+    });
+    log.setObj(obj);
+  },
+
+  recordPlan: function(id, text, pathwayId) {
+    if (!id) alert("PLAN");
+    var obj = log.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+
+    if (!obj.actions[id]) obj.actions[id] = {};
+    var planId = Date.now() + "";
+    obj.actions[id][planId] = {
+      "text": text,
+      "agree": null,
+      "done": false,
+      "pathwayId": pathwayId,
+      "history": ["You added this on " + (new Date()).toDateString()]
+    };
+
+    log.setObj(obj);
+    return planId;
+  },
+
+  findPlan: function(obj, planId) {
+    for (var k in obj.actions) {
+      if (obj.actions[k][planId] && obj.actions[k][planId].text) return k;
+    }
+    return -1;
+  },
+
+  editPlan: function(planId, text, done) {
+    var obj = log.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    var id = log.findPlan(obj, planId);
+    if (text) obj.actions[id][planId].text = text;
+    if (done === true || done === false) obj.actions[id][planId].done = done;
+    log.setObj(obj);
+  },
+
+  deletePlan: function(planId) {
+    var obj = log.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+    var id = log.findPlan(obj, planId);
+    delete obj.actions[id][planId];
+    log.setObj(obj);
+  },
+
+  listPlans: function(id, pathwayId) {
+    var obj = log.getObj([{
+        name: "actions",
+        value: {}
+      }]),
+      arr = [];
+    if (!id) return obj.actions;
+    for (var prop in obj.actions[id]) {
+      obj.actions[id][prop].id = prop;
+      if ((!pathwayId || pathwayId === obj.actions[id][prop].pathwayId) && obj.actions[id][prop].text) arr.push(obj.actions[id][prop]);
+    }
+    return arr;
+  },
+
+  getReason: function(id, actionId) {
+    var obj = log.getObj([{
+      name: "actions",
+      value: {}
+    }]);
+
+    if (obj.actions[id] && obj.actions[id][actionId]) return obj.actions[id][actionId].reason;
+    return null;
+  },
+
+  getAgreeReason: function(pathwayId, pathwayStage, standard, patientId, item) {
+    var obj = log.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
+    if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
+
+    if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
+    var items = obj.agrees[patientId].filter(function(val) {
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
+    });
+
+    return items.length === 1 ? items[0].reason || {} : {};
+  },
+
+  editPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item, agree, reason) {
+    var obj = log.getObj();
+    if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
+
+    if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
+    var items = obj.agrees[patientId].filter(function(val) {
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
+    });
+
+    var log = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
+
+    if (items.length === 1) {
+      items[0].agree = agree;
+      items[0].history.push(log);
+      items[0].reason = reason;
+    } else if (items.length === 0) {
+      obj.agrees[patientId].push({
+        "pathwayId": pathwayId,
+        "pathwayStage": pathwayStage,
+        "standard": standard,
+        "item": item,
+        "agree": agree,
+        "reason": reason,
+        "history": [log]
+      });
+    } else {
+      console.log("ERRORRR!!!!!!!");
+    }
+
+    log.setObj(obj);
+    notify.showSaved();
+  },
+
+  getAgrees: function(){
+    return log.getObj([{
+      name: "agrees",
+      value: {}
+    }]).agrees;
+  },
+
+  getPatientAgreeObject: function(pathwayId, pathwayStage, standard, patientId, item) {
+    var obj = log.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
+    if (!pathwayId || !pathwayStage) alert("EDITPATIENTAGREE");
+
+    if (!obj.agrees[patientId]) obj.agrees[patientId] = [];
+    var items = obj.agrees[patientId].filter(function(val) {
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
+    });
+    if (items.length === 1) return items[0];
+    return {};
+  },
+
+  getPatientAgree: function(pathwayId, pathwayStage, standard, patientId, item) {
+    var obj = log.getObj([{
+      name: "agrees",
+      value: {}
+    }]);
+
+    if (!obj.agrees[patientId]) return null;
+    var item2 = obj.agrees[patientId].filter(function(val) {
+      return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
+    });
+
+    if (item.length === 1) {
+      return item[0].agree;
+    }
+    return null;
+  }
+
+};
+
+module.exports = log;
+
+},{"./notify.js":9}],7:[function(require,module,exports){
 module.exports = {
   "currentUrl": "",
   "options": [],
@@ -1427,14 +1427,12 @@ module.exports = {
 };
 
 },{}],8:[function(require,module,exports){
-//getData, wireuppages, showPage, history??, loadContent
-
-var actions = require('./actionplan.js'),
-  template = require('./template.js'),
+var template = require('./template.js'),
   data = require('./data.js'),
   base = require('./base.js'),
   layout = require('./layout.js'),
-  welcome = require('./panels/welcome.js');
+  welcome = require('./panels/welcome.js'),
+  log = require('./log.js');
 
 var states, patLookup, page, hash;
 
@@ -1443,11 +1441,12 @@ data.lastloader = "main.js";
 
 var main = {
   "version": "2.0.0",
+
   hash: hash,
   init: function() {
     main.preWireUpPages();
 
-    actions.load(function() {
+    log.loadActions(function() {
       data.get(main.wireUpPages);
     });
   },
@@ -1633,7 +1632,7 @@ var main = {
 
 module.exports = main;
 
-},{"./actionplan.js":2,"./base.js":3,"./data.js":5,"./layout.js":6,"./panels/welcome.js":19,"./template.js":20}],9:[function(require,module,exports){
+},{"./base.js":2,"./data.js":4,"./layout.js":5,"./log.js":6,"./panels/welcome.js":19,"./template.js":20}],9:[function(require,module,exports){
 module.exports = {
 
   showSaved: function() {
@@ -1869,17 +1868,17 @@ var all = {
 
 module.exports = all;
 
-},{"../base.js":3,"../chart.js":4,"../data.js":5,"../layout.js":6,"./individualActionPlan.js":12,"./medication.js":13,"./otherCodes.js":14,"./qualityStandard.js":16,"./trend.js":18}],11:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"../layout.js":5,"./individualActionPlan.js":12,"./medication.js":13,"./otherCodes.js":14,"./qualityStandard.js":16,"./trend.js":18}],11:[function(require,module,exports){
 var base = require('../base.js'),
-actions = require('../actionplan.js');
+log = require('../log.js');
 
 var confirm = {
 
   wireUp: function(agreeDivSelector, panelSelector, pathwayId, pathwayStage, standard, patientId, item, disagreeText) {
-    confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+    confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
 
     panelSelector.on('change', '.btn-toggle input[type=checkbox]', function() {
-      confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+      confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
       base.wireUpTooltips();
     }).on('click', '.btn-toggle', function(e) {
       var checkbox = $(this).find("input[type=checkbox]");
@@ -1888,22 +1887,22 @@ var confirm = {
       if ($(this).hasClass("active") && other.hasClass("inactive")) {
         //unselecting
         if (checkbox.val() === "no") {
-          confirm.launchStandardModal("Disagree with " + disagreeText, "?", actions.getAgreeReason(pathwayId, pathwayStage, standard, patientId, item), true, function() {
-            actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, actions.reason.reasonText);
-            confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+          confirm.launchStandardModal("Disagree with " + disagreeText, "?", log.getAgreeReason(pathwayId, pathwayStage, standard, patientId, item), true, function() {
+            log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, log.reason.reasonText);
+            confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             base.wireUpTooltips();
           }, null, function() {
-            actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null, "");
+            log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null, "");
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
-            confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+            confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             base.wireUpTooltips();
           });
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null);
+          log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, null);
           other.removeClass("inactive");
         }
       } else if (!$(this).hasClass("active") && other.hasClass("active")) {
@@ -1916,20 +1915,20 @@ var confirm = {
         var self = this;
         if (checkbox.val() === "no") {
           confirm.launchStandardModal("Disagree with " + disagreeText, "", "", false, function() {
-            actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, actions.reason.reasonText);
+            log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, false, log.reason.reasonText);
             $(self).removeClass("inactive");
             checkbox.attr("checked", "checked");
             checkbox.parent().addClass("active");
             //unselect other
             other.removeClass("active").addClass("inactive");
             other.find("input[type=checkbox]").prop("checked", false);
-            confirm.wireUpAgreeDisagree(agreeDivSelector, actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
+            confirm.wireUpAgreeDisagree(agreeDivSelector, log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, item));
             base.wireUpTooltips();
           });
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, true);
+          log.editPatientAgree(pathwayId, pathwayStage, standard, patientId, item, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -1981,11 +1980,11 @@ var confirm = {
 
 module.exports = confirm;
 
-},{"../actionplan.js":2,"../base.js":3}],12:[function(require,module,exports){
+},{"../base.js":2,"../log.js":6}],12:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js');
+  log = require('../log.js');
 
 var iap = {
 
@@ -2001,10 +2000,10 @@ var iap = {
 
     $('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction(data.patientId, ACTIONID, null, this.checked);
+      log.editAction(data.patientId, ACTIONID, null, this.checked);
 
       if (this.checked) {
-        actions.recordEvent(pathwayId, data.patientId, "Item completed");
+        log.recordEvent(pathwayId, data.patientId, "Item completed");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         setTimeout(function(e) {
@@ -2016,7 +2015,7 @@ var iap = {
             base.wireUpTooltips();
             parent.find('button').on('click', function() {
               ACTIONID = $(this).closest('tr').data('id');
-              actions.editAction(data.patientId, ACTIONID, null, false);
+              log.editAction(data.patientId, ACTIONID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -2031,11 +2030,11 @@ var iap = {
 
     $('#personalPlanIndividual').on('click', 'input[type=checkbox]', function() {
       var PLANID = $(this).closest('tr').data("id");
-      actions.editPlan(PLANID, null, this.checked);
+      log.editPlan(PLANID, null, this.checked);
 
       if (this.checked) {
         $(this).parent().parent().parent().addClass('success');
-        actions.recordEvent(pathwayId, data.patientId, "Personal plan item");
+        log.recordEvent(pathwayId, data.patientId, "Personal plan item");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         setTimeout(function(e) {
@@ -2047,7 +2046,7 @@ var iap = {
             base.wireUpTooltips();
             parent.find('button').on('click', function() {
               PLANID = $(this).closest('tr').data('id');
-              actions.editPlan(data.patientId, PLANID, null, false);
+              log.editPlan(data.patientId, PLANID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -2058,7 +2057,7 @@ var iap = {
       }
     }).on('click', '.btn-undo', function(e) {
       var PLANID = $(this).closest('tr').data('id');
-      actions.editPlan(PLANID, null, false);
+      log.editPlan(PLANID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -2077,7 +2076,7 @@ var iap = {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
 
-        actions.editPlan(PLANID, $('#editActionPlanItem').val());
+        log.editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
@@ -2091,19 +2090,19 @@ var iap = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         iap.displayPersonalisedIndividualActionPlan(data.patientId, $('#personalPlanIndividual'));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        actions.deletePlan(PLANID);
+        log.deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      actions.recordPlan(data.patientId, $(this).parent().parent().find('textarea').val(), pathwayId);
+      log.recordPlan(data.patientId, $(this).parent().parent().find('textarea').val(), pathwayId);
 
       iap.displayPersonalisedIndividualActionPlan(data.patientId, $('#personalPlanIndividual'));
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       iap.updateIndividualSapRows();
     }).on('click', '.btn-undo', function(e) {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction(data.patientId, ACTIONID, null, false);
+      log.editAction(data.patientId, ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -2115,12 +2114,12 @@ var iap = {
       if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
         //unselecting
         if (checkbox.val() === "no") {
-          iap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), actions.getReason(data.patientId, ACTIONID), true, function() {
-            actions.editAction(data.patientId, ACTIONID, false, null, actions.reason);
+          iap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason(data.patientId, ACTIONID), true, function() {
+            log.editAction(data.patientId, ACTIONID, false, null, log.reason);
             iap.updateIndividualSapRows();
             base.wireUpTooltips();
           }, null, function() {
-            actions.ignoreAction(data.patientId, ACTIONID);
+            log.ignoreAction(data.patientId, ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
@@ -2130,7 +2129,7 @@ var iap = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.ignoreAction(data.patientId, ACTIONID);
+          log.ignoreAction(data.patientId, ACTIONID);
           other.removeClass("inactive");
         }
       } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
@@ -2142,8 +2141,8 @@ var iap = {
         //selecting
         var self = this;
         if (checkbox.val() === "no") {
-          iap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), actions.getReason(data.patientId, ACTIONID), false, function() {
-            actions.editAction(data.patientId, ACTIONID, false, null, actions.reason);
+          iap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason(data.patientId, ACTIONID), false, function() {
+            log.editAction(data.patientId, ACTIONID, false, null, log.reason);
             $(self).removeClass("inactive");
 
             checkbox.attr("checked", "checked");
@@ -2157,7 +2156,7 @@ var iap = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editAction(data.patientId, ACTIONID, true);
+          log.editAction(data.patientId, ACTIONID, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -2205,8 +2204,8 @@ var iap = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (actions.getActions()[data.patientId][self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (log.getActions()[data.patientId][self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + log.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -2215,8 +2214,8 @@ var iap = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (actions.getActions()[data.patientId][self.data("id")] && actions.getActions()[data.patientId][self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + actions.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (log.getActions()[data.patientId][self.data("id")] && log.getActions()[data.patientId][self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + log.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -2240,7 +2239,7 @@ var iap = {
   },
 
   displayPersonalisedIndividualActionPlan: function(id, parentElem) {
-    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(actions.listPlans(id)));
+    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans(id)));
 
     base.createPanelShow(actionPlanList, parentElem, {
       "hasSuggestions": plans && plans.length > 0,
@@ -2284,13 +2283,13 @@ var iap = {
       localData.suggestions = base.sortSuggestions(base.mergeIndividualStuff(base.suggestionList(suggestions), patientId));
       localData.section = {
         "name": data[pathwayId][pathwayStage].bdown[subsection].name,
-        "agree": actions.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
-        "disagree": actions.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
+        "agree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
+        "disagree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
       };
       localData.category = {
         "name": data.patients[patientId].category,
-        "agree": actions.getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
-        "disagree": actions.getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
+        "agree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
+        "disagree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
       };
     }
 
@@ -2365,17 +2364,17 @@ var iap = {
 
 module.exports = iap;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],13:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],13:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js');
+  log = require('../log.js');
 
 var med = {
 
   create: function(pathwayId, pathwayStage, standard, patientId) {
     var medications = data.patients[patientId].medications || [];
-    var agree = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "medication");
+    var agree = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "medication");
     return base.createPanel(medicationPanel, {
       "areMedications": medications.length > 0,
       "agree": agree && agree.agree,
@@ -2396,11 +2395,11 @@ var med = {
 
 module.exports = med;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],14:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],14:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js');
+  log = require('../log.js');
 
 var other = {
 
@@ -2409,7 +2408,7 @@ var other = {
       val.description = data.codes[val.code];
       return val;
     });
-    var agree = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "codes");
+    var agree = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "codes");
     return base.createPanel($('#other-codes-panel'), {
       "areCodes": codes.length > 0,
       "agree": agree && agree.agree,
@@ -2431,7 +2430,7 @@ var other = {
 
 module.exports = other;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],15:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],15:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   lookup = require('../lookup.js'),
@@ -3024,10 +3023,10 @@ var pt = {
 
 module.exports = pt;
 
-},{"../base.js":3,"../chart.js":4,"../data.js":5,"../lookup.js":7,"./individualActionPlan.js":12,"./medication.js":13,"./otherCodes.js":14,"./qualityStandard.js":16,"./trend.js":18}],16:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"../lookup.js":7,"./individualActionPlan.js":12,"./medication.js":13,"./otherCodes.js":14,"./qualityStandard.js":16,"./trend.js":18}],16:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
+  log = require('../log.js'),
   confirm = require('./confirm.js');
 
 var qs = {
@@ -3063,7 +3062,7 @@ var qs = {
         break;
     }
 
-    var agObj = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "standard");
+    var agObj = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "standard");
     if (agObj && agObj.agree) localData.agree = true;
     else if (agObj && agObj.agree === false) localData.disagree = true;
 
@@ -3081,7 +3080,7 @@ var qs = {
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
         var isClassification = $(this).closest("div").data("isClassification") !== undefined;
         any = true;
-        var item = actions.getAgrees()[data.patientId].filter(function(i) {
+        var item = log.getAgrees()[data.patientId].filter(function(i) {
           return isClassification ? i.item === "section" : i.item !== "section";
         });
         var tool;
@@ -3121,11 +3120,11 @@ var qs = {
 
 module.exports = qs;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],17:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],17:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js');
+  log = require('../log.js');
 
 var tap = {
 
@@ -3136,10 +3135,10 @@ var tap = {
 
     suggestedPlanTeam.on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, this.checked);
+      log.editAction("team", ACTIONID, null, this.checked);
 
       if (this.checked) {
-        actions.recordEvent(data.pathwayId, "team", "Item completed");
+        log.recordEvent(data.pathwayId, "team", "Item completed");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         base.wireUpTooltips();
@@ -3151,7 +3150,7 @@ var tap = {
             }));
             parent.find('button').on('click', function() {
               ACTIONID = $(this).closest('tr').data('id');
-              actions.editAction("team", ACTIONID, null, false);
+              log.editAction("team", ACTIONID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -3194,7 +3193,7 @@ var tap = {
 
     }).on('click', '.btn-undo', function(e) {
       var PLANID = $(this).closest('tr').data('id');
-      actions.editPlan(PLANID, null, false);
+      log.editPlan(PLANID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -3215,7 +3214,7 @@ var tap = {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
 
-        actions.editPlan(PLANID, $('#editActionPlanItem').val());
+        log.editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
@@ -3229,19 +3228,19 @@ var tap = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        actions.deletePlan(PLANID);
+        log.deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      actions.recordPlan("team", $(this).parent().parent().find('textarea').val(), data.pathwayId);
+      log.recordPlan("team", $(this).parent().parent().find('textarea').val(), data.pathwayId);
 
       tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, false);
+      log.editAction("team", ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -3253,12 +3252,12 @@ var tap = {
       if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
         //unselecting
         if (checkbox.val() === "no") {
-          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), actions.getReason("team", ACTIONID), true, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason("team", ACTIONID), true, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             tap.updateTeamSapRows();
             base.wireUpTooltips();
           }, null, function() {
-            actions.ignoreAction("team", ACTIONID);
+            log.ignoreAction("team", ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
@@ -3268,7 +3267,7 @@ var tap = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.ignoreAction("team", ACTIONID);
+          log.ignoreAction("team", ACTIONID);
           other.removeClass("inactive");
         }
       } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
@@ -3280,8 +3279,8 @@ var tap = {
         //selecting
         var self = this;
         if (checkbox.val() === "no") {
-          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), actions.getReason("team", ACTIONID), false, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason("team", ACTIONID), false, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             $(self).removeClass("inactive");
 
             checkbox.attr("checked", "checked");
@@ -3295,7 +3294,7 @@ var tap = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editAction("team", ACTIONID, true);
+          log.editAction("team", ACTIONID, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -3313,7 +3312,7 @@ var tap = {
   },
 
   populateTeamSuggestedActionsPanel: function() {
-    var suggestions = base.suggestionList(actions.plan[data.pathwayId].team);
+    var suggestions = base.suggestionList(log.plan[data.pathwayId].team);
     suggestions = base.sortSuggestions(tap.mergeTeamStuff(suggestions));
 
     base.createPanelShow(suggestedPlanTemplate, suggestedPlanTeam, {
@@ -3356,8 +3355,8 @@ var tap = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (actions.getActions().team[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (log.getActions().team[self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -3366,8 +3365,8 @@ var tap = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (log.getActions().team[self.data("id")] && log.getActions().team[self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -3392,7 +3391,7 @@ var tap = {
   },
 
   displayPersonalisedTeamActionPlan: function(parentElem) {
-    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(actions.listPlans("team", data.pathwayId)));
+    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans("team", data.pathwayId)));
 
     base.createPanelShow(actionPlanList, parentElem, {
       "hasSuggestions": plans && plans.length > 0,
@@ -3407,7 +3406,7 @@ var tap = {
   },
 
   mergeTeamStuff: function(suggestions) {
-    var teamActions = actions.listActions();
+    var teamActions = log.listActions();
     if (!teamActions.team) return suggestions;
 
     suggestions = tap.addDisagree(suggestions, teamActions, "team");
@@ -3463,17 +3462,17 @@ var tap = {
 
 module.exports = tap;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./confirm.js":11}],18:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],18:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
+  log = require('../log.js'),
   lookup = require('../lookup.js');
 
 var trnd = {
 
   create: function(pathwayId, pathwayStage, standard, patientId) {
-    var agree = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend");
+    var agree = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "trend");
     return base.createPanel(valueTrendPanel, {
       "pathway": lookup.monitored[pathwayId],
       "agree": agree && agree.agree,
@@ -3514,10 +3513,10 @@ var trnd = {
 
 module.exports = trnd;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"../lookup.js":7,"./confirm.js":11}],19:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"../lookup.js":7,"./confirm.js":11}],19:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
+  log = require('../log.js'),
   individualActionPlan = require('./individualActionPlan.js'),
   teamActionPlan = require('./teamActionPlan.js');
 
@@ -3526,10 +3525,10 @@ var welcome = {
   wireUpWelcomePage: function(pathwayId, pathwayStage) {
     $('#team-task-panel').on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, this.checked);
+      log.editAction("team", ACTIONID, null, this.checked);
 
       if (this.checked) {
-        actions.recordEvent(pathwayId, "team", "Item completed");
+        log.recordEvent(pathwayId, "team", "Item completed");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         base.wireUpTooltips();
@@ -3541,7 +3540,7 @@ var welcome = {
             }));
             parent.find('button').on('click', function() {
               ACTIONID = $(this).closest('tr').data('id');
-              actions.editAction("team", ACTIONID, null, false);
+              log.editAction("team", ACTIONID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -3564,7 +3563,7 @@ var welcome = {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
 
-        actions.editPlan(PLANID, $('#editActionPlanItem').val());
+        log.editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
@@ -3578,13 +3577,13 @@ var welcome = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        actions.deletePlan(PLANID);
+        log.deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.btn-undo', function(e) {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, false);
+      log.editAction("team", ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -3596,12 +3595,12 @@ var welcome = {
       if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
         //unselecting
         if (checkbox.val() === "no") {
-          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), actions.getReason("team", ACTIONID), true, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), log.getReason("team", ACTIONID), true, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             welcome.updateWelcomePage();
             base.wireUpTooltips();
           }, null, function() {
-            actions.ignoreAction("team", ACTIONID);
+            log.ignoreAction("team", ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
@@ -3611,7 +3610,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.ignoreAction("team", ACTIONID);
+          log.ignoreAction("team", ACTIONID);
           other.removeClass("inactive");
         }
       } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
@@ -3623,8 +3622,8 @@ var welcome = {
         //selecting
         var self = this;
         if (checkbox.val() === "no") {
-          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), actions.getReason("team", ACTIONID), false, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          teamActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(1)').find('span').text(), log.getReason("team", ACTIONID), false, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             $(self).removeClass("inactive");
 
             checkbox.attr("checked", "checked");
@@ -3638,7 +3637,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editAction("team", ACTIONID, true);
+          log.editAction("team", ACTIONID, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -3651,10 +3650,10 @@ var welcome = {
     $('#individual-task-panel').on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
       var patientId = $(this).closest('tr').data('team-or-patient-id');
-      actions.editAction(patientId, ACTIONID, null, this.checked);
+      log.editAction(patientId, ACTIONID, null, this.checked);
 
       if (this.checked) {
-        actions.recordEvent(pathwayId, patientId, "Item completed");
+        log.recordEvent(pathwayId, patientId, "Item completed");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         base.wireUpTooltips();
@@ -3666,7 +3665,7 @@ var welcome = {
             }));
             parent.find('button').on('click', function() {
               ACTIONID = $(this).closest('tr').data('id');
-              actions.editAction(patientId, ACTIONID, null, false);
+              log.editAction(patientId, ACTIONID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -3689,7 +3688,7 @@ var welcome = {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
 
-        actions.editPlan(PLANID, $('#editActionPlanItem').val());
+        log.editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
@@ -3703,14 +3702,14 @@ var welcome = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        actions.deletePlan(PLANID);
+        log.deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.btn-undo', function(e) {
       var ACTIONID = $(this).closest('tr').data('id');
       var patientId = $(this).closest('tr').data('team-or-patient-id');
-      actions.editAction(patientId, ACTIONID, null, false);
+      log.editAction(patientId, ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -3723,12 +3722,12 @@ var welcome = {
       if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
         //unselecting
         if (checkbox.val() === "no") {
-          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), actions.getReason(patientId, ACTIONID), true, function() {
-            actions.editAction(patientId, ACTIONID, false, null, actions.reason);
+          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), log.getReason(patientId, ACTIONID), true, function() {
+            log.editAction(patientId, ACTIONID, false, null, log.reason);
             welcome.updateWelcomePage();
             base.wireUpTooltips();
           }, null, function() {
-            actions.ignoreAction(patientId, ACTIONID);
+            log.ignoreAction(patientId, ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
@@ -3738,7 +3737,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.ignoreAction(patientId, ACTIONID);
+          log.ignoreAction(patientId, ACTIONID);
           other.removeClass("inactive");
         }
       } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
@@ -3750,8 +3749,8 @@ var welcome = {
         //selecting
         var self = this;
         if (checkbox.val() === "no") {
-          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), actions.getReason(patientId, ACTIONID), false, function() {
-            actions.editAction(patientId, ACTIONID, false, null, actions.reason);
+          individualActionPlan.launchModal(data.selected, checkbox.closest('tr').children(':nth(2)').find('span').text(), log.getReason(patientId, ACTIONID), false, function() {
+            log.editAction(patientId, ACTIONID, false, null, log.reason);
             $(self).removeClass("inactive");
 
             checkbox.attr("checked", "checked");
@@ -3765,7 +3764,7 @@ var welcome = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editAction(patientId, ACTIONID, true);
+          log.editAction(patientId, ACTIONID, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -3808,8 +3807,8 @@ var welcome = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (log.getActions().team[self.data("id")] && log.getActions().team[self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -3818,8 +3817,8 @@ var welcome = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (log.getActions().team[self.data("id")] && log.getActions().team[self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -3851,12 +3850,12 @@ var welcome = {
     var individualTasks = [];
 
     //Add the team tasks
-    for (k in actions.listActions("team")) {
-      if (actions.listActions("team")[k].agree && ((!actions.listActions("team")[k].done && !complete) || (actions.listActions("team")[k].done && complete))) {
+    for (k in log.listActions("team")) {
+      if (log.listActions("team")[k].agree && ((!log.listActions("team")[k].done && !complete) || (log.listActions("team")[k].done && complete))) {
         teamTasks.push({
           "pathway": "N/A",
-          "task": actions.text[actions.listActions("team")[k].id].text,
-          "data": actions.listActions("team")[k].id,
+          "task": log.text[log.listActions("team")[k].id].text,
+          "data": log.listActions("team")[k].id,
           "tpId": "team",
           "agree": true,
           "done": complete
@@ -3865,31 +3864,31 @@ var welcome = {
     }
 
     //Add the user added team tasks
-    for (k in actions.listPlans("team")) {
-      if ((!actions.listPlans("team")[k].done && !complete) || (actions.listPlans("team")[k].done && complete)) {
+    for (k in log.listPlans("team")) {
+      if ((!log.listPlans("team")[k].done && !complete) || (log.listPlans("team")[k].done && complete)) {
         teamTasks.push({
           "canEdit": true,
-          "pathway": data.pathwayNames[actions.listPlans("team")[k].pathwayId],
-          "pathwayId": actions.listPlans("team")[k].pathwayId,
-          "task": actions.listPlans("team")[k].text,
-          "data": actions.listPlans("team")[k].id,
-          "agree": actions.listPlans("team")[k].agree,
-          "disagree": actions.listPlans("team")[k].agree === false,
+          "pathway": data.pathwayNames[log.listPlans("team")[k].pathwayId],
+          "pathwayId": log.listPlans("team")[k].pathwayId,
+          "task": log.listPlans("team")[k].text,
+          "data": log.listPlans("team")[k].id,
+          "agree": log.listPlans("team")[k].agree,
+          "disagree": log.listPlans("team")[k].agree === false,
           "done": complete
         });
       }
     }
 
     //Add individual
-    for (k in actions.listActions()) {
+    for (k in log.listActions()) {
       if (k === "team") continue;
-      for (l in actions.listActions()[k]) {
-        if (actions.text[l] && actions.listActions()[k][l].agree && ((!actions.listActions()[k][l].done && !complete) || (actions.listActions()[k][l].done && complete))) {
+      for (l in log.listActions()[k]) {
+        if (log.text[l] && log.listActions()[k][l].agree && ((!log.listActions()[k][l].done && !complete) || (log.listActions()[k][l].done && complete))) {
           individualTasks.push({
             "pathway": "N/A",
             "patientId": k,
-            "task": actions.text[l].text,
-            "pathwayId": actions.listPlans()[k][l].pathwayId,
+            "task": log.text[l].text,
+            "pathwayId": log.listPlans()[k][l].pathwayId,
             "data": l,
             "tpId": k,
             "agree": true,
@@ -3900,17 +3899,17 @@ var welcome = {
     }
 
     //Add custom individual
-    for (k in actions.listPlans()) {
+    for (k in log.listPlans()) {
       if (k === "team") continue;
-      for (l in actions.listPlans()[k]) {
-        if (actions.listPlans()[k][l].text && (!actions.listPlans()[k][l].done && !complete) || (actions.listPlans()[k][l].done && complete)) {
+      for (l in log.listPlans()[k]) {
+        if (log.listPlans()[k][l].text && (!log.listPlans()[k][l].done && !complete) || (log.listPlans()[k][l].done && complete)) {
           individualTasks.push({
             "canEdit": true,
-            "pathway": data.pathwayNames[actions.listPlans()[k][l].pathwayId],
-            "pathwayId": actions.listPlans()[k][l].pathwayId,
+            "pathway": data.pathwayNames[log.listPlans()[k][l].pathwayId],
+            "pathwayId": log.listPlans()[k][l].pathwayId,
             "patientId": k,
             "tpId": k,
-            "task": actions.listPlans()[k][l].text,
+            "task": log.listPlans()[k][l].text,
             "data": l,
             "agree": true,
             "done": complete
@@ -3977,7 +3976,7 @@ var welcome = {
 
 module.exports = welcome;
 
-},{"../actionplan.js":2,"../base.js":3,"../data.js":5,"./individualActionPlan.js":12,"./teamActionPlan.js":17}],20:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./individualActionPlan.js":12,"./teamActionPlan.js":17}],20:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   base = require('./base.js'),
@@ -3988,26 +3987,6 @@ var data = require('./data.js'),
   layout = require('./layout.js');
 
 var template = {
-
-  //Show the overview page for a disease
-  showOverview: function(disease) {
-    data.pathwayId = disease;
-
-    layout.showMainView(data.diseases.map(function(v) {
-      return v.id;
-    }).indexOf(disease));
-
-    $('aside li ul li').removeClass('active');
-    $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
-
-    $('#mainTitle').show();
-    base.updateTitle(data[data.pathwayId]["display-name"] + ": Overview (practice-level data)");
-
-    //Show overview panels
-    template.showOverviewPanels();
-    teamActionPlan.show(farRightPanel);
-    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
-  },
 
   loadContent: function(hash, isPoppingState) {
     base.hideTooltips();
@@ -4105,6 +4084,26 @@ var template = {
     lookup.currentUrl = hash;
   },
 
+  //Show the overview page for a disease
+  showOverview: function(disease) {
+    data.pathwayId = disease;
+
+    layout.showMainView(data.diseases.map(function(v) {
+      return v.id;
+    }).indexOf(disease));
+
+    $('aside li ul li').removeClass('active');
+    $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
+
+    $('#mainTitle').show();
+    base.updateTitle(data[data.pathwayId]["display-name"] + ": Overview (practice-level data)");
+
+    //Show overview panels
+    template.showOverviewPanels();
+    teamActionPlan.show(farRightPanel);
+    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
+  },
+
   showOverviewPanels: function() {
     base.switchTo221Layout();
 
@@ -4114,6 +4113,13 @@ var template = {
     template.showPanel(lookup.categories.exclusions.name, bottomRightPanel, true);
 
     base.wireUpTooltips();
+  },
+
+  showPanel: function(pathwayStage, location, enableHover) {
+    base.showPathwayStageOverviewPanel(location, enableHover, data.pathwayId, pathwayStage);
+
+    if (enableHover) template.highlightOnHoverAndEnableSelectByClick(location);
+    else location.children('div').addClass('unclickable');
   },
 
   //Show the pathway stage for a disease
@@ -4217,13 +4223,6 @@ var template = {
 
   },
 
-  showPanel: function(pathwayStage, location, enableHover) {
-    base.showPathwayStageOverviewPanel(location, enableHover, data.pathwayId, pathwayStage);
-
-    if (enableHover) template.highlightOnHoverAndEnableSelectByClick(location);
-    else location.children('div').addClass('unclickable');
-  },
-
   displaySelectedPatient: function(id) {
     var nhs = data.patLookup ? data.patLookup[id] : id;
 
@@ -4239,51 +4238,6 @@ var template = {
     }).position().top - 140);
   },
 
-  launchPatientModal: function(pathwayId, pathwayStage, label, value, justtext) {
-    var reasons = [],
-      header;
-    if (justtext !== true && (pathwayStage === lookup.categories.monitoring.name || pathwayStage === lookup.categories.treatment.name)) {
-      if (pathwayStage === lookup.categories.monitoring.name) reasons.push({
-        "reason": "Has actually already been monitored",
-        "value": "alreadymonitored"
-      });
-      else if (pathwayStage === lookup.categories.treatment.name) reasons.push({
-        "reason": "Is actually treated to target",
-        "value": "treated"
-      });
-      reasons.push({
-        "reason": "Should be excluded – please see the suggested way on how to do this below in the 'suggested actions panel'",
-        "value": "shouldexclude"
-      });
-      var breach = data.patients[data.patientId].breach.filter(function(val) {
-        return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage;
-      })[0];
-      for (var prop in data[pathwayId][pathwayStage].bdown) {
-        if (breach.subsection !== prop) {
-          reasons.push({
-            "reason": "Should be in the '" + prop + "' group",
-            "value": "shouldbe_" + prop.replace(/\s+/g, '')
-          });
-        }
-      }
-      reasons.push({
-        "reason": "Something else",
-        "value": "else"
-      });
-    }
-    if (justtext) {
-      header = "Disagree with quality standard missed";
-    } else {
-      header = "Disagree with improvement opportunity";
-    }
-    base.launchModal({
-      "header": header,
-      "item": value,
-      "placeholder": "Provide more information here...",
-      "reasons": reasons
-    }, label, value);
-  },
-
   shouldWeFade: function(oldHash, newHash) {
     oldHash = oldHash.split('/');
     newHash = newHash.split('/');
@@ -4296,4 +4250,4 @@ var template = {
 
 module.exports = template;
 
-},{"./base.js":3,"./data.js":5,"./layout.js":6,"./lookup.js":7,"./panels/allPatients.js":10,"./panels/patients.js":15,"./panels/teamActionPlan.js":17,"./panels/welcome.js":19}]},{},[1]);
+},{"./base.js":2,"./data.js":4,"./layout.js":5,"./lookup.js":7,"./panels/allPatients.js":10,"./panels/patients.js":15,"./panels/teamActionPlan.js":17,"./panels/welcome.js":19}]},{},[1]);

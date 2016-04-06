@@ -1,6 +1,6 @@
 var base = require('../base.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js'),
+  log = require('../log.js'),
   confirm = require('./confirm.js');
 
 var qs = {
@@ -36,7 +36,7 @@ var qs = {
         break;
     }
 
-    var agObj = actions.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "standard");
+    var agObj = log.getPatientAgreeObject(pathwayId, pathwayStage, standard, patientId, "standard");
     if (agObj && agObj.agree) localData.agree = true;
     else if (agObj && agObj.agree === false) localData.disagree = true;
 
@@ -54,7 +54,7 @@ var qs = {
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
         var isClassification = $(this).closest("div").data("isClassification") !== undefined;
         any = true;
-        var item = actions.getAgrees()[data.patientId].filter(function(i) {
+        var item = log.getAgrees()[data.patientId].filter(function(i) {
           return isClassification ? i.item === "section" : i.item !== "section";
         });
         var tool;

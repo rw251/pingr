@@ -1,6 +1,6 @@
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
-  actions = require('./actionplan.js');
+  log = require('./log.js');
 
 console.log("chart.js: data.lastloader= " + data.lastloader);
 data.lastloader = "chart.js";
@@ -125,7 +125,7 @@ var cht = {
       }
     }
 
-    var patientEvents = actions.getEvents().filter(function(val) {
+    var patientEvents = log.getEvents().filter(function(val) {
       return val.id === patientId;
     });
     if (patientEvents.length > 0) {

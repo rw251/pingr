@@ -1,4 +1,4 @@
-var actions = require('./actionplan.js'),
+var log = require('./log.js'),
   lookup = require('./lookup.js');
 
 var main = {
@@ -156,7 +156,7 @@ var main = {
         diseaseObject.text.exclusions = data[d].exclusions.text.sidePanel;
       }
       this.diseases.push(diseaseObject);
-      main[d].suggestions = actions.plan[d].team;
+      main[d].suggestions = log.plan[d].team;
       $.extend(main[d].monitoring, {
         "breakdown": [],
         "bdown": {}
@@ -185,7 +185,7 @@ var main = {
         });
         for (var j = 0; j < main[d].monitoring.standards[key].opportunities.length; j++) {
           main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name] = main[d].monitoring.standards[key].opportunities[j];
-          main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name].suggestions = actions.plan[d].monitoring.individual[main[d].monitoring.standards[key].opportunities[j].name];
+          main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name].suggestions = log.plan[d].monitoring.individual[main[d].monitoring.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].monitoring.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach.push({
@@ -207,7 +207,7 @@ var main = {
         });
         for (var j = 0; j < main[d].diagnosis.standards[key].opportunities.length; j++) {
           main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name] = main[d].diagnosis.standards[key].opportunities[j];
-          main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name].suggestions = actions.plan[d].diagnosis.individual[main[d].diagnosis.standards[key].opportunities[j].name];
+          main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name].suggestions = log.plan[d].diagnosis.individual[main[d].diagnosis.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].diagnosis.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach.push({
@@ -229,7 +229,7 @@ var main = {
         });
         for (var j = 0; j < main[d].treatment.standards[key].opportunities.length; j++) {
           main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name] = main[d].treatment.standards[key].opportunities[j];
-          main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name].suggestions = actions.plan[d].treatment.individual[main[d].treatment.standards[key].opportunities[j].name];
+          main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name].suggestions = log.plan[d].treatment.individual[main[d].treatment.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].treatment.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach.push({
@@ -251,7 +251,7 @@ var main = {
         });
         for (var j = 0; j < main[d].exclusions.standards[key].opportunities.length; j++) {
           main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name] = main[d].exclusions.standards[key].opportunities[j];
-          main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name].suggestions = actions.plan[d].exclusions.individual[main[d].exclusions.standards[key].opportunities[j].name];
+          main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name].suggestions = log.plan[d].exclusions.individual[main[d].exclusions.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].exclusions.standards[key].opportunities[j].patients.length; k++) {
             if (!main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach = [];
             main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach.push({

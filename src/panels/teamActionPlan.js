@@ -1,7 +1,7 @@
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
-  actions = require('../actionplan.js');
+  log = require('../log.js');
 
 var tap = {
 
@@ -12,10 +12,10 @@ var tap = {
 
     suggestedPlanTeam.on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, this.checked);
+      log.editAction("team", ACTIONID, null, this.checked);
 
       if (this.checked) {
-        actions.recordEvent(data.pathwayId, "team", "Item completed");
+        log.recordEvent(data.pathwayId, "team", "Item completed");
         var self = this;
         $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
         base.wireUpTooltips();
@@ -27,7 +27,7 @@ var tap = {
             }));
             parent.find('button').on('click', function() {
               ACTIONID = $(this).closest('tr').data('id');
-              actions.editAction("team", ACTIONID, null, false);
+              log.editAction("team", ACTIONID, null, false);
               $(this).replaceWith(base.createPanel($('#checkbox-template'), {
                 "done": false
               }));
@@ -70,7 +70,7 @@ var tap = {
 
     }).on('click', '.btn-undo', function(e) {
       var PLANID = $(this).closest('tr').data('id');
-      actions.editPlan(PLANID, null, false);
+      log.editPlan(PLANID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -91,7 +91,7 @@ var tap = {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
 
-        actions.editPlan(PLANID, $('#editActionPlanItem').val());
+        log.editPlan(PLANID, $('#editActionPlanItem').val());
 
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
@@ -105,19 +105,19 @@ var tap = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        actions.deletePlan(PLANID);
+        log.deletePlan(PLANID);
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      actions.recordPlan("team", $(this).parent().parent().find('textarea').val(), data.pathwayId);
+      log.recordPlan("team", $(this).parent().parent().find('textarea').val(), data.pathwayId);
 
       tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
       var ACTIONID = $(this).closest('tr').data('id');
-      actions.editAction("team", ACTIONID, null, false);
+      log.editAction("team", ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
@@ -129,12 +129,12 @@ var tap = {
       if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
         //unselecting
         if (checkbox.val() === "no") {
-          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), actions.getReason("team", ACTIONID), true, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason("team", ACTIONID), true, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             tap.updateTeamSapRows();
             base.wireUpTooltips();
           }, null, function() {
-            actions.ignoreAction("team", ACTIONID);
+            log.ignoreAction("team", ACTIONID);
             other.removeClass("inactive");
             checkbox.removeAttr("checked");
             checkbox.parent().removeClass("active");
@@ -144,7 +144,7 @@ var tap = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.ignoreAction("team", ACTIONID);
+          log.ignoreAction("team", ACTIONID);
           other.removeClass("inactive");
         }
       } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
@@ -156,8 +156,8 @@ var tap = {
         //selecting
         var self = this;
         if (checkbox.val() === "no") {
-          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), actions.getReason("team", ACTIONID), false, function() {
-            actions.editAction("team", ACTIONID, false, null, actions.reason);
+          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason("team", ACTIONID), false, function() {
+            log.editAction("team", ACTIONID, false, null, log.reason);
             $(self).removeClass("inactive");
 
             checkbox.attr("checked", "checked");
@@ -171,7 +171,7 @@ var tap = {
           e.stopPropagation();
           e.preventDefault();
         } else {
-          actions.editAction("team", ACTIONID, true);
+          log.editAction("team", ACTIONID, true);
           $(this).removeClass("inactive");
 
           //unselect other
@@ -189,7 +189,7 @@ var tap = {
   },
 
   populateTeamSuggestedActionsPanel: function() {
-    var suggestions = base.suggestionList(actions.plan[data.pathwayId].team);
+    var suggestions = base.suggestionList(log.plan[data.pathwayId].team);
     suggestions = base.sortSuggestions(tap.mergeTeamStuff(suggestions));
 
     base.createPanelShow(suggestedPlanTemplate, suggestedPlanTeam, {
@@ -232,8 +232,8 @@ var tap = {
           self.removeClass('danger');
           self.addClass('active');
           self.find('td').last().children().show();
-          if (actions.getActions().team[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (log.getActions().team[self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -242,8 +242,8 @@ var tap = {
           self.removeClass('active');
           self.addClass('danger');
           self.removeClass('success');
-          if (actions.getActions().team[self.data("id")] && actions.getActions().team[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + actions.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (log.getActions().team[self.data("id")] && log.getActions().team[self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + log.getActions().team[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -268,7 +268,7 @@ var tap = {
   },
 
   displayPersonalisedTeamActionPlan: function(parentElem) {
-    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(actions.listPlans("team", data.pathwayId)));
+    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans("team", data.pathwayId)));
 
     base.createPanelShow(actionPlanList, parentElem, {
       "hasSuggestions": plans && plans.length > 0,
@@ -283,7 +283,7 @@ var tap = {
   },
 
   mergeTeamStuff: function(suggestions) {
-    var teamActions = actions.listActions();
+    var teamActions = log.listActions();
     if (!teamActions.team) return suggestions;
 
     suggestions = tap.addDisagree(suggestions, teamActions, "team");
