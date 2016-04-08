@@ -238,8 +238,78 @@ var cht = {
         }
       });
     }, 1);
-  }
+  },
 
+  drawBenchmarkChart: function(element, data) {
+    cht.destroyCharts([element + '-chart']);
+    setTimeout(function() {
+      lookup.charts[element + '-chart'] = c3.generate({
+        bindto: '#' + element,
+        size: {
+          height: 200
+        },
+        data: data,
+        axis: {
+          x: {
+            type: 'category',
+            tick: {
+              rotate: 60,
+              multiline: false
+            }
+          },
+          y: {
+            label: {
+              text: '% of patients meeting the target',
+              position: 'outer-middle'
+            }
+          }
+        },
+        grid: {
+          y: {
+            show: true
+          }
+        }
+      });
+    }, 1);
+  },
+
+  drawPerformanceTrendChart: function(element, data) {
+    cht.destroyCharts([element + '-chart']);
+    setTimeout(function() {
+      lookup.charts[element + '-chart'] = c3.generate({
+        bindto: '#' + element,
+        size: {
+          height: 200
+        },
+        data: data,
+        axis: {
+          x: {
+            type: 'timeseries',
+            tick: {
+              format: '%Y-%m-%d',
+              rotate: 60,
+              multiline: false
+            },
+            height: 60
+          },
+          y: {
+            label: {
+              text: "Performance",
+              position: 'outer-middle'
+            }
+          }
+        },
+        grid: {
+          x: {
+            show: true
+          },
+          y: {
+            show: true
+          }
+        }
+      });
+    }, 1);
+  }
 };
 
 module.exports = cht;

@@ -14,7 +14,8 @@ body.qof {
 }
 
 tr.standard-row:hover {
-  background-color: white;
+  background-color: #eee;
+  cursor: pointer;
 }
 
 span.standard-missed {
@@ -743,6 +744,8 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 /* ------------------ Login page --------------------*/
 .login-page > .login-container {
   width: 360px;
+  margin-top:-80px;
+  padding-bottom: 110px;
 }/*
 .narrow-container{
   width: 360px;
@@ -1053,4 +1056,28 @@ body > svg {
 	position: absolute;
 	height: 100%;
 	right: 0;
+}
+
+.jqstooltip {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+
+.h-chart {
+  min-width: 320px;
+  max-width: 800px;
+  height: 58px;
+  margin: 0 auto;
+}
+
+.h-condition-chart {
+  height: 120px;
+}
+.h-last-measurement-chart {
+  height: 80px;
+}
+.h-navigator-chart {
+  height: 60px;
 }

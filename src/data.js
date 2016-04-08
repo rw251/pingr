@@ -1,6 +1,63 @@
 var log = require('./log.js'),
   lookup = require('./lookup.js');
 
+var _getAllIndicatorData = function(callback){
+  var r = Math.random();
+  $.getJSON("data/indicators.json?v=" + r, function(file) {
+    main.indicators = file;
+
+    main.indicators.forEach(function(indicator){
+      var percentage = Math.round(100*indicator.values[1][1]*100/indicator.values[2][1])/100;
+      indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
+      indicator.target = indicator.values[3][1]*100 + "%";
+      indicator.up = percentage > Math.round(100*indicator.values[1][2]*100/indicator.values[2][2])/100;
+      var trend = indicator.values[1].map(function(val, idx) {
+        return Math.round(100*val*100/indicator.values[2][idx])/100;
+      }).slice(1,10);
+      trend.reverse();
+      indicator.trend = trend.join(",");
+      var dates = indicator.values[0].slice(1,10);
+      dates.reverse();
+      indicator.dates = dates;
+    });
+
+
+    callback(main.indicators);
+  });
+};
+
+var _getIndicatorData = function(indicator, callback) {
+  var r = Math.random();
+  $.getJSON("data/idata." + indicator + ".json?v=" + r, function(file) {
+    main.indicators[indicator] = file;
+
+    callback(main.indicators[indicator]);
+  });
+};
+
+var _getFakePatientData = function(callback){
+  var r = Math.random();
+  $.getJSON("data/patient.json?v=" + r, function(file) {
+    if(!main.patients) main.patients = {};
+    main.patients.patient = file;
+
+    callback(main.patients.patient);
+  });
+};
+
+var _getPatientData = function(patient, callback) {
+  var r = Math.random();
+  $.getJSON("data/" + patient + ".json?v=" + r, function(file) {
+    if(!main.patients) main.patients = {};
+    main.patients[patient] = file;
+
+    callback(main.patients[patient]);
+  }).fail(function(){
+    if(main.patients.patient) return callback(main.patients.patient);
+    else _getFakePatientData(callback);
+  });
+};
+
 var main = {
 
   pathwayNames: {},
@@ -183,7 +240,7 @@ var main = {
           "standard": key,
           "text": this.pathwayNames[d] + ' - ' + "Monitoring" + ' - ' + main[d].monitoring.standards[key].tab.title
         });
-        for (var j = 0; j < main[d].monitoring.standards[key].opportunities.length; j++) {
+        for (j = 0; j < main[d].monitoring.standards[key].opportunities.length; j++) {
           main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name] = main[d].monitoring.standards[key].opportunities[j];
           main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name].suggestions = log.plan[d].monitoring.individual[main[d].monitoring.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].monitoring.standards[key].opportunities[j].patients.length; k++) {
@@ -205,7 +262,7 @@ var main = {
           "standard": key,
           "text": this.pathwayNames[d] + ' - ' + "Diagnosis" + ' - ' + main[d].diagnosis.standards[key].tab.title
         });
-        for (var j = 0; j < main[d].diagnosis.standards[key].opportunities.length; j++) {
+        for (j = 0; j < main[d].diagnosis.standards[key].opportunities.length; j++) {
           main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name] = main[d].diagnosis.standards[key].opportunities[j];
           main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name].suggestions = log.plan[d].diagnosis.individual[main[d].diagnosis.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].diagnosis.standards[key].opportunities[j].patients.length; k++) {
@@ -227,7 +284,7 @@ var main = {
           "standard": key,
           "text": this.pathwayNames[d] + ' - ' + "Treatment" + ' - ' + main[d].treatment.standards[key].tab.title
         });
-        for (var j = 0; j < main[d].treatment.standards[key].opportunities.length; j++) {
+        for (j = 0; j < main[d].treatment.standards[key].opportunities.length; j++) {
           main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name] = main[d].treatment.standards[key].opportunities[j];
           main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name].suggestions = log.plan[d].treatment.individual[main[d].treatment.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].treatment.standards[key].opportunities[j].patients.length; k++) {
@@ -249,7 +306,7 @@ var main = {
           "standard": key,
           "text": this.pathwayNames[d] + ' - ' + "Exclusions" + ' - ' + main[d].exclusions.standards[key].tab.title
         });
-        for (var j = 0; j < main[d].exclusions.standards[key].opportunities.length; j++) {
+        for (j = 0; j < main[d].exclusions.standards[key].opportunities.length; j++) {
           main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name] = main[d].exclusions.standards[key].opportunities[j];
           main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name].suggestions = log.plan[d].exclusions.individual[main[d].exclusions.standards[key].opportunities[j].name];
           for (k = 0; k < main[d].exclusions.standards[key].opportunities[j].patients.length; k++) {
@@ -264,7 +321,36 @@ var main = {
         }
       }
     }
+  },
+
+  getAllIndicatorData: function(callback){
+    if(main.indicators) {
+      return callback(main.indicators);
+    } else {
+      _getAllIndicatorData(callback);
+    }
+  },
+
+  getIndicatorData: function(indicator, callback) {
+    if(!main.indicators) {
+      _getAllIndicatorData(function(data){
+        _getIndicatorData(indicator, callback);
+      });
+    } else if(main.indicators && main.indicators[indicator]) {
+      return callback(main.indicators[indicator]);
+    } else {
+      _getIndicatorData(indicator, callback);
+    }
+  },
+
+  getPatientData: function(patientId, callback) {
+    /*if(main.patients && main.patients[patientId]) {
+      return callback(main.patients[patientId]);
+    } else {*/
+      _getPatientData(patientId, callback);
+  /*  }*/
   }
+
 };
 
 module.exports = main;

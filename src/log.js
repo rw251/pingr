@@ -10,7 +10,7 @@ var log = {
       options.forEach(function(opt) {
         if (!obj[opt.name]) {
           obj[opt.name] = opt.value;
-          main.setObj(obj);
+          log.setObj(obj);
         }
       });
     }

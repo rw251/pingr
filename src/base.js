@@ -252,7 +252,7 @@ var base = {
   switchTo110Layout: function() {
     if (base.layout === "110") return;
     base.layout = "110";
-    farLeftPanel.removeClass('col-lg-3').addClass('col-lg-6').show();
+    farLeftPanel.removeClass('col-lg-3 col-lg-8').addClass('col-lg-6').show();
     topPanel.hide();
     topLeftPanel.hide();
     bottomLeftPanel.hide();
@@ -260,6 +260,19 @@ var base = {
     bottomRightPanel.hide();
     midPanel.hide();
     farRightPanel.removeClass('col-xl-4').addClass('col-xl-8').show();
+  },
+
+  switchTo101Layout: function() {
+    if (base.layout === "101") return;
+    base.layout = "101";
+    farLeftPanel.removeClass('col-lg-3 col-lg-6 col-xl-4').addClass('col-lg-8').show();
+    topPanel.hide();
+    topLeftPanel.hide();
+    bottomLeftPanel.hide();
+    topRightPanel.hide();
+    bottomRightPanel.hide();
+    midPanel.hide();
+    farRightPanel.removeClass('col-xl-8').addClass('col-xl-4').show();
   },
 
   switchTo221Layout: function() {
@@ -271,6 +284,19 @@ var base = {
     bottomLeftPanel.addClass('col-xl-6').show();
     topRightPanel.removeClass('col-xl-12').addClass('col-xl-6').show();
     bottomRightPanel.removeClass('col-xl-12').addClass('col-xl-6').show();
+    midPanel.removeClass('col-xl-4').addClass('col-xl-8').show();
+    farRightPanel.removeClass('col-xl-8').addClass('col-xl-4').show();
+  },
+
+  switchTo21Layout: function() {
+    if (base.layout === "21") return;
+    base.layout = "21";
+    farLeftPanel.hide();
+    topPanel.hide();
+    topLeftPanel.hide();
+    bottomLeftPanel.hide();
+    topRightPanel.removeClass('col-xl-6').addClass('col-xl-12').show();
+    bottomRightPanel.removeClass('col-xl-6').addClass('col-xl-12').show();
     midPanel.removeClass('col-xl-4').addClass('col-xl-8').show();
     farRightPanel.removeClass('col-xl-8').addClass('col-xl-4').show();
   },
@@ -320,12 +346,18 @@ var base = {
   },
 
   updateTitle: function(title, tooltip) {
-    $('.pagetitle').html(title).attr('title', tooltip).tooltip({
-      delay: {
-        "show": 500,
-        "hide": 100
-      }
-    });
+    var titles = title;
+    if (typeof title === "string") {
+      titles = [{
+        title: title,
+        tooltip: tooltip
+      }];
+    }
+    var content = titles.map(function(t, idx) {
+      return idx === titles.length - 1 ? '<span title="' + t.tooltip + '">' + t.title + '</span>' : '<a href="' + t.url + '" title="' + t.tooltip + '">' + t.title + '</a>';
+    }).join(" / ");
+
+    $('.pagetitle').html(content);
   },
 
   hideAllPanels: function() {

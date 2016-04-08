@@ -2,17 +2,21 @@ var data = require('./data.js'),
   lookup = require('./lookup.js'),
   base = require('./base.js'),
   patients = require('./panels/patients.js'),
+  patientList = require('./panels/patientList.js'),
   teamActionPlan = require('./panels/teamActionPlan.js'),
   allPatients = require('./panels/allPatients.js'),
   welcome = require('./panels/welcome.js'),
-  layout = require('./layout.js');
+  layout = require('./layout.js'),
+  overview = require('./panels/overview.js'),
+  indicatorView = require('./panels/indicator.js'),
+  patientView = require('./panels/patientView.js');
 
 var template = {
 
   loadContent: function(hash, isPoppingState) {
     base.hideTooltips();
 
-    var i, pathwayId, pathwayStage;
+    var i, pathwayId, pathwayStage, standard, indicator, patientId;
     if (!isPoppingState) {
       window.location.hash = hash;
     }
@@ -23,20 +27,63 @@ var template = {
       $('html').removeClass('scroll-bar');
     } else {
       $('html').addClass('scroll-bar');
+      var params = {};
       var urlBits = hash.split('/');
-      if (urlBits[0] === "#main") {
+      if(hash.indexOf('?')>-1) {
+        hash.split('?')[1].split('&').forEach(function(param){
+          var elems = param.split("=");
+          params[elems[0]] = elems[1];
+        });
+        urlBits = hash.split('?')[0].split('/');
+      }
+
+      if (urlBits[0] === "#overview" && !urlBits[1]) {
+        base.clearBox();
+        base.switchTo101Layout();
+        layout.showMainView();
+
+        $('#mainTitle').show();
+        base.updateTitle("Overview");
+
+        //Show overview panels
+        data.pathwayId = "htn";//TODO fudge
+        teamActionPlan.show(farRightPanel);
+        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
+        overview.create(template.loadContent);
+
+        base.wireUpTooltips();
+      } else if (urlBits[0] === "#overview") {
+        pathwayId = urlBits[1];
+        pathwayStage = urlBits[2];
+        standard = urlBits[3];
+        var tab = params.tab || "trend";
+
+        base.clearBox();
+        base.switchTo21Layout();
+        layout.showMainView();
+
+        $('#mainTitle').show();
+
+        //Show overview panels
+        data.pathwayId = pathwayId;
+        teamActionPlan.show(farRightPanel);
+        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
+        indicatorView.create(pathwayId, pathwayStage, standard, tab, template.loadContent);
+
+        base.wireUpTooltips();
+      } else if (urlBits[0] === "#main") {
         base.clearBox();
         pathwayId = urlBits[1];
         data.pathwayId = pathwayId;
         pathwayStage = urlBits[2];
         var yesPeople = urlBits[3] !== "no";
-        var standard = urlBits[4];
+        standard = urlBits[4];
 
         if (pathwayStage && layout.page !== 'main-dashboard') {
           $('.page').hide();
           $('#main-dashboard').show();
 
-          layout.showSidePanel();
+          ////layout.showSidePanel();
           layout.showOverviewPanels();
           layout.showHeaderBarItems();
         }
@@ -57,13 +104,41 @@ var template = {
         base.clearBox();
         layout.showPage('help-page');
 
-        layout.showSidePanel();
+        ////layout.showSidePanel();
         layout.showHeaderBarItems();
-        layout.showNavigation(data.diseases, -1, $('#help-page'));
-        layout.clearNavigation();
+        ////layout.showNavigation(data.diseases, -1, $('#help-page'));
+        ////layout.clearNavigation();
+      } else if (urlBits[0] === "#patient") {
+
+        patientId = urlBits[1];
+        pathwayId = urlBits[2];
+        pathwayStage = urlBits[3];
+        standard = urlBits[4];
+
+        //allPatients.showView(patientId, true);
+        base.clearBox();
+        base.switchTo21Layout();
+        layout.showMainView();
+
+        $('#mainTitle').show();
+
+        //Show overview panels
+        data.pathwayId = pathwayId;
+        teamActionPlan.show(farRightPanel);
+        
+        patientView.create(patientId);
+        base.wireUpTooltips();
+
+        /*if (patientId) {
+          var nhs = data.patLookup ? data.patLookup[patientId] : patientId;
+          $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
+            return $(this).text().trim() === nhs;
+          }).position().top - 140);
+          $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
+        }*/
       } else if (urlBits[0] === "#patients") {
 
-        var patientId = urlBits[1];
+        patientId = urlBits[1];
         pathwayId = urlBits[2];
 
         allPatients.showView(patientId, true);
@@ -81,9 +156,9 @@ var template = {
         base.clearBox();
         layout.showPage('welcome');
 
-        layout.showSidePanel();
+        ////layout.showSidePanel();
         layout.showHeaderBarItems();
-        layout.showNavigation(data.diseases, -1, $('#welcome'));
+        ////layout.showNavigation(data.diseases, -1, $('#welcome'));
 
         $('#welcome-tabs li').removeClass('active');
         $('#outstandingTasks').closest('li').addClass('active');
@@ -169,7 +244,7 @@ var template = {
       farLeftPanel.fadeOut(100, function() {
         $(this).html(panel);
         patients.wireUp(pathwayId, pathwayStage, farLeftPanel, standard);
-        patients.populate(pathwayId, pathwayStage, standard, null);
+        patientList.populate(pathwayId, pathwayStage, standard, null);
         $('#mainTitle').hide();
         base.updateTitle(data[pathwayId][pathwayStage].text.page.text, data[pathwayId][pathwayStage].text.page.tooltip);
         $(this).fadeIn(100);
@@ -177,7 +252,7 @@ var template = {
     } else {
       farLeftPanel.html(panel);
       patients.wireUp(pathwayId, pathwayStage, farLeftPanel, standard);
-      patients.populate(pathwayId, pathwayStage, standard, null);
+      patientList.populate(pathwayId, pathwayStage, standard, null);
       $('#mainTitle').hide();
       base.updateTitle(data[pathwayId][pathwayStage].text.page.text, data[pathwayId][pathwayStage].text.page.tooltip);
     }

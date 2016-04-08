@@ -5,11 +5,12 @@ var layout = {
   elements: {},
 
   //Side panel, navigation, header bar and main page
-  showMainView: function(idx) {
+  showMainView: function() {
     //Set up navigation panel
-    layout.showSidePanel();
-    layout.showNavigation(data.diseases, idx, $('#main-dashboard'));
+    ////layout.showSidePanel();
+    ////layout.showNavigation(data.diseases, idx, $('#main-dashboard'));
 
+    $('#bottomnavbar').hide();
     layout.showHeaderBarItems();
 
     //Show main dashboard page
@@ -100,7 +101,8 @@ var layout = {
     $('#' + page).show();
 
     if (page !== 'main-dashboard') {
-      layout.hideSidePanel();
+      ////layout.hideSidePanel();
+      $('#bottomnavbar').show();
       layout.hideHeaderBarItems();
     }
   },
