@@ -1,7 +1,7 @@
 /* Put your css in here */
 body {
-  padding-top: 50px;
   overflow-y: hidden;
+  padding-bottom: 70px;
 }
 
 body.qof {
@@ -686,7 +686,7 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 }
 
 .navbar-nav {
-  width: 100%;
+  /*width: 100%;*/
 }
 
 .btn-padding {
@@ -745,7 +745,7 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .login-page > .login-container {
   width: 360px;
   margin-top:-80px;
-  padding-bottom: 110px;
+  padding-top: 50px;
 }/*
 .narrow-container{
   width: 360px;

@@ -32,7 +32,7 @@ var log = {
   },
 
   editAction: function(id, actionId, agree, done, reason) {
-    var log, obj = log.getObj([{
+    var logText, obj = log.getObj([{
       name: "actions",
       value: {}
     }]);
@@ -45,28 +45,28 @@ var log = {
 
 
     if (agree) {
-      log = "You agreed with this suggested action on " + (new Date()).toDateString();
+      logText = "You agreed with this suggested action on " + (new Date()).toDateString();
     } else if (agree === false) {
       var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
-      log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
+      logText = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
     }
 
     if (done) {
-      log = "You agreed with this suggested action on " + (new Date()).toDateString();
+      logText = "You agreed with this suggested action on " + (new Date()).toDateString();
     }
 
     if (!obj.actions[id][actionId]) {
       obj.actions[id][actionId] = {
         "agree": agree ? agree : false,
         "done": done ? done : false,
-        "history": [log]
+        "history": [logText]
       };
     } else {
       if (agree === true || agree === false) obj.actions[id][actionId].agree = agree;
       if (done === true || done === false) obj.actions[id][actionId].done = done;
-      if (log) {
-        if (obj.actions[id][actionId].history) obj.actions[id][actionId].history.unshift(log);
-        else obj.actions[id][actionId].done.history = [log];
+      if (logText) {
+        if (obj.actions[id][actionId].history) obj.actions[id][actionId].history.unshift(logText);
+        else obj.actions[id][actionId].done.history = [logText];
       }
     }
 
@@ -253,11 +253,11 @@ var log = {
       return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
     });
 
-    var log = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
+    var logText = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
 
     if (items.length === 1) {
       items[0].agree = agree;
-      items[0].history.push(log);
+      items[0].history.push(logText);
       items[0].reason = reason;
     } else if (items.length === 0) {
       obj.agrees[patientId].push({
@@ -267,7 +267,7 @@ var log = {
         "item": item,
         "agree": agree,
         "reason": reason,
-        "history": [log]
+        "history": [logText]
       });
     } else {
       console.log("ERRORRR!!!!!!!");

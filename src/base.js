@@ -355,7 +355,7 @@ var base = {
     }
     var content = titles.map(function(t, idx) {
       return idx === titles.length - 1 ? '<span title="' + t.tooltip + '">' + t.title + '</span>' : '<a href="' + t.url + '" title="' + t.tooltip + '">' + t.title + '</a>';
-    }).join(" / ");
+    }).join(" > ");
 
     $('.pagetitle').html(content);
   },

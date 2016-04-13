@@ -12,6 +12,11 @@ var iap = {
     });
   },
 
+  show: function(panel, pathwayId, pathwayStage, standard, patientId) {
+    panel.html(iap.create(pathwayStage));
+    iap.wireUp(pathwayId, pathwayStage, standard, patientId);
+  },
+
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {
     individualTab = $('#tab-plan-individual');
 

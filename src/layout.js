@@ -88,7 +88,7 @@ var layout = {
     $('#aside-toggle nav:first').html(renderedBefore);
 
     $('.user').on('click', function() {
-      template.loadContent('#welcome');
+      template.loadContent('#agreedactions');
     });
 
     layout.elements.navigation = true;

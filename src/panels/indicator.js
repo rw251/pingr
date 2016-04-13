@@ -1,21 +1,15 @@
 var base = require('../base.js'),
   data = require('../data.js'),
-  patientList = require('./patientList.js'),
-  chart = require('../chart.js');
+  chart = require('../chart.js'),
+  patientList = require('../panels/patientList.js');
 
-var wireUp = function(loadContentFn) {
+var indicator = {
 
-};
-
-
-var ind = {
-
-  create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
-
+  create: function(panel, pathwayId, pathwayStage, standard, tab, loadContentFn) {
     data.getIndicatorData([pathwayId, pathwayStage, standard].join("."), function(indicators) {
 
       var tempMust = $('#indicator-overview-panel').html();
-      topRightPanel.html(Mustache.render(tempMust, {
+      panel.html(Mustache.render(tempMust, {
         "indicators": indicators,
         "benchmark": tab === "benchmark",
         "url": window.location.hash.replace(/\?tab=trend.*/g, '').replace(/\?tab=benchmark.*/g, '')
@@ -37,15 +31,15 @@ var ind = {
           }
         });
       } else {
-        var columns = indicators.opportunities.map(function(opp){
+        var columns = indicators.opportunities.map(function(opp) {
           var c = opp.values[0].slice();
-          c.splice(0,1,opp.name);
+          c.splice(0, 1, opp.name);
           return c;
         });
-        columns.splice(0,0,indicators.opportunities[0].values[1]);
+        columns.splice(0, 0, indicators.opportunities[0].values[1]);
         chart.drawPerformanceTrendChart("trend-chart-pane", {
           columns: columns,
-          x:"date"
+          x: "date"
         });
       }
 
@@ -53,9 +47,9 @@ var ind = {
       var pathwayStage = "monitoring";
       var standard = Object.keys(data[pathwayId][pathwayStage].standards)[0];
 
-      patientList.wireUp(pathwayId, pathwayStage, standard, function(patientId){
-        history.pushState(null, null, '#patient/' + [patientId,pathwayId, pathwayStage, standard].join("/"));
-        loadContentFn('#patient/' + [patientId,pathwayId, pathwayStage, standard].join("/"));
+      patientList.wireUp(pathwayId, pathwayStage, standard, function(patientId) {
+        history.pushState(null, null, '#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));
+        loadContentFn('#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));
       });
       patientList.populate(pathwayId, pathwayStage, standard, null);
       //base.updateTitle(data[pathwayId][pathwayStage].text.page.text, data[pathwayId][pathwayStage].text.page.tooltip);
@@ -67,12 +61,19 @@ var ind = {
         tooltip: data[pathwayId][pathwayStage].text.page.tooltip
       }]);
 
-      wireUp(loadContentFn);
+      indicator.wireUp(loadContentFn);
 
     });
+  },
+
+  populate: function() {
+
+  },
+
+  wireUp: function(panel, loadContentFn) {
 
   }
 
 };
 
-module.exports = ind;
+module.exports = indicator;

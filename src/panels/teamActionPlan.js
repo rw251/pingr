@@ -6,6 +6,7 @@ var base = require('../base.js'),
 var tap = {
 
   show: function(location) {
+    location.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
     base.createPanelShow($('#team-action-plan-panel'), location);
 
     suggestedPlanTeam = $('#suggestedPlanTeam');

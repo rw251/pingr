@@ -1,22 +1,51 @@
+var colour = {
+  index: 0,
+  next: function() {
+    if (this.index >= Highcharts.getOptions().colors.length) this.index = 0;
+    return Highcharts.getOptions().colors[this.index++];
+  },
+  reset: function() {
+    this.index = 0;
+  }
+};
+
 var ll = {
+  chartArray: [],
+
+  destroy: function(element) {
+    var elementId = '#' + element;
+    $(elementId).html('');
+    $(elementId).off('mouseout mousemove touchmove touchstart', '.sync-chart');
+
+    for (var i = 0; i < Highcharts.charts.length; i++) {
+      if (Highcharts.charts[i]) Highcharts.charts[i].destroy();
+      //delete Highcharts.charts[i];
+    }
+    //Highcharts.charts = [];
+  },
 
   create: function(element, data) {
     var elementId = '#' + element;
-    $(elementId).html('');
+    ll.destroy(element);
+
+    colour.reset();
     /**
      * In order to synchronize tooltips and crosshairs, override the
      * built-in events with handlers defined on the parent element.
      */
-    $(elementId).bind('mousemove touchmove touchstart', function(e) {
-      var chart,
-        point,
-        i,
-        event,
-        series;
 
-      for (i = 0; i < Highcharts.charts.length; i = i + 1) {
-        if (i === 0 || i >= Highcharts.charts.length - 2) continue;
-        chart = Highcharts.charts[i];
+    $(elementId).on('mouseout', '.sync-chart', function() {
+      var chart;
+      for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+        chart = ll.chartArray[i];
+        chart.tooltip.hide();
+      }
+    });
+    $(elementId).on('mousemove touchmove touchstart', '.sync-chart', function(e) {
+      var chart, point, i, event, series;
+
+      for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+        chart = ll.chartArray[i];
         event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
         //if (i === 0) console.log(event.chartX + " --- " + event.chartY);
         series = i === 0 ? Math.max(Math.min(Math.floor((130 - event.chartY) / 34), chart.series.length - 1), 0) : 0;
@@ -43,7 +72,7 @@ var ll = {
       var thisChart = this.chart;
 
       if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
-        Highcharts.each(Highcharts.charts, function(chart) {
+        Highcharts.each(ll.chartArray, function(chart) {
           if (chart !== thisChart) {
             if (chart.inverted) {
               if (chart.yAxis[0].setExtremes) { // It is null while updating
@@ -69,7 +98,8 @@ var ll = {
       $.each(conditions.reverse(), function(i, task) {
         var item = {
           name: task.name,
-          data: []
+          data: [],
+          color: colour.next()
         };
         $.each(task.intervals, function(j, interval) {
           item.data.push({
@@ -110,7 +140,7 @@ var ll = {
           "lineColor": "black",
           "radius": 8
         },
-        "Prescription": {
+        "Hospital admission": {
           "symbol": "triangle",
           "lineWidth": 1,
           "lineColor": "black",
@@ -123,7 +153,8 @@ var ll = {
           contactSeries[contact.name] = Highcharts.extend(contact, {
             data: [],
             type: 'scatter',
-            marker: markers[contact.name]
+            marker: markers[contact.name],
+            color: colour.next()
           });
         }
         contactSeries[contact.name].data.push([
@@ -161,6 +192,9 @@ var ll = {
             events: {
               setExtremes: syncExtremes
             },
+            labels: {
+              enabled: false
+            }
           },
 
           yAxis: {
@@ -269,7 +303,9 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
             max: Date.UTC(2016, 3, 5),
-            crosshair: false,
+            crosshair: {
+              snap: false
+            },
             events: {
               setExtremes: syncExtremes
             },
@@ -318,17 +354,19 @@ var ll = {
             data: dataset.data,
             name: dataset.name,
             type: dataset.type,
-            color: Highcharts.getOptions().colors[i],
+            color: colour.next(),
             fillOpacity: 0.3
             }]
         };
 
         if (dataset.name === "Blood pressure") {
           chartOptions.tooltip.pointFormat = "<b>BP:</b> {point.low}/{point.high} mmHg<br/>";
-          chartOptions.series.tooltip = {};
+          //chartOptions.series[0].tooltip = {};
+          chartOptions.series[0].stemWidth = 3;
+          chartOptions.series[0].whiskerWidth = 5;
         }
 
-        if (i === measurements.datasets.length - 1) {
+        /*if (i === measurements.datasets.length - 1) {
           chartOptions.xAxis = {
             crosshair: true,
             events: {
@@ -336,8 +374,8 @@ var ll = {
             },
             type: 'datetime'
           };
-        }
-        $('<div class="h-chart' + (i === measurements.datasets.length - 1 ? " h-last-measurement-chart" : "") + '">')
+        }*/
+        $('<div class="sync-chart h-chart' + (i === measurements.datasets.length - 1 ? " h-last-measurement-chart" : "") + '">')
           .appendTo(elementId)
           .highcharts(chartOptions);
 
@@ -434,7 +472,8 @@ var ll = {
       $.each(medications.reverse(), function(i, task) {
         var item = {
           name: task.name,
-          data: []
+          data: [],
+          color: colour.next()
         };
         $.each(task.intervals, function(j, interval) {
           item.data.push([i + 0.49, interval.from, interval.to]);
@@ -560,6 +599,9 @@ var ll = {
     c.highcharts().axes[1].setExtremes(1434864000000, 1459814400000, undefined, false, {
       trigger: 'syncExtremes'
     });
+
+    ll.chartArray = Highcharts.charts.slice(Highcharts.charts.length - 6, Highcharts.charts.length);
+
     var s = syncExtremes.bind(c.highcharts().series[0]);
     s({
       trigger: 'navigator',

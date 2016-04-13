@@ -66,7 +66,7 @@ $(document).on('ready', function() {
   history.pushState(null, null, '');
 });
 
-},{"./src/main.js":8,"./src/template.js":25}],2:[function(require,module,exports){
+},{"./src/main.js":8,"./src/template.js":24}],2:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   chart = require('./chart.js'),
@@ -424,7 +424,7 @@ var base = {
     }
     var content = titles.map(function(t, idx) {
       return idx === titles.length - 1 ? '<span title="' + t.tooltip + '">' + t.title + '</span>' : '<a href="' + t.url + '" title="' + t.tooltip + '">' + t.title + '</a>';
-    }).join(" / ");
+    }).join(" > ");
 
     $('.pagetitle').html(content);
   },
@@ -1209,7 +1209,7 @@ var layout = {
     $('#aside-toggle nav:first').html(renderedBefore);
 
     $('.user').on('click', function() {
-      template.loadContent('#welcome');
+      template.loadContent('#agreedactions');
     });
 
     layout.elements.navigation = true;
@@ -1297,7 +1297,7 @@ var log = {
   },
 
   editAction: function(id, actionId, agree, done, reason) {
-    var log, obj = log.getObj([{
+    var logText, obj = log.getObj([{
       name: "actions",
       value: {}
     }]);
@@ -1310,28 +1310,28 @@ var log = {
 
 
     if (agree) {
-      log = "You agreed with this suggested action on " + (new Date()).toDateString();
+      logText = "You agreed with this suggested action on " + (new Date()).toDateString();
     } else if (agree === false) {
       var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
-      log = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
+      logText = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
     }
 
     if (done) {
-      log = "You agreed with this suggested action on " + (new Date()).toDateString();
+      logText = "You agreed with this suggested action on " + (new Date()).toDateString();
     }
 
     if (!obj.actions[id][actionId]) {
       obj.actions[id][actionId] = {
         "agree": agree ? agree : false,
         "done": done ? done : false,
-        "history": [log]
+        "history": [logText]
       };
     } else {
       if (agree === true || agree === false) obj.actions[id][actionId].agree = agree;
       if (done === true || done === false) obj.actions[id][actionId].done = done;
-      if (log) {
-        if (obj.actions[id][actionId].history) obj.actions[id][actionId].history.unshift(log);
-        else obj.actions[id][actionId].done.history = [log];
+      if (logText) {
+        if (obj.actions[id][actionId].history) obj.actions[id][actionId].history.unshift(logText);
+        else obj.actions[id][actionId].done.history = [logText];
       }
     }
 
@@ -1518,11 +1518,11 @@ var log = {
       return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard && val.item === item;
     });
 
-    var log = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
+    var logText = "You " + (agree ? "" : "dis") + "agreed with this on " + (new Date()).toDateString();
 
     if (items.length === 1) {
       items[0].agree = agree;
-      items[0].history.push(log);
+      items[0].history.push(logText);
       items[0].reason = reason;
     } else if (items.length === 0) {
       obj.agrees[patientId].push({
@@ -1532,7 +1532,7 @@ var log = {
         "item": item,
         "agree": agree,
         "reason": reason,
-        "history": [log]
+        "history": [logText]
       });
     } else {
       console.log("ERRORRR!!!!!!!");
@@ -1822,7 +1822,7 @@ var main = {
 
 module.exports = main;
 
-},{"./base.js":2,"./data.js":4,"./layout.js":5,"./log.js":6,"./panels/welcome.js":24,"./template.js":25}],9:[function(require,module,exports){
+},{"./base.js":2,"./data.js":4,"./layout.js":5,"./log.js":6,"./panels/welcome.js":23,"./template.js":24}],9:[function(require,module,exports){
 module.exports = {
 
   showSaved: function() {
@@ -2058,7 +2058,7 @@ var all = {
 
 module.exports = all;
 
-},{"../base.js":2,"../chart.js":3,"../data.js":4,"../layout.js":5,"./individualActionPlan.js":13,"./medication.js":15,"./otherCodes.js":16,"./qualityStandard.js":21,"./trend.js":23}],11:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"../layout.js":5,"./individualActionPlan.js":14,"./medication.js":16,"./otherCodes.js":17,"./qualityStandard.js":20,"./trend.js":22}],11:[function(require,module,exports){
 var base = require('../base.js'),
 log = require('../log.js');
 
@@ -2173,22 +2173,16 @@ module.exports = confirm;
 },{"../base.js":2,"../log.js":6}],12:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
-  patientList = require('./patientList.js'),
-  chart = require('../chart.js');
+  chart = require('../chart.js'),
+  patientList = require('../panels/patientList.js');
 
-var wireUp = function(loadContentFn) {
+var indicator = {
 
-};
-
-
-var ind = {
-
-  create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
-
+  create: function(panel, pathwayId, pathwayStage, standard, tab, loadContentFn) {
     data.getIndicatorData([pathwayId, pathwayStage, standard].join("."), function(indicators) {
 
       var tempMust = $('#indicator-overview-panel').html();
-      topRightPanel.html(Mustache.render(tempMust, {
+      panel.html(Mustache.render(tempMust, {
         "indicators": indicators,
         "benchmark": tab === "benchmark",
         "url": window.location.hash.replace(/\?tab=trend.*/g, '').replace(/\?tab=benchmark.*/g, '')
@@ -2210,15 +2204,15 @@ var ind = {
           }
         });
       } else {
-        var columns = indicators.opportunities.map(function(opp){
+        var columns = indicators.opportunities.map(function(opp) {
           var c = opp.values[0].slice();
-          c.splice(0,1,opp.name);
+          c.splice(0, 1, opp.name);
           return c;
         });
-        columns.splice(0,0,indicators.opportunities[0].values[1]);
+        columns.splice(0, 0, indicators.opportunities[0].values[1]);
         chart.drawPerformanceTrendChart("trend-chart-pane", {
           columns: columns,
-          x:"date"
+          x: "date"
         });
       }
 
@@ -2226,9 +2220,9 @@ var ind = {
       var pathwayStage = "monitoring";
       var standard = Object.keys(data[pathwayId][pathwayStage].standards)[0];
 
-      patientList.wireUp(pathwayId, pathwayStage, standard, function(patientId){
-        history.pushState(null, null, '#patient/' + [patientId,pathwayId, pathwayStage, standard].join("/"));
-        loadContentFn('#patient/' + [patientId,pathwayId, pathwayStage, standard].join("/"));
+      patientList.wireUp(pathwayId, pathwayStage, standard, function(patientId) {
+        history.pushState(null, null, '#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));
+        loadContentFn('#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));
       });
       patientList.populate(pathwayId, pathwayStage, standard, null);
       //base.updateTitle(data[pathwayId][pathwayStage].text.page.text, data[pathwayId][pathwayStage].text.page.tooltip);
@@ -2240,17 +2234,71 @@ var ind = {
         tooltip: data[pathwayId][pathwayStage].text.page.tooltip
       }]);
 
-      wireUp(loadContentFn);
+      indicator.wireUp(loadContentFn);
 
     });
+  },
+
+  populate: function() {
+
+  },
+
+  wireUp: function(panel, loadContentFn) {
 
   }
 
 };
 
-module.exports = ind;
+module.exports = indicator;
 
-},{"../base.js":2,"../chart.js":3,"../data.js":4,"./patientList.js":18}],13:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"../panels/patientList.js":18}],13:[function(require,module,exports){
+var base = require('../base.js'),
+  log = require('../log.js'),
+  data = require('../data.js');
+
+var indicatorList = {
+
+  create: function(panel, loadContentFn) {
+    data.getAllIndicatorData(function(indicators) {
+
+      var tempMust = $('#overview-panel-table').html();
+      panel.html(Mustache.render(tempMust, {
+        "indicators": indicators
+      }));
+
+      $('.inlinesparkline').sparkline('html', {
+        tooltipFormatter: function(sparkline, options, fields) {
+          return indicators[$('.inlinesparkline').index(sparkline.el)].dates[fields.x] + ": " + fields.y + "%";
+        }
+      });
+
+      indicatorList.wireUp(panel, loadContentFn);
+
+    });
+  },
+
+  populate: function() {
+
+  },
+
+  wireUp: function(panel, loadContentFn) {
+    panel.off('click', 'tr.standard-row');
+    panel.on('click', 'tr.standard-row', function(e) {
+      var url = $(this).data("id").replace(/\./g, "/");
+      history.pushState(null, null, '#overview/' + url);
+      loadContentFn('#overview/' + url);
+      // do not give a default action
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+  }
+
+};
+
+module.exports = indicatorList;
+
+},{"../base.js":2,"../data.js":4,"../log.js":6}],14:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -2263,6 +2311,11 @@ var iap = {
       "pathwayStage": pathwayStage || "default",
       "noHeader": true
     });
+  },
+
+  show: function(panel, pathwayId, pathwayStage, standard, patientId) {
+    panel.html(iap.create(pathwayStage));
+    iap.wireUp(pathwayId, pathwayStage, standard, patientId);
   },
 
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {
@@ -2634,26 +2687,55 @@ var iap = {
 
 module.exports = iap;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],14:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],15:[function(require,module,exports){
+var colour = {
+  index: 0,
+  next: function() {
+    if (this.index >= Highcharts.getOptions().colors.length) this.index = 0;
+    return Highcharts.getOptions().colors[this.index++];
+  },
+  reset: function() {
+    this.index = 0;
+  }
+};
+
 var ll = {
+  chartArray: [],
+
+  destroy: function(element) {
+    var elementId = '#' + element;
+    $(elementId).html('');
+    $(elementId).off('mouseout mousemove touchmove touchstart', '.sync-chart');
+
+    for (var i = 0; i < Highcharts.charts.length; i++) {
+      if (Highcharts.charts[i]) Highcharts.charts[i].destroy();
+      //delete Highcharts.charts[i];
+    }
+    //Highcharts.charts = [];
+  },
 
   create: function(element, data) {
     var elementId = '#' + element;
-    $(elementId).html('');
+    ll.destroy(element);
+
+    colour.reset();
     /**
      * In order to synchronize tooltips and crosshairs, override the
      * built-in events with handlers defined on the parent element.
      */
-    $(elementId).bind('mousemove touchmove touchstart', function(e) {
-      var chart,
-        point,
-        i,
-        event,
-        series;
 
-      for (i = 0; i < Highcharts.charts.length; i = i + 1) {
-        if (i === 0 || i >= Highcharts.charts.length - 2) continue;
-        chart = Highcharts.charts[i];
+    $(elementId).on('mouseout', '.sync-chart', function() {
+      var chart;
+      for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+        chart = ll.chartArray[i];
+        chart.tooltip.hide();
+      }
+    });
+    $(elementId).on('mousemove touchmove touchstart', '.sync-chart', function(e) {
+      var chart, point, i, event, series;
+
+      for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+        chart = ll.chartArray[i];
         event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
         //if (i === 0) console.log(event.chartX + " --- " + event.chartY);
         series = i === 0 ? Math.max(Math.min(Math.floor((130 - event.chartY) / 34), chart.series.length - 1), 0) : 0;
@@ -2680,7 +2762,7 @@ var ll = {
       var thisChart = this.chart;
 
       if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
-        Highcharts.each(Highcharts.charts, function(chart) {
+        Highcharts.each(ll.chartArray, function(chart) {
           if (chart !== thisChart) {
             if (chart.inverted) {
               if (chart.yAxis[0].setExtremes) { // It is null while updating
@@ -2706,7 +2788,8 @@ var ll = {
       $.each(conditions.reverse(), function(i, task) {
         var item = {
           name: task.name,
-          data: []
+          data: [],
+          color: colour.next()
         };
         $.each(task.intervals, function(j, interval) {
           item.data.push({
@@ -2747,7 +2830,7 @@ var ll = {
           "lineColor": "black",
           "radius": 8
         },
-        "Prescription": {
+        "Hospital admission": {
           "symbol": "triangle",
           "lineWidth": 1,
           "lineColor": "black",
@@ -2760,7 +2843,8 @@ var ll = {
           contactSeries[contact.name] = Highcharts.extend(contact, {
             data: [],
             type: 'scatter',
-            marker: markers[contact.name]
+            marker: markers[contact.name],
+            color: colour.next()
           });
         }
         contactSeries[contact.name].data.push([
@@ -2798,6 +2882,9 @@ var ll = {
             events: {
               setExtremes: syncExtremes
             },
+            labels: {
+              enabled: false
+            }
           },
 
           yAxis: {
@@ -2906,7 +2993,9 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
             max: Date.UTC(2016, 3, 5),
-            crosshair: false,
+            crosshair: {
+              snap: false
+            },
             events: {
               setExtremes: syncExtremes
             },
@@ -2955,17 +3044,19 @@ var ll = {
             data: dataset.data,
             name: dataset.name,
             type: dataset.type,
-            color: Highcharts.getOptions().colors[i],
+            color: colour.next(),
             fillOpacity: 0.3
             }]
         };
 
         if (dataset.name === "Blood pressure") {
           chartOptions.tooltip.pointFormat = "<b>BP:</b> {point.low}/{point.high} mmHg<br/>";
-          chartOptions.series.tooltip = {};
+          //chartOptions.series[0].tooltip = {};
+          chartOptions.series[0].stemWidth = 3;
+          chartOptions.series[0].whiskerWidth = 5;
         }
 
-        if (i === measurements.datasets.length - 1) {
+        /*if (i === measurements.datasets.length - 1) {
           chartOptions.xAxis = {
             crosshair: true,
             events: {
@@ -2973,8 +3064,8 @@ var ll = {
             },
             type: 'datetime'
           };
-        }
-        $('<div class="h-chart' + (i === measurements.datasets.length - 1 ? " h-last-measurement-chart" : "") + '">')
+        }*/
+        $('<div class="sync-chart h-chart' + (i === measurements.datasets.length - 1 ? " h-last-measurement-chart" : "") + '">')
           .appendTo(elementId)
           .highcharts(chartOptions);
 
@@ -3071,7 +3162,8 @@ var ll = {
       $.each(medications.reverse(), function(i, task) {
         var item = {
           name: task.name,
-          data: []
+          data: [],
+          color: colour.next()
         };
         $.each(task.intervals, function(j, interval) {
           item.data.push([i + 0.49, interval.from, interval.to]);
@@ -3197,6 +3289,9 @@ var ll = {
     c.highcharts().axes[1].setExtremes(1434864000000, 1459814400000, undefined, false, {
       trigger: 'syncExtremes'
     });
+
+    ll.chartArray = Highcharts.charts.slice(Highcharts.charts.length - 6, Highcharts.charts.length);
+
     var s = syncExtremes.bind(c.highcharts().series[0]);
     s({
       trigger: 'navigator',
@@ -3209,7 +3304,7 @@ var ll = {
 
 module.exports = ll;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -3240,7 +3335,7 @@ var med = {
 
 module.exports = med;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],16:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],17:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -3275,48 +3370,7 @@ var other = {
 
 module.exports = other;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],17:[function(require,module,exports){
-var base = require('../base.js'),
-  data = require('../data.js');
-
-var wireUp = function(loadContentFn){
-  farLeftPanel.off('click', 'tr.standard-row');
-  farLeftPanel.on('click', 'tr.standard-row', function(e) {
-    var url = $(this).data("id").replace(/\./g,"/");
-    history.pushState(null, null, '#overview/' + url);
-    loadContentFn('#overview/' + url);
-    // do not give a default action
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  });
-};
-
-
-var overview = {
-
-  create: function(loadContentFn) {
-
-    data.getAllIndicatorData(function(indicators) {
-
-      var tempMust = $('#overview-panel-table').html();
-      farLeftPanel.html(Mustache.render(tempMust, {"indicators":indicators}));
-
-      $('.inlinesparkline').sparkline('html', {tooltipFormatter: function(sparkline, options, fields){
-        return indicators[$('.inlinesparkline').index(sparkline.el)].dates[fields.x] + ": " + fields.y + "%";
-      }});
-
-      wireUp(loadContentFn);
-
-    });
-
-  }
-
-};
-
-module.exports = overview;
-
-},{"../base.js":2,"../data.js":4}],18:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],18:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   lookup = require('../lookup.js');
@@ -3536,30 +3590,6 @@ var pl = {
 module.exports = pl;
 
 },{"../base.js":2,"../data.js":4,"../lookup.js":7}],19:[function(require,module,exports){
-var lifeline = require('./lifeline.js'),
-  data = require('../data.js');
-
-var pv = {
-
-  wireUp: function(){
-
-  },
-
-  create: function(patientId){
-    data.getPatientData(patientId, function(data){
-      lifeline.create('top-right-panel', data);
-    });
-  },
-
-  populate: function(){
-
-  }
-
-};
-
-module.exports = pv;
-
-},{"../data.js":4,"./lifeline.js":14}],20:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   lookup = require('../lookup.js'),
@@ -3954,7 +3984,7 @@ var pt = {
 
 module.exports = pt;
 
-},{"../base.js":2,"../chart.js":3,"../data.js":4,"../lookup.js":7,"./individualActionPlan.js":13,"./medication.js":15,"./otherCodes.js":16,"./patientList.js":18,"./qualityStandard.js":21,"./trend.js":23}],21:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"../lookup.js":7,"./individualActionPlan.js":14,"./medication.js":16,"./otherCodes.js":17,"./patientList.js":18,"./qualityStandard.js":20,"./trend.js":22}],20:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
@@ -4051,7 +4081,7 @@ var qs = {
 
 module.exports = qs;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],22:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],21:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -4060,6 +4090,7 @@ var base = require('../base.js'),
 var tap = {
 
   show: function(location) {
+    location.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
     base.createPanelShow($('#team-action-plan-panel'), location);
 
     suggestedPlanTeam = $('#suggestedPlanTeam');
@@ -4393,7 +4424,7 @@ var tap = {
 
 module.exports = tap;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],23:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],22:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -4444,7 +4475,7 @@ var trnd = {
 
 module.exports = trnd;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"../lookup.js":7,"./confirm.js":11}],24:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"../lookup.js":7,"./confirm.js":11}],23:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
@@ -4907,7 +4938,7 @@ var welcome = {
 
 module.exports = welcome;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./individualActionPlan.js":13,"./teamActionPlan.js":22}],25:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./individualActionPlan.js":14,"./teamActionPlan.js":21}],24:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   base = require('./base.js'),
@@ -4917,9 +4948,9 @@ var data = require('./data.js'),
   allPatients = require('./panels/allPatients.js'),
   welcome = require('./panels/welcome.js'),
   layout = require('./layout.js'),
-  overview = require('./panels/overview.js'),
-  indicatorView = require('./panels/indicator.js'),
-  patientView = require('./panels/patientView.js');
+  overview = require('./views/overview.js'),
+  indicatorView = require('./views/indicator.js'),
+  patientView = require('./views/patient.js');
 
 var template = {
 
@@ -4948,39 +4979,14 @@ var template = {
       }
 
       if (urlBits[0] === "#overview" && !urlBits[1]) {
-        base.clearBox();
-        base.switchTo101Layout();
-        layout.showMainView();
 
-        $('#mainTitle').show();
-        base.updateTitle("Overview");
-
-        //Show overview panels
-        data.pathwayId = "htn";//TODO fudge
-        teamActionPlan.show(farRightPanel);
-        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
         overview.create(template.loadContent);
 
-        base.wireUpTooltips();
       } else if (urlBits[0] === "#overview") {
-        pathwayId = urlBits[1];
-        pathwayStage = urlBits[2];
-        standard = urlBits[3];
-        var tab = params.tab || "trend";
 
-        base.clearBox();
-        base.switchTo21Layout();
-        layout.showMainView();
+        //create(pathwayId, pathwayStage, standard, tab, loadContentFunction)
+        indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
 
-        $('#mainTitle').show();
-
-        //Show overview panels
-        data.pathwayId = pathwayId;
-        teamActionPlan.show(farRightPanel);
-        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
-        indicatorView.create(pathwayId, pathwayStage, standard, tab, template.loadContent);
-
-        base.wireUpTooltips();
       } else if (urlBits[0] === "#main") {
         base.clearBox();
         pathwayId = urlBits[1];
@@ -5014,38 +5020,13 @@ var template = {
         base.clearBox();
         layout.showPage('help-page');
 
-        ////layout.showSidePanel();
         layout.showHeaderBarItems();
-        ////layout.showNavigation(data.diseases, -1, $('#help-page'));
-        ////layout.clearNavigation();
+
       } else if (urlBits[0] === "#patient") {
 
-        patientId = urlBits[1];
-        pathwayId = urlBits[2];
-        pathwayStage = urlBits[3];
-        standard = urlBits[4];
+        //create(pathwayId, pathwayStage, standard, patientId)
+        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1]);
 
-        //allPatients.showView(patientId, true);
-        base.clearBox();
-        base.switchTo21Layout();
-        layout.showMainView();
-
-        $('#mainTitle').show();
-
-        //Show overview panels
-        data.pathwayId = pathwayId;
-        teamActionPlan.show(farRightPanel);
-        
-        patientView.create(patientId);
-        base.wireUpTooltips();
-
-        /*if (patientId) {
-          var nhs = data.patLookup ? data.patLookup[patientId] : patientId;
-          $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
-            return $(this).text().trim() === nhs;
-          }).position().top - 140);
-          $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
-        }*/
       } else if (urlBits[0] === "#patients") {
 
         patientId = urlBits[1];
@@ -5062,7 +5043,7 @@ var template = {
           }).position().top - 140);
           $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
         }
-      } else if (urlBits[0] === "#welcome") {
+      } else if (urlBits[0] === "#agreedactions") {
         base.clearBox();
         layout.showPage('welcome');
 
@@ -5107,7 +5088,6 @@ var template = {
     //Show overview panels
     template.showOverviewPanels();
     teamActionPlan.show(farRightPanel);
-    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
   },
 
   showOverviewPanels: function() {
@@ -5256,4 +5236,138 @@ var template = {
 
 module.exports = template;
 
-},{"./base.js":2,"./data.js":4,"./layout.js":5,"./lookup.js":7,"./panels/allPatients.js":10,"./panels/indicator.js":12,"./panels/overview.js":17,"./panels/patientList.js":18,"./panels/patientView.js":19,"./panels/patients.js":20,"./panels/teamActionPlan.js":22,"./panels/welcome.js":24}]},{},[1]);
+},{"./base.js":2,"./data.js":4,"./layout.js":5,"./lookup.js":7,"./panels/allPatients.js":10,"./panels/patientList.js":18,"./panels/patients.js":19,"./panels/teamActionPlan.js":21,"./panels/welcome.js":23,"./views/indicator.js":25,"./views/overview.js":26,"./views/patient.js":27}],25:[function(require,module,exports){
+var base = require('../base.js'),
+  data = require('../data.js'),
+  patientList = require('../panels/patientList.js'),
+  indicator = require('../panels/indicator.js'),
+  teamActionPlan = require('../panels/teamActionPlan.js'),
+  layout = require('../layout.js');
+
+/*
+ * The indicator page consists of the panels:
+ *   Tabbed panel
+ *     - performance trend
+ *     - performance benchmark
+ *   Patient groups
+ *   Patient list
+ *   Team action plan
+ */
+
+var ind = {
+
+  create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
+
+    base.clearBox();
+    base.switchTo21Layout();
+    layout.showMainView();
+
+    $('#mainTitle').show();
+
+    data.pathwayId = pathwayId;
+
+    teamActionPlan.show(farRightPanel);
+    indicator.create(topRightPanel, pathwayId, pathwayStage, standard, tab, loadContentFn);
+
+    base.wireUpTooltips();
+
+  }
+
+};
+
+module.exports = ind;
+
+},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/indicator.js":12,"../panels/patientList.js":18,"../panels/teamActionPlan.js":21}],26:[function(require,module,exports){
+var base = require('../base.js'),
+  data = require('../data.js'),
+  layout = require('../layout.js'),
+  indicatorList = require('../panels/indicatorList.js'),
+  teamActionPlan = require('../panels/teamActionPlan.js');
+
+/*
+ * The overview page consists of the panels:
+ *   Indicator list
+ *   Team action plan
+ */
+var overview = {
+
+  create: function(loadContentFn) {
+
+    base.clearBox();
+    base.switchTo101Layout();
+    layout.showMainView();
+
+    $('#mainTitle').show();
+    base.updateTitle("Overview");
+
+    //Show overview panels
+    data.pathwayId = "htn";//TODO fudge
+
+    teamActionPlan.show(farRightPanel);
+    indicatorList.create(farLeftPanel, loadContentFn);
+
+    base.wireUpTooltips();
+
+  }
+
+};
+
+module.exports = overview;
+
+},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/indicatorList.js":13,"../panels/teamActionPlan.js":21}],27:[function(require,module,exports){
+var lifeline = require('../panels/lifeline.js'),
+  data = require('../data.js'),
+  base = require('../base.js'),
+  layout = require('../layout.js'),
+  individualActionPlan = require('../panels/individualActionPlan.js');
+
+/*
+ * The patient page consists of the panels:
+ *   Lifeline chart
+ *   Individual action plan
+ */
+
+var pv = {
+
+  wireUp: function() {
+
+  },
+
+  create: function(pathwayId, pathwayStage, standard, patientId) {
+
+    base.clearBox();
+    base.switchTo21Layout();
+    layout.showMainView();
+
+    $('#mainTitle').show();
+    base.updateTitle([{
+      title: "Overview",
+      url: "#overview"
+    }, {
+      title: data[pathwayId][pathwayStage].text.page.text,
+      tooltip: data[pathwayId][pathwayStage].text.page.tooltip,
+      url: ["#overview", pathwayId, pathwayStage, standard].join("/")
+    }, {
+      title: patientId
+    }]);
+
+    data.pathwayId = pathwayId;
+
+    individualActionPlan.show(farRightPanel, pathwayId, pathwayStage, standard, patientId);
+    data.getPatientData(patientId, function(data) {
+      lifeline.create('top-right-panel', data);
+    });
+
+    base.wireUpTooltips();
+
+  },
+
+  populate: function() {
+
+  }
+
+};
+
+module.exports = pv;
+
+},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/individualActionPlan.js":14,"../panels/lifeline.js":15}]},{},[1]);

@@ -17,6 +17,7 @@
   <link href="assets/css/select2/select2.min.css" rel="stylesheet" />
   <!-- Fonts  -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,300" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300" rel="stylesheet" type="text/css">
   <!-- Base Brio Styling  -->
   <link href="assets/css/app/app.v1.css" rel="stylesheet">
   <!-- My styling -->
@@ -53,70 +54,42 @@
   </div>
 
   <section id="main">
-    <nav class="navbar navbar-fixed-top hide-if-logged-out" id="topnavbar" style="display: block;padding-left: 0px;">
-      <div class="container" style="padding-left: 40px;border-bottom:0px solid #bec0c6; background-color: #b1b3ba">
-        <div class="collapse navbar-collapse" id="navbar">
-          <ul class="nav navbar-nav">
+    <header class="top-head container-fluid hide-if-logged-out">
 
-            <li class="hide-if-logged-out input-group pull-left" id="search-box">
-              <input type="text" placeholder="Search by patients number..." class="typeahead">
-              <i id="searchbtn" class="fa fa-lg fa-search" style="position: absolute;top: 20px;right: 22px;cursor: pointer;"></i>
-              <!--fudge to get search icon-->
-            </li>
+      <!--<input type="text" placeholder="Search by patients number..." class="typeahead">
+      <i id="searchbtn" class="fa fa-lg fa-search" style="position: absolute;top: 20px;right: 22px;cursor: pointer;"></i>-->
+      <!--fudge to get search icon-->
 
-            <!-- Single button -->
-            <!--<div class="hide-if-logged-out btn-group pull-right">
-              <button type="button" class="btn btn-default btn-padding dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="fa fa-cog"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <span class="btn btn-default btn-file" id="data-file-wrapper">
-                    Load data <input type="file" id="data-file" >
-                  </span>
-                </li>
-                <li>
-                  <span class="btn btn-default btn-file" id="patient-file-wrapper">
-                    Load patients <input type="file" id="patient-file" >
-                  </span>
-                </li>
-              </ul>
-            </div>-->
+      <form role="search" class="navbar-left app-search pull-left hidden-xs ng-pristine ng-valid">
+        <input type="text" placeholder="Search by patients number..." class="typeahead form-control form-control-circle">
+      </form>
 
-            <li class="active hide-if-logged-out pull-right">
-              <a class="history" href="/">Sign out</a>
-            </li>
+      <nav class=" navbar-default hidden-xs" role="navigation">
 
-            <li class="active hide-if-logged-out pull-right">
-              <a>Contact us</a>
-            </li>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="#overview">Overview</a>
+          </li>
 
-            <li class="active hide-if-logged-out pull-right" id="help">
-              <a class="history">Help</a>
-            </li>
+          <li>
+            <a href="#agreedactions">Agreed actions</a>
+          </li>
 
-            <li class="active hide-if-logged-out pull-right">
-              <a class="#welcome">Agreed actions</a>
-            </li>
+          <li>
+            <a href="#help">Help</a>
+          </li>
 
-            <!-- Split button -->
-            <!--<div class="hide-if-logged-out pull-right btn-group">-->
-            <!--<button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="hidden-xs hidden-sm hidden-md">Download agreed actions </span></button>-->
-            <!--<button type="button" class="btn btn-danger dropdown-toggle btn-padding" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="hidden-xs hidden-sm hidden-md">Download agreed actions &nbsp; </span>
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="download-outstanding clickable">Download agreed actions <strong>awaiting implementation</strong></a></li>
-                <li><a class="download-completed clickable">Download agreed actions <strong>that have been implemented </strong></a></li>
-                <li><hr style ="margin-top:2px; margin-bottom:2px; border-bottom: 1px solid grey"></hr>
-                <li><a class="download-completed clickable">Download <strong>all</strong> actions (both awaiting implementation and implemented)</a></li>
-              </ul>-->
-          </ul>
-        </div>
-      </div>
-    </nav>
+          <li>
+            <a>Contact us</a>
+          </li>
+
+          <li>
+            <a href="/">Sign out</a>
+          </li>
+
+        </ul>
+      </nav>
+    </header>
 
     <div class="starter-template-high page login-page" id="login">
       <div class="container login-container">
@@ -210,39 +183,6 @@
       </div>
     </div>
 
-    <nav class="navbar navbar-fixed-bottom" id="bottomnavbar">
-      <div class="container">
-
-        <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <table style="width:100%">
-              <tr>
-                <td>
-                  <img alt="..." class="img-responsive" width="160" height="43" src="assets/images/icons/herc-logo-160px.png">
-                </td>
-                <td></td>
-                <td></td>
-                <td>
-                  <img alt="..." class="img-responsive" width="160" height="68" src="assets/images/icons/uom-logo-160px.png">
-                </td>
-                <td></td>
-                <td></td>
-                <td>
-                  <img alt="..." class="img-responsive" width="160" height="46" src="assets/images/icons/farr-logo-160px.png">
-                </td>
-                <td></td>
-                <td></td>
-                <td>
-                  <img alt="..." class="img-responsive" width="160" height="42" src="assets/images/icons/wellcome-160px.png">
-                </td>
-              </tr>
-            </table>
-          </ul>
-        </div>
-        <!--/.nav-collapse -->
-      </div>
-    </nav>
-
     <div class="starter-template page" id="help-page">
 
       <div class="container-fluid">
@@ -282,10 +222,8 @@
           <h3 id="mainTitle" class="pagetitle" data-toggle="tooltip" data-placement="right" style="padding-left: 15px; padding-bottom: 15px; padding-top: 0px"></h3>
         </div>
         <div class="row">
-          <div class="col-xl-4 col-lg-3" id="left-panel" style="border-right:10px solid #b1b3ba;padding-bottom: 20px;height:1000px"></div>
+          <div class="col-xl-4 col-lg-3" id="left-panel"></div>
           <div class="col-xl-8 col-lg-6" id="mid-panel">
-            <!--<div class="row" style="max-height:400px">
-            </div>-->
             <div class="row">
               <div id="top-panel" class="col-xl-12"></div>
               <div id="top-left-panel" class="col-xl-6"></div>
@@ -303,6 +241,22 @@
       </div>
     </div>
     <div id="modal"></div>
+
+    <footer class="container-fluid footer pull-right">
+      <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+          <ul class="nav navbar-nav">
+            <li><img alt="..." class="img-responsive" width="160" height="42" src="assets/images/icons/wellcome-160px.png"></li>
+            <li><img alt="..." class="img-responsive" width="160" height="46" src="assets/images/icons/farr-logo-160px.png">
+            </li>
+            <li><img alt="..." class="img-responsive" width="160" height="68" src="assets/images/icons/uom-logo-160px.png">
+            </li>
+            <li><img alt="..." class="img-responsive" width="160" height="43" src="assets/images/icons/herc-logo-160px.png">
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </footer>
   </section>
 
   <div style="display:none" id="temp-hidden"></div>
@@ -1283,6 +1237,23 @@
       <div class="panel panel-default">
         <div class="panel-body">
           <div id="patients"></div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="tabbed-panel" type="x-tmpl-mustache">
+    <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <ul class="nav nav-tabs top-tabs" role="tablist">
+            {{#panels}}
+            <li {{#active}}class="active" {{/active}} data-toggle="tooltip" data-placement="top" title="{{#tooltip}}"><a {{^active}}href="{{url}}?tab={{name}}" {{/active}}>Trend</a></li>
+            {{/panels}}
+          </ul>
+          <div class="tab-pane">
+            <div id="tab-pane"></div>
+          </div>
         </div>
       </div>
     </div>

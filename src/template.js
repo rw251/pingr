@@ -7,9 +7,9 @@ var data = require('./data.js'),
   allPatients = require('./panels/allPatients.js'),
   welcome = require('./panels/welcome.js'),
   layout = require('./layout.js'),
-  overview = require('./panels/overview.js'),
-  indicatorView = require('./panels/indicator.js'),
-  patientView = require('./panels/patientView.js');
+  overview = require('./views/overview.js'),
+  indicatorView = require('./views/indicator.js'),
+  patientView = require('./views/patient.js');
 
 var template = {
 
@@ -38,39 +38,14 @@ var template = {
       }
 
       if (urlBits[0] === "#overview" && !urlBits[1]) {
-        base.clearBox();
-        base.switchTo101Layout();
-        layout.showMainView();
 
-        $('#mainTitle').show();
-        base.updateTitle("Overview");
-
-        //Show overview panels
-        data.pathwayId = "htn";//TODO fudge
-        teamActionPlan.show(farRightPanel);
-        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
         overview.create(template.loadContent);
 
-        base.wireUpTooltips();
       } else if (urlBits[0] === "#overview") {
-        pathwayId = urlBits[1];
-        pathwayStage = urlBits[2];
-        standard = urlBits[3];
-        var tab = params.tab || "trend";
 
-        base.clearBox();
-        base.switchTo21Layout();
-        layout.showMainView();
+        //create(pathwayId, pathwayStage, standard, tab, loadContentFunction)
+        indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
 
-        $('#mainTitle').show();
-
-        //Show overview panels
-        data.pathwayId = pathwayId;
-        teamActionPlan.show(farRightPanel);
-        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
-        indicatorView.create(pathwayId, pathwayStage, standard, tab, template.loadContent);
-
-        base.wireUpTooltips();
       } else if (urlBits[0] === "#main") {
         base.clearBox();
         pathwayId = urlBits[1];
@@ -104,38 +79,13 @@ var template = {
         base.clearBox();
         layout.showPage('help-page');
 
-        ////layout.showSidePanel();
         layout.showHeaderBarItems();
-        ////layout.showNavigation(data.diseases, -1, $('#help-page'));
-        ////layout.clearNavigation();
+
       } else if (urlBits[0] === "#patient") {
 
-        patientId = urlBits[1];
-        pathwayId = urlBits[2];
-        pathwayStage = urlBits[3];
-        standard = urlBits[4];
+        //create(pathwayId, pathwayStage, standard, patientId)
+        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1]);
 
-        //allPatients.showView(patientId, true);
-        base.clearBox();
-        base.switchTo21Layout();
-        layout.showMainView();
-
-        $('#mainTitle').show();
-
-        //Show overview panels
-        data.pathwayId = pathwayId;
-        teamActionPlan.show(farRightPanel);
-        
-        patientView.create(patientId);
-        base.wireUpTooltips();
-
-        /*if (patientId) {
-          var nhs = data.patLookup ? data.patLookup[patientId] : patientId;
-          $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
-            return $(this).text().trim() === nhs;
-          }).position().top - 140);
-          $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
-        }*/
       } else if (urlBits[0] === "#patients") {
 
         patientId = urlBits[1];
@@ -152,7 +102,7 @@ var template = {
           }).position().top - 140);
           $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
         }
-      } else if (urlBits[0] === "#welcome") {
+      } else if (urlBits[0] === "#agreedactions") {
         base.clearBox();
         layout.showPage('welcome');
 
@@ -197,7 +147,6 @@ var template = {
     //Show overview panels
     template.showOverviewPanels();
     teamActionPlan.show(farRightPanel);
-    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
   },
 
   showOverviewPanels: function() {
