@@ -96,7 +96,7 @@
     "intervals": [{
       "from": 1423526400000,
       "to": 1459814400000,
-      "Amlodipine": "Ramipril 2.5mg"
+      "label": "Amlodipine 2.5mg"
     }]
   }]
 }

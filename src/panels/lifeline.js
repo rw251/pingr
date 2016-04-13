@@ -15,7 +15,7 @@ var ll = {
   destroy: function(element) {
     var elementId = '#' + element;
     $(elementId).html('');
-    $(elementId).off('mouseout mousemove touchmove touchstart', '.sync-chart');
+    $(elementId).off('mousemove touchmove touchstart', '.sync-chart');
 
     for (var i = 0; i < Highcharts.charts.length; i++) {
       if (Highcharts.charts[i]) Highcharts.charts[i].destroy();
@@ -34,13 +34,6 @@ var ll = {
      * built-in events with handlers defined on the parent element.
      */
 
-    $(elementId).on('mouseout', '.sync-chart', function() {
-      var chart;
-      for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
-        chart = ll.chartArray[i];
-        chart.tooltip.hide();
-      }
-    });
     $(elementId).on('mousemove touchmove touchstart', '.sync-chart', function(e) {
       var chart, point, i, event, series;
 
@@ -102,26 +95,7 @@ var ll = {
           color: colour.next()
         };
         $.each(task.intervals, function(j, interval) {
-          item.data.push({
-            x: interval.from,
-            y: i + 0.49,
-            label: interval.label,
-            from: interval.from,
-            to: interval.to
-          }, {
-            x: interval.to,
-            y: i + 0.49,
-            from: interval.from,
-            to: interval.to
-          });
-
-          // add a null value between intervals
-          if (task.intervals[j + 1]) {
-            item.data.push(
-                [(interval.to + task.intervals[j + 1].from) / 2, null]
-            );
-          }
-
+          item.data.push([i + 0.49, interval.from, interval.to]);
         });
 
         series.push(item);
@@ -158,8 +132,8 @@ var ll = {
           });
         }
         contactSeries[contact.name].data.push([
-              contact.time,
-              contact.task
+              contact.task,
+              contact.time
           ]);
       });
 
@@ -176,7 +150,9 @@ var ll = {
             renderTo: element,
             marginLeft: 40, // Keep all charts left aligned
             spacingTop: 20,
-            spacingBottom: 20
+            spacingBottom: 20,
+            type: 'columnrange',
+            inverted: true
           },
 
           title: {
@@ -184,7 +160,7 @@ var ll = {
           },
 
 
-          xAxis: {
+          yAxis: {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
             max: Date.UTC(2016, 3, 5),
@@ -194,28 +170,39 @@ var ll = {
             },
             labels: {
               enabled: false
-            }
+            },
+
+            //things that are normally xAxis defaults
+            endOnTick: false,
+            gridLineWidth: 0,
+            lineWidth: 1,
+            maxPadding: 0.01,
+            minPadding: 0.01,
+            startOnTick: false,
+            tickWidth: 0,
+            title: {
+              text: ''
+            },
+            tickPixelInterval: 100
           },
 
-          yAxis: {
-            tickInterval: 1,
+          xAxis: {
             labels: {
-              formatter: function() {
-                if (conditions[this.value]) {
-                  return conditions[this.value].name;
-                }
-              },
-              /*align: 'left',
-              x: 2,*/
-              y: -4
+              enabled: false
             },
             startOnTick: false,
             endOnTick: false,
             title: {
               text: ''
             },
+            tickWidth: 0,
             minPadding: 0.2,
-            maxPadding: 0.2
+            maxPadding: 0.2,
+
+            //things that are normally yAxis defaults
+            gridLineWidth: 0,
+            lineWidth: 0
+
           },
           credits: {
             enabled: false
@@ -227,30 +214,56 @@ var ll = {
 
           tooltip: {
             formatter: function() {
-              if (this.series.data[0].y !== 1) {
+              if (this.series.data[0].x !== 1) {
                 //Range ergo condition
-                var xCoord = this.x;
-                var label = conditions[Math.floor(this.y)].intervals.filter(function(v) {
-                  return xCoord >= v.from && xCoord <= v.to;
+                var yCoord = this.y;
+                var label = conditions[Math.floor(this.x)].intervals.filter(function(v) {
+                  return yCoord >= v.from && yCoord <= v.to;
                 })[0].label;
-                return '<b>' + conditions[Math.floor(this.y)].name + (label ? ': ' + label : '') + '</b><br/>' +
-                  Highcharts.dateFormat('%Y:%m:%d', this.point.options.from) +
-                  ' - ' + Highcharts.dateFormat('%Y:%m:%d', this.point.options.to);
+                return '<b>' + conditions[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
+                  Highcharts.dateFormat('%Y:%m:%d', this.point.options.low) +
+                  ' - ' + Highcharts.dateFormat('%Y:%m:%d', this.point.options.high);
               } else {
                 //Single value hence contact
-                var time = this.key;
+                var time = this.y;
                 return contacts.filter(function(val) {
                   return val.data && val.data.filter(function(v) {
-                    return v[0] === time;
+                    return v[1] === time;
                   }).length > 0;
                 }).map(function(val) {
                   return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%Y:%m:%d', val.time);
                 }).join('<br/>');
               }
-            }
+            },
+            followPointer: true
           },
 
           plotOptions: {
+            columnrange: {
+              grouping: false,
+              groupPadding: 0.3,
+              dataLabels: {
+                allowOverlap: true,
+                enabled: true,
+                formatter: function() {
+                  var yCoord = this.y;
+                  var idx = -1;
+                  var label = conditions[Math.floor(this.x)].intervals.filter(function(v, i) {
+                    if (yCoord >= v.from && yCoord <= v.to) {
+                      idx = i;
+                      return true;
+                    }
+                    return false;
+                  })[0].label;
+                  return this.y === this.point.low &&
+                    (conditions[Math.floor(this.x)].intervals.length - 1 === idx ||
+                      (this.series.chart.yAxis[0].min <= yCoord && this.series.chart.yAxis[0].max >= yCoord) ||
+                      (this.series.chart.yAxis[0].min >= this.point.low && this.series.chart.yAxis[0].max <= this.point.high)) ? conditions[Math.floor(this.x)].name + (label ? ': ' + label : '') : '';
+                }
+              }
+            }
+          },
+          /*plotOptions: {
             line: {
               lineWidth: 9,
               marker: {
@@ -264,7 +277,7 @@ var ll = {
                 }
               }
             }
-          },
+          },*/
 
           series: series
 
@@ -349,6 +362,19 @@ var ll = {
               fontSize: '18px'
             },
             valueDecimals: dataset.valueDecimals
+          },
+          plotOptions:{
+            series: {
+                events: {
+                    mouseOut: function () {
+                      var chart,i;
+                      for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+                        chart = ll.chartArray[i];
+                        chart.tooltip.hide();
+                      }
+                    }
+                }
+            }
           },
           series: [{
             data: dataset.data,
@@ -505,10 +531,13 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
             max: Date.UTC(2016, 3, 5),
-            crosshair: true,
+            crosshair: {
+              snap: false
+            },
             events: {
               setExtremes: syncExtremes
             },
+
 
 
             //things that are normally xAxis defaults
@@ -559,7 +588,8 @@ var ll = {
               return '<b>' + medications[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
                 Highcharts.dateFormat('%Y:%m:%d', this.point.options.low) +
                 ' - ' + Highcharts.dateFormat('%Y:%m:%d', this.point.options.high);
-            }
+            },
+            followPointer: true
           },
 
           plotOptions: {
