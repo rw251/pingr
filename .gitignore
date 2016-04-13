@@ -6,3 +6,4 @@ node_modules
 .idea/
 index.html.bak
 mod.html
+npm-debug.log*

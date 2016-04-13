@@ -1,0 +1,74 @@
+{
+  "opportunities": [
+    {
+      "name": "No opportunities",
+      "description": "Patients with hypertension who have NOT had their renal function measured in the last 12 months and no contact with the practice",
+      "main": "These are patients that you have had no contact with.",
+      "patients": [5550000041, 5550366599, 5551573870, 5551650840, 5551667997, 5551668339, 5551697645, 5551725917, 5551734551, 5551773731, 5551806647],
+      "values": [
+        ["n", 31, 21, 31],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    },
+    {
+      "name": "Face-to-face",
+      "description": "Patients with hypertension who have NOT had their renal function measured in the last 12 months who have seen a clinician in the practice",
+      "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
+      "patients": [5551879011, 5551960805, 5552290319, 5552296308, 5552378822, 5556753852],
+      "values": [
+        ["n", 35, 24, 33],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    },
+    {
+      "name": "Non face-to-face",
+      "description": "Patients with hypertension who have NOT had their BP measured in the last 12 months who have had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
+      "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
+      "patients": [5552423448, 5552492315, 5552803965, 5552860572, 5552870948, 5552902224, 5552910216, 5552990876, 5553014733, 5553098415, 5553125053],
+      "values": [
+        ["n", 13, 22, 13],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    },
+    {
+      "name": "Frail",
+      "description": "Patients with a frailty code in their record who may benefit from being excluded from hypertension quality standards",
+      "patients": [5556879657, 5556956733, 5557018373],
+      "values": [
+        ["n", 23, 22, 13],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    },
+    {
+      "name": "Palliative",
+      "description": "Patients who are receiving palliative care treatment that may benefit from exclusion from hypertension quality standards",
+      "patients": [5556242352, 5556284912, 5556340645, 5556671587],
+      "values": [
+        ["n", 3, 2, 3],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    }
+  ],
+  "benchmark": [
+    {
+      "practice": "Blackfriars",
+      "value": 0.6
+    },
+    {
+      "practice": "Blackfriars2",
+      "value": 0.64
+    },
+    {
+      "practice": "Blackfriars3",
+      "value": 0.57
+    },
+    {
+      "practice": "Blackfriars4",
+      "value": 0.63
+    },
+    {
+      "practice": "Blackfriars5",
+      "value": 0.42
+    }
+  ]
+}

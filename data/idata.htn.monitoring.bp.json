@@ -1,0 +1,65 @@
+{
+  "opportunities": [
+    {
+      "name": "No opportunities",
+      "description": "Patients with hypertension who have NOT had their BP measured in the last 12 months and no contact with the practice",
+      "main": "These are patients that you have had no contact with.",
+      "patients": [5550000041, 5550462743, 5550516099, 5550551266, 5550640777, 5550660340, 5550739385, 5550747304, 5550777945, 5550801061, 5550844372, 5550891861, 5550929608, 5550984593, 5551024247, 5551064236, 5551118156, 5551208733, 5551262910, 5551287703, 5551341104, 5551345049, 5551359435, 5551437927, 5551455155, 5551535166, 5551573870, 5551650840, 5551667997, 5551668339, 5551697645, 5551725917, 5551734551, 5551773731, 5551806647],
+      "values": [
+        ["n", 3, 2, 3],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    },
+    {
+      "name": "Face-to-face",
+      "description": "Patients with hypertension who have NOT had their BP measured in the last 12 months who have seen a clinician in the practice",
+      "main": "These are patients you have had direct contact with (e.g. face-to-face or telephone).",
+      "patients": [5551879011, 5551960805, 5551990261, 5552036749, 5552060899, 5552115698, 5552205620, 5552211621, 5552290255, 5552290319, 5552296308, 5552378822],
+      "values": [
+        ["n", 13, 12, 13],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    },
+    {
+      "name": "Non face-to-face",
+      "description": "Patients with hypertension who have NOT had their BP measured in the last 12 months who have had some sort of contact e.g. telephone calls, or picking up repeat prescriptions",
+      "main": "These are patients you have had indirect contact with (e.g. prescriptions or letters).",
+      "patients": [5552423448, 5552492315, 5552530288, 5552533866, 5552563783, 5552586748, 5552661359, 5552727859, 5552765510, 5552774478, 5552803503, 5552803965, 5552860572, 5552870948, 5552902224, 5552910216, 5552990876, 5553014733, 5553098415, 5553125053],
+      "values": [
+        ["n", 31, 12, 3],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    },
+    {
+      "name": "Palliative",
+      "description": "Patients who are receiving palliative care treatment that may benefit from exclusion from hypertension quality standards",
+      "patients": [5556242352, 5556284912, 5556340645, 5556671587],
+      "values": [
+        ["n", 8, 9, 12],
+        ["date", "2016-01-01", "2016-02-01", "2016-03-01"]
+      ]
+    }
+  ],
+  "benchmark": [
+    {
+      "practice": "Blackfriars",
+      "value": 0.6
+    },
+    {
+      "practice": "Blackfriars2",
+      "value": 0.64
+    },
+    {
+      "practice": "Blackfriars3",
+      "value": 0.57
+    },
+    {
+      "practice": "Blackfriars4",
+      "value": 0.63
+    },
+    {
+      "practice": "Blackfriars5",
+      "value": 0.42
+    }
+  ]
+}
