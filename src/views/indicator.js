@@ -1,10 +1,12 @@
 var base = require('../base.js'),
   data = require('../data.js'),
   patientList = require('../panels/patientList.js'),
-  indicator = require('../panels/indicator.js'),
+  indicatorBreakdown = require('../panels/indicatorBreakdown.js'),
+  indicatorTrend = require('../panels/indicatorTrend.js'),
   teamActionPlan = require('../panels/teamActionPlan.js'),
   layout = require('../layout.js');
 
+var ID = "INDICATOR";
 /*
  * The indicator page consists of the panels:
  *   Tabbed panel
@@ -19,16 +21,35 @@ var ind = {
 
   create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
 
-    base.clearBox();
-    base.switchTo21Layout();
-    layout.showMainView();
+    if(layout.view !== ID) {
+      //Not already in this view so we need to rejig a few things
+      base.clearBox();
+      base.switchTo21Layout();
+      layout.showMainView();
 
-    $('#mainTitle').show();
+      layout.view = ID;
+    }
 
+    if(layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
+      //different pathway or stage so title needs updating
+      base.updateTitle([{
+        title: "Overview",
+        url: "#overview"
+      }, {
+        title: data[pathwayId][pathwayStage].text.page.text,
+        tooltip: data[pathwayId][pathwayStage].text.page.tooltip
+      }]);
+      $('#mainTitle').show();
+    }
+
+    //TODO not sure if this needs moving..?
     data.pathwayId = pathwayId;
 
+    //The three panels we need to show
+    //Panels decide whether they need to redraw themselves
     teamActionPlan.show(farRightPanel);
-    indicator.create(topRightPanel, pathwayId, pathwayStage, standard, tab, loadContentFn);
+    patientList.create(bottomRightPanel, pathwayId, pathwayStage, standard, loadContentFn);
+    indicatorTrend.create(topRightPanel, pathwayId, pathwayStage, standard, tab, patientList.selectSubsection);
 
     base.wireUpTooltips();
 

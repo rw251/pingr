@@ -4,6 +4,7 @@ var base = require('../base.js'),
   indicatorList = require('../panels/indicatorList.js'),
   teamActionPlan = require('../panels/teamActionPlan.js');
 
+var ID = "OVERVIEW";
 /*
  * The overview page consists of the panels:
  *   Indicator list
@@ -13,16 +14,22 @@ var overview = {
 
   create: function(loadContentFn) {
 
-    base.clearBox();
-    base.switchTo101Layout();
-    layout.showMainView();
+    if(layout.view !== ID) {
+      //Not already in this view so we need to rejig a few things
+      base.clearBox();
+      base.switchTo101Layout();
+      layout.showMainView();
 
-    $('#mainTitle').show();
-    base.updateTitle("Overview");
+      $('#mainTitle').show();
+      base.updateTitle("Overview");
 
-    //Show overview panels
+      layout.view = ID;
+    }
+
     data.pathwayId = "htn";//TODO fudge
 
+    //The two panels we need to show
+    //Panels decide whether they need to redraw themselves
     teamActionPlan.show(farRightPanel);
     indicatorList.create(farLeftPanel, loadContentFn);
 

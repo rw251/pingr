@@ -43,7 +43,6 @@ var template = {
 
       } else if (urlBits[0] === "#overview") {
 
-        //create(pathwayId, pathwayStage, standard, tab, loadContentFunction)
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
 
       } else if (urlBits[0] === "#main") {

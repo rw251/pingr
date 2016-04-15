@@ -1209,7 +1209,7 @@
               <td>{{name}}</td>
               <td>{{performance}}</td>
               <td>{{target}}</td>
-              <td>{{#up}}UP{{/up}}{{^up}}DOWN{{/up}}</td>
+              <td>{{#up}}<i class="fa fa-2x fa-caret-up"></i>{{/up}}{{^up}}<i class="fa fa-2x fa-caret-down"></i>{{/up}}</td>
               <td><span class="inlinesparkline">{{trend}}</span></td>
             </tr>
             {{/indicators}}
@@ -1220,24 +1220,16 @@
   </script>
 
   <script id="indicator-overview-panel" type="x-tmpl-mustache">
-    <div class="row">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <ul class="nav nav-tabs top-tabs" role="tablist">
-            <li {{^benchmark}}class="active" {{/benchmark}} data-toggle="tooltip" data-placement="top" title="Indicator performance trend"><a {{#benchmark}}href="{{url}}?tab=trend" {{/benchmark}}>Trend</a></li>
-            <li {{#benchmark}}class="active" {{/benchmark}} data-toggle="tooltip" data-placement="top" title="Indicator performance benchmark"><a {{^benchmark}}href="{{url}}?tab=benchmark" {{/benchmark}}>Benchmark</a></li>
-          </ul>
-          <div class="tab-pane">
-            <div id="trend-chart-pane"></div>
-          </div>
-        </div>
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active" data-toggle="tooltip" data-placement="top" title="Indicator performance trend"><a href="#trend" aria-controls="trend" role="tab" data-toggle="tab">Trend</a></li>
+      <li role="presentation" data-toggle="tooltip" data-placement="top" title="Indicator performance benchmark"><a href="#benchmark" aria-controls="benchmark" role="tab" data-toggle="tab">Benchmark</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="panel panel-default tab-pane tabs-up active" id="trend">
+        <div id="trend-chart"></div>
       </div>
-    </div>
-    <div class="row">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div id="patients"></div>
-        </div>
+      <div class="panel panel-default tab-pane tabs-up" id="benchmark">
+        <div id="benchmark-chart"></div>
       </div>
     </div>
   </script>
