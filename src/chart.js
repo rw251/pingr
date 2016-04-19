@@ -309,7 +309,174 @@ var cht = {
         }
       });
     }, 1);
+  },
+
+  drawBenchmarkChartHC: function(element, data) {
+    $('#' + element).highcharts({
+      chart: {
+        type: 'column',
+        height: 300
+      },
+      title: {
+        text: ''
+      },
+      xAxis: {
+        categories: [
+                    'P1',
+                    'P2',
+                    'P3',
+                    'P4',
+                    'P5',
+                    'P6',
+                    'YOU',
+                    'P7',
+                    'P8',
+                    'P9',
+                    'P10',
+                    'P11'
+                ],
+        crosshair: true
+      },
+      yAxis: {
+        min: 0,
+        max: 100,
+        title: {
+          text: '% patients meeting target'
+        }
+      },
+      tooltip: {
+        headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+          '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+      },
+      plotOptions: {
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
+      },
+      legend: {
+        enabled: false
+      },
+      series: [{
+        name: 'Performance',
+        data: [49.9, 71.5, 16.4, 29.2, 44.0, 76.0, {
+          y: 35.6,
+          color: "red"
+        }, 48.5, 26.4, 94.1, 95.6, 54.4]
+      }]
+    });
+  },
+
+  drawPerformanceTrendChartHC: function(element, data, selectSeriesFn) {
+
+    var series = [];
+
+    data.forEach(function(v, i) {
+      if (i === 0) return;
+      series.push({
+        type: 'line',
+        name: v[0],
+        data: []
+      });
+    });
+    data[0].forEach(function(v, i) {
+      if (i === 0) return;
+      var time = new Date(v).getTime();
+      series.forEach(function(vv, ii) {
+        vv.data.push([time, +data[ii + 1][i]]);
+      });
+    });
+
+    $('#' + element).highcharts({
+      chart: {
+        zoomType: 'x',
+        height: 300
+      },
+      title: {
+        text: ''
+      },
+      subtitle: {
+        text: document.ontouchstart === undefined ?
+          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+      },
+      xAxis: {
+        type: 'datetime'
+      },
+      yAxis: {
+        title: {
+          text: 'Quality standard performance'
+        }
+      },
+      legend: {
+        enabled: true
+      },
+
+      plotOptions: {
+        series: {
+          states: {
+            /*hover : {
+              enabled: false
+            },*/
+            select: {
+              lineWidthPlus: 2
+            },
+            faded: {
+              lineWidth: 1
+            }
+          },
+          events: {
+            click: function(event) {
+              var numSeries = this.chart.series.length;
+              var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
+
+              if (this.visible && numVisible === 1) {
+                //show all
+                this.chart.series.forEach(function(series) {
+                  series.show();
+                });
+                selectSeriesFn();
+              } else {
+                this.chart.series.forEach(function(series) {
+                  series.hide();
+                });
+                this.show();
+                selectSeriesFn(this.name);
+              }
+
+              return false;
+            },
+            legendItemClick: function(event) {
+              var numSeries = this.chart.series.length;
+              var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
+
+              if (this.visible && numVisible === 1) {
+                //show all
+                this.chart.series.forEach(function(series) {
+                  series.show();
+                });
+                selectSeriesFn();
+              } else {
+                this.chart.series.forEach(function(series) {
+                  series.hide();
+                });
+                this.show();
+                selectSeriesFn(this.name);
+              }
+
+              return false;
+            }
+          }
+        }
+      },
+
+      series: series
+    });
   }
+
 };
 
 module.exports = cht;

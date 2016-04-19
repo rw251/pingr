@@ -4,9 +4,9 @@ var log = require('./log.js'),
 var _getAllIndicatorData = function(callback){
   var r = Math.random();
   $.getJSON("data/indicators.json?v=" + r, function(file) {
-    main.indicators = file;
+    dt.indicators = file;
 
-    main.indicators.forEach(function(indicator){
+    dt.indicators.forEach(function(indicator){
       var percentage = Math.round(100*indicator.values[1][1]*100/indicator.values[2][1])/100;
       indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
       indicator.target = indicator.values[3][1]*100 + "%";
@@ -22,66 +22,76 @@ var _getAllIndicatorData = function(callback){
     });
 
 
-    callback(main.indicators);
+    callback(dt.indicators);
   });
 };
 
 var _getIndicatorData = function(indicator, callback) {
   var r = Math.random();
   $.getJSON("data/idata." + indicator + ".json?v=" + r, function(file) {
-    main.indicators[indicator] = file;
+    dt.indicators[indicator] = file;
 
-    callback(main.indicators[indicator]);
+    //apply which categories people belong to
+    Object.keys(dt.indicators[indicator].patients).forEach(function(patient){
+      dt.indicators[indicator].patients[patient].opportunities = [];
+      dt.indicators[indicator].opportunities.forEach(function(opp, idx){
+        if(opp.patients.indexOf(+patient)>-1) {
+          dt.indicators[indicator].patients[patient].opportunities.push(idx);
+        }
+      });
+    });
+
+    callback(dt.indicators[indicator]);
   });
 };
 
 var _getFakePatientData = function(callback){
   var r = Math.random();
   $.getJSON("data/patient.json?v=" + r, function(file) {
-    if(!main.patients) main.patients = {};
-    main.patients.patient = file;
+    if(!dt.patients) dt.patients = {};
+    dt.patients.patient = file;
 
-    callback(main.patients.patient);
+    callback(dt.patients.patient);
   });
 };
 
 var _getPatientData = function(patient, callback) {
   var r = Math.random();
   $.getJSON("data/" + patient + ".json?v=" + r, function(file) {
-    if(!main.patients) main.patients = {};
-    main.patients[patient] = file;
+    if(!dt.patients) dt.patients = {};
+    dt.patients[patient] = file;
 
-    callback(main.patients[patient]);
+    callback(dt.patients[patient]);
   }).fail(function(){
-    if(main.patients.patient) return callback(main.patients.patient);
+    if(dt.patients.patient) return callback(dt.patients.patient);
     else _getFakePatientData(callback);
   });
 };
 
-var main = {
+var dt = {
 
   pathwayNames: {},
   diseases: [],
   options: [],
 
   getPatietListForStandard: function(pathwayId, pathwayStage, standard) {
-    var patients = main.removeDuplicates(main[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a, b) {
+    var patients = dt.removeDuplicates(dt[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a, b) {
       return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
     }));
     return patients;
   },
 
   getPatientStatus: function(patientId, pathwayId, pathwayStage, standard) {
-    if (main.patients[patientId].breach) {
-      if (main.patients[patientId].breach.filter(function(val) {
+    if (dt.patients[patientId].breach) {
+      if (dt.patients[patientId].breach.filter(function(val) {
           return val.pathwayId === pathwayId && val.pathwayStage === pathwayStage && val.standard === standard;
         }).length > 0) {
         return "missed";
-      } else if (main.patients[patientId].breach.filter(function(val) {
+      } else if (dt.patients[patientId].breach.filter(function(val) {
           return val.pathwayId === pathwayId && val.pathwayStage === "diagnosis";
         }).length > 0 && pathwayStage !== "diagnosis") {
         return "not";
-      } else if (main.patients[patientId].breach.filter(function(val) {
+      } else if (dt.patients[patientId].breach.filter(function(val) {
           return val.pathwayId === pathwayId;
         }).length > 0) {
         return "ok";
@@ -94,17 +104,17 @@ var main = {
   },
 
   getNumeratorForStandard: function(pathwayId, pathwayStage, standard) {
-    var patients = main.getPatietListForStandard(pathwayId, pathwayStage, standard);
+    var patients = dt.getPatietListForStandard(pathwayId, pathwayStage, standard);
     return patients.length;
   },
 
   getDenominatorForStandard: function(pathwayId, pathwayStage) {
-    var patients = main[pathwayId][pathwayStage].patientsOk;
-    for (var standard in main[pathwayId][pathwayStage].standards) {
-      var newPatients = main.getPatietListForStandard(pathwayId, pathwayStage, standard);
+    var patients = dt[pathwayId][pathwayStage].patientsOk;
+    for (var standard in dt[pathwayId][pathwayStage].standards) {
+      var newPatients = dt.getPatietListForStandard(pathwayId, pathwayStage, standard);
       patients = patients.concat(newPatients);
     }
-    return main.removeDuplicates(patients).length;
+    return dt.removeDuplicates(patients).length;
   },
 
   removeDuplicates: function(array) {
@@ -120,8 +130,8 @@ var main = {
   },
 
   numberOfStandardsMissed: function(patientId) {
-    if (!main.patients[patientId].breach) return 0;
-    var a = main.patients[patientId].breach.map(function(val) {
+    if (!dt.patients[patientId].breach) return 0;
+    var a = dt.patients[patientId].breach.map(function(val) {
       return val.pathwayId + val.pathwayStage + val.standard;
     });
     var obj = {};
@@ -134,23 +144,23 @@ var main = {
   getAllPatients: function() {
     var pList = [],
       i, k, prop;
-    for (k = 0; k < main.diseases.length; k++) {
+    for (k = 0; k < dt.diseases.length; k++) {
       for (i in lookup.categories) {
-        for (prop in main[main.diseases[k].id][i].bdown) {
-          if (main[main.diseases[k].id][i].bdown.hasOwnProperty(prop)) {
-            pList = pList.concat(main[main.diseases[k].id][i].bdown[prop].patients);
+        for (prop in dt[dt.diseases[k].id][i].bdown) {
+          if (dt[dt.diseases[k].id][i].bdown.hasOwnProperty(prop)) {
+            pList = pList.concat(dt[dt.diseases[k].id][i].bdown[prop].patients);
           }
         }
-        pList = pList.concat(main[main.diseases[k].id][i].patientsOk);
+        pList = pList.concat(dt[dt.diseases[k].id][i].patientsOk);
       }
     }
-    pList = main.removeDuplicates(pList);
+    pList = dt.removeDuplicates(pList);
     var patients = pList.map(function(patientId) {
-      var ret = main.patients[patientId];
-      ret.nhsNumber = main.patLookup ? main.patLookup[patientId] : patientId;
+      var ret = dt.patients[patientId];
+      ret.nhsNumber = dt.patLookup ? dt.patLookup[patientId] : patientId;
       ret.patientId = patientId;
       ret.items = []; //The fields in the patient list table
-      ret.items.push(main.numberOfStandardsMissed(patientId));
+      ret.items.push(dt.numberOfStandardsMissed(patientId));
       return ret;
     });
 
@@ -159,12 +169,12 @@ var main = {
 
   get: function(callback, json) {
     if (json) {
-      main.load(json);
+      dt.load(json);
       if (typeof callback === 'function') callback();
     } else {
       var r = Math.random();
       $.getJSON("data.json?v=" + r, function(file) {
-        main.load(file);
+        dt.load(file);
         if (typeof callback === 'function') callback();
       }).fail(function(err) {
         alert("data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
@@ -176,26 +186,26 @@ var main = {
     var d = "",
       j, k, key, data = file.diseases;
 
-    main = jQuery.extend(main, data); //copy
+    dt = jQuery.extend(dt, data); //copy
 
-    main.patients = file.patients;
-    main.codes = file.codes;
-    main.patientArray = [];
+    dt.patients = file.patients;
+    dt.codes = file.codes;
+    dt.patientArray = [];
     for (var o in file.patients) {
       if (file.patients.hasOwnProperty(o)) {
-        main.patientArray.push(o);
+        dt.patientArray.push(o);
       }
     }
 
     for (d in data) {
-      main.pathwayNames[d] = data[d]["display-name"];
+      dt.pathwayNames[d] = data[d]["display-name"];
       var diseaseObject = {
         "id": d,
-        "link": data[d].link ? data[d].link : "main/" + d,
+        "link": data[d].link ? data[d].link : "dt/" + d,
         "faIcon": data[d].icon,
         "name": data[d]["display-name"],
         "text": {
-          "main": {
+          "dt": {
             "tooltip": data[d]["side-panel-tooltip"]
           }
         }
@@ -213,109 +223,109 @@ var main = {
         diseaseObject.text.exclusions = data[d].exclusions.text.sidePanel;
       }
       this.diseases.push(diseaseObject);
-      main[d].suggestions = log.plan[d].team;
-      $.extend(main[d].monitoring, {
+      dt[d].suggestions = log.plan[d].team;
+      $.extend(dt[d].monitoring, {
         "breakdown": [],
         "bdown": {}
       });
-      $.extend(main[d].treatment, {
+      $.extend(dt[d].treatment, {
         "breakdown": [],
         "bdown": {}
       });
-      $.extend(main[d].diagnosis, {
+      $.extend(dt[d].diagnosis, {
         "breakdown": [],
         "bdown": {}
       });
-      $.extend(main[d].exclusions, {
+      $.extend(dt[d].exclusions, {
         "breakdown": [],
         "bdown": {}
       });
 
-      if (!main[d].monitoring.header) continue;
-      for (key in main[d].monitoring.standards) {
+      if (!dt[d].monitoring.header) continue;
+      for (key in dt[d].monitoring.standards) {
         this.options.push({
           "value": this.options.length,
           "pathwayId": d,
           "pathwayStage": "monitoring",
           "standard": key,
-          "text": this.pathwayNames[d] + ' - ' + "Monitoring" + ' - ' + main[d].monitoring.standards[key].tab.title
+          "text": this.pathwayNames[d] + ' - ' + "Monitoring" + ' - ' + dt[d].monitoring.standards[key].tab.title
         });
-        for (j = 0; j < main[d].monitoring.standards[key].opportunities.length; j++) {
-          main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name] = main[d].monitoring.standards[key].opportunities[j];
-          main[d].monitoring.bdown[main[d].monitoring.standards[key].opportunities[j].name].suggestions = log.plan[d].monitoring.individual[main[d].monitoring.standards[key].opportunities[j].name];
-          for (k = 0; k < main[d].monitoring.standards[key].opportunities[j].patients.length; k++) {
-            if (!main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach = [];
-            main.patients[main[d].monitoring.standards[key].opportunities[j].patients[k]].breach.push({
+        for (j = 0; j < dt[d].monitoring.standards[key].opportunities.length; j++) {
+          dt[d].monitoring.bdown[dt[d].monitoring.standards[key].opportunities[j].name] = dt[d].monitoring.standards[key].opportunities[j];
+          dt[d].monitoring.bdown[dt[d].monitoring.standards[key].opportunities[j].name].suggestions = log.plan[d].monitoring.individual[dt[d].monitoring.standards[key].opportunities[j].name];
+          for (k = 0; k < dt[d].monitoring.standards[key].opportunities[j].patients.length; k++) {
+            if (!dt.patients[dt[d].monitoring.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].monitoring.standards[key].opportunities[j].patients[k]].breach = [];
+            dt.patients[dt[d].monitoring.standards[key].opportunities[j].patients[k]].breach.push({
               "pathwayId": d,
               "pathwayStage": "monitoring",
               "standard": key,
-              "subsection": main[d].monitoring.standards[key].opportunities[j].name
+              "subsection": dt[d].monitoring.standards[key].opportunities[j].name
             });
           }
         }
       }
-      for (key in main[d].diagnosis.standards) {
+      for (key in dt[d].diagnosis.standards) {
         this.options.push({
           "value": this.options.length,
           "pathwayId": d,
           "pathwayStage": "diagnosis",
           "standard": key,
-          "text": this.pathwayNames[d] + ' - ' + "Diagnosis" + ' - ' + main[d].diagnosis.standards[key].tab.title
+          "text": this.pathwayNames[d] + ' - ' + "Diagnosis" + ' - ' + dt[d].diagnosis.standards[key].tab.title
         });
-        for (j = 0; j < main[d].diagnosis.standards[key].opportunities.length; j++) {
-          main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name] = main[d].diagnosis.standards[key].opportunities[j];
-          main[d].diagnosis.bdown[main[d].diagnosis.standards[key].opportunities[j].name].suggestions = log.plan[d].diagnosis.individual[main[d].diagnosis.standards[key].opportunities[j].name];
-          for (k = 0; k < main[d].diagnosis.standards[key].opportunities[j].patients.length; k++) {
-            if (!main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach = [];
-            main.patients[main[d].diagnosis.standards[key].opportunities[j].patients[k]].breach.push({
+        for (j = 0; j < dt[d].diagnosis.standards[key].opportunities.length; j++) {
+          dt[d].diagnosis.bdown[dt[d].diagnosis.standards[key].opportunities[j].name] = dt[d].diagnosis.standards[key].opportunities[j];
+          dt[d].diagnosis.bdown[dt[d].diagnosis.standards[key].opportunities[j].name].suggestions = log.plan[d].diagnosis.individual[dt[d].diagnosis.standards[key].opportunities[j].name];
+          for (k = 0; k < dt[d].diagnosis.standards[key].opportunities[j].patients.length; k++) {
+            if (!dt.patients[dt[d].diagnosis.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].diagnosis.standards[key].opportunities[j].patients[k]].breach = [];
+            dt.patients[dt[d].diagnosis.standards[key].opportunities[j].patients[k]].breach.push({
               "pathwayId": d,
               "pathwayStage": "diagnosis",
               "standard": key,
-              "subsection": main[d].diagnosis.standards[key].opportunities[j].name
+              "subsection": dt[d].diagnosis.standards[key].opportunities[j].name
             });
           }
         }
       }
-      for (key in main[d].treatment.standards) {
+      for (key in dt[d].treatment.standards) {
         this.options.push({
           "value": this.options.length,
           "pathwayId": d,
           "pathwayStage": "treatment",
           "standard": key,
-          "text": this.pathwayNames[d] + ' - ' + "Treatment" + ' - ' + main[d].treatment.standards[key].tab.title
+          "text": this.pathwayNames[d] + ' - ' + "Treatment" + ' - ' + dt[d].treatment.standards[key].tab.title
         });
-        for (j = 0; j < main[d].treatment.standards[key].opportunities.length; j++) {
-          main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name] = main[d].treatment.standards[key].opportunities[j];
-          main[d].treatment.bdown[main[d].treatment.standards[key].opportunities[j].name].suggestions = log.plan[d].treatment.individual[main[d].treatment.standards[key].opportunities[j].name];
-          for (k = 0; k < main[d].treatment.standards[key].opportunities[j].patients.length; k++) {
-            if (!main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach = [];
-            main.patients[main[d].treatment.standards[key].opportunities[j].patients[k]].breach.push({
+        for (j = 0; j < dt[d].treatment.standards[key].opportunities.length; j++) {
+          dt[d].treatment.bdown[dt[d].treatment.standards[key].opportunities[j].name] = dt[d].treatment.standards[key].opportunities[j];
+          dt[d].treatment.bdown[dt[d].treatment.standards[key].opportunities[j].name].suggestions = log.plan[d].treatment.individual[dt[d].treatment.standards[key].opportunities[j].name];
+          for (k = 0; k < dt[d].treatment.standards[key].opportunities[j].patients.length; k++) {
+            if (!dt.patients[dt[d].treatment.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].treatment.standards[key].opportunities[j].patients[k]].breach = [];
+            dt.patients[dt[d].treatment.standards[key].opportunities[j].patients[k]].breach.push({
               "pathwayId": d,
               "pathwayStage": "treatment",
               "standard": key,
-              "subsection": main[d].treatment.standards[key].opportunities[j].name
+              "subsection": dt[d].treatment.standards[key].opportunities[j].name
             });
           }
         }
       }
-      for (key in main[d].exclusions.standards) {
+      for (key in dt[d].exclusions.standards) {
         this.options.push({
           "value": this.options.length,
           "pathwayId": d,
           "pathwayStage": "exclusions",
           "standard": key,
-          "text": this.pathwayNames[d] + ' - ' + "Exclusions" + ' - ' + main[d].exclusions.standards[key].tab.title
+          "text": this.pathwayNames[d] + ' - ' + "Exclusions" + ' - ' + dt[d].exclusions.standards[key].tab.title
         });
-        for (j = 0; j < main[d].exclusions.standards[key].opportunities.length; j++) {
-          main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name] = main[d].exclusions.standards[key].opportunities[j];
-          main[d].exclusions.bdown[main[d].exclusions.standards[key].opportunities[j].name].suggestions = log.plan[d].exclusions.individual[main[d].exclusions.standards[key].opportunities[j].name];
-          for (k = 0; k < main[d].exclusions.standards[key].opportunities[j].patients.length; k++) {
-            if (!main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach) main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach = [];
-            main.patients[main[d].exclusions.standards[key].opportunities[j].patients[k]].breach.push({
+        for (j = 0; j < dt[d].exclusions.standards[key].opportunities.length; j++) {
+          dt[d].exclusions.bdown[dt[d].exclusions.standards[key].opportunities[j].name] = dt[d].exclusions.standards[key].opportunities[j];
+          dt[d].exclusions.bdown[dt[d].exclusions.standards[key].opportunities[j].name].suggestions = log.plan[d].exclusions.individual[dt[d].exclusions.standards[key].opportunities[j].name];
+          for (k = 0; k < dt[d].exclusions.standards[key].opportunities[j].patients.length; k++) {
+            if (!dt.patients[dt[d].exclusions.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].exclusions.standards[key].opportunities[j].patients[k]].breach = [];
+            dt.patients[dt[d].exclusions.standards[key].opportunities[j].patients[k]].breach.push({
               "pathwayId": d,
               "pathwayStage": "exclusions",
               "standard": key,
-              "subsection": main[d].exclusions.standards[key].opportunities[j].name
+              "subsection": dt[d].exclusions.standards[key].opportunities[j].name
             });
           }
         }
@@ -324,28 +334,28 @@ var main = {
   },
 
   getAllIndicatorData: function(callback){
-    if(main.indicators) {
-      return callback(main.indicators);
+    if(dt.indicators) {
+      return callback(dt.indicators);
     } else {
       _getAllIndicatorData(callback);
     }
   },
 
   getIndicatorData: function(indicator, callback) {
-    if(!main.indicators) {
+    if(!dt.indicators) {
       _getAllIndicatorData(function(data){
         _getIndicatorData(indicator, callback);
       });
-    } else if(main.indicators && main.indicators[indicator]) {
-      return callback(main.indicators[indicator]);
+    } else if(dt.indicators && dt.indicators[indicator]) {
+      return callback(dt.indicators[indicator]);
     } else {
       _getIndicatorData(indicator, callback);
     }
   },
 
   getPatientData: function(patientId, callback) {
-    /*if(main.patients && main.patients[patientId]) {
-      return callback(main.patients[patientId]);
+    /*if(dt.patients && dt.patients[patientId]) {
+      return callback(dt.patients[patientId]);
     } else {*/
       _getPatientData(patientId, callback);
   /*  }*/
@@ -353,4 +363,4 @@ var main = {
 
 };
 
-module.exports = main;
+module.exports = dt;

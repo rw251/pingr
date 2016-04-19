@@ -1,3 +1,7 @@
+var base = require('../base.js');
+
+var ID = "LIFELINE";
+
 var colour = {
   index: 0,
   next: function() {
@@ -18,14 +22,27 @@ var ll = {
     $(elementId).off('mousemove touchmove touchstart', '.sync-chart');
 
     for (var i = 0; i < Highcharts.charts.length; i++) {
-      if (Highcharts.charts[i]) Highcharts.charts[i].destroy();
-      //delete Highcharts.charts[i];
+      if (Highcharts.charts[i] && Highcharts.charts[i].renderTo.className.indexOf("h-chart") > -1) Highcharts.charts[i].destroy();
     }
-    //Highcharts.charts = [];
   },
 
-  create: function(element, data) {
+  create: function(element, patientId, data) {
     var elementId = '#' + element;
+
+    var panelId = element;
+
+    if (base.panels[panelId] &&
+      base.panels[panelId].id === ID &&
+      base.panels[panelId].patientId === patientId) {
+        //Already showing the right thing
+        return;
+    }
+
+    base.panels[panelId] = {
+      id: ID,
+      patientId: patientId
+    };
+
     ll.destroy(element);
 
     colour.reset();

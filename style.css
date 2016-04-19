@@ -298,6 +298,16 @@ hr{
   opacity: 0;
 }
 
+td > .fa-caret-up {
+  color: #67BF74;
+  margin-top: -6px;
+}
+
+td > .fa-caret-down {
+  color: #F16364;
+  margin-top: -5px;
+}
+
 .panel-grey {
   background-color: #f3f3f3;
 }

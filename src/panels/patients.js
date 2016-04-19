@@ -47,7 +47,7 @@ var pt = {
 
   wireUp: function(pathwayId, pathwayStage, location, standard) {
 
-    patientList.wireUp(pathwayId, pathwayStage, standard, function(patientId){
+    patientList.wireUp(function(patientId){
       $('[data-toggle="tooltip"]').tooltip('hide');
       $(this).tooltip('destroy');
       base.clearBox();

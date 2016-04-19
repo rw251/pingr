@@ -5,6 +5,9 @@ var data = require('./data.js'),
 
 var base = {
 
+  //object for keeping track what is in each panel to prevent unnecessary redraws
+  panels: {},
+
   createPanel: function(templateSelector, data, templates) {
     var tempMust = templateSelector.html();
     Mustache.parse(tempMust); // optional, speeds up future uses

@@ -15,7 +15,8 @@ var indicatorList = {
       $('.inlinesparkline').sparkline('html', {
         tooltipFormatter: function(sparkline, options, fields) {
           return indicators[$('.inlinesparkline').index(sparkline.el)].dates[fields.x] + ": " + fields.y + "%";
-        }
+        },
+        width:"100px"
       });
 
       indicatorList.wireUp(panel, loadContentFn);
