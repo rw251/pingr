@@ -2,7 +2,8 @@ var lifeline = require('../panels/lifeline.js'),
   data = require('../data.js'),
   base = require('../base.js'),
   layout = require('../layout.js'),
-  individualActionPlan = require('../panels/individualActionPlan.js');
+  individualActionPlan = require('../panels/individualActionPlan.js'),
+  qualityStandard = require('../panels/qualityStandard.js');
 
 var ID = "PATIENT_VIEW";
 /*
@@ -47,6 +48,7 @@ var pv = {
     data.pathwayId = pathwayId;
 
     individualActionPlan.show(farRightPanel, pathwayId, pathwayStage, standard, patientId);
+    qualityStandard.show(topRightPanel, pathwayId, pathwayStage, standard, patientId);
     data.getPatientData(patientId, function(data) {
       lifeline.create('bottom-right-panel', patientId, data);
     });

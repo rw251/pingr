@@ -3,9 +3,12 @@ var base = require('../base.js'),
   log = require('../log.js'),
   confirm = require('./confirm.js');
 
+var ID = "QUALITYSTANDARD";
+
 var qs = {
 
   create: function(pathwayId, pathwayStage, standard, patientId) {
+
     var localData = {
       "nhsNumber": data.patLookup ? data.patLookup[patientId] : patientId,
       "patientId": patientId
@@ -21,17 +24,17 @@ var qs = {
 
     switch (data.getPatientStatus(patientId, pathwayId, pathwayStage, standard)) {
       case "ok":
-        farRightPanel.removeClass('standard-missed-page').addClass('standard-achieved-page').removeClass('standard-not-relevant-page');
+        ////farRightPanel.removeClass('standard-missed-page').addClass('standard-achieved-page').removeClass('standard-not-relevant-page');
         localData.achieved = true;
         localData.relevant = true;
         break;
       case "missed":
-        farRightPanel.addClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
+        ////farRightPanel.addClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
         localData.relevant = true;
         localData.achieved = false;
         break;
       case "not":
-        farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').addClass('standard-not-relevant-page');
+        ////farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').addClass('standard-not-relevant-page');
         localData.relevant = false;
         break;
     }
@@ -41,6 +44,26 @@ var qs = {
     else if (agObj && agObj.agree === false) localData.disagree = true;
 
     return base.createPanel($('#qual-standard'), localData);
+  },
+
+  show: function(panel, pathwayId, pathwayStage, standard, patientId){
+
+    var panelId = panel.attr("id");
+
+    if (base.panels[panelId] &&
+      base.panels[panelId].id === ID &&
+      base.panels[panelId].patientId === patientId) {
+        //Already showing the right thing
+        return;
+    }
+
+    base.panels[panelId] = {
+      id: ID,
+      patientId: patientId
+    };
+
+    panel.html(qs.create(pathwayId, pathwayStage, standard, patientId));
+    qs.wireUp(pathwayId, pathwayStage, standard, patientId);
   },
 
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {

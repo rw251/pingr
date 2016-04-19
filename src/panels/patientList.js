@@ -57,51 +57,23 @@ var pl = {
         });
         header = data[pathwayId][pathwayStage].standards[standard].tableTitle;
       }
-      /*else if (pathwayId && pathwayStage && subsection) {
-             pList = data[pathwayId][pathwayStage].bdown[subsection].patients;
-             header = data[pathwayId][pathwayStage].bdown[subsection].name;
-           } else if (pathwayId && pathwayStage) {
-             for (prop in data[pathwayId][pathwayStage].bdown) {
-               if (data[pathwayId][pathwayStage].bdown.hasOwnProperty(prop)) {
-                 pList = pList.concat(data[pathwayId][pathwayStage].bdown[prop].patients);
-               }
-             }
-             header = data[pathwayId][pathwayStage].patientListHeader;
-           } else if (pathwayId) {
-             for (i in lookup.categories) {
-               for (prop in data[pathwayId][i].bdown) {
-                 if (data[pathwayId][i].bdown.hasOwnProperty(prop)) {
-                   pList = pList.concat(data[pathwayId][i].bdown[prop].patients);
-                 }
-               }
-             }
-           } else {
-             for (k = 0; k < data.diseases.length; k++) {
-               for (i in lookup.categories) {
-                 for (prop in data[data.diseases[k].id][i].bdown) {
-                   if (data[data.diseases[k].id][i].bdown.hasOwnProperty(prop)) {
-                     pList = pList.concat(data[data.diseases[k].id][i].bdown[prop].patients);
-                   }
-                 }
-               }
-             }
-           }*/
 
       pList = data.removeDuplicates(pList);
       var patients = pList.map(function(patientId) {
-        var ret = data.patients[patientId];
+        var ret = indicators.patients[patientId];
         ret.nhsNumber = data.patLookup ? data.patLookup[patientId] : patientId;
         ret.patientId = patientId;
         ret.items = []; //The fields in the patient list table
         if (ret[data[pathwayId][pathwayStage].standards[standard].valueId]) {
           if (data[pathwayId][pathwayStage].standards[standard].dateORvalue === "date") {
-            ret.items.push(ret[data[pathwayId][pathwayStage].standards[standard].valueId][0][ret[data[pathwayId][pathwayStage].standards[standard].valueId][0].length - 1]);
+            ret.items.push(ret[data[pathwayId][pathwayStage].standards[standard].valueId].date);
           } else {
-            ret.items.push(ret[data[pathwayId][pathwayStage].standards[standard].valueId][1][ret[data[pathwayId][pathwayStage].standards[standard].valueId][1].length - 1]);
+            ret.items.push(ret[data[pathwayId][pathwayStage].standards[standard].valueId].value);
           }
         } else {
           ret.items.push("?");
         }
+        ret.items.push(ret.opportunities.map(function(v){return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';}).join(""));
         ret.items.push(data.numberOfStandardsMissed(patientId));
         return ret;
       });
@@ -144,6 +116,13 @@ var pl = {
         }
       }
 
+      //add qual standard column
+      localData["header-items"].push({
+        "title": "Categories",
+        "titleHTML": 'tba',
+        "isUnSortable": true,
+        "tooltip": "Categories from above chart"
+      });
       //add qual standard column
       localData["header-items"].push({
         "title": "All Opportunities",

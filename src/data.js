@@ -32,10 +32,12 @@ var _getIndicatorData = function(indicator, callback) {
     dt.indicators[indicator] = file;
 
     //apply which categories people belong to
-    dt.indicators[indicator].patients.forEach(function(patient){
-      patient.opportunities = [];
+    Object.keys(dt.indicators[indicator].patients).forEach(function(patient){
+      dt.indicators[indicator].patients[patient].opportunities = [];
       dt.indicators[indicator].opportunities.forEach(function(opp, idx){
-        if(opp.patients.indexOf(patient.id)>-1) patient.opportunities.push(idx);
+        if(opp.patients.indexOf(+patient)>-1) {
+          dt.indicators[indicator].patients[patient].opportunities.push(idx);
+        }
       });
     });
 

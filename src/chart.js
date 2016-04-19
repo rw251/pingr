@@ -429,7 +429,26 @@ var cht = {
             }
           },
           events: {
+            click: function(event) {
+              var numSeries = this.chart.series.length;
+              var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
 
+              if (this.visible && numVisible === 1) {
+                //show all
+                this.chart.series.forEach(function(series) {
+                  series.show();
+                });
+                selectSeriesFn();
+              } else {
+                this.chart.series.forEach(function(series) {
+                  series.hide();
+                });
+                this.show();
+                selectSeriesFn(this.name);
+              }
+
+              return false;
+            },
             legendItemClick: function(event) {
               var numSeries = this.chart.series.length;
               var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
