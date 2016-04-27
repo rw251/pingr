@@ -56,39 +56,47 @@
   <section id="main">
     <header class="top-head container-fluid hide-if-logged-out">
 
-      <!--<input type="text" placeholder="Search by patients number..." class="typeahead">
-      <i id="searchbtn" class="fa fa-lg fa-search" style="position: absolute;top: 20px;right: 22px;cursor: pointer;"></i>-->
-      <!--fudge to get search icon-->
+      <nav class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul id="mainTab" style="width:900px" class="nav nav-tabs nav-tabs-tall nav-wizard pull-left" role="tablist">
+              <li role="presentation" style="width:25%" class="active" data-id="overview"><a href="#overview" data-href="#overview" role="tab">OVERVIEW</a>
+                <div class="nav-arrow"></div>
+              </li>
+              <li role="presentation" style="width:25%" data-id="indicator">
+                <div class="nav-wedge"></div><a href="#indicators" data-href="#indicators" role="tab">INDICATOR</a>
+                <div class="nav-arrow"></div>
+              </li>
+              <li role="presentation" style="width:25%" data-id="patient">
+                <div class="nav-wedge"></div><a href="#patients" data-href="#patients" role="tab">PATIENT</a>
+                <div class="nav-arrow"></div>
+              </li>
+              <li role="presentation" style="width:25%" data-id="actions">
+                <div class="nav-wedge"></div><a href="#agreedactions" data-href="#agreedactions" role="tab">ACTION PLANS</a></li>
+            </ul>
 
-      <form role="search" class="navbar-left app-search pull-left hidden-xs ng-pristine ng-valid">
-        <input type="text" placeholder="Search by patients number..." class="typeahead form-control form-control-circle">
-      </form>
+            <!--<form role="search" id="search-box" class="navbar-left app-search pull-left hidden-xs ng-pristine ng-valid">
+              <input type="text" placeholder="Search by patients number..." class="typeahead form-control form-control-circle">
+            </form>-->
+            <ul class="nav navbar-nav navbar-right">
 
-      <nav class=" navbar-default hidden-xs" role="navigation">
+              <li>
+                <a href="#help">Help</a>
+              </li>
 
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a href="#overview">Overview</a>
-          </li>
+              <li>
+                <a>Contact us</a>
+              </li>
 
-          <li>
-            <a href="#agreedactions">Agreed actions</a>
-          </li>
+              <li>
+                <a href="/">Sign out</a>
+              </li>
 
-          <li>
-            <a href="#help">Help</a>
-          </li>
-
-          <li>
-            <a>Contact us</a>
-          </li>
-
-          <li>
-            <a href="/">Sign out</a>
-          </li>
-
-        </ul>
+            </ul>
+          </div>
+        </div>
       </nav>
+
     </header>
 
     <div class="starter-template-high page login-page" id="login">
@@ -97,9 +105,9 @@
           <div class="panel-body">
             <img alt="..." width="200" height="200" src="assets/images/icons/PINGR_logo-250px.png" style="display: block; margin-left: auto;margin-right: auto">
             <h2 style="text-align: center;">The Performance
-              <br> Improvement plaN
-              <br> GeneratoR (PINGR)
-            </h2>
+                          <br> Improvement plaN
+                          <br> GeneratoR (PINGR)
+                        </h2>
             <p style="font-size: 1.5em;font-style: italic;text-align: center">Improvement actions
               <br> for GP practices</p>
             <br>
@@ -217,22 +225,27 @@
 
     <div class="starter-template page" id="main-dashboard">
 
-      <div class="container-fluid" style="padding-left: 30px;">
-        <div class="row">
-          <h3 id="mainTitle" class="pagetitle" data-toggle="tooltip" data-placement="right" style="padding-left: 15px; padding-bottom: 15px; padding-top: 0px"></h3>
-        </div>
-        <div class="row">
-          <div class="col-xl-4 col-lg-3" id="left-panel"></div>
-          <div class="col-xl-8 col-lg-6" id="mid-panel">
-            <div class="row">
-              <div id="top-panel" class="col-xl-12"></div>
-              <div id="top-left-panel" class="col-xl-6"></div>
-              <div id="top-right-panel" class="col-xl-6"></div>
-              <div id="bottom-left-panel" class="col-xl-6"></div>
-              <div id="bottom-right-panel" class="col-xl-6"></div>
+      <div class="tab-content">
+        <div class="panel panel-default tab-pane tabs-up active">
+          <div class="container-fluid" style="padding-left: 30px;">
+            <div class="row" style="padding-top: 20px">
+              <div class="col-xl-4 col-lg-4" id="left-panel"></div>
+              <!--<div class="col-xl-8 col-lg-6" id="mid-panel">
+                <div class="row">
+                  <div id="top-panel" class="col-xl-12"></div>
+                  <div id="top-left-panel" class="col-xl-6"></div>
+                  <div id="top-right-panel" class="col-xl-6"></div>
+                  <div id="bottom-left-panel" class="col-xl-6"></div>
+                  <div id="bottom-right-panel" class="col-xl-6"></div>
+                </div>
+              </div>-->
+              <div class="col-xl-8 col-lg-8" id="right-panel">
+                <div id="overview-pane"></div>
+                <div id="indicator-pane"></div>
+                <div id="patient-pane"></div>
+              </div>
             </div>
           </div>
-          <div class="col-xl-4 col-lg-6" id="right-panel"></div>
         </div>
       </div>
 
@@ -533,12 +546,12 @@
   </script>
 
   <script id="team-action-plan-panel" type="x-tmpl-mustache">
-    <div class="panel panel-default panel-improvementopps">
+    <div class="affix panel panel-default panel-improvementopps">
       <div class="clearfix panel-heading-improvementopps">
         <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions: &nbsp; <span style="color: yellow;font-weight:bold"> Practice-level </span> &nbsp;
       </div>
 
-      <div class="panel-body" id="tab-plan-team">
+      <div class="panel-body fit-to-screen-height" id="tab-plan-team">
         <div id="suggestedPlanTeam"></div>
         <div id="personalPlanTeam"></div>
       </div>
@@ -586,8 +599,12 @@
   </script>
 
   <script id="individual-action-plan-panel" type="x-tmpl-mustache">
-    <div>
-      <div id="tab-plan-individual">
+    <div class="affix panel panel-default panel-improvementopps">
+      <div class="clearfix panel-heading-improvementopps">
+        <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions: &nbsp; <span style="color: yellow;font-weight:bold"> Practice-level </span> &nbsp;
+      </div>
+
+      <div class="panel-body fit-to-screen-height" id="tab-plan-individual">
         <div id="advice-placeholder">
           Select an individual patient from the patient panel to view advice
         </div>
@@ -595,7 +612,6 @@
         <div id="personalPlanIndividual"></div>
       </div>
     </div>
-
 
     <div class="modal fade" id="editPlan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -918,7 +934,7 @@
               Improvement actions: &nbsp; <span style="color: yellow;font-weight:bold"> Patient-level </span> &nbsp;
               <!--for {{standard}}-->
             </div>
-            <div id="patient-panel-right" class="panel-body">
+            <div id="patient-panel-right fit-to-screen-height" class="panel-body">
             </div>
           </div>
         </div>
@@ -1224,9 +1240,10 @@
       <li role="presentation" class="active" data-toggle="tooltip" data-placement="top" title="Indicator performance trend"><a href="#trend" aria-controls="trend" role="tab" data-toggle="tab">Trend</a></li>
       <li role="presentation" data-toggle="tooltip" data-placement="top" title="Indicator performance benchmark"><a href="#benchmark" aria-controls="benchmark" role="tab" data-toggle="tab">Benchmark</a></li>
     </ul>
-    <div class="tab-content">
+    <div class="tab-content indicator-tabs">
       <div class="panel panel-default tab-pane tabs-up active" id="trend">
         <div id="trend-chart"></div>
+        <div id="pat-list"></div>
       </div>
       <div class="panel panel-default tab-pane tabs-up" id="benchmark">
         <div id="benchmark-chart"></div>
@@ -1249,6 +1266,12 @@
         </div>
       </div>
     </div>
+  </script>
+
+  <script id="patient-search" type="x-tmpl-mustache">
+    <form role="search" id="search-box" class="navbar-left app-search pull-left hidden-xs ng-pristine ng-valid">
+      <input type="text" placeholder="Search by patients number..." class="typeahead form-control form-control-circle">
+    </form>
   </script>
 </body>
 

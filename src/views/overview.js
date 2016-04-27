@@ -14,24 +14,30 @@ var overview = {
 
   create: function(loadContentFn) {
 
-    if(layout.view !== ID) {
+    base.selectTab("overview");
+
+    if (layout.view !== ID) {
       //Not already in this view so we need to rejig a few things
       base.clearBox();
-      base.switchTo101Layout();
+      //base.switchTo101Layout();
       layout.showMainView();
 
       $('#mainTitle').show();
       base.updateTitle("Overview");
 
+      base.hidePanels(farRightPanel);
+
       layout.view = ID;
     }
 
-    data.pathwayId = "htn";//TODO fudge
+    data.pathwayId = "htn"; //TODO fudge
 
     //The two panels we need to show
     //Panels decide whether they need to redraw themselves
-    teamActionPlan.show(farRightPanel);
-    indicatorList.create(farLeftPanel, loadContentFn);
+    teamActionPlan.show(farLeftPanel);
+    indicatorList.show(farRightPanel, false, loadContentFn);
+
+    $('#overview-pane').show();
 
     base.wireUpTooltips();
 

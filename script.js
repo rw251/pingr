@@ -20,7 +20,7 @@ var template = require('./src/template.js'),
  ********************************************************/
 $(window).load(function() {
   $('.loading-container').fadeOut(1000, function() {
-    $(this).remove();
+    //$(this).remove();
   });
 });
 

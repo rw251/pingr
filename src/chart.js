@@ -312,37 +312,77 @@ var cht = {
   },
 
   drawBenchmarkChartHC: function(element, data) {
-    $('#' + element).highcharts({
+
+    data = [
+      { x: 49.9, p: 'P1', local: true },
+      { x: 71.5, p: 'P2', local: true },
+      { x: 16.4, p: 'P3', local: true },
+      { x: 29.2, p: 'P4', local: true },
+      { x: 44.0, p: 'P5', local: true },
+      { x: 76.0, p: 'P6', local: true },
+      { x: 35.6, p: 'YOU', local: true },
+      { x: 48.5, p: 'P7', local: true },
+      { x: 26.4, p: 'P8', local: true },
+      { x: 94.1, p: 'P9', local: true },
+      { x: 95.6, p: 'P10' },
+      { x: 54.0, p: 'P11' },
+      { x: 39.9, p: 'P12' },
+      { x: 61.5, p: 'P13' },
+      { x: 6.4, p: 'P14' },
+      { x: 19.2, p: 'P15' },
+      { x: 34.0, p: 'P16' },
+      { x: 66.0, p: 'P17' },
+      { x: 25.6, p: 'P18' },
+      { x: 38.5, p: 'P19' },
+      { x: 36.4, p: 'P20' },
+      { x: 84.1, p: 'P21' },
+      { x: 85.6, p: 'P22' },
+      { x: 64.0, p: 'P23' }
+    ];
+    data.sort(function(a, b) {
+      return a.x - b.x;
+    });
+
+    var local = true;
+    var bChart = $('#' + element).highcharts({
       chart: {
         type: 'column',
-        height: 300
+        height: 300,
+        events: {
+          load: function() {
+            var thisChart = this;
+            thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+              local = !local;
+              thisChart.xAxis[0].categories = data.filter(function(v) {
+                if (local) return v.local;
+                else return true;
+              }).map(function(v) {
+                return v.p;
+              });
+              thisChart.series[0].setData(data.filter(function(v) {
+                if (local) return v.local;
+                else return true;
+              }).map(function(v) {
+                if (v.p === "YOU") return { y: v.x, color: "red" };
+                else return v.x;
+              }));
+            }).add();
+          }
+        }
       },
-      title: {
-        text: ''
-      },
+      title: { text: 'Benchmark' },
       xAxis: {
-        categories: [
-                    'P1',
-                    'P2',
-                    'P3',
-                    'P4',
-                    'P5',
-                    'P6',
-                    'YOU',
-                    'P7',
-                    'P8',
-                    'P9',
-                    'P10',
-                    'P11'
-                ],
+        categories: data.filter(function(v) {
+          return v.local === local;
+        }).map(function(v) {
+          return v.p;
+        }),
         crosshair: true
       },
       yAxis: {
         min: 0,
         max: 100,
-        title: {
-          text: '% patients meeting target'
-        }
+        title: { text: '% patients meeting target' }
       },
       tooltip: {
         headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
@@ -363,48 +403,177 @@ var cht = {
       },
       series: [{
         name: 'Performance',
-        data: [49.9, 71.5, 16.4, 29.2, 44.0, 76.0, {
-          y: 35.6,
-          color: "red"
-        }, 48.5, 26.4, 94.1, 95.6, 54.4]
+        data: data.filter(function(v) {
+          return v.local === local;
+        }).map(function(v) {
+          if (v.p === "YOU") return { y: v.x, color: "red" };
+          else return v.x;
+        })
       }]
     });
   },
 
-  drawPerformanceTrendChartHC: function(element, data, selectSeriesFn) {
+  drawPerformanceTrendChartHC: function(element, data) {
 
-    var series = [];
+    /// data is
+    // {
+    //  "values":
+    //    ["x", "2015-08-24", "2015-08-23",...
+    //    ["numerator", 35, 37, 33, 32, 31,...
+    //    ["denominator", 135, 133, 133, 13,...
+    //    ["target", 0.3, 0.3, 0...
+    // }
 
-    data.forEach(function(v, i) {
-      if (i === 0) return;
-      series.push({
-        type: 'line',
-        name: v[0],
-        data: []
-      });
-    });
-    data[0].forEach(function(v, i) {
+    var target = 0.75,
+      maxValue = target,
+      maxXvalue = 0;
+
+    var series = [
+      { type: 'line', name: 'Trend', data: [] },
+      { type: 'line', name: 'Prediction', data: [], dashStyle: 'dot' }
+    ];
+
+    var today = new Date();
+    var lastApril = new Date();
+    var aprilBeforeThat = new Date();
+    var nextApril = new Date();
+    if (today.getMonth() < 3) {
+      //after april
+      lastApril.setYear(today.getFullYear() - 1);
+      aprilBeforeThat.setYear(today.getFullYear() - 1);
+    } else {
+      nextApril.setYear(today.getFullYear() + 1);
+    }
+    aprilBeforeThat.setYear(aprilBeforeThat.getFullYear() - 1);
+    lastApril.setMonth(3);
+    aprilBeforeThat.setMonth(3);
+    nextApril.setMonth(3);
+    lastApril.setDate(1);
+    aprilBeforeThat.setDate(1);
+    nextApril.setDate(1);
+
+    var n = 0,
+      sumX = 0,
+      sumY = 0,
+      sumXY = 0,
+      sumXX = 0,
+      sumYY = 0,
+      intercept, gradient, compDate;
+
+    if (data.values[0].filter(function(v) {
+        return new Date(v).getTime() > lastApril.getTime();
+      }).length > 2) compDate = new Date(lastApril.getTime());
+    else compDate = new Date(aprilBeforeThat.getTime());
+
+    data.values[0].forEach(function(v, i) {
       if (i === 0) return;
       var time = new Date(v).getTime();
-      series.forEach(function(vv, ii) {
-        vv.data.push([time, +data[ii + 1][i]]);
-      });
+      var y = +data.values[1][i] / +data.values[2][i];
+      if (time >= compDate.getTime()) {
+        n++;
+        sumX += time;
+        sumY += y;
+        sumXY += time * y;
+        sumXX += time * time;
+        sumYY += y * y;
+      }
+      series[0].data.push([time, y]);
+      maxValue = Math.max(maxValue, y);
+      maxXvalue = Math.max(maxXvalue, time);
     });
+
+    intercept = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX * sumX);
+    gradient = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+
+    series[1].data.push([maxXvalue, maxXvalue * gradient + intercept]);
+    for (var i = 0; i < 13; i++) {
+      var x = compDate.getTime();
+      if(x<maxXvalue) {
+        compDate.setMonth(compDate.getMonth() + 1);
+        continue;
+      }
+      series[1].data.push([x, x * gradient + intercept]);
+      var m = compDate.getMonth();
+      compDate.setMonth(compDate.getMonth() + 1);
+    }
+
+    //Add line of best fit for latest data since april to next april
+
+
+    //Default to last april - april
+
+
+    var c = $('#' + element).highcharts({
+      chart: { height: 300 },
+      title: { text: '' },
+      xAxis: {
+        max: nextApril.getTime(),
+        type: 'datetime'
+      },
+      yAxis: {
+        title: { text: 'Quality standard performance' },
+        max: maxValue+0.05,
+        min: 0,
+        plotLines: [{
+          value: target,
+          color: 'green',
+          dashStyle: 'shortdash',
+          width: 2,
+          label: {
+            text: 'Target - ' + (target*100) + '%'
+          },
+        }]
+      },
+      legend: { enabled: true },
+
+      navigator: {
+        enabled: true
+      },
+
+      series: series
+    });
+
+    c.highcharts().axes[0].setExtremes(aprilBeforeThat.getTime(), lastApril.getTime(), undefined, false);
+
+  },
+
+  drawAnalytics: function(element, data, selectSeriesFn) {
+
+    cht.cloneToolTip = null;
+    cht.cloneToolTip2 = null;
 
     $('#' + element).highcharts({
       chart: {
-        zoomType: 'x',
-        height: 300
+        type: "column",
+        height: 200,
+        events: {
+          click: function(event) {
+            selectSeriesFn();
+
+            if (cht.cloneToolTip) {
+              this.container.firstChild.removeChild(cht.cloneToolTip);
+              cht.cloneToolTip = null;
+            }
+            if (cht.cloneToolTip2) {
+              cht.cloneToolTip2.remove();
+              cht.cloneToolTip2 = null;
+            }
+
+            return false;
+          }
+        }
       },
       title: {
         text: ''
       },
       subtitle: {
         text: document.ontouchstart === undefined ?
-          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+          'Click a column to filter the patient list' : 'Tap a column to filter the patient list'
       },
       xAxis: {
-        type: 'datetime'
+        categories: data.slice(1).map(function(v, i) {
+          return v[0];
+        })
       },
       yAxis: {
         title: {
@@ -412,68 +581,46 @@ var cht = {
         }
       },
       legend: {
-        enabled: true
+        enabled: false
       },
 
       plotOptions: {
         series: {
-          states: {
-            /*hover : {
-              enabled: false
-            },*/
-            select: {
-              lineWidthPlus: 2
-            },
-            faded: {
-              lineWidth: 1
-            }
-          },
-          events: {
-            click: function(event) {
-              var numSeries = this.chart.series.length;
-              var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
+          cursor: 'pointer',
+          point: {
+            events: {
+              click: function(event) {
+                var numPoints = this.series.points.length;
 
-              if (this.visible && numVisible === 1) {
-                //show all
-                this.chart.series.forEach(function(series) {
-                  series.show();
-                });
-                selectSeriesFn();
-              } else {
-                this.chart.series.forEach(function(series) {
-                  series.hide();
-                });
-                this.show();
-                selectSeriesFn(this.name);
+                selectSeriesFn(this.category);
+
+                if (cht.cloneToolTip) {
+                  this.series.chart.container.firstChild.removeChild(cht.cloneToolTip);
+                }
+                if (cht.cloneToolTip2) {
+                  cht.cloneToolTip2.remove();
+                }
+                cht.cloneToolTip = this.series.chart.tooltip.label.element.cloneNode(true);
+                this.series.chart.container.firstChild.appendChild(cht.cloneToolTip);
+
+                cht.cloneToolTip2 = $('.highcharts-tooltip').clone();
+                $(this.series.chart.container).append(cht.cloneToolTip2);
+
+                return false;
               }
-
-              return false;
-            },
-            legendItemClick: function(event) {
-              var numSeries = this.chart.series.length;
-              var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
-
-              if (this.visible && numVisible === 1) {
-                //show all
-                this.chart.series.forEach(function(series) {
-                  series.show();
-                });
-                selectSeriesFn();
-              } else {
-                this.chart.series.forEach(function(series) {
-                  series.hide();
-                });
-                this.show();
-                selectSeriesFn(this.name);
-              }
-
-              return false;
             }
           }
         }
       },
 
-      series: series
+      series: [{
+        data: data.slice(1).map(function(v, i) {
+          return {
+            y: v[v.length - 1],
+            color: Highcharts.getOptions().colors[i]
+          };
+        })
+      }]
     });
   }
 

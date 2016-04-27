@@ -21,7 +21,7 @@ var template = require('./src/template.js'),
  ********************************************************/
 $(window).load(function() {
   $('.loading-container').fadeOut(1000, function() {
-    $(this).remove();
+    //$(this).remove();
   });
 });
 
@@ -66,7 +66,7 @@ $(document).on('ready', function() {
   history.pushState(null, null, '');
 });
 
-},{"./src/main.js":8,"./src/template.js":25}],2:[function(require,module,exports){
+},{"./src/main.js":8,"./src/template.js":27}],2:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   chart = require('./chart.js'),
@@ -76,6 +76,12 @@ var base = {
 
   //object for keeping track what is in each panel to prevent unnecessary redraws
   panels: {},
+
+  selectTab: function(id){
+    var href = $('#mainTab li.active a').data("href");
+    $('#mainTab li.active').removeClass('active').find('a').attr("href",href);
+    $('#mainTab li[data-id=' + id + ']').addClass('active').find('a').removeAttr("href");
+  },
 
   createPanel: function(templateSelector, data, templates) {
     var tempMust = templateSelector.html();
@@ -137,6 +143,14 @@ var base = {
 
     chart.drawOverviewChart(pathwayId, pathwayStage, enableHover);
 
+  },
+
+  hideFooter: function(){
+    $('footer').hide();
+  },
+
+  showFooter: function(){
+    $('footer').show();
   },
 
   hideTooltips: function() {
@@ -301,6 +315,8 @@ var base = {
         "text": log.text[val.id || val].text,
         "subsection": val.subsection
       };
+    }).filter(function(v,i){//RW to always limit to 3
+      return i<3;
     });
   },
 
@@ -346,6 +362,8 @@ var base = {
     midPanel.hide();
     farRightPanel.removeClass('col-xl-8').addClass('col-xl-4').show();
   },
+
+
 
   switchTo221Layout: function() {
     if (base.layout === "221") return;
@@ -440,6 +458,16 @@ var base = {
     farLeftPanel.hide();
     farRightPanel.hide();
     topPanel.hide();
+  },
+
+  hidePanels: function(panel) {
+    panel.children().hide();
+  },
+
+  updateTab: function(tab, value, url) {
+    var tabElement = $('#mainTab a[data-href=#'+tab+']');
+    tabElement.html(tabElement.text().split(":")[0] + ":<br><span><strong>" + value + "</strong></span>");
+    tabElement.data("href","#" + tab + "/" + url);
   }
 
 };
@@ -761,37 +789,77 @@ var cht = {
   },
 
   drawBenchmarkChartHC: function(element, data) {
-    $('#' + element).highcharts({
+
+    data = [
+      { x: 49.9, p: 'P1', local: true },
+      { x: 71.5, p: 'P2', local: true },
+      { x: 16.4, p: 'P3', local: true },
+      { x: 29.2, p: 'P4', local: true },
+      { x: 44.0, p: 'P5', local: true },
+      { x: 76.0, p: 'P6', local: true },
+      { x: 35.6, p: 'YOU', local: true },
+      { x: 48.5, p: 'P7', local: true },
+      { x: 26.4, p: 'P8', local: true },
+      { x: 94.1, p: 'P9', local: true },
+      { x: 95.6, p: 'P10' },
+      { x: 54.0, p: 'P11' },
+      { x: 39.9, p: 'P12' },
+      { x: 61.5, p: 'P13' },
+      { x: 6.4, p: 'P14' },
+      { x: 19.2, p: 'P15' },
+      { x: 34.0, p: 'P16' },
+      { x: 66.0, p: 'P17' },
+      { x: 25.6, p: 'P18' },
+      { x: 38.5, p: 'P19' },
+      { x: 36.4, p: 'P20' },
+      { x: 84.1, p: 'P21' },
+      { x: 85.6, p: 'P22' },
+      { x: 64.0, p: 'P23' }
+    ];
+    data.sort(function(a, b) {
+      return a.x - b.x;
+    });
+
+    var local = true;
+    var bChart = $('#' + element).highcharts({
       chart: {
         type: 'column',
-        height: 300
+        height: 300,
+        events: {
+          load: function() {
+            var thisChart = this;
+            thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+              local = !local;
+              thisChart.xAxis[0].categories = data.filter(function(v) {
+                if (local) return v.local;
+                else return true;
+              }).map(function(v) {
+                return v.p;
+              });
+              thisChart.series[0].setData(data.filter(function(v) {
+                if (local) return v.local;
+                else return true;
+              }).map(function(v) {
+                if (v.p === "YOU") return { y: v.x, color: "red" };
+                else return v.x;
+              }));
+            }).add();
+          }
+        }
       },
-      title: {
-        text: ''
-      },
+      title: { text: 'Benchmark' },
       xAxis: {
-        categories: [
-                    'P1',
-                    'P2',
-                    'P3',
-                    'P4',
-                    'P5',
-                    'P6',
-                    'YOU',
-                    'P7',
-                    'P8',
-                    'P9',
-                    'P10',
-                    'P11'
-                ],
+        categories: data.filter(function(v) {
+          return v.local === local;
+        }).map(function(v) {
+          return v.p;
+        }),
         crosshair: true
       },
       yAxis: {
         min: 0,
         max: 100,
-        title: {
-          text: '% patients meeting target'
-        }
+        title: { text: '% patients meeting target' }
       },
       tooltip: {
         headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
@@ -812,48 +880,177 @@ var cht = {
       },
       series: [{
         name: 'Performance',
-        data: [49.9, 71.5, 16.4, 29.2, 44.0, 76.0, {
-          y: 35.6,
-          color: "red"
-        }, 48.5, 26.4, 94.1, 95.6, 54.4]
+        data: data.filter(function(v) {
+          return v.local === local;
+        }).map(function(v) {
+          if (v.p === "YOU") return { y: v.x, color: "red" };
+          else return v.x;
+        })
       }]
     });
   },
 
-  drawPerformanceTrendChartHC: function(element, data, selectSeriesFn) {
+  drawPerformanceTrendChartHC: function(element, data) {
 
-    var series = [];
+    /// data is
+    // {
+    //  "values":
+    //    ["x", "2015-08-24", "2015-08-23",...
+    //    ["numerator", 35, 37, 33, 32, 31,...
+    //    ["denominator", 135, 133, 133, 13,...
+    //    ["target", 0.3, 0.3, 0...
+    // }
 
-    data.forEach(function(v, i) {
-      if (i === 0) return;
-      series.push({
-        type: 'line',
-        name: v[0],
-        data: []
-      });
-    });
-    data[0].forEach(function(v, i) {
+    var target = 0.75,
+      maxValue = target,
+      maxXvalue = 0;
+
+    var series = [
+      { type: 'line', name: 'Trend', data: [] },
+      { type: 'line', name: 'Prediction', data: [], dashStyle: 'dot' }
+    ];
+
+    var today = new Date();
+    var lastApril = new Date();
+    var aprilBeforeThat = new Date();
+    var nextApril = new Date();
+    if (today.getMonth() < 3) {
+      //after april
+      lastApril.setYear(today.getFullYear() - 1);
+      aprilBeforeThat.setYear(today.getFullYear() - 1);
+    } else {
+      nextApril.setYear(today.getFullYear() + 1);
+    }
+    aprilBeforeThat.setYear(aprilBeforeThat.getFullYear() - 1);
+    lastApril.setMonth(3);
+    aprilBeforeThat.setMonth(3);
+    nextApril.setMonth(3);
+    lastApril.setDate(1);
+    aprilBeforeThat.setDate(1);
+    nextApril.setDate(1);
+
+    var n = 0,
+      sumX = 0,
+      sumY = 0,
+      sumXY = 0,
+      sumXX = 0,
+      sumYY = 0,
+      intercept, gradient, compDate;
+
+    if (data.values[0].filter(function(v) {
+        return new Date(v).getTime() > lastApril.getTime();
+      }).length > 2) compDate = new Date(lastApril.getTime());
+    else compDate = new Date(aprilBeforeThat.getTime());
+
+    data.values[0].forEach(function(v, i) {
       if (i === 0) return;
       var time = new Date(v).getTime();
-      series.forEach(function(vv, ii) {
-        vv.data.push([time, +data[ii + 1][i]]);
-      });
+      var y = +data.values[1][i] / +data.values[2][i];
+      if (time >= compDate.getTime()) {
+        n++;
+        sumX += time;
+        sumY += y;
+        sumXY += time * y;
+        sumXX += time * time;
+        sumYY += y * y;
+      }
+      series[0].data.push([time, y]);
+      maxValue = Math.max(maxValue, y);
+      maxXvalue = Math.max(maxXvalue, time);
     });
+
+    intercept = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX * sumX);
+    gradient = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+
+    series[1].data.push([maxXvalue, maxXvalue * gradient + intercept]);
+    for (var i = 0; i < 13; i++) {
+      var x = compDate.getTime();
+      if(x<maxXvalue) {
+        compDate.setMonth(compDate.getMonth() + 1);
+        continue;
+      }
+      series[1].data.push([x, x * gradient + intercept]);
+      var m = compDate.getMonth();
+      compDate.setMonth(compDate.getMonth() + 1);
+    }
+
+    //Add line of best fit for latest data since april to next april
+
+
+    //Default to last april - april
+
+
+    var c = $('#' + element).highcharts({
+      chart: { height: 300 },
+      title: { text: '' },
+      xAxis: {
+        max: nextApril.getTime(),
+        type: 'datetime'
+      },
+      yAxis: {
+        title: { text: 'Quality standard performance' },
+        max: maxValue+0.05,
+        min: 0,
+        plotLines: [{
+          value: target,
+          color: 'green',
+          dashStyle: 'shortdash',
+          width: 2,
+          label: {
+            text: 'Target - ' + (target*100) + '%'
+          },
+        }]
+      },
+      legend: { enabled: true },
+
+      navigator: {
+        enabled: true
+      },
+
+      series: series
+    });
+
+    c.highcharts().axes[0].setExtremes(aprilBeforeThat.getTime(), lastApril.getTime(), undefined, false);
+
+  },
+
+  drawAnalytics: function(element, data, selectSeriesFn) {
+
+    cht.cloneToolTip = null;
+    cht.cloneToolTip2 = null;
 
     $('#' + element).highcharts({
       chart: {
-        zoomType: 'x',
-        height: 300
+        type: "column",
+        height: 200,
+        events: {
+          click: function(event) {
+            selectSeriesFn();
+
+            if (cht.cloneToolTip) {
+              this.container.firstChild.removeChild(cht.cloneToolTip);
+              cht.cloneToolTip = null;
+            }
+            if (cht.cloneToolTip2) {
+              cht.cloneToolTip2.remove();
+              cht.cloneToolTip2 = null;
+            }
+
+            return false;
+          }
+        }
       },
       title: {
         text: ''
       },
       subtitle: {
         text: document.ontouchstart === undefined ?
-          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+          'Click a column to filter the patient list' : 'Tap a column to filter the patient list'
       },
       xAxis: {
-        type: 'datetime'
+        categories: data.slice(1).map(function(v, i) {
+          return v[0];
+        })
       },
       yAxis: {
         title: {
@@ -861,68 +1058,46 @@ var cht = {
         }
       },
       legend: {
-        enabled: true
+        enabled: false
       },
 
       plotOptions: {
         series: {
-          states: {
-            /*hover : {
-              enabled: false
-            },*/
-            select: {
-              lineWidthPlus: 2
-            },
-            faded: {
-              lineWidth: 1
-            }
-          },
-          events: {
-            click: function(event) {
-              var numSeries = this.chart.series.length;
-              var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
+          cursor: 'pointer',
+          point: {
+            events: {
+              click: function(event) {
+                var numPoints = this.series.points.length;
 
-              if (this.visible && numVisible === 1) {
-                //show all
-                this.chart.series.forEach(function(series) {
-                  series.show();
-                });
-                selectSeriesFn();
-              } else {
-                this.chart.series.forEach(function(series) {
-                  series.hide();
-                });
-                this.show();
-                selectSeriesFn(this.name);
+                selectSeriesFn(this.category);
+
+                if (cht.cloneToolTip) {
+                  this.series.chart.container.firstChild.removeChild(cht.cloneToolTip);
+                }
+                if (cht.cloneToolTip2) {
+                  cht.cloneToolTip2.remove();
+                }
+                cht.cloneToolTip = this.series.chart.tooltip.label.element.cloneNode(true);
+                this.series.chart.container.firstChild.appendChild(cht.cloneToolTip);
+
+                cht.cloneToolTip2 = $('.highcharts-tooltip').clone();
+                $(this.series.chart.container).append(cht.cloneToolTip2);
+
+                return false;
               }
-
-              return false;
-            },
-            legendItemClick: function(event) {
-              var numSeries = this.chart.series.length;
-              var numVisible = this.chart.series.filter(function(v){return v.visible;}).length;
-
-              if (this.visible && numVisible === 1) {
-                //show all
-                this.chart.series.forEach(function(series) {
-                  series.show();
-                });
-                selectSeriesFn();
-              } else {
-                this.chart.series.forEach(function(series) {
-                  series.hide();
-                });
-                this.show();
-                selectSeriesFn(this.name);
-              }
-
-              return false;
             }
           }
         }
       },
 
-      series: series
+      series: [{
+        data: data.slice(1).map(function(v, i) {
+          return {
+            y: v[v.length - 1],
+            color: Highcharts.getOptions().colors[i]
+          };
+        })
+      }]
     });
   }
 
@@ -934,22 +1109,22 @@ module.exports = cht;
 var log = require('./log.js'),
   lookup = require('./lookup.js');
 
-var _getAllIndicatorData = function(callback){
+var _getAllIndicatorData = function(callback) {
   var r = Math.random();
   $.getJSON("data/indicators.json?v=" + r, function(file) {
     dt.indicators = file;
 
-    dt.indicators.forEach(function(indicator){
-      var percentage = Math.round(100*indicator.values[1][1]*100/indicator.values[2][1])/100;
+    dt.indicators.forEach(function(indicator) {
+      var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
       indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
-      indicator.target = indicator.values[3][1]*100 + "%";
-      indicator.up = percentage > Math.round(100*indicator.values[1][2]*100/indicator.values[2][2])/100;
+      indicator.target = indicator.values[3][1] * 100 + "%";
+      indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
-        return Math.round(100*val*100/indicator.values[2][idx])/100;
-      }).slice(1,10);
+        return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
+      }).slice(1, 10);
       trend.reverse();
       indicator.trend = trend.join(",");
-      var dates = indicator.values[0].slice(1,10);
+      var dates = indicator.values[0].slice(1, 10);
       dates.reverse();
       indicator.dates = dates;
     });
@@ -959,16 +1134,45 @@ var _getAllIndicatorData = function(callback){
   });
 };
 
+var _getAllIndicatorDataSync = function(callback) {
+  var r = Math.random();
+  $.ajax({
+    url: "data/indicators.json?v=" + r,
+    async: false,
+    success: function(file) {
+      dt.indicators = file;
+
+      dt.indicators.forEach(function(indicator) {
+        var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
+        indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
+        indicator.target = indicator.values[3][1] * 100 + "%";
+        indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
+        var trend = indicator.values[1].map(function(val, idx) {
+          return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
+        }).slice(1, 10);
+        trend.reverse();
+        indicator.trend = trend.join(",");
+        var dates = indicator.values[0].slice(1, 10);
+        dates.reverse();
+        indicator.dates = dates;
+      });
+
+    }
+  });
+
+  return dt.indicators;
+};
+
 var _getIndicatorData = function(indicator, callback) {
   var r = Math.random();
   $.getJSON("data/idata." + indicator + ".json?v=" + r, function(file) {
     dt.indicators[indicator] = file;
 
     //apply which categories people belong to
-    Object.keys(dt.indicators[indicator].patients).forEach(function(patient){
+    Object.keys(dt.indicators[indicator].patients).forEach(function(patient) {
       dt.indicators[indicator].patients[patient].opportunities = [];
-      dt.indicators[indicator].opportunities.forEach(function(opp, idx){
-        if(opp.patients.indexOf(+patient)>-1) {
+      dt.indicators[indicator].opportunities.forEach(function(opp, idx) {
+        if (opp.patients.indexOf(+patient) > -1) {
           dt.indicators[indicator].patients[patient].opportunities.push(idx);
         }
       });
@@ -978,10 +1182,33 @@ var _getIndicatorData = function(indicator, callback) {
   });
 };
 
-var _getFakePatientData = function(callback){
+var _getIndicatorDataSync = function(indicator) {
+  var r = Math.random();
+  $.ajax({
+    url: "data/idata." + indicator + ".json?v=" + r,
+    async: false,
+    success: function(file) {
+      dt.indicators[indicator] = file;
+
+      //apply which categories people belong to
+      Object.keys(dt.indicators[indicator].patients).forEach(function(patient) {
+        dt.indicators[indicator].patients[patient].opportunities = [];
+        dt.indicators[indicator].opportunities.forEach(function(opp, idx) {
+          if (opp.patients.indexOf(+patient) > -1) {
+            dt.indicators[indicator].patients[patient].opportunities.push(idx);
+          }
+        });
+      });
+
+    }
+  });
+  return dt.indicators[indicator];
+};
+
+var _getFakePatientData = function(callback) {
   var r = Math.random();
   $.getJSON("data/patient.json?v=" + r, function(file) {
-    if(!dt.patients) dt.patients = {};
+    if (!dt.patients) dt.patients = {};
     dt.patients.patient = file;
 
     callback(dt.patients.patient);
@@ -991,12 +1218,12 @@ var _getFakePatientData = function(callback){
 var _getPatientData = function(patient, callback) {
   var r = Math.random();
   $.getJSON("data/" + patient + ".json?v=" + r, function(file) {
-    if(!dt.patients) dt.patients = {};
+    if (!dt.patients) dt.patients = {};
     dt.patients[patient] = file;
 
     callback(dt.patients[patient]);
-  }).fail(function(){
-    if(dt.patients.patient) return callback(dt.patients.patient);
+  }).fail(function() {
+    if (dt.patients.patient) return callback(dt.patients.patient);
     else _getFakePatientData(callback);
   });
 };
@@ -1266,23 +1493,40 @@ var dt = {
     }
   },
 
-  getAllIndicatorData: function(callback){
-    if(dt.indicators) {
+  getAllIndicatorData: function(callback) {
+    if (dt.indicators) {
       return callback(dt.indicators);
     } else {
       _getAllIndicatorData(callback);
     }
   },
 
+  getAllIndicatorDataSync: function() {
+    if (dt.indicators) {
+      return dt.indicators;
+    } else {
+      return _getAllIndicatorDataSync();
+    }
+  },
+
   getIndicatorData: function(indicator, callback) {
-    if(!dt.indicators) {
-      _getAllIndicatorData(function(data){
+    if (!dt.indicators) {
+      _getAllIndicatorData(function(data) {
         _getIndicatorData(indicator, callback);
       });
-    } else if(dt.indicators && dt.indicators[indicator]) {
+    } else if (dt.indicators && dt.indicators[indicator]) {
       return callback(dt.indicators[indicator]);
     } else {
       _getIndicatorData(indicator, callback);
+    }
+  },
+
+  getIndicatorDataSync: function(indicator) {
+    dt.getAllIndicatorDataSync();
+    if (dt.indicators[indicator]) {
+      return dt.indicators[indicator];
+    } else {
+      return _getIndicatorDataSync(indicator);
     }
   },
 
@@ -1290,8 +1534,8 @@ var dt = {
     /*if(dt.patients && dt.patients[patientId]) {
       return callback(dt.patients[patientId]);
     } else {*/
-      _getPatientData(patientId, callback);
-  /*  }*/
+    _getPatientData(patientId, callback);
+    /*  }*/
   }
 
 };
@@ -1802,7 +2046,8 @@ var template = require('./template.js'),
   base = require('./base.js'),
   layout = require('./layout.js'),
   welcome = require('./panels/welcome.js'),
-  log = require('./log.js');
+  log = require('./log.js'),
+  patientView = require('./views/patient.js');
 
 var states, patLookup, page, hash;
 
@@ -1825,7 +2070,11 @@ var main = {
     //Hide the suggestions panel
     $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
-    template.displaySelectedPatient(nhsNumberObject.id);
+    history.pushState(null, null, '#patients/' + nhsNumberObject.id);
+    template.loadContent('#patients/' + nhsNumberObject.id, true);
+
+
+    //template.displaySelectedPatient(nhsNumberObject.id);
   },
 
   wireUpSearchBox: function() {
@@ -2002,7 +2251,7 @@ var main = {
 
 module.exports = main;
 
-},{"./base.js":2,"./data.js":4,"./layout.js":5,"./log.js":6,"./panels/welcome.js":24,"./template.js":25}],9:[function(require,module,exports){
+},{"./base.js":2,"./data.js":4,"./layout.js":5,"./log.js":6,"./panels/welcome.js":26,"./template.js":27,"./views/patient.js":31}],9:[function(require,module,exports){
 module.exports = {
 
   showSaved: function() {
@@ -2238,7 +2487,7 @@ var all = {
 
 module.exports = all;
 
-},{"../base.js":2,"../chart.js":3,"../data.js":4,"../layout.js":5,"./individualActionPlan.js":15,"./medication.js":17,"./otherCodes.js":18,"./qualityStandard.js":21,"./trend.js":23}],11:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"../layout.js":5,"./individualActionPlan.js":16,"./medication.js":18,"./otherCodes.js":19,"./qualityStandard.js":23,"./trend.js":25}],11:[function(require,module,exports){
 var base = require('../base.js'),
 log = require('../log.js');
 
@@ -2351,30 +2600,96 @@ var confirm = {
 module.exports = confirm;
 
 },{"../base.js":2,"../log.js":6}],12:[function(require,module,exports){
-var bd = {};
+var base = require('../base.js'),
+  data = require('../data.js'),
+  chart = require('../chart.js'),
+  patientList = require('./patientList.js');
+
+var ID = "INDICATOR_BENCHMARK";
+
+var iTrend = {
+
+  show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
+
+    var elem = $("<div id='benchmark-chart'></div>");
+
+    if (isAppend) panel.append(elem);
+    else panel.html(elem);
+
+    chart.drawBenchmarkChartHC("benchmark-chart", null);
+
+  },
+
+  wireUp: function() {
+
+  }
+
+};
+
+module.exports = iTrend;
+
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"./patientList.js":20}],13:[function(require,module,exports){
+var data = require('../data.js'),
+  chart = require('../chart.js');
+
+var bd = {
+
+  wireUp: function() {
+
+  },
+
+  show: function(panel, isAppend, pathwayId, pathwayStage, standard, selectSeriesFn) {
+
+    var indicators = data.getIndicatorDataSync([pathwayId, pathwayStage, standard].join("."));
+
+    var dataObj = indicators.opportunities.map(function(opp) {
+      var c = opp.values[0].slice();
+      c.splice(0, 1, opp.name);
+      return c;
+    });
+
+    dataObj.splice(0, 0, indicators.opportunities[0].values[1]);
+
+    var elem = $("<div id='breakdown-chart'></div>");
+
+    if (isAppend) panel.append(elem);
+    else panel.html(elem);
+
+    chart.drawAnalytics("breakdown-chart", dataObj, selectSeriesFn);
+
+    bd.wireUp();
+
+  }
+
+};
 
 module.exports = bd;
 
-},{}],13:[function(require,module,exports){
+},{"../chart.js":3,"../data.js":4}],14:[function(require,module,exports){
 var base = require('../base.js'),
   log = require('../log.js'),
   data = require('../data.js');
 
 var indicatorList = {
 
-  create: function(panel, loadContentFn) {
+  show: function(panel, isAppend, loadContentFn) {
     data.getAllIndicatorData(function(indicators) {
 
       var tempMust = $('#overview-panel-table').html();
-      panel.html(Mustache.render(tempMust, {
+      var html = Mustache.render(tempMust, {
         "indicators": indicators
-      }));
+      });
+      if (isAppend) {
+        panel.append(html);
+      } else {
+        panel.html(html);
+      }
 
       $('.inlinesparkline').sparkline('html', {
         tooltipFormatter: function(sparkline, options, fields) {
           return indicators[$('.inlinesparkline').index(sparkline.el)].dates[fields.x] + ": " + fields.y + "%";
         },
-        width:"100px"
+        width: "100px"
       });
 
       indicatorList.wireUp(panel, loadContentFn);
@@ -2390,8 +2705,8 @@ var indicatorList = {
     panel.off('click', 'tr.standard-row');
     panel.on('click', 'tr.standard-row', function(e) {
       var url = $(this).data("id").replace(/\./g, "/");
-      history.pushState(null, null, '#overview/' + url);
-      loadContentFn('#overview/' + url);
+      history.pushState(null, null, '#indicators/' + url);
+      loadContentFn('#indicators/' + url);
       // do not give a default action
       e.preventDefault();
       e.stopPropagation();
@@ -2403,67 +2718,40 @@ var indicatorList = {
 
 module.exports = indicatorList;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6}],14:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6}],15:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
-  chart = require('../chart.js');
+  chart = require('../chart.js'),
+  patientList = require('./patientList.js');
 
 var ID = "INDICATOR_TREND";
 
 var iTrend = {
 
-  create: function(panel, pathwayId, pathwayStage, standard, tab, selectSeriesFn) {
+  show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
 
-    var panelId = panel.attr("id");
+    var indicators = data.getAllIndicatorDataSync();
 
-    if (base.panels[panelId] &&
-      base.panels[panelId].id === ID &&
-      base.panels[panelId].pathwayId === pathwayId &&
-      base.panels[panelId].pathwayStage === pathwayStage &&
-      base.panels[panelId].standard === standard) {
-      //Already showing the right thing
-      return;
-    }
+    var elem = $("<div id='trend-chart'></div>");
 
-    base.panels[panelId] = {
-      id: ID,
-      pathwayId: pathwayId,
-      pathwayStage: pathwayStage,
-      standard: standard
-    };
+    if (isAppend) panel.append(elem);
+    else panel.html(elem);
 
-    data.getIndicatorData([pathwayId, pathwayStage, standard].join("."), function(indicators) {
+    chart.drawPerformanceTrendChartHC("trend-chart", indicators.filter(function(v){
+      return v.id===[pathwayId, pathwayStage, standard].join(".");
+    })[0]);
 
-      var tempMust = $('#indicator-overview-panel').html();
-      panel.html(Mustache.render(tempMust));
-
-      chart.drawBenchmarkChartHC("benchmark-chart", null);
-
-      var dataObj = indicators.opportunities.map(function(opp) {
-        var c = opp.values[0].slice();
-        c.splice(0, 1, opp.name);
-        return c;
-      });
-      dataObj.splice(0, 0, indicators.opportunities[0].values[1]);
-      chart.drawPerformanceTrendChartHC("trend-chart", dataObj, selectSeriesFn);
-
-      iTrend.wireUp();
-
-    });
   },
 
-  wireUp: function(){
-    $('a[data-toggle="tab"]').off('shown.bs.tab');
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-      $('.tab-pane.active div:first').highcharts().reflow();
-    });
+  wireUp: function() {
+
   }
 
 };
 
 module.exports = iTrend;
 
-},{"../base.js":2,"../chart.js":3,"../data.js":4}],15:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"./patientList.js":20}],16:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -2481,6 +2769,12 @@ var iap = {
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
     panel.html(iap.create(pathwayStage));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
+
+    panel.find('div.fit-to-screen-height').niceScroll({
+      cursoropacitymin: 0.3,
+      cursorwidth: "7px",
+      horizrailenabled: false
+    });
   },
 
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {
@@ -2852,7 +3146,7 @@ var iap = {
 
 module.exports = iap;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],16:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],17:[function(require,module,exports){
 var base = require('../base.js');
 
 var ID = "LIFELINE";
@@ -2871,8 +3165,7 @@ var colour = {
 var ll = {
   chartArray: [],
 
-  destroy: function(element) {
-    var elementId = '#' + element;
+  destroy: function(elementId) {
     $(elementId).html('');
     $(elementId).off('mousemove touchmove touchstart', '.sync-chart');
 
@@ -2881,24 +3174,16 @@ var ll = {
     }
   },
 
-  create: function(element, patientId, data) {
+  show: function(panel, isAppend, patientId, data) {
+
+
+    var element = 'lifeline-chart';
     var elementId = '#' + element;
 
-    var panelId = element;
+    ll.destroy(elementId);
 
-    if (base.panels[panelId] &&
-      base.panels[panelId].id === ID &&
-      base.panels[panelId].patientId === patientId) {
-        //Already showing the right thing
-        return;
-    }
-
-    base.panels[panelId] = {
-      id: ID,
-      patientId: patientId
-    };
-
-    ll.destroy(element);
+    if(isAppend) panel.append($('<div id="' + element + '"></div>'));
+    else panel.html($('<div id="' + element + '"></div>'));
 
     colour.reset();
     /**
@@ -3516,7 +3801,7 @@ var ll = {
 
 module.exports = ll;
 
-},{"../base.js":2}],17:[function(require,module,exports){
+},{"../base.js":2}],18:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -3547,7 +3832,7 @@ var med = {
 
 module.exports = med;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],18:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],19:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -3582,7 +3867,7 @@ var other = {
 
 module.exports = other;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],19:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],20:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   lookup = require('../lookup.js');
@@ -3784,28 +4069,12 @@ var pl = {
 
   },
 
-  create: function(panel, pathwayId, pathwayStage, standard, loadContentFn) {
-
-    var panelId = panel.attr("id");
-
-    if (base.panels[panelId] &&
-      base.panels[panelId].id === ID &&
-      base.panels[panelId].pathwayId === pathwayId &&
-      base.panels[panelId].pathwayStage === pathwayStage &&
-      base.panels[panelId].standard === standard) {
-      //Already showing the right thing
-      return;
-    }
-
-    base.panels[panelId] = {
-      id: ID,
-      pathwayId: pathwayId,
-      pathwayStage: pathwayStage,
-      standard: standard
-    };
+  show: function(panel, isAppend, pathwayId, pathwayStage, standard, loadContentFn) {
 
     var tempMust = $('#patients-panel-yes').html();
-    panel.html(Mustache.render(tempMust));
+
+    if(isAppend) panel.append(Mustache.render(tempMust));
+    else panel.html(Mustache.render(tempMust));
 
     pl.wireUp(function(patientId) {
       history.pushState(null, null, '#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));
@@ -3818,7 +4087,86 @@ var pl = {
 
 module.exports = pl;
 
-},{"../base.js":2,"../data.js":4,"../lookup.js":7}],20:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../lookup.js":7}],21:[function(require,module,exports){
+var base = require('../base.js'),
+  data = require('../data.js'),
+  lookup = require('../lookup.js');
+var states, loadContFn, ID = "PATIENT_SEARCH";
+
+var ps = {
+
+  wireUp: function() {
+    if (states) {
+      states.clearPrefetchCache();
+    }
+
+    states = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      local: $.map(data.patientArray, function(state) {
+        return {
+          id: state,
+          value: state
+        };
+      })
+    });
+
+    states.initialize(true);
+
+    $('#search-box').find('.typeahead').typeahead('destroy');
+    $('#search-box').find('.typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1,
+        autoselect: true
+      }, {
+        name: 'patients',
+        displayKey: 'value',
+        source: states.ttAdapter(),
+        templates: {
+          empty: [
+              '<div class="empty-message">',
+                '&nbsp; &nbsp; No matches',
+              '</div>'
+            ].join('\n')
+        }
+      }).on('typeahead:selected', ps.onSelected)
+      .on('typeahead:autocompleted', ps.onSelected);
+
+    $('#searchbtn').on('mousedown', function() {
+      var val = $('.typeahead').eq(0).val();
+      if (!val || val === "") val = $('.typeahead').eq(1).val();
+      ps.onSelected(null, {
+        "id": val
+      });
+    });
+  },
+
+  onSelected: function($e, nhsNumberObject) {
+    //Hide the suggestions panel
+    $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
+
+    history.pushState(null, null, '#patients/' + nhsNumberObject.id);
+    loadContFn('#patients/' + nhsNumberObject.id, true);
+
+  },
+
+  show: function(panel, isAppend, loadContentFn) {
+
+    loadContFn = loadContentFn;
+    var tempMust = $('#patient-search').html();
+
+    if(isAppend) panel.append(Mustache.render(tempMust));
+    else panel.html(Mustache.render(tempMust));
+
+    ps.wireUp();
+  }
+
+};
+
+module.exports = ps;
+
+},{"../base.js":2,"../data.js":4,"../lookup.js":7}],22:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   lookup = require('../lookup.js'),
@@ -4213,7 +4561,7 @@ var pt = {
 
 module.exports = pt;
 
-},{"../base.js":2,"../chart.js":3,"../data.js":4,"../lookup.js":7,"./individualActionPlan.js":15,"./medication.js":17,"./otherCodes.js":18,"./patientList.js":19,"./qualityStandard.js":21,"./trend.js":23}],21:[function(require,module,exports){
+},{"../base.js":2,"../chart.js":3,"../data.js":4,"../lookup.js":7,"./individualActionPlan.js":16,"./medication.js":18,"./otherCodes.js":19,"./patientList.js":20,"./qualityStandard.js":23,"./trend.js":25}],23:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
@@ -4333,7 +4681,7 @@ var qs = {
 
 module.exports = qs;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],22:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],24:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -4523,6 +4871,12 @@ var tap = {
     });
 
     tap.populateTeamSuggestedActionsPanel();
+
+    location.find('div.fit-to-screen-height').niceScroll({
+      cursoropacitymin: 0.3,
+      cursorwidth: "7px",
+      horizrailenabled: false
+    });
   },
 
   populateTeamSuggestedActionsPanel: function() {
@@ -4676,7 +5030,7 @@ var tap = {
 
 module.exports = tap;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],23:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./confirm.js":11}],25:[function(require,module,exports){
 var base = require('../base.js'),
   confirm = require('./confirm.js'),
   data = require('../data.js'),
@@ -4727,7 +5081,7 @@ var trnd = {
 
 module.exports = trnd;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"../lookup.js":7,"./confirm.js":11}],24:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"../lookup.js":7,"./confirm.js":11}],26:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
@@ -5190,7 +5544,7 @@ var welcome = {
 
 module.exports = welcome;
 
-},{"../base.js":2,"../data.js":4,"../log.js":6,"./individualActionPlan.js":15,"./teamActionPlan.js":22}],25:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../log.js":6,"./individualActionPlan.js":16,"./teamActionPlan.js":24}],27:[function(require,module,exports){
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   base = require('./base.js'),
@@ -5202,7 +5556,8 @@ var data = require('./data.js'),
   layout = require('./layout.js'),
   overview = require('./views/overview.js'),
   indicatorView = require('./views/indicator.js'),
-  patientView = require('./views/patient.js');
+  patientView = require('./views/patient.js'),
+  actionPlan = require('./views/actions.js');
 
 var template = {
 
@@ -5216,14 +5571,16 @@ var template = {
 
     if (hash === '') {
       base.clearBox();
+      base.showFooter();
       layout.showPage('login');
       $('html').removeClass('scroll-bar');
     } else {
+      base.hideFooter();
       $('html').addClass('scroll-bar');
       var params = {};
       var urlBits = hash.split('/');
-      if(hash.indexOf('?')>-1) {
-        hash.split('?')[1].split('&').forEach(function(param){
+      if (hash.indexOf('?') > -1) {
+        hash.split('?')[1].split('&').forEach(function(param) {
           var elems = param.split("=");
           params[elems[0]] = elems[1];
         });
@@ -5234,7 +5591,7 @@ var template = {
 
         overview.create(template.loadContent);
 
-      } else if (urlBits[0] === "#overview") {
+      } else if (urlBits[0] === "#indicators") {
 
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
 
@@ -5269,6 +5626,7 @@ var template = {
 
       } else if (urlBits[0] === "#help") {
         base.clearBox();
+        base.selectTab("");
         layout.showPage('help-page');
 
         layout.showHeaderBarItems();
@@ -5276,12 +5634,14 @@ var template = {
       } else if (urlBits[0] === "#patient") {
 
         //create(pathwayId, pathwayStage, standard, patientId)
-        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1]);
+        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1], template.loadContent);
 
       } else if (urlBits[0] === "#patients") {
 
         patientId = urlBits[1];
-        pathwayId = urlBits[2];
+
+        patientView.create(null, null, null, patientId, template.loadContent);
+        /*pathwayId = urlBits[2];
 
         allPatients.showView(patientId, true);
 
@@ -5293,20 +5653,10 @@ var template = {
             return $(this).text().trim() === nhs;
           }).position().top - 140);
           $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
-        }
+        }*/
       } else if (urlBits[0] === "#agreedactions") {
-        base.clearBox();
-        layout.showPage('welcome');
 
-        ////layout.showSidePanel();
-        layout.showHeaderBarItems();
-        ////layout.showNavigation(data.diseases, -1, $('#welcome'));
-
-        $('#welcome-tabs li').removeClass('active');
-        $('#outstandingTasks').closest('li').addClass('active');
-
-        welcome.populate();
-
+        actionPlan.create();
 
       } else {
         //if screen not in correct segment then select it
@@ -5487,11 +5837,45 @@ var template = {
 
 module.exports = template;
 
-},{"./base.js":2,"./data.js":4,"./layout.js":5,"./lookup.js":7,"./panels/allPatients.js":10,"./panels/patientList.js":19,"./panels/patients.js":20,"./panels/teamActionPlan.js":22,"./panels/welcome.js":24,"./views/indicator.js":26,"./views/overview.js":27,"./views/patient.js":28}],26:[function(require,module,exports){
+},{"./base.js":2,"./data.js":4,"./layout.js":5,"./lookup.js":7,"./panels/allPatients.js":10,"./panels/patientList.js":20,"./panels/patients.js":22,"./panels/teamActionPlan.js":24,"./panels/welcome.js":26,"./views/actions.js":28,"./views/indicator.js":29,"./views/overview.js":30,"./views/patient.js":31}],28:[function(require,module,exports){
+var base = require('../base.js'),
+  layout = require('../layout.js'),
+  welcome = require('../panels/welcome.js');
+
+var ID = "ACTION_PLAN_VIEW";
+
+var ap = {
+
+  create: function() {
+
+    base.selectTab("actions");
+
+    if(layout.view !== ID) {
+      //Not already in this view so we need to rejig a few things
+      base.clearBox();
+      layout.showPage('welcome');
+      layout.showHeaderBarItems();
+
+      $('#welcome-tabs li').removeClass('active');
+      $('#outstandingTasks').closest('li').addClass('active');
+
+      layout.view = ID;
+    }
+
+    welcome.populate();
+
+  }
+
+};
+
+module.exports = ap;
+
+},{"../base.js":2,"../layout.js":5,"../panels/welcome.js":26}],29:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   patientList = require('../panels/patientList.js'),
   indicatorBreakdown = require('../panels/indicatorBreakdown.js'),
+  indicatorBenchmark = require('../panels/indicatorBenchmark.js'),
   indicatorTrend = require('../panels/indicatorTrend.js'),
   teamActionPlan = require('../panels/teamActionPlan.js'),
   layout = require('../layout.js');
@@ -5511,13 +5895,34 @@ var ind = {
 
   create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
 
+    base.selectTab("indicator");
+
+    $('.loading-container').show();
+
     if(layout.view !== ID) {
       //Not already in this view so we need to rejig a few things
       base.clearBox();
-      base.switchTo21Layout();
+      //base.switchTo21Layout();
       layout.showMainView();
 
+      base.hidePanels(farRightPanel);
+
       layout.view = ID;
+    }
+
+    if(!pathwayId) {
+      if(layout.pathwayId) pathwayId = layout.pathwayId;
+      else pathwayId = Object.keys(data.pathwayNames)[0];
+    }
+
+    if(!pathwayStage){
+      if(layout.pathwayStage) pathwayStage = layout.pathwayStage;
+      else pathwayStage = "monitoring";
+    }
+
+    if(!standard){
+      if(layout.standard) standard = layout.standard;
+      else standard = Object.keys(data[pathwayId][pathwayStage].standards)[0];
     }
 
     if(layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
@@ -5532,24 +5937,36 @@ var ind = {
       $('#mainTitle').show();
     }
 
+    layout.pathwayId = pathwayId;
+    layout.pathwayStage = pathwayStage;
+    layout.standard = standard;
+
     //TODO not sure if this needs moving..?
     data.pathwayId = pathwayId;
 
     //The three panels we need to show
     //Panels decide whether they need to redraw themselves
-    teamActionPlan.show(farRightPanel);
-    patientList.create(bottomRightPanel, pathwayId, pathwayStage, standard, loadContentFn);
-    indicatorTrend.create(topRightPanel, pathwayId, pathwayStage, standard, tab, patientList.selectSubsection);
+    teamActionPlan.show(farLeftPanel);
+
+    base.updateTab("indicators", [pathwayId.toUpperCase(), standard.toUpperCase()].join(" "), [pathwayId, pathwayStage, standard].join("/"));
+
+    indicatorBreakdown.show(farRightPanel,false,pathwayId, pathwayStage, standard,patientList.selectSubsection);
+    patientList.show(farRightPanel, true, pathwayId, pathwayStage, standard, loadContentFn);
+    indicatorTrend.show(farRightPanel, true, pathwayId, pathwayStage, standard);
+    indicatorBenchmark.show(farRightPanel, true, pathwayId, pathwayStage, standard);
+
+    $('#indicator-pane').show();
 
     base.wireUpTooltips();
 
+    $('.loading-container').fadeOut(1000);
   }
 
 };
 
 module.exports = ind;
 
-},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/indicatorBreakdown.js":12,"../panels/indicatorTrend.js":14,"../panels/patientList.js":19,"../panels/teamActionPlan.js":22}],27:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/indicatorBenchmark.js":12,"../panels/indicatorBreakdown.js":13,"../panels/indicatorTrend.js":15,"../panels/patientList.js":20,"../panels/teamActionPlan.js":24}],30:[function(require,module,exports){
 var base = require('../base.js'),
   data = require('../data.js'),
   layout = require('../layout.js'),
@@ -5566,24 +5983,30 @@ var overview = {
 
   create: function(loadContentFn) {
 
-    if(layout.view !== ID) {
+    base.selectTab("overview");
+
+    if (layout.view !== ID) {
       //Not already in this view so we need to rejig a few things
       base.clearBox();
-      base.switchTo101Layout();
+      //base.switchTo101Layout();
       layout.showMainView();
 
       $('#mainTitle').show();
       base.updateTitle("Overview");
 
+      base.hidePanels(farRightPanel);
+
       layout.view = ID;
     }
 
-    data.pathwayId = "htn";//TODO fudge
+    data.pathwayId = "htn"; //TODO fudge
 
     //The two panels we need to show
     //Panels decide whether they need to redraw themselves
-    teamActionPlan.show(farRightPanel);
-    indicatorList.create(farLeftPanel, loadContentFn);
+    teamActionPlan.show(farLeftPanel);
+    indicatorList.show(farRightPanel, false, loadContentFn);
+
+    $('#overview-pane').show();
 
     base.wireUpTooltips();
 
@@ -5593,13 +6016,14 @@ var overview = {
 
 module.exports = overview;
 
-},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/indicatorList.js":13,"../panels/teamActionPlan.js":22}],28:[function(require,module,exports){
+},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/indicatorList.js":14,"../panels/teamActionPlan.js":24}],31:[function(require,module,exports){
 var lifeline = require('../panels/lifeline.js'),
   data = require('../data.js'),
   base = require('../base.js'),
   layout = require('../layout.js'),
   individualActionPlan = require('../panels/individualActionPlan.js'),
-  qualityStandard = require('../panels/qualityStandard.js');
+  qualityStandard = require('../panels/qualityStandard.js'),
+  patientSearch = require('../panels/patientSearch.js');
 
 var ID = "PATIENT_VIEW";
 /*
@@ -5614,40 +6038,68 @@ var pv = {
 
   },
 
-  create: function(pathwayId, pathwayStage, standard, patientId) {
+  create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
 
-    if(layout.view !== ID) {
+    base.selectTab("patient");
+
+    if (layout.view !== ID) {
       //Not already in this view so we need to rejig a few things
       base.clearBox();
-      base.switchTo21Layout();
+      //base.switchTo21Layout();
       layout.showMainView();
+
+      base.hidePanels(farRightPanel);
 
       layout.view = ID;
     }
 
-    if(layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
+    if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
       layout.standard !== standard || layout.patientId !== patientId) {
       //different pathway or stage or patientId so title needs updating
       $('#mainTitle').show();
-      base.updateTitle([{
-        title: "Overview",
-        url: "#overview"
-      }, {
-        title: data[pathwayId][pathwayStage].text.page.text,
-        tooltip: data[pathwayId][pathwayStage].text.page.tooltip,
-        url: ["#overview", pathwayId, pathwayStage, standard].join("/")
-      }, {
-        title: patientId
-      }]);
+
+      if (pathwayId && pathwayStage && standard) {
+
+        base.updateTitle([{
+          title: "Overview",
+          url: "#overview"
+                }, {
+          title: data[pathwayId][pathwayStage].text.page.text,
+          tooltip: data[pathwayId][pathwayStage].text.page.tooltip,
+          url: ["#overview", pathwayId, pathwayStage, standard].join("/")
+                }, {
+          title: patientId
+                }]);
+      } else {
+        base.updateTitle([{
+          title: "Overview",
+          url: "#overview"
+                }, {
+          title: patientId
+              }]);
+      }
     }
 
-    data.pathwayId = pathwayId;
 
-    individualActionPlan.show(farRightPanel, pathwayId, pathwayStage, standard, patientId);
-    qualityStandard.show(topRightPanel, pathwayId, pathwayStage, standard, patientId);
-    data.getPatientData(patientId, function(data) {
-      lifeline.create('bottom-right-panel', patientId, data);
-    });
+    base.hidePanels(farLeftPanel);
+    patientSearch.show(farRightPanel, false, loadContentFn);
+
+    if (patientId) {
+      base.updateTab("patients", patientId, patientId);
+
+      layout.patientId = patientId;
+      data.pathwayId = pathwayId;
+
+      data.getPatientData(patientId, function(data) {
+        lifeline.show(farRightPanel, true, patientId, data);
+      });
+      individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+      //qualityStandard.show($('#patient-pane'), pathwayId, pathwayStage, standard, patientId);
+
+      $('#patient-pane').show();
+    } else {
+      base.updateTab("patients", "", patientId);
+    }
 
     base.wireUpTooltips();
 
@@ -5661,4 +6113,4 @@ var pv = {
 
 module.exports = pv;
 
-},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/individualActionPlan.js":15,"../panels/lifeline.js":16,"../panels/qualityStandard.js":21}]},{},[1]);
+},{"../base.js":2,"../data.js":4,"../layout.js":5,"../panels/individualActionPlan.js":16,"../panels/lifeline.js":17,"../panels/patientSearch.js":21,"../panels/qualityStandard.js":23}]},{},[1]);

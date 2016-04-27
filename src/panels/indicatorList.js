@@ -4,19 +4,24 @@ var base = require('../base.js'),
 
 var indicatorList = {
 
-  create: function(panel, loadContentFn) {
+  show: function(panel, isAppend, loadContentFn) {
     data.getAllIndicatorData(function(indicators) {
 
       var tempMust = $('#overview-panel-table').html();
-      panel.html(Mustache.render(tempMust, {
+      var html = Mustache.render(tempMust, {
         "indicators": indicators
-      }));
+      });
+      if (isAppend) {
+        panel.append(html);
+      } else {
+        panel.html(html);
+      }
 
       $('.inlinesparkline').sparkline('html', {
         tooltipFormatter: function(sparkline, options, fields) {
           return indicators[$('.inlinesparkline').index(sparkline.el)].dates[fields.x] + ": " + fields.y + "%";
         },
-        width:"100px"
+        width: "100px"
       });
 
       indicatorList.wireUp(panel, loadContentFn);
@@ -32,8 +37,8 @@ var indicatorList = {
     panel.off('click', 'tr.standard-row');
     panel.on('click', 'tr.standard-row', function(e) {
       var url = $(this).data("id").replace(/\./g, "/");
-      history.pushState(null, null, '#overview/' + url);
-      loadContentFn('#overview/' + url);
+      history.pushState(null, null, '#indicators/' + url);
+      loadContentFn('#indicators/' + url);
       // do not give a default action
       e.preventDefault();
       e.stopPropagation();

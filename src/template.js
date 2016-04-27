@@ -9,7 +9,8 @@ var data = require('./data.js'),
   layout = require('./layout.js'),
   overview = require('./views/overview.js'),
   indicatorView = require('./views/indicator.js'),
-  patientView = require('./views/patient.js');
+  patientView = require('./views/patient.js'),
+  actionPlan = require('./views/actions.js');
 
 var template = {
 
@@ -23,14 +24,16 @@ var template = {
 
     if (hash === '') {
       base.clearBox();
+      base.showFooter();
       layout.showPage('login');
       $('html').removeClass('scroll-bar');
     } else {
+      base.hideFooter();
       $('html').addClass('scroll-bar');
       var params = {};
       var urlBits = hash.split('/');
-      if(hash.indexOf('?')>-1) {
-        hash.split('?')[1].split('&').forEach(function(param){
+      if (hash.indexOf('?') > -1) {
+        hash.split('?')[1].split('&').forEach(function(param) {
           var elems = param.split("=");
           params[elems[0]] = elems[1];
         });
@@ -41,7 +44,7 @@ var template = {
 
         overview.create(template.loadContent);
 
-      } else if (urlBits[0] === "#overview") {
+      } else if (urlBits[0] === "#indicators") {
 
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
 
@@ -76,6 +79,7 @@ var template = {
 
       } else if (urlBits[0] === "#help") {
         base.clearBox();
+        base.selectTab("");
         layout.showPage('help-page');
 
         layout.showHeaderBarItems();
@@ -83,12 +87,14 @@ var template = {
       } else if (urlBits[0] === "#patient") {
 
         //create(pathwayId, pathwayStage, standard, patientId)
-        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1]);
+        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1], template.loadContent);
 
       } else if (urlBits[0] === "#patients") {
 
         patientId = urlBits[1];
-        pathwayId = urlBits[2];
+
+        patientView.create(null, null, null, patientId, template.loadContent);
+        /*pathwayId = urlBits[2];
 
         allPatients.showView(patientId, true);
 
@@ -100,20 +106,10 @@ var template = {
             return $(this).text().trim() === nhs;
           }).position().top - 140);
           $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
-        }
+        }*/
       } else if (urlBits[0] === "#agreedactions") {
-        base.clearBox();
-        layout.showPage('welcome');
 
-        ////layout.showSidePanel();
-        layout.showHeaderBarItems();
-        ////layout.showNavigation(data.diseases, -1, $('#welcome'));
-
-        $('#welcome-tabs li').removeClass('active');
-        $('#outstandingTasks').closest('li').addClass('active');
-
-        welcome.populate();
-
+        actionPlan.create();
 
       } else {
         //if screen not in correct segment then select it
