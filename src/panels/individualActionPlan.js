@@ -15,6 +15,12 @@ var iap = {
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
     panel.html(iap.create(pathwayStage));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
+
+    panel.find('div.fit-to-screen-height').niceScroll({
+      cursoropacitymin: 0.3,
+      cursorwidth: "7px",
+      horizrailenabled: false
+    });
   },
 
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {

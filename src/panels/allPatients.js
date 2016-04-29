@@ -6,7 +6,8 @@ var base = require('../base.js'),
   trend = require('./trend.js'),
   individualActionPlan = require('./individualActionPlan.js'),
   layout = require('../layout.js'),
-  chart = require('../chart.js');
+  chart = require('../chart.js'),
+  Mustache = require('mustache');
 
 var all = {
 

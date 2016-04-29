@@ -8,9 +8,9 @@
     "lint": "jshint --show-non-errors script.js data.json",
     "clean": "rimraf dist",
     "postclean": "mkdir dist",
-    "prebuild": "npm run clean",
-    "build": "browserify script.js -o dist/script.js",
-    "postbuild": "uglifyjs dist/script.js --output dist/script.min.js",
+    "prebuild": "npm run clean && cp node_modules/zeroclipboard/dist/ZeroClipboard.swf dist/",
+    "build": "browserify --debug script.js -o dist/script.js",
+    "postbuild": "uglifyjs dist/script.js --output dist/script.min.js --source-map dist/script.min.js.map",
     "serve": "http-server -o -p 9090 .",
     "serve:x": "http-server -p 9090 .",
     "predemo": "npm run build",
@@ -37,11 +37,18 @@
   "homepage": "https://github.com/rw251/rw251.github.io",
   "devDependencies": {
     "browserify": "^13.0.0",
+    "cp": "^0.2.0",
     "http-server": "^0.8.0",
     "jshint": "^2.7.0",
     "mv": "^2.0.3",
     "nodemon": "^1.9.1",
     "rimraf": "^2.3.4",
     "uglify-js": "^2.6.2"
+  },
+  "dependencies": {
+    "highcharts": "^4.2.4",
+    "jquery-sparkline": "^2.3.2",
+    "mustache": "^2.2.1",
+    "zeroclipboard": "^2.2.0"
   }
 }

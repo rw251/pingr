@@ -3,7 +3,9 @@ var template = require('./template.js'),
   base = require('./base.js'),
   layout = require('./layout.js'),
   welcome = require('./panels/welcome.js'),
-  log = require('./log.js');
+  log = require('./log.js'),
+  patientView = require('./views/patient.js'),
+  Mustache = require('mustache');
 
 var states, patLookup, page, hash;
 
@@ -26,7 +28,11 @@ var main = {
     //Hide the suggestions panel
     $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
 
-    template.displaySelectedPatient(nhsNumberObject.id);
+    history.pushState(null, null, '#patients/' + nhsNumberObject.id);
+    template.loadContent('#patients/' + nhsNumberObject.id, true);
+
+
+    //template.displaySelectedPatient(nhsNumberObject.id);
   },
 
   wireUpSearchBox: function() {

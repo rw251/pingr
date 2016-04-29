@@ -1,6 +1,8 @@
-var base = require('../base.js'),
+var Highcharts = require('highcharts/highstock'),
+  base = require('../base.js'),
   data = require('../data.js'),
-  lookup = require('../lookup.js');
+  lookup = require('../lookup.js'),
+  Mustache = require('mustache');
 
 var ID = "PATIENT_LIST";
 
@@ -199,28 +201,12 @@ var pl = {
 
   },
 
-  create: function(panel, pathwayId, pathwayStage, standard, loadContentFn) {
-
-    var panelId = panel.attr("id");
-
-    if (base.panels[panelId] &&
-      base.panels[panelId].id === ID &&
-      base.panels[panelId].pathwayId === pathwayId &&
-      base.panels[panelId].pathwayStage === pathwayStage &&
-      base.panels[panelId].standard === standard) {
-      //Already showing the right thing
-      return;
-    }
-
-    base.panels[panelId] = {
-      id: ID,
-      pathwayId: pathwayId,
-      pathwayStage: pathwayStage,
-      standard: standard
-    };
+  show: function(panel, isAppend, pathwayId, pathwayStage, standard, loadContentFn) {
 
     var tempMust = $('#patients-panel-yes').html();
-    panel.html(Mustache.render(tempMust));
+
+    if(isAppend) panel.append(Mustache.render(tempMust));
+    else panel.html(Mustache.render(tempMust));
 
     pl.wireUp(function(patientId) {
       history.pushState(null, null, '#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));

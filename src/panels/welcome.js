@@ -2,7 +2,8 @@ var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
   individualActionPlan = require('./individualActionPlan.js'),
-  teamActionPlan = require('./teamActionPlan.js');
+  teamActionPlan = require('./teamActionPlan.js'),
+  Mustache = require('mustache');
 
 var welcome = {
 

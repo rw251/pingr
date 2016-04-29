@@ -1,4 +1,6 @@
-var base = require('../base.js');
+var Highcharts = require('highcharts/highstock'),
+  base = require('../base.js');
+require('highcharts/highcharts-more')(Highcharts);
 
 var ID = "LIFELINE";
 
@@ -16,8 +18,7 @@ var colour = {
 var ll = {
   chartArray: [],
 
-  destroy: function(element) {
-    var elementId = '#' + element;
+  destroy: function(elementId) {
     $(elementId).html('');
     $(elementId).off('mousemove touchmove touchstart', '.sync-chart');
 
@@ -26,24 +27,16 @@ var ll = {
     }
   },
 
-  create: function(element, patientId, data) {
+  show: function(panel, isAppend, patientId, data) {
+
+
+    var element = 'lifeline-chart';
     var elementId = '#' + element;
 
-    var panelId = element;
+    ll.destroy(elementId);
 
-    if (base.panels[panelId] &&
-      base.panels[panelId].id === ID &&
-      base.panels[panelId].patientId === patientId) {
-        //Already showing the right thing
-        return;
-    }
-
-    base.panels[panelId] = {
-      id: ID,
-      patientId: patientId
-    };
-
-    ll.destroy(element);
+    if(isAppend) panel.append($('<div id="' + element + '"></div>'));
+    else panel.html($('<div id="' + element + '"></div>'));
 
     colour.reset();
     /**

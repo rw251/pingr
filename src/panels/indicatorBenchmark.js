@@ -3,22 +3,18 @@ var base = require('../base.js'),
   chart = require('../chart.js'),
   patientList = require('./patientList.js');
 
-var ID = "INDICATOR_TREND";
+var ID = "INDICATOR_BENCHMARK";
 
 var iTrend = {
 
   show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
 
-    var indicators = data.getAllIndicatorDataSync();
-
-    var elem = $("<div id='trend-chart' class='fit-to-scrolling-section-height'></div>");
+    var elem = $("<div id='benchmark-chart' class='fit-to-scrolling-section-height'></div>");
 
     if (isAppend) panel.append(elem);
     else panel.html(elem);
 
-    chart.drawPerformanceTrendChartHC("trend-chart", indicators.filter(function(v){
-      return v.id===[pathwayId, pathwayStage, standard].join(".");
-    })[0]);
+    chart.drawBenchmarkChartHC("benchmark-chart", null);
 
   },
 

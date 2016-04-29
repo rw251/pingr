@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 /*jshint -W055 */
-/*global $, c3, Mustache, ZeroClipboard, console, jsPDF, Bloodhound, bb, alert*/
+/*global console, alert*/
 
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.
@@ -20,7 +20,7 @@ var template = require('./src/template.js'),
  ********************************************************/
 $(window).load(function() {
   $('.loading-container').fadeOut(1000, function() {
-    $(this).remove();
+    //$(this).remove();
   });
 });
 

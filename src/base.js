@@ -1,12 +1,20 @@
 var data = require('./data.js'),
   lookup = require('./lookup.js'),
   chart = require('./chart.js'),
-  log = require('./log.js');
+  log = require('./log.js'),
+  Mustache = require('mustache'),
+  ZeroClipboard = require('zeroclipboard');
 
 var base = {
 
   //object for keeping track what is in each panel to prevent unnecessary redraws
   panels: {},
+
+  selectTab: function(id) {
+    var href = $('#mainTab li.active a').data("href");
+    $('#mainTab li.active').removeClass('active').find('a').attr("href", href);
+    $('#mainTab li[data-id="' + id + '"]').addClass('active').find('a').removeAttr("href");
+  },
 
   createPanel: function(templateSelector, data, templates) {
     var tempMust = templateSelector.html();
@@ -68,6 +76,14 @@ var base = {
 
     chart.drawOverviewChart(pathwayId, pathwayStage, enableHover);
 
+  },
+
+  hideFooter: function() {
+    $('footer').hide();
+  },
+
+  showFooter: function() {
+    $('footer').show();
   },
 
   hideTooltips: function() {
@@ -232,6 +248,8 @@ var base = {
         "text": log.text[val.id || val].text,
         "subsection": val.subsection
       };
+    }).filter(function(v, i) { //RW to always limit to 3
+      return i < 3;
     });
   },
 
@@ -277,6 +295,8 @@ var base = {
     midPanel.hide();
     farRightPanel.removeClass('col-xl-8').addClass('col-xl-4').show();
   },
+
+
 
   switchTo221Layout: function() {
     if (base.layout === "221") return;
@@ -371,6 +391,33 @@ var base = {
     farLeftPanel.hide();
     farRightPanel.hide();
     topPanel.hide();
+  },
+
+  hidePanels: function(panel) {
+    panel.children().hide();
+  },
+
+  updateTab: function(tab, value, url) {
+    var tabElement = $('#mainTab a[data-href="#' + tab + '"]');
+    tabElement.html(tabElement.text().split(":")[0] + ":<br><span><strong>" + value + "</strong></span>");
+    tabElement.data("href", "#" + tab + "/" + url);
+  },
+
+  addFullPage: function(panel) {
+    panel.fullpage({ verticalCentered: true, paddingBottom: '80px', scrollBar: true });
+
+    $('.fp-down').off('click').on('click', function() {
+      $.fn.fullpage.moveSectionDown();
+    });
+
+    $('.fp-up').off('click').on('click', function() {
+      $.fn.fullpage.moveSectionUp();
+    });
+  },
+
+  removeFullPage: function(panel) {
+    if (panel.children('.section').length === 0) return;
+    if ($.fn.fullpage && $.fn.fullpage.destroy) $.fn.fullpage.destroy('all'); //tidy up before doing it again
   }
 
 };

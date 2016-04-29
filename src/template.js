@@ -9,42 +9,58 @@ var data = require('./data.js'),
   layout = require('./layout.js'),
   overview = require('./views/overview.js'),
   indicatorView = require('./views/indicator.js'),
-  patientView = require('./views/patient.js');
+  patientView = require('./views/patient.js'),
+  actionPlan = require('./views/actions.js'),
+  Mustache = require('mustache');
 
 var template = {
 
   loadContent: function(hash, isPoppingState) {
+    console.time("1");
     base.hideTooltips();
+    console.timeEnd("1");
+
+    console.time("2");
 
     var i, pathwayId, pathwayStage, standard, indicator, patientId;
     if (!isPoppingState) {
       window.location.hash = hash;
     }
+    console.timeEnd("2");
+    console.time("3");
 
     if (hash === '') {
       base.clearBox();
+      base.showFooter();
       layout.showPage('login');
       $('html').removeClass('scroll-bar');
     } else {
+      base.hideFooter();
+      console.timeEnd("3");
+      console.time("4");
       $('html').addClass('scroll-bar');
+      console.timeEnd("4");
+      console.time("5");
       var params = {};
       var urlBits = hash.split('/');
-      if(hash.indexOf('?')>-1) {
-        hash.split('?')[1].split('&').forEach(function(param){
+
+      if (hash.indexOf('?') > -1) {
+        hash.split('?')[1].split('&').forEach(function(param) {
           var elems = param.split("=");
           params[elems[0]] = elems[1];
         });
         urlBits = hash.split('?')[0].split('/');
       }
-
+      console.timeEnd("5");
+      console.time("6");
       if (urlBits[0] === "#overview" && !urlBits[1]) {
 
         overview.create(template.loadContent);
 
-      } else if (urlBits[0] === "#overview") {
+      } else if (urlBits[0] === "#indicators") {
 
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
-
+        console.timeEnd("6");
       } else if (urlBits[0] === "#main") {
         base.clearBox();
         pathwayId = urlBits[1];
@@ -76,6 +92,7 @@ var template = {
 
       } else if (urlBits[0] === "#help") {
         base.clearBox();
+        base.selectTab("");
         layout.showPage('help-page');
 
         layout.showHeaderBarItems();
@@ -83,12 +100,14 @@ var template = {
       } else if (urlBits[0] === "#patient") {
 
         //create(pathwayId, pathwayStage, standard, patientId)
-        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1]);
+        patientView.create(urlBits[2], urlBits[3], urlBits[4], urlBits[1], template.loadContent);
 
       } else if (urlBits[0] === "#patients") {
 
         patientId = urlBits[1];
-        pathwayId = urlBits[2];
+
+        patientView.create(null, null, null, patientId, template.loadContent);
+        /*pathwayId = urlBits[2];
 
         allPatients.showView(patientId, true);
 
@@ -100,20 +119,10 @@ var template = {
             return $(this).text().trim() === nhs;
           }).position().top - 140);
           $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
-        }
+        }*/
       } else if (urlBits[0] === "#agreedactions") {
-        base.clearBox();
-        layout.showPage('welcome');
 
-        ////layout.showSidePanel();
-        layout.showHeaderBarItems();
-        ////layout.showNavigation(data.diseases, -1, $('#welcome'));
-
-        $('#welcome-tabs li').removeClass('active');
-        $('#outstandingTasks').closest('li').addClass('active');
-
-        welcome.populate();
-
+        actionPlan.create();
 
       } else {
         //if screen not in correct segment then select it

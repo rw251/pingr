@@ -187,6 +187,12 @@ var tap = {
     });
 
     tap.populateTeamSuggestedActionsPanel();
+
+    location.find('div.fit-to-screen-height').niceScroll({
+      cursoropacitymin: 0.3,
+      cursorwidth: "7px",
+      horizrailenabled: false
+    });
   },
 
   populateTeamSuggestedActionsPanel: function() {
