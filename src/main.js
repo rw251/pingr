@@ -4,7 +4,8 @@ var template = require('./template.js'),
   layout = require('./layout.js'),
   welcome = require('./panels/welcome.js'),
   log = require('./log.js'),
-  patientView = require('./views/patient.js');
+  patientView = require('./views/patient.js'),
+  Mustache = require('mustache');
 
 var states, patLookup, page, hash;
 

@@ -25,6 +25,7 @@ var overview = {
       $('#mainTitle').show();
       base.updateTitle("Overview");
 
+      base.removeFullPage(farRightPanel);
       base.hidePanels(farRightPanel);
 
       layout.view = ID;

@@ -5,6 +5,7 @@ var base = require('../base.js'),
   indicatorBenchmark = require('../panels/indicatorBenchmark.js'),
   indicatorTrend = require('../panels/indicatorTrend.js'),
   teamActionPlan = require('../panels/teamActionPlan.js'),
+  wrapper = require('../panels/wrapper.js'),
   layout = require('../layout.js');
 
 var ID = "INDICATOR";
@@ -23,70 +24,94 @@ var ind = {
   create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
 
     base.selectTab("indicator");
-
     $('.loading-container').show();
 
-    if(layout.view !== ID) {
-      //Not already in this view so we need to rejig a few things
-      base.clearBox();
-      //base.switchTo21Layout();
-      layout.showMainView();
 
-      base.hidePanels(farRightPanel);
+    //use a setTimeout to force the UI to change e.g. show the loading-container
+    //before further execution
+    setTimeout(function() {
+      if (layout.view !== ID) {
+        //Not already in this view so we need to rejig a few things
+        base.clearBox();
+        //base.switchTo21Layout();
+        layout.showMainView();
 
-      layout.view = ID;
-    }
+        base.removeFullPage(farRightPanel);
+        base.hidePanels(farRightPanel);
 
-    if(!pathwayId) {
-      if(layout.pathwayId) pathwayId = layout.pathwayId;
-      else pathwayId = Object.keys(data.pathwayNames)[0];
-    }
+        layout.view = ID;
+      }
 
-    if(!pathwayStage){
-      if(layout.pathwayStage) pathwayStage = layout.pathwayStage;
-      else pathwayStage = "monitoring";
-    }
+      if (!pathwayId) {
+        if (layout.pathwayId) pathwayId = layout.pathwayId;
+        else pathwayId = Object.keys(data.pathwayNames)[0];
+      }
 
-    if(!standard){
-      if(layout.standard) standard = layout.standard;
-      else standard = Object.keys(data[pathwayId][pathwayStage].standards)[0];
-    }
+      if (!pathwayStage) {
+        if (layout.pathwayStage) pathwayStage = layout.pathwayStage;
+        else pathwayStage = "monitoring";
+      }
 
-    if(layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
-      //different pathway or stage so title needs updating
-      base.updateTitle([{
-        title: "Overview",
-        url: "#overview"
-      }, {
-        title: data[pathwayId][pathwayStage].text.page.text,
-        tooltip: data[pathwayId][pathwayStage].text.page.tooltip
-      }]);
-      $('#mainTitle').show();
-    }
+      if (!standard) {
+        if (layout.standard) standard = layout.standard;
+        else standard = Object.keys(data[pathwayId][pathwayStage].standards)[0];
+      }
 
-    layout.pathwayId = pathwayId;
-    layout.pathwayStage = pathwayStage;
-    layout.standard = standard;
+      if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
+        //different pathway or stage so title needs updating
+        base.updateTitle([{
+          title: "Overview",
+          url: "#overview"
+        }, {
+          title: data[pathwayId][pathwayStage].text.page.text,
+          tooltip: data[pathwayId][pathwayStage].text.page.tooltip
+        }]);
+        $('#mainTitle').show();
+      }
 
-    //TODO not sure if this needs moving..?
-    data.pathwayId = pathwayId;
+      layout.pathwayId = pathwayId;
+      layout.pathwayStage = pathwayStage;
+      layout.standard = standard;
 
-    //The three panels we need to show
-    //Panels decide whether they need to redraw themselves
-    teamActionPlan.show(farLeftPanel);
+      //TODO not sure if this needs moving..?
+      data.pathwayId = pathwayId;
 
-    base.updateTab("indicators", [pathwayId.toUpperCase(), standard.toUpperCase()].join(" "), [pathwayId, pathwayStage, standard].join("/"));
+      //The three panels we need to show
+      //Panels decide whether they need to redraw themselves
+      teamActionPlan.show(farLeftPanel);
 
-    indicatorBreakdown.show(farRightPanel,false,pathwayId, pathwayStage, standard,patientList.selectSubsection);
-    patientList.show(farRightPanel, true, pathwayId, pathwayStage, standard, loadContentFn);
-    indicatorTrend.show(farRightPanel, true, pathwayId, pathwayStage, standard);
-    indicatorBenchmark.show(farRightPanel, true, pathwayId, pathwayStage, standard);
+      base.updateTab("indicators", [pathwayId.toUpperCase(), standard.toUpperCase()].join(" "), [pathwayId, pathwayStage, standard].join("/"));
 
-    $('#indicator-pane').show();
+      wrapper.show(farRightPanel, false, [
+        {
+          show: indicatorBreakdown.show,
+          args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
+        }, {
+          show: patientList.show,
+          args: [pathwayId, pathwayStage, standard, loadContentFn]
+        }
+      ], "Scroll down or click for your performance over time", false);
+      wrapper.show(farRightPanel, true, [
+        {
+          show: indicatorTrend.show,
+          args: [pathwayId, pathwayStage, standard]
+        }
+      ], "Scroll down or click for your performance benchmark", "Scroll up or click for your patients at risk");
+      wrapper.show(farRightPanel, true, [
+        {
+          show: indicatorBenchmark.show,
+          args: [pathwayId, pathwayStage, standard]
+        }
+      ], false, "Scroll up or click for your performance over time");
 
-    base.wireUpTooltips();
+      base.addFullPage(farRightPanel);
 
-    $('.loading-container').fadeOut(1000);
+      $('#indicator-pane').show();
+
+      base.wireUpTooltips();
+
+      $('.loading-container').fadeOut(1000);
+    }, 0);
   }
 
 };

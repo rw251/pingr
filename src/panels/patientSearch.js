@@ -1,6 +1,7 @@
 var base = require('../base.js'),
   data = require('../data.js'),
-  lookup = require('../lookup.js');
+  lookup = require('../lookup.js'),
+  Mustache = require('mustache');
 var states, loadContFn, ID = "PATIENT_SEARCH";
 
 var ps = {

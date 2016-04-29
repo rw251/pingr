@@ -1,6 +1,8 @@
-var data = require('./data.js'),
+var Highcharts = require('highcharts/highstock'),
+  data = require('./data.js'),
   lookup = require('./lookup.js'),
-  log = require('./log.js');
+  log = require('./log.js'),
+  Mustache = require('mustache');
 
 console.log("chart.js: data.lastloader= " + data.lastloader);
 data.lastloader = "chart.js";
@@ -347,7 +349,6 @@ var cht = {
     var bChart = $('#' + element).highcharts({
       chart: {
         type: 'column',
-        height: 300,
         events: {
           load: function() {
             var thisChart = this;
@@ -504,7 +505,6 @@ var cht = {
 
 
     var c = $('#' + element).highcharts({
-      chart: { height: 300 },
       title: { text: '' },
       xAxis: {
         max: nextApril.getTime(),

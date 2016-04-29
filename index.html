@@ -11,15 +11,16 @@
   <link href="assets/images/icons/PINGR_logo-52px.png" rel="icon" type="image/png">
   <!-- Bootstrap -->
   <link href="assets/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <!-- Load c3.css -->
-  <link href="assets/css/c3/c3.min.css" rel="stylesheet" type="text/css">
-  <!-- Bootstrap Select2 -->
-  <link href="assets/css/select2/select2.min.css" rel="stylesheet" />
+  <!-- Fullpage -->
+  <link href="assets/css/fullpage/fullpage.css" rel="stylesheet" />
   <!-- Fonts  -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,300" rel="stylesheet" type="text/css">
   <link href="http://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300" rel="stylesheet" type="text/css">
   <!-- Base Brio Styling  -->
   <link href="assets/css/app/app.v1.css" rel="stylesheet">
+  <!--fonts-->
+  <link href="assets/css/fontawesome/font-awesome.min.css" rel="stylesheet">
+  <link href="assets/css/fontpingr/font-pingr.css" rel="stylesheet">
   <!-- My styling -->
   <link href="style.css?23" rel="stylesheet" type="text/css">
 
@@ -275,67 +276,26 @@
   <div style="display:none" id="temp-hidden"></div>
 
   <!-- jQuery from CDN  -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
   <!-- jQuery fallback if no online version -->
   <script>
-    window.jQuery || document.write('<script src="assets/js/jquery/jquery-1.9.1.min.js"><\/script>')
-  </script>
-
-  <!-- jQuery from CDN  -->
-  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/js/select2.min.js"></script>
-  <!-- fallback -->
-  <script>
-    window.jQuery.fn.select2 || document.write('<script src="assets/js/select2/select2.min.js"><\/script>')
+    window.jQuery || document.write('<script src="assets/js/jquery/jquery-1.12.3.min.js"><\/script>')
   </script>
 
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="assets/js/bootstrap/bootstrap.min.js"></script>
-  <!-- Underscore -->
-  <script src="assets/js/plugins/underscore/underscore-min.js"></script>
-  <!-- Globalize -->
-  <script src="assets/js/globalize/globalize.min.js"></script>
+  <!-- Fullpage things -->
+  <script src="assets/js/fullpage/fullpage.min.js"></script>
   <!-- NiceScroll -->
   <script src="assets/js/plugins/nicescroll/jquery.nicescroll.min.js"></script>
   <!-- Typeahead -->
   <script src="assets/js/plugins/typehead/typeahead.bundle.js"></script>
-  <!-- Zero clipboard -->
-  <script src="assets/js/clipboard/ZeroClipboard.min.js"></script>
   <!-- jsPDF -->
   <script src="assets/js/jspdf/jspdf.min.js"></script>
-
-  <!-- Load d3.js and c3.js -->
-
-  <!-- Polyfill now that some bits of svg were removed from chrome >=48 -->
-  <script src="assets/js/c3/pathseg.js"></script>
-  <script charset="utf-8" src="assets/js/c3/d3.min.js"></script>
-  <script src="assets/js/c3/c3.min.js"></script>
-
-  <script src="assets/js/highcharts/highstock.min.js"></script>
-  <script src="assets/js/highcharts/highcharts-more.min.js"></script>
-
-  <!-- validation -->
-  <script src="assets/js/jquery-sparkline/jquery.sparkline.min.js"></script>
-
-  <!-- validation -->
-  <script src="assets/js/jqueryvalidate/jquery.validate.min.js"></script>
-
-  <!-- Mustache -->
-  <script src="assets/js/mustache/mustache.min.js"></script>
-
   <!-- History polyfill -->
   <script src="assets/js/history/history.min.js"></script>
 
-  <!-- for colour animation -->
-  <script src="assets/js/jquery-color/jquery.color-2.1.2.min.js"></script>
-
-  <!-- Custom JQuery -->
-  <script src="assets/js/app/custom.js" type="text/javascript"></script>
-
-  <script src="dist/script.js?9"></script>
-
-  <!-- build:remove:dev -->
-  <!--<script src="//localhost:9091"></script>-->
-  <!-- /build -->
+  <script src="dist/script.min.js?9"></script>
 
   <script id="checkbox-template" type="x-tmpl-mustache">
     {{^done}}
@@ -455,7 +415,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="list-item" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
+        <tr class="list-item" data-toggle="tooltip" data-placement="left"  title="Click for more information about this patient">
           <td style="min-width:130px">
             <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
               <span class="fa fa-clipboard"></span>
@@ -477,7 +437,7 @@
         </thead>
         <tbody>
           {{#patients}}
-          <tr class="list-item patient-row-tooltip" data-toggle="tooltip" data-placement="right"  title="Click for more information about this patient">
+          <tr class="list-item patient-row-tooltip" data-toggle="tooltip" data-placement="left"  title="Click for more information about this patient">
             <td style="min-width:130px">
               <button type="button" data-patient-id="{{patientId}}" data-clipboard-text="{{nhsNumber}}" data-content="Copied" data-toggle="lone-tooltip" data-placement="right" title="Copy {{nhsNumber}} to clipboard." class="btn btn-xs btn-default btn-copy">
                 <span class="fa fa-clipboard"></span>

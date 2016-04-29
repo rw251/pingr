@@ -29,6 +29,7 @@ var pv = {
       //base.switchTo21Layout();
       layout.showMainView();
 
+      base.removeFullPage(farRightPanel);
       base.hidePanels(farRightPanel);
 
       layout.view = ID;

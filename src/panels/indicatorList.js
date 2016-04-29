@@ -1,6 +1,8 @@
 var base = require('../base.js'),
   log = require('../log.js'),
-  data = require('../data.js');
+  data = require('../data.js'),
+  sparkline = require('jquery-sparkline'),
+  Mustache = require('mustache');
 
 var indicatorList = {
 

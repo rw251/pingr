@@ -9,7 +9,7 @@ var iTrend = {
 
   show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
 
-    var elem = $("<div id='benchmark-chart'></div>");
+    var elem = $("<div id='benchmark-chart' class='fit-to-scrolling-section-height'></div>");
 
     if (isAppend) panel.append(elem);
     else panel.html(elem);

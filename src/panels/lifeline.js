@@ -1,4 +1,6 @@
-var base = require('../base.js');
+var Highcharts = require('highcharts/highstock'),
+  base = require('../base.js');
+require('highcharts/highcharts-more')(Highcharts);
 
 var ID = "LIFELINE";
 
