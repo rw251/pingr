@@ -2442,7 +2442,10 @@ body > svg {
     margin: 0 auto;
 }
 .h-condition-chart {
-    height: 120px;
+    height: 110px;
+}
+.h-medication-chart {
+    height: 140px;
 }
 .h-last-measurement-chart {
     height: 80px;

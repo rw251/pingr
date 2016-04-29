@@ -35,7 +35,7 @@ var ll = {
 
     ll.destroy(elementId);
 
-    if(isAppend) panel.append($('<div id="' + element + '"></div>'));
+    if (isAppend) panel.append($('<div id="' + element + '"></div>'));
     else panel.html($('<div id="' + element + '"></div>'));
 
     colour.reset();
@@ -166,7 +166,10 @@ var ll = {
           },
 
           title: {
-            text: ''
+            text: 'Patient conditions and contacts',
+            align: 'left',
+            margin: 1,
+            style: '{"color": "#333333", "fontSize": "12px"}'
           },
 
 
@@ -251,7 +254,7 @@ var ll = {
           plotOptions: {
             columnrange: {
               grouping: false,
-              groupPadding: 0.3,
+              /*groupPadding: 0.3,*/
               dataLabels: {
                 allowOverlap: true,
                 enabled: true,
@@ -373,17 +376,17 @@ var ll = {
             },
             valueDecimals: dataset.valueDecimals
           },
-          plotOptions:{
+          plotOptions: {
             series: {
-                events: {
-                    mouseOut: function () {
-                      var chart,i;
-                      for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
-                        chart = ll.chartArray[i];
-                        chart.tooltip.hide();
-                      }
-                    }
+              events: {
+                mouseOut: function() {
+                  var chart, i;
+                  for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+                    chart = ll.chartArray[i];
+                    chart.tooltip.hide();
+                  }
                 }
+              }
             }
           },
           series: [{
@@ -400,6 +403,16 @@ var ll = {
           //chartOptions.series[0].tooltip = {};
           chartOptions.series[0].stemWidth = 3;
           chartOptions.series[0].whiskerWidth = 5;
+        }
+
+        if (i === 0) {
+          chartOptions.title =
+            {
+              text: 'Patient measurements',
+              align: 'left',
+              margin: 1,
+              style: '{"color": "#333333", "fontSize": "12px"}'
+            };
         }
 
         /*if (i === measurements.datasets.length - 1) {
@@ -519,7 +532,7 @@ var ll = {
       });
 
       // create the chart
-      return $('<div class="h-chart h-condition-chart">')
+      return $('<div class="h-chart h-medication-chart">')
         .appendTo(elementId)
         .highcharts({
 
@@ -533,7 +546,10 @@ var ll = {
           },
 
           title: {
-            text: ''
+            text: 'Patient medications',
+            align: 'left',
+            margin: 1,
+            style: '{"color": "#333333", "fontSize": "12px"}'
           },
 
 

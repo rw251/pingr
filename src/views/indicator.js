@@ -26,7 +26,6 @@ var ind = {
     base.selectTab("indicator");
     $('.loading-container').show();
 
-
     //use a setTimeout to force the UI to change e.g. show the loading-container
     //before further execution
     setTimeout(function() {

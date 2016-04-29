@@ -15,32 +15,39 @@ var overview = {
   create: function(loadContentFn) {
 
     base.selectTab("overview");
+    $('.loading-container').show();
 
-    if (layout.view !== ID) {
-      //Not already in this view so we need to rejig a few things
-      base.clearBox();
-      //base.switchTo101Layout();
-      layout.showMainView();
+    //use a setTimeout to force the UI to change e.g. show the loading-container
+    //before further execution
+    setTimeout(function() {
 
-      $('#mainTitle').show();
-      base.updateTitle("Overview");
+      if (layout.view !== ID) {
+        //Not already in this view so we need to rejig a few things
+        base.clearBox();
+        //base.switchTo101Layout();
+        layout.showMainView();
 
-      base.removeFullPage(farRightPanel);
-      base.hidePanels(farRightPanel);
+        $('#mainTitle').show();
+        base.updateTitle("Overview");
 
-      layout.view = ID;
-    }
+        base.removeFullPage(farRightPanel);
+        base.hidePanels(farRightPanel);
 
-    data.pathwayId = "htn"; //TODO fudge
+        layout.view = ID;
+      }
 
-    //The two panels we need to show
-    //Panels decide whether they need to redraw themselves
-    teamActionPlan.show(farLeftPanel);
-    indicatorList.show(farRightPanel, false, loadContentFn);
+      data.pathwayId = "htn"; //TODO fudge
 
-    $('#overview-pane').show();
+      //The two panels we need to show
+      //Panels decide whether they need to redraw themselves
+      teamActionPlan.show(farLeftPanel);
+      indicatorList.show(farRightPanel, false, loadContentFn);
 
-    base.wireUpTooltips();
+      $('#overview-pane').show();
+
+      base.wireUpTooltips();
+      $('.loading-container').fadeOut(1000);
+    }, 0);
 
   }
 
