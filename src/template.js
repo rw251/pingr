@@ -16,18 +16,12 @@ var data = require('./data.js'),
 var template = {
 
   loadContent: function(hash, isPoppingState) {
-    console.time("1");
     base.hideTooltips();
-    console.timeEnd("1");
-
-    console.time("2");
 
     var i, pathwayId, pathwayStage, standard, indicator, patientId;
     if (!isPoppingState) {
       window.location.hash = hash;
     }
-    console.timeEnd("2");
-    console.time("3");
 
     if (hash === '') {
       base.clearBox();
@@ -36,11 +30,7 @@ var template = {
       $('html').removeClass('scroll-bar');
     } else {
       base.hideFooter();
-      console.timeEnd("3");
-      console.time("4");
       $('html').addClass('scroll-bar');
-      console.timeEnd("4");
-      console.time("5");
       var params = {};
       var urlBits = hash.split('/');
 
@@ -51,8 +41,7 @@ var template = {
         });
         urlBits = hash.split('?')[0].split('/');
       }
-      console.timeEnd("5");
-      console.time("6");
+
       if (urlBits[0] === "#overview" && !urlBits[1]) {
 
         overview.create(template.loadContent);
@@ -60,7 +49,7 @@ var template = {
       } else if (urlBits[0] === "#indicators") {
 
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
-        console.timeEnd("6");
+
       } else if (urlBits[0] === "#main") {
         base.clearBox();
         pathwayId = urlBits[1];
