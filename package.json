@@ -10,7 +10,7 @@
     "postclean": "mkdir dist",
     "prebuild": "npm run clean && cp node_modules/zeroclipboard/dist/ZeroClipboard.swf dist/",
     "build": "browserify --debug script.js -o dist/script.js",
-    "postbuild": "uglifyjs dist/script.js --output dist/script.min.js --source-map dist/script.min.js.map",
+    "postbuild": "uglifyjs dist/script.js --output dist/script.min.js --source-map dist/script.min.js.map --source-map-url /dist/script.min.js.map --source-map-root /",
     "serve": "http-server -o -p 9090 .",
     "serve:x": "http-server -p 9090 .",
     "predemo": "npm run build",

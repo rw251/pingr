@@ -3,7 +3,8 @@ var lifeline = require('../panels/lifeline.js'),
   base = require('../base.js'),
   layout = require('../layout.js'),
   individualActionPlan = require('../panels/individualActionPlan.js'),
-  qualityStandard = require('../panels/qualityStandard.js'),
+  qualityStandards = require('../panels/qualityStandards.js'),
+  patientCharacteristics = require('../panels/patientCharacteristics.js'),
   patientSearch = require('../panels/patientSearch.js');
 
 var ID = "PATIENT_VIEW";
@@ -69,7 +70,7 @@ var pv = {
 
 
       base.hidePanels(farLeftPanel);
-      patientSearch.show(farRightPanel, false, loadContentFn);
+
 
       if (patientId) {
         base.updateTab("patients", patientId, patientId);
@@ -77,15 +78,28 @@ var pv = {
         layout.patientId = patientId;
         data.pathwayId = pathwayId;
 
+        var elWrap = $('<div class="row"></div>');
+
+        var el1 = $('<div class="col-md-4"></div>');
+        var el2 = $('<div class="col-md-8"></div>');
+
+        patientSearch.show(el1, false, loadContentFn);
+        patientCharacteristics.show(el1,true, patientId);
+        qualityStandards.show(el2, true, patientId);
+        elWrap.html(el1);
+        elWrap.append(el2);
+        farRightPanel.html(elWrap);
         data.getPatientData(patientId, function(data) {
           lifeline.show(farRightPanel, true, patientId, data);
         });
         individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
-        //qualityStandard.show($('#patient-pane'), pathwayId, pathwayStage, standard, patientId);
 
+        patientSearch.wireUp();
         $('#patient-pane').show();
       } else {
         base.updateTab("patients", "", patientId);
+
+        patientSearch.show(farRightPanel, false, loadContentFn);
       }
 
       base.wireUpTooltips();

@@ -35,8 +35,10 @@ var ll = {
 
     ll.destroy(elementId);
 
-    if (isAppend) panel.append($('<div id="' + element + '"></div>'));
-    else panel.html($('<div id="' + element + '"></div>'));
+    var htmlElement = $('<div class="panel panel-default"><div class="panel-body"><div id="' + element + '"></div></div></div>');
+
+    if (isAppend) panel.append(htmlElement);
+    else panel.html(htmlElement);
 
     colour.reset();
     /**

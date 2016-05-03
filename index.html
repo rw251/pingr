@@ -1228,6 +1228,40 @@
       <input type="text" placeholder="Search by patients number..." class="typeahead form-control form-control-circle">
     </form>
   </script>
+
+  <script id="quality-standard-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Quality standard</th>
+            <th>Target met?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#standards}}
+            <tr class="{{#targetMet}}success{{/targetMet}}{{^targetMet}}danger{{/targetMet}}">
+              <td>{{display}}</td>
+              <td>{{#targetMet}}<i class="fa fa-check text-success"></i>{{/targetMet}}{{^targetMet}}<i class="fa fa-times text-danger"></i>{{/targetMet}}</td>
+            </tr>
+          {{/standards}}
+        </tbody>
+      </table>
+    </div>
+  </script>
+
+  <script id="patient-characteristics-panel" type="x-tmpl-mustache">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Patient details
+      </div>
+      <div class="panel-body">
+        <div>
+          <span><strong>{{age}}</strong> year old <strong>{{sex}}</strong></span>
+        </div>
+      </div>
+    </div>
+  </script>
 </body>
 
 </html>

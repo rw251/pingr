@@ -97,27 +97,57 @@ var _getIndicatorDataSync = function(indicator) {
   return dt.indicators[indicator];
 };
 
-var _getFakePatientData = function(callback) {
-  var r = Math.random();
-  $.getJSON("data/patient.json?v=" + r, function(file) {
-    if (!dt.patients) dt.patients = {};
-    dt.patients.patient = file;
+var _getFakePatientData = function(patient, callback) {
+  var r = Math.random(),
+    isAsync = typeof(callback) === "function";
+  if(dt.patients && dt.patients.patient){
+    if(isAsync) return callback(dt.patients.patient);
+    else return dt.patients.patient;
+  }
+  $.ajax({
+    url: "data/patient.json?v=" + r,
+    async: isAsync,
+    success: function(file) {
+      if (!dt.patients) dt.patients = {};
+      dt.patients.patient = file;
+      dt.patients[patient] = file;
 
-    callback(dt.patients.patient);
+      if(isAsync) callback(dt.patients.patient);
+    }
   });
+  if(!isAsync) return dt.patients.patient;
 };
 
 var _getPatientData = function(patient, callback) {
-  var r = Math.random();
-  $.getJSON("data/" + patient + ".json?v=" + r, function(file) {
-    if (!dt.patients) dt.patients = {};
-    dt.patients[patient] = file;
+  //if callback provided do async - else do sync
+  var r = Math.random(),
+    isAsync = typeof(callback) === "function";
 
-    callback(dt.patients[patient]);
-  }).fail(function() {
-    if (dt.patients.patient) return callback(dt.patients.patient);
-    else _getFakePatientData(callback);
+  if(dt.patients && dt.patients[patient] && dt.patients[patient].characteristics){
+    if(isAsync) return callback(dt.patients[patient]);
+    else return dt.patients[patient];
+  }
+
+  $.ajax({
+    url: "data/" + patient + ".json?v=" + r,
+    async: isAsync,
+    success: function(file) {
+      if (!dt.patients) dt.patients = {};
+      dt.patients[patient] = file;
+
+      if (isAsync) callback(dt.patients[patient]);
+    },
+    error: function() {
+      if (dt.patients.patient && isAsync) {
+        dt.patients[patient] = dt.patients.patient;
+        return callback(dt.patients.patient);
+      } else if (!dt.patients.patient) {
+        _getFakePatientData(patient, callback);
+      }
+    }
   });
+
+  if(!isAsync) return dt.patients.patient;
 };
 
 var dt = {
@@ -423,11 +453,7 @@ var dt = {
   },
 
   getPatientData: function(patientId, callback) {
-    /*if(dt.patients && dt.patients[patientId]) {
-      return callback(dt.patients[patientId]);
-    } else {*/
-    _getPatientData(patientId, callback);
-    /*  }*/
+    return _getPatientData(patientId, callback);
   }
 
 };

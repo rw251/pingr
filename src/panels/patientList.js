@@ -209,8 +209,8 @@ var pl = {
     else panel.html(Mustache.render(tempMust));
 
     pl.wireUp(function(patientId) {
-      history.pushState(null, null, '#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));
-      loadContentFn('#patient/' + [patientId, pathwayId, pathwayStage, standard].join("/"));
+      history.pushState(null, null, '#patient/' + patientId);
+      loadContentFn('#patient/' + patientId);
     });
     pl.populate(pathwayId, pathwayStage, standard, null);
   }
