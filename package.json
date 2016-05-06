@@ -46,6 +46,8 @@
     "uglify-js": "^2.6.2"
   },
   "dependencies": {
+    "async": "^2.0.0-rc.3",
+    "csv-parser": "^1.9.3",
     "highcharts": "^4.2.4",
     "jquery-sparkline": "^2.3.2",
     "mustache": "^2.2.1",

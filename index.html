@@ -58,7 +58,7 @@
       <nav class="navbar navbar-default navbar-fixed-top hidden-xs" role="navigation">
         <div class="navbar-inner">
           <div class="container">
-            <ul id="mainTab" style="width:900px" class="nav nav-tabs nav-tabs-tall nav-wizard pull-left" role="tablist">
+            <ul id="mainTab" style="width:1100px" class="nav nav-tabs nav-tabs-tall nav-wizard pull-left" role="tablist">
               <li role="presentation" style="width:25%" class="active" data-id="overview"><a href="#overview" data-href="#overview" role="tab">OVERVIEW</a>
                 <div class="nav-arrow"></div>
               </li>
@@ -75,6 +75,21 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
+
+              <li id="file-loader">
+                  <a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Load data
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <span id="data-file-wrapper" class="btn btn-default btn-file">
+                      Load data...<input type="file" id="data-file" />
+                    </span>
+                    <span id="patient-file-wrapper" class="btn btn-default btn-file">
+                      Load patient lookup...<input type="file" id="patient-file" />
+                    </span>
+                  </ul>
+              </li>
 
               <li>
                 <a href="#help">Help</a>
@@ -131,21 +146,6 @@
       </div>
     </div>
 
-    <aside id="aside-toggle" class="left-panel" style="overflow: hidden; outline: none;color: #C2C3C6; display:none" tabindex="5003">
-      <div class="user text-center clickable">
-        <!--<img alt="..." class="img-circle" width="52" height="52" src="assets/images/avtar/ben-52px.png">-->
-        <!--<i class="fa fa-camera-retro fa-2x"></i>-->
-        <img alt="..." width="52" height="52" src="assets/images/icons/PINGR_logo-52px.png">
-        <h3 style="margin-top: 10px">PINGR</h3>
-        <p style="font-size: 0.9em;font-style: italic">Improvement actions
-          <br> for GP practices</p>
-        <!--<h4 class="user-name">Hello Dr Brown</h4>-->
-      </div>
-
-      <nav class="navigation"></nav>
-
-    </aside>
-
     <div class="starter-template page welcome-page" id="welcome">
       <div class="container">
         <div class="row">
@@ -174,8 +174,8 @@
         </div>
 
         <ul id="welcome-tabs" class="nav nav-tabs">
-          <li class="active" data-toggle="tooltip" title="Improvement actions with which you have previously already in PINGR that have not yet been implemented in practice"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awaiting implementation</a></li>
-          <li data-toggle="tooltip" title="Improvement actions with which you have previously already in PINGR and then implemented in practice"><a id="completedTasks" href="#completedTasks">Agreed actions that have been implemented</a></li>
+          <li class="active" data-toggle="tooltip" title="Recommended actions with which you have previously already in PINGR that have not yet been implemented in practice"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awaiting implementation</a></li>
+          <li data-toggle="tooltip" title="Recommended actions with which you have previously already in PINGR and then implemented in practice"><a id="completedTasks" href="#completedTasks">Agreed actions that have been implemented</a></li>
         </ul>
         <div class="top-tab-pane">
           <div class="panel panel-default">
@@ -290,7 +290,7 @@
   <!-- History polyfill -->
   <script src="assets/js/history/history.min.js"></script>
 
-  <script src="dist/script.min.js?9"></script>
+  <script src="dist/script.js?9"></script>
 
   <script id="checkbox-template" type="x-tmpl-mustache">
     {{^done}}
@@ -312,15 +312,15 @@
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with this action and save it in your agreed actions list ">
             <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked" {{/agree}}>
-            <span class="fa fa-thumbs-up"></span>
+            <span class="fa fa-2x fa-thumbs-up"></span>
           </label>
           <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="top" title="Click to disagree with this action and remove it from your suggested actions list ">
             <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked" {{/disagree}}>
-            <span class="fa fa-thumbs-down"></span>
+            <span class="fa fa-2x fa-thumbs-down"></span>
           </label>
         </div>
       </td>
-      <td>{{>chk}}</td>
+      <!--<td>{{>chk}}</td>-->
     </tr>
   </script>
 
@@ -373,8 +373,8 @@
       <thead>
         <tr>
           <th>Suggested by PINGR &nbsp;<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated from recommended actions in NICE clinical guidelines, peer-reviewed academic journals, and other users of this application"></i>            </th>
-          <th style="width: 65px">Agree?</th>
-          <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list">Action implemented?</th>
+          <th style="width: 105px">Add to action plan?</th>
+          <!--<th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list">Action implemented?</th>-->
         </tr>
       </thead>
       <tbody>
@@ -462,11 +462,11 @@
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action and save it in your agreed actions list ">
             <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked" {{/agree}}>
-            <span class="fa fa-thumbs-up"></span>
+            <span class="fa fa-2x fa-thumbs-up"></span>
           </label>
           <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action and remove it from your suggested actions list ">
             <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked" {{/disagree}}>
-            <span class="fa fa-thumbs-down"></span>
+            <span class="fa fa-2x fa-thumbs-down"></span>
           </label>
         </div>
       </td>
@@ -480,8 +480,8 @@
       <thead>
         <tr>
           <th>Suggested by you</th>
-          <th style="width: 65px">Agree?</th>
-          <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list">Action implemented?</th>
+          <th style="width: 65px">Add to action plan?</th>
+          <!--<th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list">Action implemented?</th>-->
         </tr>
       </thead>
       <tbody>
@@ -501,9 +501,9 @@
   </script>
 
   <script id="team-action-plan-panel" type="x-tmpl-mustache">
-    <div class="affix panel panel-default panel-improvementopps">
-      <div class="clearfix panel-heading-improvementopps">
-        <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions: &nbsp; <span style="color: yellow;font-weight:bold"> Practice-level </span> &nbsp;
+    <div class="affix panel panel-default">
+      <div class="clearfix panel-heading">
+        Recommended actions: <span style="color: black;font-weight:bold"> Practice-level </span>
       </div>
 
       <div class="panel-body fit-to-screen-height" id="tab-plan-team">
@@ -554,9 +554,9 @@
   </script>
 
   <script id="individual-action-plan-panel" type="x-tmpl-mustache">
-    <div class="affix panel panel-default panel-improvementopps">
-      <div class="clearfix panel-heading-improvementopps">
-        <!---<i class="fa fa-list-ul fa-fw">--></i>&nbsp; Improvement actions: &nbsp; <span style="color: yellow;font-weight:bold"> Practice-level </span> &nbsp;
+    <div class="affix panel panel-default">
+      <div class="clearfix panel-heading">
+        Recommended actions: <span style="color: black;font-weight:bold"> Practice-level </span>
       </div>
 
       <div class="panel-body fit-to-screen-height" id="tab-plan-individual">
@@ -625,11 +625,11 @@
       <div id="qual-agree-disagree" class="btn-group" data-toggle="buttons" data-text="{{standard}}">
         <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this judgment and feed this information back">
           <input type="checkbox" name="patient-standard-agree" value="yes" autocomplete="off" {{#agree}}checked="checked" {{/agree}}>
-          <span class="fa fa-thumbs-up"></span>
+          <span class="fa  fa-2x fa-thumbs-up"></span>
         </label>
         <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this judgment and feed this information back">
           <input type="checkbox" name="patient-standard-agree" value="no" autocomplete="off" {{#disagree}}checked="checked" {{/disagree}}>
-          <span class="fa fa-thumbs-down"></span>
+          <span class="fa fa-2x fa-thumbs-down"></span>
         </label>
         </h4>
       </div>
@@ -661,11 +661,11 @@
             <div class="btn-group" data-toggle="buttons">
               <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="bottom" title="Click to agree with this action and save it in your agreed actions list ">
                 <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked" {{/agree}}>
-                <span class="fa fa-thumbs-up"></span>
+                <span class="fa fa-2x fa-thumbs-up"></span>
               </label>
               <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="bottom" title="Click to disagree with this action and remove it from your suggested actions list ">
                 <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked" {{/disagree}}>
-                <span class="fa fa-thumbs-down"></span>
+                <span class="fa fa-2x fa-thumbs-down"></span>
               </label>
             </div>
           </td>
@@ -715,8 +715,8 @@
   </script>
 
   <script id="value-trend-panel" type="x-tmpl-mustache">
-    <div id="trend-panel" class="panel panel-default panel-improvementopps" style="margin-bottom:10px; border-color: cornflowerblue">
-      <div class="panel-heading-improvementopps" style="background-color: cornflowerblue">
+    <div id="trend-panel" class="panel panel-default" style="margin-bottom:10px; border-color: cornflowerblue">
+      <div class="panel-heading" style="background-color: cornflowerblue">
         <span>{{standard}} data</span>
         <span class="pull-right btn btn-xs btn-default table-chart-toggle btn-trend">Table</span>
       </div>
@@ -729,11 +729,11 @@
             <div id="trend-agree-disagree" class="btn-group" data-toggle="buttons">
               <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these data and feed this information back">
                 <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked" {{/agree}}>
-                <span class="fa fa-thumbs-up"></span>
+                <span class="fa fa-2x fa-thumbs-up"></span>
               </label>
               <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these data and feed this information back">
                 <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked" {{/disagree}}>
-                <span class="fa fa-thumbs-down"></span>
+                <span class="fa fa-2x fa-thumbs-down"></span>
               </label>
             </div>
           </div>
@@ -777,11 +777,11 @@
           <div id="medication-agree-disagree" class="btn-group" data-toggle="buttons">
             <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with this information and feed this back">
               <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked"{{/agree}}>
-              <span class="fa fa-thumbs-up"></span>
+              <span class="fa fa-2x fa-thumbs-up"></span>
             </label>
             <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with this information and feed this back">
               <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked"{{/disagree}}>
-              <span class="fa fa-thumbs-down"></span>
+              <span class="fa fa-2x fa-thumbs-down"></span>
             </label>
           </div>
         </div>-->
@@ -821,11 +821,11 @@
           <div id="other-codes-agree-disagree" class="btn-group" data-toggle="buttons">
             <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with these codes">
               <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked" {{/agree}}>
-              <span class="fa fa-thumbs-up"></span>
+              <span class="fa fa-2x fa-thumbs-up"></span>
             </label>
             <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with these codes">
               <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked" {{/disagree}}>
-              <span class="fa fa-thumbs-down"></span>
+              <span class="fa fa-2x fa-thumbs-down"></span>
             </label>
           </div>
         </div>
@@ -834,8 +834,8 @@
   </script>
 
   <script id="other-codes-and-meds-wrapper-panel" type="x-tmpl-mustache">
-    <div id="medCodeWrapperPanel" class="panel panel-default panel-improvementopps" style="border-color: cornflowerblue">
-      <div class="panel-heading-improvementopps" style="background-color:cornflowerblue">
+    <div id="medCodeWrapperPanel" class="panel panel-default" style="border-color: cornflowerblue">
+      <div class="panel-heading" style="background-color:cornflowerblue">
         <span>Current medications and relevant other information</span>
         <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="Other Read codes that PINGR thinks are relevant"></i>
       </div>
@@ -886,7 +886,7 @@
         <div class="col-md-6">
           <div class="panel panel-default panel-improvementopps">
             <div class="panel-heading-improvementopps">
-              Improvement actions: &nbsp; <span style="color: yellow;font-weight:bold"> Patient-level </span> &nbsp;
+              Recommended actions: &nbsp; <span style="color: black;font-weight:bold"> Patient-level </span> &nbsp;
               <!--for {{standard}}-->
             </div>
             <div id="patient-panel-right fit-to-screen-height" class="panel-body">
@@ -1065,11 +1065,11 @@
         <div class="btn-group" data-toggle="buttons">
           <label class="btn btn-xs btn-yes btn-toggle btn-success {{#agree}}active{{/agree}}" data-toggle="tooltip" data-placement="top" title="Click to agree with this action and save it in your agreed actions list ">
             <input type="checkbox" value="yes" autocomplete="off" {{#agree}}checked="checked" {{/agree}}>
-            <span class="fa fa-thumbs-up"></span>
+            <span class="fa fa-2x fa-thumbs-up"></span>
           </label>
           <label class="btn btn-xs btn-no btn-toggle btn-danger {{#disagree}}active{{/disagree}}" data-toggle="tooltip" data-placement="auto right" title="Click to disagree with this action and remove it from your suggested actions list ">
             <input type="checkbox" value="no" autocomplete="off" {{#disagree}}checked="checked" {{/disagree}}>
-            <span class="fa fa-thumbs-down"></span>
+            <span class="fa fa-2x fa-thumbs-down"></span>
           </label>
         </div>
       </td>
@@ -1240,10 +1240,10 @@
         </thead>
         <tbody>
           {{#standards}}
-            <tr class="{{#targetMet}}success{{/targetMet}}{{^targetMet}}danger{{/targetMet}}">
-              <td>{{display}}</td>
-              <td>{{#targetMet}}<i class="fa fa-check text-success"></i>{{/targetMet}}{{^targetMet}}<i class="fa fa-times text-danger"></i>{{/targetMet}}</td>
-            </tr>
+          <tr class="{{#targetMet}}success{{/targetMet}}{{^targetMet}}danger{{/targetMet}}">
+            <td>{{display}}</td>
+            <td>{{#targetMet}}<i class="fa fa-check text-success"></i>{{/targetMet}}{{^targetMet}}<i class="fa fa-times text-danger"></i>{{/targetMet}}</td>
+          </tr>
           {{/standards}}
         </tbody>
       </table>

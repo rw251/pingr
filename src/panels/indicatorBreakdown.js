@@ -12,12 +12,10 @@ var bd = {
     var indicators = data.getIndicatorDataSync([pathwayId, pathwayStage, standard].join("."));
 
     var dataObj = indicators.opportunities.map(function(opp) {
-      var c = opp.values[0].slice();
-      c.splice(0, 1, opp.name);
-      return c;
+      return [opp.name, opp.patients.length];
     });
 
-    dataObj.splice(0, 0, indicators.opportunities[0].values[1]);
+    //dataObj.splice(0, 0, ["date",indicators.values[0][indicators.values[0].length-1]]);
 
     var elem = $("<div id='breakdown-chart'></div>");
 

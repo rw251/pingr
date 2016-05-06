@@ -57,25 +57,30 @@ var pl = {
         pList = indicators.opportunities.reduce(function(a, b) {
           return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
         });
-        header = data[pathwayId][pathwayStage].standards[standard].tableTitle;
+        header = data.text[pathwayId][pathwayStage].standards[standard].tableTitle;
       }
 
       pList = data.removeDuplicates(pList);
+      var vId = data.text[pathwayId][pathwayStage].standards[standard].valueId;
+      var dOv = data.text[pathwayId][pathwayStage].standards[standard].dateORvalue;
       var patients = pList.map(function(patientId) {
         var ret = indicators.patients[patientId];
-        ret.nhsNumber = data.patLookup ? data.patLookup[patientId] : patientId;
+        ret.nhsNumber = data.patLookup[patientId] || patientId;
         ret.patientId = patientId;
         ret.items = []; //The fields in the patient list table
-        if (ret[data[pathwayId][pathwayStage].standards[standard].valueId]) {
-          if (data[pathwayId][pathwayStage].standards[standard].dateORvalue === "date") {
-            ret.items.push(ret[data[pathwayId][pathwayStage].standards[standard].valueId].date);
+
+        var measures = data.patients[patientId].measurements.filter(function(v){return v.id===vId;});
+
+        if ( measures[0] && measures[0].data) {
+          if (dOv === "date") {
+            ret.items.push(new Date(measures[0].data[measures[0].data.length-1][0]));
           } else {
-            ret.items.push(ret[data[pathwayId][pathwayStage].standards[standard].valueId].value);
+            ret.items.push(measures[0].data[measures[0].data.length-1][1]);
           }
         } else {
           ret.items.push("?");
         }
-        ret.items.push(ret.opportunities.map(function(v){return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';}).join(""));
+        ret.items.push(indicators.patients[patientId].opportunities.map(function(v){return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';}).join(""));
         ret.items.push(data.numberOfStandardsMissed(patientId));
         return ret;
       });
@@ -93,10 +98,10 @@ var pl = {
       };
 
       //middle column is either value or date
-      if (data[pathwayId][pathwayStage].standards[standard].dateORvalue) {
+      if (dOv) {
         localData["header-items"].push({
-          "title": data[pathwayId][pathwayStage].standards[standard].valueName,
-          "tooltip": data[pathwayId][pathwayStage].standards[standard].dateORvalue === "date" ? "Last date " + data[pathwayId][pathwayStage].standards[standard].value + " was measured" : "Last " + data[pathwayId][pathwayStage].standards[standard].value + " reading",
+          "title": data.text[pathwayId][pathwayStage].standards[standard].valueName,
+          "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
           "isSorted": false,
           "direction": "sort-asc"
         });

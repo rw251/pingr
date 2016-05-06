@@ -29,7 +29,6 @@ var ll = {
 
   show: function(panel, isAppend, patientId, data) {
 
-
     var element = 'lifeline-chart';
     var elementId = '#' + element;
 
@@ -63,12 +62,6 @@ var ll = {
         }
       }
     });
-    /**
-     * Override the reset function, we don't need to hide the tooltips and crosshairs.
-     */
-    /*Highcharts.Pointer.prototype.reset = function() {
-      return undefined;
-    };*/
 
     /**
      * Synchronize zooming through the setExtremes event handler.
@@ -99,6 +92,7 @@ var ll = {
 
 
     var plotConditions = function(conditions, contacts) {
+      ll.charts=1;
       var series = [];
       $.each(conditions.reverse(), function(i, task) {
         var item = {
@@ -113,25 +107,12 @@ var ll = {
         series.push(item);
       });
 
+      var markerTemplate = { "lineWidth": 1, "lineColor": "black", "radius": 8 };
       var markers = {
-        "Face to face": {
-          "symbol": "square",
-          "lineWidth": 1,
-          "lineColor": "black",
-          "radius": 8
-        },
-        "Telephone": {
-          "symbol": "circle",
-          "lineWidth": 1,
-          "lineColor": "black",
-          "radius": 8
-        },
-        "Hospital admission": {
-          "symbol": "triangle",
-          "lineWidth": 1,
-          "lineColor": "black",
-          "radius": 8
-        }
+        "default": $.extend({ "symbol": "triangle" }, markerTemplate),
+        "Face to face": $.extend({ "symbol": "square" }, markerTemplate),
+        "Telephone": $.extend({ "symbol": "circle" }, markerTemplate),
+        "Hospital admission": $.extend({ "symbol": "triangle" }, markerTemplate)
       };
       var contactSeries = {};
       $.each(contacts, function(i, contact) {
@@ -139,7 +120,7 @@ var ll = {
           contactSeries[contact.name] = Highcharts.extend(contact, {
             data: [],
             type: 'scatter',
-            marker: markers[contact.name],
+            marker: markers[contact.name] || markers.default,
             color: colour.next()
           });
         }
@@ -153,6 +134,7 @@ var ll = {
         return contactSeries[key];
       }));
 
+      $(elementId).append($('<div class="chart-title">Patient conditions and contacts</div>'));
       // create the chart
       $('<div class="h-chart h-condition-chart">')
         .appendTo(elementId)
@@ -160,25 +142,20 @@ var ll = {
 
           chart: {
             renderTo: element,
-            marginLeft: 40, // Keep all charts left aligned
+            marginLeft: 120, // Keep all charts left aligned
             spacingTop: 20,
             spacingBottom: 20,
             type: 'columnrange',
-            inverted: true
+            inverted: true,
+            backgroundColor: '#F9F3F9'
           },
 
-          title: {
-            text: 'Patient conditions and contacts',
-            align: 'left',
-            margin: 1,
-            style: '{"color": "#333333", "fontSize": "12px"}'
-          },
-
+          title: '',
 
           yAxis: {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
-            max: Date.UTC(2016, 3, 5),
+            max: new Date().getTime(),
             crosshair: true,
             events: {
               setExtremes: syncExtremes
@@ -246,7 +223,7 @@ var ll = {
                     return v[1] === time;
                   }).length > 0;
                 }).map(function(val) {
-                  return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%Y:%m:%d', val.time);
+                  return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%Y:%m:%d', time);
                 }).join('<br/>');
               }
             },
@@ -278,21 +255,6 @@ var ll = {
               }
             }
           },
-          /*plotOptions: {
-            line: {
-              lineWidth: 9,
-              marker: {
-                enabled: false
-              },
-              dataLabels: {
-                enabled: true,
-                align: 'left',
-                formatter: function() {
-                  return this.point.options && this.point.options.label;
-                }
-              }
-            }
-          },*/
 
           series: series
 
@@ -300,20 +262,22 @@ var ll = {
     };
 
     var plotMeasurements = function(measurements) {
-      $.each(measurements.datasets, function(i, dataset) {
-
+      $(elementId).append($('<div class="chart-title">Patient measurements</div>'));
+      $.each(measurements, function(i, dataset) {
+        ll.charts++;
         // Add X values
-        if (dataset.data && typeof dataset.data[0] !== "object") {
+        /*if (dataset.data && typeof dataset.data[0] !== "object") {
           dataset.data = Highcharts.map(dataset.data, function(val, j) {
             return [measurements.xData[j], val];
           });
-        }
+        }*/
 
         var chartOptions = {
           chart: {
-            marginLeft: 40, // Keep all charts left aligned
+            marginLeft: 120, // Keep all charts left aligned
             spacingTop: 0,
             spacingBottom: 8,
+            backgroundColor: '#F9F9F3'
           },
           title: {
             text: '',
@@ -330,7 +294,7 @@ var ll = {
           xAxis: {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
-            max: Date.UTC(2016, 3, 5),
+            max: new Date().getTime(),
             crosshair: {
               snap: false
             },
@@ -348,7 +312,9 @@ var ll = {
           },
           yAxis: {
             title: {
-              text: null
+              text: dataset.name + "<br>" + dataset.unit.replace(/\^([0-9]+)/, "<sup>$1</sup>") + "",
+              margin: 60,
+              rotation: 0
             },
             startOnTick: false,
             endOnTick: false,
@@ -368,14 +334,8 @@ var ll = {
                 y: -1 // align to title
               };
             },
-            borderWidth: 0,
-            backgroundColor: 'rgba(252, 255, 197, 0.65)',
-            pointFormat: '<b>' + dataset.name + ':</b> {point.y} ' + dataset.unit,
-            headerFormat: '',
-            shadow: true,
-            style: {
-              fontSize: '18px'
-            },
+            useHTML: true,
+            pointFormat: '<b>' + dataset.name + ':</b> {point.y} ' + dataset.unit.replace(/\^([0-9]+)/, "<sup>$1</sup>"),
             valueDecimals: dataset.valueDecimals
           },
           plotOptions: {
@@ -400,22 +360,25 @@ var ll = {
             }]
         };
 
-        if (dataset.name === "Blood pressure") {
+        if (dataset.name === "BP") {
           chartOptions.tooltip.pointFormat = "<b>BP:</b> {point.low}/{point.high} mmHg<br/>";
           //chartOptions.series[0].tooltip = {};
           chartOptions.series[0].stemWidth = 3;
           chartOptions.series[0].whiskerWidth = 5;
         }
 
-        if (i === 0) {
-          chartOptions.title =
-            {
-              text: 'Patient measurements',
-              align: 'left',
-              margin: 1,
-              style: '{"color": "#333333", "fontSize": "12px"}'
-            };
-        }
+        /*if (i === 0) {
+          chartOptions.title = {
+            text: 'Patient measurements',
+            align: 'left',
+            margin: 1,
+            style: {
+              color: "#333333",
+              fontSize: "12px",
+              fontWeight: "bold"
+            }
+          };
+        }*/
 
         /*if (i === measurements.datasets.length - 1) {
           chartOptions.xAxis = {
@@ -426,7 +389,7 @@ var ll = {
             type: 'datetime'
           };
         }*/
-        $('<div class="sync-chart h-chart' + (i === measurements.datasets.length - 1 ? " h-last-measurement-chart" : "") + '">')
+        $('<div class="sync-chart h-chart' + (i === measurements.length - 1 ? " h-last-measurement-chart" : "") + '">')
           .appendTo(elementId)
           .highcharts(chartOptions);
 
@@ -434,13 +397,14 @@ var ll = {
     };
 
     var plotNavigator = function() {
+      ll.charts++;
       var chart = $('<div class="h-chart h-navigator-chart">')
         .appendTo(elementId)
         .highcharts({
 
           chart: {
             renderTo: element,
-            marginLeft: 40, // Keep all charts left aligned
+            marginLeft: 120, // Keep all charts left aligned
             spacingTop: 20,
             spacingBottom: 20,
             ignoreHiddenSeries: false
@@ -453,7 +417,7 @@ var ll = {
           xAxis: {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
-            max: Date.UTC(2016, 3, 5),
+            max: new Date().getTime(),
             crosshair: false,
             events: {
               setExtremes: syncExtremes
@@ -519,6 +483,7 @@ var ll = {
     };
 
     var plotMedications = function(medications) {
+      ll.charts++;
       var series = [];
       $.each(medications.reverse(), function(i, task) {
         var item = {
@@ -533,6 +498,13 @@ var ll = {
         series.push(item);
       });
 
+      if (series.length === 0) series.push({
+        type: 'line',
+        name: 'Random data',
+        data: []
+      });
+
+      $(elementId).append($('<div class="chart-title">Patient medications</div>'));
       // create the chart
       return $('<div class="h-chart h-medication-chart">')
         .appendTo(elementId)
@@ -540,25 +512,41 @@ var ll = {
 
           chart: {
             renderTo: element,
-            marginLeft: 40, // Keep all charts left aligned
+            marginLeft: 120, // Keep all charts left aligned
             spacingTop: 20,
             spacingBottom: 20,
             type: 'columnrange',
-            inverted: true
+            inverted: true,
+            backgroundColor: '#F3F9F9'
+          },
+          lang: {
+            noData: "No relevant medications"
+          },
+          noData: {
+            style: {
+              fontWeight: 'bold',
+              fontSize: '15px',
+              color: '#303030'
+            }
           },
 
-          title: {
-            text: 'Patient medications',
-            align: 'left',
-            margin: 1,
-            style: '{"color": "#333333", "fontSize": "12px"}'
-          },
+          title: '',
+          /*{
+                      text: 'Patient medications',
+                      align: 'left',
+                      margin: 1,
+                      style: {
+                        color: "#333333",
+                        fontSize: "12px",
+                        fontWeight: "bold"
+                      }
+                    },*/
 
 
           yAxis: {
             type: 'datetime',
             min: Date.UTC(2013, 6, 12),
-            max: Date.UTC(2016, 3, 5),
+            max: new Date().getTime(),
             crosshair: {
               snap: false
             },
@@ -658,7 +646,7 @@ var ll = {
       trigger: 'syncExtremes'
     });
 
-    ll.chartArray = Highcharts.charts.slice(Highcharts.charts.length - 6, Highcharts.charts.length);
+    ll.chartArray = Highcharts.charts.slice(Highcharts.charts.length - ll.charts, Highcharts.charts.length);
 
     var s = syncExtremes.bind(c.highcharts().series[0]);
     s({

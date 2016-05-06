@@ -1,6 +1,7 @@
 var log = require('./log.js'),
   lookup = require('./lookup.js');
 
+
 var _getAllIndicatorData = function(callback) {
   var r = Math.random();
   $.getJSON("data/indicators.json?v=" + r, function(file) {
@@ -100,8 +101,8 @@ var _getIndicatorDataSync = function(indicator) {
 var _getFakePatientData = function(patient, callback) {
   var r = Math.random(),
     isAsync = typeof(callback) === "function";
-  if(dt.patients && dt.patients.patient){
-    if(isAsync) return callback(dt.patients.patient);
+  if (dt.patients && dt.patients.patient) {
+    if (isAsync) return callback(dt.patients.patient);
     else return dt.patients.patient;
   }
   $.ajax({
@@ -112,10 +113,10 @@ var _getFakePatientData = function(patient, callback) {
       dt.patients.patient = file;
       dt.patients[patient] = file;
 
-      if(isAsync) callback(dt.patients.patient);
+      if (isAsync) callback(dt.patients.patient);
     }
   });
-  if(!isAsync) return dt.patients.patient;
+  if (!isAsync) return dt.patients.patient;
 };
 
 var _getPatientData = function(patient, callback) {
@@ -123,8 +124,8 @@ var _getPatientData = function(patient, callback) {
   var r = Math.random(),
     isAsync = typeof(callback) === "function";
 
-  if(dt.patients && dt.patients[patient] && dt.patients[patient].characteristics){
-    if(isAsync) return callback(dt.patients[patient]);
+  if (dt.patients && dt.patients[patient]) {
+    if (isAsync) return callback(dt.patients[patient]);
     else return dt.patients[patient];
   }
 
@@ -147,7 +148,7 @@ var _getPatientData = function(patient, callback) {
     }
   });
 
-  if(!isAsync) return dt.patients.patient;
+  if (!isAsync) return dt.patients.patient;
 };
 
 var dt = {
@@ -155,6 +156,7 @@ var dt = {
   pathwayNames: {},
   diseases: [],
   options: [],
+  patLookup:{},
 
   getPatietListForStandard: function(pathwayId, pathwayStage, standard) {
     var patients = dt.removeDuplicates(dt[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a, b) {
@@ -250,18 +252,66 @@ var dt = {
   },
 
   get: function(callback, json) {
-    if (json) {
-      dt.load(json);
-      if (typeof callback === 'function') callback();
-    } else {
-      var r = Math.random();
-      $.getJSON("data.json?v=" + r, function(file) {
-        dt.load(file);
+    //get text
+    $.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
+      dt.text = textfile.pathways;
+
+      if (json) {
+        dt.newload(json);
         if (typeof callback === 'function') callback();
-      }).fail(function(err) {
-        alert("data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+      } else {
+        $.getJSON("data/data.json?v=" + Math.random(), function(file) {
+          dt.newload(file);
+          if (typeof callback === 'function') callback();
+        }).fail(function(err) {
+          alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+        });
+      }
+
+    }).fail(function(err) {
+      alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+    });
+  },
+
+  newload: function(file) {
+    dt.indicators = file.indicators;
+    dt.pathwayNames = {};
+
+    dt.indicators.forEach(function(indicator) {
+      var pathwayId = indicator.id.split(".")[0];
+      var pathwayStage = indicator.id.split(".")[1];
+      var standard = indicator.id.split(".")[2];
+      if(!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId]="";
+      var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
+      indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
+      indicator.target = indicator.values[3][1] * 100 + "%";
+      indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
+      var trend = indicator.values[1].map(function(val, idx) {
+        return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
+      }).slice(1, 10);
+      trend.reverse();
+      indicator.trend = trend.join(",");
+      var dates = indicator.values[0].slice(1, 10);
+      dates.reverse();
+      indicator.dates = dates;
+
+      dt.indicators[indicator.id] = { "opportunities": indicator.opportunities || [], "patients": {} };
+
+      //apply which categories people belong to
+      dt.patients = {};
+      Object.keys(file.patients).forEach(function(patient) {
+        dt.patients[patient] = file.patients[patient];
+        dt.indicators[indicator.id].patients[patient] = {};
+        dt.indicators[indicator.id].patients[patient].opportunities = [];
+        dt.indicators[indicator.id].opportunities.forEach(function(opp, idx) {
+          if (opp.patients.indexOf(+patient) > -1) {
+            dt.indicators[indicator.id].patients[patient].opportunities.push(idx);
+          }
+        });
       });
-    }
+    });
+
+
   },
 
   load: function(file) {

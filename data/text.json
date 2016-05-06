@@ -1,0 +1,84 @@
+{
+  "events":{
+
+  },
+  "measurements": {
+    "egfr": {
+      "name": "eGFR",
+      "unit": "ml/min/1.73m^2",
+      "type": "line",
+      "valueDecimals": 1
+    },
+    "acr": {
+      "name": "ACR",
+      "unit": "μg/mg",
+      "type": "line",
+      "valueDecimals": 0
+    },
+    "bp": {
+      "name": "BP",
+      "unit": "mmHg",
+      "type": "errorbar"
+    }
+  },
+
+  "pathways": {
+
+    "htn": {
+      "monitoring": {
+        "text": {
+          "page": {
+            "text": "htn-mon-page-text",
+            "tooltip": "htn-mon-page-tooltip"
+          }
+        },
+        "standards": {
+          "bp": {
+            "name": "",
+            "valueId": "bp",
+            "dateORvalue": "date",
+            "opportunities": {
+
+            },
+            "tableTitle":""
+          }
+        }
+      }
+    },
+
+    "ckd": {
+      "diagnosis": {
+        "text": {
+          "page": {
+            "text": "ckd-diag-page-text",
+            "tooltip": "ckd-diag-page-tooltip"
+          }
+        },
+        "standards": {
+          "ckd": {
+            "name": "CKD diagnoses",
+            "description" : "a description of ckd diag",
+            "valueId": "egfr",
+            "valueName": "Latest eGFR",
+            "dateORvalue": "value",
+            "tableTitle":"CKD table title",
+            "opportunities": {
+              "undiagnosed": {
+                "name": "Undiagnosed",
+                "description": "undiag la"
+              },
+              "overdiagnosed": {
+                "name": "Overdiagnosed",
+                "description": "overdiag la"
+              },
+              "misdiagnosed": {
+                "name": "Misdiagnosed",
+                "description": "misdiag la"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -571,7 +571,7 @@ var cht = {
           'Click a column to filter the patient list' : 'Tap a column to filter the patient list'
       },
       xAxis: {
-        categories: data.slice(1).map(function(v, i) {
+        categories: data.map(function(v, i) {
           return v[0];
         })
       },
@@ -614,7 +614,7 @@ var cht = {
       },
 
       series: [{
-        data: data.slice(1).map(function(v, i) {
+        data: data.map(function(v, i) {
           return {
             y: v[v.length - 1],
             color: Highcharts.getOptions().colors[i]

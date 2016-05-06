@@ -94,13 +94,18 @@ var main = {
       reader.onload = (function() {
         return function(e) {
           var JsonObj = JSON.parse(e.target.result);
-          getData(null, JsonObj);
+          data.get(null, JsonObj);
           console.log(JsonObj);
 
           main.wireUpSearchBox();
 
           setTimeout(function() {
-            $('#data-file-wrapper').hide(500);
+            if (!$('#patient-file-wrapper').is(':visible')) {
+              $('#file-loader').hide(500);
+            } else {
+              $('#data-file-wrapper').hide(500);
+            }
+            template.loadContent('#overview');
           }, 1000);
         };
       })(file);
@@ -116,17 +121,22 @@ var main = {
       reader.onload = (function() {
         return function(e) {
           var lines = e.target.result.split("\n");
-          patLookup = {};
+          data.patLookup = {};
           for (var i = 0; i < lines.length; i++) {
             var fields = lines[i].split(",");
             if (fields.length !== 2) continue;
-            patLookup[fields[0].trim()] = fields[1].trim();
+            data.patLookup[fields[0].trim()] = fields[1].trim();
           }
 
           main.wireUpSearchBox();
 
           setTimeout(function() {
-            $('#patient-file-wrapper').hide(500);
+            if (!$('#data-file-wrapper').is(':visible')) {
+              $('#file-loader').hide(500);
+            } else {
+              $('#patient-file-wrapper').hide(500);
+            }
+            template.loadContent('#overview');
           }, 1000);
         };
       })(file);
@@ -167,42 +177,42 @@ var main = {
   },
 
   preWireUpPages: function() {
-    layout.showPage('login');
+      layout.showPage('login');
 
-    //Every link element stores href in history
-    $(document).on('click', 'a.history', function() {
-      // keep the link in the browser history
-      history.pushState(null, null, this.href);
-      template.loadContent(location.hash, true);
-      // do not give a default action
-      return false;
-    });
+      //Every link element stores href in history
+      $(document).on('click', 'a.history', function() {
+        // keep the link in the browser history
+        history.pushState(null, null, this.href);
+        template.loadContent(location.hash, true);
+        // do not give a default action
+        return false;
+      });
 
-    //Called when the back button is hit
-    $(window).on('popstate', function(e) {
-      template.loadContent(location.hash, true);
-    });
+      //Called when the back button is hit
+      $(window).on('popstate', function(e) {
+        template.loadContent(location.hash, true);
+      });
 
-    //Templates
-    patientsPanelTemplate = $('#patients-panel');
-    actionPlanPanel = $('#action-plan-panel');
-    patientList = $('#patient-list');
-    suggestedPlanTemplate = $('#suggested-plan-template');
-    individualPanel = $('#individual-panel');
-    valueTrendPanel = $('#value-trend-panel');
-    medicationPanel = $('#medications-panel');
-    actionPlanList = $('#action-plan-list');
+      //Templates
+      patientsPanelTemplate = $('#patients-panel');
+      actionPlanPanel = $('#action-plan-panel');
+      patientList = $('#patient-list');
+      suggestedPlanTemplate = $('#suggested-plan-template');
+      individualPanel = $('#individual-panel');
+      valueTrendPanel = $('#value-trend-panel');
+      medicationPanel = $('#medications-panel');
+      actionPlanList = $('#action-plan-list');
 
-    //Selectors
-    bottomLeftPanel = $('#bottom-left-panel');
-    bottomRightPanel = $('#bottom-right-panel');
-    topPanel = $('#top-panel');
-    topLeftPanel = $('#top-left-panel');
-    topRightPanel = $('#top-right-panel');
-    midPanel = $('#mid-panel');
-    farLeftPanel = $('#left-panel');
-    farRightPanel = $('#right-panel');
-  }
+      //Selectors
+      bottomLeftPanel = $('#bottom-left-panel');
+      bottomRightPanel = $('#bottom-right-panel');
+      topPanel = $('#top-panel');
+      topLeftPanel = $('#top-left-panel');
+      topRightPanel = $('#top-right-panel');
+      midPanel = $('#mid-panel');
+      farLeftPanel = $('#left-panel');
+      farRightPanel = $('#right-panel');
+    }
     /*,
       "_local": local*/
 };

@@ -1,0 +1,57 @@
+{
+  "id": "ckd.diagnosis.ckd",
+  "name": "CKD diagnoses",
+  "description": "a description of ckd diag",
+  "values": [
+    [
+      "x",
+      "2016-03-01",
+      "2016-04-01",
+      "2016-05-01"
+    ],
+    [
+      "numerator",
+      "15",
+      "16",
+      "17"
+    ],
+    [
+      "denominator",
+      "20",
+      "20",
+      "20"
+    ],
+    [
+      "target",
+      "0.75",
+      "0.8",
+      "0.85"
+    ]
+  ],
+  "opportunities": [
+    {
+      "id": "undiagnosed",
+      "name": "Undiagnosed",
+      "description": "undiag la",
+      "patients": [
+        1000000001
+      ]
+    },
+    {
+      "id": "overdiagnosed",
+      "name": "Overdiagnosed",
+      "description": "overdiag la",
+      "patients": [
+        1000000001
+      ]
+    },
+    {
+      "id": "misdiagnosed",
+      "name": "Misdiagnosed",
+      "description": "misdiag la",
+      "patients": [
+        1000000002
+      ]
+    }
+  ]
+}

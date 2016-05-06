@@ -53,7 +53,7 @@ var ind = {
 
       if (!standard) {
         if (layout.standard) standard = layout.standard;
-        else standard = Object.keys(data[pathwayId][pathwayStage].standards)[0];
+        else standard = Object.keys(data.text[pathwayId][pathwayStage].standards)[0];
       }
 
       if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
@@ -62,8 +62,8 @@ var ind = {
           title: "Overview",
           url: "#overview"
         }, {
-          title: data[pathwayId][pathwayStage].text.page.text,
-          tooltip: data[pathwayId][pathwayStage].text.page.tooltip
+          title: data.text[pathwayId][pathwayStage].text.page.text,
+          tooltip: data.text[pathwayId][pathwayStage].text.page.tooltip
         }]);
         $('#mainTitle').show();
       }

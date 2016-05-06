@@ -52,8 +52,8 @@ var pv = {
             title: "Overview",
             url: "#overview"
                 }, {
-            title: data[pathwayId][pathwayStage].text.page.text,
-            tooltip: data[pathwayId][pathwayStage].text.page.tooltip,
+            title: data.text[pathwayId][pathwayStage].text.page.text,
+            tooltip: data.text[pathwayId][pathwayStage].text.page.tooltip,
             url: ["#overview", pathwayId, pathwayStage, standard].join("/")
                 }, {
             title: patientId
@@ -73,7 +73,7 @@ var pv = {
 
 
       if (patientId) {
-        base.updateTab("patients", patientId, patientId);
+        base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
 
         layout.patientId = patientId;
         data.pathwayId = pathwayId;
