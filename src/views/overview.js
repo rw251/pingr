@@ -15,7 +15,7 @@ var overview = {
   create: function(loadContentFn) {
 
     base.selectTab("overview");
-    $('.loading-container').show();
+    base.showLoading();
 
     //use a setTimeout to force the UI to change e.g. show the loading-container
     //before further execution
@@ -28,7 +28,7 @@ var overview = {
         layout.showMainView();
 
         $('#mainTitle').show();
-        base.updateTitle("Overview");
+        base.updateTitle("Overview of your practice performance");
 
         base.removeFullPage(farRightPanel);
         base.hidePanels(farRightPanel);
@@ -46,7 +46,7 @@ var overview = {
       $('#overview-pane').show();
 
       base.wireUpTooltips();
-      $('.loading-container').fadeOut(1000);
+      base.hideLoading();
     }, 0);
 
   }

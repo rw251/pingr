@@ -489,7 +489,7 @@ var cht = {
     series[1].data.push([maxXvalue, maxXvalue * gradient + intercept]);
     for (var i = 0; i < 13; i++) {
       var x = compDate.getTime();
-      if(x<maxXvalue) {
+      if (x < maxXvalue) {
         compDate.setMonth(compDate.getMonth() + 1);
         continue;
       }
@@ -512,7 +512,7 @@ var cht = {
       },
       yAxis: {
         title: { text: 'Quality standard performance' },
-        max: maxValue+0.05,
+        max: maxValue + 0.05,
         min: 0,
         plotLines: [{
           value: target,
@@ -520,7 +520,7 @@ var cht = {
           dashStyle: 'shortdash',
           width: 2,
           label: {
-            text: 'Target - ' + (target*100) + '%'
+            text: 'Target - ' + (target * 100) + '%'
           },
         }]
       },
@@ -545,6 +545,7 @@ var cht = {
     $('#' + element).highcharts({
       chart: {
         type: "column",
+        backgroundColor: "#F3F9F9",
         height: 200,
         events: {
           click: function(event) {
@@ -564,7 +565,7 @@ var cht = {
         }
       },
       title: {
-        text: ''
+        text: 'Patients not meeting the standard'
       },
       subtitle: {
         text: document.ontouchstart === undefined ?
@@ -577,7 +578,14 @@ var cht = {
       },
       yAxis: {
         title: {
-          text: 'Quality standard performance'
+          text: 'Number of patients'
+        },
+        stackLabels: {
+          enabled: true,
+          style: {
+            fontWeight: 'bold',
+            color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+          }
         }
       },
       legend: {
@@ -585,6 +593,14 @@ var cht = {
       },
 
       plotOptions: {
+
+        column: {
+          dataLabels: {
+            enabled: true,
+            color: 'black'
+          }
+        },
+
         series: {
           cursor: 'pointer',
           point: {

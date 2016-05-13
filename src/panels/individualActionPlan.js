@@ -198,40 +198,59 @@ var iap = {
       }
     });
 
+    $('#advice-list').off('click', '.show-more');
+    $('#advice-list').on('click', '.show-more', function(e) {
+      var id = $(this).data("id");
+      var elem = $('.show-more-row[data-id="' + id + '"]');
+      if(elem.is(':visible')){
+        $('.show-more[data-id="' + id + '"]:first').show();
+        elem.hide();
+      } else {
+        $(this).hide();
+        elem.show('fast');
+      }
+      // do not give a default action
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
     iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard);
   },
 
   updateIndividualSapRows: function() {
-    $('#advice-list').add('#personalPlanIndividual').find('.suggestion').each(function() {
+    /*$('#advice-list').add('#personalPlanIndividual').find('.suggestion').each(function() {
       $(this).find('td').last().children().hide();
-    });
+    });*/
 
-    $('#advice-list').add('#personalPlanIndividual').find('.cr-styled input[type=checkbox]').each(function() {
+    /*$('#advice-list').add('#personalPlanIndividual').find('.cr-styled input[type=checkbox]').each(function() {
       if (this.checked) {
         $(this).parent().parent().parent().addClass('success');
       } else {
         $(this).parent().parent().parent().removeClass('success');
       }
-    });
+    });*/
 
-    $('#advice-list').add('#personalPlanIndividual').find('.btn-undo').each(function() {
+    /*$('#advice-list').add('#personalPlanIndividual').find('.btn-undo').each(function() {
       $(this).parent().parent().addClass('success');
-    });
+    });*/
 
     //no class - user not yet agreed/disagreed - no background / muted text
     //active - user agrees - green background / normal text
     //success - user completed - green background / strikethrough text
     //danger - user disagrees - red background / strikethrough text
 
-    $('#advice-list').add('#personalPlanIndividual').find('tr').each(function() {
+    $('#advice-list').add('#personalPlanIndividual').find('tr.suggestion').each(function() {
       var self = $(this);
+      var id = self.data("id");
+      var all = $('.show-more-row[data-id="' + id + '"],.suggestion[data-id="' + id + '"]');
       var any = false;
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
         any = true;
         if (this.value === "yes") {
-          self.removeClass('danger');
-          self.addClass('active');
-          self.find('td').last().children().show();
+          all.removeClass('danger');
+          all.addClass('active');
+          //self.find('td').last().children().show();
           if (log.getActions()[data.patientId][self.data("id")].history) {
             var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + log.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
@@ -239,9 +258,9 @@ var iap = {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
         } else {
-          self.removeClass('active');
-          self.addClass('danger');
-          self.removeClass('success');
+          all.removeClass('active');
+          all.addClass('danger');
+          all.removeClass('success');
           if (log.getActions()[data.patientId][self.data("id")] && log.getActions()[data.patientId][self.data("id")].history) {
             $(this).parent().attr("title", "<p>" + log.getActions()[data.patientId][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
@@ -253,9 +272,9 @@ var iap = {
         self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
       }
       if (!any) {
-        self.removeClass('danger');
-        self.removeClass('active');
-        self.removeClass('success');
+        all.removeClass('danger');
+        all.removeClass('active');
+        all.removeClass('success');
 
         self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list  ").tooltip('fixTitle').tooltip('hide');
         self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
@@ -286,6 +305,9 @@ var iap = {
       "nhsNumber": data.patLookup ? data.patLookup[patientId] : patientId,
       "patientId": patientId
     };
+
+    var patientData = data.getPatientData(patientId);
+
     var breaches = data.patients[patientId].breach ? data.patients[patientId].breach.filter(function(v) {
       return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
     }) : [];
@@ -297,19 +319,19 @@ var iap = {
       };
     };
 
-    if (breaches.length === 0) {
+    if (patientData.actions.length === 0) {
       localData.noSuggestions = true;
     } else {
-      var suggestions = [],
+      /*var suggestions = [],
         subsection = "";
       for (var i = 0; i < breaches.length; i++) {
         subsection = breaches[i].subsection;
         suggestions = suggestions.concat(data[pathwayId][pathwayStage].bdown[subsection].suggestions ?
           data[pathwayId][pathwayStage].bdown[subsection].suggestions.map(fn) : []);
-      }
+      }*/
 
-      localData.suggestions = base.sortSuggestions(base.mergeIndividualStuff(base.suggestionList(suggestions), patientId));
-      localData.section = {
+      localData.suggestions = base.sortSuggestions(base.mergeIndividualStuff(patientData.actions, patientId));
+      /*localData.section = {
         "name": data[pathwayId][pathwayStage].bdown[subsection].name,
         "agree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
         "disagree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === false,
@@ -318,15 +340,13 @@ var iap = {
         "name": data.patients[patientId].category,
         "agree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "category") === true,
         "disagree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "category") === false,
-      };
+      };*/
     }
 
     $('#advice-placeholder').hide();
     $('#advice').show();
 
-    base.createPanelShow(individualPanel, $('#advice-list'), localData, {
-      "chk": $('#checkbox-template').html()
-    });
+    base.createPanelShow(individualPanel, $('#advice-list'), localData);
 
     //Wire up any clipboard stuff in the suggestions
     $('#advice-list').find('span:contains("[COPY")').each(function() {

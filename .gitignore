@@ -7,3 +7,4 @@ node_modules
 index.html.bak
 mod.html
 npm-debug.log*
+data/in/*.txt

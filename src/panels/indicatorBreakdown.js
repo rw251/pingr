@@ -15,8 +15,6 @@ var bd = {
       return [opp.name, opp.patients.length];
     });
 
-    //dataObj.splice(0, 0, ["date",indicators.values[0][indicators.values[0].length-1]]);
-
     var elem = $("<div id='breakdown-chart'></div>");
 
     if (isAppend) panel.append(elem);

@@ -23,87 +23,67 @@ var pv = {
   create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
 
     base.selectTab("patient");
-    $('.loading-container').show();
+    base.showLoading();
 
     //use a setTimeout to force the UI to change e.g. show the loading-container
     //before further execution
     setTimeout(function() {
 
-      if (layout.view !== ID) {
-        //Not already in this view so we need to rejig a few things
-        base.clearBox();
-        //base.switchTo21Layout();
-        layout.showMainView();
+      data.getPatientData(patientId, function(patientData) {
+        if (layout.view !== ID) {
+          //Not already in this view so we need to rejig a few things
+          base.clearBox();
+          //base.switchTo21Layout();
+          layout.showMainView();
 
-        base.removeFullPage(farRightPanel);
-        base.hidePanels(farRightPanel);
+          base.removeFullPage(farRightPanel);
+          base.hidePanels(farRightPanel);
 
-        layout.view = ID;
-      }
-
-      if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
-        layout.standard !== standard || layout.patientId !== patientId) {
-        //different pathway or stage or patientId so title needs updating
-        $('#mainTitle').show();
-
-        if (pathwayId && pathwayStage && standard) {
-
-          base.updateTitle([{
-            title: "Overview",
-            url: "#overview"
-                }, {
-            title: data.text[pathwayId][pathwayStage].text.page.text,
-            tooltip: data.text[pathwayId][pathwayStage].text.page.tooltip,
-            url: ["#overview", pathwayId, pathwayStage, standard].join("/")
-                }, {
-            title: patientId
-                }]);
-        } else {
-          base.updateTitle([{
-            title: "Overview",
-            url: "#overview"
-                }, {
-            title: patientId
-              }]);
+          layout.view = ID;
         }
-      }
+
+        if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
+          layout.standard !== standard || layout.patientId !== patientId) {
+          //different pathway or stage or patientId so title needs updating
+          $('#mainTitle').show();
+
+          var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
+          var sex = patientData.characteristics.sex.toLowerCase()==="m" ?
+            "male" : (patientData.characteristics.sex.toLowerCase()==="f" ? "female" : patientData.characteristics.sex.toLowerCase())
+          ;
+          base.updateTitle("Patient " + patid +
+            " - " + patientData.characteristics.age + " year old " + sex);
+        }
 
 
-      base.hidePanels(farLeftPanel);
+        base.hidePanels(farLeftPanel);
 
 
-      if (patientId) {
-        base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
+        if (patientId) {
+          base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
 
-        layout.patientId = patientId;
-        data.pathwayId = pathwayId;
+          layout.patientId = patientId;
+          data.patientId = patientId;
+          data.pathwayId = pathwayId;
 
-        var elWrap = $('<div class="row"></div>');
+          patientSearch.show($('#title-right'), true, loadContentFn);
+          qualityStandards.show(farRightPanel, false, patientId);
 
-        var el1 = $('<div class="col-md-4"></div>');
-        var el2 = $('<div class="col-md-8"></div>');
+          lifeline.show(farRightPanel, true, patientId, patientData);
+          individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
 
-        patientSearch.show(el1, false, loadContentFn);
-        patientCharacteristics.show(el1,true, patientId);
-        qualityStandards.show(el2, true, patientId);
-        elWrap.html(el1);
-        elWrap.append(el2);
-        farRightPanel.html(elWrap);
-        data.getPatientData(patientId, function(data) {
-          lifeline.show(farRightPanel, true, patientId, data);
-        });
-        individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+          patientSearch.wireUp();
+          $('#patient-pane').show();
+        } else {
+          base.updateTitle("No patient currently selected");
 
-        patientSearch.wireUp();
-        $('#patient-pane').show();
-      } else {
-        base.updateTab("patients", "", patientId);
+          patientSearch.show(farRightPanel, true, loadContentFn);
+        }
 
-        patientSearch.show(farRightPanel, false, loadContentFn);
-      }
+        base.wireUpTooltips();
+        base.hideLoading();
 
-      base.wireUpTooltips();
-      $('.loading-container').fadeOut(1000);
+      });
     }, 0);
 
   },

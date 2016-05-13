@@ -4,6 +4,7 @@ var base = require('../base.js'),
   indicatorBreakdown = require('../panels/indicatorBreakdown.js'),
   indicatorBenchmark = require('../panels/indicatorBenchmark.js'),
   indicatorTrend = require('../panels/indicatorTrend.js'),
+  indicatorHeadlines = require('../panels/indicatorHeadlines.js'),
   teamActionPlan = require('../panels/teamActionPlan.js'),
   wrapper = require('../panels/wrapper.js'),
   layout = require('../layout.js');
@@ -24,7 +25,7 @@ var ind = {
   create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
 
     base.selectTab("indicator");
-    $('.loading-container').show();
+    base.showLoading();
 
     //use a setTimeout to force the UI to change e.g. show the loading-container
     //before further execution
@@ -48,7 +49,7 @@ var ind = {
 
       if (!pathwayStage) {
         if (layout.pathwayStage) pathwayStage = layout.pathwayStage;
-        else pathwayStage = "monitoring";
+        else pathwayStage = Object.keys(data.text[pathwayId])[0];
       }
 
       if (!standard) {
@@ -56,17 +57,18 @@ var ind = {
         else standard = Object.keys(data.text[pathwayId][pathwayStage].standards)[0];
       }
 
-      if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
+      //if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
         //different pathway or stage so title needs updating
-        base.updateTitle([{
+        base.updateTitle(data.text[pathwayId][pathwayStage].text.page.text);
+        /*base.updateTitle([{
           title: "Overview",
           url: "#overview"
         }, {
           title: data.text[pathwayId][pathwayStage].text.page.text,
           tooltip: data.text[pathwayId][pathwayStage].text.page.tooltip
         }]);
-        $('#mainTitle').show();
-      }
+        $('#mainTitle').show();*/
+      //}
 
       layout.pathwayId = pathwayId;
       layout.pathwayStage = pathwayStage;
@@ -83,25 +85,28 @@ var ind = {
 
       wrapper.show(farRightPanel, false, [
         {
+          show: indicatorHeadlines.show,
+          args: [pathwayId, pathwayStage, standard]
+        }, {
           show: indicatorBreakdown.show,
           args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
         }, {
           show: patientList.show,
           args: [pathwayId, pathwayStage, standard, loadContentFn]
         }
-      ], "Scroll down or click for your performance over time", false);
+      ], "Performance over time", false);
       wrapper.show(farRightPanel, true, [
         {
           show: indicatorTrend.show,
           args: [pathwayId, pathwayStage, standard]
         }
-      ], "Scroll down or click for your performance benchmark", "Scroll up or click for your patients at risk");
+      ], "Benchmarking", "Patients at risk");
       wrapper.show(farRightPanel, true, [
         {
           show: indicatorBenchmark.show,
           args: [pathwayId, pathwayStage, standard]
         }
-      ], false, "Scroll up or click for your performance over time");
+      ], false, "Performance over time");
 
       base.addFullPage(farRightPanel);
 
@@ -109,7 +114,11 @@ var ind = {
 
       base.wireUpTooltips();
 
-      $('.loading-container').fadeOut(1000);
+      /*setTimeout($('.fp-controlArrow').each(function(idx, el) {
+        if(el.is(":visible"))
+      }), 2000);*/
+
+      base.hideLoading();
     }, 0);
   }
 

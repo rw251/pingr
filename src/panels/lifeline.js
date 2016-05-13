@@ -92,7 +92,7 @@ var ll = {
 
 
     var plotConditions = function(conditions, contacts) {
-      ll.charts=1;
+      ll.charts = 1;
       var series = [];
       $.each(conditions.reverse(), function(i, task) {
         var item = {
@@ -147,14 +147,16 @@ var ll = {
             spacingBottom: 20,
             type: 'columnrange',
             inverted: true,
-            backgroundColor: '#F9F3F9'
+            backgroundColor: '#F9F3F9',
+            borderWidth: 2,
+            borderColor: '#ddd'
           },
 
           title: '',
 
           yAxis: {
             type: 'datetime',
-            min: Date.UTC(2013, 6, 12),
+            min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
             crosshair: true,
             events: {
@@ -209,9 +211,10 @@ var ll = {
               if (this.series.data[0].x !== 1) {
                 //Range ergo condition
                 var yCoord = this.y;
-                var label = conditions[Math.floor(this.x)].intervals.filter(function(v) {
+                var labelTmp = conditions[Math.floor(this.x)].intervals.filter(function(v) {
                   return yCoord >= v.from && yCoord <= v.to;
-                })[0].label;
+                });
+                var label = labelTmp.length > 0 ? labelTmp[0].label : "No label A";
                 return '<b>' + conditions[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
                   Highcharts.dateFormat('%Y:%m:%d', this.point.options.low) +
                   ' - ' + Highcharts.dateFormat('%Y:%m:%d', this.point.options.high);
@@ -240,13 +243,14 @@ var ll = {
                 formatter: function() {
                   var yCoord = this.y;
                   var idx = -1;
-                  var label = conditions[Math.floor(this.x)].intervals.filter(function(v, i) {
+                  var labelTmp = conditions[Math.floor(this.x)].intervals.filter(function(v, i) {
                     if (yCoord >= v.from && yCoord <= v.to) {
                       idx = i;
                       return true;
                     }
                     return false;
-                  })[0].label;
+                  });
+                  var label = labelTmp.length > 0 ? labelTmp[0].label : "No label B";
                   return this.y === this.point.low &&
                     (conditions[Math.floor(this.x)].intervals.length - 1 === idx ||
                       (this.series.chart.yAxis[0].min <= yCoord && this.series.chart.yAxis[0].max >= yCoord) ||
@@ -277,7 +281,9 @@ var ll = {
             marginLeft: 120, // Keep all charts left aligned
             spacingTop: 0,
             spacingBottom: 8,
-            backgroundColor: '#F9F9F3'
+            backgroundColor: '#F9F9F3',
+            borderWidth: 2,
+            borderColor: '#ddd'
           },
           title: {
             text: '',
@@ -293,7 +299,7 @@ var ll = {
           },
           xAxis: {
             type: 'datetime',
-            min: Date.UTC(2013, 6, 12),
+            min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
             crosshair: {
               snap: false
@@ -407,7 +413,9 @@ var ll = {
             marginLeft: 120, // Keep all charts left aligned
             spacingTop: 20,
             spacingBottom: 20,
-            ignoreHiddenSeries: false
+            ignoreHiddenSeries: false,
+            borderWidth: 2,
+            borderColor: '#ddd'
           },
 
           title: {
@@ -416,7 +424,7 @@ var ll = {
 
           xAxis: {
             type: 'datetime',
-            min: Date.UTC(2013, 6, 12),
+            min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
             crosshair: false,
             events: {
@@ -545,7 +553,7 @@ var ll = {
 
           yAxis: {
             type: 'datetime',
-            min: Date.UTC(2013, 6, 12),
+            min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
             crosshair: {
               snap: false
@@ -598,9 +606,10 @@ var ll = {
           tooltip: {
             formatter: function() {
               var yCoord = this.y;
-              var label = medications[Math.floor(this.x)].intervals.filter(function(v) {
+              var labelTmp = medications[Math.floor(this.x)].intervals.filter(function(v) {
                 return yCoord >= v.from && yCoord <= v.to;
-              })[0].label;
+              });
+              var label = labelTmp.length > 0 ? labelTmp[0].label : "No label C";
               return '<b>' + medications[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
                 Highcharts.dateFormat('%Y:%m:%d', this.point.options.low) +
                 ' - ' + Highcharts.dateFormat('%Y:%m:%d', this.point.options.high);
@@ -617,13 +626,14 @@ var ll = {
                 formatter: function() {
                   var yCoord = this.y;
                   var idx = -1;
-                  var label = medications[Math.floor(this.x)].intervals.filter(function(v, i) {
+                  var labelTmp = medications[Math.floor(this.x)].intervals.filter(function(v, i) {
                     if (yCoord >= v.from && yCoord <= v.to) {
                       idx = i;
                       return true;
                     }
                     return false;
-                  })[0].label;
+                  });
+                  var label = labelTmp.length > 0 ? labelTmp[0].label : "No label D";
                   return this.y === this.point.low &&
                     (medications[Math.floor(this.x)].intervals.length - 1 === idx ||
                       (this.series.chart.yAxis[0].min <= yCoord && this.series.chart.yAxis[0].max >= yCoord) ||

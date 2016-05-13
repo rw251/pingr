@@ -77,18 +77,18 @@
             <ul class="nav navbar-nav navbar-right">
 
               <li id="file-loader">
-                  <a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     Load data
                     <span class="caret"></span>
                   </a>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <span id="data-file-wrapper" class="btn btn-default btn-file">
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <span id="data-file-wrapper" class="btn btn-default btn-file">
                       Load data...<input type="file" id="data-file" />
                     </span>
-                    <span id="patient-file-wrapper" class="btn btn-default btn-file">
+                  <span id="patient-file-wrapper" class="btn btn-default btn-file">
                       Load patient lookup...<input type="file" id="patient-file" />
                     </span>
-                  </ul>
+                </ul>
               </li>
 
               <li>
@@ -222,9 +222,10 @@
     <div class="starter-template page" id="main-dashboard">
 
       <div class="tab-content">
+        <div id="title-row" class="title-row"><span id="title-left"></span><span class="pull-right" style="width:280px" id="title-right"></span></div>
         <div class="panel panel-default tab-pane tabs-up active">
           <div class="container-fluid" style="padding-left: 30px;">
-            <div class="row" style="padding-top: 20px">
+            <div class="row" style="padding-top: 10px">
               <div class="col-xl-4 col-lg-4" id="left-panel"></div>
               <!--<div class="col-xl-8 col-lg-6" id="mid-panel">
                 <div class="row">
@@ -372,7 +373,8 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Suggested by PINGR &nbsp;<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated from recommended actions in NICE clinical guidelines, peer-reviewed academic journals, and other users of this application"></i>            </th>
+          <th>
+            <!--Suggested by PINGR &nbsp;<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="left" title="These suggested actions were generated from recommended actions in NICE clinical guidelines, peer-reviewed academic journals, and other users of this application"></i>            --></th>
           <th style="width: 105px">Add to action plan?</th>
           <!--<th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list">Action implemented?</th>-->
         </tr>
@@ -480,7 +482,7 @@
       <thead>
         <tr>
           <th>Suggested by you</th>
-          <th style="width: 65px">Add to action plan?</th>
+          <th style="width: 105px">Add to action plan?</th>
           <!--<th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list">Action implemented?</th>-->
         </tr>
       </thead>
@@ -492,12 +494,12 @@
   </script>
 
   <script id="action-plan" type="x-tmpl-mustache">
-    <div class="input-group">
-      <textarea class="form-control" rows="3" style="resize:none" placeholder="Enter your own improvement action..."></textarea>
-      <span class="input-group-addon btn add-plan">
-        Add
-      </span>
-    </div>
+    <form>
+      <div class="form-group">
+        <textarea class="form-control" rows="3" style="resize:none" placeholder="Enter your own improvement action then click 'add' below..."></textarea>
+      </div>
+      <button class="btn btn-info add-plan">Add</button>
+    </form>
   </script>
 
   <script id="team-action-plan-panel" type="x-tmpl-mustache">
@@ -556,7 +558,7 @@
   <script id="individual-action-plan-panel" type="x-tmpl-mustache">
     <div class="affix panel panel-default">
       <div class="clearfix panel-heading">
-        Recommended actions: <span style="color: black;font-weight:bold"> Practice-level </span>
+        Recommended actions: <span style="color: black;font-weight:bold"> Patient-level </span>
       </div>
 
       <div class="panel-body fit-to-screen-height" id="tab-plan-individual">
@@ -640,22 +642,23 @@
   <script id="individual-panel" type="x-tmpl-mustache">
     {{#noSuggestions}}
     <p>There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.</p>
-    {{/noSuggestions}} {{^noSuggestions}}
+    {{/noSuggestions}}
+    {{^noSuggestions}}
     <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
-          <th>Suggested by PINGR &nbsp;
+          <th>
+            <!--Suggested by PINGR &nbsp;-->
             <!--<i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="These suggested actions were generated by analysing data from the patients’ Electronic Health Records, then linking them to appropriate recommendations in NICE clinical guidelines and the British National Formulary."></i>-->
           </th>
-          <th style="width: 65px">Agree?</th>
-          <th style="width: 106px" data-toggle="tooltip" data-placement="bottom" title="Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list">Action implemented?</th>
+          <th style="width: 105px">Add to action plan?</th>
         </tr>
       </thead>
       <tbody>
         {{#suggestions}}
         <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}" {{/tpId}}>
           <td>
-            <span data-subsection="{{subsection}}">{{{text}}}</span>
+            <span data-subsection="{{subsection}}">{{{short}}} <br> <a data-id="{{id}}" class="show-more">show more</a></span>
           </td>
           <td>
             <div class="btn-group" data-toggle="buttons">
@@ -669,7 +672,12 @@
               </label>
             </div>
           </td>
-          <td>{{>chk}}</td>
+        </tr>
+        <tr class="show-more-row" data-id="{{id}}">
+          <td colspan="2">{{long}}</td>
+        </tr>
+        <tr class="show-more-row" data-id="{{id}}">
+          <td colspan="2">{{reason}} <br> <a data-id="{{id}}" class="show-more">show less</a></td>
         </tr>
         {{/suggestions}}
       </tbody>
@@ -1170,6 +1178,7 @@
               <th>Indicator</th>
               <th>Performance</th>
               <th>Target</th>
+              <th>Benchmark</th>
               <th></th>
               <th></th>
             </tr>
@@ -1177,11 +1186,15 @@
           <tbody>
             {{#indicators}}
             <tr class="standard-row" data-id="{{id}}">
-              <td>{{name}}</td>
-              <td>{{performance}}</td>
+              <td><strong>{{name}}</strong> <br> <a data-id="{{id}}" class="show-more">show more</a></td>
+              <td><strong>{{performance.percentage}}%</strong> ({{performance.fraction}})</td>
               <td>{{target}}</td>
+              <td>{{benchmark}}</td>
               <td>{{#up}}<i class="fa fa-2x fa-caret-up"></i>{{/up}}{{^up}}<i class="fa fa-2x fa-caret-down"></i>{{/up}}</td>
               <td><span class="inlinesparkline">{{trend}}</span></td>
+            </tr>
+            <tr class="show-more-row" data-id="{{id}}">
+              <td colspan="6">{{description}}<br><a data-id="{{id}}" class="show-more">show less</a></td>
             </tr>
             {{/indicators}}
           </tbody>
@@ -1225,7 +1238,7 @@
 
   <script id="patient-search" type="x-tmpl-mustache">
     <form role="search" id="search-box" class="app-search hidden-xs ng-pristine ng-valid">
-      <input type="text" placeholder="Search by patients number..." class="typeahead form-control form-control-circle">
+      <input type="text" placeholder="Search by patients NHS number..." class="typeahead form-control form-control-circle">
     </form>
   </script>
 
@@ -1260,6 +1273,18 @@
           <span><strong>{{age}}</strong> year old <strong>{{sex}}</strong></span>
         </div>
       </div>
+    </div>
+  </script>
+
+  <script id="indicator-headline-panel" type="x-tmpl-mustache">
+    <div style="text-align: center;">
+      <b>{{performance.percentage}}%</b> of your patients ...
+    </div>
+    <div style="text-align: center;">
+      The target is <b>{{target}}</b>
+    </div>
+    <div style="text-align: center;">
+      positive message
     </div>
   </script>
 </body>

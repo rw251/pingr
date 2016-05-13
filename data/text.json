@@ -3,13 +3,13 @@
 
   },
   "measurements": {
-    "egfr": {
+    "eGFR": {
       "name": "eGFR",
       "unit": "ml/min/1.73m^2",
       "type": "line",
       "valueDecimals": 1
     },
-    "acr": {
+    "ACR": {
       "name": "ACR",
       "unit": "μg/mg",
       "type": "line",
@@ -35,6 +35,7 @@
         "standards": {
           "bp": {
             "name": "",
+            "description" : "a description of htn diag",
             "valueId": "bp",
             "dateORvalue": "date",
             "opportunities": {
@@ -58,10 +59,10 @@
           "ckd": {
             "name": "CKD diagnoses",
             "description" : "a description of ckd diag",
-            "valueId": "egfr",
+            "valueId": "eGFR",
             "valueName": "Latest eGFR",
             "dateORvalue": "value",
-            "tableTitle":"CKD table title",
+            "tableTitle":"All patients with improvment opportunities",
             "opportunities": {
               "undiagnosed": {
                 "name": "Undiagnosed",
@@ -71,9 +72,21 @@
                 "name": "Overdiagnosed",
                 "description": "overdiag la"
               },
-              "misdiagnosed": {
-                "name": "Misdiagnosed",
-                "description": "misdiag la"
+              "unstagedUnknown": {
+                "name": "unstaged Unknown",
+                "description": "unstaged Unknown la"
+              },
+              "unstagedKnown": {
+                "name": "unstaged known",
+                "description": "unstaged known la"
+              },
+              "suggestExclude":{
+                "name": "suggest exclude",
+                "description": "sugg exc la"
+              },
+              "wrongstage":{
+                "name": "wrong stage",
+                "description": "wrong stage la"
               }
             }
           }

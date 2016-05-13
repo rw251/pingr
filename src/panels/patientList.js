@@ -67,7 +67,7 @@ var pl = {
         var ret = indicators.patients[patientId];
         ret.nhsNumber = data.patLookup[patientId] || patientId;
         ret.patientId = patientId;
-        ret.items = []; //The fields in the patient list table
+        ret.items = [data.patients[patientId].characteristics.age]; //The fields in the patient list table
 
         var measures = data.patients[patientId].measurements.filter(function(v){return v.id===vId;});
 
@@ -81,7 +81,7 @@ var pl = {
           ret.items.push("?");
         }
         ret.items.push(indicators.patients[patientId].opportunities.map(function(v){return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';}).join(""));
-        ret.items.push(data.numberOfStandardsMissed(patientId));
+        //ret.items.push(data.numberOfStandardsMissed(patientId));
         return ret;
       });
 
@@ -94,6 +94,11 @@ var pl = {
           "isSorted": false,
           "direction": "sort-asc",
           "tooltip": "NHS number of each patient"
+        },{
+          "title": "Age",
+          "isSorted": false,
+          "direction": "sort-asc",
+          "tooltip": "The age of the patient"
         }]
       };
 
@@ -126,17 +131,9 @@ var pl = {
       //add qual standard column
       localData["header-items"].push({
         "title": "Categories",
-        "titleHTML": 'tba',
-        "isUnSortable": true,
-        "tooltip": "Categories from above chart"
-      });
-      //add qual standard column
-      localData["header-items"].push({
-        "title": "All Opportunities",
-        "titleHTML": '# of <i class="fa fa-flag" style="color:red"></i>',
+        "titleHTML": 'Categories',
         "isSorted": true,
-        "direction": "sort-desc",
-        "tooltip": "Total number of improvement opportunities available across all conditions"
+        "tooltip": "Categories from above chart"
       });
 
       if (sortField === undefined) sortField = 2;

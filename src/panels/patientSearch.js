@@ -17,7 +17,7 @@ var ps = {
       local: $.map(data.patientArray, function(state) {
         return {
           id: state,
-          value: state
+          value: data.patLookup && data.patLookup[state] ? data.patLookup[state] : state
         };
       })
     });

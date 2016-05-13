@@ -283,7 +283,11 @@ var dt = {
       var standard = indicator.id.split(".")[2];
       if(!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId]="";
       var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
-      indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
+      indicator.performance = {
+        fraction: indicator.values[1][1] + "/" + indicator.values[2][1],
+        percentage: percentage
+      };
+      indicator.benchmark = "90%";//TODO magic number
       indicator.target = indicator.values[3][1] * 100 + "%";
       indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
@@ -294,12 +298,16 @@ var dt = {
       var dates = indicator.values[0].slice(1, 10);
       dates.reverse();
       indicator.dates = dates;
+      indicator.description=dt.text[pathwayId][pathwayStage].standards[standard].description;
 
-      dt.indicators[indicator.id] = { "opportunities": indicator.opportunities || [], "patients": {} };
+      dt.indicators[indicator.id] = { performance: indicator.performance, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
 
       //apply which categories people belong to
       dt.patients = {};
+      dt.patientArray = [];
+
       Object.keys(file.patients).forEach(function(patient) {
+        dt.patientArray.push(patient);
         dt.patients[patient] = file.patients[patient];
         dt.indicators[indicator.id].patients[patient] = {};
         dt.indicators[indicator.id].patients[patient].opportunities = [];

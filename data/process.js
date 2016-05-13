@@ -9,6 +9,16 @@ var standard = "ckd";
 
 var id = [pathway, stage, standard].join(".");
 
+var FILENAMES = {
+  demographics: 'demographics.txt',
+  diagnoses: 'diagnoses.txt',
+  events: 'importantcodes.txt',
+  indicators: 'indicator.txt',
+  measurements: 'measurements.txt',
+  opportunities: 'improvementcats.txt',
+  actions: 'actions.txt'
+};
+
 
 //Load current data
 var dataFile = JSON.parse(fs.readFileSync('data/data.json', 'utf8') || "{}");
@@ -35,7 +45,7 @@ if (!i) {
   indicators.push(i);
 }
 
-if(!i.opportunities) i.opportunities = [];
+if (!i.opportunities) i.opportunities = [];
 
 var readCsvAsync = function(input, callback) {
   var obj = [];
@@ -55,7 +65,7 @@ var readCsvAsync = function(input, callback) {
 async.series([
   function(callback) {
       console.log("1 series");
-      fs.createReadStream('data/in/indicators.csv')
+      fs.createReadStream('data/in/' + FILENAMES.indicators)
         .pipe(
           csv({
             separator: '\t',
@@ -84,10 +94,11 @@ async.series([
   function(callback) {
       console.log("2 series");
       async.map([
-        { file: "data/in/demographics.csv", headers: ['patientId', 'age', 'sex'] },
-        { file: "data/in/diagnoses.csv", headers: ['patientId', 'date', 'diag', 'cat'] },
-        { file: "data/in/measurements.csv", headers: ['patientId', 'date', 'thing', 'value'] },
-        { file: "data/in/events.csv", headers: ['patientId', 'date', 'event'] }
+        { file: "data/in/" + FILENAMES.demographics, headers: ['patientId', 'age', 'sex'] },
+        { file: "data/in/" + FILENAMES.diagnoses, headers: ['patientId', 'date', 'diag', 'cat'] },
+        { file: "data/in/" + FILENAMES.measurements, headers: ['patientId', 'date', 'thing', 'value'] },
+        { file: "data/in/" + FILENAMES.events, headers: ['patientId', 'date', 'event'] }/*,
+        { file: "data/in/" + FILENAMES.actions, headers: ['patientId', 'actionId', 'short', 'long', 'reason'] }*/
     ], readCsvAsync, function(err, results) {
         if (err) {
           return callback(err);
@@ -95,83 +106,86 @@ async.series([
         var temp = {};
         //age, sex
         results[0].forEach(function(v) {
-          temp[v.patientId] = {};
-          patients[v.patientId] = { characteristics: { age: v.age, sex: v.sex } };
-          patients[v.patientId].conditions = [];
-          patients[v.patientId].contacts = [];
-          patients[v.patientId].measurements = [];
-          patients[v.patientId].standards = [];
-          patients[v.patientId].medications = [];
+          temp[+v.patientId] = {};
+          patients[+v.patientId] = { characteristics: { age: v.age, sex: v.sex } };
+          patients[+v.patientId].conditions = [];
+          patients[+v.patientId].contacts = [];
+          patients[+v.patientId].measurements = [];
+          patients[+v.patientId].standards = [{display:indText.name, targetMet:false}];
+          patients[+v.patientId].medications = [];
+          patients[+v.patientId].actions = [];
         });
 
         //diagnoses
         results[1].forEach(function(v) {
-          if (!temp[v.patientId].diag) temp[v.patientId].diag = {};
-          if (!temp[v.patientId].diag[v.diag]) temp[v.patientId].diag[v.diag] = [];
-          temp[v.patientId].diag[v.diag].push({ date: new Date(v.date).getTime(), cat: v.cat });
+          if (!temp[+v.patientId].diag) temp[+v.patientId].diag = {};
+          if (!temp[+v.patientId].diag[v.diag]) temp[+v.patientId].diag[v.diag] = [];
+          temp[+v.patientId].diag[v.diag].push({ date: new Date(v.date).getTime(), cat: v.cat });
         });
 
         Object.keys(temp).forEach(function(p) {
-          Object.keys(temp[p].diag).forEach(function(d) {
-            temp[p].diag[d].sort(function(a, b) {
-              return a.date - b.date;
-            });
-            var intervals = [];
-            var last = temp[p].diag[d].reduce(function(prev, cur) {
-              var end = new Date(cur.date);
-              end.setDate(end.getDate()-1);
-              intervals.push({
-                from: prev.date,
-                to: end.getTime(),
-                label: prev.cat || ""
+          if (temp[p].diag) {
+            Object.keys(temp[p].diag).forEach(function(d) {
+              temp[p].diag[d].sort(function(a, b) {
+                return a.date - b.date;
               });
-              return cur;
+              var intervals = [];
+              var last = temp[p].diag[d].reduce(function(prev, cur) {
+                var end = new Date(cur.date);
+                end.setDate(end.getDate() - 1);
+                intervals.push({
+                  from: prev.date,
+                  to: end.getTime(),
+                  label: prev.cat || ""
+                });
+                return cur;
+              });
+              intervals.push({
+                from: last.date,
+                to: new Date().getTime(),
+                label: last.cat
+              });
+              patients[p].conditions.push({
+                name: d,
+                intervals: intervals
+              });
             });
-            console.log(last);
-            intervals.push({
-              from: last.date,
-              to: new Date().getTime(),
-              label: last.cat
-            });
-            patients[p].conditions.push({
-              name: d,
-              intervals: intervals
-            });
-          });
+          }
         });
 
         //measurements
         results[2].forEach(function(v) {
-          if (!temp[v.patientId].meas) temp[v.patientId].meas = {};
-          if (!temp[v.patientId].meas[v.thing]) temp[v.patientId].meas[v.thing] = [];
-          temp[v.patientId].meas[v.thing].push({ date: new Date(v.date).getTime(), value: v.value });
+          if (!temp[+v.patientId].meas) temp[+v.patientId].meas = {};
+          if (!temp[+v.patientId].meas[v.thing]) temp[+v.patientId].meas[v.thing] = [];
+          temp[+v.patientId].meas[v.thing].push({ date: new Date(v.date).getTime(), value: v.value });
         });
 
         Object.keys(temp).forEach(function(p) {
-          Object.keys(temp[p].meas).forEach(function(d) {
-            temp[p].meas[d].sort(function(a, b) {
-              return a.date - b.date;
+          if (temp[p].meas) {
+            Object.keys(temp[p].meas).forEach(function(d) {
+              temp[p].meas[d].sort(function(a, b) {
+                return a.date - b.date;
+              });
+              var mData = [];
+              temp[p].meas[d].forEach(function(v) {
+                mData.push([v.date, +v.value]);
+              });
+              patients[p].measurements.push({
+                "id": d,
+                "name": textFile.measurements[d].name,
+                "data": mData,
+                "unit": textFile.measurements[d].unit,
+                "type": textFile.measurements[d].type,
+                "valueDecimals": textFile.measurements[d].valueDecimals
+              });
             });
-            var mData = [];
-            temp[p].meas[d].forEach(function(v) {
-              mData.push([v.date, +v.value]);
-            });
-
-            patients[p].measurements.push({
-              "id": d,
-              "name": textFile.measurements[d].name,
-              "data": mData,
-              "unit": textFile.measurements[d].unit,
-              "type": textFile.measurements[d].type,
-              "valueDecimals": textFile.measurements[d].valueDecimals
-            });
-          });
+          }
         });
 
 
         //events
         results[3].forEach(function(v) {
-          patients[v.patientId].contacts.push({
+          patients[+v.patientId].contacts.push({
             name: v.event,
             time: new Date(v.date).getTime(),
             task: 1
@@ -183,22 +197,30 @@ async.series([
         i.opportunities.forEach(function(v, ix) {
           i.opportunities[ix].patients = [];
         });
-        fs.createReadStream('data/in/opportunities.csv')
+        fs.createReadStream('data/in/' + FILENAMES.opportunities)
           .pipe(
             csv({
               separator: '\t',
-              headers: ['patientId', 'opportunity']
+              headers: ['patientId', 'opportunity', 'actionId', 'short', 'long', 'reason', 'link']
             })
           )
           .on('data', function(data) {
+            patients[+data.patientId].actions.push({
+              id: data.actionId,
+              short: data.short,
+              long: data.long,
+              reason: data.reason,
+              link: data.link
+            });
             var opp = i.opportunities.filter(function(v) {
               return v.id === data.opportunity;
             })[0];
             if (!opp) {
+              console.log(data.opportunity);
               opp = { id: data.opportunity, name: oppText[data.opportunity].name, description: oppText[data.opportunity].description, patients: [] };
               i.opportunities.push(opp);
             }
-            opp.patients.push(+data.patientId);
+            if(opp.patients.indexOf(+data.patientId)===-1) opp.patients.push(+data.patientId);
           })
           .on('end', function() {
             fs.writeFile('data/idata.' + id + '.json', JSON.stringify(i, null, 2), function(err) {

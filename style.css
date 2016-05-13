@@ -10,9 +10,6 @@ header {
 body, html {
     overflow-x: hidden;
 }
-strong, b {
-    font-weight: 700;
-}
 .transit {
     transition: all 0.5s;
     -moz-transition: all 0.5s;
@@ -1799,7 +1796,7 @@ header {
     background-color: #70ba63;
 }
 .starter-template {
-    padding: 65px 15px 0px 15px;
+    padding: 112px 15px 0px 15px;
 }
 .starter-template-high {
     padding: 15px 15px 0px 15px;
@@ -1812,6 +1809,17 @@ header {
     color: #222;
 }
 .table>tbody>tr.suggestion.success td span {
+    text-decoration: line-through;
+    color: #85868d;
+}
+.table>tbody>tr.show-more-row.danger td span {
+    text-decoration: line-through;
+}
+.table>tbody>tr.show-more-row.active > td {
+    background-color: rgb(223, 240, 216);
+    color: #222;
+}
+.table>tbody>tr.show-more-row.success td span {
     text-decoration: line-through;
     color: #85868d;
 }
@@ -2103,7 +2111,7 @@ th, td {
 }
 .twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
     width: 100%;
-    max-width: 300px;
+    max-width: 500px;
     /*  height: 36px;*/
 }
 .twitter-typeahead {
@@ -2268,11 +2276,11 @@ body > svg {
     width: 31%;
 }
 .page > .tab-content > .panel {
-    min-height: 380px;
+    min-height: 370px;
     margin-bottom: 0;
 }
 .fit-to-screen-height {
-    height: 300px;
+    height: 270px;
     overflow-y: scroll;
 }
 .fit-to-scrolling-section-height {
@@ -2280,90 +2288,90 @@ body > svg {
 }
 @media (min-height: 500px) {
     .fit-to-screen-height {
-        height: 350px;
+        height: 320px;
     }
     .fit-to-scrolling-section-height {
         height: 300px;
     }
     .page > .tab-content > .panel {
-        min-height: 430px;
+        min-height: 420px;
     }
 }
 @media (min-height: 600px) {
     .fit-to-screen-height {
-        height: 450px;
+        height: 420px;
     }
     .fit-to-scrolling-section-height {
         height: 400px;
     }
     .page > .tab-content > .panel {
-        min-height: 530px;
+        min-height: 520px;
     }
 }
 @media (min-height: 700px) {
     .fit-to-screen-height {
-        height: 550px;
+        height: 520px;
     }
     .fit-to-scrolling-section-height {
         height: 500px;
     }
     .page > .tab-content > .panel {
-        min-height: 630px;
+        min-height: 620px;
     }
 }
 @media (min-height: 800px) {
     .fit-to-screen-height {
-        height: 650px;
+        height: 620px;
     }
     .fit-to-scrolling-section-height {
         height: 600px;
     }
     .page > .tab-content > .panel {
-        min-height: 730px;
+        min-height: 720px;
     }
 }
 @media (min-height: 900px) {
     .fit-to-screen-height {
-        height: 750px;
+        height: 720px;
     }
     .fit-to-scrolling-section-height {
         height: 700px;
     }
     .page > .tab-content > .panel {
-        min-height: 830px;
+        min-height: 820px;
     }
 }
 @media (min-height: 1000px) {
     .fit-to-screen-height {
-        height: 850px;
+        height: 820px;
     }
     .fit-to-scrolling-section-height {
         height: 800px;
     }
     .page > .tab-content > .panel {
-        min-height: 930px;
+        min-height: 920px;
     }
 }
 @media (min-height: 1100px) {
     .fit-to-screen-height {
-        height: 950px;
+        height: 920px;
     }
     .fit-to-scrolling-section-height {
         height: 900px;
     }
     .page > .tab-content > .panel {
-        min-height: 1030px;
+        min-height: 1020px;
     }
 }
 @media (min-height: 1200px) {
     .fit-to-screen-height {
-        height: 1050px;
+        height: 1020px;
     }
     .fit-to-scrolling-section-height {
         height: 1000px;
     }
     .page > .tab-content > .panel {
-        min-height: 1130px;
+        min-height: 1120px;
     }
 }
 .fp-controlArrow.fp-prev {
@@ -2374,7 +2382,7 @@ body > svg {
 }
 .fp-controlArrow.fp-up {
     bottom: auto;
-    top: 25px;
+    top: 0px;
     left: 50%;
     width: 0;
     border-width: 0 38.5px 34px 38.5px;
@@ -2382,7 +2390,7 @@ body > svg {
 }
 .fp-controlArrow.fp-down {
     top: auto;
-    bottom: 100px;
+    bottom: 130px;
     left: 50%;
     border-width: 34px 38.5px 0 38.5px;
     border-color: #eee transparent transparent transparent;
@@ -2400,4 +2408,43 @@ body > svg {
     font-size: 12px;
     font-weight: bold;
     color: #333333;
+}
+
+.show-more {
+  cursor: pointer;
+}
+
+.show-more-row {
+  display:none;
+}
+
+.standard-row.hover {
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.show-more-row.hover {
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.table>tbody>tr.show-more-row>td {
+  border-top-width: 0;
+}
+
+.title-row {
+  display:none;
+  font-size:20px;
+  position: fixed;
+  top: 75px;
+  left: 15px;
+  right: 15px;
+  border-right: 1px solid rgb(221, 221, 221);;
+  border-left: 1px solid rgb(221, 221, 221);;
+  background: white;
+  padding-top:10px;
+  padding-left:30px;
+  padding-right:15px;
+  z-index:100;
+  min-height:46px;
 }

@@ -46,7 +46,7 @@ var main = {
       local: $.map(data.patientArray, function(state) {
         return {
           id: state,
-          value: patLookup ? patLookup[state] : state
+          value: data.patLookup && data.patLookup[state] ? data.patLookup[state] : state
         };
       })
     });
@@ -123,7 +123,7 @@ var main = {
           var lines = e.target.result.split("\n");
           data.patLookup = {};
           for (var i = 0; i < lines.length; i++) {
-            var fields = lines[i].split(",");
+            var fields = lines[i].split("\t");
             if (fields.length !== 2) continue;
             data.patLookup[fields[0].trim()] = fields[1].trim();
           }
