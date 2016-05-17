@@ -12,7 +12,7 @@ var id = [pathway, stage, standard].join(".");
 var FILENAMES = {
   demographics: 'demographics.txt',
   diagnoses: 'diagnoses.txt',
-  events: 'importantcodes.txt',
+  events: 'important codes.txt',
   indicators: 'indicator.txt',
   measurements: 'measures.txt',
   contacts: 'contacts.txt',
