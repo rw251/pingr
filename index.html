@@ -642,8 +642,7 @@
   <script id="individual-panel" type="x-tmpl-mustache">
     {{#noSuggestions}}
     <p>There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.</p>
-    {{/noSuggestions}}
-    {{^noSuggestions}}
+    {{/noSuggestions}} {{^noSuggestions}}
     <table id="individual-suggested-actions-table" class="table">
       <thead>
         <tr>
@@ -677,7 +676,8 @@
           <td colspan="2">{{long}}</td>
         </tr>
         <tr class="show-more-row" data-id="{{id}}">
-          <td colspan="2">{{reason}} <br> <a data-id="{{id}}" class="show-more">show less</a></td>
+          <td colspan="2">{{reason}}
+            <br> <a data-id="{{id}}" class="show-more">show less</a></td>
         </tr>
         {{/suggestions}}
       </tbody>
@@ -1186,7 +1186,8 @@
           <tbody>
             {{#indicators}}
             <tr class="standard-row" data-id="{{id}}">
-              <td><strong>{{name}}</strong> <br> <a data-id="{{id}}" class="show-more">show more</a></td>
+              <td><strong>{{name}}</strong>
+                <br> <a data-id="{{id}}" class="show-more">show more</a></td>
               <td><strong>{{performance.percentage}}%</strong> ({{performance.fraction}})</td>
               <td>{{target}}</td>
               <td>{{benchmark}}</td>
@@ -1194,7 +1195,8 @@
               <td><span class="inlinesparkline">{{trend}}</span></td>
             </tr>
             <tr class="show-more-row" data-id="{{id}}">
-              <td colspan="6">{{description}}<br><a data-id="{{id}}" class="show-more">show less</a></td>
+              <td colspan="6">{{{description}}}
+                <br><a data-id="{{id}}" class="show-more">show less</a></td>
             </tr>
             {{/indicators}}
           </tbody>
@@ -1277,15 +1279,12 @@
   </script>
 
   <script id="indicator-headline-panel" type="x-tmpl-mustache">
-    <div style="text-align: center;">
-      <b>{{performance.percentage}}%</b> of your patients ...
-    </div>
-    <div style="text-align: center;">
-      The target is <b>{{target}}</b>
-    </div>
-    <div style="text-align: center;">
-      positive message
-    </div>
+    <ul>
+      <li class="perf-bullet"><b>{{performance.percentage}}%</b> ({{performance.fraction}}) of your patients with a CKD stage 3 or above based on their latest eGFR and ACR readings have the correct diagnosis coded in their record according to <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2"
+          target="_blank">NICE guidelines</a></li>
+      <li class="perf-bullet">The target for this quality indicator is <b>{{target}}</b></li>
+      <li class="perf-bullet perf-bullet-msg">There's lots of room for improvement - but don't be disheartened! Look through the suggestions listed on this page and under each patient for improvement actions to take.</li>
+    </ul>
   </script>
 </body>
 

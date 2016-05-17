@@ -14,9 +14,9 @@ var FILENAMES = {
   diagnoses: 'diagnoses.txt',
   events: 'importantcodes.txt',
   indicators: 'indicator.txt',
-  measurements: 'measurements.txt',
-  opportunities: 'improvementcats.txt',
-  actions: 'actions.txt'
+  measurements: 'measures.txt',
+  contacts: 'contacts.txt',
+  opportunities: 'impOppCatsAndActions.txt'
 };
 
 
@@ -97,8 +97,8 @@ async.series([
         { file: "data/in/" + FILENAMES.demographics, headers: ['patientId', 'age', 'sex'] },
         { file: "data/in/" + FILENAMES.diagnoses, headers: ['patientId', 'date', 'diag', 'cat'] },
         { file: "data/in/" + FILENAMES.measurements, headers: ['patientId', 'date', 'thing', 'value'] },
-        { file: "data/in/" + FILENAMES.events, headers: ['patientId', 'date', 'event'] }/*,
-        { file: "data/in/" + FILENAMES.actions, headers: ['patientId', 'actionId', 'short', 'long', 'reason'] }*/
+        { file: "data/in/" + FILENAMES.events, headers: ['patientId', 'date', 'event'] },
+        { file: "data/in/" + FILENAMES.contacts, headers: ['patientId', 'date', 'contact'] }
     ], readCsvAsync, function(err, results) {
         if (err) {
           return callback(err);
@@ -109,6 +109,7 @@ async.series([
           temp[+v.patientId] = {};
           patients[+v.patientId] = { characteristics: { age: v.age, sex: v.sex } };
           patients[+v.patientId].conditions = [];
+          patients[+v.patientId].events = [];
           patients[+v.patientId].contacts = [];
           patients[+v.patientId].measurements = [];
           patients[+v.patientId].standards = [{display:indText.name, targetMet:false}];
@@ -185,10 +186,19 @@ async.series([
 
         //events
         results[3].forEach(function(v) {
-          patients[+v.patientId].contacts.push({
+          patients[+v.patientId].events.push({
             name: v.event,
             time: new Date(v.date).getTime(),
             task: 1
+          });
+        });
+
+        //contacts
+        results[4].forEach(function(v) {
+          patients[+v.patientId].contacts.push({
+            name: v.contact,
+            time: new Date(v.date).getTime(),
+            task: 2
           });
         });
 

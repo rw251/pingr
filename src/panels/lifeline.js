@@ -91,7 +91,7 @@ var ll = {
     }
 
 
-    var plotConditions = function(conditions, contacts) {
+    var plotConditions = function(conditions, importantCodes, contacts) {
       ll.charts = 1;
       var series = [];
       $.each(conditions.reverse(), function(i, task) {
@@ -115,6 +115,7 @@ var ll = {
         "Hospital admission": $.extend({ "symbol": "triangle" }, markerTemplate)
       };
       var contactSeries = {};
+      var eventSeries = {};
       $.each(contacts, function(i, contact) {
         if (!contactSeries[contact.name]) {
           contactSeries[contact.name] = Highcharts.extend(contact, {
@@ -130,8 +131,27 @@ var ll = {
           ]);
       });
 
+      $.each(importantCodes, function(i, event) {
+        if (!eventSeries[event.name]) {
+          eventSeries[event.name] = Highcharts.extend(event, {
+            data: [],
+            type: 'scatter',
+            marker: markers[event.name] || markers.default,
+            color: colour.next()
+          });
+        }
+        eventSeries[event.name].data.push([
+              event.task,
+              event.time
+          ]);
+      });
+
       series = series.concat(Object.keys(contactSeries).map(function(key) {
         return contactSeries[key];
+      }));
+
+      series = series.concat(Object.keys(eventSeries).map(function(key) {
+        return eventSeries[key];
       }));
 
       $(elementId).append($('<div class="chart-title">Patient conditions and contacts</div>'));
@@ -208,7 +228,7 @@ var ll = {
 
           tooltip: {
             formatter: function() {
-              if (this.series.data[0].x !== 1) {
+              if (this.series.data[0].x !== 1 && this.series.data[0].x !== 2) {
                 //Range ergo condition
                 var yCoord = this.y;
                 var labelTmp = conditions[Math.floor(this.x)].intervals.filter(function(v) {
@@ -221,7 +241,7 @@ var ll = {
               } else {
                 //Single value hence contact
                 var time = this.y;
-                return contacts.filter(function(val) {
+                return (this.series.data[0].x === 1 ? importantCodes : contacts).filter(function(val) {
                   return val.data && val.data.filter(function(v) {
                     return v[1] === time;
                   }).length > 0;
@@ -290,6 +310,9 @@ var ll = {
             align: 'left',
             margin: 0,
             x: 30
+          },
+          marker: {
+            enabled: true
           },
           credits: {
             enabled: false
@@ -505,15 +528,20 @@ var ll = {
 
         series.push(item);
       });
+      var noData = false;
+      if (series.length === 0) {
+        series.push({
+          type: 'line',
+          name: 'Random data',
+          data: []
+        });
+        noData = true;
+      }
 
-      if (series.length === 0) series.push({
-        type: 'line',
-        name: 'Random data',
-        data: []
-      });
-
+      //$(elementId).append($('<div class="chart-title"' + (noData ? 'style="display:none"' : '') + '>Patient medications</div>'));
       $(elementId).append($('<div class="chart-title">Patient medications</div>'));
       // create the chart
+      //return $('<div class="h-chart h-medication-chart"' + (noData ? 'style="display:none"' : '') + '>')
       return $('<div class="h-chart h-medication-chart">')
         .appendTo(elementId)
         .highcharts({
@@ -648,7 +676,7 @@ var ll = {
         });
     };
 
-    plotConditions(data.conditions, data.contacts);
+    plotConditions(data.conditions, data.events, data.contacts);
     plotMeasurements(data.measurements);
     var c = plotMedications(data.medications);
     plotNavigator();

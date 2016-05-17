@@ -2182,7 +2182,7 @@ body > svg {
     height: 110px;
 }
 .h-medication-chart {
-    height: 140px;
+    max-height: 140px;
 }
 .h-last-measurement-chart {
     height: 80px;
@@ -2447,4 +2447,18 @@ body > svg {
   padding-right:15px;
   z-index:100;
   min-height:46px;
+  text-align: center;
+}
+
+#title-left {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.perf-bullet {
+  font-size: larger;
+}
+
+.perf-bullet-msg {
+  font-style: italic;
 }

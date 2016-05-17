@@ -51,42 +51,37 @@
       "diagnosis": {
         "text": {
           "page": {
-            "text": "ckd-diag-page-text",
-            "tooltip": "ckd-diag-page-tooltip"
+            "text": "Correct coding of CKD diagnosis"
           }
         },
         "standards": {
           "ckd": {
-            "name": "CKD diagnoses",
-            "description" : "a description of ckd diag",
+            "name": "Correct coding of CKD diagnosis",
+            "description" : "Patients with correct coding of CKD (Stage 3 or above) based on eGFR and ACR readings as specified in <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>NICE guidance</a>. <br> Eligible patients: patients with a CKD diagnostic code (stage 3 or above) or eGFR readings persistently < 60 ml/min/1.73m2 who do not have a QOF exclusion code. <br> Correct patients: patients who have a diagnostic code matching their latest eGFR and/or ACR readings.",
             "valueId": "eGFR",
             "valueName": "Latest eGFR",
             "dateORvalue": "value",
-            "tableTitle":"All patients with improvment opportunities",
+            "tableTitle":"All patients with improvement opportunities",
             "opportunities": {
               "undiagnosed": {
                 "name": "Undiagnosed",
-                "description": "undiag la"
+                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who <strong>do not</strong> have a CKD diagnosis code in their record"
               },
               "overdiagnosed": {
                 "name": "Overdiagnosed",
-                "description": "overdiag la"
-              },
-              "unstagedUnknown": {
-                "name": "unstaged Unknown",
-                "description": "unstaged Unknown la"
-              },
-              "unstagedKnown": {
-                "name": "unstaged known",
-                "description": "unstaged known la"
+                "description": "Patients who have a CKD diagnostic code in their record but their latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above"
               },
               "suggestExclude":{
-                "name": "suggest exclude",
-                "description": "sugg exc la"
+                "name": "Suggest Exclude",
+                "description": "Patients who have a CKD stage 3 or above diagnosis code in their record or who have CKD stage 3 or above based on their latest eGFR readings and who may <strong>benefit from being excluded</strong> from CKD quality indicators"
               },
-              "wrongstage":{
-                "name": "wrong stage",
-                "description": "wrong stage la"
+              "wrongDiagnosisKnown":{
+                "name": "Wrong Diagnosis (Correct Known)",
+                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who have the <strong>wrong</strong> CKD diagnosis code in their record"
+              },
+              "WrongDiagnosisUnknown":{
+                "name": "Wrong Diagnosis (Correct Unknown)",
+                "description": "Patients who have CKD stage 3 or above according to their latest eGFR reading and have a CKD diagnosis code in their record but <strong>no ACR reading</strong> to correctly stage their CKD"
               }
             }
           }
