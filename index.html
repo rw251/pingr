@@ -401,7 +401,7 @@
   </script>
 
   <script id="patient-list" type="x-tmpl-mustache">
-    <h4>{{header}} {{#header}}(n={{n}}){{/header}}</h4>
+    <h4>{{{header}}} {{#header}}(n={{n}}){{/header}}</h4>
 
     <table class="table patient-list table-body-hidden">
       <thead>
@@ -657,7 +657,7 @@
         {{#suggestions}}
         <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}" {{/tpId}}>
           <td>
-            <span data-subsection="{{subsection}}">{{{short}}} <br> <a data-id="{{id}}" class="show-more">show more</a></span>
+            <span data-subsection="{{subsection}}"><strong>{{{short}}}</strong> <br> <a data-id="{{id}}" class="show-more">Show more</a></span>
           </td>
           <td>
             <div class="btn-group" data-toggle="buttons">
@@ -673,11 +673,11 @@
           </td>
         </tr>
         <tr class="show-more-row" data-id="{{id}}">
-          <td colspan="2">{{long}}</td>
+          <td colspan="2">{{{long}}}</td>
         </tr>
         <tr class="show-more-row" data-id="{{id}}">
-          <td colspan="2">{{reason}}
-            <br> <a data-id="{{id}}" class="show-more">show less</a></td>
+          <td colspan="2">{{{reason}}}
+            <br> <a data-id="{{id}}" class="show-more">Show less</a></td>
         </tr>
         {{/suggestions}}
       </tbody>
@@ -1187,7 +1187,7 @@
             {{#indicators}}
             <tr class="standard-row" data-id="{{id}}">
               <td><strong>{{name}}</strong>
-                <br> <a data-id="{{id}}" class="show-more">show more</a></td>
+                <br> <a data-id="{{id}}" class="show-more">Show more</a></td>
               <td><strong>{{performance.percentage}}%</strong> ({{performance.fraction}})</td>
               <td>{{target}}</td>
               <td>{{benchmark}}</td>
@@ -1196,7 +1196,7 @@
             </tr>
             <tr class="show-more-row" data-id="{{id}}">
               <td colspan="6">{{{description}}}
-                <br><a data-id="{{id}}" class="show-more">show less</a></td>
+                <br><a data-id="{{id}}" class="show-more">Show less</a></td>
             </tr>
             {{/indicators}}
           </tbody>

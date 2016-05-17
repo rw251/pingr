@@ -57,7 +57,7 @@
         "standards": {
           "ckd": {
             "name": "Correct coding of CKD diagnosis",
-            "description" : "Patients with correct coding of CKD (Stage 3 or above) based on eGFR and ACR readings as specified in <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>NICE guidance</a>. <br> Eligible patients: patients with a CKD diagnostic code (stage 3 or above) or eGFR readings persistently < 60 ml/min/1.73m2 who do not have a QOF exclusion code. <br> Correct patients: patients who have a diagnostic code matching their latest eGFR and/or ACR readings.",
+            "description" : "<strong>Description:</strong> Patients with correct coding of CKD (Stage 3 or above) based on eGFR and ACR readings as specified in <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>NICE guidance</a>. <br> <strong>Eligible patients:</strong> patients with a CKD diagnostic code (stage 3 or above) or eGFR readings persistently < 60 ml/min/1.73m2 who do not have a QOF exclusion code. <br> <strong>Correct patients:</strong> patients who have a diagnostic code matching their latest eGFR and/or ACR readings.",
             "valueId": "eGFR",
             "valueName": "Latest eGFR",
             "dateORvalue": "value",

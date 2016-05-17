@@ -21,7 +21,7 @@ var FILENAMES = {
 
 
 //Load current data
-var dataFile = JSON.parse(fs.readFileSync('data/data.json', 'utf8') || "{}");
+var dataFile = JSON.parse(fs.readFileSync('data/datareal.json', 'utf8') || "{}");
 
 var textFile = JSON.parse(fs.readFileSync('data/text.json', 'utf8') || "{}");
 
