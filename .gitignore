@@ -8,6 +8,6 @@ index.html.bak
 mod.html
 npm-debug.log*
 data/in/*.txt
-data/data.json
+data/datareal.json
 data/idata*
 data/indicators.json

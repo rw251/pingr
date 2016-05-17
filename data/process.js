@@ -79,9 +79,9 @@ async.series([
           i.values[3].push(data.target);
         })
         .on('end', function() {
-          fs.writeFile('data/indicators.json', JSON.stringify(indicators, null, 2), function(err) {
+          /*fs.writeFile('data/indicators.json', JSON.stringify(indicators, null, 2), function(err) {
             if (err) return console.log(err);
-          });
+          });*/
           console.log("1 series done");
           callback(null);
         })
@@ -233,11 +233,11 @@ async.series([
             if(opp.patients.indexOf(+data.patientId)===-1) opp.patients.push(+data.patientId);
           })
           .on('end', function() {
-            fs.writeFile('data/idata.' + id + '.json', JSON.stringify(i, null, 2), function(err) {
+            /*fs.writeFile('data/idata.' + id + '.json', JSON.stringify(i, null, 2), function(err) {
               if (err) return console.log(err);
-            });
+            });*/
 
-            fs.writeFile('data/data.json', JSON.stringify(dataFile, null, 2), function(err) {
+            fs.writeFile('data/datareal.json', JSON.stringify(dataFile, null, 2), function(err) {
               if (err) return console.log(err);
             });
           });
