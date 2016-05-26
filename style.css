@@ -377,7 +377,8 @@ header {
 /*** Nav Toolbar (right)***/
 
 header .navbar-default .navbar-nav > li > a {
-    color: #b3b3be;
+    color: blue;
+    cursor: pointer;
 }
 
 /*** Nav Toolbar (right)***/
@@ -1406,7 +1407,9 @@ hr {
 }
 .nav-tabs>li a {
     border: 1px solid #ddd;
-    background-color: #F9F9F9;
+    background-color: #EEE;
+    margin-right:10px;
+    margin-top:10px;
 }
 .nav-tabs>li a:hover {
     border: 1px solid #ddd;
@@ -2461,4 +2464,28 @@ body > svg {
 
 .perf-bullet-msg {
   font-style: italic;
+}
+
+.pastel-blue {
+  background-color: #f9ffff;
+}
+
+.pastel-pink {
+  background-color: #fff9ff;
+}
+
+.pastel-yellow {
+  background-color: #fffff9;
+}
+
+.pastel-purple {
+  background-color: #f9f9ff;
+}
+
+.pastel-green {
+  background-color: #f9fff9;
+}
+
+.pastel-orange {
+  background-color: #fff9f9;
 }
