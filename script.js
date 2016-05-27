@@ -30,6 +30,39 @@ $(window).load(function() {
 $(document).on('ready', function() {
   //Grab the hash if exists - IE seems to forget it
   main.hash = location.hash;
+
+  //CHANGE THIS - added to spoof login
+  location.hash="";
+  main.hash="";
+  $('#signin').on('click', function(){
+    if($('#inpEmail').val().length<8) alert("Please enter your email address.");
+    else {
+      console.log('{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '"}}');
+      $.ajax({
+        type: "POST",
+        url: "http://130.88.250.206:9100/pingr",
+        data: '{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '"}}',
+        success: function(d){console.log(d);},
+        dataType: "json",
+        contentType:"application/json"
+      });
+
+      var obj = JSON.parse(localStorage.bb);
+      obj.email=$('#inpEmail').val();
+      localStorage.bb = JSON.stringify(obj);
+
+
+      history.pushState(null, null, '#overview');
+      template.loadContent('#overview');
+    }
+  });
+  $('#inpEmail').on('keyup', function(){
+    var code = e.which;
+    if(code==13){
+      $('#signin').click();
+    }
+  });
+
   //Load the data then wire up the events on the page
   main.init();
 
@@ -40,6 +73,10 @@ $(document).on('ready', function() {
     localStorage.bb = JSON.stringify({
       "version": main.version
     });
+  }
+
+  if(JSON.parse(localStorage.bb).email) {
+    $('#inpEmail').val(JSON.parse(localStorage.bb).email);
   }
 
   $('[data-toggle="tooltip"]').tooltip({
