@@ -2489,3 +2489,11 @@ body > svg {
 .pastel-orange {
   background-color: #fff9f9;
 }
+
+.black {
+  color: black;
+}
+
+.f20 {
+  font-size:20px;
+}

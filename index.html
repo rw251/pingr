@@ -654,7 +654,7 @@
         {{#suggestions}}
         <tr class="suggestion" data-id="{{id}}" {{#tpId}}data-team-or-patient-id="{{tpId}}" {{/tpId}}>
           <td>
-            <span data-subsection="{{subsection}}"><strong>{{{short}}}</strong> <br> <a data-id="{{id}}" class="show-more">Show more</a></span>
+            <span data-subsection="{{subsection}}"><strong class="black f20">{{{short}}}</strong> <br> <a data-id="{{id}}" class="show-more">Show more <i class="fa fa-caret-down"></i></a></span>
           </td>
           <td>
             <div class="btn-group" data-toggle="buttons">
@@ -669,13 +669,17 @@
             </div>
           </td>
         </tr>
+        {{#long}}
         <tr class="show-more-row" data-id="{{id}}">
           <td colspan="2">{{{long}}}</td>
         </tr>
+        {{/long}}
+        {{#reason}}
         <tr class="show-more-row" data-id="{{id}}">
           <td colspan="2">{{{reason}}}
-            <br> <a data-id="{{id}}" class="show-more">Show less</a></td>
+            <br> <a data-id="{{id}}" class="show-more">Show less <i class="fa fa-caret-up"></i></a></td>
         </tr>
+        {{/reason}}
         {{/suggestions}}
       </tbody>
     </table>
@@ -1184,7 +1188,7 @@
             {{#indicators}}
             <tr class="standard-row" data-id="{{id}}">
               <td><strong>{{name}}</strong>
-                <br> <a data-id="{{id}}" class="show-more">Show more</a></td>
+                <br> <a data-id="{{id}}" class="show-more">Show more <i class="fa fa-caret-down"></i></a></td>
               <td><strong>{{performance.percentage}}%</strong> ({{performance.fraction}})</td>
               <td>{{target}}</td>
               <td>{{benchmark}}</td>
@@ -1193,7 +1197,7 @@
             </tr>
             <tr class="show-more-row" data-id="{{id}}">
               <td colspan="6">{{{description}}}
-                <br><a data-id="{{id}}" class="show-more">Show less</a></td>
+                <br><a data-id="{{id}}" class="show-more">Show less <i class="fa fa-caret-up"></i></a></td>
             </tr>
             {{/indicators}}
           </tbody>
@@ -1277,10 +1281,9 @@
 
   <script id="indicator-headline-panel" type="x-tmpl-mustache">
     <ul>
-      <li class="perf-bullet"><b>{{performance.percentage}}%</b> ({{performance.fraction}}) of your patients with a CKD stage 3 or above based on their latest eGFR and ACR readings have the correct diagnosis coded in their record according to <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2"
-          target="_blank">NICE guidelines</a></li>
+      <li class="perf-bullet"><b>{{performance.percentage}}%</b> ({{performance.fraction}}) {{{tagline}}}</li>
       <li class="perf-bullet">The target for this quality indicator is <b>{{target}}</b></li>
-      <li class="perf-bullet perf-bullet-msg">There's lots of room for improvement - but don't be disheartened! Look through the suggestions listed on this page and under each patient for improvement actions to take.</li>
+      <li class="perf-bullet perf-bullet-msg">{{{positiveMessage}}}</li>
     </ul>
   </script>
 </body>

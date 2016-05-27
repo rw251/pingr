@@ -130,7 +130,7 @@
   },
   "indicators": [
         {
-      "id": "ckd.diagnosis.ckd",
+      "id": "ckd.diagnosis.diagnosis",
       "name": "CKD diagnoses",
       "description": "a description of ckd diag",
       "values": [

@@ -59,7 +59,7 @@ var ind = {
 
       //if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
         //different pathway or stage so title needs updating
-        base.updateTitle(data.text[pathwayId][pathwayStage].text.page.text);
+        base.updateTitle(data.text[pathwayId][pathwayStage].standards[standard].name);
         /*base.updateTitle([{
           title: "Overview",
           url: "#overview"

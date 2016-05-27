@@ -156,7 +156,7 @@ var dt = {
   pathwayNames: {},
   diseases: [],
   options: [],
-  patLookup:{},
+  patLookup: {},
 
   getPatietListForStandard: function(pathwayId, pathwayStage, standard) {
     var patients = dt.removeDuplicates(dt[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a, b) {
@@ -281,13 +281,13 @@ var dt = {
       var pathwayId = indicator.id.split(".")[0];
       var pathwayStage = indicator.id.split(".")[1];
       var standard = indicator.id.split(".")[2];
-      if(!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId]="";
+      if (!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId] = "";
       var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
       indicator.performance = {
         fraction: indicator.values[1][1] + "/" + indicator.values[2][1],
         percentage: percentage
       };
-      indicator.benchmark = "90%";//TODO magic number
+      indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][1] * 100 + "%";
       indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
@@ -298,9 +298,16 @@ var dt = {
       var dates = indicator.values[0].slice(1, 10);
       dates.reverse();
       indicator.dates = dates;
-      indicator.description=dt.text[pathwayId][pathwayStage].standards[standard].description;
+      if (dt.text[pathwayId] && dt.text[pathwayId][pathwayStage] && dt.text[pathwayId][pathwayStage].standards[standard]) {
+        indicator.description = dt.text[pathwayId][pathwayStage].standards[standard].description;
+        indicator.tagline = dt.text[pathwayId][pathwayStage].standards[standard].tagline;
+        indicator.positiveMessage = dt.text[pathwayId][pathwayStage].standards[standard].positiveMessage;
+      } else {
+        indicator.description = "No description specified";
+        indicator.tagline = "";
+      }
 
-      dt.indicators[indicator.id] = { performance: indicator.performance, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
+      dt.indicators[indicator.id] = { performance: indicator.performance, tagline: indicator.tagline, positiveMessage: indicator.positiveMessage, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
 
       //apply which categories people belong to
       dt.patients = {};
