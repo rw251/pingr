@@ -1,4 +1,4 @@
-var data = require('./data.js'),
+var data = require('./data'),
 Mustache = require('mustache');
 
 var layout = {

@@ -1,7 +1,7 @@
 var Highcharts = require('highcharts/highstock'),
-  data = require('./data.js'),
-  lookup = require('./lookup.js'),
-  log = require('./log.js'),
+  data = require('./data'),
+  lookup = require('./lookup'),
+  log = require('./log'),
   Mustache = require('mustache');
 
 console.log("chart.js: data.lastloader= " + data.lastloader);

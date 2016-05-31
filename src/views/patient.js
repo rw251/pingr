@@ -1,11 +1,11 @@
-var lifeline = require('../panels/lifeline.js'),
-  data = require('../data.js'),
-  base = require('../base.js'),
-  layout = require('../layout.js'),
-  individualActionPlan = require('../panels/individualActionPlan.js'),
-  qualityStandards = require('../panels/qualityStandards.js'),
-  patientCharacteristics = require('../panels/patientCharacteristics.js'),
-  patientSearch = require('../panels/patientSearch.js');
+var lifeline = require('../panels/lifeline'),
+  data = require('../data'),
+  base = require('../base'),
+  layout = require('../layout'),
+  individualActionPlan = require('../panels/individualActionPlan'),
+  qualityStandards = require('../panels/qualityStandards'),
+  patientCharacteristics = require('../panels/patientCharacteristics'),
+  patientSearch = require('../panels/patientSearch');
 
 var ID = "PATIENT_VIEW";
 /*

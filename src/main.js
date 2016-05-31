@@ -1,10 +1,10 @@
-var template = require('./template.js'),
-  data = require('./data.js'),
-  base = require('./base.js'),
-  layout = require('./layout.js'),
-  welcome = require('./panels/welcome.js'),
-  log = require('./log.js'),
-  patientView = require('./views/patient.js'),
+var template = require('./template'),
+  data = require('./data'),
+  base = require('./base'),
+  layout = require('./layout'),
+  welcome = require('./panels/welcome'),
+  log = require('./log'),
+  patientView = require('./views/patient'),
   Mustache = require('mustache');
 
 var states, patLookup, page, hash;

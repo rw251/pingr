@@ -4,6 +4,8 @@
   "description": "The performance improvement plan generator",
   "main": "script.js",
   "scripts": {
+    "bstart": "brunch watch --server",
+    "bbuild": "brunch build --production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors script.js data.json",
     "clean": "rimraf dist",
@@ -36,9 +38,13 @@
   },
   "homepage": "https://github.com/rw251/rw251.github.io",
   "devDependencies": {
+    "auto-reload-brunch": "^2.7.1",
     "browserify": "^13.0.0",
+    "brunch": "^2.8.0",
     "cp": "^0.2.0",
+    "csv-parser": "^1.9.3",
     "http-server": "^0.8.0",
+    "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
     "mv": "^2.0.3",
     "nodemon": "^1.9.1",
@@ -47,7 +53,6 @@
   },
   "dependencies": {
     "async": "^2.0.0-rc.3",
-    "csv-parser": "^1.9.3",
     "highcharts": "^4.2.4",
     "jquery-sparkline": "^2.3.2",
     "mustache": "^2.2.1",

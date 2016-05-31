@@ -12,3 +12,5 @@ data/in/**/*.txt
 data/datareal.json
 data/idata*
 data/indicators.json
+dist/
+src/assets/data/

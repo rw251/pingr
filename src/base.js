@@ -1,7 +1,7 @@
-var data = require('./data.js'),
-  lookup = require('./lookup.js'),
-  chart = require('./chart.js'),
-  log = require('./log.js'),
+var data = require('./data'),
+  lookup = require('./lookup'),
+  chart = require('./chart'),
+  log = require('./log'),
   Mustache = require('mustache'),
   ZeroClipboard = require('zeroclipboard');
 

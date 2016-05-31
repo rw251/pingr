@@ -1,8 +1,8 @@
-var base = require('../base.js'),
-  data = require('../data.js'),
-  layout = require('../layout.js'),
-  indicatorList = require('../panels/indicatorList.js'),
-  teamActionPlan = require('../panels/teamActionPlan.js');
+var base = require('../base'),
+  data = require('../data'),
+  layout = require('../layout'),
+  indicatorList = require('../panels/indicatorList'),
+  teamActionPlan = require('../panels/teamActionPlan');
 
 var ID = "OVERVIEW";
 /*

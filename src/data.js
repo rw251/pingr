@@ -1,5 +1,5 @@
-var log = require('./log.js'),
-  lookup = require('./lookup.js');
+var log = require('./log'),
+  lookup = require('./lookup');
 
 
 var _getAllIndicatorData = function(callback) {

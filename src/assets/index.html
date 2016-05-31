@@ -8,17 +8,17 @@
   <meta content="width=device-width, initial-scale=1" name="viewport">
 
   <title>PINGR</title>
-  <link href="assets/images/icons/PINGR_logo-52px.png" rel="icon" type="image/png">
+  <link href="images/icons/PINGR_logo-52px.png" rel="icon" type="image/png">
   <!-- Bootstrap -->
-  <link href="assets/css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
   <!-- Fullpage -->
-  <link href="assets/css/fullpage/fullpage.css" rel="stylesheet" />
+  <link href="css/fullpage/fullpage.css" rel="stylesheet" />
   <!-- Fonts  -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,300" rel="stylesheet" type="text/css">
   <link href="http://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300" rel="stylesheet" type="text/css">
   <!--fonts-->
-  <link href="assets/css/fontawesome/font-awesome.min.css" rel="stylesheet">
-  <link href="assets/css/fontpingr/font-pingr.css" rel="stylesheet">
+  <link href="css/fontawesome/font-awesome.min.css" rel="stylesheet">
+  <link href="css/fontpingr/font-pingr.css" rel="stylesheet">
   <!-- My styling -->
   <link href="style.css?23" rel="stylesheet" type="text/css">
 
@@ -114,7 +114,7 @@
       <div class="container login-container">
         <div class="login-panel panel panel-default plain animated bounceIn">
           <div class="panel-body">
-            <img alt="..." width="200" height="200" src="assets/images/icons/PINGR_logo-250px.png" style="display: block; margin-left: auto;margin-right: auto">
+            <img alt="..." width="200" height="200" src="images/icons/PINGR_logo-250px.png" style="display: block; margin-left: auto;margin-right: auto">
             <h2 style="text-align: center;">The Performance
                           <br> Improvement plaN
                           <br> GeneratoR (PINGR)
@@ -256,12 +256,12 @@
       <nav class="navbar navbar-default navbar-fixed-bottom">
         <div class="container">
           <ul class="nav navbar-nav">
-            <li><img alt="..." class="img-responsive" width="160" height="42" src="assets/images/icons/wellcome-160px.png"></li>
-            <li><img alt="..." class="img-responsive" width="160" height="46" src="assets/images/icons/farr-logo-160px.png">
+            <li><img alt="..." class="img-responsive" width="160" height="42" src="images/icons/wellcome-160px.png"></li>
+            <li><img alt="..." class="img-responsive" width="160" height="46" src="images/icons/farr-logo-160px.png">
             </li>
-            <li><img alt="..." class="img-responsive" width="160" height="68" src="assets/images/icons/uom-logo-160px.png">
+            <li><img alt="..." class="img-responsive" width="160" height="68" src="images/icons/uom-logo-160px.png">
             </li>
-            <li><img alt="..." class="img-responsive" width="160" height="43" src="assets/images/icons/herc-logo-160px.png">
+            <li><img alt="..." class="img-responsive" width="160" height="43" src="images/icons/herc-logo-160px.png">
             </li>
           </ul>
         </div>
@@ -275,23 +275,28 @@
   <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
   <!-- jQuery fallback if no online version -->
   <script>
-    window.jQuery || document.write('<script src="assets/js/jquery/jquery-1.12.3.min.js"><\/script>')
+    window.jQuery || document.write('<script src="js/jquery/jquery-1.12.3.min.js"><\/script>')
   </script>
 
   <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="assets/js/bootstrap/bootstrap.min.js"></script>
+  <script src="js/bootstrap/bootstrap.min.js"></script>
   <!-- Fullpage things -->
-  <script src="assets/js/fullpage/fullpage.min.js"></script>
+  <script src="js/fullpage/fullpage.min.js"></script>
   <!-- NiceScroll -->
-  <script src="assets/js/plugins/nicescroll/jquery.nicescroll.min.js"></script>
+  <script src="js/plugins/nicescroll/jquery.nicescroll.min.js"></script>
   <!-- Typeahead -->
-  <script src="assets/js/plugins/typehead/typeahead.bundle.js"></script>
+  <script src="js/plugins/typehead/typeahead.bundle.js"></script>
   <!-- jsPDF -->
-  <script src="assets/js/jspdf/jspdf.min.js"></script>
+  <script src="js/jspdf/jspdf.min.js"></script>
   <!-- History polyfill -->
-  <script src="assets/js/history/history.min.js"></script>
+  <script src="js/history/history.min.js"></script>
 
-  <script src="dist/script.js?9"></script>
+  <script src="libraries.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    require("src/script.js").init();
+  </script>
 
   <script id="checkbox-template" type="x-tmpl-mustache">
     {{^done}}

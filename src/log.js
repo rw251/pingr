@@ -1,4 +1,4 @@
-var notify = require('./notify.js');
+var notify = require('./notify');
 
 var log = {
   reason: {},

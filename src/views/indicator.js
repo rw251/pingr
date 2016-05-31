@@ -1,13 +1,13 @@
-var base = require('../base.js'),
-  data = require('../data.js'),
-  patientList = require('../panels/patientList.js'),
-  indicatorBreakdown = require('../panels/indicatorBreakdown.js'),
-  indicatorBenchmark = require('../panels/indicatorBenchmark.js'),
-  indicatorTrend = require('../panels/indicatorTrend.js'),
-  indicatorHeadlines = require('../panels/indicatorHeadlines.js'),
-  teamActionPlan = require('../panels/teamActionPlan.js'),
-  wrapper = require('../panels/wrapper.js'),
-  layout = require('../layout.js');
+var base = require('../base'),
+  data = require('../data'),
+  patientList = require('../panels/patientList'),
+  indicatorBreakdown = require('../panels/indicatorBreakdown'),
+  indicatorBenchmark = require('../panels/indicatorBenchmark'),
+  indicatorTrend = require('../panels/indicatorTrend'),
+  indicatorHeadlines = require('../panels/indicatorHeadlines'),
+  teamActionPlan = require('../panels/teamActionPlan'),
+  wrapper = require('../panels/wrapper'),
+  layout = require('../layout');
 
 var ID = "INDICATOR";
 /*

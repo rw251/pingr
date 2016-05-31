@@ -1,6 +1,6 @@
-var base = require('../base.js'),
-  layout = require('../layout.js'),
-  welcome = require('../panels/welcome.js');
+var base = require('../base'),
+  layout = require('../layout'),
+  welcome = require('../panels/welcome');
 
 var ID = "ACTION_PLAN_VIEW";
 
