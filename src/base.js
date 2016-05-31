@@ -20,11 +20,11 @@ var base = {
     //var tempMust = templateSelector.html();
     //Mustache.parse(tempMust); // optional, speeds up future uses
     if (templates) {
-      for (var o in templates) {
+      /**for (var o in templates) {
         if (templates.hasOwnProperty(o)) {
           Mustache.parse(templates[o]);
         }
-      }
+      }*/
     }
     var rendered = templateFn(data); //Mustache.render(tempMust, data, templates);
     return rendered;

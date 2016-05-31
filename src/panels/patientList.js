@@ -182,10 +182,10 @@ var pl = {
         }
       }
 
-      base.createPanelShow(require('src/templates/patient-list.hbs'), patientsPanel, localData, {
-        "header-item": require('src/templates/partials/patient-list-header-item')(),
-        "item": require('src/templates/partials/patient-list-item')()
-      });
+      base.createPanelShow(require('src/templates/patient-list.hbs'), patientsPanel, localData);/*, {
+        "header-item": require('src/templates/partials/_patient-list-header-item')(),
+        "item": require('src/templates/partials/_patient-list-item')()
+      });*/
 
       $('#patients-placeholder').hide();
 
