@@ -7,7 +7,9 @@ var tap = {
 
   show: function(location) {
     location.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
-    base.createPanelShow($('#team-action-plan-panel'), location);
+    //base.createPanelShow($('#team-action-plan-panel'), location);
+    var tmpl = require('src/templates/team-action-plan.hbs');
+    location.html(tmpl());
 
     suggestedPlanTeam = $('#suggestedPlanTeam');
 
@@ -199,13 +201,17 @@ var tap = {
     var suggestions = base.suggestionList(log.plan[data.pathwayId].team);
     suggestions = base.sortSuggestions(tap.mergeTeamStuff(suggestions));
 
-    base.createPanelShow(suggestedPlanTemplate, suggestedPlanTeam, {
+    /*base.createPanelShow(suggestedPlanTemplate, suggestedPlanTeam, {
       "suggestions": suggestions
     }, {
       "item": $('#suggested-plan-item').html(),
       "chk": $('#checkbox-template').html()
-    });
+    });*/
 
+    var tmpl = require('src/templates/team-action-plan.hbs');
+    suggestedPlanTeam.html(tmpl({
+      "suggestions": suggestions
+    }));
     tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
   },
 
@@ -277,14 +283,20 @@ var tap = {
   displayPersonalisedTeamActionPlan: function(parentElem) {
     var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans("team", data.pathwayId)));
 
-    base.createPanelShow(actionPlanList, parentElem, {
+    /*base.createPanelShow(actionPlanList, parentElem, {
       "hasSuggestions": plans && plans.length > 0,
       "suggestions": plans
     }, {
       "action-plan": $('#action-plan').html(),
       "action-plan-item": $('#action-plan-item').html(),
       "chk": $('#checkbox-template').html()
-    });
+    });*/
+
+    var tmpl = require('src/templates/team-action-plan.hbs');
+    parentElem.html(tmpl({
+      "hasSuggestions": plans && plans.length > 0,
+      "suggestions": plans
+    }));
 
     tap.updateTeamSapRows();
   },

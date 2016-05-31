@@ -1,0 +1,8 @@
+<th style="min-width:90px" class="sortable {{direction}}" data-toggle="tooltip" title="{{tooltip}}">
+  {{#titleHTML}} {{{titleHTML}}} {{/titleHTML}} {{^titleHTML}} {{title}} {{/titleHTML}} {{^isUnSortable}} {{#isSorted}} {{#isAsc}}
+  <i class="fa fa-sort-asc" data-toggle="tooltip" title="Order patients by {{title}}"></i>{{/isAsc}} {{^isAsc}}
+  <i class="fa fa-sort-desc" data-toggle="tooltip" title="Order patients by {{title}}"></i>{{/isAsc}} {{/isSorted}} {{^isSorted}}
+  <i class="fa fa-sort" data-toggle="tooltip" title="Order patients by {{title}}"></i>
+  {{/isSorted}}
+  {{/isUnSortable}}
+</th>

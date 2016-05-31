@@ -16,9 +16,9 @@ var base = {
     $('#mainTab li[data-id="' + id + '"]').addClass('active').find('a').removeAttr("href");
   },
 
-  createPanel: function(templateSelector, data, templates) {
-    var tempMust = templateSelector.html();
-    Mustache.parse(tempMust); // optional, speeds up future uses
+  createPanel: function(templateFn, data, templates) {
+    //var tempMust = templateSelector.html();
+    //Mustache.parse(tempMust); // optional, speeds up future uses
     if (templates) {
       for (var o in templates) {
         if (templates.hasOwnProperty(o)) {
@@ -26,7 +26,7 @@ var base = {
         }
       }
     }
-    var rendered = Mustache.render(tempMust, data, templates);
+    var rendered = templateFn(data); //Mustache.render(tempMust, data, templates);
     return rendered;
   },
 

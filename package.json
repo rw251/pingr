@@ -43,6 +43,7 @@
     "brunch": "^2.8.0",
     "cp": "^0.2.0",
     "csv-parser": "^1.9.3",
+    "handlebars-brunch": "^2.0.1",
     "http-server": "^0.8.0",
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",

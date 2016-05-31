@@ -10,7 +10,8 @@ var indicatorList = {
     data.getAllIndicatorData(function(indicators) {
 
       var tempMust = $('#overview-panel-table').html();
-      var html = Mustache.render(tempMust, {
+      var tmpl = require('src/templates/overview-table.hbs');
+      var html = tmpl({
         "indicators": indicators
       });
       if (isAppend) {

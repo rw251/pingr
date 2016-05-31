@@ -182,9 +182,9 @@ var pl = {
         }
       }
 
-      base.createPanelShow(patientList, patientsPanel, localData, {
-        "header-item": $("#patient-list-header-item").html(),
-        "item": $('#patient-list-item').html()
+      base.createPanelShow(require('src/templates/patient-list.hbs'), patientsPanel, localData, {
+        "header-item": require('src/templates/partials/patient-list-header-item')(),
+        "item": require('src/templates/partials/patient-list-item')()
       });
 
       $('#patients-placeholder').hide();
@@ -205,10 +205,11 @@ var pl = {
 
   show: function(panel, isAppend, pathwayId, pathwayStage, standard, loadContentFn) {
 
-    var tempMust = $('#patients-panel-yes').html();
+    //var tempMust = $('#patients-panel-yes').html();
+    var tmpl = require('src/templates/patient-list-wrapper');
 
-    if(isAppend) panel.append(Mustache.render(tempMust));
-    else panel.html(Mustache.render(tempMust));
+    if(isAppend) panel.append(tmpl());
+    else panel.html(tmpl());
 
     pl.wireUp(function(patientId) {
       history.pushState(null, null, '#patient/' + patientId);

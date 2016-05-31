@@ -32,6 +32,18 @@ module.exports = {
         before: ['vendor/styles/bootstrap.scss']
       }
     },
-    templates: { joinTo: 'app.js' }
+
+    templates: {
+      joinTo: 'app.js'
+    }
+  },
+
+  plugins: {
+    handlebars: {
+      include: {
+        runtime: false
+      },
+      pathReplace: /^.*templates\//
+    }
   }
 };

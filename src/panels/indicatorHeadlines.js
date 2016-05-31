@@ -1,7 +1,7 @@
 var data = require('../data.js'),
-  chart = require('../chart.js'),
+  chart = require('../chart.js');/*,
   Mustache = require('mustache');
-
+*/
 var hl = {
 
   wireUp: function() {
@@ -12,8 +12,8 @@ var hl = {
 
     var indicators = data.getIndicatorDataSync([pathwayId, pathwayStage, standard].join("."));
 
-    var tempMust = $('#indicator-headline-panel').html();
-    var html = Mustache.render(tempMust, indicators);
+    var tmpl = require('src/templates/indicator-headline.hbs');
+    var html = tmpl(indicators);
 
     if(isAppend) panel.append(html);
     else panel.html(html);
