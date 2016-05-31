@@ -236,8 +236,8 @@ var ll = {
                 });
                 var label = labelTmp.length > 0 ? labelTmp[0].label : "No label A";
                 return '<b>' + conditions[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
-                  Highcharts.dateFormat('%Y:%m:%d', this.point.options.low) +
-                  ' - ' + Highcharts.dateFormat('%Y:%m:%d', this.point.options.high);
+                  Highcharts.dateFormat('%d/%m/%Y', this.point.options.low) +
+                  ' - ' + Highcharts.dateFormat('%d/%m/%Y', this.point.options.high);
               } else {
                 //Single value hence contact
                 var time = this.y;
@@ -246,7 +246,7 @@ var ll = {
                     return v[1] === time;
                   }).length > 0;
                 }).map(function(val) {
-                  return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%Y:%m:%d', time);
+                  return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%d/%m/%Y', time);
                 }).join('<br/>');
               }
             },
@@ -639,8 +639,8 @@ var ll = {
               });
               var label = labelTmp.length > 0 ? labelTmp[0].label : "No label C";
               return '<b>' + medications[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
-                Highcharts.dateFormat('%Y:%m:%d', this.point.options.low) +
-                ' - ' + Highcharts.dateFormat('%Y:%m:%d', this.point.options.high);
+                Highcharts.dateFormat('%d/%m/%Y', this.point.options.low) +
+                ' - ' + Highcharts.dateFormat('%d/%m/%Y', this.point.options.high);
             },
             followPointer: true
           },

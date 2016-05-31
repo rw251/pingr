@@ -411,7 +411,21 @@ var cht = {
           else return v.x;
         })
       }]
-    });
+    },
+    function(chart) { // on complete
+       var textX = chart.plotLeft + (chart.plotWidth  * 0.5);
+       var textY = chart.plotTop  + (chart.plotHeight * 0.5);
+
+       var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
+       span += '<span style="font-size: 64px">Coming Soon!</span>';
+       span += '</span>';
+
+       $("#benchmark-chart").append(span);
+       span = $('#pieChartInfoText');
+       span.css('left', textX + (span.width() * -0.5));
+       span.css('top', textY + (span.height() * -0.5));
+   });
+
   },
 
   drawPerformanceTrendChartHC: function(element, data) {
@@ -592,6 +606,20 @@ var cht = {
         enabled: false
       },
 
+      tooltip: {
+        animation: false,
+
+        formatter: function() {
+          return this.point.desc.match(/.{1,40}[^ ]* ?/g).join("<br>");
+        },
+
+        style:{
+          "whiteSpace": "normal"
+        },
+
+        useHTML:true
+      },
+
       plotOptions: {
 
         column: {
@@ -632,7 +660,8 @@ var cht = {
       series: [{
         data: data.map(function(v, i) {
           return {
-            y: v[v.length - 1],
+            y: v[2],
+            desc: v[1],
             color: Highcharts.getOptions().colors[i]
           };
         })

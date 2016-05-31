@@ -146,11 +146,11 @@ dirs.forEach(function(id) {
               patients[+v.patientId].events = [];
               patients[+v.patientId].contacts = [];
               patients[+v.patientId].measurements = [];
-              patients[+v.patientId].standards = [{ display: indText.name, targetMet: false }];
+              patients[+v.patientId].standards = [{ display: indText.name, targetMet: true }];
               patients[+v.patientId].medications = [];
               patients[+v.patientId].actions = [];
             } else {
-              patients[+v.patientId].standards.push({ display: indText.name, targetMet: false });
+              patients[+v.patientId].standards.push({ display: indText.name, targetMet: true });
             }
           });
 
@@ -263,6 +263,12 @@ dirs.forEach(function(id) {
                 reason: data.reason,
                 link: data.link
               });
+              patients[+data.patientId].standards.forEach(function(v){
+                if(v.display===indText.name) {
+                  v.targetMet=false;
+                }
+              });
+              
               var opp = i.opportunities.filter(function(v) {
                 return v.id === data.opportunity;
               })[0];

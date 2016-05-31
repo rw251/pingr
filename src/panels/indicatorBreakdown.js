@@ -12,7 +12,7 @@ var bd = {
     var indicators = data.getIndicatorDataSync([pathwayId, pathwayStage, standard].join("."));
 
     var dataObj = indicators.opportunities.map(function(opp) {
-      return [opp.name, opp.patients.length];
+      return [opp.name, opp.description, opp.patients.length];
     });
 
     var elem = $("<div id='breakdown-chart'></div>");

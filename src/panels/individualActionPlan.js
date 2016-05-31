@@ -26,6 +26,8 @@ var iap = {
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {
     individualTab = $('#tab-plan-individual');
 
+    //find [] and replace with copy button
+
     $('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
       log.editAction(data.patientId, ACTIONID, null, this.checked);
@@ -352,6 +354,10 @@ var iap = {
     $('#advice-list').find('span:contains("[COPY")').each(function() {
       var html = $(this).html();
       $(this).html(html.replace(/\[COPY:([^\]]*)\]/g, '$1 <button type="button" data-clipboard-text="$1" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+    });
+    $('#advice-list').find('span:contains("[")').each(function() {
+      var html = $(this).html();
+      $(this).html(html.replace(/\[([^\]]*)\]/g, ' <button type="button" data-clipboard-text="$1" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
 
     $('#advice-list').find('span:contains("[INFO")').each(function() {
