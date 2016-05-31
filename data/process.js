@@ -75,7 +75,7 @@ dirs.forEach(function(id) {
       val = els[1];
     assign(textFile.pathways[pathway][stage].standards[standard], key, val);
   });
-  console.log(JSON.stringify(textFile.pathways[pathway][stage].standards[standard],null,2));
+  console.log(JSON.stringify(textFile.pathways[pathway][stage].standards[standard], null, 2));
   //var id = [pathway, stage, standard].join(".");
 
   var indText = textFile.pathways[pathway][stage].standards[standard];
@@ -256,19 +256,23 @@ dirs.forEach(function(id) {
               })
             )
             .on('data', function(data) {
-              patients[+data.patientId].actions.push({
-                id: data.actionId,
-                short: data.short,
-                long: data.long,
-                reason: data.reason,
-                link: data.link
-              });
-              patients[+data.patientId].standards.forEach(function(v){
-                if(v.display===indText.name) {
-                  v.targetMet=false;
+              if (patients[+data.patientId].actions.filter(function(v) {
+                  return v.id === data.actionId;
+                }).length === 0) {
+                patients[+data.patientId].actions.push({
+                  id: data.actionId,
+                  short: data.short,
+                  long: data.long,
+                  reason: data.reason,
+                  link: data.link
+                });
+              }
+              patients[+data.patientId].standards.forEach(function(v) {
+                if (v.display === indText.name) {
+                  v.targetMet = false;
                 }
               });
-              
+
               var opp = i.opportunities.filter(function(v) {
                 return v.id === data.opportunity;
               })[0];
