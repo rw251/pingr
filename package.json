@@ -49,6 +49,7 @@
     "mv": "^2.0.3",
     "nodemon": "^1.9.1",
     "rimraf": "^2.3.4",
+    "sass-brunch": "^2.6.3",
     "uglify-js": "^2.6.2"
   },
   "dependencies": {
