@@ -1,0 +1,11 @@
+include thumbs
+
+mixin actionPlanItem(suggestion)
+  tr.suggestion.active(data-id=suggestion.id, class=suggestion.done ? 'success' : '', data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined)
+    td
+      span!= suggestion.text
+      .btn-group.btn-hover-show-group.pull-right(data-toggle='buttons')
+        i.fa.fa-pencil.edit-plan.clickable(data-toggle='tooltip', data-placement='top', title='Edit plan')
+        i.fa.fa-trash.delete-plan.clickable(data-toggle='tooltip', data-placement='top', title='Delete plan')
+    td
+      +thumbs(suggestion)

@@ -44,6 +44,7 @@
     "cp": "^0.2.0",
     "csv-parser": "^1.9.3",
     "http-server": "^0.8.0",
+    "jade-brunch": "^2.8.0",
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
     "mv": "^2.0.3",
@@ -57,7 +58,6 @@
     "highcharts": "^4.2.4",
     "jquery-sparkline": "^2.3.2",
     "mustache": "^2.2.1",
-    "static-handlebars-brunch": "^0.1.5",
     "zeroclipboard": "^2.2.0"
   }
 }

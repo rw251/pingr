@@ -1,0 +1,15 @@
+.panel.panel-default
+  table.table.table-condensed
+    thead
+      tr
+        th Quality indicator
+        th Target met?
+    tbody
+      each standard in standards
+        tr(class=standard.targetMet ? 'success' : 'danger')
+          td= standard.display
+          td
+            if targetMet
+              i.fa.fa-check.text-success
+            else
+              i.fa.fa-times.text-danger

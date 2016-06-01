@@ -1,14 +1,13 @@
 module.exports = {
   // See http://brunch.io for documentation.
   paths: {
-    public: 'dist',
-    watched: ['src', 'vendor']
+    public: 'dist'
   },
 
   files: {
     javascripts: {
       joinTo: {
-        'libraries.js': /^(?!src\/)/
+        'libraries.js': /^(?!app\/)/
       },
       order: {
         before: [
@@ -21,8 +20,8 @@ module.exports = {
           ]
       },
       entryPoints: {
-        'src/script.js': {
-          'app.js': /^src\//
+        'app/script.js': {
+          'app.js': /^app\//
         }
       }
     },
@@ -35,15 +34,6 @@ module.exports = {
 
     templates: {
       joinTo: 'app.js'
-    }
-  },
-
-  plugins: {
-    handlebars: {
-      include: {
-        runtime: false
-      },
-      pathReplace: /^.*templates\//
     }
   }
 };

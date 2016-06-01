@@ -1,0 +1,8 @@
+ul
+  li.perf-bullet
+    b!= performance.percentage + '%'
+    span!= ' (' + performance.fraction + ') ' + tagline
+  li.perf-bullet
+    | The target for this quality indicator is 
+    b= target
+  li.perf-bullet.perf-bullet-msg!= positiveMessage

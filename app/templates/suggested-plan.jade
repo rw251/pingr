@@ -1,0 +1,16 @@
+include mixins/thumbs
+
+table.table
+  thead
+    tr
+      th
+        | Recommended actions
+      th(style='width: 105px') Add to action plan?
+  tbody
+    each suggestion in suggestions
+      tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined)
+        td
+          span!= suggestion.text
+        td
+          +thumbs(suggestion)
+include mixins/personal-action-plan

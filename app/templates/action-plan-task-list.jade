@@ -1,0 +1,44 @@
+include mixins/action-plan-task-list
+
+.container-fluid
+  .row
+    #team-task-panel.panel.panel-info
+      .panel-heading Practice-level      
+      +actionPlanTaskList(team)
+  .row
+    #team-add-plan(style='padding-bottom: 15px;margin-top: -10px;')
+      include mixins/personal-action-plan
+  .row
+    #individual-task-panel.panel.panel-warning
+      .panel-heading Individual patient
+      +actionPlanTaskList(individual)
+#editPlan.modal.fade(tabindex='-1', role='dialog', aria-labelledby='exampleModalLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#exampleModalLabel.modal-title Edit Plan
+      .modal-body
+        .form-group
+          input#editActionPlanItem.form-control(type='text')
+      .modal-footer
+        button.btn.btn-primary.save-plan(type='button') Save
+        button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+#deletePlan.modal.fade(tabindex='-1', role='dialog', aria-labelledby='deleteModalLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#deleteModalLabel.modal-title Delete a suggested action you added
+      .modal-body
+        p
+          strong You indicated that you want to delete:
+        span#team-delete-item(style='font-style:italic')
+        br
+        p
+          strong Are you sure?
+      .modal-footer
+        button.btn.btn-danger.delete-plan(type='button') Delete
+        button.btn.btn-default(type='button', data-dismiss='modal') Cancel

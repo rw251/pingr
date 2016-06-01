@@ -1,0 +1,38 @@
+.panel.panel-default
+  .panel-body.pastel-pink
+    table.table
+      thead
+        tr
+          th Indicator
+          th Performance
+          th Target
+          th Benchmark
+          th
+          th
+      tbody
+        each indicator in indicators
+          tr.standard-row(data-id=indicator.id)
+            td
+              strong= indicator.name
+              br
+              a.show-more(data-id=indicator.id)
+                | Show more 
+                i.fa.fa-caret-down
+            td
+              strong= indicator.performance.percentage + '%'
+              span= ' (' + indicator.performance.fraction + ')'
+            td= indicator.target
+            td= indicator.benchmark
+            td
+              if indicator.up
+                i.fa.fa-2x.fa-caret-up
+              else
+                i.fa.fa-2x.fa-caret-down
+            td
+              span.inlinesparkline {{trend}}
+          tr.show-more-row(data-id=indicator.id)
+            td(colspan='6')!= indicator.description
+                br
+                a.show-more(data-id=indicator.id)
+                  | Show less 
+                  i.fa.fa-caret-up

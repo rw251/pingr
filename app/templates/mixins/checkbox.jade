@@ -1,0 +1,7 @@
+mixin checkbox(suggestion)
+  if !suggestion.done
+    label.cr-styled(data-toggle='tooltip', data-placement='bottom', title='Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list')
+      input(type='checkbox', checked=suggestion.done ? 'checked' : undefined)
+      i.fa
+  else 
+    button.btn.btn-xs.btn-warning.btn-undo(data-toggle='tooltip', data-placement='bottom', title='You marked this as complete - click to undo') Undo

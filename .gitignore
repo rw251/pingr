@@ -13,4 +13,4 @@ data/datareal.json
 data/idata*
 data/indicators.json
 dist/
-src/assets/data/
+app/assets/data/data.json
