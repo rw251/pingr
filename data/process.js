@@ -278,8 +278,11 @@ dirs.forEach(function(id) {
               })[0];
               if (!opp) {
                 console.log(data.opportunity);
-                opp = { id: data.opportunity, name: oppText[data.opportunity].name, description: oppText[data.opportunity].description, patients: [] };
+                opp = { id: data.opportunity, name: oppText[data.opportunity].name, positionInBarChart: oppText[data.opportunity].positionInBarChart, description: oppText[data.opportunity].description, patients: [] };
                 i.opportunities.push(opp);
+                i.opportunities.sort(function(a,b){
+                  return a.positionInBarChart - b.positionInBarChart;
+                });
               }
               if (opp.patients.indexOf(+data.patientId) === -1) opp.patients.push(+data.patientId);
             })
