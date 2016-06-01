@@ -1,7 +1,7 @@
 {
   "diseases": {
     "htn": {
-      "team" : ["0002","0003","0004","0005","0009","0012"],
+      "team" : [],
       "monitoring": {
         "individual": {
           "No opportunities": ["0013","0014","0015"],
@@ -21,7 +21,7 @@
           "White coat": ["0030","0031", "0050"],
           "Hypotension": ["0087"],
           "Palliative": ["0050"],
-          "Frail": ["0050"]        
+          "Frail": ["0050"]
         }
       },
       "exclusions": {
@@ -87,7 +87,7 @@
       }
     },
     "ckd" :{
-      "team":["0104","0105"],
+      "team":[],
       "monitoring":{
         "individual":{
           "No opportunities": ["0013","0014","0015"],
@@ -106,7 +106,7 @@
           "White coat": ["0030","0031", "0050"],
           "Hypotension": ["0087"],
           "Palliative": ["0050"],
-          "Frail": ["0050"]        
+          "Frail": ["0050"]
         }
       },
       "exclusions":{

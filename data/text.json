@@ -35,23 +35,28 @@
             "opportunities": {
               "wrongStage": {
                 "name": "wrongStage",
-                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who <strong>do not</strong> have a CKD diagnosis code in their record"
+                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who <strong>do not</strong> have a CKD diagnosis code in their record",
+                "positionInBarChart": "3"
               },
               "overdiagnosed": {
                 "name": "Overdiagnosed",
-                "description": "Patients who have a CKD diagnostic code in their record but their latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above"
+                "description": "Patients who have a CKD diagnostic code in their record but their latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above",
+                "positionInBarChart": "6"
               },
               "suggestExclude": {
                 "name": "Suggest Exclude",
-                "description": "Patients who have a CKD stage 3 or above diagnosis code in their record or who have CKD stage 3 or above based on their latest eGFR readings and who may <strong>benefit from being excluded</strong> from CKD quality indicators"
+                "description": "Patients who have a CKD stage 3 or above diagnosis code in their record or who have CKD stage 3 or above based on their latest eGFR readings and who may <strong>benefit from being excluded</strong> from CKD quality indicators",
+                "positionInBarChart": "5"
               },
               "AcrTest": {
                 "name": "AcrTest",
-                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who have the <strong>wrong</strong> CKD diagnosis code in their record"
+                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who have the <strong>wrong</strong> CKD diagnosis code in their record",
+                "positionInBarChart": "2"
               },
               "rightStageWrongSubstage": {
                 "name": "rightStageWrongSubstage",
-                "description": "Patients who have CKD stage 3 or above according to their latest eGFR reading and have a CKD diagnosis code in their record but <strong>no ACR reading</strong> to correctly stage their CKD"
+                "description": "Patients who have CKD stage 3 or above according to their latest eGFR reading and have a CKD diagnosis code in their record but <strong>no ACR reading</strong> to correctly stage their CKD",
+                "positionInBarChart": "4"
               }
             }
           },
@@ -67,15 +72,18 @@
             "opportunities": {
               "acrTest": {
                 "name": "acrTest",
-                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who <strong>do not</strong> have a CKD diagnosis code in their record"
+                "description": "Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who <strong>do not</strong> have a CKD diagnosis code in their record",
+                "positionInBarChart": "2"
               },
               "addCode": {
                 "name": "addCode",
-                "description": "Patients who have a CKD diagnostic code in their record but their latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above"
+                "description": "Patients who have a CKD diagnostic code in their record but their latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above",
+                "positionInBarChart": "1"
               },
               "suggestExclude": {
                 "name": "Suggest Exclude",
-                "description": "Patients who have a CKD stage 3 or above diagnosis code in their record or who have CKD stage 3 or above based on their latest eGFR readings and who may <strong>benefit from being excluded</strong> from CKD quality indicators"
+                "description": "Patients who have a CKD stage 3 or above diagnosis code in their record or who have CKD stage 3 or above based on their latest eGFR readings and who may <strong>benefit from being excluded</strong> from CKD quality indicators",
+                "positionInBarChart": "3"
               }
             }
           }

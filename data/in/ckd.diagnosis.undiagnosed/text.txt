@@ -8,7 +8,10 @@ dateORvalue	value
 tableTitle	All patients with improvement opportunities
 opportunities.acrTest.name	acrTest
 opportunities.acrTest.description	Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who <strong>do not</strong> have a CKD diagnosis code in their record
+opportunities.acrTest.positionInBarChart	2
 opportunities.addCode.name	addCode
 opportunities.addCode.description	Patients who have a CKD diagnostic code in their record but their latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above
+opportunities.addCode.positionInBarChart	1
 opportunities.suggestExclude.name	Suggest Exclude
 opportunities.suggestExclude.description	Patients who have a CKD stage 3 or above diagnosis code in their record or who have CKD stage 3 or above based on their latest eGFR readings and who may <strong>benefit from being excluded</strong> from CKD quality indicators
+opportunities.suggestExclude.positionInBarChart	3
