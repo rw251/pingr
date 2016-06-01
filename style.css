@@ -2297,7 +2297,7 @@ body > svg {
         height: 300px;
     }
     .page > .tab-content > .panel {
-        min-height: 420px;
+        min-height: 370px;
     }
 }
 @media (min-height: 600px) {
@@ -2308,7 +2308,7 @@ body > svg {
         height: 400px;
     }
     .page > .tab-content > .panel {
-        min-height: 520px;
+        min-height: 470px;
     }
 }
 @media (min-height: 700px) {
@@ -2319,7 +2319,7 @@ body > svg {
         height: 500px;
     }
     .page > .tab-content > .panel {
-        min-height: 620px;
+        min-height: 570px;
     }
 }
 @media (min-height: 800px) {
@@ -2330,7 +2330,7 @@ body > svg {
         height: 600px;
     }
     .page > .tab-content > .panel {
-        min-height: 720px;
+        min-height: 670px;
     }
 }
 @media (min-height: 900px) {
@@ -2341,7 +2341,7 @@ body > svg {
         height: 700px;
     }
     .page > .tab-content > .panel {
-        min-height: 820px;
+        min-height: 770px;
     }
 }
 @media (min-height: 1000px) {
@@ -2352,7 +2352,7 @@ body > svg {
         height: 800px;
     }
     .page > .tab-content > .panel {
-        min-height: 920px;
+        min-height: 870px;
     }
 }
 @media (min-height: 1100px) {
@@ -2363,7 +2363,7 @@ body > svg {
         height: 900px;
     }
     .page > .tab-content > .panel {
-        min-height: 1020px;
+        min-height: 970px;
     }
 }
 @media (min-height: 1200px) {
@@ -2374,7 +2374,7 @@ body > svg {
         height: 1000px;
     }
     .page > .tab-content > .panel {
-        min-height: 1120px;
+        min-height: 1070px;
     }
 }
 .fp-controlArrow.fp-prev {
