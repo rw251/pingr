@@ -24,11 +24,14 @@ var log = {
 
   loadActions: function(callback) {
     var r = Math.random();
-    $.getJSON("action-plan.json?v=" + r, function(file) {
+    log.plan=[];
+    log.text=[];
+    callback();
+    /*$.getJSON("action-plan.json?v=" + r, function(file) {
       log.plan = file.diseases;
       log.text = file.plans;
       callback();
-    });
+    });*/
   },
 
   editAction: function(id, actionId, agree, done, reason) {

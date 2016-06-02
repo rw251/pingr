@@ -9,6 +9,9 @@ var indicatorList = {
   show: function(panel, isAppend, loadContentFn) {
     data.getAllIndicatorData(function(indicators) {
 
+      indicators.sort(function(a,b){
+        return a.performance - b.performance;
+      });
       var tempMust = $('#overview-panel-table').html();
       var tmpl = require('templates/overview-table');
       var html = tmpl({
@@ -38,6 +41,10 @@ var indicatorList = {
   },
 
   wireUp: function(panel, loadContentFn) {
+    panel.off('click', 'tr.show-more-row a');
+    panel.on('click', 'tr.show-more-row a', function(e){
+      e.stopPropagation();
+    });
     panel.off('click', 'tr.standard-row,tr.show-more-row');
     panel.on('click', 'tr.standard-row,tr.show-more-row', function(e) {
       var url = $(this).data("id").replace(/\./g, "/");

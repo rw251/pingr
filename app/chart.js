@@ -439,7 +439,7 @@ var cht = {
     //    ["target", 0.3, 0.3, 0...
     // }
 
-    var target = 0.75,
+    var target = 75,
       maxValue = target,
       maxXvalue = 0;
 
@@ -483,7 +483,7 @@ var cht = {
     data.values[0].forEach(function(v, i) {
       if (i === 0) return;
       var time = new Date(v).getTime();
-      var y = +data.values[1][i] / +data.values[2][i];
+      var y = +data.values[1][i] * 100 / +data.values[2][i];
       if (time >= compDate.getTime()) {
         n++;
         sumX += time;
@@ -501,15 +501,16 @@ var cht = {
     gradient = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
 
     series[1].data.push([maxXvalue, maxXvalue * gradient + intercept]);
+    var newCompDate = new Date(lastApril.getTime());
     for (var i = 0; i < 13; i++) {
-      var x = compDate.getTime();
+      var x = newCompDate.getTime();
       if (x < maxXvalue) {
-        compDate.setMonth(compDate.getMonth() + 1);
+        newCompDate.setMonth(newCompDate.getMonth() + 1);
         continue;
       }
       series[1].data.push([x, x * gradient + intercept]);
-      var m = compDate.getMonth();
-      compDate.setMonth(compDate.getMonth() + 1);
+      var m = newCompDate.getMonth();
+      newCompDate.setMonth(newCompDate.getMonth() + 1);
     }
 
     //Add line of best fit for latest data since april to next april
@@ -526,7 +527,7 @@ var cht = {
       },
       yAxis: {
         title: { text: 'Quality standard performance' },
-        max: maxValue + 0.05,
+        max: maxValue + 5,
         min: 0,
         plotLines: [{
           value: target,
@@ -534,11 +535,14 @@ var cht = {
           dashStyle: 'shortdash',
           width: 2,
           label: {
-            text: 'Target - ' + (target * 100) + '%'
+            text: 'Target - ' + (target) + '%'
           },
         }]
       },
       legend: { enabled: true },
+      tooltip: {
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:.2f}%</b><br/>'
+      },
 
       navigator: {
         enabled: true

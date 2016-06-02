@@ -19,7 +19,7 @@
                 | Show more 
                 i.fa.fa-caret-down
             td
-              strong= indicator.performance.percentage + '%'
+              strong(class=indicator.aboveTarget ? 'text-success' : 'text-danger')= indicator.performance.percentage + '%'
               span= ' (' + indicator.performance.fraction + ')'
             td= indicator.target
             td= indicator.benchmark

@@ -278,25 +278,26 @@ var dt = {
     dt.pathwayNames = {};
 
     dt.indicators.forEach(function(indicator) {
+      var last = indicator.values[0].length-1;
       var pathwayId = indicator.id.split(".")[0];
       var pathwayStage = indicator.id.split(".")[1];
       var standard = indicator.id.split(".")[2];
       if (!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId] = "";
-      var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
+      var percentage = Math.round(100 * indicator.values[1][last] * 100 / indicator.values[2][last]) / 100;
       indicator.performance = {
-        fraction: indicator.values[1][1] + "/" + indicator.values[2][1],
+        fraction: indicator.values[1][last] + "/" + indicator.values[2][last],
         percentage: percentage
       };
       indicator.benchmark = "90%"; //TODO magic number
-      indicator.target = indicator.values[3][1] * 100 + "%";
-      indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
+      indicator.target = indicator.values[3][last] * 100 + "%";
+      indicator.up = percentage > Math.round(100 * indicator.values[1][last-1] * 100 / indicator.values[2][last-1]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
         return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
-      }).slice(1, 10);
-      trend.reverse();
+      }).slice(Math.max(1,last-10), 10);
+      //trend.reverse();
       indicator.trend = trend.join(",");
-      var dates = indicator.values[0].slice(1, 10);
-      dates.reverse();
+      var dates = indicator.values[0].slice(Math.max(1,last-10), 10);
+      //dates.reverse();
       indicator.dates = dates;
       if (dt.text[pathwayId] && dt.text[pathwayId][pathwayStage] && dt.text[pathwayId][pathwayStage].standards[standard]) {
         indicator.description = dt.text[pathwayId][pathwayStage].standards[standard].description;
@@ -306,7 +307,7 @@ var dt = {
         indicator.description = "No description specified";
         indicator.tagline = "";
       }
-
+      indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last]*100;
       dt.indicators[indicator.id] = { performance: indicator.performance, tagline: indicator.tagline, positiveMessage: indicator.positiveMessage, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
 
       //apply which categories people belong to

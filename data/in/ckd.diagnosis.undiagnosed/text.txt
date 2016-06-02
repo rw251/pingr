@@ -1,5 +1,6 @@
 name	?Undia CKD diagnosis
 description	<strong>Description:</strong> Patients with correct coding of CKD (Stage 3 or above) based on eGFR and ACR readings as specified in <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>NICE guidance</a>. <br> <strong>Eligible patients:</strong> patients with a CKD diagnostic code (stage 3 or above) or eGFR readings persistently < 60 ml/min/1.73m2 who do not have a QOF exclusion code. <br> <strong>Correct patients:</strong> patients who have a diagnostic code matching their latest eGFR and/or ACR readings.
+tabText	Undiag tab
 tagline	of your patients with a CKD stage 3 or above ba--- are diagnosed....nosis coded in their record according to <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">NICE guidelines</a>
 positiveMessage	There's lots of room for improvement -- but don't be disheartened! Look through the suggestions listed on this page and under each patient for improvement actions to take.
 valueId	eGFR

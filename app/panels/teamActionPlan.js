@@ -198,8 +198,9 @@ var tap = {
   },
 
   populateTeamSuggestedActionsPanel: function() {
-    var suggestions = base.suggestionList(log.plan[data.pathwayId].team);
-    suggestions = base.sortSuggestions(tap.mergeTeamStuff(suggestions));
+    /*var suggestions = base.suggestionList(log.plan[data.pathwayId].team);
+    suggestions = base.sortSuggestions(tap.mergeTeamStuff(suggestions));*/
+    var suggestions=[];
 
     /*base.createPanelShow(suggestedPlanTemplate, suggestedPlanTeam, {
       "suggestions": suggestions
