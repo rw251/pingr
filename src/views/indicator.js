@@ -81,7 +81,7 @@ var ind = {
       //Panels decide whether they need to redraw themselves
       teamActionPlan.show(farLeftPanel);
 
-      base.updateTab("indicators", [pathwayId.toUpperCase(), standard.toUpperCase()].join(" "), [pathwayId, pathwayStage, standard].join("/"));
+      base.updateTab("indicators", data.text[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 
       wrapper.show(farRightPanel, false, [
         {

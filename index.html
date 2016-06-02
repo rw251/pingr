@@ -1189,7 +1189,7 @@
             <tr class="standard-row" data-id="{{id}}">
               <td><strong>{{name}}</strong>
                 <br> <a data-id="{{id}}" class="show-more">Show more <i class="fa fa-caret-down"></i></a></td>
-              <td><strong>{{performance.percentage}}%</strong> ({{performance.fraction}})</td>
+              <td><strong class="{{#aboveTarget}}text-success{{/aboveTarget}}{{^aboveTarget}}text-danger{{/aboveTarget}}">{{performance.percentage}}%</strong> ({{performance.fraction}})</td>
               <td>{{target}}</td>
               <td>{{benchmark}}</td>
               <td>{{#up}}<i class="fa fa-2x fa-caret-up"></i>{{/up}}{{^up}}<i class="fa fa-2x fa-caret-down"></i>{{/up}}</td>

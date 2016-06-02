@@ -98,6 +98,7 @@ dirs.forEach(function(id) {
 
   if (!i.opportunities) i.opportunities = [];
 
+  var tempDates = [];
   async.series([
     function(callback) {
         console.log("1 series");
@@ -109,12 +110,27 @@ dirs.forEach(function(id) {
             })
           )
           .on('data', function(data) {
-            i.values[0].push(data.date);
+            /*i.values[0].push(data.date.replace(/[^0-9-]/g,""));
             i.values[1].push(data.numerator);
             i.values[2].push(data.denominator);
-            i.values[3].push(data.target);
+            i.values[3].push(data.target);*/
+            tempDates.push({
+              date: data.date.replace(/[^0-9-]/g,""),
+              num: data.numerator,
+              den: data.denominator,
+              target: data.target
+            });
           })
           .on('end', function() {
+            tempDates.sort(function(a,b){
+              return new Date(a.date).getTime() -  new Date(b.date).getTime();
+            });
+            tempDates.forEach(function(v){
+              i.values[0].push(v.date);
+              i.values[1].push(v.num);
+              i.values[2].push(v.den);
+              i.values[3].push(v.target);
+            });
             console.log("1 series done");
             callback(null);
           })

@@ -29,37 +29,36 @@ var pv = {
     //before further execution
     setTimeout(function() {
 
-      data.getPatientData(patientId, function(patientData) {
-        if (layout.view !== ID) {
-          //Not already in this view so we need to rejig a few things
-          base.clearBox();
-          //base.switchTo21Layout();
-          layout.showMainView();
+      if (layout.view !== ID) {
+        //Not already in this view so we need to rejig a few things
+        base.clearBox();
+        //base.switchTo21Layout();
+        layout.showMainView();
 
-          base.removeFullPage(farRightPanel);
-          base.hidePanels(farRightPanel);
+        base.removeFullPage(farRightPanel);
+        base.hidePanels(farRightPanel);
 
-          layout.view = ID;
-        }
+        layout.view = ID;
+      }
 
-        if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
-          layout.standard !== standard || layout.patientId !== patientId) {
-          //different pathway or stage or patientId so title needs updating
-          $('#mainTitle').show();
+      base.hidePanels(farLeftPanel);
 
-          var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
-          var sex = patientData.characteristics.sex.toLowerCase()==="m" ?
-            "male" : (patientData.characteristics.sex.toLowerCase()==="f" ? "female" : patientData.characteristics.sex.toLowerCase())
-          ;
-          base.updateTitle("Patient " + patid +
-            " - " + patientData.characteristics.age + " year old " + sex);
-        }
+      if (patientId) {
+        data.getPatientData(patientId, function(patientData) {
 
 
-        base.hidePanels(farLeftPanel);
+          if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
+            layout.standard !== standard || layout.patientId !== patientId) {
+            //different pathway or stage or patientId so title needs updating
+            $('#mainTitle').show();
 
+            var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
+            var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
+              "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
+            base.updateTitle("Patient " + patid +
+              " - " + patientData.characteristics.age + " year old " + sex);
+          }
 
-        if (patientId) {
           base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
 
           layout.patientId = patientId;
@@ -74,16 +73,20 @@ var pv = {
 
           patientSearch.wireUp();
           $('#patient-pane').show();
-        } else {
-          base.updateTitle("No patient currently selected");
 
-          patientSearch.show(farRightPanel, true, loadContentFn);
-        }
+          base.wireUpTooltips();
+          base.hideLoading();
+
+        });
+      } else {
+        base.updateTitle("No patient currently selected");
+
+        patientSearch.show(farRightPanel, true, loadContentFn);
 
         base.wireUpTooltips();
         base.hideLoading();
+      }
 
-      });
     }, 0);
 
   },

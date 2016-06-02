@@ -347,84 +347,84 @@ var cht = {
 
     var local = true;
     var bChart = $('#' + element).highcharts({
-      chart: {
-        type: 'column',
-        events: {
-          load: function() {
-            var thisChart = this;
-            thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
-              local = !local;
-              thisChart.xAxis[0].categories = data.filter(function(v) {
-                if (local) return v.local;
-                else return true;
-              }).map(function(v) {
-                return v.p;
-              });
-              thisChart.series[0].setData(data.filter(function(v) {
-                if (local) return v.local;
-                else return true;
-              }).map(function(v) {
-                if (v.p === "YOU") return { y: v.x, color: "red" };
-                else return v.x;
-              }));
-            }).add();
+        chart: {
+          type: 'column',
+          events: {
+            load: function() {
+              var thisChart = this;
+              thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+                local = !local;
+                thisChart.xAxis[0].categories = data.filter(function(v) {
+                  if (local) return v.local;
+                  else return true;
+                }).map(function(v) {
+                  return v.p;
+                });
+                thisChart.series[0].setData(data.filter(function(v) {
+                  if (local) return v.local;
+                  else return true;
+                }).map(function(v) {
+                  if (v.p === "YOU") return { y: v.x, color: "red" };
+                  else return v.x;
+                }));
+              }).add();
+            }
           }
-        }
-      },
-      title: { text: 'Benchmark' },
-      xAxis: {
-        categories: data.filter(function(v) {
-          return v.local === local;
-        }).map(function(v) {
-          return v.p;
-        }),
-        crosshair: true
-      },
-      yAxis: {
-        min: 0,
-        max: 100,
-        title: { text: '% patients meeting target' }
-      },
-      tooltip: {
-        headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
-        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-          '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
-        footerFormat: '</table>',
-        shared: true,
-        useHTML: true
-      },
-      plotOptions: {
-        column: {
-          pointPadding: 0.2,
-          borderWidth: 0
-        }
-      },
-      legend: {
-        enabled: false
-      },
-      series: [{
-        name: 'Performance',
-        data: data.filter(function(v) {
-          return v.local === local;
-        }).map(function(v) {
-          if (v.p === "YOU") return { y: v.x, color: "red" };
-          else return v.x;
-        })
+        },
+        title: { text: 'Benchmark' },
+        xAxis: {
+          categories: data.filter(function(v) {
+            return v.local === local;
+          }).map(function(v) {
+            return v.p;
+          }),
+          crosshair: true
+        },
+        yAxis: {
+          min: 0,
+          max: 100,
+          title: { text: '% patients meeting target' }
+        },
+        tooltip: {
+          headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
+          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+          }
+        },
+        legend: {
+          enabled: false
+        },
+        series: [{
+          name: 'Performance',
+          data: data.filter(function(v) {
+            return v.local === local;
+          }).map(function(v) {
+            if (v.p === "YOU") return { y: v.x, color: "red" };
+            else return v.x;
+          })
       }]
-    },
-    function(chart) { // on complete
-       var textX = chart.plotLeft + (chart.plotWidth  * 0.5);
-       var textY = chart.plotTop  + (chart.plotHeight * 0.5);
+      },
+      function(chart) { // on complete
+        var textX = chart.plotLeft + (chart.plotWidth * 0.5);
+        var textY = chart.plotTop + (chart.plotHeight * 0.5);
 
-       var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
-       span += '<span style="font-size: 64px">Coming Soon!</span>';
-       span += '</span>';
+        var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
+        span += '<span style="font-size: 64px">Coming Soon!</span>';
+        span += '</span>';
 
-       $("#benchmark-chart").append(span);
-       span = $('#pieChartInfoText');
-       span.css('left', textX + (span.width() * -0.5));
-       span.css('top', textY + (span.height() * -0.5));
-   });
+        $("#benchmark-chart").append(span);
+        span = $('#pieChartInfoText');
+        span.css('left', textX + (span.width() * -0.5));
+        span.css('top', textY + (span.height() * -0.5));
+      });
 
   },
 
@@ -439,7 +439,7 @@ var cht = {
     //    ["target", 0.3, 0.3, 0...
     // }
 
-    var target = 0.75,
+    var target = 75,
       maxValue = target,
       maxXvalue = 0;
 
@@ -483,7 +483,7 @@ var cht = {
     data.values[0].forEach(function(v, i) {
       if (i === 0) return;
       var time = new Date(v).getTime();
-      var y = +data.values[1][i] / +data.values[2][i];
+      var y = +data.values[1][i] * 100 / +data.values[2][i];
       if (time >= compDate.getTime()) {
         n++;
         sumX += time;
@@ -500,16 +500,17 @@ var cht = {
     intercept = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX * sumX);
     gradient = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
 
+    var newCompDate = new Date(lastApril.getTime());
     series[1].data.push([maxXvalue, maxXvalue * gradient + intercept]);
     for (var i = 0; i < 13; i++) {
-      var x = compDate.getTime();
+      var x = newCompDate.getTime();
       if (x < maxXvalue) {
-        compDate.setMonth(compDate.getMonth() + 1);
+        newCompDate.setMonth(newCompDate.getMonth() + 1);
         continue;
       }
       series[1].data.push([x, x * gradient + intercept]);
-      var m = compDate.getMonth();
-      compDate.setMonth(compDate.getMonth() + 1);
+      var m = newCompDate.getMonth();
+      newCompDate.setMonth(newCompDate.getMonth() + 1);
     }
 
     //Add line of best fit for latest data since april to next april
@@ -526,7 +527,7 @@ var cht = {
       },
       yAxis: {
         title: { text: 'Quality standard performance' },
-        max: maxValue + 0.05,
+        max: maxValue + 5,
         min: 0,
         plotLines: [{
           value: target,
@@ -534,11 +535,14 @@ var cht = {
           dashStyle: 'shortdash',
           width: 2,
           label: {
-            text: 'Target - ' + (target * 100) + '%'
+            text: 'Target - ' + (target) + '%'
           },
         }]
       },
       legend: { enabled: true },
+      tooltip: {
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:.2f}%</b><br/>'
+      },
 
       navigator: {
         enabled: true
@@ -613,11 +617,11 @@ var cht = {
           return this.point.desc.match(/.{1,40}[^ ]* ?/g).join("<br>");
         },
 
-        style:{
+        style: {
           "whiteSpace": "normal"
         },
 
-        useHTML:true
+        useHTML: true
       },
 
       plotOptions: {
