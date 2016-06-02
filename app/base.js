@@ -2,7 +2,6 @@ var data = require('./data'),
   lookup = require('./lookup'),
   chart = require('./chart'),
   log = require('./log'),
-  Mustache = require('mustache'),
   ZeroClipboard = require('zeroclipboard');
 
 var base = {
@@ -156,18 +155,20 @@ var base = {
    ********************************/
 
   launchModal: function(data, label, value, reasonText, callbackOnSave, callbackOnCancel, callbackOnUndo) {
-    var template = $('#modal-why').html();
-    Mustache.parse(template); // optional, speeds up future uses
+    //var template = $('#modal-why').html();
+    //Mustache.parse(template); // optional, speeds up future uses
+    var tmpl = require("templates/modal-why");
 
-    var reasonTemplate = $('#modal-why-item').html();
-    Mustache.parse(reasonTemplate);
+    //var reasonTemplate = $('#modal-why-item').html();
+    //Mustache.parse(reasonTemplate);
 
     if (data.reasons && data.reasons.length > 0) data.hasReasons = true;
 
-    var rendered = Mustache.render(template, data, {
+    /*var rendered = Mustache.render(template, data, {
       "item": reasonTemplate
     });
-    $('#modal').html(rendered);
+    $('#modal').html(rendered);*/
+    $('#modal').html(tmpl(data));
 
     if (reasonText) {
       $('#modal textarea').val(reasonText);
