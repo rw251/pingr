@@ -1,5 +1,5 @@
 name	Correct CKD monitoring
-tabText  CKD monitor
+tabText	CKD monitor
 description	<strong>Description:</strong> Patients with CKD (Stage 3 and above) who have received the <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>correct frequency of eGFR monitoring based on their latest eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) who do not have an exclusion code. <br> <strong>Correct patients:</strong> Patients who have the correct frequency of monitoring <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>based on their latest eGFR and/or ACR readings</a>.
 tagline	of your patients with a CKD code have been correctly monitored <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>based on their latest eGFR and/or ACR readings</a>.
 positiveMessage	Well done! For tips on how to improve further, look through the recommended improvement actions on this page and for each patient.
