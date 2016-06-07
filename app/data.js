@@ -308,6 +308,7 @@ var dt = {
         indicator.tagline = "";
       }
       indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last]*100;
+
       dt.indicators[indicator.id] = { performance: indicator.performance, tagline: indicator.tagline, positiveMessage: indicator.positiveMessage, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
 
       //apply which categories people belong to

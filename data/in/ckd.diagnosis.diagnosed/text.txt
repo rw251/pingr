@@ -1,24 +1,19 @@
-name	Correct coding of CKD diagnosis
-description	<strong>Description:</strong> Patients with correct coding of CKD (Stage 3 or above) based on eGFR and ACR readings as specified in <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>NICE guidance</a>. <br> <strong>Eligible patients:</strong> patients with a CKD diagnostic code (stage 3 or above) or eGFR readings persistently < 60 ml/min/1.73m2 who do not have a QOF exclusion code. <br> <strong>Correct patients:</strong> patients who have a diagnostic code matching their latest eGFR and/or ACR readings.
-tabText	Diag tab
-tagline	of your patients with a CKD stage 3 or above based on their latest eGFR and ACR readings have the correct diagnosis coded in their record according to <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">NICE guidelines</a>
-positiveMessage	There's lots of room for improvement - but don't be disheartened! Look through the suggestions listed on this page and under each patient for improvement actions to take.
+name	CKD staging
+tabText  CKD stage
+description	<strong>Description:</strong> Patients with correct coding of CKD staging (Stage 3 or above) based on their latest <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) without an exclusion code. <br> <strong>Correct patients:</strong> Patients with a CKD staging code <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>matching their latest eGFR and/or ACR readings</a>.
+tagline	of your patients with a CKD code have the correct stage recorded based on their <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">eGFR and ACR readings</a>.
+positiveMessage	There's room for improvement - but don't be disheartened! Look through the recommended improvement actions on this page and for each patient.
 valueId	eGFR
 valueName	Latest eGFR
 dateORvalue	value
 tableTitle	All patients with improvement opportunities
-opportunities.wrongStage.name	wrongStage
-opportunities.wrongStage.description	Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who <strong>do not</strong> have a CKD diagnosis code in their record
-opportunities.wrongStage.positionInBarChart	3
+opportunities.wrongStage.name	Wrong stage
+opportunities.wrongStage.description	Patients who have the <strong>wrong CKD stage</strong> in their records according to their latest eGFR and ACR readings.
+opportunities.rightStageWrongSubstage.name	Right stage, wrong substage
+opportunities.rightStageWrongSubstage.description	Patients who have the <strong>right CKD stage</strong> but the <strong>wrong CKD substage</strong> in their records according to their latest eGFR and ACR readings.
 opportunities.overdiagnosed.name	Overdiagnosed
-opportunities.overdiagnosed.description	Patients who have a CKD diagnostic code in their record but their latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above
-opportunities.overdiagnosed.positionInBarChart	1
-opportunities.suggestExclude.name	Suggest Exclude
-opportunities.suggestExclude.description	Patients who have a CKD stage 3 or above diagnosis code in their record or who have CKD stage 3 or above based on their latest eGFR readings and who may <strong>benefit from being excluded</strong> from CKD quality indicators
-opportunities.suggestExclude.positionInBarChart	5
-opportunities.AcrTest.name	AcrTest
-opportunities.AcrTest.description	Patients who have CKD stage 3 or above according to their latest eGFR and ACR readings but who have the <strong>wrong</strong> CKD diagnosis code in their record
-opportunities.AcrTest.positionInBarChart	2
-opportunities.rightStageWrongSubstage.name	rightStageWrongSubstage
-opportunities.rightStageWrongSubstage.description	Patients who have CKD stage 3 or above according to their latest eGFR reading and have a CKD diagnosis code in their record but <strong>no ACR reading</strong> to correctly stage their CKD
-opportunities.rightStageWrongSubstage.positionInBarChart	4
+opportunities.overdiagnosed.description	Patients with a CKD code whose <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'><strong>latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above</strong></a>.
+opportunities.acrTest.name	ACR missing
+opportunities.acrTest.description	Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">CKD staging</a>.
+opportunities.suggestExclude.name	Suggest exclude
+opportunities.suggestExclude.description	Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators.

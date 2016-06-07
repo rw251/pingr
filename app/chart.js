@@ -347,84 +347,84 @@ var cht = {
 
     var local = true;
     var bChart = $('#' + element).highcharts({
-      chart: {
-        type: 'column',
-        events: {
-          load: function() {
-            var thisChart = this;
-            thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
-              local = !local;
-              thisChart.xAxis[0].categories = data.filter(function(v) {
-                if (local) return v.local;
-                else return true;
-              }).map(function(v) {
-                return v.p;
-              });
-              thisChart.series[0].setData(data.filter(function(v) {
-                if (local) return v.local;
-                else return true;
-              }).map(function(v) {
-                if (v.p === "YOU") return { y: v.x, color: "red" };
-                else return v.x;
-              }));
-            }).add();
+        chart: {
+          type: 'column',
+          events: {
+            load: function() {
+              var thisChart = this;
+              thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+                local = !local;
+                thisChart.xAxis[0].categories = data.filter(function(v) {
+                  if (local) return v.local;
+                  else return true;
+                }).map(function(v) {
+                  return v.p;
+                });
+                thisChart.series[0].setData(data.filter(function(v) {
+                  if (local) return v.local;
+                  else return true;
+                }).map(function(v) {
+                  if (v.p === "YOU") return { y: v.x, color: "red" };
+                  else return v.x;
+                }));
+              }).add();
+            }
           }
-        }
-      },
-      title: { text: 'Benchmark' },
-      xAxis: {
-        categories: data.filter(function(v) {
-          return v.local === local;
-        }).map(function(v) {
-          return v.p;
-        }),
-        crosshair: true
-      },
-      yAxis: {
-        min: 0,
-        max: 100,
-        title: { text: '% patients meeting target' }
-      },
-      tooltip: {
-        headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
-        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-          '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
-        footerFormat: '</table>',
-        shared: true,
-        useHTML: true
-      },
-      plotOptions: {
-        column: {
-          pointPadding: 0.2,
-          borderWidth: 0
-        }
-      },
-      legend: {
-        enabled: false
-      },
-      series: [{
-        name: 'Performance',
-        data: data.filter(function(v) {
-          return v.local === local;
-        }).map(function(v) {
-          if (v.p === "YOU") return { y: v.x, color: "red" };
-          else return v.x;
-        })
+        },
+        title: { text: 'Benchmark' },
+        xAxis: {
+          categories: data.filter(function(v) {
+            return v.local === local;
+          }).map(function(v) {
+            return v.p;
+          }),
+          crosshair: true
+        },
+        yAxis: {
+          min: 0,
+          max: 100,
+          title: { text: '% patients meeting target' }
+        },
+        tooltip: {
+          headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
+          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+          }
+        },
+        legend: {
+          enabled: false
+        },
+        series: [{
+          name: 'Performance',
+          data: data.filter(function(v) {
+            return v.local === local;
+          }).map(function(v) {
+            if (v.p === "YOU") return { y: v.x, color: "red" };
+            else return v.x;
+          })
       }]
-    },
-    function(chart) { // on complete
-       var textX = chart.plotLeft + (chart.plotWidth  * 0.5);
-       var textY = chart.plotTop  + (chart.plotHeight * 0.5);
+      },
+      function(chart) { // on complete
+        var textX = chart.plotLeft + (chart.plotWidth * 0.5);
+        var textY = chart.plotTop + (chart.plotHeight * 0.5);
 
-       var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
-       span += '<span style="font-size: 64px">Coming Soon!</span>';
-       span += '</span>';
+        var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
+        span += '<span style="font-size: 64px">Coming Soon!</span>';
+        span += '</span>';
 
-       $("#benchmark-chart").append(span);
-       span = $('#pieChartInfoText');
-       span.css('left', textX + (span.width() * -0.5));
-       span.css('top', textY + (span.height() * -0.5));
-   });
+        $("#benchmark-chart").append(span);
+        span = $('#pieChartInfoText');
+        span.css('left', textX + (span.width() * -0.5));
+        span.css('top', textY + (span.height() * -0.5));
+      });
 
   },
 
@@ -500,6 +500,7 @@ var cht = {
     intercept = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX * sumX);
     gradient = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
 
+    var newCompDate = new Date(lastApril.getTime());
     series[1].data.push([maxXvalue, maxXvalue * gradient + intercept]);
     var newCompDate = new Date(lastApril.getTime());
     for (var i = 0; i < 13; i++) {
@@ -617,11 +618,11 @@ var cht = {
           return this.point.desc.match(/.{1,40}[^ ]* ?/g).join("<br>");
         },
 
-        style:{
+        style: {
           "whiteSpace": "normal"
         },
 
-        useHTML:true
+        useHTML: true
       },
 
       plotOptions: {
