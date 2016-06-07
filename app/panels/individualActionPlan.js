@@ -116,7 +116,7 @@ var iap = {
     }).on('click', '.delete-plan', function() {
       var PLANID = $(this).closest('tr').data("id");
 
-      $('#individual-delete-item').html($($(this).closest('tr').children('td')[0]).find('span').text());
+      $('#modal-delete-item').html($($(this).closest('tr').children('td')[0]).find('span').text());
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         iap.displayPersonalisedIndividualActionPlan(data.patientId, $('#personalPlanIndividual'));

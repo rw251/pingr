@@ -57,7 +57,7 @@ var welcome = {
     }).on('click', '.delete-plan', function() {
       var PLANID = $(this).closest('tr').data("id");
 
-      $('#team-delete-item').html($($(this).closest('tr').children('td')[1]).find('span').text());
+      $('#modal-delete-item').html($($(this).closest('tr').children('td')[1]).find('span').text());
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
@@ -182,7 +182,7 @@ var welcome = {
     }).on('click', '.delete-plan', function() {
       var PLANID = $(this).closest('tr').data("id");
 
-      $('#team-delete-item').html($($(this).closest('tr').children('td')[2]).find('span').text());
+      $('#modal-delete-item').html($($(this).closest('tr').children('td')[2]).find('span').text());
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         welcome.populate(!$('#outstandingTasks').parent().hasClass("active"));
