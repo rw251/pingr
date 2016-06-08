@@ -23,9 +23,8 @@
     "precommit": "git add --all",
     "commit": "git diff-index --quiet HEAD || git commit -m \"Changes\"",
     "postcommit": "git push origin",
-    "predeploy": "npm run remove-live-reload && npm run commit",
-    "deploy": "git push origin master:gh-pages && git checkout gh-pages && git pull",
-    "postdeploy": "git checkout master && npm run add-live-reload && npm run commit"
+    "predeploy": "npm run bbuild && cp -r dist/* dist-test/",
+    "deploy": "cd dist-test && git add -A && git commit -m \"Latest test version\" && git push"
   },
   "repository": {
     "type": "git",
