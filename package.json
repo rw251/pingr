@@ -6,6 +6,7 @@
   "scripts": {
     "bstart": "brunch watch --server",
     "bbuild": "brunch build --production",
+    "postbbuild": "cp -r dist/* dist-test/" ,
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors script.js data.json",
     "clean": "rimraf dist",
@@ -23,8 +24,9 @@
     "precommit": "git add --all",
     "commit": "git diff-index --quiet HEAD || git commit -m \"Changes\"",
     "postcommit": "git push origin",
-    "predeploy": "npm run bbuild && cp -r dist/* dist-test/",
-    "deploy": "cd dist-test && git add -A && git commit -m \"Latest test version\" && git push"
+    "predeploy": "cd dist-test && git pull origin gh-pages",
+    "deploy": "npm run bbuild",
+    "postdeploy" :"cd dist-test && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages"
   },
   "repository": {
     "type": "git",
