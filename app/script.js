@@ -44,7 +44,7 @@ var App = {
           $.ajax({
             type: "POST",
             url: "http://130.88.250.206:9100/pingr",
-            data: '{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '"}}',
+            data: '{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '","detail":[{"key":"href","value":"' + location.href +'"}]}}',
             success: function(d) { console.log(d); },
             dataType: "json",
             contentType: "application/json"
