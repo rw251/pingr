@@ -35,5 +35,10 @@ module.exports = {
     templates: {
       joinTo: 'app.js'
     }
+  },
+
+  server : {
+    run: true,
+    port: 3001
   }
 };

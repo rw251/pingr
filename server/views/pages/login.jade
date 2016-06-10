@@ -1,0 +1,40 @@
+include ../partials/head.jade
+#login.starter-template-high.page.login-page
+  .container.login-container
+    .login-panel.panel.panel-default.plain.animated.bounceIn
+      .panel-body
+        img(alt='...', width='200', height='200', src='images/icons/PINGR_logo-250px.png', style='display: block; margin-left: auto;margin-right: auto')
+        h2(style='text-align: center;')
+          | The Performance
+          br
+          |  Improvement plaN
+          br
+          |  GeneratoR (PINGR)
+        p(style='font-size: 1.5em;font-style: italic;text-align: center')
+          | Improvement actions
+          br
+          |  for GP practices
+        br
+        if message && message.error
+          .alert.alert-danger.alert-dismissible.fade-in(role="alert")
+            button.close(type="button" data-dismiss="alert" aria-label="Close")
+              span(aria-hidden="true") ×
+            p= message.error
+        form(action='/login', method='post')
+          .form-group.input-group
+            span.input-group-addon
+              i.fa.fa-envelope
+            input#inpEmail.form-control(type='text', name='username', placeholder='Email address', required='', autofocus='')
+          .form-group.input-group
+            span.input-group-addon
+              i.fa.fa-key
+            input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
+          .form-group
+            label.cr-styled
+              input(type='checkbox')
+              i.fa
+            |               Remember me
+          button#signin.btn.btn-purple.btn-block.history(type='submit')
+            // href="#overview">
+            | Sign in
+            span.fa.fa-arrow-circle-right

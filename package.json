@@ -6,7 +6,7 @@
   "scripts": {
     "bstart": "brunch watch --server",
     "bbuild": "brunch build --production",
-    "postbbuild": "cp -r dist/* dist-test/" ,
+    "postbbuild": "cp -r dist/* dist-test/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors script.js data.json",
     "clean": "rimraf dist",
@@ -26,7 +26,7 @@
     "postcommit": "git push origin",
     "predeploy": "cd dist-test && git pull origin gh-pages",
     "deploy": "npm run bbuild",
-    "postdeploy" :"cd dist-test && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages"
+    "postdeploy": "cd dist-test && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages"
   },
   "repository": {
     "type": "git",
@@ -40,18 +40,31 @@
   "homepage": "https://github.com/rw251/rw251.github.io",
   "devDependencies": {
     "auto-reload-brunch": "^2.7.1",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.1",
     "browserify": "^13.0.0",
     "brunch": "^2.8.0",
+    "connect-flash": "^0.1.1",
     "cp": "^0.2.0",
     "csv-parser": "^1.9.3",
+    "debug": "^2.2.0",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
     "http-server": "^0.8.0",
+    "jade": "^1.11.0",
     "jade-brunch": "^2.8.0",
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
+    "mongoose": "^4.4.20",
+    "morgan": "^1.7.0",
     "mv": "^2.0.3",
     "nodemon": "^1.9.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.0-beta2",
     "rimraf": "^2.3.4",
     "sass-brunch": "^2.6.3",
+    "serve-favicon": "^2.3.0",
     "uglify-js": "^2.6.2"
   },
   "dependencies": {
