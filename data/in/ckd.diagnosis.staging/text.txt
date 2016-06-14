@@ -1,5 +1,5 @@
 name	CKD staging
-tabText  CKD stage
+tabText	CKD stage
 description	<strong>Description:</strong> Patients with correct coding of CKD staging (Stage 3 or above) based on their latest <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) without an exclusion code. <br> <strong>Correct patients:</strong> Patients with a CKD staging code <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>matching their latest eGFR and/or ACR readings</a>.
 tagline	of your patients with a CKD code have the correct stage recorded based on their <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">eGFR and ACR readings</a>.
 positiveMessage	There's room for improvement - but don't be disheartened! Look through the recommended improvement actions on this page and for each patient.
