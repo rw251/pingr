@@ -18,6 +18,8 @@ var dataFile = { indicators: [] }; //JSON.parse(fs.readFileSync('data/datareal.j
 var textFile = JSON.parse(fs.readFileSync('data/text.json', 'utf8') || "{}");
 textFile.pathways = {};
 
+var messages=[];
+
 var readCsvAsync = function(input, callback) {
   var obj = [];
   fs.createReadStream(input.file)
@@ -70,7 +72,10 @@ dirs.forEach(function(id) {
   //Load new text
   fs.readFileSync('data/in/' + dir + 'text.txt', 'utf8').split("\n").forEach(function(line) {
     var els = line.trim("\r").split("\t");
-    if (els.length < 2) return;
+    if (els.length < 2) {
+      if(els[0].replace(/[^a-zA-Z0-9]/g,"").length>0) messages.push("The text.txt file in " + dir + " contains a row with no TAB character: " + els[0]);
+      return;
+    }
     var key = els[0],
       val = els[1];
     assign(textFile.pathways[pathway][stage].standards[standard], key, val);
@@ -301,9 +306,6 @@ dirs.forEach(function(id) {
               if (opp.patients.indexOf(+data.patientId) === -1) opp.patients.push(+data.patientId);
             })
             .on('end', function() {
-              /*fs.writeFile('data/idata.' + id + '.json', JSON.stringify(i, null, 2), function(err) {
-                if (err) return console.log(err);
-              });*/
 
               if (lastDir) {
                 //Deduplicate contacts
@@ -331,6 +333,19 @@ dirs.forEach(function(id) {
 
                 fs.writeFile('data/text.json', JSON.stringify(textFile, null, 2), function(err) {
                   if (err) return console.log(err);
+                });
+
+                if(messages.length>0) {
+                  console.log();
+                  console.log("################");
+                  console.log("## WARNING!!! ##");
+                  console.log("################");
+                  console.log();
+                  console.log("The following errors were detected and should be investigated:");
+                  console.log();
+                }
+                messages.forEach(function(msg){
+                  console.warn(msg);
                 });
               }
             });

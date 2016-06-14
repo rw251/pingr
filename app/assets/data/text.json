@@ -1,0 +1,125 @@
+{
+  "events": {},
+  "measurements": {
+    "eGFR": {
+      "name": "eGFR",
+      "unit": "ml/min/1.73m^2",
+      "type": "line",
+      "valueDecimals": 1
+    },
+    "ACR": {
+      "name": "ACR",
+      "unit": "μg/mg",
+      "type": "line",
+      "valueDecimals": 0
+    },
+    "bp": {
+      "name": "BP",
+      "unit": "mmHg",
+      "type": "errorbar"
+    }
+  },
+  "pathways": {
+    "ckd": {
+      "diagnosis": {
+        "standards": {
+          "diagnosed": {
+            "name": "CKD staging",
+            "tabText": "CKD stage",
+            "description": "<strong>Description:</strong> Patients with correct coding of CKD staging (Stage 3 or above) based on their latest <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) without an exclusion code. <br> <strong>Correct patients:</strong> Patients with a CKD staging code <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>matching their latest eGFR and/or ACR readings</a>.",
+            "tagline": "of your patients with a CKD code have the correct stage recorded based on their <a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2\" target=\"_blank\">eGFR and ACR readings</a>.",
+            "positiveMessage": "There's room for improvement - but don't be disheartened! Look through the recommended improvement actions on this page and for each patient.",
+            "valueId": "eGFR",
+            "valueName": "Latest eGFR",
+            "dateORvalue": "value",
+            "tableTitle": "All patients with improvement opportunities",
+            "opportunities": {
+              "wrongStage": {
+                "name": "Wrong stage",
+                "description": "Patients who have the <strong>wrong CKD stage</strong> in their records according to their latest eGFR and ACR readings."
+              },
+              "rightStageWrongSubstage": {
+                "name": "Right stage, wrong substage",
+                "description": "Patients who have the <strong>right CKD stage</strong> but the <strong>wrong CKD substage</strong> in their records according to their latest eGFR and ACR readings."
+              },
+              "overdiagnosed": {
+                "name": "Overdiagnosed",
+                "description": "Patients with a CKD code whose <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'><strong>latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above</strong></a>."
+              },
+              "acrTest": {
+                "name": "ACR missing",
+                "description": "Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2\" target=\"_blank\">CKD staging</a>."
+              },
+              "suggestExclude": {
+                "name": "Suggest exclude",
+                "description": "Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators."
+              }
+            }
+          },
+          "monitoring": {
+            "name": "Correct CKD monitoring",
+            "tabText": "CKD monitor",
+            "description": "<strong>Description:</strong> Patients with CKD (Stage 3 and above) who have received the <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>correct frequency of eGFR monitoring based on their latest eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) who do not have an exclusion code. <br> <strong>Correct patients:</strong> Patients who have the correct frequency of monitoring <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>based on their latest eGFR and/or ACR readings</a>.",
+            "tagline": "of your patients with a CKD code have been correctly monitored <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>based on their latest eGFR and/or ACR readings</a>.",
+            "positiveMessage": "Well done! For tips on how to improve further, look through the recommended improvement actions on this page and for each patient.",
+            "valueId": "eGFR",
+            "valueName": "Latest eGFR",
+            "dateORvalue": "value",
+            "tableTitle": "All patients with improvement opportunities",
+            "opportunities": {
+              "underContact": {
+                "name": "Under monitored - contact with practice",
+                "description": "Patients with a CKD code who have <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'><strong>not been monitored correctly based on their latest eGFR and ACR readings</strong></a> but who have had contact with your practice in the last year."
+              },
+              "underNoContact": {
+                "name": "Under monitored - NO contact with practice",
+                "description": "Patients with a CKD code who have <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'><strong>not been monitored correctly based on their latest eGFR and ACR readings</strong></a> and who have had <strong>no</strong> contact with your practice in the last year."
+              },
+              "overMonitored": {
+                "name": "Over monitored",
+                "description": "Patients with a CKD code who have had <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'><strong>more than 4 eGFR readings in the last year</strong></a>."
+              },
+              "acrTest": {
+                "name": "ACR missing",
+                "description": "Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197\" target=\"_blank\">CKD monitoring</a>."
+              },
+              "overdiagnosed": {
+                "name": "Overdiagnosed",
+                "description": "Patients with a CKD code whose <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'><strong>latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above</strong></a>."
+              },
+              "suggestExclude": {
+                "name": "Suggest exclude",
+                "description": "Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators."
+              }
+            }
+          },
+          "undiagnosed": {
+            "name": "CKD diagnosis",
+            "tabText": "CKD diagnose",
+            "description": "<strong>Description:</strong> Patients with a diagnosis of CKD (Stage 3 or above) based on their <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with recent eGFR readings persistently less than 60 mL/min/1.73 m2 who do not have an exclusion code. <br> <strong>Correct patients:</strong> Patients who have a diagnostic code of CKD stage 3 or above.",
+            "tagline": "of your patients with CKD <a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2\" target=\"_blank\">according to their latest eGFR and/or ACR readings</a> have a CKD code in their records.",
+            "positiveMessage": "Well done! For tips on how to improve further, look through the recommended improvement actions on this page and for each patient.",
+            "valueId": "eGFR",
+            "valueName": "Latest eGFR",
+            "dateORvalue": "value",
+            "tableTitle": "All patients with improvement opportunities",
+            "opportunities": {
+              "addCode": {
+                "name": "Add a diagnostic code",
+                "description": "Patients who have CKD <a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2\" target=\"_blank\">according to their latest eGFR and/or ACR readings</a> but have no CKD code in their record."
+              },
+              "acrTest": {
+                "name": "ACR missing",
+                "description": "Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2\" target=\"_blank\">CKD diagnosis</a>."
+              },
+              "suggestExclude": {
+                "name": "Suggest exclude",
+                "description": "Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

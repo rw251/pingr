@@ -1,0 +1,13 @@
+#editPlan.modal.fade(tabindex='-1', role='dialog', aria-labelledby='exampleModalLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#exampleModalLabel.modal-title Edit Plan
+      .modal-body
+        .form-group
+          input#editActionPlanItem.form-control(type='text')
+      .modal-footer
+        button.btn.btn-primary.save-plan(type='button') Save
+        button.btn.btn-default(type='button', data-dismiss='modal') Cancel
