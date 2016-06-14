@@ -165,11 +165,11 @@ dirs.forEach(function(id) {
               patients[+v.patientId].events = [];
               patients[+v.patientId].contacts = [];
               patients[+v.patientId].measurements = [];
-              patients[+v.patientId].standards = [{ display: indText.name, targetMet: true }];
+              patients[+v.patientId].standards = [{ display: indText.tabText, targetMet: true }];
               patients[+v.patientId].medications = [];
               patients[+v.patientId].actions = [];
             } else {
-              patients[+v.patientId].standards.push({ display: indText.name, targetMet: true });
+              patients[+v.patientId].standards.push({ display: indText.tabText, targetMet: true });
             }
           });
 
@@ -287,7 +287,7 @@ dirs.forEach(function(id) {
                 });
               }
               patients[+data.patientId].standards.forEach(function(v) {
-                if (v.display === indText.name) {
+                if (v.display === indText.tabText) {
                   v.targetMet = false;
                 }
               });

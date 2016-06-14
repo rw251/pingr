@@ -86,6 +86,13 @@ var template = {
 
         layout.showHeaderBarItems();
 
+      } else if (urlBits[0] === "#contact") {
+        base.clearBox();
+        base.selectTab("");
+        layout.showPage('contact-page');
+
+        layout.showHeaderBarItems();
+
       } else if (urlBits[0] === "#patient") {
 
         //create(pathwayId, pathwayStage, standard, patientId)

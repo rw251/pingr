@@ -9,7 +9,7 @@ var indicatorList = {
   show: function(panel, isAppend, loadContentFn) {
     data.getAllIndicatorData(function(indicators) {
       indicators.sort(function(a,b){
-        return a.performance - b.performance;
+        return a.performance.percentage - b.performance.percentage;
       });
       var tempMust = $('#overview-panel-table').html();
       var tmpl = require('templates/overview-table');
