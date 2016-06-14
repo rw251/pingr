@@ -1,0 +1,45 @@
+include thumbs
+include checkbox
+
+mixin actionPlanTaskListItem(thing)
+  if thing.task
+    tr.suggestion(data-pathway-id=thing.pathwayId, data-id=thing.task.id, data-team-or-patient-id=thing.tpid ? thing.tpId : undefined)
+      td
+        span= thing.pathway
+      if thing.patientId
+        td
+          span= thing.patientId
+      td
+        span(data-subsection=thing.subsection)
+          strong.black.f20!= thing.task.short
+          if thing.canEdit
+            .btn-group.btn-hover-show-group.pull-right(data-toggle='buttons')
+              i.fa.fa-pencil.edit-plan.clickable(data-toggle='tooltip', data-placement='top', title='Edit plan')
+              i.fa.fa-trash.delete-plan.clickable(data-toggle='tooltip', data-placement='top', title='Delete plan')
+          if thing.task.long || thing.task.reason
+            br
+            a.show-more(data-id=thing.id)
+              | Show more 
+              i.fa.fa-caret-down
+      td
+        +thumbs(thing)
+      td
+        +checkbox(thing)
+    if thing.task.long
+      tr.show-more-row(data-id=thing.id)
+        td(colspan='3')!= thing.task.long
+        if !thing.task.reason
+          br
+          a.show-more(data-id=thing.id)
+            | Show less 
+            i.fa.fa-caret-up
+    if thing.task.reason
+      tr.show-more-row(data-id=thing.id)
+        td(colspan='3')
+          != thing.task.reason
+          br
+          a.show-more(data-id=thing.id)
+            | Show less 
+            i.fa.fa-caret-up
+  else
+    =thing.task

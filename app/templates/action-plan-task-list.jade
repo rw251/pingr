@@ -1,0 +1,16 @@
+include mixins/action-plan-task-list
+
+.container-fluid
+  .row
+    #team-task-panel.panel.panel-info
+      .panel-heading Practice-level      
+      +actionPlanTaskList(team)
+  .row
+    #team-add-plan(style='padding-bottom: 15px;margin-top: -10px;')
+      include mixins/personal-action-plan
+  .row
+    #individual-task-panel.panel.panel-warning
+      .panel-heading Individual patient
+      +actionPlanTaskList(individual)
+include mixins/edit-plan-modal
+include mixins/delete-plan-modal

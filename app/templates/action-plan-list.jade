@@ -1,0 +1,11 @@
+include mixins/action-plan-item
+
+if hasSuggestions
+  table.table
+    thead
+      tr
+        th Suggested by you
+        th(style='width: 105px') Add to action plan?
+    tbody
+      each suggestion in suggestions
+        +actionPlanItem(suggestion)

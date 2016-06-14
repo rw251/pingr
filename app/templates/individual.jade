@@ -1,0 +1,40 @@
+include mixins/thumbs
+
+if noSuggestions
+  p There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
+else 
+  table#individual-suggested-actions-table.table
+    thead
+      tr
+        th
+        th(style='width: 105px')
+    tbody
+      each suggestion in suggestions
+        tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined)
+          td
+            span(data-subsection=suggestion.subsection)
+              strong.black.f20!= suggestion.short
+              if suggestion.long || suggestion.reason
+                br
+                a.show-more(data-id=suggestion.id)
+                  | Show more 
+                  i.fa.fa-caret-down
+          td
+            +thumbs(suggestion)
+        if suggestion.long
+          tr.show-more-row(data-id=suggestion.id)
+            td(colspan='2')!= suggestion.long
+            if !suggestion.reason
+              br
+              a.show-more(data-id=suggestion.id)
+                | Show less 
+                i.fa.fa-caret-up
+        if suggestion.reason
+          tr.show-more-row(data-id=suggestion.id)
+            td(colspan='2')
+              != suggestion.reason
+              br
+              a.show-more(data-id=suggestion.id)
+                | Show less 
+                i.fa.fa-caret-up
+include mixins/personal-action-plan

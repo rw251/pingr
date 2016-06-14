@@ -1,0 +1,30 @@
+include mixins/patient-list-header-item
+
+h4!= header + '(n=' + n + ')'
+table.table.patient-list.table-body-hidden
+  thead
+    tr
+      each item in locals['header-items']
+        +header(item)
+  tbody
+    tr.list-item(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+      td(style='min-width:130px')
+        button.btn.btn-xs.btn-default.btn-copy(type='button', data-content='Copied', data-toggle='tooltip', data-placement='right')
+          span.fa.fa-clipboard
+        |         1234567890
+      td 2014-06-10
+.table-scroll
+  table.table.patient-list.table-head-hidden
+    thead
+      tr
+        each item in locals['header-items']
+          +header(item)
+    tbody
+      each patient in patients
+        tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+          td(style='min-width:130px')
+            button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-clipboard-text=patient.nhsNumber, data-content='Copied', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + patient.nhsNumber + ' to clipboard.')
+              span.fa.fa-clipboard
+            =patient.nhsNumber
+          each item in patient.items
+            td!= item
