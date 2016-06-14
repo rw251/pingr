@@ -57,12 +57,12 @@ var pl = {
         pList = indicators.opportunities.reduce(function(a, b) {
           return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
         });
-        header = data.text[pathwayId][pathwayStage].standards[standard].tableTitle;
+        header = data.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
       }
 
       pList = data.removeDuplicates(pList);
-      var vId = data.text[pathwayId][pathwayStage].standards[standard].valueId;
-      var dOv = data.text[pathwayId][pathwayStage].standards[standard].dateORvalue;
+      var vId = data.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
+      var dOv = data.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
       var patients = pList.map(function(patientId) {
         var ret = indicators.patients[patientId];
         ret.nhsNumber = data.patLookup[patientId] || patientId;
@@ -105,7 +105,7 @@ var pl = {
       //middle column is either value or date
       if (dOv) {
         localData["header-items"].push({
-          "title": data.text[pathwayId][pathwayStage].standards[standard].valueName,
+          "title": data.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
           "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
           "isSorted": false,
           "direction": "sort-asc"

@@ -49,23 +49,23 @@ var ind = {
 
       if (!pathwayStage) {
         if (layout.pathwayStage) pathwayStage = layout.pathwayStage;
-        else pathwayStage = Object.keys(data.text[pathwayId])[0];
+        else pathwayStage = Object.keys(data.text.pathways[pathwayId])[0];
       }
 
       if (!standard) {
         if (layout.standard) standard = layout.standard;
-        else standard = Object.keys(data.text[pathwayId][pathwayStage].standards)[0];
+        else standard = Object.keys(data.text.pathways[pathwayId][pathwayStage].standards)[0];
       }
 
       //if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
         //different pathway or stage so title needs updating
-        base.updateTitle(data.text[pathwayId][pathwayStage].standards[standard].name);
+        base.updateTitle(data.text.pathways[pathwayId][pathwayStage].standards[standard].name);
         /*base.updateTitle([{
           title: "Overview",
           url: "#overview"
         }, {
-          title: data.text[pathwayId][pathwayStage].text.page.text,
-          tooltip: data.text[pathwayId][pathwayStage].text.page.tooltip
+          title: data.text.pathways[pathwayId][pathwayStage].text.page.text,
+          tooltip: data.text.pathways[pathwayId][pathwayStage].text.page.tooltip
         }]);
         $('#mainTitle').show();*/
       //}
@@ -81,7 +81,7 @@ var ind = {
       //Panels decide whether they need to redraw themselves
       teamActionPlan.show(farLeftPanel);
 
-      base.updateTab("indicators", data.text[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
+      base.updateTab("indicators", data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 
       wrapper.show(farRightPanel, false, [
         {

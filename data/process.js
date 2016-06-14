@@ -327,6 +327,8 @@ dirs.forEach(function(id) {
                 });
                 console.log("Duplicate contacts removed.");
 
+                dataFile.text = textFile;
+
                 fs.writeFile('data/datareal.json', JSON.stringify(dataFile, null, 2), function(err) {
                   if (err) return console.log(err);
                 });

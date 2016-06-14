@@ -139,7 +139,7 @@ var template = {
     $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
 
     $('#mainTitle').show();
-    base.updateTitle(data.text[data.pathwayId]["display-name"] + ": Overview (practice-level data)");
+    base.updateTitle(data.text.pathways[data.pathwayId]["display-name"] + ": Overview (practice-level data)");
 
     //Show overview panels
     template.showOverviewPanels();
@@ -192,7 +192,7 @@ var template = {
         patients.wireUp(pathwayId, pathwayStage, farLeftPanel, standard);
         patientList.populate(pathwayId, pathwayStage, standard, null);
         $('#mainTitle').hide();
-        base.updateTitle(data.text[pathwayId][pathwayStage].text.page.text, data.text[pathwayId][pathwayStage].text.page.tooltip);
+        base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
         $(this).fadeIn(100);
       });
     } else {
@@ -200,7 +200,7 @@ var template = {
       patients.wireUp(pathwayId, pathwayStage, farLeftPanel, standard);
       patientList.populate(pathwayId, pathwayStage, standard, null);
       $('#mainTitle').hide();
-      base.updateTitle(data.text[pathwayId][pathwayStage].text.page.text, data.text[pathwayId][pathwayStage].text.page.tooltip);
+      base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
     }
 
     var tempMust = $('#patient-panel-placeholder').html();
@@ -229,7 +229,7 @@ var template = {
         patients.wireUpOk(pathwayId, pathwayStage, farLeftPanel);
         patients.populateOk(pathwayId, pathwayStage, null);
         $('#mainTitle').hide();
-        base.updateTitle(data.text[pathwayId][pathwayStage].text.page.text, data.text[pathwayId][pathwayStage].text.page.tooltip);
+        base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
         $(this).fadeIn(300);
       });
       var tempMust = $('#patient-panel-placeholder').html();
@@ -239,7 +239,7 @@ var template = {
       patients.wireUpOk(pathwayId, pathwayStage, farLeftPanel);
       patients.populateOk(pathwayId, pathwayStage, null);
       $('#mainTitle').hide();
-      base.updateTitle(data.text[pathwayId][pathwayStage].text.page.text, data.text[pathwayId][pathwayStage].text.page.tooltip);
+      base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
     }
   },
 
