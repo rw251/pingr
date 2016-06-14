@@ -15,3 +15,4 @@ data/indicators.json
 dist/
 dist-test/
 app/assets/data/data.json
+server/
