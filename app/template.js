@@ -80,6 +80,7 @@ var template = {
         base.wireUpTooltips();
 
       } else if (urlBits[0] === "#help") {
+        layout.view="HELP";
         base.clearBox();
         base.selectTab("");
         layout.showPage('help-page');
@@ -87,6 +88,7 @@ var template = {
         layout.showHeaderBarItems();
 
       } else if (urlBits[0] === "#contact") {
+        layout.view="CONTACT";
         base.clearBox();
         base.selectTab("");
         layout.showPage('contact-page');
