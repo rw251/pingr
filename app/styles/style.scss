@@ -1,5 +1,8 @@
+$background: #f2f2f4;
+$arrowColour: #bbb;
+
 body {
-    background-color: #f9f9f9;
+    background-color: $background;
     color: #85868d;
     font-family: 'Roboto', sans-serif;
     position: relative;
@@ -7,7 +10,8 @@ body {
 header {
     font-family: 'Raleway', sans-serif;
 }
-body, html {
+body,
+html {
     overflow-x: hidden;
 }
 .transit {
@@ -22,14 +26,12 @@ a:focus {
 a:hover {
     text-decoration: none;
 }
-
 /*****************************
 Loader
 *****************************/
-
 .loading-container {
     position: fixed;
-    background-color: #f9f9f9;
+    background-color: $background;
     z-index: 9;
     top: 0;
     left: 0;
@@ -53,7 +55,10 @@ Loader
     height: 16px;
     position: absolute;
 }
-.l1 div, .l2 div, .l3 div, .l4 div {
+.l1 div,
+.l2 div,
+.l3 div,
+.l4 div {
     width: 100%;
     height: 100%;
 }
@@ -197,17 +202,17 @@ Loader
 .l4 {
     animation: l4-rise 3s ease 0s infinite;
 }
-.l1 div, .l4 div {
+.l1 div,
+.l4 div {
     animation: rot1 3s ease 0s infinite;
 }
-.l2 div, .l3 div {
+.l2 div,
+.l3 div {
     animation: rot2 3s ease 0s infinite;
 }
-
 /*****************************
 Navigation
 *****************************/
-
 .navigation {
     margin: 20px 0;
 }
@@ -228,7 +233,8 @@ Navigation
     top: 10px;
     visibility: hidden;
 }
-.navigation > ul > li.active.has-submenu:after, .navigation > ul > li.has-submenu:hover:after {
+.navigation > ul > li.active.has-submenu:after,
+.navigation > ul > li.has-submenu:hover:after {
     color: #fff;
 }
 .navigation > ul > li > a {
@@ -250,7 +256,9 @@ Navigation
     box-shadow: none;
     color: white;
 }
-.navigation > ul > li:hover > a, .navigation > ul > li.active:hover > a, .navigation > ul > li.active > a {
+.navigation > ul > li.active > a,
+.navigation > ul > li.active:hover > a,
+.navigation > ul > li:hover > a {
     color: #fff;
     background-color: #ff404b;
     -webkit-box-shadow: inset -6px 0 8px -2px rgba(0, 0, 0, 0.3);
@@ -261,9 +269,7 @@ Navigation
     margin-right: 6px;
     font-size: 14px;
 }
-
 /*** Sub Menu ***/
-
 .navigation ul li ul {
     display: none;
     background-color: #333747;
@@ -287,21 +293,20 @@ aside:not(.collapsed) .navigation ul li.active ul {
     text-align: left;
     display: block;
 }
-.navigation ul li ul li a:hover, .navigation ul li ul li.active a {
+.navigation ul li ul li a:hover,
+.navigation ul li ul li.active a {
     border-left: 5px solid #5e6271;
     color: #5e6271;
 }
-
 /*** Aside Collapsed Sub Menu ***/
-
 @media (min-width: 768px) {
     aside.left-panel.collapsed .navigation ul li ul {
         z-index: 3;
         left: 100%;
-        top: 0px;
-        background-color: #F2F2F4;
+        top: 0;
+        background-color: $background;
         box-shadow: none;
-        padding: 10px 0px;
+        padding: 10px 0;
         min-width: 200px;
         border: 1px solid #dddddd;
     }
@@ -310,7 +315,7 @@ aside:not(.collapsed) .navigation ul li.active ul {
         content: "";
         height: 20px;
         width: 20px;
-        border-color: transparent #F2F2F4 transparent transparent;
+        border-color: transparent $background transparent transparent;
         border-width: 10px;
         border-style: solid;
         position: absolute;
@@ -322,29 +327,25 @@ aside:not(.collapsed) .navigation ul li.active ul {
         display: block;
     }
     aside.left-panel.collapsed .navigation ul li ul li a {
-        border: 0px;
+        border: 0;
         color: #8f8f9f;
         border-bottom: 1px dashed #ECECEE;
     }
 }
-
 /*****************************
 Top Header
 *****************************/
-
 header {
-    background-color: #f2f2f4;
+    background-color: $background;
     border-bottom: 1px solid #ececee;
     padding-top: 4px;
     padding-bottom: 4px;
 }
-
 /* rw - don't need
 .navbar-toggle{
 	margin:8px 20px 8px 0px;
 	display:block;
 	padding-left:0px;} */
-
 .navbar-toggle .icon-bar {
     background-color: #b3b3be;
 }
@@ -352,7 +353,8 @@ header {
     position: relative;
     margin-bottom: 8px;
 }
-.app-search .form-control, .app-search .form-control:focus {
+.app-search .form-control,
+.app-search .form-control:focus {
     border: 1px solid #d3d3db;
     font-size: 13px;
     color: #c4c4cd;
@@ -373,22 +375,22 @@ header {
 .app-search .form-control::-moz-placeholder {
     color: #c4c4cd;
 }
-
 /*** Nav Toolbar (right)***/
-
+.navbar-default {
+    margin-left: 15px;
+    margin-right: 15px;
+}
 header .navbar-default .navbar-nav > li > a {
     color: blue;
     cursor: pointer;
 }
-
 /*** Nav Toolbar (right)***/
-
 .nav-toolbar {
-    margin: 8px 0px;
+    margin: 8px 0;
     float: right;
 }
 .nav-toolbar > li {
-    padding: 0px;
+    padding: 0;
     display: inline-block;
     margin-left: 5px;
     position: relative;
@@ -427,15 +429,13 @@ header .navbar-default .navbar-nav > li > a {
     border: 1px solid #C1C1C9;
 }
 .nav-toolbar .dropdown-menu.panel {
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding-top: 0;
+    padding-bottom: 0;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
 }
-
 /*****************************
 Content Area (right)
 *****************************/
-
 .content {
     margin-left: 190px;
 }
@@ -448,9 +448,7 @@ Content Area (right)
     padding-bottom: 20px;
     min-height: 550px;
 }
-
 /*** Page Header / Page Title ***/
-
 .page-header {
     margin: 0;
     border: 0;
@@ -469,13 +467,11 @@ Content Area (right)
     font-size: 14px;
     color: #9D9EA5;
 }
-
 /*****************************
 Custom Margins & Paddings
 *****************************/
-
 .no-margn {
-    margin: 0px;
+    margin: 0;
 }
 .margn-t-xs {
     margin-top: 5px;
@@ -484,7 +480,7 @@ Custom Margins & Paddings
     margin-top: 10px;
 }
 .no-padd {
-    padding: 0px;
+    padding: 0;
 }
 .padd-xs {
     padding: 5px;
@@ -510,14 +506,12 @@ Custom Margins & Paddings
 .padd-t-lg {
     padding-top: 20px;
 }
-
 /*****************************
 Styled Radio/Checkbox
 *****************************/
-
 .cr-styled {
     display: inline-block;
-    margin: 0px 2px;
+    margin: 0 2px;
 }
 .cr-styled i {
     display: inline-block;
@@ -535,36 +529,26 @@ Styled Radio/Checkbox
     visibility: hidden;
     display: none;
 }
-
 /* Checkbox */
-
 .cr-styled input[type=checkbox]:checked + i:before {
     content: "\f00c";
 }
-
 /* Radio */
-
 .cr-styled input[type=radio] + i {
     border-radius: 20px;
 }
 .cr-styled input[type=radio]:checked + i:before {
     content: "\f111";
 }
-
 /*** cr-styled Theaming/Colorss ***/
-
 .cr-styled input:checked + i {
     border-color: #a49bc4;
     color: #a49bc4;
 }
-
 /*****************************
  Pages / Widgets / Elements
 *****************************/
-
-
 /****Dashboard Stats****/
-
 .dashboard-stats.panel {
     position: relative;
     cursor: pointer;
@@ -576,14 +560,15 @@ Styled Radio/Checkbox
     font-size: 40px;
     position: absolute;
     margin-left: 10px;
-    left: 0px;
+    left: 0;
     top: 10px;
     text-align: center;
     z-index: 1;
     color: #fff;
     height: 80px;
 }
-.dashboard-stats.rounded i.fa.stats-icon, .dashboard-stats.rounded.panel {
+.dashboard-stats.rounded i.fa.stats-icon,
+.dashboard-stats.rounded.panel {
     border-radius: 50px;
 }
 .dashboard-stats .sparkline {
@@ -605,15 +590,15 @@ Styled Radio/Checkbox
     left: 100%;
     margin-left: -90px;
 }
-.dashboard-stats:hover h3, .dashboard-stats:hover p {
+.dashboard-stats:hover h3,
+.dashboard-stats:hover p {
     opacity: 0;
 }
-.dashboard-stats:hover .sparkline, .dashboard-stats:hover i.fa.stats-icon {
+.dashboard-stats:hover .sparkline,
+.dashboard-stats:hover i.fa.stats-icon {
     opacity: 1;
 }
-
 /****Messages-Chating****/
-
 .messages {
     max-height: 520px;
     overflow: auto;
@@ -621,24 +606,23 @@ Styled Radio/Checkbox
 .messages .media {
     padding-top: 18px;
     padding-bottom: 18px;
-    margin: 0px;
+    margin: 0;
     border-top: 1px dashed #eaeef1;
 }
 .messages .media:first-child {
-    border: 0px;
+    border: 0;
 }
 .messages .media .media-body .media {
     margin-top: 18px;
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
-
 /*user status icon*/
-
 .user-status {
     position: relative;
     display: inline-block;
 }
-.user-status:before, .user-status:before {
+.user-status:before,
+.user-status:before {
     content: "";
     display: inline-block;
     height: 12px;
@@ -646,13 +630,11 @@ Styled Radio/Checkbox
     border-radius: 100%;
     background-color: #666;
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: 0;
+    right: 0;
     border: 2px solid #fff;
 }
-
 /*user status icon color*/
-
 .user-status.online:before {
     background-color: #70ba63;
 }
@@ -681,18 +663,14 @@ Styled Radio/Checkbox
 .messages .media .media-body {
     font-size: 13px;
 }
-
 /****ToDo List****/
-
 .todo-list li {
     border: 0;
     margin: 0;
     border-radius: 0;
     border-bottom: 1px dashed #e0e0e0;
 }
-
 /****Activities List****/
-
 .activities-list {
     max-height: 560px;
     overflow: auto;
@@ -705,7 +683,7 @@ Styled Radio/Checkbox
     content: "";
     position: absolute;
     left: 15px;
-    top: 0px;
+    top: 0;
     height: 100%;
     border-left: 1px solid #ccc;
 }
@@ -726,63 +704,62 @@ Styled Radio/Checkbox
 }
 .activities-list li .activity-actions {
     position: absolute;
-    right: 0px;
+    right: 0;
     top: 25px;
 }
-.activities-list > li.info-activity:before, .activities-list > li.info-activity:after {
+.activities-list > li.info-activity:after,
+.activities-list > li.info-activity:before {
     border-color: #4fcdfc;
 }
-.activities-list > li.warning-activity:before, .activities-list > li.warning-activity:after {
+.activities-list > li.warning-activity:after,
+.activities-list > li.warning-activity:before {
     border-color: #fcd036;
 }
-.activities-list > li.danger-activity:before, .activities-list > li.danger-activity:after {
+.activities-list > li.danger-activity:after,
+.activities-list > li.danger-activity:before {
     border-color: #ff6264;
 }
-.activities-list > li.success-activity:before, .activities-list li.success-activity:after {
+.activities-list > li.success-activity:before,
+.activities-list li.success-activity:after {
     border-color: #68b828;
 }
-.activities-list > li.primary-activity:before, .activities-list > li.primary-activity:after {
+.activities-list > li.primary-activity:after,
+.activities-list > li.primary-activity:before {
     border-color: #7c38bc;
 }
-.activities-list > li.info-activity:before, .activities-list > li.info-activity:after {
+.activities-list > li.info-activity:after,
+.activities-list > li.info-activity:before {
     border-color: #4fcdfc;
 }
-
 /*****************************
 Footer
 *****************************/
-
 .footer {
-    background-color: #f2f2f4;
+    background-color: $background;
     border-top: 1px solid #ececee;
     padding-bottom: 15px;
     padding-top: 15px;
 }
-
 /***********************************************
 ================================================
  Custom Bootstrap / Overwriting
 ================================================
 ************************************************/
-
-
 /*****************************
  Grid
 *****************************/
-
 .row.no-gutter {
     margin-left: 0;
     margin-right: 0;
 }
-.row.no-gutter [class*="col-"]:not(:first-child), .row.no-gutter [class*="col-"]:not(:last-child) {
+.row.no-gutter [class*="col-"]:not(:first-child),
+.row.no-gutter [class*="col-"]:not(:last-child) {
     padding-left: 0;
     padding-right: 0;
 }
-
 /*****************************
  Color >> Backgrounds + Text
 *****************************/
-
 .bg-white {
     background-color: #fff;
 }
@@ -879,20 +856,20 @@ Footer
 .text-info {
     color: #4DC5F9;
 }
-
 /*****************************
  Form Elements
 *****************************/
-
-
 /*** Custom Colors Btn ***/
-
 .btn-purple {
     background-color: #8d82b5;
     border-color: #6b5f98;
     color: #fff;
 }
-.btn-purple:hover, .btn-purple:focus, .btn-purple:active, .btn-purple.active, .open .dropdown-toggle.btn-purple {
+.btn-purple.active,
+.btn-purple:active,
+.btn-purple:focus,
+.btn-purple:hover,
+.open .dropdown-toggle.btn-purple {
     background-color: #6b5f98;
     color: #fff;
 }
@@ -901,141 +878,135 @@ Footer
     border-color: #579e4b;
     color: #fff;
 }
-.btn-green:hover, .btn-green:focus, .btn-green:active, .btn-green.active, .open .dropdown-toggle.btn-purple {
+.btn-green.active,
+.btn-green:active,
+.btn-green:focus,
+.btn-green:hover,
+.open .dropdown-toggle.btn-purple {
     background-color: #579e4b;
     color: #fff;
 }
-
 /*** Btn Shapes ***/
-
-.btn-circle, .form-control-circle, .btn-group .btn-circle:first-child:not(:last-child):not(.dropdown-toggle) {
+.btn-circle,
+.btn-group .btn-circle:first-child:not(:last-child):not(.dropdown-toggle),
+.form-control-circle {
     border-radius: 50px;
 }
-.btn-flat, .form-control-flat {
-    border-radius: 0px;
+.btn-flat,
+.form-control-flat {
+    border-radius: 0;
 }
-
 /*****************************
 Form Elements
 *****************************/
-
 .has-feedback div[class*=col-] .form-control-feedback {
     right: 15px;
     line-height: 34px;
 }
-
 /*****************************
 Panel Styling
 *****************************/
-
 .panel {
     margin-bottom: 30px;
 }
 .panel-heading {
     font-weight: 700;
 }
-.panel-heading small, .panel-heading span, .panel-heading.un-bold {
+.panel-heading small,
+.panel-heading span,
+.panel-heading.un-bold {
     font-weight: 400;
 }
-
 /*** success ***/
-
 .panel-diagnosis {
     border-color: #70ba63;
 }
-.panel-diagnosis > .panel-heading, .panel-diagnosis > .panel-footer {
+.panel-diagnosis > .panel-footer,
+.panel-diagnosis > .panel-heading {
     border-color: #70ba63;
     background-color: #70ba63;
     color: #fff;
     box-shadow: none;
 }
-
 /*** info ***/
-
 .panel-monitoring {
     border-color: #4cbceb;
 }
-.panel-monitoring > .panel-heading, .panel-monitoring > .panel-footer {
+.panel-monitoring > .panel-footer,
+.panel-monitoring > .panel-heading {
     border-color: #4cbceb;
     background-color: #4cbceb;
     color: #fff;
     box-shadow: none;
 }
-
 /*** warning ***/
-
 .panel-treatment {
     border-color: #feb252;
 }
-.panel-treatment > .panel-heading, .panel-treatment > .panel-footer {
+.panel-treatment > .panel-footer,
+.panel-treatment > .panel-heading {
     border-color: #feb252;
     background-color: #feb252;
     color: #fff;
     box-shadow: none;
 }
-
 /*** danger ***/
-
 .panel-exclusions {
     border-color: #e35b5a;
 }
-.panel-exclusions > .panel-heading, .panel-exclusions > .panel-footer {
+.panel-exclusions > .panel-footer,
+.panel-exclusions > .panel-heading {
     border-color: #e35b5a;
     background-color: #e35b5a;
     color: #fff;
     box-shadow: none;
 }
-
 /*** default ***/
-
 .panel-default {
     border-color: #ddd;
 }
-.panel-default > .panel-heading, .panel-default > .panel-footer {
+.panel-default > .panel-footer,
+.panel-default > .panel-heading {
     border-color: #e8e8eb;
     background-color: #f5f5f5;
     box-shadow: none;
 }
-.panel-default > .panel-heading, .btn-default {
+.btn-default,
+.panel-default > .panel-heading {
     color: #9D9EA5;
 }
-
 /*** primary ***/
-
 .panel-primary {
     border-color: #8d82b5;
 }
-.panel-primary > .panel-heading, .panel-primary > .panel-footer {
+.panel-primary > .panel-footer,
+.panel-primary > .panel-heading {
     border-color: #8d82b5;
     background-color: #8d82b5;
     box-shadow: none;
 }
-
 /*** Clean Panel Heading ***/
-
-.panel-heading.clean, .panel-footer.clean {
+.panel-footer.clean,
+.panel-heading.clean {
     background: none;
     border: none;
 }
-
 /*****************************
  Dropdown
 *****************************/
-
 .dropdown-menu {}
 .dropdown-menu > li > a {
     color: #84868e;
 }
-
 /*** Dropdown Menu Sizes ***/
-
 .dropdown-menu.md {
-    min-width: 300px
+    min-width: 300px;
 }
 .dropdown-menu.lg {
     min-width: 400px;
 }
-.dropdown-menu.arrow:after, .dropdown-menu.arrow:before {
+.dropdown-menu.arrow:after,
+.dropdown-menu.arrow:before {
     content: "";
     display: block;
     position: absolute;
@@ -1052,13 +1023,13 @@ Panel Styling
     bottom: 100%;
     left: 6px;
 }
-.dropdown-menu.arrow.arrow-top-right, .dropdown-menu.arrow.arrow-top-left {
+.dropdown-menu.arrow.arrow-top-left,
+.dropdown-menu.arrow.arrow-top-right {
     top: calc(100% + 15px);
 }
-
 /**Top Right Arrow**/
-
-.dropdown-menu.arrow.arrow-top-right:after, .dropdown-menu.arrow.arrow-top-right:before {
+.dropdown-menu.arrow.arrow-top-right:after,
+.dropdown-menu.arrow.arrow-top-right:before {
     border-bottom-color: inherit;
     right: 6px;
     left: auto;
@@ -1070,10 +1041,9 @@ Panel Styling
 .dropdown-menu.arrow.arrow-top-right:after {
     border-bottom-color: #fff;
 }
-
 /**Top Left Arrow**/
-
-.dropdown-menu.arrow.arrow-top-left:after, .dropdown-menu.arrow.arrow-top-left:before {
+.dropdown-menu.arrow.arrow-top-left:after,
+.dropdown-menu.arrow.arrow-top-left:before {
     border-bottom-color: inherit;
     left: 6px;
     left: auto;
@@ -1089,11 +1059,9 @@ Panel Styling
 .dropdown-menu.arrow.panel-default:after {
     border-bottom-color: #F5F5F5;
 }
-
 /*****************************
 Progress Bars
 *****************************/
-
 .progress.progress-xxs {
     height: 4px;
 }
@@ -1106,11 +1074,9 @@ Progress Bars
 .progress.progress-lg {
     height: 24px;
 }
-
 /*****************************
 Horizaontal Row
 *****************************/
-
 hr.sm {
     margin-top: 15px;
     margin-bottom: 15px;
@@ -1123,52 +1089,48 @@ hr.dotted {
     border-style: dashed;
 }
 hr.clean {
-    border: 0px;
+    border: 0;
 }
-
 /*****************************
 Tabs with panel
 *****************************/
-
 .panel.tab-pane.tabs-up {
-    border-top: 0px;
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
-
 /****************************************
 =========================================
 Responsive Stying
 =========================================
 *****************************************/
-
 @media (max-width: 768px) {
     aside.left-panel.collapsed {
         width: 250px;
         height: 3000px;
-        left: 0px;
+        left: 0;
         /*overflow:hidden !important;*/
     }
     aside.left-panel.collapsed + .content {
-        margin-left: 0px;
+        margin-left: 0;
         transform: translate3d(250px, 0px, 0px);
         -ms-transform: translate3d(250px, 0px, 0px);
         -webkit-transform: translate3d(250px, 0px, 0px);
         -moz-transition: translate3d(250px, 0px, 0px);
-        -o-transition: translate3d(250px, 0px, 0px)
+        -o-transition: translate3d(250px, 0px, 0px);
     }
     aside.left-panel {
         left: 100%;
     }
     section.content {
-        margin-left: 0px;
+        margin-left: 0;
     }
     .content > .container-fluid {
         padding-left: 15px;
         padding-right: 15px;
     }
     .page-header h1 {
-        margin-top: 0px;
+        margin-top: 0;
     }
 }
 @media (max-width: 450px) {
@@ -1194,14 +1156,13 @@ Responsive Stying
         right: 44px;
     }
 }
-
 /****************************************
 =========================================
 Just For Demo / Showcase
 =========================================
 *****************************************/
-
-.showcase-btn li, .showcase-btn {
+.showcase-btn,
+.showcase-btn li {
     margin-bottom: 10px;
 }
 .showcase-switch-button {
@@ -1268,7 +1229,7 @@ div.standard-not-relevant-page {
     margin-top: -15px;
     margin-bottom: 8px;
 }
-.row.row-mid>div {
+.row.row-mid > div {
     margin-bottom: -15px;
 }
 .panel-body.success {
@@ -1345,13 +1306,14 @@ div.standard-not-relevant-page {
 tr.suggestion:hover .btn-hover-show-group {
     display: inline-block;
 }
-tr.suggestion.success:hover .btn-hover-show-group, tr.suggestion.danger:hover .btn-hover-show-group {
+tr.suggestion.danger:hover .btn-hover-show-group,
+tr.suggestion.success:hover .btn-hover-show-group {
     display: none;
 }
 hr {
     margin-top: 30px;
     margin-bottom: 20px;
-    border-top: 0px solid #7e818d;
+    border-top: 0 solid #7e818d;
     border-bottom: 2px solid #7e818d;
 }
 .info-button {
@@ -1403,36 +1365,56 @@ hr {
     height: 75px;
 }
 .nav-tabs-tall {
-    border-bottom-width: 0px;
+    border-bottom-width: 0;
 }
-.nav-tabs>li a {
+.nav-tabs > li a {
     border: 1px solid #ddd;
     background-color: #EEE;
-    margin-right:10px;
-    margin-top:10px;
+    margin-right: 10px;
+    margin-top: 10px;
 }
-.nav-tabs>li a:hover {
+.nav-tabs > li a:hover {
     border: 1px solid #ddd;
     border-bottom: 0;
 }
-.nav-tabs>li a.active {
+.nav-tabs > li a.active {
     border-bottom: 2px solid white;
 }
 .nav-tabs a.active {
     border-bottom: 2px solid white;
     background-color: blue;
 }
-
 /*support for slightly wider desktops */
-
-.col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12 {
+.col-xl-1,
+.col-xl-10,
+.col-xl-11,
+.col-xl-12,
+.col-xl-2,
+.col-xl-3,
+.col-xl-4,
+.col-xl-5,
+.col-xl-6,
+.col-xl-7,
+.col-xl-8,
+.col-xl-9 {
     position: relative;
     min-height: 1px;
     padding-right: 15px;
     padding-left: 15px;
 }
 @media (min-width: 1300px) {
-    .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12 {
+    .col-xl-1,
+    .col-xl-10,
+    .col-xl-11,
+    .col-xl-12,
+    .col-xl-2,
+    .col-xl-3,
+    .col-xl-4,
+    .col-xl-5,
+    .col-xl-6,
+    .col-xl-7,
+    .col-xl-8,
+    .col-xl-9 {
         float: left;
     }
     .col-xl-12 {
@@ -1454,9 +1436,7 @@ hr {
 .btn-copy {
     color: orange;
 }
-
 /* thanks fly in message */
-
 .flyover {
     position: fixed;
     left: 150%;
@@ -1511,20 +1491,14 @@ td > .fa-caret-down {
     color: white;
     border-color: #70ba63;
     font-size: 14px;
-    padding-bottom: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
+    padding: 10px 15px;
 }
 .panel-heading-htn {
     background-color: #70ba63;
     color: white;
     border-color: #70ba63;
     font-size: 14px;
-    padding-bottom: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
+    padding: 10px 15px;
 }
 .panel-htn {
     border-color: #70ba63;
@@ -1539,10 +1513,7 @@ td > .fa-caret-down {
     border-color: #7f7fff;
     font-size: 14px;
     font-weight: bold;
-    padding-bottom: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
+    padding: 10px 15px;
 }
 .panel-heading-ckd {
     background-color: #7f7fff;
@@ -1550,10 +1521,7 @@ td > .fa-caret-down {
     border-color: #7f7fff;
     font-size: 14px;
     font-weight: bold;
-    padding-bottom: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
+    padding: 10px 15px;
 }
 .panel-heading-asthma {
     background-color: #7f7fff;
@@ -1561,10 +1529,7 @@ td > .fa-caret-down {
     border-color: #7f7fff;
     font-size: 14px;
     font-weight: bold;
-    padding-bottom: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
+    padding: 10px 15px;
 }
 .panel-af {
     border-color: #7f7fff;
@@ -1588,17 +1553,15 @@ td > .fa-caret-down {
     border-style: dashed;
 }
 .user img {
-    border: 0px;
+    border: 0;
     width: 75px;
     height: 75px;
 }
 .user.text-center.clickable:hover {
     color: white;
-    transition: color .2s ease;
+    transition: color 0.2s ease;
 }
-
 /* Better widths for container */
-
 @media (min-width: 768px) {
     .container {
         width: 538px;
@@ -1624,30 +1587,22 @@ td > .fa-caret-down {
         width: 1570px;
     }
 }
-
 /*
 To stop screen shifting left slightly on modal popup
 see https://github.com/twbs/bootstrap/issues/9855
 mod
 */
-
 .modal-open {
     padding-right: 0 !important;
 }
-
 /* position the dialog a bit lower down the screen */
-
 .modal-dialog {
     margin-top: 300px;
 }
-
 /* Change header*/
-
-
 /*.modal-content {
   background-color: #0480be;
 }*/
-
 .modal-header {
     padding: 9px 15px;
     border-bottom: 1px solid #eee;
@@ -1671,7 +1626,7 @@ nav.part {
     left: 75px;
 }
 header {
-    background-color: #f2f2f4;
+    background-color: $background;
     border-bottom: 1px solid #ececee;
     padding-top: 4px;
     padding-bottom: 4px;
@@ -1707,12 +1662,11 @@ header {
     cursor: default;
 }
 .c3-target-larger path {
-    stroke-width: 0px;
+    stroke-width: 0;
 }
 .c3-target-larger circle {
     r: 10px;
 }
-
 /*
 #chart-benchmark .c3-line {
 	stroke-width: 0px;
@@ -1723,16 +1677,16 @@ header {
 	padding-bottom: 10px;
 	padding-top: 5px;
 }*/
-
 .tr-hovered {
     background-color: rgb(244, 244, 255);
 }
-
 /*.btn-toggle {
 	opacity:0.5;
 }*/
-
-.table.table-body-hidden tbody tr, .table.table-head-hidden thead tr, .table.table-body-hidden tbody tr td, .table.table-head-hidden thead tr th {
+.table.table-body-hidden tbody tr,
+.table.table-body-hidden tbody tr td,
+.table.table-head-hidden thead tr,
+.table.table-head-hidden thead tr th {
     visibility: collapse;
     line-height: 0;
     padding-top: 0;
@@ -1740,14 +1694,15 @@ header {
     border-top: 0;
     border-bottom: 0;
 }
-.table.table-body-hidden tbody tr td button, .table.table-head-hidden thead tr th i {
-    height: 0px;
+.table.table-body-hidden tbody tr td button,
+.table.table-head-hidden thead tr th i {
+    height: 0;
     padding-top: 0;
     padding-bottom: 0;
     border-width: 0;
 }
 .table.table-body-hidden {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 .btn-toggle.inactive {
     opacity: 0.5;
@@ -1781,8 +1736,8 @@ header {
 .shorty {
     margin-left: 75px;
 }
-.navbar-nav>li>.btn-group {
-    padding: 8px 15px 8px 15px;
+.navbar-nav > li > .btn-group {
+    padding: 8px 15px;
 }
 .navbar-toggle {
     display: block;
@@ -1799,34 +1754,34 @@ header {
     background-color: #70ba63;
 }
 .starter-template {
-    padding: 112px 15px 0px 15px;
+    padding: 112px 15px 0;
 }
 .starter-template-high {
-    padding: 15px 15px 0px 15px;
+    padding: 15px 15px 0;
 }
-.table>tbody>tr.suggestion.danger td span {
+.table > tbody > tr.suggestion.danger td span {
     text-decoration: line-through;
 }
-.table>tbody>tr.suggestion.active > td {
+.table > tbody > tr.suggestion.active > td {
     background-color: rgb(223, 240, 216);
     color: #222;
 }
-.table>tbody>tr.suggestion.success td span {
+.table > tbody > tr.suggestion.success td span {
     text-decoration: line-through;
     color: #85868d;
 }
-.table>tbody>tr.show-more-row.danger td span {
+.table > tbody > tr.show-more-row.danger td span {
     text-decoration: line-through;
 }
-.table>tbody>tr.show-more-row.active > td {
+.table > tbody > tr.show-more-row.active > td {
     background-color: rgb(223, 240, 216);
     color: #222;
 }
-.table>tbody>tr.show-more-row.success td span {
+.table > tbody > tr.show-more-row.success td span {
     text-decoration: line-through;
     color: #85868d;
 }
-.table>tbody>tr.suggestion.success td label.btn-toggle span {
+.table > tbody > tr.suggestion.success td label.btn-toggle span {
     color: #fff;
 }
 tr.suggestion.success label.btn-toggle.btn-success.active {
@@ -1844,14 +1799,12 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .btn-padding {
     position: relative;
     overflow: hidden;
-    margin: 8px 0px;
+    margin: 8px 0;
 }
-
 /*
  * Better file loading buttons#
  *  courtesy of Cory LaViska http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
  */
-
 .btn-file {
     position: relative;
     overflow: hidden;
@@ -1878,7 +1831,6 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .table-small-margin {
     margin-bottom: 10px;
 }
-
 /*
 .form-horizontal .control-label {
   padding-top: 4px;
@@ -1892,21 +1844,16 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .input-group .form-control {
   margin:0;
 }*/
-
-
 /* ------------------ Login page --------------------*/
-
 .login-page > .login-container {
     width: 360px;
     margin-top: -80px;
     padding-top: 50px;
 }
-
 /*
 .narrow-container{
   width: 360px;
 }*/
-
 .login-page .login-panel {
     margin-top: 40px;
 }
@@ -1925,7 +1872,6 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .c3-chart-arc text {
     fill: #000;
 }
-
 /*
 .dashboard-stats .view-style {
 	opacity: 1;
@@ -1934,17 +1880,17 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 	padding: 7px 0px 15px 0px;
 	color: rgb(95, 175,245);
 }*/
-
-
 /*
 .fa-check-circle:before {
   content: "\f058";
 }*/
-
-table, th, td {
+table,
+td,
+th {
     border-collapse: collapse;
 }
-th, td {
+td,
+th {
     padding: 30px;
 }
 .top-tab-pane {}
@@ -1973,32 +1919,28 @@ th, td {
     padding: 5px;
 }
 .sub-tab-pane > .panel .panel {
-    padding-bottom: 0px;
-    margin: 0 0 5px 0;
+    padding-bottom: 0;
+    margin: 0 0 5px;
 }
 .table-scroll {
-    max-height: 270px;
+    max-height: 170px;
 }
 .table-scroll .table {
     margin-bottom: 0;
 }
-.top-tab-pane>.panel>.panel-body>div>.table-scroll {
+.top-tab-pane > .panel > .panel-body > div > .table-scroll {
     max-height: 500px;
 }
-.all-patients>.table-scroll {
+.all-patients > .table-scroll {
     max-height: 700px;
 }
-
 /*.soon {
 	font-size: 64px;
 	text-align: center;
 }*/
-
-
 /*************************************
 *	Pathway code
 **************************************/
-
 .cd-container {
     /* this class is used to give a max-width to the element it is applied to, and center it horizontally when it reaches that max-width */
     width: 90%;
@@ -2044,20 +1986,19 @@ th, td {
 .cd-timeline-block:last-child {
     margin-bottom: 0;
 }
-
 /**********************************/
-
-
 /* Typeahead for patient searching
 ************************************/
-
-.tt-dropdown-menu, .gist {
+.gist,
+.tt-dropdown-menu {
     text-align: left;
 }
-.typeahead, .tt-query, .tt-hint {
+.tt-hint,
+.tt-query,
+.typeahead {
     width: 396px;
     height: 30px;
-    padding: 0px 12px;
+    padding: 0 12px;
     font-size: 13px;
     line-height: 30px;
     border: 2px solid #ccc;
@@ -2078,7 +2019,7 @@ th, td {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 .tt-hint {
-    color: #999
+    color: #999;
 }
 .tt-dropdown-menu {
     width: 422px;
@@ -2109,10 +2050,15 @@ th, td {
 .gist {
     font-size: 14px;
 }
-.twitter-typeahead, .tt-hint, .tt-input {
+.tt-hint,
+.tt-input,
+.twitter-typeahead {
     height: 36px;
 }
-.twitter-typeahead, .tt-hint, .tt-input, .tt-dropdown-menu {
+.tt-dropdown-menu,
+.tt-hint,
+.tt-input,
+.twitter-typeahead {
     width: 100%;
     max-width: 500px;
     /*  height: 36px;*/
@@ -2133,28 +2079,22 @@ th, td {
     color: #c4c4cd;
     display: inline-block;
 }
-
 /* Fix for c3 flicker whereby
    extra svg elements at the bottom
    of the page cause the vertical
    scrollbar to toggle  */
-
 body > svg {
     /*height:0px !important;*/
     position: absolute;
     z-index: -10;
     top: 0;
 }
-
 /* Define a class for a padding less row*/
-
-.row-no-padding>div {
+.row-no-padding > div {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
-
 /* Allow column to stretch to height of container*/
-
 .tooltip-inner-saved {
     color: white;
     background: #00b20b;
@@ -2193,7 +2133,6 @@ body > svg {
 .h-navigator-chart {
     height: 60px;
 }
-
 /*
 .nav-tabs.nav-wizard > li {
   position: relative;
@@ -2274,7 +2213,6 @@ body > svg {
   border-color: #fff #fff #fff transparent;
 }
 */
-
 .panel.affix {
     width: 31%;
 }
@@ -2378,25 +2316,25 @@ body > svg {
     }
 }
 .fp-controlArrow.fp-prev {
-    border-color: transparent #eee;
+    border-color: transparent $arrowColour;
 }
 .fp-controlArrow.fp-next {
-    border-color: transparent #eee;
+    border-color: transparent $arrowColour;
 }
 .fp-controlArrow.fp-up {
     bottom: auto;
-    top: 0px;
+    top: 35px;
     left: 50%;
     width: 0;
     border-width: 0 38.5px 34px 38.5px;
-    border-color: #eee transparent;
+    border-color: $arrowColour transparent;
 }
 .fp-controlArrow.fp-down {
     top: auto;
-    bottom: 130px;
+    bottom: 135px;
     left: 50%;
     border-width: 34px 38.5px 0 38.5px;
-    border-color: #eee transparent transparent transparent;
+    border-color: $arrowColour transparent transparent transparent;
 }
 .fp-controlArrow div {
     margin-left: 25px;
@@ -2412,88 +2350,80 @@ body > svg {
     font-weight: bold;
     color: #333333;
 }
-
 .show-more {
-  cursor: pointer;
+    cursor: pointer;
 }
-
 .show-more-row {
-  display:none;
+    display: none;
 }
-
+.suggestion {
+    background-color: #f5f5f5;
+}
+.standard-row,.show-more-row {
+  background-color: #fafafa;
+}
 .standard-row.hover {
     background-color: #eee;
     cursor: pointer;
 }
-
+.alternate-row {
+  background-color: white;
+}
 .show-more-row.hover {
     background-color: #eee;
     cursor: pointer;
 }
-
-.table>tbody>tr.show-more-row>td {
-  border-top-width: 0;
+.table > tbody > tr.show-more-row > td {
+    border-top-width: 0;
 }
-
 .title-row {
-  display:none;
-  font-size:20px;
-  position: fixed;
-  top: 75px;
-  left: 15px;
-  right: 15px;
-  border-right: 1px solid rgb(221, 221, 221);;
-  border-left: 1px solid rgb(221, 221, 221);;
-  background: white;
-  padding-top:10px;
-  padding-left:30px;
-  padding-right:15px;
-  z-index:100;
-  min-height:46px;
-  text-align: center;
+    display: none;
+    font-size: 20px;
+    position: fixed;
+    top: 75px;
+    left: 15px;
+    right: 15px;
+    border-right: 1px solid rgb(221, 221, 221);
+    border-left: 1px solid rgb(221, 221, 221);
+    background: white;
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 15px;
+    z-index: 100;
+    min-height: 46px;
+    text-align: center;
 }
-
 #title-left {
-  font-size: 28px;
-  font-weight: bold;
+    font-size: 28px;
+    font-weight: bold;
 }
-
 .perf-bullet {
-  font-size: larger;
+    font-size: larger;
 }
-
 .perf-bullet-msg {
-  font-style: italic;
+    font-style: italic;
 }
-
 .pastel-blue {
-  background-color: #f9ffff;
+    background-color: #f9ffff;
 }
-
 .pastel-pink {
-  background-color: #fff9ff;
+    background-color: #fff9ff;
 }
-
 .pastel-yellow {
-  background-color: #fffff9;
+    background-color: #fffff9;
 }
-
 .pastel-purple {
-  background-color: #f9f9ff;
+    background-color: #f9f9ff;
 }
-
 .pastel-green {
-  background-color: #f9fff9;
+    background-color: #f9fff9;
 }
-
 .pastel-orange {
-  background-color: #fff9f9;
+    background-color: #fff9f9;
 }
-
 .black {
-  color: black;
+    color: black;
 }
-
 .f20 {
-  font-size:20px;
+    font-size: 20px;
 }

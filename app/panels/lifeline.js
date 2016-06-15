@@ -32,6 +32,10 @@ var ll = {
     var element = 'lifeline-chart';
     var elementId = '#' + element;
 
+    //Most recent max date of series minus one month or 1 year whichever is most
+    var minMaxDate=new Date();
+    minMaxDate.setMonth(minMaxDate.getMonth()-11);
+
     ll.destroy(elementId);
 
     var htmlElement = $('<div class="panel panel-default"><div class="panel-body"><div id="' + element + '"></div></div></div>');
@@ -100,9 +104,16 @@ var ll = {
           data: [],
           color: colour.next()
         };
+
+        var latestIntervalEndDate;
+
         $.each(task.intervals, function(j, interval) {
+          if(!latestIntervalEndDate) latestIntervalEndDate = interval.to;
+          else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
           item.data.push([i + 0.49, interval.from, interval.to]);
         });
+
+        if(latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
 
         series.push(item);
       });
@@ -116,7 +127,10 @@ var ll = {
       };
       var contactSeries = {};
       var eventSeries = {};
+      var latestContact;
       $.each(contacts, function(i, contact) {
+        if(!latestContact) latestContact = contact.time;
+        else latestContact = Math.max(latestContact, contact.time);
         if (!contactSeries[contact.name]) {
           contactSeries[contact.name] = Highcharts.extend(contact, {
             data: [],
@@ -130,8 +144,12 @@ var ll = {
               contact.time
           ]);
       });
+      if(latestContact) minMaxDate = Math.min(latestContact, minMaxDate);
 
+      var latestImportantCode;
       $.each(importantCodes, function(i, event) {
+        if(!latestImportantCode) latestImportantCode = event.time;
+        else latestImportantCode = Math.max(latestImportantCode, event.time);
         if (!eventSeries[event.name]) {
           eventSeries[event.name] = Highcharts.extend(event, {
             data: [],
@@ -145,6 +163,8 @@ var ll = {
               event.time
           ]);
       });
+
+      if(latestImportantCode) minMaxDate = Math.min(latestImportantCode, minMaxDate);
 
       series = series.concat(Object.keys(contactSeries).map(function(key) {
         return contactSeries[key];
@@ -287,15 +307,19 @@ var ll = {
 
     var plotMeasurements = function(measurements) {
       $(elementId).append($('<div class="chart-title">Patient measurements</div>'));
+      //Make measurements alphabetical so they are always in the same order
+      measurements.sort(function(a,b){
+        if(a.name<b.name) return -1;
+        if(a.name>b.name) return 1;
+        return 0;
+      });
       $.each(measurements, function(i, dataset) {
         ll.charts++;
-        // Add X values
-        /*if (dataset.data && typeof dataset.data[0] !== "object") {
-          dataset.data = Highcharts.map(dataset.data, function(val, j) {
-            return [measurements.xData[j], val];
-          });
-        }*/
-
+        var maxMeasurementDate=0;
+        dataset.data.forEach(function(v){
+          maxMeasurementDate = Math.max(maxMeasurementDate, v[0]);
+        });
+        minMaxDate = Math.min(minMaxDate, maxMeasurementDate);
         var chartOptions = {
           chart: {
             marginLeft: 120, // Keep all charts left aligned
@@ -676,11 +700,14 @@ var ll = {
         });
     };
 
+    minMaxDate.setMonth(minMaxDate.getMonth()-1); //gives 1 month padding
+
     plotConditions(data.conditions, data.events, data.contacts);
     plotMeasurements(data.measurements);
     var c = plotMedications(data.medications);
     plotNavigator();
-    c.highcharts().axes[1].setExtremes(1434864000000, 1459814400000, undefined, false, {
+    var today = new Date().getTime();
+    c.highcharts().axes[1].setExtremes(minMaxDate, today, undefined, false, {
       trigger: 'syncExtremes'
     });
 
@@ -689,8 +716,8 @@ var ll = {
     var s = syncExtremes.bind(c.highcharts().series[0]);
     s({
       trigger: 'navigator',
-      min: 1434864000000,
-      max: 1459814400000
+      min: minMaxDate,
+      max: today
     });
   }
 

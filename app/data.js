@@ -277,6 +277,8 @@ var dt = {
     dt.indicators = file.indicators;
     dt.pathwayNames = {};
 
+    if(file.text) dt.text = file.text;
+
     dt.indicators.forEach(function(indicator) {
       var last = indicator.values[0].length-1;
       var pathwayId = indicator.id.split(".")[0];
@@ -293,16 +295,16 @@ var dt = {
       indicator.up = percentage > Math.round(100 * indicator.values[1][last-1] * 100 / indicator.values[2][last-1]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
         return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
-      }).slice(Math.max(1,last-10), 10);
+      }).slice(Math.max(1,last-10), Math.max(1,last-10)+11);
       //trend.reverse();
       indicator.trend = trend.join(",");
-      var dates = indicator.values[0].slice(Math.max(1,last-10), 10);
+      var dates = indicator.values[0].slice(Math.max(1,last-10), Math.max(1,last-10)+11);
       //dates.reverse();
       indicator.dates = dates;
-      if (dt.text[pathwayId] && dt.text[pathwayId][pathwayStage] && dt.text[pathwayId][pathwayStage].standards[standard]) {
-        indicator.description = dt.text[pathwayId][pathwayStage].standards[standard].description;
-        indicator.tagline = dt.text[pathwayId][pathwayStage].standards[standard].tagline;
-        indicator.positiveMessage = dt.text[pathwayId][pathwayStage].standards[standard].positiveMessage;
+      if (dt.text.pathways[pathwayId] && dt.text.pathways[pathwayId][pathwayStage] && dt.text.pathways[pathwayId][pathwayStage].standards[standard]) {
+        indicator.description = dt.text.pathways[pathwayId][pathwayStage].standards[standard].description;
+        indicator.tagline = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tagline;
+        indicator.positiveMessage = dt.text.pathways[pathwayId][pathwayStage].standards[standard].positiveMessage;
       } else {
         indicator.description = "No description specified";
         indicator.tagline = "";

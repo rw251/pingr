@@ -49,25 +49,25 @@ var ind = {
 
       if (!pathwayStage) {
         if (layout.pathwayStage) pathwayStage = layout.pathwayStage;
-        else pathwayStage = Object.keys(data.text[pathwayId])[0];
+        else pathwayStage = Object.keys(data.text.pathways[pathwayId])[0];
       }
 
       if (!standard) {
         if (layout.standard) standard = layout.standard;
-        else standard = Object.keys(data.text[pathwayId][pathwayStage].standards)[0];
+        else standard = Object.keys(data.text.pathways[pathwayId][pathwayStage].standards)[0];
       }
 
       //if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
-        //different pathway or stage so title needs updating
-        base.updateTitle(data.text[pathwayId][pathwayStage].standards[standard].name);
-        /*base.updateTitle([{
-          title: "Overview",
-          url: "#overview"
-        }, {
-          title: data.text[pathwayId][pathwayStage].text.page.text,
-          tooltip: data.text[pathwayId][pathwayStage].text.page.tooltip
-        }]);
-        $('#mainTitle').show();*/
+      //different pathway or stage so title needs updating
+      base.updateTitle(data.text.pathways[pathwayId][pathwayStage].standards[standard].name);
+      /*base.updateTitle([{
+        title: "Overview",
+        url: "#overview"
+      }, {
+        title: data.text.pathways[pathwayId][pathwayStage].text.page.text,
+        tooltip: data.text.pathways[pathwayId][pathwayStage].text.page.tooltip
+      }]);
+      $('#mainTitle').show();*/
       //}
 
       layout.pathwayId = pathwayId;
@@ -81,7 +81,7 @@ var ind = {
       //Panels decide whether they need to redraw themselves
       teamActionPlan.show(farLeftPanel);
 
-      base.updateTab("indicators", data.text[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
+      base.updateTab("indicators", data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 
       wrapper.show(farRightPanel, false, [
         {
@@ -108,7 +108,20 @@ var ind = {
         }
       ], false, "Performance over time");
 
+      if ($('#addedCSS').length === 0) {
+        $('head').append('<style id="addedCSS" type="text/css">.table-scroll {max-height:170px;}');
+      }
+
       base.addFullPage(farRightPanel);
+      /*console.log("WINDOW HEIGHT: " + $(window).height());
+      console.log("TABLE TOP: " + $('.table-scroll').position().top);
+      console.log("CSS: " + Math.floor($(window).height()-$('.table-scroll').position().top-200)+"px");*/
+      $('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
+
+      $(window).off('resize').on('resize', function() {
+        var win = $(this); //this = window
+        $('#addedCSS').text('.table-scroll {max-height:' + Math.floor(win.height() - $('.table-scroll').position().top - 200) + 'px;}');
+      });
 
       $('#indicator-pane').show();
 

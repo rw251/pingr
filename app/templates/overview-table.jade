@@ -7,11 +7,12 @@
           th Performance
           th Target
           th Benchmark
-          th
-          th
+          th Change
+          th Trend
       tbody
+        - var alt=false
         each indicator in indicators
-          tr.standard-row(data-id=indicator.id)
+          tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
             td
               strong= indicator.name
               br
@@ -30,9 +31,10 @@
                 i.fa.fa-2x.fa-caret-down
             td
               span.inlinesparkline= indicator.trend
-          tr.show-more-row(data-id=indicator.id)
+          tr.show-more-row(data-id=indicator.id,class=alt ? 'alternate-row': '')
             td(colspan='6')!= indicator.description
                 br
                 a.show-more(data-id=indicator.id)
                   | Show less 
                   i.fa.fa-caret-up
+          - alt = !alt

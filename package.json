@@ -4,29 +4,21 @@
   "description": "The performance improvement plan generator",
   "main": "script.js",
   "scripts": {
-    "bstart": "brunch watch --server",
-    "bbuild": "brunch build --production",
-    "postbbuild": "cp -r dist/* dist-test/",
+    "start": "brunch watch --server",
+
+    "build": "brunch build --production",
+    "postbuild": "cp -r dist/* dist-test/" ,
+
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors script.js data.json",
-    "clean": "rimraf dist",
-    "postclean": "mkdir dist",
-    "prebuild": "npm run clean && cp node_modules/zeroclipboard/dist/ZeroClipboard.swf dist/",
-    "build": "browserify --debug script.js -o dist/script.js",
-    "postbuild": "uglifyjs dist/script.js --output dist/script.min.js --source-map dist/script.min.js.map --source-map-url /dist/script.min.js.map --source-map-root /",
-    "serve": "http-server -o -p 9090 .",
-    "serve:x": "http-server -p 9090 .",
-    "predemo": "npm run build",
-    "predemo:x": "npm run build",
-    "demo": "npm run serve -s",
-    "demo:x": "npm run serve:x -s",
-    "watch": "nodemon -i dist -q --exec npm run demo:x",
-    "precommit": "git add --all",
-    "commit": "git diff-index --quiet HEAD || git commit -m \"Changes\"",
-    "postcommit": "git push origin",
-    "predeploy": "cd dist-test && git pull origin gh-pages",
-    "deploy": "npm run bbuild",
-    "postdeploy": "cd dist-test && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages"
+
+    "predeploy": "cd dist && git pull origin gh-pages",
+    "deploy": "npm run build",
+    "postdeploy" :"cd dist && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages",
+
+    "predeploy:test": "cd dist-test && git pull origin gh-pages",
+    "deploy:test": "npm run build",
+    "postdeploy:test" :"cd dist-test && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages"
   },
   "repository": {
     "type": "git",

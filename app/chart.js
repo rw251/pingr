@@ -570,21 +570,21 @@ var cht = {
           click: function(event) {
             selectSeriesFn();
 
-            if (cht.cloneToolTip) {
+            /*if (cht.cloneToolTip) {
               this.container.firstChild.removeChild(cht.cloneToolTip);
               cht.cloneToolTip = null;
             }
             if (cht.cloneToolTip2) {
               cht.cloneToolTip2.remove();
               cht.cloneToolTip2 = null;
-            }
+            }*/
 
             return false;
           }
         }
       },
       title: {
-        text: 'Patients not meeting the standard'
+        text: 'Patients with improvement opportunities'
       },
       subtitle: {
         text: document.ontouchstart === undefined ?
@@ -615,7 +615,7 @@ var cht = {
         animation: false,
 
         formatter: function() {
-          return this.point.desc.match(/.{1,40}[^ ]* ?/g).join("<br>");
+          return this.point.desc.replace(/<a[^h]+href=[\"'].*?[\"'][^h]*>(.*?)<\/a>/,"$1").match(/.{1,40}[^ ]* ?/g).join("<br>");
         },
 
         style: {
@@ -643,7 +643,7 @@ var cht = {
 
                 selectSeriesFn(this.category);
 
-                if (cht.cloneToolTip) {
+                /*if (cht.cloneToolTip) {
                   this.series.chart.container.firstChild.removeChild(cht.cloneToolTip);
                 }
                 if (cht.cloneToolTip2) {
@@ -653,7 +653,7 @@ var cht = {
                 this.series.chart.container.firstChild.appendChild(cht.cloneToolTip);
 
                 cht.cloneToolTip2 = $('.highcharts-tooltip').clone();
-                $(this.series.chart.container).append(cht.cloneToolTip2);
+                $(this.series.chart.container).append(cht.cloneToolTip2);*/
 
                 return false;
               }

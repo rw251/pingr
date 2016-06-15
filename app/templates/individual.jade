@@ -9,8 +9,9 @@ else
         th
         th(style='width: 105px')
     tbody
+      - var alt = false
       each suggestion in suggestions
-        tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined)
+        tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined, class=alt ? 'alternate-row': '')
           td
             span(data-subsection=suggestion.subsection)
               strong.black.f20!= suggestion.short
@@ -22,7 +23,7 @@ else
           td
             +thumbs(suggestion)
         if suggestion.long
-          tr.show-more-row(data-id=suggestion.id)
+          tr.show-more-row(data-id=suggestion.id, class=alt ? 'alternate-row': '')
             td(colspan='2')!= suggestion.long
             if !suggestion.reason
               br
@@ -30,11 +31,12 @@ else
                 | Show less 
                 i.fa.fa-caret-up
         if suggestion.reason
-          tr.show-more-row(data-id=suggestion.id)
+          tr.show-more-row(data-id=suggestion.id, class=alt ? 'alternate-row': '')
             td(colspan='2')
               != suggestion.reason
               br
               a.show-more(data-id=suggestion.id)
                 | Show less 
                 i.fa.fa-caret-up
+        - alt = !alt
 include mixins/personal-action-plan
