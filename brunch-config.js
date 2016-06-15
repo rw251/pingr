@@ -1,21 +1,17 @@
 module.exports = {
   // See http://brunch.io for documentation.
   paths: {
-    public: 'dist'
+    public: 'dist',
+    watched: ['app','vendor','server']
   },
 
   files: {
     javascripts: {
       joinTo: {
-        'libraries.js': /^(?!app\/)/
+        'libraries.js': /^(?!(app|server)\/)/
       },
       order: {
         before: [
-          /*'vendor/scripts/console-helper.js',
-          'vendor/scripts/jquery-1.9.0.min.js',
-          'vendor/scripts/handlebars-1.0.rc.2.js',
-          'vendor/scripts/ember-latest.js',
-          'vendor/scripts/ember-data-latest.js',*/
           'vendor/scripts/bootstrap.js'
           ]
       },
@@ -36,9 +32,19 @@ module.exports = {
       joinTo: 'app.js'
     }
   },
+  hooks: {
+    onCompile: function(generatedFiles, changedAssets) {
+      if(changedAssets.length === changedAssets.filter(function(v){
+        return v.path.search(/^server/);
+      }).length) {
+          console.log("NEED TO RESTART");
+      }
+    }
+  }
+  /*,
 
   server : {
     run: true,
-    port: 3001
-  }
+    port: 3333
+  }*/
 };

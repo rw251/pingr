@@ -6,6 +6,11 @@
   "scripts": {
     "start": "brunch watch --server",
 
+    "watch": "brunch watch",
+
+    "predebug": "echo In one window launch brunch without server: npm run watch",
+    "debug": "echo Then in second window launch server with debug: node-debug app.js",
+
     "build": "brunch build --production",
     "postbuild": "cp -r dist/* dist-test/" ,
 

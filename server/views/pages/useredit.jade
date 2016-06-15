@@ -1,0 +1,15 @@
+include ../partials/head.jade
+a.btn.btn-info(href='/admin') Back to user list
+form(action='/edit/'+user.email, method='post')
+  label(for='fullname') Full name:
+  input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='', value=user.fullname)
+  label(for='email') Email:
+  input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='', value=user.email)
+  .form-group
+    label.cr-styled
+      input(name='isAdmin', type='checkbox', checked=user.roles.indexOf('admin')>-1 ? 'checked' : undefined)
+      i.fa
+    |               Is Admin
+  button.btn.btn-purple.btn-block.history(type='submit')
+    | Update
+    span.fa.fa-arrow-circle-right

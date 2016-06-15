@@ -15,7 +15,7 @@ var main = {
   "version": "2.0.0",
 
   hash: hash,
-  init: function() {
+  init: function(callback) {
     main.preWireUpPages();
 
     log.loadActions(function() {

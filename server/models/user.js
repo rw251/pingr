@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
   SALT_WORK_FACTOR = 10;
 
 var UserSchema = new Schema({
-  username: {
+  email: {
     type: String,
     required: true,
     index: {
@@ -18,7 +18,8 @@ var UserSchema = new Schema({
   fullname: {
     type: String,
     required: true
-  }
+  },
+  roles:[String]
 });
 
 UserSchema.pre('save', function(next) {

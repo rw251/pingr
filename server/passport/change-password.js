@@ -2,7 +2,7 @@ var User = require('../models/user');
 
 module.exports = function(req, res, next) {
   User.findOne({
-    'username': req.user.username
+    'email': req.user.email
   }, function(err, user) {
     // In case of any error, return using the done method
     if (err) {

@@ -33,11 +33,11 @@ var App = {
     $(document).on('ready', function() {
       //Grab the hash if exists - IE seems to forget it
       main.hash = location.hash;
-
+      main.hash="#overview";
       //CHANGE THIS - added to spoof login
-      location.hash = "";
-      main.hash = "";
-      $('#signin').on('click', function() {
+      //location.hash = "";
+      //main.hash = "";
+    /*  $('#signin').on('click', function() {
         if ($('#inpEmail').val().length < 8) alert("Please enter your email address.");
         else {
           console.log('{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '"}}');
@@ -58,13 +58,13 @@ var App = {
           history.pushState(null, null, '#overview');
           template.loadContent('#overview');
         }
-      });
-      $('#inpEmail').on('keyup', function(e) {
+      });*/
+      /*$('#inpEmail').on('keyup', function(e) {
         var code = e.which;
         if (code == 13) {
           $('#signin').click();
         }
-      });
+      });*/
 
       //Load the data then wire up the events on the page
       main.init();
@@ -78,9 +78,9 @@ var App = {
         });
       }
 
-      if (JSON.parse(localStorage.bb).email) {
+      /*if (JSON.parse(localStorage.bb).email) {
         $('#inpEmail').val(JSON.parse(localStorage.bb).email);
-      }
+      }*/
 
       $('[data-toggle="tooltip"]').tooltip({
         container: 'body',
@@ -101,8 +101,8 @@ var App = {
         $('[data-toggle="tooltip"]').not(this).tooltip('hide');
       });
 
-      //ensure on first load the login screen is cached to the history
-      history.pushState(null, null, '');
+      /*history.pushState(null, null, '#overview');
+      template.loadContent('#overview');*/
     });
   }
 };
