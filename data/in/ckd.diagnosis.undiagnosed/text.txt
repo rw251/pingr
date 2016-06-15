@@ -9,7 +9,10 @@ dateORvalue	value
 tableTitle	All patients with improvement opportunities
 opportunities.addCode.name	Add a diagnostic code
 opportunities.addCode.description	Patients who have CKD <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">according to their latest eGFR and/or ACR readings</a> but have no CKD code in their record.
+opportunities.addCode.positionInBarChart	1
 opportunities.acrTest.name	ACR missing
 opportunities.acrTest.description	Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">CKD diagnosis</a>.
+opportunities.acrTest.positionInBarChart	2
 opportunities.suggestExclude.name	Suggest exclude
 opportunities.suggestExclude.description	Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators.
+opportunities.suggestExclude.positionInBarChart	3
