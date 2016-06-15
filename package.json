@@ -12,6 +12,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors script.js data.json",
 
+    "predeploy": "cd dist && git pull origin gh-pages",
+    "deploy": "npm run build",
+    "postdeploy" :"cd dist && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages",
+
     "predeploy:test": "cd dist-test && git pull origin gh-pages",
     "deploy:test": "npm run build",
     "postdeploy:test" :"cd dist-test && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages"
