@@ -2,6 +2,7 @@ var lifeline = require('../panels/lifeline'),
   data = require('../data'),
   base = require('../base'),
   layout = require('../layout'),
+  lookup = require('../lookup'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
   patientCharacteristics = require('../panels/patientCharacteristics'),
@@ -44,6 +45,8 @@ var pv = {
       base.hidePanels(farLeftPanel);
 
       if (patientId) {
+        lookup.suggestionModalText = "Screen: Patient\nPatient ID: " + patientId + "  - NB this helps us identify the patient but is NOT their NHS number. Please don't send NHS numbers of other identifiable information via this form.\n===========\n";
+
         data.getPatientData(patientId, function(patientData) {
 
           if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
@@ -54,8 +57,13 @@ var pv = {
             var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
             var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
               "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
-            base.updateTitle("Patient " + patid +
-              " - " + patientData.characteristics.age + " year old " + sex);
+            var titleTmpl = require("templates/patient-title");
+            base.updateTitle(titleTmpl({
+              patid: patid,
+              nhs: patid.toString().replace(/ /g, ""),
+              age: patientData.characteristics.age,
+              sex: sex
+            }));
           }
 
           base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
@@ -80,6 +88,8 @@ var pv = {
       } else {
         base.updateTitle("No patient currently selected");
         patientSearch.show(farRightPanel, true, loadContentFn);
+
+        lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
 
         base.wireUpTooltips();
         base.hideLoading();

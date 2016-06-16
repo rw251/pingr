@@ -130,10 +130,10 @@ var pl = {
 
       //add qual standard column
       localData["header-items"].push({
-        "title": "Categories",
-        "titleHTML": 'Categories',
+        "title": "Improvement Opportunities",
+        "titleHTML": 'Improvement Opportunities',
         "isSorted": true,
-        "tooltip": "Categories from above chart"
+        "tooltip": "Improvement opportunities from the bar chart above"
       });
 
       if (sortField === undefined) sortField = 2;

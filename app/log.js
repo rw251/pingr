@@ -24,8 +24,8 @@ var log = {
 
   loadActions: function(callback) {
     var r = Math.random();
-    log.plan=[];
-    log.text=[];
+    log.plan = [];
+    log.text = [];
     callback();
     /*$.getJSON("action-plan.json?v=" + r, function(file) {
       log.plan = file.diseases;
@@ -52,6 +52,29 @@ var log = {
     } else if (agree === false) {
       var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
       logText = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
+
+      var dataToSend = {
+        event: {
+          what: "disagree",
+          when: new Date().getTime(),
+          who: JSON.parse(localStorage.bb).email,
+          detail: [
+            { key: "patient", "value": id },
+            { key: "action", "value": actionId }
+            ]
+        }
+      };
+      if(reason && reason.reason) dataToSend.event.detail.push(  { key: "reason", value: reason.reason });
+      if(reason && reason.reasonText) dataToSend.event.detail.push(  { key: "reasonText", value: reason.reasonText });
+      console.log(dataToSend);
+      $.ajax({
+        type: "POST",
+        url: "http://130.88.250.206:9100/pingr",
+        data: JSON.stringify(dataToSend),
+        success: function(d) { console.log(d); },
+        dataType: "json",
+        contentType: "application/json"
+      });
     }
 
     if (done) {
@@ -280,7 +303,7 @@ var log = {
     notify.showSaved();
   },
 
-  getAgrees: function(){
+  getAgrees: function() {
     return log.getObj([{
       name: "agrees",
       value: {}

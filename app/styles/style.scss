@@ -1,6 +1,5 @@
 $background: #f2f2f4;
 $arrowColour: #bbb;
-
 body {
     background-color: $background;
     color: #85868d;
@@ -1290,10 +1289,17 @@ div.standard-not-relevant-page {
     color: darkgrey;
     box-shadow: inset -2px 0 8px -2px rgba(0, 0, 0, 0.3);
 }
+.btn-copy:hover, .zeroclipboard-is-hover{
+  color: orange;
+  background-color: rgb(241,241,241);
+  border-color: rgb(184,184,184);
+}
+
+/*
 .btn:hover {
     color: white;
     background-color: lightgrey;
-}
+}*/
 .btn-switch.active {
     box-shadow: inset -2px 0 8px -2px rgba(100, 203, 238, 1);
 }
@@ -1366,6 +1372,42 @@ hr {
 }
 .nav-tabs-tall {
     border-bottom-width: 0;
+    width: 1100px;
+}
+@media (max-width: 1600px) {
+    .nav-tabs-tall {
+        width: 1000px;
+    }
+}
+@media (max-width: 1500px) {
+    .nav-tabs-tall {
+        width: 900px;
+    }
+}
+@media (max-width: 1400px) {
+    .nav-tabs-tall {
+        width: 800px;
+    }
+}
+@media (max-width: 1300px) {
+    .nav-tabs-tall {
+        width: 700px;
+    }
+}
+@media (max-width: 1200px) {
+    .nav-tabs-tall {
+        width: 600px;
+    }
+}
+@media (max-width: 1100px) {
+    .nav-tabs-tall {
+        width: 500px;
+    }
+}
+@media (max-width: 1000px) {
+    .nav-tabs-tall {
+        width: 400px;
+    }
 }
 .nav-tabs > li a {
     border: 1px solid #ddd;
@@ -1598,6 +1640,9 @@ mod
 /* position the dialog a bit lower down the screen */
 .modal-dialog {
     margin-top: 300px;
+}
+.modal-dialog.modal-dialog-top {
+    margin-top: 100px;
 }
 /* Change header*/
 /*.modal-content {
@@ -2359,15 +2404,16 @@ body > svg {
 .suggestion {
     background-color: #f5f5f5;
 }
-.standard-row,.show-more-row {
-  background-color: #fafafa;
+.show-more-row,
+.standard-row {
+    background-color: #fafafa;
 }
 .standard-row.hover {
     background-color: #eee;
     cursor: pointer;
 }
 .alternate-row {
-  background-color: white;
+    background-color: white;
 }
 .show-more-row.hover {
     background-color: #eee;

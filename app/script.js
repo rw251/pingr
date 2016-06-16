@@ -40,11 +40,21 @@ var App = {
       $('#signin').on('click', function() {
         if ($('#inpEmail').val().length < 8) alert("Please enter your email address.");
         else {
-          console.log('{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '"}}');
+          var dataToSend = {
+            event: {
+              what: "login",
+              when: new Date().getTime(),
+              who: $("#inpEmail").val(),
+              detail: [
+                { key: "href", value: location.href }
+              ]
+            }
+          };
+          console.log(dataToSend);
           $.ajax({
             type: "POST",
             url: "http://130.88.250.206:9100/pingr",
-            data: '{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '","detail":[{"key":"href","value":"' + location.href +'"}]}}',
+            data: JSON.stringify(dataToSend),
             success: function(d) { console.log(d); },
             dataType: "json",
             contentType: "application/json"
