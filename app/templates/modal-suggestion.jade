@@ -1,0 +1,18 @@
+.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+  .modal-dialog.modal-dialog-top
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#modalLabel.modal-title Suggestions, comments and bugs
+      .modal-body
+        form
+          .form-group
+            label
+              ='Please send us any suggestions, comments or bugs you find with the system.'
+            .text-danger But please don't send us any patient identifiable information - e.g. NHS number, name, date of birth.
+            textarea.form-control(rows='10', style='resize:none')
+              =text
+          button.btn.btn-primary.save-plan(type='submit') Send
+          button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+      .modal-footer
