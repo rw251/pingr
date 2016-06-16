@@ -29570,18 +29570,6 @@
 				"long": "",
 				"reason": "Reasoning<ul><li>Latest eGFR:<strong> 66</strong> on <strong>04/05/16<li></strong>Latest CKD code: <strong>G3</strong> on <strong>21/09/06</strong></li><li><a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2\" target=\"_blank\"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>\t",
 				"link": ""
-			}, {
-				"id": "suggestExcludeHouse",
-				"short": "Add CKD exception code 9hE0. (patient unsuitable) [9hE0.]",
-				"long": "",
-				"reason": "Reasoning<ul><li><strong>Housebound</strong> code on <strong>25/06/14</strong> (and no 'not housebound' code afterwards)</li></ul>",
-				"link": ""
-			}, {
-				"id": "suggestExcludePal",
-				"short": "Add CKD exception code 9hE0. (patient unsuitable) [9hE0.]",
-				"long": "",
-				"reason": "Reasoning<ul><li><strong>Palliative care</strong> code on <strong>06/09/13</strong></li></ul>",
-				"link": ""
 			}]
 		},
 		"234": {
@@ -33074,12 +33062,6 @@
 				"short": "Add code 1Z15. (CKD stage G3a) [1Z15.]",
 				"long": "",
 				"reason": "Reasoning<ul><li>Latest eGFR:<strong> 58</strong> on <strong>30/11/15<li>Latest ACR: <strong>Nil</strong></li><li></strong>Latest CKD code: <strong> Nil</strong></li><li><a href=\"http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2\" target=\"_blank\"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>\t",
-				"link": ""
-			}, {
-				"id": "suggestExcludeHouse",
-				"short": "Add CKD exception code 9hE0. (patient unsuitable) [9hE0.]",
-				"long": "",
-				"reason": "Reasoning<ul><li><strong>Housebound</strong> code on <strong>15/05/15</strong> (and no 'not housebound' code afterwards)</li></ul>",
 				"link": ""
 			}, {
 				"id": "suggestExcludeHouse",

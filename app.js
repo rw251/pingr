@@ -306,19 +306,10 @@ var base = {
    ********************************/
 
   launchModal: function(data, label, value, reasonText, callbackOnSave, callbackOnCancel, callbackOnUndo) {
-    //var template = $('#modal-why').html();
-    //Mustache.parse(template); // optional, speeds up future uses
     var tmpl = require("templates/modal-why");
-
-    //var reasonTemplate = $('#modal-why-item').html();
-    //Mustache.parse(reasonTemplate);
 
     if (data.reasons && data.reasons.length > 0) data.hasReasons = true;
 
-    /*var rendered = Mustache.render(template, data, {
-      "item": reasonTemplate
-    });
-    $('#modal').html(rendered);*/
     $('#modal').html(tmpl(data));
 
     if (reasonText) {
@@ -358,6 +349,43 @@ var base = {
         if (callbackOnCancel) callbackOnCancel();
       }
     });
+  },
+
+  launchSuggestionModal: function() {
+    var tmpl = require("templates/modal-suggestion");
+
+    $('#modal').html(tmpl({text: lookup.suggestionModalText}));
+
+
+    $('#modal .modal').off('submit', 'form').on('submit', 'form', function(e) {
+
+      var suggestion = $('#modal textarea').val();
+
+      var dataToSend = {
+        event: {
+          what: "suggestion",
+          when: new Date().getTime(),
+          who: (JSON.parse(localStorage.bb).email || "?"),
+          detail: [
+            { key: "text", value: suggestion }
+          ]
+        }
+      };
+
+      console.log(dataToSend);
+
+      $.ajax({
+        type: "POST",
+        url: "http://130.88.250.206:9100/pingr",
+        data: JSON.stringify(dataToSend),
+        success: function(d) { console.log(d); },
+        dataType: "json",
+        contentType: "application/json"
+      });
+
+      e.preventDefault();
+      $('#modal .modal').modal('hide');
+    }).modal();
   },
 
   sortSuggestions: function(suggestions) {
@@ -520,7 +548,7 @@ var base = {
     return $standard;
   },
 
-  updateTitle: function(title){
+  updateTitle: function(title) {
     $('#title-left').html(title);
     $('#title-right').html("");
   },
@@ -576,12 +604,12 @@ var base = {
     if ($.fn.fullpage && $.fn.fullpage.destroy) $.fn.fullpage.destroy('all'); //tidy up before doing it again
   },
 
-  showLoading: function(){
+  showLoading: function() {
     $('.loading-container').show();
     $('#title-row').hide();
   },
 
-  hideLoading: function(){
+  hideLoading: function() {
     $('.loading-container').fadeOut(1000);
     $('#title-row').fadeIn(1000);
   },
@@ -1983,8 +2011,8 @@ var log = {
 
   loadActions: function(callback) {
     var r = Math.random();
-    log.plan=[];
-    log.text=[];
+    log.plan = [];
+    log.text = [];
     callback();
     /*$.getJSON("action-plan.json?v=" + r, function(file) {
       log.plan = file.diseases;
@@ -2005,12 +2033,39 @@ var log = {
       obj.actions[id] = {};
     }
 
+    var dataToSend = {
+      event: {
+        what: "agree",
+        when: new Date().getTime(),
+        who: JSON.parse(localStorage.bb).email,
+        detail: [
+          { key: "patient", "value": id },
+          { key: "action", "value": actionId }
+          ]
+      }
+    };
 
     if (agree) {
       logText = "You agreed with this suggested action on " + (new Date()).toDateString();
     } else if (agree === false) {
       var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
       logText = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
+
+      dataToSend.event.whate = "disagree";
+      if(reason && reason.reason) dataToSend.event.detail.push(  { key: "reason", value: reason.reason });
+      if(reason && reason.reasonText) dataToSend.event.detail.push(  { key: "reasonText", value: reason.reasonText });
+    }
+
+    if(agree || agree===false){
+      console.log(dataToSend);
+      $.ajax({
+        type: "POST",
+        url: "http://130.88.250.206:9100/pingr",
+        data: JSON.stringify(dataToSend),
+        success: function(d) { console.log(d); },
+        dataType: "json",
+        contentType: "application/json"
+      });
     }
 
     if (done) {
@@ -2239,7 +2294,7 @@ var log = {
     notify.showSaved();
   },
 
-  getAgrees: function(){
+  getAgrees: function() {
     return log.getObj([{
       name: "agrees",
       value: {}
@@ -2365,7 +2420,7 @@ var main = {
       local: $.map(data.patientArray, function(state) {
         return {
           id: state,
-          value: data.patLookup && data.patLookup[state] ? data.patLookup[state] : state
+          value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
         };
       })
     });
@@ -4509,10 +4564,10 @@ var pl = {
 
       //add qual standard column
       localData["header-items"].push({
-        "title": "Categories",
-        "titleHTML": 'Categories',
+        "title": "Improvement opportunities",
+        "titleHTML": 'Improvement opportunities',
         "isSorted": true,
-        "tooltip": "Categories from above chart"
+        "tooltip": "Improvement opportunities from the bar chart above"
       });
 
       if (sortField === undefined) sortField = 2;
@@ -4622,7 +4677,7 @@ var ps = {
       local: $.map(data.patientArray, function(state) {
         return {
           id: state,
-          value: data.patLookup && data.patLookup[state] ? data.patLookup[state] : state
+          value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
         };
       })
     });
@@ -6204,11 +6259,21 @@ var App = {
       $('#signin').on('click', function() {
         if ($('#inpEmail').val().length < 8) alert("Please enter your email address.");
         else {
-          console.log('{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '"}}');
+          var dataToSend = {
+            event: {
+              what: "login",
+              when: new Date().getTime(),
+              who: $("#inpEmail").val(),
+              detail: [
+                { key: "href", value: location.href }
+              ]
+            }
+          };
+          console.log(dataToSend);
           $.ajax({
             type: "POST",
             url: "http://130.88.250.206:9100/pingr",
-            data: '{"event":{"what":"login","when":' + new Date().getTime() + ',"who":"' + $("#inpEmail").val() + '","detail":[{"key":"href","value":"' + location.href +'"}]}}',
+            data: JSON.stringify(dataToSend),
             success: function(d) { console.log(d); },
             dataType: "json",
             contentType: "application/json"
@@ -6359,6 +6424,7 @@ var template = {
 
       } else if (urlBits[0] === "#help") {
         layout.view="HELP";
+        lookup.suggestionModalText = "Screen: Help\n===========\n";
         base.clearBox();
         base.selectTab("");
         layout.showPage('help-page');
@@ -6367,6 +6433,7 @@ var template = {
 
       } else if (urlBits[0] === "#contact") {
         layout.view="CONTACT";
+        lookup.suggestionModalText = "Screen: Contact us\n===========\n";
         base.clearBox();
         base.selectTab("");
         layout.showPage('contact-page');
@@ -6409,6 +6476,11 @@ var template = {
 
         base.wireUpTooltips();
       }
+
+      $('#suggs').off('click').on('click', function(e){
+        base.launchSuggestionModal();
+        e.preventDefault();
+      });
     }
 
     lookup.currentUrl = hash;
@@ -7250,6 +7322,25 @@ if (typeof define === 'function' && define.amd) {
 }
 });
 
+;require.register("templates/modal-suggestion.jade", function(exports, require, module) {
+var __templateData = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
+;var locals_for_with = (locals || {});(function (text) {
+buf.push("<div tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalLabel\" aria-hidden=\"true\" class=\"modal fade\"><div class=\"modal-dialog modal-dialog-top\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" data-dismiss=\"modal\" aria-label=\"Close\" class=\"close\"><span aria-hidden=\"true\">×</span></button><h4 id=\"modalLabel\" class=\"modal-title\">Suggestions, comments and bugs</h4></div><div class=\"modal-body\"><form><div class=\"form-group\"><div class=\"no\">Please send us any suggestions, comments or bugs you find with PINGR. This could be problems with the data or ideas on how we could improve it</div><div class=\"text-danger small\">But please don't send us any patient identifiable information - e.g. NHS number, name, date of birth.</div><textarea rows=\"10\" style=\"resize:none\" class=\"form-control\">" + (jade.escape(null == (jade_interp = '===========\nThis text tells us which part of PINGR you’re referring to – please don’t delete it!\n' + text) ? "" : jade_interp)) + "</textarea></div><button type=\"submit\" class=\"btn btn-primary save-plan\">Send</button><button type=\"button\" data-dismiss=\"modal\" class=\"btn btn-default\">Cancel</button></form></div><div class=\"modal-footer\"></div></div></div></div>");}.call(this,"text" in locals_for_with?locals_for_with.text:typeof text!=="undefined"?text:undefined));;return buf.join("");
+};
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
+});
+
 ;require.register("templates/modal-why.jade", function(exports, require, module) {
 var __templateData = function template(locals) {
 var buf = [];
@@ -7476,7 +7567,9 @@ buf.push("</tr></thead><tbody>");
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var patient = $$obj[$index];
 
-buf.push("<tr data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more information about this patient\" class=\"list-item patient-row-tooltip\"><td style=\"min-width:130px\"><button type=\"button\"" + (jade.attr("data-patient-id", patient.patientId, true, false)) + (jade.attr("data-clipboard-text", patient.nhsNumber, true, false)) + " data-content=\"Copied\" data-toggle=\"lone-tooltip\" data-placement=\"right\"" + (jade.attr("title", 'Copy ' + patient.nhsNumber + ' to clipboard.', true, false)) + " class=\"btn btn-xs btn-default btn-copy\"><span class=\"fa fa-clipboard\"></span></button>" + (jade.escape(null == (jade_interp = patient.nhsNumber) ? "" : jade_interp)) + "</td>");
+buf.push("<tr data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more information about this patient\" class=\"list-item patient-row-tooltip\"><td style=\"min-width:130px\">");
+var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+buf.push("<button type=\"button\"" + (jade.attr("data-patient-id", patient.patientId, true, false)) + (jade.attr("data-clipboard-text", nhs, true, false)) + " data-content=\"Copied\" data-toggle=\"lone-tooltip\" data-placement=\"right\"" + (jade.attr("title", 'Copy ' + nhs + ' to clipboard.', true, false)) + " class=\"btn btn-xs btn-default btn-copy\"><span class=\"fa fa-clipboard\"></span></button>" + (jade.escape(null == (jade_interp = ' ' + patient.nhsNumber) ? "" : jade_interp)) + "</td>");
 // iterate patient.items
 ;(function(){
   var $$obj = patient.items;
@@ -7507,7 +7600,9 @@ buf.push("</tr>");
     for (var $index in $$obj) {
       $$l++;      var patient = $$obj[$index];
 
-buf.push("<tr data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more information about this patient\" class=\"list-item patient-row-tooltip\"><td style=\"min-width:130px\"><button type=\"button\"" + (jade.attr("data-patient-id", patient.patientId, true, false)) + (jade.attr("data-clipboard-text", patient.nhsNumber, true, false)) + " data-content=\"Copied\" data-toggle=\"lone-tooltip\" data-placement=\"right\"" + (jade.attr("title", 'Copy ' + patient.nhsNumber + ' to clipboard.', true, false)) + " class=\"btn btn-xs btn-default btn-copy\"><span class=\"fa fa-clipboard\"></span></button>" + (jade.escape(null == (jade_interp = patient.nhsNumber) ? "" : jade_interp)) + "</td>");
+buf.push("<tr data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more information about this patient\" class=\"list-item patient-row-tooltip\"><td style=\"min-width:130px\">");
+var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+buf.push("<button type=\"button\"" + (jade.attr("data-patient-id", patient.patientId, true, false)) + (jade.attr("data-clipboard-text", nhs, true, false)) + " data-content=\"Copied\" data-toggle=\"lone-tooltip\" data-placement=\"right\"" + (jade.attr("title", 'Copy ' + nhs + ' to clipboard.', true, false)) + " class=\"btn btn-xs btn-default btn-copy\"><span class=\"fa fa-clipboard\"></span></button>" + (jade.escape(null == (jade_interp = ' ' + patient.nhsNumber) ? "" : jade_interp)) + "</td>");
 // iterate patient.items
 ;(function(){
   var $$obj = patient.items;
@@ -7556,6 +7651,25 @@ var jade_mixins = {};
 var jade_interp;
 
 buf.push("<form id=\"search-box\" role=\"search\" class=\"app-search hidden-xs ng-pristine ng-valid\"><input type=\"text\" placeholder=\"Search by patients NHS number...\" class=\"typeahead form-control form-control-circle\"/></form>");;return buf.join("");
+};
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
+});
+
+;require.register("templates/patient-title.jade", function(exports, require, module) {
+var __templateData = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
+;var locals_for_with = (locals || {});(function (age, nhs, patid, sex) {
+buf.push((jade.escape(null == (jade_interp = 'Patient ' + patid + ' ') ? "" : jade_interp)) + "<button type=\"button\"" + (jade.attr("data-clipboard-text", nhs, true, false)) + " data-content=\"Copied\" data-toggle=\"lone-tooltip\" data-placement=\"right\"" + (jade.attr("title", 'Copy ' + nhs + ' to clipboard.', true, false)) + " class=\"btn btn-xs btn-default btn-copy\"><span class=\"fa fa-clipboard\"></span></button>" + (jade.escape(null == (jade_interp = ' - ' + age + ' year old ' + sex) ? "" : jade_interp)));}.call(this,"age" in locals_for_with?locals_for_with.age:typeof age!=="undefined"?age:undefined,"nhs" in locals_for_with?locals_for_with.nhs:typeof nhs!=="undefined"?nhs:undefined,"patid" in locals_for_with?locals_for_with.patid:typeof patid!=="undefined"?patid:undefined,"sex" in locals_for_with?locals_for_with.sex:typeof sex!=="undefined"?sex:undefined));;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -7700,6 +7814,7 @@ if (typeof define === 'function' && define.amd) {
 ;require.register("views/actions.js", function(exports, require, module) {
 var base = require('../base'),
   layout = require('../layout'),
+  lookup = require('../lookup'),
   welcome = require('../panels/welcome');
 
 var ID = "ACTION_PLAN_VIEW";
@@ -7707,10 +7822,11 @@ var ID = "ACTION_PLAN_VIEW";
 var ap = {
 
   create: function() {
+    lookup.suggestionModalText = "Screen: Action plan\n===========\n";
 
     base.selectTab("actions");
 
-    if(layout.view !== ID) {
+    if (layout.view !== ID) {
       //Not already in this view so we need to rejig a few things
       base.clearBox();
       layout.showPage('welcome');
@@ -7742,7 +7858,8 @@ var base = require('../base'),
   indicatorHeadlines = require('../panels/indicatorHeadlines'),
   teamActionPlan = require('../panels/teamActionPlan'),
   wrapper = require('../panels/wrapper'),
-  layout = require('../layout');
+  layout = require('../layout'),
+  lookup = require('../lookup');
 
 var ID = "INDICATOR";
 /*
@@ -7795,6 +7912,7 @@ var ind = {
       //if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
       //different pathway or stage so title needs updating
       base.updateTitle(data.text.pathways[pathwayId][pathwayStage].standards[standard].name);
+      lookup.suggestionModalText="Screen: Indicator\nIndicator: " + data.text.pathways[pathwayId][pathwayStage].standards[standard].name + "\n===========\n";
       /*base.updateTitle([{
         title: "Overview",
         url: "#overview"
@@ -7880,6 +7998,7 @@ require.register("views/overview.js", function(exports, require, module) {
 var base = require('../base'),
   data = require('../data'),
   layout = require('../layout'),
+  lookup = require('../lookup'),
   indicatorList = require('../panels/indicatorList'),
   teamActionPlan = require('../panels/teamActionPlan');
 
@@ -7892,6 +8011,8 @@ var ID = "OVERVIEW";
 var overview = {
 
   create: function(loadContentFn) {
+
+    lookup.suggestionModalText="Screen: Overview\n===========\n";
 
     base.selectTab("overview");
     base.showLoading();
@@ -7941,6 +8062,7 @@ var lifeline = require('../panels/lifeline'),
   data = require('../data'),
   base = require('../base'),
   layout = require('../layout'),
+  lookup = require('../lookup'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
   patientCharacteristics = require('../panels/patientCharacteristics'),
@@ -7983,6 +8105,8 @@ var pv = {
       base.hidePanels(farLeftPanel);
 
       if (patientId) {
+        lookup.suggestionModalText = "Screen: Patient\nPatient ID: " + patientId + "  - NB this helps us identify the patient but is NOT their NHS number.\n===========\n";
+
         data.getPatientData(patientId, function(patientData) {
 
           if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
@@ -7993,8 +8117,13 @@ var pv = {
             var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
             var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
               "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
-            base.updateTitle("Patient " + patid +
-              " - " + patientData.characteristics.age + " year old " + sex);
+            var titleTmpl = require("templates/patient-title");
+            base.updateTitle(titleTmpl({
+              patid: patid,
+              nhs: patid.toString().replace(/ /g, ""),
+              age: patientData.characteristics.age,
+              sex: sex
+            }));
           }
 
           base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
@@ -8019,6 +8148,8 @@ var pv = {
       } else {
         base.updateTitle("No patient currently selected");
         patientSearch.show(farRightPanel, true, loadContentFn);
+
+        lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
 
         base.wireUpTooltips();
         base.hideLoading();
