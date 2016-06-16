@@ -45,7 +45,7 @@ var pv = {
       base.hidePanels(farLeftPanel);
 
       if (patientId) {
-        lookup.suggestionModalText = "Screen: Patient\nPatient ID: " + patientId + "  - NB this helps us identify the patient but is NOT their NHS number. Please don't send NHS numbers of other identifiable information via this form.\n===========\n";
+        lookup.suggestionModalText = "Screen: Patient\nPatient ID: " + patientId + "  - NB this helps us identify the patient but is NOT their NHS number.\n===========\n";
 
         data.getPatientData(patientId, function(patientData) {
 

@@ -1372,42 +1372,45 @@ hr {
 }
 .nav-tabs-tall {
     border-bottom-width: 0;
-    width: 1100px;
+    width: 1070px;
 }
 @media (max-width: 1600px) {
     .nav-tabs-tall {
-        width: 1000px;
+        width: 970px;
     }
 }
-@media (max-width: 1500px) {
+@media (max-width: 1550px) {
     .nav-tabs-tall {
-        width: 900px;
+        width: 870px;
     }
 }
-@media (max-width: 1400px) {
+@media (max-width: 1450px) {
     .nav-tabs-tall {
-        width: 800px;
+        width: 770px;
     }
 }
-@media (max-width: 1300px) {
+@media (max-width: 1350px) {
     .nav-tabs-tall {
-        width: 700px;
+        width: 670px;
     }
 }
-@media (max-width: 1200px) {
+@media (max-width: 1250px) {
     .nav-tabs-tall {
-        width: 600px;
+        width: 570px;
     }
 }
-@media (max-width: 1100px) {
+@media (max-width: 1150px) {
     .nav-tabs-tall {
-        width: 500px;
+        width: 470px;
     }
 }
-@media (max-width: 1000px) {
+@media (max-width: 1050px) {
     .nav-tabs-tall {
-        width: 400px;
+        width: 370px;
     }
+}
+.italic {
+  font-style: italic;
 }
 .nav-tabs > li a {
     border: 1px solid #ddd;

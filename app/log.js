@@ -46,6 +46,17 @@ var log = {
       obj.actions[id] = {};
     }
 
+    var dataToSend = {
+      event: {
+        what: "agree",
+        when: new Date().getTime(),
+        who: JSON.parse(localStorage.bb).email,
+        detail: [
+          { key: "patient", "value": id },
+          { key: "action", "value": actionId }
+          ]
+      }
+    };
 
     if (agree) {
       logText = "You agreed with this suggested action on " + (new Date()).toDateString();
@@ -53,19 +64,12 @@ var log = {
       var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
       logText = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
 
-      var dataToSend = {
-        event: {
-          what: "disagree",
-          when: new Date().getTime(),
-          who: JSON.parse(localStorage.bb).email,
-          detail: [
-            { key: "patient", "value": id },
-            { key: "action", "value": actionId }
-            ]
-        }
-      };
+      dataToSend.event.whate = "disagree";
       if(reason && reason.reason) dataToSend.event.detail.push(  { key: "reason", value: reason.reason });
       if(reason && reason.reasonText) dataToSend.event.detail.push(  { key: "reasonText", value: reason.reasonText });
+    }
+
+    if(agree || agree===false){
       console.log(dataToSend);
       $.ajax({
         type: "POST",

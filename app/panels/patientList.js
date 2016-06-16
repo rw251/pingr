@@ -130,8 +130,8 @@ var pl = {
 
       //add qual standard column
       localData["header-items"].push({
-        "title": "Improvement Opportunities",
-        "titleHTML": 'Improvement Opportunities',
+        "title": "Improvement opportunities",
+        "titleHTML": 'Improvement opportunities',
         "isSorted": true,
         "tooltip": "Improvement opportunities from the bar chart above"
       });
