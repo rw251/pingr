@@ -1,0 +1,17 @@
+.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+  .modal-dialog.modal-dialog-top
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#modalLabel.modal-title Suggestions, comments and bugs
+      .modal-body
+        form
+          .form-group
+            .no Please send us any suggestions, comments or bugs you find with PINGR. This could be problems with the data or ideas on how we could improve it
+            .text-danger.small But please don't send us any patient identifiable information - e.g. NHS number, name, date of birth.
+            textarea.form-control(rows='10', style='resize:none')
+              = '===========\nThis text tells us which part of PINGR you’re referring to – please don’t delete it!\n' + text
+          button.btn.btn-primary.save-plan(type='submit') Send
+          button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+      .modal-footer

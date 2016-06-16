@@ -1,6 +1,7 @@
 var base = require('../base'),
   data = require('../data'),
   layout = require('../layout'),
+  lookup = require('../lookup'),
   indicatorList = require('../panels/indicatorList'),
   teamActionPlan = require('../panels/teamActionPlan');
 
@@ -13,6 +14,8 @@ var ID = "OVERVIEW";
 var overview = {
 
   create: function(loadContentFn) {
+
+    lookup.suggestionModalText="Screen: Overview\n===========\n";
 
     base.selectTab("overview");
     base.showLoading();

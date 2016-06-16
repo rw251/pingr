@@ -81,6 +81,7 @@ var template = {
 
       } else if (urlBits[0] === "#help") {
         layout.view="HELP";
+        lookup.suggestionModalText = "Screen: Help\n===========\n";
         base.clearBox();
         base.selectTab("");
         layout.showPage('help-page');
@@ -89,6 +90,7 @@ var template = {
 
       } else if (urlBits[0] === "#contact") {
         layout.view="CONTACT";
+        lookup.suggestionModalText = "Screen: Contact us\n===========\n";
         base.clearBox();
         base.selectTab("");
         layout.showPage('contact-page');
@@ -131,6 +133,11 @@ var template = {
 
         base.wireUpTooltips();
       }
+
+      $('#suggs').off('click').on('click', function(e){
+        base.launchSuggestionModal();
+        e.preventDefault();
+      });
     }
 
     lookup.currentUrl = hash;

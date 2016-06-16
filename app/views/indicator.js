@@ -7,7 +7,8 @@ var base = require('../base'),
   indicatorHeadlines = require('../panels/indicatorHeadlines'),
   teamActionPlan = require('../panels/teamActionPlan'),
   wrapper = require('../panels/wrapper'),
-  layout = require('../layout');
+  layout = require('../layout'),
+  lookup = require('../lookup');
 
 var ID = "INDICATOR";
 /*
@@ -60,6 +61,7 @@ var ind = {
       //if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage) {
       //different pathway or stage so title needs updating
       base.updateTitle(data.text.pathways[pathwayId][pathwayStage].standards[standard].name);
+      lookup.suggestionModalText="Screen: Indicator\nIndicator: " + data.text.pathways[pathwayId][pathwayStage].standards[standard].name + "\n===========\n";
       /*base.updateTitle([{
         title: "Overview",
         url: "#overview"

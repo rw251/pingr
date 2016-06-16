@@ -155,19 +155,10 @@ var base = {
    ********************************/
 
   launchModal: function(data, label, value, reasonText, callbackOnSave, callbackOnCancel, callbackOnUndo) {
-    //var template = $('#modal-why').html();
-    //Mustache.parse(template); // optional, speeds up future uses
     var tmpl = require("templates/modal-why");
-
-    //var reasonTemplate = $('#modal-why-item').html();
-    //Mustache.parse(reasonTemplate);
 
     if (data.reasons && data.reasons.length > 0) data.hasReasons = true;
 
-    /*var rendered = Mustache.render(template, data, {
-      "item": reasonTemplate
-    });
-    $('#modal').html(rendered);*/
     $('#modal').html(tmpl(data));
 
     if (reasonText) {
@@ -207,6 +198,43 @@ var base = {
         if (callbackOnCancel) callbackOnCancel();
       }
     });
+  },
+
+  launchSuggestionModal: function() {
+    var tmpl = require("templates/modal-suggestion");
+
+    $('#modal').html(tmpl({text: lookup.suggestionModalText}));
+
+
+    $('#modal .modal').off('submit', 'form').on('submit', 'form', function(e) {
+
+      var suggestion = $('#modal textarea').val();
+
+      var dataToSend = {
+        event: {
+          what: "suggestion",
+          when: new Date().getTime(),
+          who: (JSON.parse(localStorage.bb).email || "?"),
+          detail: [
+            { key: "text", value: suggestion }
+          ]
+        }
+      };
+
+      console.log(dataToSend);
+
+      $.ajax({
+        type: "POST",
+        url: "http://130.88.250.206:9100/pingr",
+        data: JSON.stringify(dataToSend),
+        success: function(d) { console.log(d); },
+        dataType: "json",
+        contentType: "application/json"
+      });
+
+      e.preventDefault();
+      $('#modal .modal').modal('hide');
+    }).modal();
   },
 
   sortSuggestions: function(suggestions) {
@@ -369,7 +397,7 @@ var base = {
     return $standard;
   },
 
-  updateTitle: function(title){
+  updateTitle: function(title) {
     $('#title-left').html(title);
     $('#title-right').html("");
   },
@@ -425,12 +453,12 @@ var base = {
     if ($.fn.fullpage && $.fn.fullpage.destroy) $.fn.fullpage.destroy('all'); //tidy up before doing it again
   },
 
-  showLoading: function(){
+  showLoading: function() {
     $('.loading-container').show();
     $('#title-row').hide();
   },
 
-  hideLoading: function(){
+  hideLoading: function() {
     $('.loading-container').fadeOut(1000);
     $('#title-row').fadeIn(1000);
   },

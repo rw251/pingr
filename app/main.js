@@ -45,7 +45,7 @@ var main = {
       local: $.map(data.patientArray, function(state) {
         return {
           id: state,
-          value: data.patLookup && data.patLookup[state] ? data.patLookup[state] : state
+          value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
         };
       })
     });
