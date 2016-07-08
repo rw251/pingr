@@ -39,9 +39,7 @@ var PatientSchema = new Schema({
     {
       id: String,
       name: String,
-      data: [
-        [Number]
-      ]
+      data: Schema.Types.Mixed
     }
   ],
   standards: [

@@ -135,7 +135,7 @@ module.exports = function(passport) {
 
   //Get list of indicators for a single practice - for use on the overview screen
   router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, function(req, res) {
-    indicators.get(req.params.practiceId, function(err, indicators) {
+    indicators.list(req.params.practiceId, function(err, indicators) {
       res.send(indicators);
     });
   });
