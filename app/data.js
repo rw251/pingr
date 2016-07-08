@@ -1,103 +1,6 @@
 var log = require('./log'),
   lookup = require('./lookup');
 
-
-var _getAllIndicatorData = function(callback) {
-  var r = Math.random();
-  $.getJSON("data/indicators.json?v=" + r, function(file) {
-    dt.indicators = file;
-
-    dt.indicators.forEach(function(indicator) {
-      var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
-      indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
-      indicator.target = indicator.values[3][1] * 100 + "%";
-      indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
-      var trend = indicator.values[1].map(function(val, idx) {
-        return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
-      }).slice(1, 10);
-      trend.reverse();
-      indicator.trend = trend.join(",");
-      var dates = indicator.values[0].slice(1, 10);
-      dates.reverse();
-      indicator.dates = dates;
-    });
-
-
-    callback(dt.indicators);
-  });
-};
-
-var _getAllIndicatorDataSync = function(callback) {
-  var r = Math.random();
-  $.ajax({
-    url: "data/indicators.json?v=" + r,
-    async: false,
-    success: function(file) {
-      dt.indicators = file;
-
-      dt.indicators.forEach(function(indicator) {
-        var percentage = Math.round(100 * indicator.values[1][1] * 100 / indicator.values[2][1]) / 100;
-        indicator.performance = indicator.values[1][1] + " / " + indicator.values[2][1] + " (" + percentage + "%)";
-        indicator.target = indicator.values[3][1] * 100 + "%";
-        indicator.up = percentage > Math.round(100 * indicator.values[1][2] * 100 / indicator.values[2][2]) / 100;
-        var trend = indicator.values[1].map(function(val, idx) {
-          return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
-        }).slice(1, 10);
-        trend.reverse();
-        indicator.trend = trend.join(",");
-        var dates = indicator.values[0].slice(1, 10);
-        dates.reverse();
-        indicator.dates = dates;
-      });
-
-    }
-  });
-
-  return dt.indicators;
-};
-
-var _getIndicatorData = function(indicator, callback) {
-  var r = Math.random();
-  $.getJSON("data/idata." + indicator + ".json?v=" + r, function(file) {
-    dt.indicators[indicator] = file;
-
-    //apply which categories people belong to
-    Object.keys(dt.indicators[indicator].patients).forEach(function(patient) {
-      dt.indicators[indicator].patients[patient].opportunities = [];
-      dt.indicators[indicator].opportunities.forEach(function(opp, idx) {
-        if (opp.patients.indexOf(+patient) > -1) {
-          dt.indicators[indicator].patients[patient].opportunities.push(idx);
-        }
-      });
-    });
-
-    callback(dt.indicators[indicator]);
-  });
-};
-
-var _getIndicatorDataSync = function(indicator) {
-  var r = Math.random();
-  $.ajax({
-    url: "data/idata." + indicator + ".json?v=" + r,
-    async: false,
-    success: function(file) {
-      dt.indicators[indicator] = file;
-
-      //apply which categories people belong to
-      Object.keys(dt.indicators[indicator].patients).forEach(function(patient) {
-        dt.indicators[indicator].patients[patient].opportunities = [];
-        dt.indicators[indicator].opportunities.forEach(function(opp, idx) {
-          if (opp.patients.indexOf(+patient) > -1) {
-            dt.indicators[indicator].patients[patient].opportunities.push(idx);
-          }
-        });
-      });
-
-    }
-  });
-  return dt.indicators[indicator];
-};
-
 var _getFakePatientData = function(patient, callback) {
   var r = Math.random(),
     isAsync = typeof(callback) === "function";
@@ -488,7 +391,7 @@ var dt = {
     if (dt.indicators) {
       return callback(dt.indicators);
     } else {
-      _getAllIndicatorData(callback);
+      return callback(null);
     }
   },
 
@@ -496,19 +399,13 @@ var dt = {
     if (dt.indicators) {
       return dt.indicators;
     } else {
-      return _getAllIndicatorDataSync();
+      return null;
     }
   },
 
   getIndicatorData: function(indicator, callback) {
-    if (!dt.indicators) {
-      _getAllIndicatorData(function(data) {
-        _getIndicatorData(indicator, callback);
-      });
-    } else if (dt.indicators && dt.indicators[indicator]) {
+    if (dt.indicators && dt.indicators[indicator]) {
       return callback(dt.indicators[indicator]);
-    } else {
-      _getIndicatorData(indicator, callback);
     }
   },
 
@@ -516,8 +413,6 @@ var dt = {
     dt.getAllIndicatorDataSync();
     if (dt.indicators[indicator]) {
       return dt.indicators[indicator];
-    } else {
-      return _getIndicatorDataSync(indicator);
     }
   },
 
