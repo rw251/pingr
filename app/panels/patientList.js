@@ -44,9 +44,8 @@ var pl = {
 
     var i, k, prop, header, pList = [];
 
-    data.getIndicatorData([pathwayId, pathwayStage, standard].join("."), function(indicators) {
-
-      if (pathwayId && pathwayStage && standard && subsection) {
+    data.getIndicatorData("P87024", [pathwayId, pathwayStage, standard].join("."), function(patients) {
+      /*if (pathwayId && pathwayStage && standard && subsection) {
         pList = indicators.opportunities.filter(function(val) {
           return val.name === subsection;
         })[0].patients;
@@ -58,12 +57,20 @@ var pl = {
           return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
         });
         header = data.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
+      }*/
+      if (subsection) {
+        patients = patients.filter(function(v) {
+          return v.opportunities.indexOf(subsection) > -1;
+        });
+        //header
+      } else {
+        //header
       }
 
-      pList = data.removeDuplicates(pList);
-      var vId = data.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
-      var dOv = data.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
-      var patients = pList.map(function(patientId) {
+      //pList = data.removeDuplicates(pList);
+      //var vId = data.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
+      //var dOv = data.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
+      /*var patients = pList.map(function(patientId) {
         var ret = indicators.patients[patientId];
         ret.nhsNumber = data.patLookup[patientId] || patientId;
         ret.patientId = patientId;
@@ -83,6 +90,19 @@ var pl = {
         ret.items.push(indicators.patients[patientId].opportunities.map(function(v){return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';}).join(""));
         //ret.items.push(data.numberOfStandardsMissed(patientId));
         return ret;
+      });*/
+      patients = patients.map(function(v) {
+        return {
+          nhsNumber: data.patLookup[v.patientId] || v.patientId,
+          patientId: v.patientId,
+          items: [
+            v.age,
+            v.value,
+            v.opportunities.map(function(w) {
+              return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[w] + '"></span>';
+            }).join("")
+          ]
+        };
       });
 
       var localData = {
@@ -94,7 +114,7 @@ var pl = {
           "isSorted": false,
           "direction": "sort-asc",
           "tooltip": "NHS number of each patient"
-        },{
+        }, {
           "title": "Age",
           "isSorted": false,
           "direction": "sort-asc",
@@ -103,14 +123,16 @@ var pl = {
       };
 
       //middle column is either value or date
-      if (dOv) {
+      //if (dOv) {
+      var dOv="date";
+      var vId="eGFR";
         localData["header-items"].push({
           "title": data.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
           "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
           "isSorted": false,
           "direction": "sort-asc"
         });
-      } else {
+      /*} else {
         if (pathwayStage === lookup.categories.monitoring.name) {
           localData["header-items"].push({
             "title": "Last BP Date",
@@ -126,7 +148,7 @@ var pl = {
             "direction": "sort-asc"
           });
         }
-      }
+      }*/
 
       //add qual standard column
       localData["header-items"].push({
@@ -182,10 +204,11 @@ var pl = {
         }
       }
 
-      base.createPanelShow(require('templates/patient-list'), patientsPanel, localData);/*, {
-        "header-item": require('src/templates/partials/_patient-list-header-item')(),
-        "item": require('src/templates/partials/_patient-list-item')()
-      });*/
+      base.createPanelShow(require('templates/patient-list'), patientsPanel, localData);
+      /*, {
+              "header-item": require('src/templates/partials/_patient-list-header-item')(),
+              "item": require('src/templates/partials/_patient-list-item')()
+            });*/
 
       $('#patients-placeholder').hide();
 
@@ -208,7 +231,7 @@ var pl = {
     //var tempMust = $('#patients-panel-yes').html();
     var tmpl = require('templates/patient-list-wrapper');
 
-    if(isAppend) panel.append(tmpl());
+    if (isAppend) panel.append(tmpl());
     else panel.html(tmpl());
 
     pl.wireUp(function(patientId) {

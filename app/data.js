@@ -24,16 +24,15 @@ var _getFakePatientData = function(patient, callback) {
 
 var _getPatientData = function(patient, callback) {
   //if callback provided do async - else do sync
-  var r = Math.random(),
-    isAsync = typeof(callback) === "function";
+  var isAsync = typeof(callback) === "function";
 
-  if (dt.patients && dt.patients[patient]) {
+  /*if (dt.patients && dt.patients[patient]) {
     if (isAsync) return callback(dt.patients[patient]);
     else return dt.patients[patient];
-  }
+  }*/
 
   $.ajax({
-    url: "data/" + patient + ".json?v=" + r,
+    url: "/api/PatientDetails/" + patient,
     async: isAsync,
     success: function(file) {
       if (!dt.patients) dt.patients = {};
@@ -51,7 +50,7 @@ var _getPatientData = function(patient, callback) {
     }
   });
 
-  if (!isAsync) return dt.patients.patient;
+  if (!isAsync) return dt.patients[patient];
 };
 
 var dt = {
@@ -403,10 +402,27 @@ var dt = {
     }
   },
 
-  getIndicatorData: function(indicator, callback) {
-    if (dt.indicators && dt.indicators[indicator]) {
-      return callback(dt.indicators[indicator]);
-    }
+  getIndicatorData: function(practiceId, indicatorId, callback) {
+    //if (dt.indicators && dt.indicators[indicator]) {
+    //  return callback(dt.indicators[indicator]);
+    //}
+    var isAsync = typeof(callback) === "function";
+
+    $.ajax({
+      url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
+      async: isAsync,
+      success: function(file) {
+        if (!dt.indicators) dt.indicators = {};
+        dt.indicators[indicatorId] = file;
+
+        if (isAsync) callback(dt.indicators[indicatorId]);
+      },
+      error: function() {
+
+      }
+    });
+
+    if (!isAsync) return dt.indicators[indicatorId];
   },
 
   getIndicatorDataSync: function(indicator) {
