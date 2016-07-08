@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var cp = require('../passport/change-password');
+var fp = require('../passport/forgot-password');
 var rp = require('../passport/reset-password');
 var users = require('../controllers/users.js');
+var patients = require('../controllers/patients.js');
+var indicators = require('../controllers/indicators.js');
 
 var isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
@@ -14,8 +17,8 @@ var isAuthenticated = function(req, res, next) {
   res.redirect('/login');
 };
 
-var isAdmin = function(req, res, next){
-  if(req.user.roles.indexOf("admin")>-1) return next();
+var isAdmin = function(req, res, next) {
+  if (req.user.roles.indexOf("admin") > -1) return next();
   res.redirect('/login');
 };
 
@@ -34,18 +37,6 @@ module.exports = function(passport) {
     failureFlash: true
   }));
 
-  /* GET Registration Page */
-  router.get('/signup', function(req, res) {
-    res.render('pages/register', { message: req.flash() });
-  });
-
-  /* Handle Registration POST */
-  router.post('/signup', passport.authenticate('signup', {
-    successRedirect: '/',
-    failureRedirect: '/signup',
-    failureFlash: true
-  }));
-
   /* GET Change password Page */
   router.get('/changepassword', isAuthenticated, function(req, res) {
     res.render('pages/changepassword', { message: req.flash() });
@@ -54,6 +45,17 @@ module.exports = function(passport) {
   /* Handle Change password POST */
   router.post('/changepassword', isAuthenticated, cp, function(req, res) {
     res.render('pages/changepassword', { message: req.flash() });
+  });
+
+  //User forgets password
+  router.get('/forgot', function(req, res) {
+    res.render('pages/userforgot.jade');
+  });
+  router.post('/forgot', fp.forgot, function(req, res) {
+    res.render('pages/userforgot.jade', { message: req.flash() });
+  });
+  router.get('/forgot/:token', fp.token, function(req, res) {
+    res.render('pages/userforgot.jade', { message: req.flash() });
   });
 
   /* Handle Logout */
@@ -74,7 +76,7 @@ module.exports = function(passport) {
   });
 
   router.post('/adduser', isAuthenticated, isAdmin, function(req, res) {
-    users.add(req, function(err, user, flash){
+    users.add(req, function(err, user, flash) {
       res.render('pages/useradd.jade', { users: users, message: req.flash() });
     });
   });
@@ -84,21 +86,21 @@ module.exports = function(passport) {
   });
 
   router.post('/delete/:email', isAuthenticated, isAdmin, function(req, res) {
-    users.delete(req.params.email, function(err, user, flash){
+    users.delete(req.params.email, function(err, user, flash) {
       res.redirect('/admin');
     });
   });
 
   router.get('/edit/:email', isAuthenticated, isAdmin, function(req, res) {
-    users.get(req.params.email, function(err, user){
+    users.get(req.params.email, function(err, user) {
       res.render('pages/useredit.jade', { user: user });
     });
   });
 
   router.post('/edit/:email', isAuthenticated, isAdmin, function(req, res) {
-    users.edit(req.params.email, req, function(err, user, flash){
-      console.log("E:"+err);
-      console.log("U:"+user);
+    users.edit(req.params.email, req, function(err, user, flash) {
+      console.log("E:" + err);
+      console.log("U:" + user);
       res.redirect('/admin');
     });
   });
@@ -111,8 +113,48 @@ module.exports = function(passport) {
     res.render('pages/userreset.jade', { message: req.flash() });
   });
 
-  /* GET Home Page */
-  router.get(/^\/.*(html|js)$/, isAuthenticated, function(req, res, next) {
+  /* api */
+  //Return a list of patients - not sure this is needed
+  router.get('/api/ListOfPatients', isAuthenticated, function(req, res) {
+    patients.list(function(err, patients) {
+      res.send(patients);
+    });
+  });
+  //Get a single patient's details - for use on the patient screen
+  router.get('/api/PatientDetails/:patientId', isAuthenticated, function(req, res) {
+    patients.get(req.params.patientId, function(err, patient) {
+      res.send(patient);
+    });
+  });
+  //Get list of patients for a practice and indicator - for use on indicator screen
+  router.get('/api/PatientListForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+    patients.getListForIndicator(req.params.practiceId, req.params.indicatorId, function(err, patients) {
+      res.send(patients);
+    });
+  });
+
+  //Get list of indicators for a single practice - for use on the overview screen
+  router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, function(req, res) {
+    indicators.get(req.params.practiceId, function(err, indicators) {
+      res.send(indicators);
+    });
+  });
+  //Get benchmark data for an indicator
+  router.get('/api/BenchmarkDataFor/:indicatorId', isAuthenticated, function(req, res) {
+    indicators.getBenchmark(req.params.indicatorId, function(err, benchmark) {
+      res.send(benchmark);
+    });
+  });
+  //Get trend data for a practice and an indicator
+  router.get('/api/TrendDataForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+    indicators.getTrend(req.params.practiceId, req.params.indicatorId, function(err, trend) {
+      res.send(trend);
+    });
+  });
+
+
+  /* Ensure all html/js resources are only accessible if authenticated */
+  router.get(/^\/(.*html|.*js|)$/, isAuthenticated, function(req, res, next) {
     next();
   });
 

@@ -12,6 +12,7 @@ data/in/**/*.txt
 data/datareal.json
 data/idata*
 data/indicators.json
+data/mongo*.json
 dist/
 dist-test/
 app/assets/data/data.json
