@@ -1,4 +1,5 @@
-var log = require('./log'),
+var Highcharts = require('highcharts/highstock'),
+  log = require('./log'),
   lookup = require('./lookup');
 
 var _getFakePatientData = function(patient, callback) {
@@ -180,10 +181,10 @@ var dt = {
     dt.indicators = file.indicators;
     dt.pathwayNames = {};
 
-    if(file.text) dt.text = file.text;
+    if (file.text) dt.text = file.text;
 
     dt.indicators.forEach(function(indicator) {
-      var last = indicator.values[0].length-1;
+      var last = indicator.values[0].length - 1;
       var pathwayId = indicator.id.split(".")[0];
       var pathwayStage = indicator.id.split(".")[1];
       var standard = indicator.id.split(".")[2];
@@ -195,13 +196,13 @@ var dt = {
       };
       indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
-      indicator.up = percentage > Math.round(100 * indicator.values[1][last-1] * 100 / indicator.values[2][last-1]) / 100;
+      indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
         return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
-      }).slice(Math.max(1,last-10), Math.max(1,last-10)+11);
+      }).slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
       //trend.reverse();
       indicator.trend = trend.join(",");
-      var dates = indicator.values[0].slice(Math.max(1,last-10), Math.max(1,last-10)+11);
+      var dates = indicator.values[0].slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
       //dates.reverse();
       indicator.dates = dates;
       if (dt.text.pathways[pathwayId] && dt.text.pathways[pathwayId][pathwayStage] && dt.text.pathways[pathwayId][pathwayStage].standards[standard]) {
@@ -212,7 +213,7 @@ var dt = {
         indicator.description = "No description specified";
         indicator.tagline = "";
       }
-      indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last]*100;
+      indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last] * 100;
 
       dt.indicators[indicator.id] = { performance: indicator.performance, tagline: indicator.tagline, positiveMessage: indicator.positiveMessage, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
 
@@ -406,6 +407,117 @@ var dt = {
   getIndicatorData: function(indicator, callback) {
     if (dt.indicators && dt.indicators[indicator]) {
       return callback(dt.indicators[indicator]);
+    }
+  },
+
+  getPatientList: function(practiceId, pathwayId, pathwayStage, standard, subsection, callback) {
+    var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+    if (!subsection) subsection = "all";
+    if (!dt.patientList) dt.patientList = {};
+    if (!dt.patientList[practiceId]) dt.patientList[practiceId] = {};
+    if (!dt.patientList[practiceId][indicatorId]) dt.patientList[practiceId][indicatorId] = {};
+
+    if (dt.patientList[practiceId][indicatorId][subsection]) {
+      return callback(dt.patientList[practiceId][indicatorId][subsection]);
+    } else {
+      var i, k, prop, pList, header;
+
+      if (subsection !== "all") {
+        pList = dt.indicators[indicatorId].opportunities.filter(function(val) {
+          return val.name === subsection;
+        })[0].patients;
+        header = dt.indicators[indicatorId].opportunities.filter(function(val) {
+          return val.name === subsection;
+        })[0].description;
+      } else {
+        pList = dt.indicators[indicatorId].opportunities.reduce(function(a, b) {
+          return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
+        });
+        header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
+      }
+
+      pList = dt.removeDuplicates(pList);
+      var vId = dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
+      var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
+      var patients = pList.map(function(patientId) {
+        var ret = dt.indicators[indicatorId].patients[patientId];
+        ret.nhsNumber = dt.patLookup[patientId] || patientId;
+        ret.patientId = patientId;
+        ret.items = [dt.patients[patientId].characteristics.age]; //The fields in the patient list table
+
+        var measures = dt.patients[patientId].measurements.filter(function(v) {
+          return v.id === vId;
+        });
+
+        if (measures[0] && measures[0].data) {
+          if (dOv === "date") {
+            ret.items.push(new Date(measures[0].data[measures[0].data.length - 1][0]));
+          } else {
+            ret.items.push(measures[0].data[measures[0].data.length - 1][1]);
+          }
+        } else {
+          ret.items.push("?");
+        }
+        ret.items.push(dt.indicators[indicatorId].patients[patientId].opportunities.map(function(v) {
+          return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';
+        }).join(""));
+        //ret.items.push(data.numberOfStandardsMissed(patientId));
+        return ret;
+      });
+
+      var rtn = {
+        "patients": patients,
+        "n": patients.length,
+        "header": header,
+        "header-items": [{
+          "title": "NHS no.",
+          "isSorted": false,
+          "direction": "sort-asc",
+          "tooltip": "NHS number of each patient"
+        }, {
+          "title": "Age",
+          "isSorted": false,
+          "direction": "sort-asc",
+          "tooltip": "The age of the patient"
+        }]
+      };
+
+      //middle column is either value or date
+      if (dOv) {
+        rtn["header-items"].push({
+          "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
+          "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
+          "isSorted": false,
+          "direction": "sort-asc"
+        });
+      } else {
+        if (pathwayStage === lookup.categories.monitoring.name) {
+          rtn["header-items"].push({
+            "title": "Last BP Date",
+            "isSorted": false,
+            "direction": "sort-asc",
+            "tooltip": "Last date BP was measured"
+          });
+        } else {
+          rtn["header-items"].push({
+            "title": "Last SBP",
+            "tooltip": "Last systolic BP reading",
+            "isSorted": false,
+            "direction": "sort-asc"
+          });
+        }
+      }
+
+      //add qual standard column
+      rtn["header-items"].push({
+        "title": "Improvement opportunities",
+        "titleHTML": 'Improvement opportunities',
+        "isSorted": true,
+        "tooltip": "Improvement opportunities from the bar chart above"
+      });
+
+      dt.patientList[practiceId][indicatorId][subsection] = rtn;
+      return callback(rtn);
     }
   },
 
