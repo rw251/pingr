@@ -7,7 +7,7 @@ var base = require('../base.js'),
 var indicatorList = {
 
   show: function(panel, isAppend, loadContentFn) {
-    data.getAllIndicatorData(function(indicators) {
+    data.getAllIndicatorData("P87024", function(indicators) {
       indicators.sort(function(a,b){
         return a.performance.percentage - b.performance.percentage;
       });

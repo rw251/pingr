@@ -388,7 +388,7 @@ var dt = {
     }
   },
 
-  getAllIndicatorData: function(callback) {
+  getAllIndicatorData: function(practiceId, callback) {
     if (dt.indicators) {
       return callback(dt.indicators);
     } else {
@@ -396,7 +396,7 @@ var dt = {
     }
   },
 
-  getAllIndicatorDataSync: function() {
+  getAllIndicatorDataSync: function(practiceId) {
     if (dt.indicators) {
       return dt.indicators;
     } else {
@@ -404,9 +404,25 @@ var dt = {
     }
   },
 
-  getIndicatorData: function(indicator, callback) {
+  getTrendData: function(practiceId, pathwayId, pathwayStage, standard) {
+    if (dt.indicators) {
+      return dt.indicators.filter(function(v) {
+        return v.id === [pathwayId, pathwayStage, standard].join(".");
+      })[0];
+    }
+    return null;
+  },
+
+  getIndicatorData: function(practiceId, indicator, callback) {
     if (dt.indicators && dt.indicators[indicator]) {
       return callback(dt.indicators[indicator]);
+    }
+  },
+
+  getIndicatorDataSync: function(practiceId, indicator) {
+    dt.getAllIndicatorDataSync(practiceId);
+    if (dt.indicators[indicator]) {
+      return dt.indicators[indicator];
     }
   },
 
@@ -518,13 +534,6 @@ var dt = {
 
       dt.patientList[practiceId][indicatorId][subsection] = rtn;
       return callback(rtn);
-    }
-  },
-
-  getIndicatorDataSync: function(indicator) {
-    dt.getAllIndicatorDataSync();
-    if (dt.indicators[indicator]) {
-      return dt.indicators[indicator];
     }
   },
 

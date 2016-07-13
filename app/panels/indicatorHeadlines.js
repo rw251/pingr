@@ -10,7 +10,7 @@ var hl = {
 
   show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
 
-    var indicators = data.getIndicatorDataSync([pathwayId, pathwayStage, standard].join("."));
+    var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
 
     var tmpl = require('templates/indicator-headline');
     var html = tmpl(indicators);
