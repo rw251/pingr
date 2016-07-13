@@ -156,7 +156,8 @@ var dt = {
 
   get: function(callback, json) {
     //get text
-    $.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
+    //$.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
+    $.getJSON("/api/Text", function(textfile) {
       dt.text = textfile.pathways;
 
       if (json) {
@@ -387,8 +388,8 @@ var dt = {
     }
   },
 
-  processIndicators: function(indicators){
-    indicators=indicators.map(function(indicator) {
+  processIndicators: function(indicators) {
+    indicators = indicators.map(function(indicator) {
       var last = indicator.values[0].length - 1;
       var pathwayId = indicator.id.split(".")[0];
       var pathwayStage = indicator.id.split(".")[1];
@@ -418,7 +419,7 @@ var dt = {
       } else {
         indicator.description = "No description specified";
         indicator.tagline = "";
-        indicator.name="Unknown";
+        indicator.name = "Unknown";
       }
       indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last] * 100;
 
@@ -437,7 +438,7 @@ var dt = {
         url: "/api/ListOfIndicatorsForPractice/" + practiceId,
         success: function(file) {
           if (!dt.indicators) dt.indicators = dt.processIndicators(file);
-          
+
           return callback(dt.indicators);
         },
         error: function() {

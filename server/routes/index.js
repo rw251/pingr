@@ -6,6 +6,7 @@ var rp = require('../passport/reset-password');
 var users = require('../controllers/users.js');
 var patients = require('../controllers/patients.js');
 var indicators = require('../controllers/indicators.js');
+var text = require('../controllers/text.js');
 
 var isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
@@ -149,6 +150,12 @@ module.exports = function(passport) {
   router.get('/api/TrendDataForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
     indicators.getTrend(req.params.practiceId, req.params.indicatorId, function(err, trend) {
       res.send(trend);
+    });
+  });
+  //Get text
+  router.get('/api/Text', isAuthenticated, function(req, res) {
+    text.get(function(err, textObj) {
+      res.send(textObj);
     });
   });
 
