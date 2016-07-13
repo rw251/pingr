@@ -44,125 +44,11 @@ var pl = {
 
     var i, k, prop, header, pList = [];
 
-    data.getIndicatorData("P87024", [pathwayId, pathwayStage, standard].join("."), function(patients) {
-      /*if (pathwayId && pathwayStage && standard && subsection) {
-        pList = indicators.opportunities.filter(function(val) {
-          return val.name === subsection;
-        })[0].patients;
-        header = indicators.opportunities.filter(function(val) {
-          return val.name === subsection;
-        })[0].description;
-      } else if (pathwayId && pathwayStage && standard) {
-        pList = indicators.opportunities.reduce(function(a, b) {
-          return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
-        });
-        header = data.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
-      }*/
-      if (subsection) {
-        patients = patients.filter(function(v) {
-          return v.opportunities.indexOf(subsection) > -1;
-        });
-        //header
-        header = "subsection";
-      } else {
-        //header
-        header = "nosubsection";
-      }
-
-      //pList = data.removeDuplicates(pList);
-      //var vId = data.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
-      //var dOv = data.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
-      /*var patients = pList.map(function(patientId) {
-        var ret = indicators.patients[patientId];
-        ret.nhsNumber = data.patLookup[patientId] || patientId;
-        ret.patientId = patientId;
-        ret.items = [data.patients[patientId].characteristics.age]; //The fields in the patient list table
-
-        var measures = data.patients[patientId].measurements.filter(function(v){return v.id===vId;});
-
-        if ( measures[0] && measures[0].data) {
-          if (dOv === "date") {
-            ret.items.push(new Date(measures[0].data[measures[0].data.length-1][0]));
-          } else {
-            ret.items.push(measures[0].data[measures[0].data.length-1][1]);
-          }
-        } else {
-          ret.items.push("?");
-        }
-        ret.items.push(indicators.patients[patientId].opportunities.map(function(v){return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';}).join(""));
-        //ret.items.push(data.numberOfStandardsMissed(patientId));
-        return ret;
-      });*/
-      patients = patients.map(function(v) {
-        return {
-          nhsNumber: data.patLookup[v.patientId] || v.patientId,
-          patientId: v.patientId,
-          items: [
-            v.age,
-            v.value,
-            v.opportunities.map(function(w) {
-              return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[w] + '"></span>';
-            }).join("")
-          ]
-        };
-      });
-
-      var localData = {
-        "patients": patients,
-        "n": patients.length,
-        "header": header,
-        "header-items": [{
-          "title": "NHS no.",
-          "isSorted": false,
-          "direction": "sort-asc",
-          "tooltip": "NHS number of each patient"
-        }, {
-          "title": "Age",
-          "isSorted": false,
-          "direction": "sort-asc",
-          "tooltip": "The age of the patient"
-        }]
-      };
-
-      //middle column is either value or date
-      //if (dOv) {
-      var dOv="date";
-      var vId="eGFR";
-        localData["header-items"].push({
-          "title": data.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
-          "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
-          "isSorted": false,
-          "direction": "sort-asc"
-        });
-      /*} else {
-        if (pathwayStage === lookup.categories.monitoring.name) {
-          localData["header-items"].push({
-            "title": "Last BP Date",
-            "isSorted": false,
-            "direction": "sort-asc",
-            "tooltip": "Last date BP was measured"
-          });
-        } else {
-          localData["header-items"].push({
-            "title": "Last SBP",
-            "tooltip": "Last systolic BP reading",
-            "isSorted": false,
-            "direction": "sort-asc"
-          });
-        }
-      }*/
-
-      //add qual standard column
-      localData["header-items"].push({
-        "title": "Improvement opportunities",
-        "titleHTML": 'Improvement opportunities',
-        "isSorted": true,
-        "tooltip": "Improvement opportunities from the bar chart above"
-      });
+    data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
 
       if (sortField === undefined) sortField = 2;
       if (sortField !== undefined) {
-        localData.patients.sort(function(a, b) {
+        list.patients.sort(function(a, b) {
           if (sortField === 0) { //NHS number
             if (a.nhsNumber === b.nhsNumber) {
               return 0;
@@ -195,22 +81,21 @@ var pl = {
           }
         });
 
-        for (i = 0; i < localData["header-items"].length; i++) {
+        for (i = 0; i < list["header-items"].length; i++) {
           if (i === sortField) {
-            localData["header-items"][i].direction = sortAsc ? "sort-asc" : "sort-desc";
-            localData["header-items"][i].isAsc = sortAsc;
-            localData["header-items"][i].isSorted = true;
+            list["header-items"][i].direction = sortAsc ? "sort-asc" : "sort-desc";
+            list["header-items"][i].isAsc = sortAsc;
+            list["header-items"][i].isSorted = true;
           } else {
-            localData["header-items"][i].isSorted = false;
+            list["header-items"][i].isSorted = false;
           }
         }
       }
 
-      base.createPanelShow(require('templates/patient-list'), patientsPanel, localData);
-      /*, {
-              "header-item": require('src/templates/partials/_patient-list-header-item')(),
-              "item": require('src/templates/partials/_patient-list-item')()
-            });*/
+      base.createPanelShow(require('templates/patient-list'), patientsPanel, list);/*, {
+        "header-item": require('src/templates/partials/_patient-list-header-item')(),
+        "item": require('src/templates/partials/_patient-list-item')()
+      });*/
 
       $('#patients-placeholder').hide();
 
