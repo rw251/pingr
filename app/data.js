@@ -387,11 +387,63 @@ var dt = {
     }
   },
 
+  processIndicators: function(indicators){
+    indicators=indicators.map(function(indicator) {
+      var last = indicator.values[0].length - 1;
+      var pathwayId = indicator.id.split(".")[0];
+      var pathwayStage = indicator.id.split(".")[1];
+      var standard = indicator.id.split(".")[2];
+      //if (!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId] = "";
+      var percentage = Math.round(100 * indicator.values[1][last] * 100 / indicator.values[2][last]) / 100;
+      indicator.performance = {
+        fraction: indicator.values[1][last] + "/" + indicator.values[2][last],
+        percentage: percentage
+      };
+      indicator.benchmark = "90%"; //TODO magic number
+      indicator.target = indicator.values[3][last] * 100 + "%";
+      indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
+      var trend = indicator.values[1].map(function(val, idx) {
+        return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
+      }).slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
+      //trend.reverse();
+      indicator.trend = trend.join(",");
+      var dates = indicator.values[0].slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
+      //dates.reverse();
+      indicator.dates = dates;
+      if (dt.text.pathways[pathwayId] && dt.text.pathways[pathwayId][pathwayStage] && dt.text.pathways[pathwayId][pathwayStage].standards[standard]) {
+        indicator.description = dt.text.pathways[pathwayId][pathwayStage].standards[standard].description;
+        indicator.name = dt.text.pathways[pathwayId][pathwayStage].standards[standard].name;
+        indicator.tagline = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tagline;
+        indicator.positiveMessage = dt.text.pathways[pathwayId][pathwayStage].standards[standard].positiveMessage;
+      } else {
+        indicator.description = "No description specified";
+        indicator.tagline = "";
+        indicator.name="Unknown";
+      }
+      indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last] * 100;
+
+      return indicator; //= { performance: indicator.performance, tagline: indicator.tagline, positiveMessage: indicator.positiveMessage, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
+    });
+
+    return indicators;
+  },
+
   getAllIndicatorData: function(practiceId, callback) {
     if (dt.indicators) {
       return callback(dt.indicators);
     } else {
-      return callback(null);
+
+      $.ajax({
+        url: "/api/ListOfIndicatorsForPractice/" + practiceId,
+        success: function(file) {
+          if (!dt.indicators) dt.indicators = dt.processIndicators(file);
+          
+          return callback(dt.indicators);
+        },
+        error: function() {
+
+        }
+      });
     }
   },
 
