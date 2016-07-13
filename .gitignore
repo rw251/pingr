@@ -9,7 +9,7 @@ mod.html
 npm-debug.log*
 data/in/**/*.txt
 !data/in/**/text.txt
-data/datareal.json
+data/datareal*.json
 data/idata*
 data/indicators.json
 data/mongo*.json

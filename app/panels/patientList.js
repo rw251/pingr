@@ -63,8 +63,10 @@ var pl = {
           return v.opportunities.indexOf(subsection) > -1;
         });
         //header
+        header = "subsection";
       } else {
         //header
+        header = "nosubsection";
       }
 
       //pList = data.removeDuplicates(pList);
@@ -221,6 +223,8 @@ var pl = {
         cursorwidth: "7px",
         horizrailenabled: false
       });
+
+      base.hideLoading();
 
     });
 

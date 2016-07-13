@@ -425,6 +425,29 @@ var dt = {
     if (!isAsync) return dt.indicators[indicatorId];
   },
 
+  getIndicatorOpportunities: function(practiceId, indicatorId, callback) {
+    if (dt.indicators && dt.indicators[indicatorId]) {
+      return callback(dt.indicators[indicatorId]);
+    }
+    var isAsync = typeof(callback) === "function";
+
+    $.ajax({
+      url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
+      async: isAsync,
+      success: function(file) {
+        if (!dt.indicators) dt.indicators = {};
+        dt.indicators[indicatorId] = file;
+
+        if (isAsync) callback(dt.indicators[indicatorId]);
+      },
+      error: function() {
+
+      }
+    });
+
+    if (!isAsync) return dt.indicators[indicatorId];
+  },
+
   getIndicatorDataSync: function(indicator) {
     dt.getAllIndicatorDataSync();
     if (dt.indicators[indicator]) {
