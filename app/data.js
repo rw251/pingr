@@ -158,18 +158,19 @@ var dt = {
     //get text
     //$.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
     $.getJSON("/api/Text", function(textfile) {
-      dt.text = textfile.pathways;
+      dt.text = textfile;
 
       if (json) {
         dt.newload(json);
         if (typeof callback === 'function') callback();
       } else {
-        $.getJSON("data/data.json?v=" + Math.random(), function(file) {
+      /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
           dt.newload(file);
           if (typeof callback === 'function') callback();
         }).fail(function(err) {
           alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
-        });
+        });*/
+        if (typeof callback === 'function') callback();
       }
 
     }).fail(function(err) {
@@ -423,6 +424,20 @@ var dt = {
       }
       indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last] * 100;
 
+      if(!dt.patientArray) dt.patientArray=[];
+      dt.patientArray = indicator.opportunities.reduce(function(prev, curr) {
+        var union = prev.concat(curr.patients);
+        return union.filter(function(item, pos) {
+          return union.indexOf(item) == pos;
+        });
+      }, dt.patientArray);
+
+      indicator.opportunities = indicator.opportunities.map(function(v){
+        v.name = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[v.id].name;
+        v.description = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[v.id].description;
+        return v;
+      });
+
       return indicator; //= { performance: indicator.performance, tagline: indicator.tagline, positiveMessage: indicator.positiveMessage, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
     });
 
@@ -488,10 +503,13 @@ var dt = {
     return null;
   },
 
-  getIndicatorDataSync: function(practiceId, indicator) {
+  getIndicatorDataSync: function(practiceId, indicatorId) {
     dt.getAllIndicatorDataSync(practiceId);
-    if (dt.indicators[indicator]) {
-      return dt.indicators[indicator];
+    var indicator = dt.indicators.filter(function(v){
+      return v.id === indicatorId;
+    });
+    if (indicator.length>0) {
+      return indicator[0];
     }
   },
 
@@ -499,9 +517,6 @@ var dt = {
     var i, k, prop, pList, header;
 
     if (subsection !== "all") {
-      /*header = dt.indicators[indicatorId].opportunities.filter(function(val) {
-        return val.name === subsection;
-      })[0].description;*/
       var subsectionIds = Object.keys(dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities).filter(function(key) {
         return dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[key].name === subsection;
       });
@@ -519,7 +534,9 @@ var dt = {
     var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
 
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
-    var opps = dt.indicators[indicatorId].opportunities.map(function(v) {
+    var opps = dt.indicators.filter(function(v){
+      return v.id === indicatorId;
+    })[0].opportunities.map(function(v) {
       return v.id;
     });
 
