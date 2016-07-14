@@ -1,7 +1,6 @@
 var data = require('./data'),
   lookup = require('./lookup'),
   base = require('./base'),
-  patients = require('./panels/patients'),
   patientList = require('./panels/patientList'),
   teamActionPlan = require('./panels/teamActionPlan'),
   welcome = require('./panels/welcome'),
@@ -49,35 +48,6 @@ var template = {
 
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
 
-      } else if (urlBits[0] === "#main") {
-        base.clearBox();
-        pathwayId = urlBits[1];
-        data.pathwayId = pathwayId;
-        pathwayStage = urlBits[2];
-        var yesPeople = urlBits[3] !== "no";
-        standard = urlBits[4];
-
-        if (pathwayStage && layout.page !== 'main-dashboard') {
-          $('.page').hide();
-          $('#main-dashboard').show();
-
-          ////layout.showSidePanel();
-          layout.showOverviewPanels();
-          layout.showHeaderBarItems();
-        }
-
-        if (pathwayStage) {
-          if (yesPeople) {
-            template.showPathwayStageViewOk(pathwayId, pathwayStage, template.shouldWeFade(lookup.currentUrl, hash));
-          } else {
-            template.showPathwayStageView(pathwayId, pathwayStage, standard, template.shouldWeFade(lookup.currentUrl, hash));
-          }
-        } else {
-          template.showOverview(pathwayId);
-        }
-
-        base.wireUpTooltips();
-
       } else if (urlBits[0] === "#help") {
         layout.view="HELP";
         lookup.suggestionModalText = "Screen: Help\n===========\n";
@@ -114,9 +84,6 @@ var template = {
       } else {
         //if screen not in correct segment then select it
         alert("shouldn't get here");
-        pathwayStage = hash.substr(1);
-
-        template.showPathwayStageView(pathwayStage);
 
         base.wireUpTooltips();
       }
@@ -165,85 +132,6 @@ var template = {
 
     if (enableHover) template.highlightOnHoverAndEnableSelectByClick(location);
     else location.children('div').addClass('unclickable');
-  },
-
-  //Show the pathway stage for a disease
-  showPathwayStageView: function(pathwayId, pathwayStage, standard, shouldFade) {
-    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
-    data.pathwayId = pathwayId;
-    layout.showMainView(data.diseases.map(function(v) {
-      return v.id;
-    }).indexOf(pathwayId));
-
-    $('aside li ul li').removeClass('active');
-    var re = new RegExp(pathwayStage, "g");
-    $('aside a').filter(function() {
-      return this.href.match(re);
-    }).parent().addClass('active');
-
-    base.switchTo110Layout();
-
-    if (!standard) {
-      standard = Object.keys(data[pathwayId][pathwayStage].standards)[0];
-    }
-
-    var panel = patients.create(pathwayId, pathwayStage, standard);
-
-    if (shouldFade) {
-      farLeftPanel.fadeOut(100, function() {
-        $(this).html(panel);
-        patients.wireUp(pathwayId, pathwayStage, farLeftPanel, standard);
-        patientList.populate(pathwayId, pathwayStage, standard, null);
-        $('#mainTitle').hide();
-        base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
-        $(this).fadeIn(100);
-      });
-    } else {
-      farLeftPanel.html(panel);
-      patients.wireUp(pathwayId, pathwayStage, farLeftPanel, standard);
-      patientList.populate(pathwayId, pathwayStage, standard, null);
-      $('#mainTitle').hide();
-      base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
-    }
-
-    var tempMust = $('#patient-panel-placeholder').html();
-    farRightPanel.html(Mustache.render(tempMust));
-  },
-
-  showPathwayStageViewOk: function(pathwayId, pathwayStage, shouldFade) {
-    farRightPanel.removeClass('standard-missed-page').removeClass('standard-achieved-page').removeClass('standard-not-relevant-page');
-    layout.showMainView(data.diseases.map(function(v) {
-      return v.id;
-    }).indexOf(pathwayId));
-
-    $('aside li ul li').removeClass('active');
-    var re = new RegExp(pathwayStage, "g");
-    $('aside a').filter(function() {
-      return this.href.match(re);
-    }).parent().addClass('active');
-
-    base.switchTo110Layout();
-
-    var panel = patients.createOk(pathwayId, pathwayStage);
-
-    if (shouldFade) {
-      farLeftPanel.fadeOut(200, function() {
-        $(this).html(panel);
-        patients.wireUpOk(pathwayId, pathwayStage, farLeftPanel);
-        patients.populateOk(pathwayId, pathwayStage, null);
-        $('#mainTitle').hide();
-        base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
-        $(this).fadeIn(300);
-      });
-      var tempMust = $('#patient-panel-placeholder').html();
-      farRightPanel.html(Mustache.render(tempMust));
-    } else {
-      farLeftPanel.html(panel);
-      patients.wireUpOk(pathwayId, pathwayStage, farLeftPanel);
-      patients.populateOk(pathwayId, pathwayStage, null);
-      $('#mainTitle').hide();
-      base.updateTitle(data.text.pathways[pathwayId][pathwayStage].text.page.text, data.text.pathways[pathwayId][pathwayStage].text.page.tooltip);
-    }
   },
 
   highlightOnHoverAndEnableSelectByClick: function(panelSelector) {
