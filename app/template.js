@@ -4,7 +4,6 @@ var data = require('./data'),
   patients = require('./panels/patients'),
   patientList = require('./panels/patientList'),
   teamActionPlan = require('./panels/teamActionPlan'),
-  allPatients = require('./panels/allPatients'),
   welcome = require('./panels/welcome'),
   layout = require('./layout'),
   overview = require('./views/overview'),
@@ -107,19 +106,7 @@ var template = {
         patientId = urlBits[1];
 
         patientView.create(null, null, null, patientId, template.loadContent);
-        /*pathwayId = urlBits[2];
 
-        allPatients.showView(patientId, true);
-
-        base.wireUpTooltips();
-
-        if (patientId) {
-          var nhs = data.patLookup ? data.patLookup[patientId] : patientId;
-          $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
-            return $(this).text().trim() === nhs;
-          }).position().top - 140);
-          $('#patients').find('tr:contains(' + nhs + ')').addClass("highlighted");
-        }*/
       } else if (urlBits[0] === "#agreedactions") {
 
         actionPlan.create();
