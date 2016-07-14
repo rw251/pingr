@@ -518,6 +518,123 @@ var dt = {
     }
   },
 
+  processPatientList: function(pathwayId, pathwayStage, standard, subsection, patients) {
+    var i, k, prop, pList, header;
+
+    if (subsection !== "all") {
+      /*header = dt.indicators[indicatorId].opportunities.filter(function(val) {
+        return val.name === subsection;
+      })[0].description;*/
+      var subsectionIds = Object.keys(dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities).filter(function(key) {
+        return dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[key].name === subsection;
+      });
+      if (subsectionIds.length > 0) {
+        patients = patients.filter(function(v) {
+          return v.opportunities.indexOf(subsectionIds[0]) > -1;
+        });
+        header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[subsectionIds[0]].description;
+      }
+    } else {
+      header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
+    }
+
+    var vId = dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
+    var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
+
+    var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+    var opps = dt.indicators[indicatorId].opportunities.map(function(v) {
+      return v.id;
+    });
+
+    patients = patients.map(function(patient) {
+      patient.nhsNumber = dt.patLookup[patient.patientId] || patient.patientId;
+      patient.items = [
+        patient.age,
+        patient.value,
+        patient.opportunities.map(function(v) {
+          return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
+        }).join("")
+      ]; //The fields in the patient list table
+      return patient;
+      /*var ret = dt.indicators[indicatorId].patients[patientId];
+      ret.nhsNumber = dt.patLookup[patientId] || patientId;
+      ret.patientId = patientId;
+      ret.items = [dt.patients[patientId].characteristics.age]; //The fields in the patient list table
+
+      var measures = dt.patients[patientId].measurements.filter(function(v) {
+        return v.id === vId;
+      });
+
+      if (measures[0] && measures[0].data) {
+        if (dOv === "date") {
+          ret.items.push(new Date(measures[0].data[measures[0].data.length - 1][0]));
+        } else {
+          ret.items.push(measures[0].data[measures[0].data.length - 1][1]);
+        }
+      } else {
+        ret.items.push("?");
+      }
+      ret.items.push(dt.indicators[indicatorId].patients[patientId].opportunities.map(function(v) {
+        return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';
+      }).join(""));
+      //ret.items.push(data.numberOfStandardsMissed(patientId));
+      return ret;*/
+    });
+
+    var rtn = {
+      "patients": patients,
+      "n": patients.length,
+      "header": header,
+      "header-items": [{
+        "title": "NHS no.",
+        "isSorted": false,
+        "direction": "sort-asc",
+        "tooltip": "NHS number of each patient"
+      }, {
+        "title": "Age",
+        "isSorted": false,
+        "direction": "sort-asc",
+        "tooltip": "The age of the patient"
+      }]
+    };
+
+    //middle column is either value or date
+    if (dOv) {
+      rtn["header-items"].push({
+        "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
+        "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
+        "isSorted": false,
+        "direction": "sort-asc"
+      });
+    } else {
+      if (pathwayStage === lookup.categories.monitoring.name) {
+        rtn["header-items"].push({
+          "title": "Last BP Date",
+          "isSorted": false,
+          "direction": "sort-asc",
+          "tooltip": "Last date BP was measured"
+        });
+      } else {
+        rtn["header-items"].push({
+          "title": "Last SBP",
+          "tooltip": "Last systolic BP reading",
+          "isSorted": false,
+          "direction": "sort-asc"
+        });
+      }
+    }
+
+    //add qual standard column
+    rtn["header-items"].push({
+      "title": "Improvement opportunities",
+      "titleHTML": 'Improvement opportunities',
+      "isSorted": true,
+      "tooltip": "Improvement opportunities from the bar chart above"
+    });
+
+    return rtn;
+  },
+
   getPatientList: function(practiceId, pathwayId, pathwayStage, standard, subsection, callback) {
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
     if (!subsection) subsection = "all";
@@ -528,104 +645,19 @@ var dt = {
     if (dt.patientList[practiceId][indicatorId][subsection]) {
       return callback(dt.patientList[practiceId][indicatorId][subsection]);
     } else {
-      var i, k, prop, pList, header;
 
-      if (subsection !== "all") {
-        pList = dt.indicators[indicatorId].opportunities.filter(function(val) {
-          return val.name === subsection;
-        })[0].patients;
-        header = dt.indicators[indicatorId].opportunities.filter(function(val) {
-          return val.name === subsection;
-        })[0].description;
-      } else {
-        pList = dt.indicators[indicatorId].opportunities.reduce(function(a, b) {
-          return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
-        });
-        header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
-      }
+      $.ajax({
+        url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
+        success: function(file) {
+          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
 
-      pList = dt.removeDuplicates(pList);
-      var vId = dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
-      var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
-      var patients = pList.map(function(patientId) {
-        var ret = dt.indicators[indicatorId].patients[patientId];
-        ret.nhsNumber = dt.patLookup[patientId] || patientId;
-        ret.patientId = patientId;
-        ret.items = [dt.patients[patientId].characteristics.age]; //The fields in the patient list table
+          callback(dt.patientList[practiceId][indicatorId][subsection]);
+        },
+        error: function() {
 
-        var measures = dt.patients[patientId].measurements.filter(function(v) {
-          return v.id === vId;
-        });
-
-        if (measures[0] && measures[0].data) {
-          if (dOv === "date") {
-            ret.items.push(new Date(measures[0].data[measures[0].data.length - 1][0]));
-          } else {
-            ret.items.push(measures[0].data[measures[0].data.length - 1][1]);
-          }
-        } else {
-          ret.items.push("?");
         }
-        ret.items.push(dt.indicators[indicatorId].patients[patientId].opportunities.map(function(v) {
-          return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';
-        }).join(""));
-        //ret.items.push(data.numberOfStandardsMissed(patientId));
-        return ret;
       });
 
-      var rtn = {
-        "patients": patients,
-        "n": patients.length,
-        "header": header,
-        "header-items": [{
-          "title": "NHS no.",
-          "isSorted": false,
-          "direction": "sort-asc",
-          "tooltip": "NHS number of each patient"
-        }, {
-          "title": "Age",
-          "isSorted": false,
-          "direction": "sort-asc",
-          "tooltip": "The age of the patient"
-        }]
-      };
-
-      //middle column is either value or date
-      if (dOv) {
-        rtn["header-items"].push({
-          "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
-          "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
-          "isSorted": false,
-          "direction": "sort-asc"
-        });
-      } else {
-        if (pathwayStage === lookup.categories.monitoring.name) {
-          rtn["header-items"].push({
-            "title": "Last BP Date",
-            "isSorted": false,
-            "direction": "sort-asc",
-            "tooltip": "Last date BP was measured"
-          });
-        } else {
-          rtn["header-items"].push({
-            "title": "Last SBP",
-            "tooltip": "Last systolic BP reading",
-            "isSorted": false,
-            "direction": "sort-asc"
-          });
-        }
-      }
-
-      //add qual standard column
-      rtn["header-items"].push({
-        "title": "Improvement opportunities",
-        "titleHTML": 'Improvement opportunities',
-        "isSorted": true,
-        "tooltip": "Improvement opportunities from the bar chart above"
-      });
-
-      dt.patientList[practiceId][indicatorId][subsection] = rtn;
-      return callback(rtn);
     }
   },
 
