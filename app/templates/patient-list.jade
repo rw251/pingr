@@ -12,7 +12,12 @@ table.table.patient-list.table-body-hidden
         button.btn.btn-xs.btn-default.btn-copy(type='button', data-content='Copied', data-toggle='tooltip', data-placement='right')
           span.fa.fa-clipboard
         |         1234567890
-      td 2014-06-10
+      td
+        | 56
+      td
+        | 12/06/2016
+      td
+        | .
 .table-scroll
   table.table.patient-list.table-head-hidden
     thead
@@ -28,4 +33,5 @@ table.table.patient-list.table-body-hidden
               span.fa.fa-clipboard
             = ' ' + patient.nhsNumber
           each item in patient.items
+            - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
             td!= item
