@@ -5403,11 +5403,13 @@ var bd = {
     });
   },
 
-    showTab: function(panel, tabSet, tabLabel, subPanels, isActive) {
+    showTab: function(panel, tabSet, name, tabLabel, subPanels, isActive) {
 
-  //change this to add li
+      //*b* name must be made something sensible --!!!!
+
+      //change this to add li
       var sectionElement = panel;
-      var tabSection = $('<li id="'+ tabLabel.toLowerCase() +'" data-toggle="tooltip" title="'+ tabLabel.toLowerCase() +'"><a id="'+ tabLabel.toLowerCase() +'PaneTab" href="#'+ tabLabel.toLowerCase() +'PaneTab">'+tabLabel+'</a></li>');
+      var tabSection = $('<li id="'+ tabLabel.toLowerCase() +'" data-toggle="tooltip" title="'+ tabLabel.toLowerCase() +'"><a id="'+ tabLabel.toLowerCase() +'PaneTab" href="#'+ tabLabel.toLowerCase() +'PaneTab">'+name+'</a></li>');
 
       var contentObject = $('<div id="'+ tabLabel.toLowerCase() +'-content"></div>');
       $(sectionElement).append(contentObject);
@@ -7046,7 +7048,7 @@ var ind = {
         farRightPanel.append(tabContent);
 
         // *B* 1st tabbed panel
-        wrapper.showTab(tabContent, tabList, "Improvement opportunities", [
+        wrapper.showTab(tabContent, tabList, "Improvement opportunities",  "Overview", [
           {
             show: indicatorHeadlines.show,
             args: [pathwayId, pathwayStage, standard]
@@ -7061,7 +7063,7 @@ var ind = {
        ], true);
 
   	    // *B* 2nd tabbed panel
-        wrapper.showTab(tabContent, tabList, "Current and future trend", [
+        wrapper.showTab(tabContent, tabList, "Current and future trend", "indicator", [
           {
             show: indicatorTrend.show,
             args: [pathwayId, pathwayStage, standard]
@@ -7069,7 +7071,7 @@ var ind = {
         ], false);
 
   	     // *B* 3rd tabbed panel
-        wrapper.showTab(tabContent, tabList, "Comparison to other practices", [
+        wrapper.showTab(tabContent, tabList, "Comparison to other practices", "patient", [
           {
             show: indicatorBenchmark.show,
             args: [pathwayId, pathwayStage, standard]
