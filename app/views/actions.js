@@ -13,10 +13,11 @@ var ap = {
     base.selectTab("actions");
 
     if (layout.view !== ID) {
-      //Not already in this view so we need to rejig a few things
+      //Not already in this view so we need to rejig a few things - boilerplate
       base.clearBox();
       layout.showPage('welcome');
       layout.showHeaderBarItems();
+
 
       $('#welcome-tabs li').removeClass('active');
       $('#outstandingTasks').closest('li').addClass('active');

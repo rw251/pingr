@@ -50,6 +50,10 @@ var overview = {
 
       base.wireUpTooltips();
       base.hideLoading();
+
+      //add state indicator
+      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
+
     }, 0);
 
   }

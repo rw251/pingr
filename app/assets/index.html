@@ -55,18 +55,24 @@
         <div class="navbar-inner">
           <div class="container">
             <ul id="mainTab" class="nav nav-tabs nav-tabs-tall nav-wizard pull-left" role="tablist">
-              <li role="presentation" style="width:25%" class="active" data-id="overview"><a href="#overview" data-href="#overview" role="tab">OVERVIEW</a>
+              <li role="presentation" style="width:20%" class="active" data-id="overview"><a href="#overview" data-href="#overview" role="tab">OVERVIEW</a>
                 <div class="nav-arrow"></div>
               </li>
-              <li role="presentation" style="width:25%" data-id="indicator">
+              <li role="presentation" style="width:20%" data-id="indicator">
                 <div class="nav-wedge"></div><a href="#indicators" data-href="#indicators" role="tab">INDICATOR</a>
                 <div class="nav-arrow"></div>
               </li>
-              <li role="presentation" style="width:25%" data-id="patient">
+
+              <!--li role="presentation" style="width:20%" data-id="indicator">
+                <div class="nav-wedge"></div><a href="#indicatorsEdit" data-href="#indicatorsEdit" role="tab">INDICATOR_EDIT</a>
+                <div class="nav-arrow"></div>
+              </li-->
+
+              <li role="presentation" style="width:20%" data-id="patient">
                 <div class="nav-wedge"></div><a href="#patients" data-href="#patients" role="tab">PATIENT</a>
                 <div class="nav-arrow"></div>
               </li>
-              <li role="presentation" style="width:25%" data-id="actions">
+              <li role="presentation" style="width:20%" data-id="actions">
                 <div class="nav-wedge"></div><a href="#agreedactions" data-href="#agreedactions" role="tab">ACTION PLANS</a></li>
             </ul>
 
@@ -110,6 +116,7 @@
 
     </header>
 
+    <!-- LOGIN PAGE -->
     <div class="starter-template-high page login-page" id="login">
       <div class="container login-container">
         <div class="login-panel panel panel-default plain animated bounceIn">
@@ -122,6 +129,8 @@
             <p style="font-size: 1.5em;font-style: italic;text-align: center">Improvement actions
               <br> for GP practices</p>
             <br>
+
+            <!-- login form-->
             <div class="form-group input-group">
               <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
               <input id="inpEmail" type="email" class="form-control" placeholder="Email address" required>
@@ -147,6 +156,7 @@
       </div>
     </div>
 
+    <!-- ACTION PAGE -->
     <div class="starter-template page welcome-page" id="welcome">
       <div class="container">
         <div class="row">
@@ -175,6 +185,9 @@
         </div>
 
         <ul id="welcome-tabs" class="nav nav-tabs">
+          <!-- Recommended actions with which you have previously already in PINGR that have not yet been implemented in practice
+          <li class="active" data-toggle="tooltip" title="Recommended actions with which you have previously already in PINGR that have not yet been implemented in practice"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awaiting implementation</a></li>
+          <li data-toggle="tooltip" title="play area"><a id="breakdown-chart" href="#breakout-chart">Breakdown chart</a></li>-->
           <li class="active" data-toggle="tooltip" title="Recommended actions with which you have previously already in PINGR that have not yet been implemented in practice"><a id="outstandingTasks" href="#outstandingTasks">Agreed actions awaiting implementation</a></li>
           <li data-toggle="tooltip" title="Recommended actions with which you have previously already in PINGR and then implemented in practice"><a id="completedTasks" href="#completedTasks">Agreed actions that have been implemented</a></li>
         </ul>
@@ -233,6 +246,7 @@
       </div>
     </div>
 
+    <!-- INDICATOR PAGE -->
     <div class="starter-template page" id="main-dashboard">
 
       <div class="tab-content">
@@ -251,12 +265,23 @@
                 </div>
               </div>-->
               <div class="col-xl-8 col-lg-8" id="right-panel">
-                <div id="overview-pane"></div>
+
+
+                <!--div id="overview-pane"></div>
                 <div id="indicator-pane"></div>
-                <div id="patient-pane"></div>
+                <div id="patient-pane"></div-->
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div id="stateMaintainence" style="display: None;">
+        <div id="stateM-overview">
+        </div>
+        <div id="stateM-indicator">
+        </div>
+        <div id="stateM-patient">
         </div>
       </div>
 

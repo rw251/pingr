@@ -84,6 +84,9 @@ var pv = {
           base.wireUpTooltips();
           base.hideLoading();
 
+          //add state indicator
+          farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+
         });
       } else {
         base.updateTitle("No patient currently selected");
@@ -93,6 +96,9 @@ var pv = {
 
         base.wireUpTooltips();
         base.hideLoading();
+
+        //add state indicator
+        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
       }
 
     }, 0);

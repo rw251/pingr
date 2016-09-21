@@ -1,4 +1,5 @@
-var data = require('../data.js'),
+var base = require('../base.js'),
+  data = require('../data.js'),
   Mustache = require('mustache');
 
 var pc = {
@@ -11,7 +12,11 @@ var pc = {
     var html = Mustache.render(tempMust, patientData.characteristics);
 
     if (isAppend) panel.append(html);
-    else panel.html(html);
+    //*b* maintain state
+    else {
+      base.savePanelState();
+      panel.html(html);
+    }
 
   }
 

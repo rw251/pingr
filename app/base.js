@@ -29,6 +29,40 @@ var base = {
     return rendered;
   },
 
+  //*b* maintains the state of the right-panel in all tabs that use it
+  //    presently this is involved in chaching the state of indicator tab
+  //    however it is ready to use to maintain overview and patient tabs if
+  //    required in the future.
+  savePanelState: function()
+  {
+    if($("div[class*='state-']")[0] !== undefined)
+    {
+      if($("div[class*='state-']").attr('class').includes('overview'))
+      {
+        //save as overview
+        var stateData = $("div[class*='state-']").children();
+        $("#stateM-overview").html(stateData);
+        return;
+      }
+
+      if($("div[class*='state-']").attr('class').includes('indicator'))
+      {
+        //save as indicator
+        var stateData = $("div[class*='state-']").children();
+        $("#stateM-indicator").html(stateData);
+        return;
+      }
+
+      if($("div[class*='state-']").attr('class').includes('patient'))
+      {
+        //save as patient
+        var stateData = $("div[class*='state-']").children();
+        $("#stateM-patient").html(stateData);
+        return;
+      }
+    }
+  },
+
   createPanelShow: function(templateSelector, panelSelector, data, templates) {
     var rendered = base.createPanel(templateSelector, data, templates);
     panelSelector.html(rendered).show();
