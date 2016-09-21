@@ -180,6 +180,40 @@ var base = {
     return rendered;
   },
 
+  //*b* maintains the state of the right-panel in all tabs that use it
+  //    presently this is involved in chaching the state of indicator tab
+  //    however it is ready to use to maintain overview and patient tabs if
+  //    required in the future.
+  savePanelState: function()
+  {
+    if($("div[class*='state-']")[0] !== undefined)
+    {
+      if($("div[class*='state-']").attr('class').includes('overview'))
+      {
+        //save as overview
+        var stateData = $("div[class*='state-']").children();
+        $("#stateM-overview").html(stateData);
+        return;
+      }
+
+      if($("div[class*='state-']").attr('class').includes('indicator'))
+      {
+        //save as indicator
+        var stateData = $("div[class*='state-']").children();
+        $("#stateM-indicator").html(stateData);
+        return;
+      }
+
+      if($("div[class*='state-']").attr('class').includes('patient'))
+      {
+        //save as patient
+        var stateData = $("div[class*='state-']").children();
+        $("#stateM-patient").html(stateData);
+        return;
+      }
+    }
+  },
+
   createPanelShow: function(templateSelector, panelSelector, data, templates) {
     var rendered = base.createPanel(templateSelector, data, templates);
     panelSelector.html(rendered).show();
@@ -2422,6 +2456,8 @@ var template = require('./template'),
   layout = require('./layout'),
   welcome = require('./panels/welcome'),
   log = require('./log'),
+  wrapper = require('./panels/wrapper'), // *B*
+  indicatorTrend = require('./panels/indicatorTrend'), // *B*
   patientView = require('./views/patient');
 
 var states, patLookup, page, hash;
@@ -2569,10 +2605,10 @@ var main = {
       /*var tempMust = $('#welcome-task-list').html();
       var rendered = Mustache.render(tempMust);*/
       //var tmpl = require("templates/action-plan-task-list");
-      $('#welcome-tab-content').fadeOut(100, function() {
+      $('#welcome-tab-content').fadeOut(250, function() {
         //$(this).html(tmpl());
         welcome.populate();
-        $(this).fadeIn(100);
+        $(this).fadeIn(250);
       });
     });
 
@@ -2584,10 +2620,10 @@ var main = {
       /*var tempMust = $('#welcome-task-list').html();
       var rendered = Mustache.render(tempMust);*/
       //var tmpl = require("templates/action-plan-task-list");
-      $('#welcome-tab-content').fadeOut(100, function() {
+      $('#welcome-tab-content').fadeOut(250, function() {
         //$(this).html(tmpl());
         welcome.populate(true);
-        $(this).fadeIn(100);
+        $(this).fadeIn(250);
       });
     });
 
@@ -2612,7 +2648,8 @@ var main = {
         template.loadContent(location.hash, true);
       });
 
-      //Templates
+
+      //Template DOM container constants
       patientsPanelTemplate = $('#patients-panel');
       actionPlanPanel = $('#action-plan-panel');
       patientList = $('#patient-list');
@@ -2622,7 +2659,7 @@ var main = {
       medicationPanel = $('#medications-panel');
       actionPlanList = $('#action-plan-list');
 
-      //Selectors
+      //Selector DOM container constants
       bottomLeftPanel = $('#bottom-left-panel');
       bottomRightPanel = $('#bottom-right-panel');
       topPanel = $('#top-panel');
@@ -2837,7 +2874,8 @@ module.exports = bd;
 });
 
 require.register("panels/indicatorHeadlines.js", function(exports, require, module) {
-var data = require('../data.js'),
+var base = require('../base.js'),
+  data = require('../data.js'),
   chart = require('../chart.js');/*,
   Mustache = require('mustache');
 */
@@ -2855,10 +2893,12 @@ var hl = {
     var html = tmpl(indicators);
 
     if(isAppend) panel.append(html);
-    else panel.html(html);
-
+    //*b* maintain state
+    else {
+      base.savePanelState();
+      panel.html(html);
+    }
   }
-
 };
 
 module.exports = hl;
@@ -2887,6 +2927,8 @@ var indicatorList = {
       if (isAppend) {
         panel.append(html);
       } else {
+        //*b* maintain state
+        base.savePanelState();
         panel.html(html);
       }
 
@@ -4154,7 +4196,8 @@ module.exports = ll;
 });
 
 require.register("panels/patientCharacteristics.js", function(exports, require, module) {
-var data = require('../data.js'),
+var base = require('../base.js'),
+  data = require('../data.js'),
   Mustache = require('mustache');
 
 var pc = {
@@ -4167,7 +4210,11 @@ var pc = {
     var html = Mustache.render(tempMust, patientData.characteristics);
 
     if (isAppend) panel.append(html);
-    else panel.html(html);
+    //*b* maintain state
+    else {
+      base.savePanelState();
+      panel.html(html);
+    }
 
   }
 
@@ -4398,7 +4445,8 @@ module.exports = ps;
 });
 
 require.register("panels/qualityStandards.js", function(exports, require, module) {
-var data = require('../data.js');
+var base = require('../base.js'),
+  data = require('../data.js');
 
 var qs = {
 
@@ -4412,10 +4460,12 @@ var qs = {
     });
 
     if (isAppend) panel.append(html);
-    else panel.html(html);
-
+    //*b* maintain state
+    else {
+      base.savePanelState();
+      panel.html(html);
+    }
   }
-
 };
 
 module.exports = qs;
@@ -4794,6 +4844,7 @@ var base = require('../base.js'),
   teamActionPlan = require('./teamActionPlan.js'),
   Mustache = require('mustache');
 
+//AKA Actions
 var welcome = {
 
   wireUpWelcomePage: function(pathwayId, pathwayStage) {
@@ -5275,10 +5326,70 @@ var bd = {
 
   wireUp: function() {
 
+    $('#overviewPaneTab').on('click', function(e) {
+      e.preventDefault();
+
+      $('#mainPage-tabs li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      //var tempMust = $('#welcome-task-list').html();
+      //var rendered = Mustache.render(tempMust);
+      //var tmpl = require("templates/action-plan-task-list");
+      $('#mainPage-tab-content').fadeOut(250, function() {
+
+        $('#mainPage-tab-content').children().fadeOut(1);
+        $('#overview-content').fadeIn(1);
+
+    //*b* tabbed content
+
+        //welcome.populate(true);
+        $(this).fadeIn(250);
+      });
+    });
+
+    $('#indicatorPaneTab').on('click', function(e) {
+      e.preventDefault();
+
+      $('#mainPage-tabs li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      //var tempMust = $('#welcome-task-list').html();
+      //var rendered = Mustache.render(tempMust);
+      //var tmpl = require("templates/action-plan-task-list");
+      $('#mainPage-tab-content').fadeOut(250, function() {
+
+        $('#mainPage-tab-content').children().fadeOut(1);
+        $('#indicator-content').fadeIn(1);
+
+    //*b* tabbed content
+
+        //welcome.populate(true);
+        $(this).fadeIn(250);
+      });
+    });
+
+    $('#patientPaneTab').on('click', function(e) {
+      e.preventDefault();
+
+      $('#mainPage-tabs li').removeClass('active');
+      $(this).closest('li').addClass('active');
+      //var tempMust = $('#welcome-task-list').html();
+      //var rendered = Mustache.render(tempMust);
+      //var tmpl = require("templates/action-plan-task-list");
+      $('#mainPage-tab-content').fadeOut(250, function() {
+
+        $('#mainPage-tab-content').children().fadeOut(1);
+        $('#patient-content').fadeIn(1);
+
+    //*b* tabbed content
+
+        //welcome.populate(true);
+        $(this).fadeIn(250);
+      });
+    });
   },
 
   show: function(panel, isAppend, subPanels, isDownText, isUpText) {
 
+//change this to add li
     var sectionElement = $('<div class="section"></div>');
 
     if (isAppend) panel.append(sectionElement);
@@ -5290,9 +5401,37 @@ var bd = {
       args.unshift(sectionElement);
       v.show.apply(null, args);
     });
+  },
 
-    if (isUpText) sectionElement.prepend($('<div class="fp-controlArrow fp-up"><div>' + isUpText + '</div></div>'));
-    if (isDownText) sectionElement.append($('<div class="fp-controlArrow fp-down"><div>' + isDownText + '</div></div>'));
+    showTab: function(panel, tabSet, tabLabel, subPanels, isActive) {
+
+  //change this to add li
+      var sectionElement = panel;
+      var tabSection = $('<li id="'+ tabLabel.toLowerCase() +'" data-toggle="tooltip" title="'+ tabLabel.toLowerCase() +'"><a id="'+ tabLabel.toLowerCase() +'PaneTab" href="#'+ tabLabel.toLowerCase() +'PaneTab">'+tabLabel+'</a></li>');
+
+      var contentObject = $('<div id="'+ tabLabel.toLowerCase() +'-content"></div>');
+      $(sectionElement).append(contentObject);
+
+      //append to tabSet
+      tabSet.append(tabSection);
+      //append to panel
+      //panel.append(tabSet);
+
+      subPanels.forEach(function(v) {
+        var args = v.args;
+        args.unshift(true);
+        args.unshift(contentObject);
+        v.show.apply(null, args);
+      });
+
+      if(isActive){
+          tabSection.addClass('active');
+      }
+      else {
+        contentObject.fadeOut(1);
+      }
+    //if (isUpText) sectionElement.prepend($('<div class="fp-controlArrow fp-up"><div>' + isUpText + '</div></div>'));
+    //if (isDownText) sectionElement.append($('<div class="fp-controlArrow fp-down"><div>' + isDownText + '</div></div>'));
 
   }
 
@@ -5472,7 +5611,6 @@ var template = {
       if (urlBits[0] === "#overview" && !urlBits[1]) {
 
         overview.create(template.loadContent);
-
       } else if (urlBits[0] === "#indicators") {
 
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
@@ -5773,7 +5911,7 @@ buf.push("<div class=\"panel-body\">You currently have no outstanding planned ac
 };
 buf.push("<div class=\"container-fluid\"><div class=\"row\"><div id=\"team-task-panel\" class=\"panel panel-info\"><div class=\"panel-heading\">Practice-level      </div>");
 jade_mixins["actionPlanTaskList"](team);
-buf.push("</div></div><div class=\"row\"><div id=\"team-add-plan\" style=\"padding-bottom: 15px;margin-top: -10px;\"><form onsubmit=\"return false;\"><div class=\"form-group\"><textarea rows=\"3\" style=\"resize:none\" placeholder=\"Enter your own improvement action then click 'add' below...\" class=\"form-control\"></textarea></div><button class=\"btn btn-info add-plan\">Add</button></form></div></div><div class=\"row\"><div id=\"individual-task-panel\" class=\"panel panel-warning\"><div class=\"panel-heading\">Individual patient</div>");
+buf.push("</div></div><div class=\"row\"> <div id=\"team-add-plan\" style=\"padding-bottom: 15px;margin-top: -10px;\"><form onsubmit=\"return false;\"><div class=\"form-group\"><textarea rows=\"3\" style=\"resize:none\" placeholder=\"Enter your own improvement action then click 'add' below...\" class=\"form-control\"></textarea></div><button class=\"btn btn-info add-plan\">Add</button></form></div></div><div class=\"row\"><div id=\"individual-task-panel\" class=\"panel panel-warning\"><div class=\"panel-heading\">Individual patient</div>");
 jade_mixins["actionPlanTaskList"](individual);
 buf.push("</div></div></div><div id=\"editPlan\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\" class=\"modal fade\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" data-dismiss=\"modal\" aria-label=\"Close\" class=\"close\"><span aria-hidden=\"true\">×</span></button><h4 id=\"exampleModalLabel\" class=\"modal-title\">Edit Plan</h4></div><div class=\"modal-body\"><div class=\"form-group\"><input id=\"editActionPlanItem\" type=\"text\" class=\"form-control\"/></div></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-primary save-plan\">Save</button><button type=\"button\" data-dismiss=\"modal\" class=\"btn btn-default\">Cancel</button></div></div></div></div><div id=\"deletePlan\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"deleteModalLabel\" aria-hidden=\"true\" class=\"modal fade\"><div class=\"modal-dialog\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" data-dismiss=\"modal\" aria-label=\"Close\" class=\"close\"><span aria-hidden=\"true\">×</span></button><h4 id=\"deleteModalLabel\" class=\"modal-title\">Delete a suggested action you added</h4></div><div class=\"modal-body\"><p><strong>You indicated that you want to delete:</strong></p><span id=\"modal-delete-item\" style=\"font-style:italic\"></span><br/><p><strong>Are you sure?</strong></p></div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-danger delete-plan\">Delete</button><button type=\"button\" data-dismiss=\"modal\" class=\"btn btn-default\">Cancel</button></div></div></div></div>");}.call(this,"individual" in locals_for_with?locals_for_with.individual:typeof individual!=="undefined"?individual:undefined,"team" in locals_for_with?locals_for_with.team:typeof team!=="undefined"?team:undefined));;return buf.join("");
 };
@@ -6788,10 +6926,11 @@ var ap = {
     base.selectTab("actions");
 
     if (layout.view !== ID) {
-      //Not already in this view so we need to rejig a few things
+      //Not already in this view so we need to rejig a few things - boilerplate
       base.clearBox();
       layout.showPage('welcome');
       layout.showHeaderBarItems();
+
 
       $('#welcome-tabs li').removeClass('active');
       $('#outstandingTasks').closest('li').addClass('active');
@@ -6874,15 +7013,6 @@ var ind = {
       //different pathway or stage so title needs updating
       base.updateTitle(data.text.pathways[pathwayId][pathwayStage].standards[standard].name);
       lookup.suggestionModalText="Screen: Indicator\nIndicator: " + data.text.pathways[pathwayId][pathwayStage].standards[standard].name + "\n===========\n";
-      /*base.updateTitle([{
-        title: "Overview",
-        url: "#overview"
-      }, {
-        title: data.text.pathways[pathwayId][pathwayStage].text.page.text,
-        tooltip: data.text.pathways[pathwayId][pathwayStage].text.page.tooltip
-      }]);
-      $('#mainTitle').show();*/
-      //}
 
       layout.pathwayId = pathwayId;
       layout.pathwayStage = pathwayStage;
@@ -6893,40 +7023,72 @@ var ind = {
 
       //The three panels we need to show
       //Panels decide whether they need to redraw themselves
+      // *B* insect this and make sure its not redundant
       teamActionPlan.show(farLeftPanel);
 
       base.updateTab("indicators", data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 
-      wrapper.show(farRightPanel, false, [
-        {
-          show: indicatorHeadlines.show,
-          args: [pathwayId, pathwayStage, standard]
-        }, {
-          show: indicatorBreakdown.show,
-          args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
-        }, {
-          show: patientList.show,
-          args: [pathwayId, pathwayStage, standard, loadContentFn]
-        }
-      ], "Performance over time", false);
-      wrapper.show(farRightPanel, true, [
-        {
-          show: indicatorTrend.show,
-          args: [pathwayId, pathwayStage, standard]
-        }
-      ], "Benchmarking", "Patients at risk");
-      wrapper.show(farRightPanel, true, [
-        {
-          show: indicatorBenchmark.show,
-          args: [pathwayId, pathwayStage, standard]
-        }
-      ], false, "Performance over time");
+      //check state cache (stateMaintainance)
+      if($('#stateM-indicator').children().length > 0)
+      {
+        var indicatorCachedState = $('#stateM-indicator').children();
+        base.savePanelState();
+        farRightPanel.html(indicatorCachedState);
+      }
+
+      //if not presently loaded
+      if($('#mainPage-tabs').length < 1)
+      {
+
+        var tabList = $('<ul id="mainPage-tabs" class="nav nav-tabs"></ul>');
+        var tabContent = $('<div id="mainPage-tab-content"></div>');
+        farRightPanel.append(tabList);
+        farRightPanel.append(tabContent);
+
+        // *B* 1st tabbed panel
+        wrapper.showTab(tabContent, tabList, "Improvement opportunities", [
+          {
+            show: indicatorHeadlines.show,
+            args: [pathwayId, pathwayStage, standard]
+            //args: [pathwayId, pathways, standard]
+          }, {
+            show: indicatorBreakdown.show,
+           args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
+         }, {
+            show: patientList.show,
+            args: [pathwayId, pathwayStage, standard, loadContentFn]
+         }
+       ], true);
+
+  	    // *B* 2nd tabbed panel
+        wrapper.showTab(tabContent, tabList, "Current and future trend", [
+          {
+            show: indicatorTrend.show,
+            args: [pathwayId, pathwayStage, standard]
+          }
+        ], false);
+
+  	     // *B* 3rd tabbed panel
+        wrapper.showTab(tabContent, tabList, "Comparison to other practices", [
+          {
+            show: indicatorBenchmark.show,
+            args: [pathwayId, pathwayStage, standard]
+          }
+        ], false);
+
+        //setup tab buttons
+        wrapper.wireUp();
+      }
+      else {
+        //reload active tab
+        $('#mainPage-tabs li.active a').click();
+      }
 
       if ($('#addedCSS').length === 0) {
         $('head').append('<style id="addedCSS" type="text/css">.table-scroll {max-height:170px;}');
       }
 
-      base.addFullPage(farRightPanel);
+      //base.addFullPage(farRightPanel);
       /*console.log("WINDOW HEIGHT: " + $(window).height());
       console.log("TABLE TOP: " + $('.table-scroll').position().top);
       console.log("CSS: " + Math.floor($(window).height()-$('.table-scroll').position().top-200)+"px");*/
@@ -6937,15 +7099,21 @@ var ind = {
         $('#addedCSS').text('.table-scroll {max-height:' + Math.floor(win.height() - $('.table-scroll').position().top - 200) + 'px;}');
       });
 
-      $('#indicator-pane').show();
+      //$('#indicator-pane').show();
+
+      $('#mainPage-tabs').show();
 
       base.wireUpTooltips();
+
 
       /*setTimeout($('.fp-controlArrow').each(function(idx, el) {
         if(el.is(":visible"))
       }), 2000);*/
 
       base.hideLoading();
+
+      //add state indicator
+      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
     }, 0);
   }
 
@@ -7008,6 +7176,10 @@ var overview = {
 
       base.wireUpTooltips();
       base.hideLoading();
+
+      //add state indicator
+      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
+
     }, 0);
 
   }
@@ -7105,6 +7277,9 @@ var pv = {
           base.wireUpTooltips();
           base.hideLoading();
 
+          //add state indicator
+          farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+
         });
       } else {
         base.updateTitle("No patient currently selected");
@@ -7114,6 +7289,9 @@ var pv = {
 
         base.wireUpTooltips();
         base.hideLoading();
+
+        //add state indicator
+        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
       }
 
     }, 0);
