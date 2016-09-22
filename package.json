@@ -6,7 +6,7 @@
   "scripts": {
     "start": "brunch watch --server",
     "build": "brunch build --production",
-    "postinstall": "npm run build",
+    "postinstall": "brunch build --production",
     "watch": "brunch watch",
 
     "predebug": "echo In one window launch brunch without server: npm run watch",
