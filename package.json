@@ -5,7 +5,8 @@
   "main": "script.js",
   "scripts": {
     "start": "brunch watch --server",
-
+    "build": "brunch build --production",
+    "postinstall": "npm run build",
     "watch": "brunch watch",
 
     "predebug": "echo In one window launch brunch without server: npm run watch",
@@ -70,5 +71,8 @@
     "jquery-sparkline": "^2.3.2",
     "mustache": "^2.2.1",
     "zeroclipboard": "^2.2.0"
+  },
+  "engines": {
+    "node": "4.2.4"
   }
 }
