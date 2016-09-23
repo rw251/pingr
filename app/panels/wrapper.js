@@ -82,11 +82,13 @@ var bd = {
     });
   },
 
-    showTab: function(panel, tabSet, tabLabel, subPanels, isActive) {
+    showTab: function(panel, tabSet, name, tabLabel, subPanels, isActive) {
 
-  //change this to add li
+      //*b* name must be made something sensible --!!!!
+
+      //change this to add li
       var sectionElement = panel;
-      var tabSection = $('<li id="'+ tabLabel.toLowerCase() +'" data-toggle="tooltip" title="'+ tabLabel.toLowerCase() +'"><a id="'+ tabLabel.toLowerCase() +'PaneTab" href="#'+ tabLabel.toLowerCase() +'PaneTab">'+tabLabel+'</a></li>');
+      var tabSection = $('<li id="'+ tabLabel.toLowerCase() +'" data-toggle="tooltip" title="'+ tabLabel.toLowerCase() +'"><a id="'+ tabLabel.toLowerCase() +'PaneTab" href="#'+ tabLabel.toLowerCase() +'PaneTab">'+name+'</a></li>');
 
       var contentObject = $('<div id="'+ tabLabel.toLowerCase() +'-content"></div>');
       $(sectionElement).append(contentObject);
