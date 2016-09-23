@@ -1,4 +1,5 @@
-var data = require('../data.js');
+var base = require('../base.js'),
+  data = require('../data.js');
 
 var qs = {
 
@@ -12,10 +13,12 @@ var qs = {
     });
 
     if (isAppend) panel.append(html);
-    else panel.html(html);
-
+    //*b* maintain state
+    else {
+      base.savePanelState();
+      panel.html(html);
+    }
   }
-
 };
 
 module.exports = qs;

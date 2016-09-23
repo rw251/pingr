@@ -43,7 +43,6 @@ var template = {
       if (urlBits[0] === "#overview" && !urlBits[1]) {
 
         overview.create(template.loadContent);
-
       } else if (urlBits[0] === "#indicators") {
 
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);

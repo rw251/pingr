@@ -19,6 +19,8 @@ var indicatorList = {
       if (isAppend) {
         panel.append(html);
       } else {
+        //*b* maintain state
+        base.savePanelState();
         panel.html(html);
       }
 

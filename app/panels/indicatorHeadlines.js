@@ -1,4 +1,5 @@
-var data = require('../data.js'),
+var base = require('../base.js'),
+  data = require('../data.js'),
   chart = require('../chart.js');/*,
   Mustache = require('mustache');
 */
@@ -16,10 +17,12 @@ var hl = {
     var html = tmpl(indicators);
 
     if(isAppend) panel.append(html);
-    else panel.html(html);
-
+    //*b* maintain state
+    else {
+      base.savePanelState();
+      panel.html(html);
+    }
   }
-
 };
 
 module.exports = hl;

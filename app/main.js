@@ -4,6 +4,8 @@ var template = require('./template'),
   layout = require('./layout'),
   welcome = require('./panels/welcome'),
   log = require('./log'),
+  wrapper = require('./panels/wrapper'), // *B*
+  indicatorTrend = require('./panels/indicatorTrend'), // *B*
   patientView = require('./views/patient');
 
 var states, patLookup, page, hash;
@@ -151,10 +153,10 @@ var main = {
       /*var tempMust = $('#welcome-task-list').html();
       var rendered = Mustache.render(tempMust);*/
       //var tmpl = require("templates/action-plan-task-list");
-      $('#welcome-tab-content').fadeOut(100, function() {
+      $('#welcome-tab-content').fadeOut(250, function() {
         //$(this).html(tmpl());
         welcome.populate();
-        $(this).fadeIn(100);
+        $(this).fadeIn(250);
       });
     });
 
@@ -166,10 +168,10 @@ var main = {
       /*var tempMust = $('#welcome-task-list').html();
       var rendered = Mustache.render(tempMust);*/
       //var tmpl = require("templates/action-plan-task-list");
-      $('#welcome-tab-content').fadeOut(100, function() {
+      $('#welcome-tab-content').fadeOut(250, function() {
         //$(this).html(tmpl());
         welcome.populate(true);
-        $(this).fadeIn(100);
+        $(this).fadeIn(250);
       });
     });
 
@@ -194,7 +196,8 @@ var main = {
         template.loadContent(location.hash, true);
       });
 
-      //Templates
+
+      //Template DOM container constants
       patientsPanelTemplate = $('#patients-panel');
       actionPlanPanel = $('#action-plan-panel');
       patientList = $('#patient-list');
@@ -204,7 +207,7 @@ var main = {
       medicationPanel = $('#medications-panel');
       actionPlanList = $('#action-plan-list');
 
-      //Selectors
+      //Selector DOM container constants
       bottomLeftPanel = $('#bottom-left-panel');
       bottomRightPanel = $('#bottom-right-panel');
       topPanel = $('#top-panel');

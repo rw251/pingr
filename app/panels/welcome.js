@@ -5,6 +5,7 @@ var base = require('../base.js'),
   teamActionPlan = require('./teamActionPlan.js'),
   Mustache = require('mustache');
 
+//AKA Actions
 var welcome = {
 
   wireUpWelcomePage: function(pathwayId, pathwayStage) {
