@@ -1,21 +1,26 @@
 include ../partials/head.jade
-a.btn.btn-info(href='/') Back to interface
-a.btn.btn-info(href='/adduser') Add User
-table.table
-  thead
-    tr
-      th Full name
-      th Email
-      th User roles
-      th Actions
-  tbody
-    each user in users
+.container.starter-template-high
+  .btn-toolbar
+    a.btn.btn-info(href='/') Back to interface
+    a.btn.btn-info(href='/adduser') Add User
+  table.table
+    thead
       tr
-        td= user.fullname
-        td= user.email
-        td= user.roles.indexOf("admin") > -1 ? "Admin" : ""
-        td
-          a.btn.btn-success(href='/edit/'+user.email) Edit
-          a.btn.btn-warning(href='/reset/'+user.email) Reset password
-          a.btn.btn-danger(href='/delete/'+user.email) Delete
-a.btn.btn-info(href='/adduser') Add User
+        th Full name
+        th Email
+        th Practice
+        th User roles
+        th Actions
+    tbody
+      each user in users
+        tr
+          td= user.fullname
+          td= user.email
+          td= user.practiceName + (user.practiceId ? " (" + user.practiceId + ")" : "")
+          td= user.roles.indexOf("admin") > -1 ? "Admin" : ""
+          td
+            .btn-toolbar
+              a.btn.btn-success(href='/edit/'+user.email) Edit
+              a.btn.btn-warning(href='/reset/'+user.email) Reset password
+              a.btn.btn-danger(href='/delete/'+user.email) Delete
+  a.btn.btn-info(href='/adduser') Add User

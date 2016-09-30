@@ -16,7 +16,7 @@ module.exports = {
   },
 
   list: function(done) {
-    User.find({}, null, {sort: {email: 1}}, function(err, users) {
+    User.find({}, null, { sort: { email: 1 } }, function(err, users) {
       if (err) {
         return done(err);
       }
@@ -40,28 +40,60 @@ module.exports = {
         console.log('Error in SignUp: ' + err);
         return done(err);
       }
-      // already exists
+      // doesn't exist
       if (!user) {
-        console.log('User doesnt exists with email: ' + email);
-        return done(null, false, req.flash('error', 'User Not Exists'));
+        console.log('User doesnt exist with email: ' + email);
+        return done(null, false, 'Trying to edit a user with an email not found in the system');
       } else {
-        // if there is a user with that email
-        // create the user
+
         var roles = [];
         if (req.body.isAdmin) roles.push("admin");
+        var originalUser = user;
 
-        user.email = req.body.email;
-        user.fullname = req.body.fullname;
-        user.roles = roles;
-        // save the user
-        user.save(function(err) {
-          if (err) {
-            console.log('Error in Saving user: ' + err);
-            throw err;
-          }
-          console.log('User edit succesful');
-          return done(null, user);
-        });
+        if(email === req.body.email){
+          //email not changing so update is fine
+          user.fullname = req.body.fullname;
+          var els = req.body.practice.split("|");
+          user.practiceId = els[0] !== "" ? els[0] : "";
+          user.practiceName = els[0] !== "" ? els[1] : "None";
+          user.roles = roles;
+          // save the user
+          user.save(function(err) {
+            if (err) {
+              console.log('Error in Saving user: ' + err);
+              throw err;
+            }
+            console.log('User edit succesful');
+            return done(null, user);
+          });
+        } else {
+          //check no existing user with that email
+          User.findOne({
+            'email': req.body.email
+          }, function(err, user) {
+            // if there is already a user with the modified email address
+            if(user) {
+              console.log('Trying to change the email to one that already appears in the system: ' + email);
+              return done(null, false, 'Trying to change the email to one that already appears in the system.');
+            } else {
+              originalUser.email = req.body.email;
+              originalUser.fullname = req.body.fullname;
+              var els = req.body.practice.split("|");
+              originalUser.practiceId = els[0] !== "" ? els[0] : "";
+              originalUser.practiceName = els[0] !== "" ? els[1] : "None";
+              originalUser.roles = roles;
+              // save the user
+              originalUser.save(function(err) {
+                if (err) {
+                  console.log('Error in Saving user: ' + err);
+                  throw err;
+                }
+                console.log('User edit succesful');
+                return done(null, originalUser);
+              });
+            }
+          });
+        }
       }
     });
   },
@@ -78,16 +110,20 @@ module.exports = {
       // already exists
       if (user) {
         console.log('User already exists with email: ' + req.body.email);
-        return done(null, false, req.flash('error', 'User Already Exists'));
+        return done(null, false, req.flash('error', 'An account with that email address already exists'));
       } else {
         // if there is no user with that email
         // create the user
         var roles = [];
         if (req.body.isAdmin) roles.push("admin");
+
+        var els = req.body.practice.split("|");
         var newUser = new User({
           email: req.body.email,
           password: req.body.password,
           fullname: req.body.fullname,
+          practiceId: els[0] !== "" ? els[0] : "",
+          practiceName: els[0] !== "" ? els[1] : "None",
           roles: roles
         });
 

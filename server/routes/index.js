@@ -4,6 +4,7 @@ var cp = require('../passport/change-password');
 var fp = require('../passport/forgot-password');
 var rp = require('../passport/reset-password');
 var users = require('../controllers/users.js');
+var practices = require('../controllers/practices.js');
 var patients = require('../controllers/patients.js');
 var indicators = require('../controllers/indicators.js');
 var text = require('../controllers/text.js');
@@ -15,6 +16,7 @@ var isAuthenticated = function(req, res, next) {
   if (req.isAuthenticated())
     return next();
   // if the user is not authenticated then redirect him to the login page
+  req.session.redirect_to = req.path; //remember the page they tried to load
   res.redirect('/login');
 };
 
@@ -32,11 +34,13 @@ module.exports = function(passport) {
   });
 
   /* Handle Login POST */
-  router.post('/login', passport.authenticate('login', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true
-  }));
+  router.post('/login', passport.authenticate('login', { failureFlash: true,failureRedirect: '/login' }), function(req,res) {
+    var red = req.session.redirect_to || '/';
+    if(req.body.hash) red+='#'+req.body.hash;
+    req.session.redirect_to=null;
+    delete req.session.redirect_to;
+    res.redirect(red);
+  });
 
   /* GET Change password Page */
   router.get('/changepassword', isAuthenticated, function(req, res) {
@@ -73,12 +77,20 @@ module.exports = function(passport) {
   });
 
   router.get('/adduser', isAuthenticated, isAdmin, function(req, res) {
-    res.render('pages/useradd.jade', { message: req.flash() });
+    practices.list(function(err, practices) {
+      res.render('pages/useradd.jade', { practices: practices, message: req.flash() });
+    });
   });
 
   router.post('/adduser', isAuthenticated, isAdmin, function(req, res) {
     users.add(req, function(err, user, flash) {
-      res.render('pages/useradd.jade', { users: users, message: req.flash() });
+      if (err || flash) {
+        practices.list(function(err, practices) {
+          res.render('pages/useradd.jade', { practices: practices, message: flash });
+        });
+      } else {
+        res.redirect('/admin');
+      }
     });
   });
 
@@ -94,15 +106,23 @@ module.exports = function(passport) {
 
   router.get('/edit/:email', isAuthenticated, isAdmin, function(req, res) {
     users.get(req.params.email, function(err, user) {
-      res.render('pages/useredit.jade', { user: user });
+      practices.list(function(err, practices) {
+        res.render('pages/useredit.jade', { practices: practices, user: user });
+      });
     });
   });
 
   router.post('/edit/:email', isAuthenticated, isAdmin, function(req, res) {
-    users.edit(req.params.email, req, function(err, user, flash) {
-      console.log("E:" + err);
-      console.log("U:" + user);
-      res.redirect('/admin');
+    users.edit(req.params.email, req, function(err, user, msg) {
+      if (err || msg) {
+        users.get(req.params.email, function(err, user) {
+          practices.list(function(err, practices) {
+            res.render('pages/useredit.jade', { practices: practices, user: user, message: {error: msg} });
+          });
+        });
+      } else {
+        res.redirect('/admin');
+      }
     });
   });
 

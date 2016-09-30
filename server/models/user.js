@@ -19,6 +19,12 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+  practiceId: {
+    type: String
+  },
+  practiceName: {
+    type: String
+  },
   roles:[String]
 });
 
