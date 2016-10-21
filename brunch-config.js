@@ -2,7 +2,7 @@ module.exports = {
   // See http://brunch.io for documentation.
   paths: {
     public: 'dist',
-    watched: ['app','vendor','server']
+    watched: ['app','vendor']
   },
 
   files: {
@@ -31,20 +31,5 @@ module.exports = {
     templates: {
       joinTo: 'app.js'
     }
-  },
-  hooks: {
-    onCompile: function(generatedFiles, changedAssets) {
-      if(changedAssets.length === changedAssets.filter(function(v){
-        return v.path.search(/^server/);
-      }).length) {
-          console.log("NEED TO RESTART");
-      }
-    }
   }
-  /*,
-
-  server : {
-    run: true,
-    port: 3333
-  }*/
 };
