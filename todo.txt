@@ -1,0 +1,9 @@
+- Setup working version of pingr on server #1
+  - mongodb with users
+  - proxy to direct traffic to correct place
+- script to..
+  - load stored procedures
+  - execute all stored procedures
+  - extract key data
+  - send to other server
+  - import into mongodb
