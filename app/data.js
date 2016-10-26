@@ -444,13 +444,13 @@ var dt = {
     return indicators;
   },
 
-  getAllIndicatorData: function(practiceId, callback) {
+  getAllIndicatorData: function(callback) {
     if (dt.indicators) {
       return callback(dt.indicators);
     } else {
 
       $.ajax({
-        url: "/api/ListOfIndicatorsForPractice/" + practiceId,
+        url: "/api/ListOfIndicatorsForPractice",
         success: function(file) {
           if (!dt.indicators) dt.indicators = dt.processIndicators(file);
 
@@ -478,7 +478,7 @@ var dt = {
     var isAsync = typeof(callback) === "function";
 
     $.ajax({
-      url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
+      url: "/api/PatientListForPractice/Indicator/" + indicatorId,
       async: isAsync,
       success: function(file) {
         if (!dt.indicators) dt.indicators = {};
@@ -641,7 +641,7 @@ var dt = {
     } else {
 
       $.ajax({
-        url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
+        url: "/api/PatientListForPractice/Indicator/" + indicatorId,
         success: function(file) {
           dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
 
