@@ -148,15 +148,15 @@ module.exports = function(passport) {
     });
   });
   //Get list of patients for a practice and indicator - for use on indicator screen
-  router.get('/api/PatientListForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+  router.get('/api/PatientListForPractice/Indicator/:indicatorId', isAuthenticated, function(req, res) {
     patients.getListForIndicator(req.params.practiceId, req.params.indicatorId, function(err, patients) {
       res.send(patients);
     });
   });
 
   //Get list of indicators for a single practice - for use on the overview screen
-  router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, function(req, res) {
-    indicators.list(req.params.practiceId, function(err, indicators) {
+  router.get('/api/ListOfIndicatorsForPractice', isAuthenticated, function(req, res) {
+    indicators.list(req.user.practiceId, function(err, indicators) {
       res.send(indicators);
     });
   });
@@ -167,8 +167,8 @@ module.exports = function(passport) {
     });
   });
   //Get trend data for a practice and an indicator
-  router.get('/api/TrendDataForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
-    indicators.getTrend(req.params.practiceId, req.params.indicatorId, function(err, trend) {
+  router.get('/api/TrendDataForPractice/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+    indicators.getTrend(req.user.practiceId, req.params.indicatorId, function(err, trend) {
       res.send(trend);
     });
   });

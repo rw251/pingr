@@ -371,9 +371,13 @@ async.series([
             dataFile.patients = Object.keys(dataFile.patients).map(function(v){
               return dataFile.patients[v];
             });
-            fs.writeFile('data/patients.json', JSON.stringify(dataFile.patients, null, 2), function(err) {
-              if (err) return console.log(err);
-            });
+
+            var file = fs.createWriteStream('data/patients.json');
+            file.on('error', function(err) { /* error handling */ });
+            file.write("[\n");
+            dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + ',\n'); });
+            file.write("]");
+            file.end();
 
             fs.writeFile('data/text.json', JSON.stringify(textFile, null, 2), function(err) {
               if (err) return console.log(err);
