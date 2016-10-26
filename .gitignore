@@ -16,3 +16,4 @@ data/mongo*.json
 dist/
 dist-test/
 app/assets/data/data.json
+pingr.zip
