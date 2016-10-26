@@ -17,3 +17,4 @@ dist/
 dist-test/
 app/assets/data/data.json
 pingr.zip
+deploy/dbserver/log/*
