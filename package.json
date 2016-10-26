@@ -20,7 +20,7 @@
     "deploy:test": "npm run build",
     "postdeploy:test": "cd dist-test && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages",
     "prepackage": "npm run build",
-    "package": "npm prune --production && bestzip pingr.zip dist/ deploy/appserver/ node_modules/ server/ testserver/ brunch-server.js package.json README.md server.js",
+    "package": "npm prune --production && bestzip pingr.zip dist/ deploy/appserver/ node_modules/ server/ testserver/ add_to_scheduled_tasks.bat brunch-server.js package.json README.md start.bat server.js",
     "postpackage": "npm install"
   },
   "repository": {

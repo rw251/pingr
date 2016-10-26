@@ -4,23 +4,43 @@ var csv = require('csv-parser'),
   async = require('async');
 
 var FILENAMES = {
-  demographics: 'demographics.txt',
-  diagnoses: 'diagnoses.txt',
-  events: 'important codes.txt',
-  indicators: 'indicator.txt',
-  measurements: 'measures.txt',
-  contacts: 'contacts.txt',
-  opportunities: 'impOppCatsAndActions.txt',
-  gplookup: 'gpcodes.txt',
-  text: 'text.txt'
+  demographics: 'demographics.dat',
+  diagnoses: 'diagnoses.dat',
+  events: 'impCodes.dat',
+  indicators: 'indicator.dat',
+  measurements: 'measures.dat',
+  contacts: 'contacts.dat',
+  opportunities: 'impOppCatsAndActions.dat',
+  text: 'text.dat'
 };
 
-var IN_DIR = 'data';
+var IN_DIR = 'in/';
 
 //Load current data
 //make sure opportunities is empty
-var dataFile = { indicators: JSON.parse(fs.readFileSync('data/existingIndicators.json', 'utf8') || "[]"), patients: [] };
-var textFile = { pathways: {} };
+var dataFile = { indicators: JSON.parse(fs.readFileSync(IN_DIR + 'existingIndicators.json', 'utf8') || "[]"), patients: {} };
+var textFile = {
+  pathways: {},
+  measurements: {
+    "eGFR": {
+      "name": "eGFR",
+      "unit": "ml/min/1.73m^2",
+      "type": "line",
+      "valueDecimals": 1
+    },
+    "ACR": {
+      "name": "ACR",
+      "unit": "μg/mg",
+      "type": "line",
+      "valueDecimals": 0
+    },
+    "bp": {
+      "name": "BP",
+      "unit": "mmHg",
+      "type": "errorbar"
+    }
+  }
+};
 
 var messages = [];
 
@@ -63,7 +83,7 @@ var assign = function(obj, prop, value) {
 fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function(line) {
   var els = line.trim("\r").split("\t");
   if (els.length < 5) {
-    if (els[0].replace(/[^a-zA-Z0-9]/g, "").length > 0) messages.push("The text.txt file contains a row with no TAB character: " + els[0]);
+    if (els[0].replace(/[^a-zA-Z0-9]/g, "").length > 0) messages.push("The text.dat file contains a row with no TAB character: " + els[0]);
     return;
   }
   var pathway = els[0],
@@ -73,7 +93,7 @@ fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function(li
     val = els[4];
   if (!textFile.pathways[pathway]) textFile.pathways[pathway] = {};
   if (!textFile.pathways[pathway][stage]) textFile.pathways[pathway][stage] = { standards: {} };
-  textFile.pathways[pathway][stage].standards[standard] = {};
+  if (!textFile.pathways[pathway][stage].standards[standard]) textFile.pathways[pathway][stage].standards[standard] = {};
   assign(textFile.pathways[pathway][stage].standards[standard], key, val);
 });
 
@@ -92,12 +112,12 @@ async.series([
           if (data.date) {
 
             var i = indicators.filter(function(v) {
-              return v.id === data.indicatorid;
+              return v.id === data.indicatorid && v.practiceId === data.gpcode;
             })[0];
 
-            var pathway = id.split('.')[0];
-            var stage = id.split('.')[1];
-            var standard = id.split('.')[2];
+            var pathway = data.indicatorid.split('.')[0];
+            var stage = data.indicatorid.split('.')[1];
+            var standard = data.indicatorid.split('.')[2];
 
             var indText = textFile.pathways[pathway][stage].standards[standard];
             var oppText = indText.opportunities;
@@ -144,11 +164,11 @@ async.series([
     function(callback) {
       console.log("2 series");
       async.map([
-        { file: "data/in/" + dir + FILENAMES.demographics, headers: ['patientId', 'nhsnumber', 'age', 'sex', 'gpcode'] },
-        { file: "data/in/" + dir + FILENAMES.diagnoses, headers: ['patientId', 'date', 'diag', 'cat'] },
-        { file: "data/in/" + dir + FILENAMES.measurements, headers: ['patientId', 'date', 'thing', 'value'] },
-        { file: "data/in/" + dir + FILENAMES.events, headers: ['patientId', 'date', 'event'] },
-        { file: "data/in/" + dir + FILENAMES.contacts, headers: ['patientId', 'date', 'contact'] }
+        { file: IN_DIR + FILENAMES.demographics, headers: ['patientId', 'nhsnumber', 'age', 'sex', 'gpcode'] },
+        { file: IN_DIR + FILENAMES.diagnoses, headers: ['patientId', 'date', 'diag', 'cat'] },
+        { file: IN_DIR + FILENAMES.measurements, headers: ['patientId', 'date', 'thing', 'value'] },
+        { file: IN_DIR + FILENAMES.events, headers: ['patientId', 'date', 'event'] },
+        { file: IN_DIR + FILENAMES.contacts, headers: ['patientId', 'date', 'contact'] }
       ], readCsvAsync, function(err, results) {
         if (err) {
           return callback(err);
@@ -158,17 +178,18 @@ async.series([
         results[0].forEach(function(v) {
           temp[+v.patientId] = {};
           if (!patients[+v.patientId]) {
-            patients[+v.patientId] = { characteristics: { nhs: v.nhsnumber, age: v.age, sex: v.sex, practiceId: v.gpcode } };
+            patients[+v.patientId] = { patientId: +v.patientId, characteristics: { nhs: v.nhsnumber, age: v.age, sex: v.sex, practiceId: v.gpcode } };
             patients[+v.patientId].conditions = [];
             patients[+v.patientId].events = [];
             patients[+v.patientId].contacts = [];
             patients[+v.patientId].measurements = [];
-            patients[+v.patientId].standards = [];//[{ display: indText.tabText, targetMet: true }];
+            patients[+v.patientId].standards = []; //[{ display: indText.tabText, targetMet: true }];
             patients[+v.patientId].medications = [];
             patients[+v.patientId].actions = [];
-          }/* else {
-            patients[+v.patientId].standards.push({ display: indText.tabText, targetMet: true });
-          }*/
+          }
+          /* else {
+                      patients[+v.patientId].standards.push({ display: indText.tabText, targetMet: true });
+                    }*/
         });
 
         //diagnoses
@@ -244,11 +265,14 @@ async.series([
 
         //events
         results[3].forEach(function(v) {
-          patients[+v.patientId].events.push({
-            name: v.event,
-            time: new Date(v.date).getTime(),
-            task: 1
-          });
+          if (!patients[+v.patientId]) console.log("Event without patient:" + JSON.stringify(v));
+          else {
+            patients[+v.patientId].events.push({
+              name: v.event,
+              time: new Date(v.date).getTime(),
+              task: 1
+            });
+          }
         });
 
         //contacts
@@ -293,8 +317,14 @@ async.series([
             });
 
             var i = indicators.filter(function(v) {
-              return v.id === data.indicatorid;
+              return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
             })[0];
+
+            if (!i) {
+              console.log("no indicator for" + JSON.stringify(data));
+              return;
+            }
+            if (!i.opportunities) i.opportunities = [];
 
             var opp = i.opportunities.filter(function(v) {
               return v.id === data.opportunity;
@@ -311,49 +341,56 @@ async.series([
           })
           .on('end', function() {
 
-            if (lastDir) {
-              //Deduplicate contacts
-              console.log("Removing duplicate contacts...");
-              Object.keys(patients).forEach(function(pid) {
-                var item, tempContact = {},
-                  i, n;
-                for (i = 0, n = patients[pid].contacts.length; i < n; i++) {
-                  item = patients[pid].contacts[i];
-                  tempContact[item.name + item.time] = item;
-                }
-                i = 0;
-                var nonDuplicatedArray = [];
-                for (item in tempContact) {
-                  nonDuplicatedArray[i++] = tempContact[item];
-                }
-                patients[pid].contacts = nonDuplicatedArray;
-                console.log(pid + ": " + n + " contacts reduced to " + patients[pid].contacts.length);
-              });
-              console.log("Duplicate contacts removed.");
-
-              dataFile.text = textFile;
-
-              fs.writeFile('data/datareal.json', JSON.stringify(dataFile, null, 2), function(err) {
-                if (err) return console.log(err);
-              });
-
-              fs.writeFile('data/text.json', JSON.stringify(textFile, null, 2), function(err) {
-                if (err) return console.log(err);
-              });
-
-              if (messages.length > 0) {
-                console.log();
-                console.log("################");
-                console.log("## WARNING!!! ##");
-                console.log("################");
-                console.log();
-                console.log("The following errors were detected and should be investigated:");
-                console.log();
+            //Deduplicate contacts
+            /*console.log("Removing duplicate contacts...");
+            Object.keys(patients).forEach(function(pid) {
+              var item, tempContact = {},
+                i, n;
+              for (i = 0, n = patients[pid].contacts.length; i < n; i++) {
+                item = patients[pid].contacts[i];
+                tempContact[item.name + item.time] = item;
               }
-              messages.forEach(function(msg) {
-                console.warn(msg);
-              });
+              i = 0;
+              var nonDuplicatedArray = [];
+              for (item in tempContact) {
+                nonDuplicatedArray[i++] = tempContact[item];
+              }
+              patients[pid].contacts = nonDuplicatedArray;
+              console.log(pid + ": " + n + " contacts reduced to " + patients[pid].contacts.length);
+            });
+            console.log("Duplicate contacts removed.");*/
+
+            dataFile.text = textFile;
+
+
+            fs.writeFile('data/indicators.json', JSON.stringify(dataFile.indicators, null, 2), function(err) {
+              if (err) return console.log(err);
+            });
+
+
+            dataFile.patients = Object.keys(dataFile.patients).map(function(v){
+              return dataFile.patients[v];
+            });
+            fs.writeFile('data/patients.json', JSON.stringify(dataFile.patients, null, 2), function(err) {
+              if (err) return console.log(err);
+            });
+
+            fs.writeFile('data/text.json', JSON.stringify(textFile, null, 2), function(err) {
+              if (err) return console.log(err);
+            });
+
+            if (messages.length > 0) {
+              console.log();
+              console.log("################");
+              console.log("## WARNING!!! ##");
+              console.log("################");
+              console.log();
+              console.log("The following errors were detected and should be investigated:");
+              console.log();
             }
+            messages.forEach(function(msg) {
+              console.warn(msg);
+            });
           });
       });
     }],
