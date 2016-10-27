@@ -135,6 +135,13 @@ module.exports = function(passport) {
   });
 
   /* api */
+  //Get nhs number lookup
+  router.get('/api/nhs', isAuthenticated, function(req,res){
+    patients.nhsLookup(function(err, lookup) {
+      res.send(lookup);
+    });
+  });
+
   //Return a list of patients - not sure this is needed
   router.get('/api/ListOfPatients', isAuthenticated, function(req, res) {
     patients.list(function(err, patients) {
@@ -149,7 +156,7 @@ module.exports = function(passport) {
   });
   //Get list of patients for a practice and indicator - for use on indicator screen
   router.get('/api/PatientListForPractice/Indicator/:indicatorId', isAuthenticated, function(req, res) {
-    patients.getListForIndicator(req.params.practiceId, req.params.indicatorId, function(err, patients) {
+    patients.getListForIndicator(req.user.practiceId, req.params.indicatorId, function(err, patients) {
       res.send(patients);
     });
   });

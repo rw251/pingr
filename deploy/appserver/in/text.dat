@@ -1,0 +1,69 @@
+ckd	diagnosis	undiagnosed	name	CKD diagnosis
+ckd	diagnosis	undiagnosed	tabText	CKD diagnose
+ckd	diagnosis	undiagnosed	description	<strong>Description:</strong> Patients with a diagnosis of CKD (Stage 3 or above) based on their <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with recent eGFR readings persistently less than 60 mL/min/1.73 m2 who do not have an exclusion code. <br> <strong>Correct patients:</strong> Patients who have a diagnostic code of CKD stage 3 or above.
+ckd	diagnosis	undiagnosed	tagline	of your patients with CKD <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">according to their latest eGFR and/or ACR readings</a> have a CKD code in their records.
+ckd	diagnosis	undiagnosed	positiveMessage	Well done! For tips on how to improve further, look through the recommended improvement actions on this page and for each patient.
+ckd	diagnosis	undiagnosed	valueId	eGFR
+ckd	diagnosis	undiagnosed	valueName	Latest eGFR
+ckd	diagnosis	undiagnosed	dateORvalue	value
+ckd	diagnosis	undiagnosed	tableTitle	All patients with improvement opportunities
+ckd	diagnosis	undiagnosed	opportunities.addCode.name	Add a diagnostic code
+ckd	diagnosis	undiagnosed	opportunities.addCode.description	Patients who have CKD <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">according to their latest eGFR and/or ACR readings</a> but have no CKD code in their record.
+ckd	diagnosis	undiagnosed	opportunities.addCode.positionInBarChart	1
+ckd	diagnosis	undiagnosed	opportunities.acrTest.name	ACR missing
+ckd	diagnosis	undiagnosed	opportunities.acrTest.description	Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">CKD diagnosis</a>.
+ckd	diagnosis	undiagnosed	opportunities.acrTest.positionInBarChart	2
+ckd	diagnosis	undiagnosed	opportunities.suggestExclude.name	Suggest exclude
+ckd	diagnosis	undiagnosed	opportunities.suggestExclude.description	Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators.
+ckd	diagnosis	undiagnosed	opportunities.suggestExclude.positionInBarChart	3
+ckd	diagnosis	monitoring	name	Correct CKD monitoring
+ckd	diagnosis	monitoring	tabText	CKD monitor
+ckd	diagnosis	monitoring	description	<strong>Description:</strong> Patients with CKD (Stage 3 and above) who have received the <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>correct frequency of eGFR monitoring based on their latest eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) who do not have an exclusion code. <br> <strong>Correct patients:</strong> Patients who have the correct frequency of monitoring <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>based on their latest eGFR and/or ACR readings</a>.
+ckd	diagnosis	monitoring	tagline	of your patients with a CKD code have been correctly monitored <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'>based on their latest eGFR and/or ACR readings</a>.
+ckd	diagnosis	monitoring	positiveMessage	Well done! For tips on how to improve further, look through the recommended improvement actions on this page and for each patient.
+ckd	diagnosis	monitoring	valueId	eGFR
+ckd	diagnosis	monitoring	valueName	Latest eGFR
+ckd	diagnosis	monitoring	dateORvalue	value
+ckd	diagnosis	monitoring	tableTitle	All patients with improvement opportunities
+ckd	diagnosis	monitoring	opportunities.underContact.name	Undermonitored <br>(contact with practice)
+ckd	diagnosis	monitoring	opportunities.underContact.description	Patients with a CKD code who have <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'><strong>not been monitored correctly based on their latest eGFR and ACR readings</strong></a> but who have had contact with your practice in the last year.
+ckd	diagnosis	monitoring	opportunities.underContact.positionInBarChart	1
+ckd	diagnosis	monitoring	opportunities.underNoContact.name	Undermonitored <br>(<i>no</i> contact with practice)
+ckd	diagnosis	monitoring	opportunities.underNoContact.description	Patients with a CKD code who have <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'><strong>not been monitored correctly based on their latest eGFR and ACR readings</strong></a> and who have had <strong>no</strong> contact with your practice in the last year.
+ckd	diagnosis	monitoring	opportunities.underNoContact.positionInBarChart	2
+ckd	diagnosis	monitoring	opportunities.overMonitored.name	Overmonitored <br>(patients with CKD)
+ckd	diagnosis	monitoring	opportunities.overMonitored.description	Patients with a CKD code who have had <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197'><strong>> 4 eGFR readings in the last year</strong></a>.
+ckd	diagnosis	monitoring	opportunities.overMonitored.positionInBarChart	3
+ckd	diagnosis	monitoring	opportunities.acrTest.name	ACR missing
+ckd	diagnosis	monitoring	opportunities.acrTest.description	Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank">CKD monitoring</a>.
+ckd	diagnosis	monitoring	opportunities.acrTest.positionInBarChart	5
+ckd	diagnosis	monitoring	opportunities.overdiagnosed.name	Overmonitored <br>(overdiagnosed patients)
+ckd	diagnosis	monitoring	opportunities.overdiagnosed.description	Patients with a CKD code whose <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'><strong>latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above</strong></a>.
+ckd	diagnosis	monitoring	opportunities.overdiagnosed.positionInBarChart	4
+ckd	diagnosis	monitoring	opportunities.suggestExclude.name	Suggest exclude
+ckd	diagnosis	monitoring	opportunities.suggestExclude.description	Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators.
+ckd	diagnosis	monitoring	opportunities.suggestExclude.positionInBarChart	6
+ckd	diagnosis	staging	name	CKD staging
+ckd	diagnosis	staging	tabText	CKD stage
+ckd	diagnosis	staging	description	<strong>Description:</strong> Patients with correct coding of CKD staging (Stage 3 or above) based on their latest <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) without an exclusion code. <br> <strong>Correct patients:</strong> Patients with a CKD staging code <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'>matching their latest eGFR and/or ACR readings</a>.
+ckd	diagnosis	staging	tagline	of your patients with a CKD code have the correct stage recorded based on their <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">eGFR and ACR readings</a>.
+ckd	diagnosis	staging	positiveMessage	There's room for improvement - but don't be disheartened! Look through the recommended improvement actions on this page and for each patient.
+ckd	diagnosis	staging	valueId	eGFR
+ckd	diagnosis	staging	valueName	Latest eGFR
+ckd	diagnosis	staging	dateORvalue	value
+ckd	diagnosis	staging	tableTitle	All patients with improvement opportunities
+ckd	diagnosis	staging	opportunities.wrongStage.name	Wrong stage
+ckd	diagnosis	staging	opportunities.wrongStage.description	Patients who have the <strong>wrong CKD stage</strong> in their records according to their latest eGFR and ACR readings.
+ckd	diagnosis	staging	opportunities.wrongStage.positionInBarChart	1
+ckd	diagnosis	staging	opportunities.rightStageWrongSubstage.name	Right stage, wrong substage
+ckd	diagnosis	staging	opportunities.rightStageWrongSubstage.description	Patients who have the <strong>right CKD stage</strong> but the <strong>wrong CKD substage</strong> in their records according to their latest eGFR and ACR readings.
+ckd	diagnosis	staging	opportunities.rightStageWrongSubstage.positionInBarChart	2
+ckd	diagnosis	staging	opportunities.overdiagnosed.name	Overdiagnosed
+ckd	diagnosis	staging	opportunities.overdiagnosed.description	Patients with a CKD code whose <a target='_blank' href='http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'><strong>latest eGFR readings do not meet the criteria for CKD diagnosis stage 3 or above</strong></a>.
+ckd	diagnosis	staging	opportunities.overdiagnosed.positionInBarChart	3
+ckd	diagnosis	staging	opportunities.acrTest.name	ACR missing
+ckd	diagnosis	staging	opportunities.acrTest.description	Patients with a CKD code who do not have an ACR test result in their record to enable accurate <a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank">CKD staging</a>.
+ckd	diagnosis	staging	opportunities.acrTest.positionInBarChart	4
+ckd	diagnosis	staging	opportunities.suggestExclude.name	Suggest exclude
+ckd	diagnosis	staging	opportunities.suggestExclude.description	Patients with a CKD code who may <strong>benefit from being excluded</strong> from CKD quality indicators.
+ckd	diagnosis	staging	opportunities.suggestExclude.positionInBarChart	5

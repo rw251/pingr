@@ -10,46 +10,51 @@ var ps = {
       states.clearPrefetchCache();
     }
 
-    states = new Bloodhound({
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      local: $.map(data.patientArray, function(state) {
-        return {
-          id: state,
-          value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
-        };
-      })
-    });
+    data.populateNhsLookup(function(){
 
-    states.initialize(true);
-
-    $('#search-box').find('.typeahead').typeahead('destroy');
-    $('#search-box').find('.typeahead').typeahead({
-        hint: true,
-        highlight: true,
-        minLength: 1,
-        autoselect: true
-      }, {
-        name: 'patients',
-        displayKey: 'value',
-        source: states.ttAdapter(),
-        templates: {
-          empty: [
-              '<div class="empty-message">',
-                '&nbsp; &nbsp; No matches',
-              '</div>'
-            ].join('\n')
-        }
-      }).on('typeahead:selected', ps.onSelected)
-      .on('typeahead:autocompleted', ps.onSelected);
-
-    $('#searchbtn').on('mousedown', function() {
-      var val = $('.typeahead').eq(0).val();
-      if (!val || val === "") val = $('.typeahead').eq(1).val();
-      ps.onSelected(null, {
-        "id": val
+      states = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: $.map(data.patientArray, function(state) {
+          return {
+            id: state,
+            value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
+          };
+        })
       });
+
+      states.initialize(true);
+
+      $('#search-box').find('.typeahead').typeahead('destroy');
+      $('#search-box').find('.typeahead').typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1,
+          autoselect: true
+        }, {
+          name: 'patients',
+          displayKey: 'value',
+          source: states.ttAdapter(),
+          templates: {
+            empty: [
+                '<div class="empty-message">',
+                  '&nbsp; &nbsp; No matches',
+                '</div>'
+              ].join('\n')
+          }
+        }).on('typeahead:selected', ps.onSelected)
+        .on('typeahead:autocompleted', ps.onSelected);
+
+      $('#searchbtn').on('mousedown', function() {
+        var val = $('.typeahead').eq(0).val();
+        if (!val || val === "") val = $('.typeahead').eq(1).val();
+        ps.onSelected(null, {
+          "id": val
+        });
+      });
+
     });
+
   },
 
   onSelected: function($e, nhsNumberObject) {
