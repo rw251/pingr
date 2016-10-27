@@ -14,7 +14,7 @@ var FILENAMES = {
   text: 'text.dat'
 };
 
-var IN_DIR = 'in/';
+var IN_DIR = 'E:\\ImporterPINGR\\';
 
 //Load current data
 //make sure opportunities is empty
@@ -136,10 +136,19 @@ async.series([
               indicators.push(i);
             }
 
-            i.values[0].push(data.date.replace(/[^0-9-]/g, ""));
-            i.values[1].push(data.numerator);
-            i.values[2].push(data.denominator);
-            i.values[3].push(data.target);
+			var dtt = data.date.replace(/[^0-9-]/g, "");
+			//replace if already there
+			var dttIdx = i.values[0].indexOf(dtt);
+			if(dttIdx === -1) {
+				i.values[0].push(dtt);
+				i.values[1].push(data.numerator);
+				i.values[2].push(data.denominator);
+				i.values[3].push(data.target);
+			} else {
+				i.values[1][dttIdx] = data.numerator;
+				i.values[2][dttIdx] = data.denominator;
+				i.values[3][dttIdx] = data.target;
+			}
           }
         })
         .on('end', function() {
@@ -283,6 +292,12 @@ async.series([
             task: 2
           });
         });
+		
+		indicators.forEach(function(v){
+		  v.opportunities.forEach(function(vv,ix){
+		    v.opportunities[ix].patients=[]; 
+		  });
+		});
 
         fs.createReadStream(IN_DIR + FILENAMES.opportunities)
           .pipe(
@@ -371,8 +386,8 @@ async.series([
             dataFile.patients = Object.keys(dataFile.patients).map(function(v){
               return dataFile.patients[v];
             });
-
-            var file = fs.createWriteStream('data/patients.json');
+           
+			var file = fs.createWriteStream('data/patients.json');
             file.on('error', function(err) { /* error handling */ });
             file.write("[\n");
             dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + ',\n'); });
