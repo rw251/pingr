@@ -21,7 +21,7 @@ IF NOT EXIST %IMPORT_DIR%contacts.dat (
 	goto :failed
 )
 IF NOT EXIST %IMPORT_DIR%demographics.dat (
-	SET ERRRR=demographics file is missing	
+	SET ERRRR=demographics file is missing
 	goto :failed
 )
 IF NOT EXIST %IMPORT_DIR%diagnoses.dat (
@@ -65,6 +65,8 @@ mongoimport --db pingr --collection text --drop data/text.json --jsonArray
 mongoimport --db pingr --collection indicators --drop data/indicators.json --jsonArray
 mongoimport --db pingr --collection patients --drop data/patients.json --jsonArray
 mongoimport --db pingr --collection practices --drop in/practices.json --jsonArray
+
+cscript sendmail.vbs "All files successfully loaded into mongo"
 
 goto :end
 
