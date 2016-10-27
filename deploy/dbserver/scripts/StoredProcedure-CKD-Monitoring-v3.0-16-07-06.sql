@@ -555,7 +555,7 @@ from #classify as d
 --set @denominator = (select COUNT(*) from #indicator);  
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target)
 --select CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
-select 'ckd.diagnosis.monitoring',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when underMonitored is NULL and overMonitored is NULL then 1 else 0 end) as numerator, (select COUNT(*) from #indicator) as denominator, 0.75 as target from #indicator as a
+select 'ckd.diagnosis.monitoring',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when underMonitored is NULL and overMonitored is NULL then 1 else 0 end) as numerator, COUNT(*) as denominator, 0.75 as target from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
 --0s full SIR

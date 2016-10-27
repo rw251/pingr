@@ -4,6 +4,7 @@ GO
 CREATE PROCEDURE [pingr.run-all] @ReportDate VARCHAR(10)
 AS
 SET NOCOUNT ON --exclude row count results for call from R
+SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an aggregate or other SET operation." error though BB needs to check this out at some point 
 
 							---------------------------------------------------------------
 							--------------CREATE TABLES USED BY STORED PROCEDURES----------
