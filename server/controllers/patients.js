@@ -31,6 +31,23 @@ module.exports = {
     });
   },
 
+  //Get nhs lookup
+  nhsLookup: function(gp, done){
+    Patient.find({"characteristics.practiceId":gp}, {_id:0, "characteristics.nhs":1, patientId:1}, function(err, patients){
+      if(!patients) {
+        console.log('oops with nhs lookup');
+        return done(null, false);
+      } else {
+        var rtn = {};
+        patients.forEach(function(v){
+          v = v.toObject();
+          rtn[""+v.patientId] = v.characteristics.nhs;
+        });
+        return done(null, rtn);
+      }
+    });
+  },
+
   //Get list of patients for a practice and indicator - for use on indicator screen
   getListForIndicator: function(practiceId, indicatorId, done) {
     //need to get
@@ -59,6 +76,7 @@ module.exports = {
             });
             return {
               patientId: patient.patientId,
+              nhs: patient.characteristics.nhs,
               age: patient.characteristics.age,
               value: meas,
               opportunities: opps

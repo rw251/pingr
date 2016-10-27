@@ -59,7 +59,14 @@ var dt = {
   pathwayNames: {},
   diseases: [],
   options: [],
-  patLookup: {},
+
+  populateNhsLookup: function(done){
+    if(dt.patLookup) return done();
+    $.getJSON("/api/nhs", function(lookup){
+      dt.patLookup = lookup;
+      return done();
+    });
+  },
 
   getPatietListForStandard: function(pathwayId, pathwayStage, standard) {
     var patients = dt.removeDuplicates(dt[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a, b) {
@@ -444,7 +451,7 @@ var dt = {
     return indicators;
   },
 
-  getAllIndicatorData: function(callback) {
+  getAllIndicatorData: function(practiceId, callback) {
     if (dt.indicators) {
       return callback(dt.indicators);
     } else {
@@ -541,7 +548,7 @@ var dt = {
     });
 
     patients = patients.map(function(patient) {
-      patient.nhsNumber = dt.patLookup[patient.patientId] || patient.patientId;
+      patient.nhsNumber = patient.nhs || patient.patientId;
       patient.items = [
         patient.age,
         patient.value,

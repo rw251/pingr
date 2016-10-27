@@ -45,7 +45,7 @@ var ind = {
 
       if (!pathwayId) {
         if (layout.pathwayId) pathwayId = layout.pathwayId;
-        else pathwayId = Object.keys(data.pathwayNames)[0];
+        else pathwayId = Object.keys(data.text.pathways)[0];
       }
 
       if (!pathwayStage) {
