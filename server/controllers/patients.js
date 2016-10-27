@@ -39,10 +39,11 @@ module.exports = {
         return done(null, false);
       } else {
         var rtn = {};
-        patients.map(function(v){
-          rtn[v.patientId] = v.characteristics.nhs;
+        patients.forEach(function(v){
+          v = v.toObject();
+          rtn[""+v.patientId] = v.characteristics.nhs;
         });
-        return rtn;
+        return done(null, rtn);
       }
     });
   },

@@ -137,7 +137,7 @@ module.exports = function(passport) {
   /* api */
   //Get nhs number lookup
   router.get('/api/nhs', isAuthenticated, function(req,res){
-    patients.nhsLookup(function(err, lookup) {
+    patients.nhsLookup(req.user.practiceId, function(err, lookup) {
       res.send(lookup);
     });
   });
