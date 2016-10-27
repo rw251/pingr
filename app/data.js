@@ -444,7 +444,7 @@ var dt = {
     return indicators;
   },
 
-  getAllIndicatorData: function(callback) {
+  getAllIndicatorData: function(practiceId, callback) {
     if (dt.indicators) {
       return callback(dt.indicators);
     } else {
