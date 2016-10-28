@@ -1,7 +1,7 @@
 Set MyEmail=CreateObject("CDO.Message")
 
-MyEmail.Subject="Subject"
-MyEmail.From="PINGR Alert <alert@smash.srft.nhs.uk>"
+MyEmail.Subject="PINGR update"
+MyEmail.From="PINGR Alert <info@pingr.srft.nhs.uk>"
 MyEmail.To="benjamin.brown@manchester.ac.uk;richard.williams2@manchester.ac.uk"
 MyEmail.TextBody=WScript.Arguments(0)
 
@@ -15,7 +15,7 @@ MyEmail.Configuration.Fields.Item ("http://schemas.microsoft.com/cdo/configurati
 MyEmail.Configuration.Fields.Item ("http://schemas.microsoft.com/cdo/configuration/smtpserver")="mail.srft.nhs.uk"
 
 'SMTP Port
-MyEmail.Configuration.Fields.Item ("http://schemas.microsoft.com/cdo/configuration/smtpserverport")=25 
+MyEmail.Configuration.Fields.Item ("http://schemas.microsoft.com/cdo/configuration/smtpserverport")=25
 
 MyEmail.Configuration.Fields.Update
 MyEmail.Send
