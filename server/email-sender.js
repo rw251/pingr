@@ -13,6 +13,7 @@ exports.sendEmail = function(mailConfig, subject, text, attachment, callback) {
             user: mailConfig.smtp.username,
             pass: mailConfig.smtp.password
         };
+        smtpProperties.service='SendGrid';
     }
     else {
         smtpProperties.tls = { rejectUnauthorized:false };

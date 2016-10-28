@@ -38,7 +38,7 @@ module.exports = {
             mailConfig.options.from = 'PINGR <info@pingr.srft.nhs.uk>';
             mailConfig.options.to = user.email;
             //Send email
-            emailSender.sendEmail(mailConfig, 'PINGR: Password reset', 'You\'re password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://' + req.headers.host + '/#!/reset/' + token + '\n\n', null, function(error, info) {
+            emailSender.sendEmail(mailConfig, 'PINGR: Password reset', 'You\'re password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://' + req.headers.host + '/forgot/' + token + '\n\n', null, function(error, info) {
               if(error) {
                 console.log("email not sent: " + error);
               }

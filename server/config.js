@@ -11,31 +11,15 @@ module.exports = {
   mail: {
       sendEmailOnError: true,
       smtp: {
-          host: 'mailrouter.man.ac.uk',
-          port: 25,
-          useAuth: false,
-          username: '',
-          password: ''
-      },
-      options: {
-          from: 'development@pingr.srft.nhs.uk',
-          to: 'richard.williams2@manchester.ac.uk'
-      }
-  }
-  /*
-  mail: {
-      sendEmailOnError: true,
-      smtp: {
-          host: 'mail.srft.nhs.uk',
-          port: 25,
-          useAuth: false,
-          username: '',
-          password: ''
+          host: process.env.PINGR_SMTP_HOST || 'mail.srft.nhs.uk',
+          port: process.env.PINGR_SMTP_PORT || 25,
+          useAuth: process.env.PINGR_SMTP_USER && true,
+          username: process.env.PINGR_SMTP_USER || '',
+          password: process.env.PINGR_SMTP_PASS || ''
       },
       options: {
           from: 'PINGR <info@pingr.srft.nhs.uk>',
           to: ''
       }
-  },
-  */
+  }
 };
