@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var cp = require('../passport/change-password');
 var fp = require('../passport/forgot-password');
+var reg = require('../passport/register-user');
 var rp = require('../passport/reset-password');
 var users = require('../controllers/users.js');
 var practices = require('../controllers/practices.js');
@@ -44,12 +45,12 @@ module.exports = function(passport) {
 
   /* GET Change password Page */
   router.get('/changepassword', isAuthenticated, function(req, res) {
-    res.render('pages/changepassword', { message: req.flash() });
+    res.render('pages/changepassword.jade', { message: req.flash() });
   });
 
   /* Handle Change password POST */
   router.post('/changepassword', isAuthenticated, cp, function(req, res) {
-    res.render('pages/changepassword', { message: req.flash() });
+    res.render('pages/changepassword.jade', { message: req.flash() });
   });
 
   //User forgets password
@@ -59,8 +60,19 @@ module.exports = function(passport) {
   router.post('/forgot', fp.forgot, function(req, res) {
     res.render('pages/userforgot.jade', { message: req.flash() });
   });
-  router.get('/forgot/:token', fp.token, function(req, res) {
-    res.render('pages/userforgot.jade', { message: req.flash() });
+  router.get('/forgot/:token', function(req, res) {
+    res.render('pages/newpassword.jade', { message: req.flash() });
+  });
+  router.post('/forgot/:token', fp.token, function(req, res) {
+    res.render('pages/newpassword.jade', { message: req.flash() });
+  });
+
+  //User registration
+  router.get('/register', function(req, res){
+    res.render('pages/userregister.jade');
+  });
+  router.post('/register', reg, function(req, res){
+    res.render('pages/userregister.jade', { message: req.flash() });
   });
 
   /* Handle Logout */

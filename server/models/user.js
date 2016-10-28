@@ -25,6 +25,12 @@ var UserSchema = new Schema({
   practiceName: {
     type: String
   },
+  password_recovery_code: {
+      type: String
+  },
+  password_recovery_expiry: {
+      type: Date
+  },
   roles:[String]
 });
 

@@ -7,5 +7,35 @@ module.exports = {
   },
   server:{
     port: process.env.PINGR_SERVER_PORT
+  },
+  mail: {
+      sendEmailOnError: true,
+      smtp: {
+          host: 'mailrouter.man.ac.uk',
+          port: 25,
+          useAuth: false,
+          username: '',
+          password: ''
+      },
+      options: {
+          from: 'development@pingr.srft.nhs.uk',
+          to: 'richard.williams2@manchester.ac.uk'
+      }
   }
+  /*
+  mail: {
+      sendEmailOnError: true,
+      smtp: {
+          host: 'mail.srft.nhs.uk',
+          port: 25,
+          useAuth: false,
+          username: '',
+          password: ''
+      },
+      options: {
+          from: 'PINGR <info@pingr.srft.nhs.uk>',
+          to: ''
+      }
+  },
+  */
 };

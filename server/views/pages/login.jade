@@ -30,7 +30,7 @@ include ../partials/head.jade
               i.fa.fa-key
             input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
           .form-group
-            a.small(href='/reset') Forgot password
+            a.small(href='/forgot') Forgot password
           script document.write('<input type="hidden" name="hash" value="'+document.location.href.split("#")[1] ?? ''+'"/>');
           button#signin.btn.btn-purple.btn-block.history(type='submit')
             // href="#overview">
