@@ -292,12 +292,12 @@ async.series([
             task: 2
           });
         });
-		
-		indicators.forEach(function(v){
-		  v.opportunities.forEach(function(vv,ix){
-		    v.opportunities[ix].patients=[]; 
-		  });
-		});
+
+    		indicators.forEach(function(v){
+    		  v.opportunities.forEach(function(vv,ix){
+    		    v.opportunities[ix].patients=[];
+    		  });
+    		});
 
         fs.createReadStream(IN_DIR + FILENAMES.opportunities)
           .pipe(
@@ -325,12 +325,16 @@ async.series([
                 link: data.link
               });
             }
+
+            patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
+/*
+RW - maybe need a way to determine if a person has met a standard
             patients[+data.patientId].standards.forEach(function(v) {
               if (v.display === indText.tabText) {
                 v.targetMet = false;
               }
             });
-
+*/
             var i = indicators.filter(function(v) {
               return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
             })[0];
@@ -386,7 +390,7 @@ async.series([
             dataFile.patients = Object.keys(dataFile.patients).map(function(v){
               return dataFile.patients[v];
             });
-           
+
 			var file = fs.createWriteStream('data/patients.json');
             file.on('error', function(err) { /* error handling */ });
             file.write("[\n");
