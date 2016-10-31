@@ -35,10 +35,10 @@ module.exports = function(passport) {
   });
 
   /* Handle Login POST */
-  router.post('/login', passport.authenticate('login', { failureFlash: true,failureRedirect: '/login' }), function(req,res) {
+  router.post('/login', passport.authenticate('login', { failureFlash: true, failureRedirect: '/login' }), function(req, res) {
     var red = req.session.redirect_to || '/';
-    if(req.body.hash) red+='#'+req.body.hash;
-    req.session.redirect_to=null;
+    if (req.body.hash) red += '#' + req.body.hash;
+    req.session.redirect_to = null;
     delete req.session.redirect_to;
     res.redirect(red);
   });
@@ -68,12 +68,20 @@ module.exports = function(passport) {
   });
 
   //User registration
-  router.get('/register', function(req, res){
-    res.render('pages/userregister.jade');
+  router.get('/register', function(req, res) {
+    practices.list(function(err, practices) {
+      res.render('pages/userregister.jade',  { practices: practices });
+    });
   });
-  router.post('/register', reg, function(req, res){
-    res.render('pages/userregister.jade', { message: req.flash() });
+  router.post('/register', reg.register, function(req, res) {
+    practices.list(function(err, practices) {
+      res.render('pages/userregister.jade',  { practices: practices, message: req.flash() });
+    });
   });
+  router.get('/authorise/:email',  isAuthenticated, isAdmin, reg.authorise, function(req, res){
+    res.render('pages/userauthorise.jade',  { message: req.flash() });
+  });
+
 
   /* Handle Logout */
   router.get('/signout', function(req, res) {
@@ -129,7 +137,7 @@ module.exports = function(passport) {
       if (err || msg) {
         users.get(req.params.email, function(err, user) {
           practices.list(function(err, practices) {
-            res.render('pages/useredit.jade', { practices: practices, user: user, message: {error: msg} });
+            res.render('pages/useredit.jade', { practices: practices, user: user, message: { error: msg } });
           });
         });
       } else {
@@ -148,7 +156,7 @@ module.exports = function(passport) {
 
   /* api */
   //Get nhs number lookup
-  router.get('/api/nhs', isAuthenticated, function(req,res){
+  router.get('/api/nhs', isAuthenticated, function(req, res) {
     patients.nhsLookup(req.user.practiceId, function(err, lookup) {
       res.send(lookup);
     });
@@ -198,6 +206,9 @@ module.exports = function(passport) {
     });
   });
 
+  router.get('/', isAuthenticated, function(req, res, next) {
+    res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname });
+  });
 
   /* Ensure all html/js resources are only accessible if authenticated */
   router.get(/^\/(.*html|.*js|)$/, isAuthenticated, function(req, res, next) {

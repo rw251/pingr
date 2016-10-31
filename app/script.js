@@ -34,47 +34,6 @@ var App = {
       //Grab the hash if exists - IE seems to forget it
       main.hash = location.hash;
       main.hash="#overview";
-      //CHANGE THIS - added to spoof login
-      //location.hash = "";
-      //main.hash = "";
-    /*  $('#signin').on('click', function() {
-        if ($('#inpEmail').val().length < 8) alert("Please enter your email address.");
-        else {
-          var dataToSend = {
-            event: {
-              what: "login",
-              when: new Date().getTime(),
-              who: $("#inpEmail").val(),
-              detail: [
-                { key: "href", value: location.href }
-              ]
-            }
-          };
-          console.log(dataToSend);
-          $.ajax({
-            type: "POST",
-            url: "http://130.88.250.206:9100/pingr",
-            data: JSON.stringify(dataToSend),
-            success: function(d) { console.log(d); },
-            dataType: "json",
-            contentType: "application/json"
-          });
-
-          var obj = JSON.parse(localStorage.bb);
-          obj.email = $('#inpEmail').val();
-          localStorage.bb = JSON.stringify(obj);
-
-
-          history.pushState(null, null, '#overview');
-          template.loadContent('#overview');
-        }
-      });*/
-      /*$('#inpEmail').on('keyup', function(e) {
-        var code = e.which;
-        if (code == 13) {
-          $('#signin').click();
-        }
-      });*/
 
       //Load the data then wire up the events on the page
       main.init();
@@ -87,10 +46,6 @@ var App = {
           "version": main.version
         });
       }
-
-      /*if (JSON.parse(localStorage.bb).email) {
-        $('#inpEmail').val(JSON.parse(localStorage.bb).email);
-      }*/
 
       $('[data-toggle="tooltip"]').tooltip({
         container: 'body',
@@ -111,8 +66,6 @@ var App = {
         $('[data-toggle="tooltip"]').not(this).tooltip('hide');
       });
 
-      /*history.pushState(null, null, '#overview');
-      template.loadContent('#overview');*/
     });
   }
 };

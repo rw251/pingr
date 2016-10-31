@@ -25,6 +25,12 @@ var UserSchema = new Schema({
   practiceName: {
     type: String
   },
+  practiceIdNotAuthorised: {
+    type: String
+  },
+  practiceNameNotAuthorised: {
+    type: String
+  },
   password_recovery_code: {
       type: String
   },

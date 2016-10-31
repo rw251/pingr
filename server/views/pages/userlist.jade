@@ -16,11 +16,17 @@ include ../partials/head.jade
         tr
           td= user.fullname
           td= user.email
-          td= user.practiceName + (user.practiceId ? " (" + user.practiceId + ")" : "")
+          - if(user.practiceNameNotAuthorised)  
+            td= user.practiceNameNotAuthorised + (user.practiceIdNotAuthorised ? " (" + user.practiceIdNotAuthorised + ")" : "")
+          - else
+            td= user.practiceName + (user.practiceId ? " (" + user.practiceId + ")" : "")
           td= user.roles.indexOf("admin") > -1 ? "Admin" : ""
           td
             .btn-toolbar
-              a.btn.btn-success(href='/edit/'+user.email) Edit
-              a.btn.btn-warning(href='/reset/'+user.email) Reset password
-              a.btn.btn-danger(href='/delete/'+user.email) Delete
+              - if(user.practiceNameNotAuthorised)  
+                a.btn.btn-success(href='/authorise/'+user.email) Authorise
+              - else
+                a.btn.btn-success(href='/edit/'+user.email) Edit
+                a.btn.btn-warning(href='/reset/'+user.email) Reset password
+                a.btn.btn-danger(href='/delete/'+user.email) Delete
   a.btn.btn-info(href='/adduser') Add User
