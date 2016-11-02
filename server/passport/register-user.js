@@ -49,8 +49,14 @@ module.exports = {
             if (error) {
               console.log("email not sent: " + error);
             }
-            req.flash('success', 'Thanks for registering. You will receive an email shortly when your request has been authorised.');
-            return next();
+            localMailConfig.options.to = newUser.email;
+            emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'We have received your request to access ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1] + '\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR', null, function(error, info) {
+              if (error) {
+                console.log("email not sent: " + error);
+              }
+              req.flash('success', 'Thanks for registering. You will receive an email shortly when your request has been authorised. You can log in to PINGR now, but you won\'t see any data until you are authorised.');
+              return next();
+            });
           });
         });
       }
@@ -106,5 +112,46 @@ module.exports = {
         });
       }
     });
+  },
+
+  reject: function(req, res, next) {
+    User.findOne({
+      'email': req.params.email
+    }, function(err, user) {
+      // In case of any error, return using the done method
+      if (err || !user) {
+        console.log('Error in user register: ' + err);
+        req.flash('error', 'User doesn\'t exist');
+        return next();
+      } else {
+        User.remove({'email': user.email}, function(err){
+          if (err) {
+            console.log('Error removing user');
+            req.flash('error', 'An error occurred deleting the user.');
+            return next();
+          }
+          //send email
+          var config = require('../config');
+          var localMailConfig = {
+            sendEmailOnError: mailConfig.sendEmailOnError,
+            smtp: mailConfig.smtp,
+            options: {}
+          };
+          localMailConfig.options.to = user.email;
+          localMailConfig.options.from = mailConfig.options.from;
+          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been denied access to view PINGR for practice ' + user.practiceName + '\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR', null, function(error, info) {
+            if (error) {
+              console.log("email not sent: " + error);
+              req.flash('error', 'User rejected but confirmation email failed to send.');
+              return next();
+            } else {
+              req.flash('success', 'User rejected and rejection email sent to them.');
+              return next();
+            }
+          });
+        });
+      }
+    });
   }
+
 };

@@ -21,7 +21,7 @@ include ../partials/head.jade
       .form-group.input-group
         span.input-group-addon
           i.fa.fa-stethoscope
-        select.form-control(name='practice')
+        select.form-control(name='practice', required='')
           option(value="") Select GP practice
           each practice in practices
             option(value=practice._id+"|"+practice.name)= practice.name

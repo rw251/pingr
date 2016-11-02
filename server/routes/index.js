@@ -81,6 +81,9 @@ module.exports = function(passport) {
   router.get('/authorise/:email',  isAuthenticated, isAdmin, reg.authorise, function(req, res){
     res.render('pages/userauthorise.jade',  { message: req.flash() });
   });
+  router.get('/reject/:email',  isAuthenticated, isAdmin, reg.reject, function(req, res){
+    res.render('pages/userauthorise.jade',  { message: req.flash() });
+  });
 
 
   /* Handle Logout */
