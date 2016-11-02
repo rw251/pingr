@@ -39,6 +39,8 @@ module.exports = {
           }
           //send email
           //mailConfig.options.to =
+          console.log(mailConfig.options.to);
+          console.log('PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1]);
           //to is now in config file
           emailSender.sendEmail(mailConfig, 'PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, function(error, info) {
             if (error) {
