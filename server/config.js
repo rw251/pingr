@@ -6,7 +6,8 @@ module.exports = {
     secret: process.env.PINGR_PASSPORT_SECRET
   },
   server:{
-    port: process.env.PINGR_SERVER_PORT
+    port: process.env.PINGR_SERVER_PORT,
+    url: process.env.PINGR_SERVER_URL
   },
   mail: {
       sendEmailOnError: true,

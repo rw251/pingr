@@ -1,7 +1,8 @@
 var User = require('../models/user'),
   emailSender = require('../email-sender');
 
-var mailConfig = require('../config').mail;
+var config = require('../config');
+var mailConfig = config.mail;
 
 module.exports = {
   register: function(req, res, next) {
@@ -39,7 +40,7 @@ module.exports = {
           //send email
           //mailConfig.options.to =
           //to is now in config file
-          emailSender.sendEmail(mailConfig, 'PINGR: Request for access', 'A user has requested to access pingr.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, function(error, info) {
+          emailSender.sendEmail(mailConfig, 'PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
             }
@@ -80,7 +81,7 @@ module.exports = {
           }
           //send email
           mailConfig.options.to = user.email;
-          emailSender.sendEmail(mailConfig, 'PINGR: Request for access', 'You have been authorised to view PINGR for practice ' + user.practiceName + '\n\nYou can access the site at https://pingr.srft.nhs.uk.\n\nRegards\n\nPINGR', null, function(error, info) {
+          emailSender.sendEmail(mailConfig, 'PINGR: Request for access', 'You have been authorised to view PINGR for practice ' + user.practiceName + '\n\nYou can access the site at ' + config.server.url + '.\n\nRegards\n\nPINGR', null, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User authorised but confirmation email failed to send.');
