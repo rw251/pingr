@@ -3,7 +3,7 @@ Set wshShell = CreateObject( "WScript.Shell" )
 
 MyEmail.Subject="PINGR update"
 MyEmail.From="PINGR Alert <info@pingr.srft.nhs.uk>"
-MyEmail.To="richard.williams2@manchester.ac.uk"
+MyEmail.To="benjamin.brown@manchester.ac.uk;richard.williams2@manchester.ac.uk"
 MyEmail.TextBody=WScript.Arguments(0)
 
 if WScript.Arguments.count > 1 then

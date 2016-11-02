@@ -37,7 +37,8 @@ module.exports = {
             return next();
           }
           //send email
-          mailConfig.options.to = '1234richardwilliams@gmail.com';
+          //mailConfig.options.to =
+          //to is now in config file
           emailSender.sendEmail(mailConfig, 'PINGR: Request for access', 'A user has requested to access pingr.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);

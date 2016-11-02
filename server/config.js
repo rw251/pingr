@@ -19,7 +19,7 @@ module.exports = {
       },
       options: {
           from: 'PINGR <info@pingr.srft.nhs.uk>',
-          to: ''
+          to: process.env.PINGR_EMAIL_LIST || ''
       }
   }
 };
