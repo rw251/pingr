@@ -1,9 +1,6 @@
 var User = require('../models/user'),
   emailSender = require('../email-sender');
 
-var config = require('../config');
-var mailConfig = config.mail;
-
 module.exports = {
   register: function(req, res, next) {
     User.findOne({
@@ -37,8 +34,8 @@ module.exports = {
             req.flash('error', 'An error occurred please try again.');
             return next();
           }
-          //send email
-          //mailConfig.options.to =
+          var config = require('../config');
+          var mailConfig = config.mail;
           console.log(mailConfig.options.to);
           console.log('PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1]);
           //to is now in config file
@@ -82,6 +79,8 @@ module.exports = {
             return next();
           }
           //send email
+          var config = require('../config');
+          var mailConfig = config.mail;
           mailConfig.options.to = user.email;
           emailSender.sendEmail(mailConfig, 'PINGR: Request for access', 'You have been authorised to view PINGR for practice ' + user.practiceName + '\n\nYou can access the site at ' + config.server.url + '.\n\nRegards\n\nPINGR', null, function(error, info) {
             if (error) {
