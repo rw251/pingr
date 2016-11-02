@@ -90,6 +90,7 @@ module.exports = function(passport) {
 
   /* Handle Logout */
   router.get('/signout', function(req, res) {
+    events.logout(req.user.email, req.sessionID);
     req.logout();
     res.redirect('/login');
   });

@@ -57,7 +57,15 @@ var PatientSchema = new Schema({
       short: String,
       long: String,
       reason: String,
-      link: String
+      link: String,
+      agree: Boolean,
+      done: Boolean,
+      history: [String],
+      userDefined: Boolean,
+      rejected: {
+        reason: String,
+        reasonText: String
+      }
     }
   ]
 });

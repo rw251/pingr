@@ -4,7 +4,11 @@ var log = {
   reason: {},
 
   navigate: function(toUrl, data) {
-    var dataToSend = { event: { type: "navigate", url: toUrl, data: data } };
+    log.event("navigate", toUrl, data);
+  },
+
+  event: function(type, url, data) {
+    var dataToSend = { event: { type: type, url: url, data: data } };
     $.ajax({
       type: "POST",
       url: "/api/event",
@@ -58,17 +62,11 @@ var log = {
       obj.actions[id] = {};
     }
 
-    var dataToSend = {
-      event: {
-        what: "agree",
-        when: new Date().getTime(),
-        who: JSON.parse(localStorage.bb).email,
-        detail: [
-          { key: "patient", "value": id },
-          { key: "action", "value": actionId }
-          ]
-      }
-    };
+    var dataToSend = [
+      { key: "patient", "value": id },
+      { key: "action", "value": actionId }
+    ];
+    var accction = "agree";
 
     if (agree) {
       logText = "You agreed with this suggested action on " + (new Date()).toDateString();
@@ -76,21 +74,13 @@ var log = {
       var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
       logText = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
 
-      dataToSend.event.whate = "disagree";
-      if (reason && reason.reason) dataToSend.event.detail.push({ key: "reason", value: reason.reason });
-      if (reason && reason.reasonText) dataToSend.event.detail.push({ key: "reasonText", value: reason.reasonText });
+      accction = "disagree";
+      if (reason && reason.reason) dataToSend.push({ key: "reason", value: reason.reason });
+      if (reason && reason.reasonText) dataToSend.push({ key: "reasonText", value: reason.reasonText });
     }
 
     if (agree || agree === false) {
-      console.log(dataToSend);
-      $.ajax({
-        type: "POST",
-        url: "http://130.88.250.206:9100/pingr",
-        data: JSON.stringify(dataToSend),
-        success: function(d) { console.log(d); },
-        dataType: "json",
-        contentType: "application/json"
-      });
+      log.event(accction, window.location.hash, dataToSend);
     }
 
     if (done) {
@@ -205,32 +195,18 @@ var log = {
       value: {}
     }]);
 
-    var dataToSend = {
-      event: {
-        what: "recordIndividualPlan",
-        when: new Date().getTime(),
-        who: JSON.parse(localStorage.bb).email,
-        detail: [
-          { key: "text", value: text }
-          ]
-      }
-    };
+    var dataToSend = [
+      { key: "text", value: text }
+    ];
+    var accction = "recordIndividualPlan";
     if (id === "team") {
-      dataToSend.event.what = "recordTeamPlan";
-      dataToSend.event.detail.push({ key: "pathwayId", value: pathwayId });
+      accction = "recordTeamPlan";
+      dataToSend.push({ key: "pathwayId", value: pathwayId });
     } else {
-      dataToSend.event.detail.push({ key: "patientId", value: id });
+      dataToSend.push({ key: "patientId", value: id });
     }
 
-    console.log(dataToSend);
-    $.ajax({
-      type: "POST",
-      url: "http://130.88.250.206:9100/pingr",
-      data: JSON.stringify(dataToSend),
-      success: function(d) { console.log(d); },
-      dataType: "json",
-      contentType: "application/json"
-    });
+    log.event(accction, window.location.hash, dataToSend);
 
     if (!obj.actions[id]) obj.actions[id] = {};
     var planId = Date.now() + "";

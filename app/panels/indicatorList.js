@@ -44,6 +44,7 @@ var indicatorList = {
   wireUp: function(panel, loadContentFn) {
     panel.off('click', 'tr.show-more-row a');
     panel.on('click', 'tr.show-more-row a', function(e){
+      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
       e.stopPropagation();
     });
     panel.off('click', 'tr.standard-row,tr.show-more-row');
@@ -78,6 +79,7 @@ var indicatorList = {
       } else {
         $(this).hide();
         elem.show('fast');
+        log.event("show-more", window.location.hash, [{key:"indicator",value:id}]);
       }
       // do not give a default action
       e.preventDefault();

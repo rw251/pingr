@@ -244,27 +244,7 @@ var base = {
 
       var suggestion = $('#modal textarea').val();
 
-      var dataToSend = {
-        event: {
-          what: "suggestion",
-          when: new Date().getTime(),
-          who: (JSON.parse(localStorage.bb).email || "?"),
-          detail: [
-            { key: "text", value: suggestion }
-          ]
-        }
-      };
-
-      console.log(dataToSend);
-
-      $.ajax({
-        type: "POST",
-        url: "http://130.88.250.206:9100/pingr",
-        data: JSON.stringify(dataToSend),
-        success: function(d) { console.log(d); },
-        dataType: "json",
-        contentType: "application/json"
-      });
+      log.event("suggestion", window.location.hash, [{ key: "text", value: suggestion }]);
 
       e.preventDefault();
       $('#modal .modal').modal('hide');

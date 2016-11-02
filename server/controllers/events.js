@@ -51,6 +51,17 @@ var e = {
         console.log("Error writing login event: " + err);
       }
     });
+  },
+
+  logout: function(email, session) {
+    var newEvent = new Event({sessionId:session, user: email, type: "logout"});
+
+    // save the event
+    newEvent.save(function(err) {
+      if (err) {
+        console.log("Error writing login event: " + err);
+      }
+    });
   }
 
 };

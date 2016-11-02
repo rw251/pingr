@@ -14,9 +14,10 @@ include ../partials/head.jade
     tbody
       each event in events
         tr
-          td= event.user
-          td= event.sessionId
+          td
+            a(href='/events/'+event.user)= event.user
+          td(title=event.sessionId)= event.sessionId ? event.sessionId.substr(0,5)+"..." : ""
           td= event.type
           td= event.url
-          td= event.date
+          td= event.date.getDate() + '/' + (event.date.getMonth()+1) + '/' + event.date.getFullYear() + ' ' + event.date.getHours() + ':' + (event.date.getMinutes() < 10 ? '0' : '') + event.date.getMinutes() + ':' + (event.date.getSeconds() < 10 ? '0' : '') + event.date.getSeconds()
           td= event.data.length>0 ? event.data : ''

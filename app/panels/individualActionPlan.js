@@ -7,10 +7,6 @@ var iap = {
 
   create: function(pathwayStage) {
     return require("templates/individual-action-plan")();
-    /*return base.createPanel($('#individual-action-plan-panel'), {
-      "pathwayStage": pathwayStage || "default",
-      "noHeader": true
-    });*/
   },
 
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
