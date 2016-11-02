@@ -25,7 +25,7 @@ include ../partials/head.jade
             .btn-toolbar
               - if(user.practiceNameNotAuthorised)  
                 a.btn.btn-success(href='/authorise/'+user.email) Authorise
-                a.btn.btn-success(href='/reject/'+user.email) Reject
+                a.btn.btn-danger(href='/reject/'+user.email) Reject
               - else
                 a.btn.btn-success(href='/edit/'+user.email) Edit
                 a.btn.btn-warning(href='/reset/'+user.email) Reset password

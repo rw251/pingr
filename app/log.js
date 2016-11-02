@@ -3,6 +3,18 @@ var notify = require('./notify');
 var log = {
   reason: {},
 
+  navigate: function(toUrl, data) {
+    var dataToSend = { event: { type: "navigate", url: toUrl, data: data } };
+    $.ajax({
+      type: "POST",
+      url: "/api/event",
+      data: JSON.stringify(dataToSend),
+      success: function(d) { console.log(d); },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
   getObj: function(options) {
     var obj = JSON.parse(localStorage.bb);
 

@@ -1,4 +1,5 @@
 var data = require('./data'),
+  log = require('./log'),
   lookup = require('./lookup'),
   base = require('./base'),
   patientList = require('./panels/patientList'),
@@ -15,6 +16,8 @@ var template = {
 
   loadContent: function(hash, isPoppingState) {
     base.hideTooltips();
+
+    log.navigate(hash, []);
 
     var i, pathwayId, pathwayStage, standard, indicator, patientId;
     if (!isPoppingState) {

@@ -8,6 +8,7 @@ var users = require('../controllers/users.js');
 var practices = require('../controllers/practices.js');
 var patients = require('../controllers/patients.js');
 var indicators = require('../controllers/indicators.js');
+var events = require('../controllers/events.js');
 var text = require('../controllers/text.js');
 
 var isAuthenticated = function(req, res, next) {
@@ -36,6 +37,7 @@ module.exports = function(passport) {
 
   /* Handle Login POST */
   router.post('/login', passport.authenticate('login', { failureFlash: true, failureRedirect: '/login' }), function(req, res) {
+    events.login(req.user.email, req.sessionID);
     var red = req.session.redirect_to || '/';
     if (req.body.hash) red += '#' + req.body.hash;
     req.session.redirect_to = null;
@@ -90,6 +92,20 @@ module.exports = function(passport) {
   router.get('/signout', function(req, res) {
     req.logout();
     res.redirect('/login');
+  });
+
+  /* EVENT VIEWER */
+
+  router.get('/events', isAuthenticated, isAdmin, function(req, res) {
+    events.list({}, req.query.skip, req.query.limit, function(err, events) {
+      res.render('pages/eventlist.jade', { events: events, message: req.flash() });
+    });
+  });
+
+  router.get('/events/:email', isAuthenticated, isAdmin, function(req, res) {
+    events.list({user: req.params.email},req.query.skip, req.query.limit, function(err, events) {
+      res.render('pages/eventlist.jade', { events: events, message: req.flash() });
+    });
   });
 
   /* USER ADMIN */
@@ -158,6 +174,20 @@ module.exports = function(passport) {
   });
 
   /* api */
+  //store Event
+  router.post('/api/event',function(req,res){
+    if(!req.body.event) {
+      res.send("No event posted");
+    } else {
+      req.body.event.sessionId = req.sessionID;
+      req.body.event.user = req.user.email;
+      events.add(req.body.event, function(err){
+        if(err) res.send(err);
+        else res.send("");
+      });
+    }
+  });
+
   //Get nhs number lookup
   router.get('/api/nhs', isAuthenticated, function(req, res) {
     patients.nhsLookup(req.user.practiceId, function(err, lookup) {

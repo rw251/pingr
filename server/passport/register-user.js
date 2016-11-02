@@ -139,7 +139,7 @@ module.exports = {
           };
           localMailConfig.options.to = user.email;
           localMailConfig.options.from = mailConfig.options.from;
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been denied access to view PINGR for practice ' + user.practiceName + '\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR', null, function(error, info) {
+          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been denied access to view PINGR for practice ' + user.practiceNameNotAuthorised + '\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR', null, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User rejected but confirmation email failed to send.');
