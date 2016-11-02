@@ -35,10 +35,16 @@ module.exports = {
               return next();
             }
             console.log('Password token issued succesful');
-            mailConfig.options.from = 'PINGR <info@pingr.srft.nhs.uk>';
-            mailConfig.options.to = user.email;
+
+            var localMailConfig = {
+              sendEmailOnError: mailConfig.sendEmailOnError,
+              smtp: mailConfig.smtp,
+              options: {}
+            };
+            localMailConfig.options.to = user.email;
+            localMailConfig.options.from = mailConfig.options.from;
             //Send email
-            emailSender.sendEmail(mailConfig, 'PINGR: Password reset', 'You\'re password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://' + req.headers.host + '/forgot/' + token + '\n\n', null, function(error, info) {
+            emailSender.sendEmail(localMailConfig, 'PINGR: Password reset', 'You\'re password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://' + req.headers.host + '/forgot/' + token + '\n\n', null, function(error, info) {
               if(error) {
                 console.log("email not sent: " + error);
               }
@@ -83,8 +89,13 @@ module.exports = {
                         req.flash('error', 'An error has occurred. Please try again.');
                         return next();
                       } else {
-                          mailConfig.options.from = 'PINGR <info@pingr.srft.nhs.uk>';
-                          mailConfig.options.to = user.email;
+                          var localMailConfig = {
+                            sendEmailOnError: mailConfig.sendEmailOnError,
+                            smtp: mailConfig.smtp,
+                            options: {}
+                          };
+                          localMailConfig.options.to = user.email;
+                          localMailConfig.options.from = mailConfig.options.from;
                           //Send email
                           emailSender.sendEmail(mailConfig, 'PINGR: Password changed', 'You\'re password has been changed.\n\nIf you did not initiate this please contact the support team.', null, function(error, info){
                               if(error) {
