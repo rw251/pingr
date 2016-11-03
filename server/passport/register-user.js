@@ -42,8 +42,11 @@ module.exports = {
             smtp: mailConfig.smtp,
             options: {}
           };
-          localMailConfig.options.to = mailConfig.options.to;
+console.log(JSON.stringify(config));
+console.log(JSON.stringify(mailConfig));
+	  localMailConfig.options.to = mailConfig.options.to;
           localMailConfig.options.from = mailConfig.options.from;
+console.log(JSON.stringify(localMailConfig));
           //to is now in config file
           emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, function(error, info) {
             if (error) {
