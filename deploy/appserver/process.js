@@ -105,7 +105,7 @@ async.series([
         .pipe(
           csv({
             separator: '\t',
-            headers: ['indicatorid', 'gpcode', 'date', 'numerator', 'denominator', 'target']
+            headers: ['indicatorid', 'gpcode', 'date', 'numerator', 'denominator', 'target', 'benchmark']
           })
         )
         .on('data', function(data) {
@@ -127,6 +127,7 @@ async.series([
                 id: data.indicatorid,
                 practiceId: data.gpcode,
                 measurementId: indText.valueId,
+                benchmark: data.benchmark,
                 displayDate: indText.dateORvalue === "date",
                 name: indText.name,
                 description: indText.description,
