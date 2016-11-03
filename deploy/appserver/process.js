@@ -135,6 +135,8 @@ async.series([
                 opportunities: []
               };
               indicators.push(i);
+            } else {
+              i.benchmark = data.benchmark;
             }
 
 			var dtt = data.date.replace(/[^0-9-]/g, "");

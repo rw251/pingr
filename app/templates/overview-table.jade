@@ -23,7 +23,7 @@
               strong(class=indicator.aboveTarget ? 'text-success' : 'text-danger')= indicator.performance.percentage + '%'
               span= ' (' + indicator.performance.fraction + ')'
             td= indicator.target
-            td= indicator.benchmark
+            td= (indicator.benchmark*100).toFixed(0)+"%"
             td
               if indicator.up
                 i.fa.fa-2x.fa-caret-up
