@@ -489,6 +489,16 @@ select PatID, code, correct,
 from #classify where code is not null
 --0s full SIR
 
+-----------------------------
+----Get benchmark from top 10% (5 practices)
+----------------------------
+declare @val float;
+set @val = (select round(avg(perc),2) from (
+select top 5 sum(case when indicator='right' then 1.0 else 0.0 end) / SUM(case when code is not null then 1.0 else 0.0 end) as perc from #indicator as a
+	inner join ptPractice as b on a.PatID = b.PatID
+	group by b.pracID
+	order by perc desc) sub);
+	
 --------------------------------------------------------------------------------
 --Declare indicator, numerator, denominator, target
 --------------------------------------------------------------------------------
@@ -496,9 +506,9 @@ from #classify where code is not null
 --declare @denominator int;
 --set @numerator = (select COUNT(*) from #indicator where indicator='right');
 --set @denominator = (select COUNT(*) from #indicator where code is not null); --only select pts for denominator where they have a CKD code in their records 
-insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target)
+insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 --select 'pingr.ckd.coding', CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
-select 'ckd.diagnosis.staging',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target from #indicator as a
+select 'ckd.diagnosis.staging',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
 --0s full SIR
