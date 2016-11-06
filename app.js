@@ -395,27 +395,7 @@ var base = {
 
       var suggestion = $('#modal textarea').val();
 
-      var dataToSend = {
-        event: {
-          what: "suggestion",
-          when: new Date().getTime(),
-          who: (JSON.parse(localStorage.bb).email || "?"),
-          detail: [
-            { key: "text", value: suggestion }
-          ]
-        }
-      };
-
-      console.log(dataToSend);
-
-      $.ajax({
-        type: "POST",
-        url: "http://130.88.250.206:9100/pingr",
-        data: JSON.stringify(dataToSend),
-        success: function(d) { console.log(d); },
-        dataType: "json",
-        contentType: "application/json"
-      });
+      log.event("suggestion", window.location.hash, [{ key: "text", value: suggestion }]);
 
       e.preventDefault();
       $('#modal .modal').modal('hide');
@@ -1365,8 +1345,7 @@ var _getFakePatientData = function(patient, callback) {
 
 var _getPatientData = function(patient, callback) {
   //if callback provided do async - else do sync
-  var r = Math.random(),
-    isAsync = typeof(callback) === "function";
+  var isAsync = typeof(callback) === "function";
 
   if (dt.patients && dt.patients[patient]) {
     if (isAsync) return callback(dt.patients[patient]);
@@ -1374,7 +1353,7 @@ var _getPatientData = function(patient, callback) {
   }
 
   $.ajax({
-    url: "data/" + patient + ".json?v=" + r,
+    url: "/api/PatientDetails/" + patient,
     async: isAsync,
     success: function(file) {
       if (!dt.patients) dt.patients = {};
@@ -1392,7 +1371,7 @@ var _getPatientData = function(patient, callback) {
     }
   });
 
-  if (!isAsync) return dt.patients.patient;
+  if (!isAsync) return dt.patients[patient];
 };
 
 var dt = {
@@ -1400,7 +1379,14 @@ var dt = {
   pathwayNames: {},
   diseases: [],
   options: [],
-  patLookup: {},
+
+  populateNhsLookup: function(done){
+    if(dt.patLookup) return done();
+    $.getJSON("/api/nhs", function(lookup){
+      dt.patLookup = lookup;
+      return done();
+    });
+  },
 
   getPatietListForStandard: function(pathwayId, pathwayStage, standard) {
     var patients = dt.removeDuplicates(dt[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a, b) {
@@ -1497,19 +1483,21 @@ var dt = {
 
   get: function(callback, json) {
     //get text
-    $.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
-      dt.text = textfile.pathways;
+    //$.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
+    $.getJSON("/api/Text", function(textfile) {
+      dt.text = textfile;
 
       if (json) {
         dt.newload(json);
         if (typeof callback === 'function') callback();
       } else {
-        $.getJSON("data/data.json?v=" + Math.random(), function(file) {
+      /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
           dt.newload(file);
           if (typeof callback === 'function') callback();
         }).fail(function(err) {
           alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
-        });
+        });*/
+        if (typeof callback === 'function') callback();
       }
 
     }).fail(function(err) {
@@ -1728,11 +1716,77 @@ var dt = {
     }
   },
 
+  processIndicators: function(indicators) {
+    indicators = indicators.map(function(indicator) {
+      var last = indicator.values[0].length - 1;
+      var pathwayId = indicator.id.split(".")[0];
+      var pathwayStage = indicator.id.split(".")[1];
+      var standard = indicator.id.split(".")[2];
+      //if (!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId] = "";
+      var percentage = Math.round(100 * indicator.values[1][last] * 100 / indicator.values[2][last]) / 100;
+      indicator.performance = {
+        fraction: indicator.values[1][last] + "/" + indicator.values[2][last],
+        percentage: percentage
+      };
+      indicator.benchmark = "90%"; //TODO magic number
+      indicator.target = indicator.values[3][last] * 100 + "%";
+      indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
+      var trend = indicator.values[1].map(function(val, idx) {
+        return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
+      }).slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
+      //trend.reverse();
+      indicator.trend = trend.join(",");
+      var dates = indicator.values[0].slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
+      //dates.reverse();
+      indicator.dates = dates;
+      if (dt.text.pathways[pathwayId] && dt.text.pathways[pathwayId][pathwayStage] && dt.text.pathways[pathwayId][pathwayStage].standards[standard]) {
+        indicator.description = dt.text.pathways[pathwayId][pathwayStage].standards[standard].description;
+        indicator.name = dt.text.pathways[pathwayId][pathwayStage].standards[standard].name;
+        indicator.tagline = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tagline;
+        indicator.positiveMessage = dt.text.pathways[pathwayId][pathwayStage].standards[standard].positiveMessage;
+      } else {
+        indicator.description = "No description specified";
+        indicator.tagline = "";
+        indicator.name = "Unknown";
+      }
+      indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last] * 100;
+
+      if(!dt.patientArray) dt.patientArray=[];
+      dt.patientArray = indicator.opportunities.reduce(function(prev, curr) {
+        var union = prev.concat(curr.patients);
+        return union.filter(function(item, pos) {
+          return union.indexOf(item) == pos;
+        });
+      }, dt.patientArray);
+
+      indicator.opportunities = indicator.opportunities.map(function(v){
+        v.name = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[v.id].name;
+        v.description = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[v.id].description;
+        return v;
+      });
+
+      return indicator; //= { performance: indicator.performance, tagline: indicator.tagline, positiveMessage: indicator.positiveMessage, target: indicator.target, "opportunities": indicator.opportunities || [], "patients": {} };
+    });
+
+    return indicators;
+  },
+
   getAllIndicatorData: function(practiceId, callback) {
     if (dt.indicators) {
       return callback(dt.indicators);
     } else {
-      return callback(null);
+
+      $.ajax({
+        url: "/api/ListOfIndicatorsForPractice",
+        success: function(file) {
+          if (!dt.indicators) dt.indicators = dt.processIndicators(file);
+
+          return callback(dt.indicators);
+        },
+        error: function() {
+
+        }
+      });
     }
   },
 
@@ -1744,6 +1798,29 @@ var dt = {
     }
   },
 
+  getIndicatorData: function(practiceId, indicatorId, callback) {
+    if (dt.indicators && dt.indicators[indicatorId]) {
+      return callback(dt.indicators[indicatorId]);
+    }
+    var isAsync = typeof(callback) === "function";
+
+    $.ajax({
+      url: "/api/PatientListForPractice/Indicator/" + indicatorId,
+      async: isAsync,
+      success: function(file) {
+        if (!dt.indicators) dt.indicators = {};
+        dt.indicators[indicatorId] = file;
+
+        if (isAsync) callback(dt.indicators[indicatorId]);
+      },
+      error: function() {
+
+      }
+    });
+
+    if (!isAsync) return dt.indicators[indicatorId];
+  },
+
   getTrendData: function(practiceId, pathwayId, pathwayStage, standard) {
     if (dt.indicators) {
       return dt.indicators.filter(function(v) {
@@ -1753,17 +1830,130 @@ var dt = {
     return null;
   },
 
-  getIndicatorData: function(practiceId, indicator, callback) {
-    if (dt.indicators && dt.indicators[indicator]) {
-      return callback(dt.indicators[indicator]);
+  getIndicatorDataSync: function(practiceId, indicatorId) {
+    dt.getAllIndicatorDataSync(practiceId);
+    var indicator = dt.indicators.filter(function(v){
+      return v.id === indicatorId;
+    });
+    if (indicator.length>0) {
+      return indicator[0];
     }
   },
 
-  getIndicatorDataSync: function(practiceId, indicator) {
-    dt.getAllIndicatorDataSync(practiceId);
-    if (dt.indicators[indicator]) {
-      return dt.indicators[indicator];
+  processPatientList: function(pathwayId, pathwayStage, standard, subsection, patients) {
+    var i, k, prop, pList, header;
+
+    if (subsection !== "all") {
+      var subsectionIds = Object.keys(dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities).filter(function(key) {
+        return dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[key].name === subsection;
+      });
+      if (subsectionIds.length > 0) {
+        patients = patients.filter(function(v) {
+          return v.opportunities.indexOf(subsectionIds[0]) > -1;
+        });
+        header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[subsectionIds[0]].description;
+      }
+    } else {
+      header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
     }
+
+    var vId = dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
+    var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
+
+    var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+    var opps = dt.indicators.filter(function(v){
+      return v.id === indicatorId;
+    })[0].opportunities.map(function(v) {
+      return v.id;
+    });
+
+    patients = patients.map(function(patient) {
+      patient.nhsNumber = patient.nhs || patient.patientId;
+      patient.items = [
+        patient.age,
+        patient.value,
+        patient.opportunities.map(function(v) {
+          return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
+        }).join("")
+      ]; //The fields in the patient list table
+      return patient;
+      /*var ret = dt.indicators[indicatorId].patients[patientId];
+      ret.nhsNumber = dt.patLookup[patientId] || patientId;
+      ret.patientId = patientId;
+      ret.items = [dt.patients[patientId].characteristics.age]; //The fields in the patient list table
+
+      var measures = dt.patients[patientId].measurements.filter(function(v) {
+        return v.id === vId;
+      });
+
+      if (measures[0] && measures[0].data) {
+        if (dOv === "date") {
+          ret.items.push(new Date(measures[0].data[measures[0].data.length - 1][0]));
+        } else {
+          ret.items.push(measures[0].data[measures[0].data.length - 1][1]);
+        }
+      } else {
+        ret.items.push("?");
+      }
+      ret.items.push(dt.indicators[indicatorId].patients[patientId].opportunities.map(function(v) {
+        return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';
+      }).join(""));
+      //ret.items.push(data.numberOfStandardsMissed(patientId));
+      return ret;*/
+    });
+
+    var rtn = {
+      "patients": patients,
+      "n": patients.length,
+      "header": header,
+      "header-items": [{
+        "title": "NHS no.",
+        "isSorted": false,
+        "direction": "sort-asc",
+        "tooltip": "NHS number of each patient"
+      }, {
+        "title": "Age",
+        "isSorted": false,
+        "direction": "sort-asc",
+        "tooltip": "The age of the patient"
+      }]
+    };
+
+    //middle column is either value or date
+    if (dOv) {
+      rtn["header-items"].push({
+        "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
+        "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
+        "isSorted": false,
+        "direction": "sort-asc"
+      });
+    } else {
+      if (pathwayStage === lookup.categories.monitoring.name) {
+        rtn["header-items"].push({
+          "title": "Last BP Date",
+          "isSorted": false,
+          "direction": "sort-asc",
+          "tooltip": "Last date BP was measured"
+        });
+      } else {
+        rtn["header-items"].push({
+          "title": "Last SBP",
+          "tooltip": "Last systolic BP reading",
+          "isSorted": false,
+          "direction": "sort-asc"
+        });
+      }
+    }
+
+    //add qual standard column
+    rtn["header-items"].push({
+      "title": "Improvement opportunities",
+      "titleHTML": 'Improvement opportunities',
+      "isSorted": true,
+      "tooltip": "Improvement opportunities from the bar chart above"
+    });
+
+    return rtn;
   },
 
   getPatientList: function(practiceId, pathwayId, pathwayStage, standard, subsection, callback) {
@@ -1776,104 +1966,19 @@ var dt = {
     if (dt.patientList[practiceId][indicatorId][subsection]) {
       return callback(dt.patientList[practiceId][indicatorId][subsection]);
     } else {
-      var i, k, prop, pList, header;
 
-      if (subsection !== "all") {
-        pList = dt.indicators[indicatorId].opportunities.filter(function(val) {
-          return val.name === subsection;
-        })[0].patients;
-        header = dt.indicators[indicatorId].opportunities.filter(function(val) {
-          return val.name === subsection;
-        })[0].description;
-      } else {
-        pList = dt.indicators[indicatorId].opportunities.reduce(function(a, b) {
-          return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);
-        });
-        header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].tableTitle;
-      }
+      $.ajax({
+        url: "/api/PatientListForPractice/Indicator/" + indicatorId,
+        success: function(file) {
+          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
 
-      pList = dt.removeDuplicates(pList);
-      var vId = dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueId;
-      var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
-      var patients = pList.map(function(patientId) {
-        var ret = dt.indicators[indicatorId].patients[patientId];
-        ret.nhsNumber = dt.patLookup[patientId] || patientId;
-        ret.patientId = patientId;
-        ret.items = [dt.patients[patientId].characteristics.age]; //The fields in the patient list table
+          callback(dt.patientList[practiceId][indicatorId][subsection]);
+        },
+        error: function() {
 
-        var measures = dt.patients[patientId].measurements.filter(function(v) {
-          return v.id === vId;
-        });
-
-        if (measures[0] && measures[0].data) {
-          if (dOv === "date") {
-            ret.items.push(new Date(measures[0].data[measures[0].data.length - 1][0]));
-          } else {
-            ret.items.push(measures[0].data[measures[0].data.length - 1][1]);
-          }
-        } else {
-          ret.items.push("?");
         }
-        ret.items.push(dt.indicators[indicatorId].patients[patientId].opportunities.map(function(v) {
-          return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';
-        }).join(""));
-        //ret.items.push(data.numberOfStandardsMissed(patientId));
-        return ret;
       });
 
-      var rtn = {
-        "patients": patients,
-        "n": patients.length,
-        "header": header,
-        "header-items": [{
-          "title": "NHS no.",
-          "isSorted": false,
-          "direction": "sort-asc",
-          "tooltip": "NHS number of each patient"
-        }, {
-          "title": "Age",
-          "isSorted": false,
-          "direction": "sort-asc",
-          "tooltip": "The age of the patient"
-        }]
-      };
-
-      //middle column is either value or date
-      if (dOv) {
-        rtn["header-items"].push({
-          "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
-          "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
-          "isSorted": false,
-          "direction": "sort-asc"
-        });
-      } else {
-        if (pathwayStage === lookup.categories.monitoring.name) {
-          rtn["header-items"].push({
-            "title": "Last BP Date",
-            "isSorted": false,
-            "direction": "sort-asc",
-            "tooltip": "Last date BP was measured"
-          });
-        } else {
-          rtn["header-items"].push({
-            "title": "Last SBP",
-            "tooltip": "Last systolic BP reading",
-            "isSorted": false,
-            "direction": "sort-asc"
-          });
-        }
-      }
-
-      //add qual standard column
-      rtn["header-items"].push({
-        "title": "Improvement opportunities",
-        "titleHTML": 'Improvement opportunities',
-        "isSorted": true,
-        "tooltip": "Improvement opportunities from the bar chart above"
-      });
-
-      dt.patientList[practiceId][indicatorId][subsection] = rtn;
-      return callback(rtn);
     }
   },
 
@@ -2040,6 +2145,22 @@ var notify = require('./notify');
 var log = {
   reason: {},
 
+  navigate: function(toUrl, data) {
+    log.event("navigate", toUrl, data);
+  },
+
+  event: function(type, url, data) {
+    var dataToSend = { event: { type: type, url: url, data: data } };
+    $.ajax({
+      type: "POST",
+      url: "/api/event",
+      data: JSON.stringify(dataToSend),
+      success: function(d) { console.log(d); },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
   getObj: function(options) {
     var obj = JSON.parse(localStorage.bb);
 
@@ -2083,17 +2204,11 @@ var log = {
       obj.actions[id] = {};
     }
 
-    var dataToSend = {
-      event: {
-        what: "agree",
-        when: new Date().getTime(),
-        who: JSON.parse(localStorage.bb).email,
-        detail: [
-          { key: "patient", "value": id },
-          { key: "action", "value": actionId }
-          ]
-      }
-    };
+    var dataToSend = [
+      { key: "patient", "value": id },
+      { key: "action", "value": actionId }
+    ];
+    var accction = "agree";
 
     if (agree) {
       logText = "You agreed with this suggested action on " + (new Date()).toDateString();
@@ -2101,21 +2216,13 @@ var log = {
       var reasonText = log.reason.reason === "" && log.reason.reasonText === "" ? " - no reason given" : " . You disagreed because you said: '" + log.reason.reason + "; " + log.reason.reasonText + ".'";
       logText = "You disagreed with this action on " + (new Date()).toDateString() + reasonText;
 
-      dataToSend.event.whate = "disagree";
-      if (reason && reason.reason) dataToSend.event.detail.push({ key: "reason", value: reason.reason });
-      if (reason && reason.reasonText) dataToSend.event.detail.push({ key: "reasonText", value: reason.reasonText });
+      accction = "disagree";
+      if (reason && reason.reason) dataToSend.push({ key: "reason", value: reason.reason });
+      if (reason && reason.reasonText) dataToSend.push({ key: "reasonText", value: reason.reasonText });
     }
 
     if (agree || agree === false) {
-      console.log(dataToSend);
-      $.ajax({
-        type: "POST",
-        url: "http://130.88.250.206:9100/pingr",
-        data: JSON.stringify(dataToSend),
-        success: function(d) { console.log(d); },
-        dataType: "json",
-        contentType: "application/json"
-      });
+      log.event(accction, window.location.hash, dataToSend);
     }
 
     if (done) {
@@ -2230,32 +2337,18 @@ var log = {
       value: {}
     }]);
 
-    var dataToSend = {
-      event: {
-        what: "recordIndividualPlan",
-        when: new Date().getTime(),
-        who: JSON.parse(localStorage.bb).email,
-        detail: [
-          { key: "text", value: text }
-          ]
-      }
-    };
+    var dataToSend = [
+      { key: "text", value: text }
+    ];
+    var accction = "recordIndividualPlan";
     if (id === "team") {
-      dataToSend.event.what = "recordTeamPlan";
-      dataToSend.event.detail.push({ key: "pathwayId", value: pathwayId });
+      accction = "recordTeamPlan";
+      dataToSend.push({ key: "pathwayId", value: pathwayId });
     } else {
-      dataToSend.event.detail.push({ key: "patientId", value: id });
+      dataToSend.push({ key: "patientId", value: id });
     }
 
-    console.log(dataToSend);
-    $.ajax({
-      type: "POST",
-      url: "http://130.88.250.206:9100/pingr",
-      data: JSON.stringify(dataToSend),
-      success: function(d) { console.log(d); },
-      dataType: "json",
-      contentType: "application/json"
-    });
+    log.event(accction, window.location.hash, dataToSend);
 
     if (!obj.actions[id]) obj.actions[id] = {};
     var planId = Date.now() + "";
@@ -2469,7 +2562,7 @@ var main = {
   "version": "2.0.0",
 
   hash: hash,
-  init: function() {
+  init: function(callback) {
     main.preWireUpPages();
 
     log.loadActions(function() {
@@ -2493,46 +2586,51 @@ var main = {
       states.clearPrefetchCache();
     }
 
-    states = new Bloodhound({
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      local: $.map(data.patientArray, function(state) {
-        return {
-          id: state,
-          value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
-        };
-      })
-    });
-
-    states.initialize(true);
-
-    $('#search-box').find('.typeahead').typeahead('destroy');
-    $('#search-box').find('.typeahead').typeahead({
-        hint: true,
-        highlight: true,
-        minLength: 1,
-        autoselect: true
-      }, {
-        name: 'patients',
-        displayKey: 'value',
-        source: states.ttAdapter(),
-        templates: {
-          empty: [
-              '<div class="empty-message">',
-                '&nbsp; &nbsp; No matches',
-              '</div>'
-            ].join('\n')
-        }
-      }).on('typeahead:selected', main.onSelected)
-      .on('typeahead:autocompleted', main.onSelected);
-
-    $('#searchbtn').on('mousedown', function() {
-      var val = $('.typeahead').eq(0).val();
-      if (!val || val === "") val = $('.typeahead').eq(1).val();
-      main.onSelected(null, {
-        "id": val
+    data.populateNhsLookup(function(){
+      
+      states = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: $.map(data.patientArray, function(state) {
+          return {
+            id: state,
+            value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
+          };
+        })
       });
+
+      states.initialize(true);
+
+      $('#search-box').find('.typeahead').typeahead('destroy');
+      $('#search-box').find('.typeahead').typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1,
+          autoselect: true
+        }, {
+          name: 'patients',
+          displayKey: 'value',
+          source: states.ttAdapter(),
+          templates: {
+            empty: [
+                '<div class="empty-message">',
+                  '&nbsp; &nbsp; No matches',
+                '</div>'
+              ].join('\n')
+          }
+        }).on('typeahead:selected', main.onSelected)
+        .on('typeahead:autocompleted', main.onSelected);
+
+      $('#searchbtn').on('mousedown', function() {
+        var val = $('.typeahead').eq(0).val();
+        if (!val || val === "") val = $('.typeahead').eq(1).val();
+        main.onSelected(null, {
+          "id": val
+        });
+      });
+
     });
+
   },
 
   wireUpPages: function() {
@@ -2952,6 +3050,7 @@ var indicatorList = {
   wireUp: function(panel, loadContentFn) {
     panel.off('click', 'tr.show-more-row a');
     panel.on('click', 'tr.show-more-row a', function(e){
+      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
       e.stopPropagation();
     });
     panel.off('click', 'tr.standard-row,tr.show-more-row');
@@ -2986,6 +3085,7 @@ var indicatorList = {
       } else {
         $(this).hide();
         elem.show('fast');
+        log.event("show-more", window.location.hash, [{key:"indicator",value:id}]);
       }
       // do not give a default action
       e.preventDefault();
@@ -3043,10 +3143,6 @@ var iap = {
 
   create: function(pathwayStage) {
     return require("templates/individual-action-plan")();
-    /*return base.createPanel($('#individual-action-plan-panel'), {
-      "pathwayStage": pathwayStage || "default",
-      "noHeader": true
-    });*/
   },
 
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
@@ -4347,7 +4443,7 @@ var pl = {
     //var tempMust = $('#patients-panel-yes').html();
     var tmpl = require('templates/patient-list-wrapper');
 
-    if(isAppend) panel.append(tmpl());
+    if (isAppend) panel.append(tmpl());
     else panel.html(tmpl());
 
     pl.wireUp(function(patientId) {
@@ -4376,46 +4472,51 @@ var ps = {
       states.clearPrefetchCache();
     }
 
-    states = new Bloodhound({
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      local: $.map(data.patientArray, function(state) {
-        return {
-          id: state,
-          value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
-        };
-      })
-    });
+    data.populateNhsLookup(function(){
 
-    states.initialize(true);
-
-    $('#search-box').find('.typeahead').typeahead('destroy');
-    $('#search-box').find('.typeahead').typeahead({
-        hint: true,
-        highlight: true,
-        minLength: 1,
-        autoselect: true
-      }, {
-        name: 'patients',
-        displayKey: 'value',
-        source: states.ttAdapter(),
-        templates: {
-          empty: [
-              '<div class="empty-message">',
-                '&nbsp; &nbsp; No matches',
-              '</div>'
-            ].join('\n')
-        }
-      }).on('typeahead:selected', ps.onSelected)
-      .on('typeahead:autocompleted', ps.onSelected);
-
-    $('#searchbtn').on('mousedown', function() {
-      var val = $('.typeahead').eq(0).val();
-      if (!val || val === "") val = $('.typeahead').eq(1).val();
-      ps.onSelected(null, {
-        "id": val
+      states = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: $.map(data.patientArray, function(state) {
+          return {
+            id: state,
+            value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
+          };
+        })
       });
+
+      states.initialize(true);
+
+      $('#search-box').find('.typeahead').typeahead('destroy');
+      $('#search-box').find('.typeahead').typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1,
+          autoselect: true
+        }, {
+          name: 'patients',
+          displayKey: 'value',
+          source: states.ttAdapter(),
+          templates: {
+            empty: [
+                '<div class="empty-message">',
+                  '&nbsp; &nbsp; No matches',
+                '</div>'
+              ].join('\n')
+          }
+        }).on('typeahead:selected', ps.onSelected)
+        .on('typeahead:autocompleted', ps.onSelected);
+
+      $('#searchbtn').on('mousedown', function() {
+        var val = $('.typeahead').eq(0).val();
+        if (!val || val === "") val = $('.typeahead').eq(1).val();
+        ps.onSelected(null, {
+          "id": val
+        });
+      });
+
     });
+
   },
 
   onSelected: function($e, nhsNumberObject) {
@@ -5479,48 +5580,7 @@ var App = {
     $(document).on('ready', function() {
       //Grab the hash if exists - IE seems to forget it
       main.hash = location.hash;
-
-      //CHANGE THIS - added to spoof login
-      location.hash = "";
-      main.hash = "";
-      $('#signin').on('click', function() {
-        if ($('#inpEmail').val().length < 8) alert("Please enter your email address.");
-        else {
-          var dataToSend = {
-            event: {
-              what: "login",
-              when: new Date().getTime(),
-              who: $("#inpEmail").val(),
-              detail: [
-                { key: "href", value: location.href }
-              ]
-            }
-          };
-          console.log(dataToSend);
-          $.ajax({
-            type: "POST",
-            url: "http://130.88.250.206:9100/pingr",
-            data: JSON.stringify(dataToSend),
-            success: function(d) { console.log(d); },
-            dataType: "json",
-            contentType: "application/json"
-          });
-
-          var obj = JSON.parse(localStorage.bb);
-          obj.email = $('#inpEmail').val();
-          localStorage.bb = JSON.stringify(obj);
-
-
-          history.pushState(null, null, '#overview');
-          template.loadContent('#overview');
-        }
-      });
-      $('#inpEmail').on('keyup', function(e) {
-        var code = e.which;
-        if (code == 13) {
-          $('#signin').click();
-        }
-      });
+      main.hash="#overview";
 
       //Load the data then wire up the events on the page
       main.init();
@@ -5532,10 +5592,6 @@ var App = {
         localStorage.bb = JSON.stringify({
           "version": main.version
         });
-      }
-
-      if (JSON.parse(localStorage.bb).email) {
-        $('#inpEmail').val(JSON.parse(localStorage.bb).email);
       }
 
       $('[data-toggle="tooltip"]').tooltip({
@@ -5557,8 +5613,6 @@ var App = {
         $('[data-toggle="tooltip"]').not(this).tooltip('hide');
       });
 
-      //ensure on first load the login screen is cached to the history
-      history.pushState(null, null, '');
     });
   }
 };
@@ -5569,6 +5623,7 @@ module.exports = App;
 
 require.register("template.js", function(exports, require, module) {
 var data = require('./data'),
+  log = require('./log'),
   lookup = require('./lookup'),
   base = require('./base'),
   patientList = require('./panels/patientList'),
@@ -5585,6 +5640,8 @@ var template = {
 
   loadContent: function(hash, isPoppingState) {
     base.hideTooltips();
+
+    log.navigate(hash, []);
 
     var i, pathwayId, pathwayStage, standard, indicator, patientId;
     if (!isPoppingState) {
@@ -6500,7 +6557,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 ;var locals_for_with = (locals || {});(function (indicators, undefined) {
-buf.push("<div class=\"panel panel-default\"><div class=\"panel-body pastel-pink\"><table class=\"table\"><thead><tr><th>Indicator</th><th>Performance</th><th>Target</th><th>Benchmark</th><th>Change</th><th>Trend</th></tr></thead><tbody>");
+buf.push("<div class=\"panel panel-default\"><div class=\"panel-body pastel-pink\"><table class=\"table\"><thead><tr><th>Indicator</th><th>Current Performance</th><th>Salford Target</th><th>Top 10%</th><th>Change</th><th>Trend</th></tr></thead><tbody>");
 var alt=false
 // iterate indicators
 ;(function(){
@@ -6581,7 +6638,7 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-;var locals_for_with = (locals || {});(function (header, n, patients, undefined) {
+;var locals_for_with = (locals || {});(function (Date, header, n, patients, undefined) {
 jade_mixins["header"] = jade_interp = function(item){
 var block = (this && this.block), attributes = (this && this.attributes) || {};
 buf.push("<th style=\"min-width:90px\" data-toggle=\"tooltip\"" + (jade.attr("title", item.tooltip, true, false)) + (jade.cls(['sortable',item.direction], [null,true])) + ">");
@@ -6636,7 +6693,7 @@ jade_mixins["header"](item);
   }
 }).call(this);
 
-buf.push("</tr></thead><tbody><tr data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more information about this patient\" class=\"list-item\"><td style=\"min-width:130px\"><button type=\"button\" data-content=\"Copied\" data-toggle=\"tooltip\" data-placement=\"right\" class=\"btn btn-xs btn-default btn-copy\"><span class=\"fa fa-clipboard\"></span></button>        1234567890</td><td>2014-06-10</td></tr></tbody></table><div class=\"table-scroll\"><table class=\"table patient-list table-head-hidden\"><thead><tr>");
+buf.push("</tr></thead><tbody><tr data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more information about this patient\" class=\"list-item\"><td style=\"min-width:130px\"><button type=\"button\" data-content=\"Copied\" data-toggle=\"tooltip\" data-placement=\"right\" class=\"btn btn-xs btn-default btn-copy\"><span class=\"fa fa-clipboard\"></span></button>        1234567890</td><td>56</td><td>12/06/2016</td><td>.</td></tr></tbody></table><div class=\"table-scroll\"><table class=\"table patient-list table-head-hidden\"><thead><tr>");
 // iterate locals['header-items']
 ;(function(){
   var $$obj = locals['header-items'];
@@ -6679,6 +6736,7 @@ buf.push("<button type=\"button\"" + (jade.attr("data-patient-id", patient.patie
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var item = $$obj[$index];
 
+if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
 buf.push("<td>" + (null == (jade_interp = item) ? "" : jade_interp) + "</td>");
     }
 
@@ -6687,6 +6745,7 @@ buf.push("<td>" + (null == (jade_interp = item) ? "" : jade_interp) + "</td>");
     for (var $index in $$obj) {
       $$l++;      var item = $$obj[$index];
 
+if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
 buf.push("<td>" + (null == (jade_interp = item) ? "" : jade_interp) + "</td>");
     }
 
@@ -6712,6 +6771,7 @@ buf.push("<button type=\"button\"" + (jade.attr("data-patient-id", patient.patie
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var item = $$obj[$index];
 
+if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
 buf.push("<td>" + (null == (jade_interp = item) ? "" : jade_interp) + "</td>");
     }
 
@@ -6720,6 +6780,7 @@ buf.push("<td>" + (null == (jade_interp = item) ? "" : jade_interp) + "</td>");
     for (var $index in $$obj) {
       $$l++;      var item = $$obj[$index];
 
+if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
 buf.push("<td>" + (null == (jade_interp = item) ? "" : jade_interp) + "</td>");
     }
 
@@ -6732,7 +6793,7 @@ buf.push("</tr>");
   }
 }).call(this);
 
-buf.push("</tbody></table></div>");}.call(this,"header" in locals_for_with?locals_for_with.header:typeof header!=="undefined"?header:undefined,"n" in locals_for_with?locals_for_with.n:typeof n!=="undefined"?n:undefined,"patients" in locals_for_with?locals_for_with.patients:typeof patients!=="undefined"?patients:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
+buf.push("</tbody></table></div>");}.call(this,"Date" in locals_for_with?locals_for_with.Date:typeof Date!=="undefined"?Date:undefined,"header" in locals_for_with?locals_for_with.header:typeof header!=="undefined"?header:undefined,"n" in locals_for_with?locals_for_with.n:typeof n!=="undefined"?n:undefined,"patients" in locals_for_with?locals_for_with.patients:typeof patients!=="undefined"?patients:undefined,"undefined" in locals_for_with?locals_for_with.undefined:typeof undefined!=="undefined"?undefined:undefined));;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -6998,7 +7059,7 @@ var ind = {
 
       if (!pathwayId) {
         if (layout.pathwayId) pathwayId = layout.pathwayId;
-        else pathwayId = Object.keys(data.pathwayNames)[0];
+        else pathwayId = Object.keys(data.text.pathways)[0];
       }
 
       if (!pathwayStage) {
