@@ -1,5 +1,6 @@
+include ../mixins/data-item
 include ../partials/head.jade
-.container.starter-template-high
+div
   .btn-toolbar
     a.btn.btn-info(href='/') Back to interface
   table.table
@@ -11,13 +12,20 @@ include ../partials/head.jade
         th Url
         th Time
         th Data
+        th XPath
     tbody
       each event in events
         tr
-          td
-            a(href='/events/'+event.user)= event.user
+          td(title=event.user)
+            a(href='/events/'+event.user)= (event.user && event.user.match(/^[^@]+/)) ? event.user.match(/^[^@]+/) : ""
           td(title=event.sessionId)= event.sessionId ? event.sessionId.substr(0,5)+"..." : ""
           td= event.type
           td= event.url
           td= event.date.getDate() + '/' + (event.date.getMonth()+1) + '/' + event.date.getFullYear() + ' ' + event.date.getHours() + ':' + (event.date.getMinutes() < 10 ? '0' : '') + event.date.getMinutes() + ':' + (event.date.getSeconds() < 10 ? '0' : '') + event.date.getSeconds()
-          td= event.data.length>0 ? event.data : ''
+          td
+            if(event.data && event.data.length>0)
+              table.nopadding
+                tbody
+                  each item in event.data
+                    +dataItem(item)
+          td(title=event.xpath)= event.xpath ? event.xpath.substr(0,15)+"..." : ""

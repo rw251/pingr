@@ -10,7 +10,8 @@
  */
 
 var template = require('./template'),
-  main = require('./main');
+  main = require('./main'),
+  events = require('./events');
 
 //TODO not sure why i did this - was in local variable
 //maybe a separate module
@@ -31,6 +32,8 @@ var App = {
      *** This happens when the page is ready ***
      ******************************************/
     $(document).on('ready', function() {
+      //Wire up global click/hover listener
+      events.listen();
       //Grab the hash if exists - IE seems to forget it
       main.hash = location.hash;
       main.hash="#overview";

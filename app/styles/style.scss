@@ -30,6 +30,18 @@ a:hover {
   margin-left: auto;
   margin-right:auto;
 }
+table.nopadding tr td {
+  padding: 0;
+  padding-right:5px;
+  line-height:1em;
+}
+table.nopadding tr td.cellkey {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+table.nopadding tr td.cellvalue {
+
+}
 /*****************************
 Loader
 *****************************/
