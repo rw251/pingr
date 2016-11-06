@@ -23,7 +23,7 @@ sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-CorrectCoding-v3.0-16-07-
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-Monitoring-v3.0-16-07-06.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-Undiagnosed-v3.0-16-07-06.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_Run_all.sql
-
+sqlcmd -E -d %SMASH.DB% -i scripts/_generate_trend_data.sql
 
 REM ==================================
 REM == Extract NHS lookup for mongo ==
