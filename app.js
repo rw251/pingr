@@ -1522,7 +1522,7 @@ var dt = {
         fraction: indicator.values[1][last] + "/" + indicator.values[2][last],
         percentage: percentage
       };
-      indicator.benchmark = "90%"; //TODO magic number
+      //indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
       indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
@@ -1728,7 +1728,7 @@ var dt = {
         fraction: indicator.values[1][last] + "/" + indicator.values[2][last],
         percentage: percentage
       };
-      indicator.benchmark = "90%"; //TODO magic number
+      //indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
       indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
       var trend = indicator.values[1].map(function(val, idx) {
@@ -1989,6 +1989,152 @@ var dt = {
 };
 
 module.exports = dt;
+
+});
+
+require.register("events.js", function(exports, require, module) {
+/**
+ * Gets an XPath for an element which describes its hierarchical location.
+ * Copied from firebug with a BSD licence - https://code.google.com/p/fbug/source/browse/branches/firebug1.6/content/firebug/lib.js?spec=svn12950&r=8828#1332
+ */
+var getElementXPath = function(el) {
+  if (el && el.id)
+    return '//*[@id="' + el.id + '"]';
+  else
+    return getElementTreeXPath(el);
+};
+
+var getElementTreeXPath = function(el) {
+  var paths = [];
+
+  // Use nodeName (instead of localName) so namespace prefix is included (if any).
+  for (; el && el.nodeType === 1; el = el.parentNode) {
+    var index = 0;
+    for (var sibling = el.previousSibling; sibling; sibling = sibling.previousSibling) {
+      // Ignore document type declaration.
+      if (sibling.nodeType === Node.DOCUMENT_TYPE_NODE)
+        continue;
+
+      if (sibling.nodeName === el.nodeName)
+        ++index;
+    }
+
+    var tagName = el.nodeName.toLowerCase();
+    var pathIndex = (index ? "[" + (index + 1) + "]" : "");
+    paths.splice(0, 0, tagName + pathIndex);
+  }
+
+  return paths.length ? "/" + paths.join("/") : null;
+};
+
+
+var logInfo = function(event, type, href) {
+  var obj = {};
+  obj.url = href ? href : location.href;
+  obj.type = type;
+  obj.data = [];
+  var text = "";
+  if (event) {
+    obj.xpath = getElementXPath(event.target);
+
+    var t = event.target;
+
+    /* SMASH specific stuff - might need it after testing
+        if (t.nodeName.toLowerCase() === "span") {
+          if (t.parentNode.nodeName.toLowerCase() === "button") {
+            t = t.parentNode;
+          } else if (t.parentNode.nodeName.toLowerCase() === "a") {
+            t = t.parentNode;
+          }
+        }
+
+        if (t.nodeName.toLowerCase() === "a") {
+          obj.text = $(t).text().trim();
+        } else if (t.nodeName.toLowerCase() === "select") {
+          if (t.selectedIndex) {
+            obj.text = $(t.item(t.selectedIndex)).text().trim();
+          }
+        } else if (t.nodeName.toLowerCase() === "button") {
+          obj.text = $(t).text().trim();
+        } else if ($(t).data('patient-id')) {
+          obj.text = "NHS number for patient id " + $(t).data('patient-id'); //Don't want to capture nhs numbers in the events
+        } else if ($(t).hasClass('scroll-table-header') || $(t).parent().hasClass('scroll-table-header') || $(t).hasClass('scroll-table-body') || $(t).parent().hasClass('scroll-table-body')) {
+          obj.text = ""; //Edge case where entire table is copied- never want thi, especially if nhs numbers in it
+        } else if ($(t).text().trim() !== "") {
+          obj.text = $(t).text().trim();
+        }*/
+    text = $(t).text().trim().replace(/\n/g, "").replace(/ +/g, " ").substring(0, 50);
+
+    //Final double check
+    text = text.replace(/(?:^|\D)(\d{10})(?=\D|$)/g, "xxxxxxxxxx"); //replaces any 10 digit characters with xxxxxxxxxx
+  } //if(event)
+
+  if (text !== "") {
+    obj.data.push({ key: "text", value: text });
+  }
+  //console.log(obj);
+  setTimeout(function() {
+    var dataToSend = { event: obj };
+    $.ajax({
+      type: "POST",
+      url: "/api/event",
+      data: JSON.stringify(dataToSend),
+      success: function(d) { console.log(d); },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  }, 500);
+};
+
+var delay = 500,
+  setTimeoutConst = {},
+  isListening=false;
+
+module.exports = {
+
+  listen: function() {
+
+    if(isListening) {
+      console.log("Hmm - trying to do the global listening more than once..");
+      return;
+    }
+
+    isListening = true;
+
+    $(document)
+      .on('keyup', function(event) {
+        //if enter, tab, arrows then record
+        if (event.which === 13) { //enter
+          logInfo(event, 'Key_ENTER');
+        } else if (event.which === 9) { //tab
+          logInfo(event, 'Key_TAB');
+        } else if (event.which === 38) { //arrow up
+          logInfo(event, 'Key_ARROW_UP');
+        } else if (event.which === 40) { //arrow down
+          logInfo(event, 'Key_ARROW_DOWN');
+        } else if (event.which === 37) { //arrow left
+          logInfo(event, 'Key_ARROW_LEFT');
+        } else if (event.which === 39) { //arrow up
+          logInfo(event, 'Key_ARROW_RIGHT');
+        }
+      })
+      .on('mouseover', function(event) {
+        setTimeoutConst[event.target] = setTimeout(function() {
+          logInfo(event, 'hover');
+        }, delay);
+      })
+      .on('mouseout', function(event) {
+        clearTimeout(setTimeoutConst[event.target]);
+      })
+      .on('click', function(event) {
+        clearTimeout(setTimeoutConst[event.target]);
+        setTimeoutConst[event.target] = setTimeout(function() {
+          logInfo(event, 'hover');
+        }, delay);
+        logInfo(event, 'click');
+      });
+  }
+};
 
 });
 
@@ -5557,7 +5703,8 @@ require.register("script.js", function(exports, require, module) {
  */
 
 var template = require('./template'),
-  main = require('./main');
+  main = require('./main'),
+  events = require('./events');
 
 //TODO not sure why i did this - was in local variable
 //maybe a separate module
@@ -5578,6 +5725,8 @@ var App = {
      *** This happens when the page is ready ***
      ******************************************/
     $(document).on('ready', function() {
+      //Wire up global click/hover listener
+      events.listen();
       //Grab the hash if exists - IE seems to forget it
       main.hash = location.hash;
       main.hash="#overview";
@@ -6567,7 +6716,7 @@ var alt=false
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var indicator = $$obj[$index];
 
-buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><strong" + (jade.cls([indicator.aboveTarget ? 'text-success' : 'text-danger'], [true])) + ">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = indicator.benchmark) ? "" : jade_interp)) + "</td><td>");
+buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><strong" + (jade.cls([indicator.aboveTarget ? 'text-success' : 'text-danger'], [true])) + ">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = (indicator.benchmark*100).toFixed(0)+"%") ? "" : jade_interp)) + "</td><td>");
 if ( indicator.up)
 {
 buf.push("<i class=\"fa fa-2x fa-caret-up\"></i>");
@@ -6585,7 +6734,7 @@ alt = !alt
     for (var $index in $$obj) {
       $$l++;      var indicator = $$obj[$index];
 
-buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><strong" + (jade.cls([indicator.aboveTarget ? 'text-success' : 'text-danger'], [true])) + ">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = indicator.benchmark) ? "" : jade_interp)) + "</td><td>");
+buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><strong" + (jade.cls([indicator.aboveTarget ? 'text-success' : 'text-danger'], [true])) + ">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = (indicator.benchmark*100).toFixed(0)+"%") ? "" : jade_interp)) + "</td><td>");
 if ( indicator.up)
 {
 buf.push("<i class=\"fa fa-2x fa-caret-up\"></i>");
