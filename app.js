@@ -6139,8 +6139,26 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-;var locals_for_with = (locals || {});(function (performance, positiveMessage, tagline, target) {
-buf.push("<ul><li class=\"perf-bullet\"><b>" + (null == (jade_interp = performance.percentage + '%') ? "" : jade_interp) + "</b><span>" + (null == (jade_interp = ' (' + performance.fraction + ') ' + tagline) ? "" : jade_interp) + "</span></li><li class=\"perf-bullet\">The target for this quality indicator is <b>" + (jade.escape(null == (jade_interp = target) ? "" : jade_interp)) + "</b></li><li class=\"perf-bullet perf-bullet-msg\">" + (null == (jade_interp = positiveMessage) ? "" : jade_interp) + "</li></ul>");}.call(this,"performance" in locals_for_with?locals_for_with.performance:typeof performance!=="undefined"?performance:undefined,"positiveMessage" in locals_for_with?locals_for_with.positiveMessage:typeof positiveMessage!=="undefined"?positiveMessage:undefined,"tagline" in locals_for_with?locals_for_with.tagline:typeof tagline!=="undefined"?tagline:undefined,"target" in locals_for_with?locals_for_with.target:typeof target!=="undefined"?target:undefined));;return buf.join("");
+;var locals_for_with = (locals || {});(function (aboveTarget, performance, positiveMessage, tagline, target) {
+buf.push("<ul><li class=\"perf-bullet\"><!--b!= performance.percentage + '%'-->");
+if ( aboveTarget)
+{
+buf.push("<b class=\"text-overPerform\">" + (null == (jade_interp = performance.percentage + '%') ? "" : jade_interp) + "</b>");
+}
+else
+{
+buf.push("<b class=\"text-underPerform\">" + (null == (jade_interp = performance.percentage + '%') ? "" : jade_interp) + "</b>");
+}
+buf.push("<span>" + (null == (jade_interp = ' (' + performance.fraction + ') ' + tagline) ? "" : jade_interp) + "</span></li><li class=\"perf-bullet\">The target for this quality indicator is <b>" + (jade.escape(null == (jade_interp = target) ? "" : jade_interp)) + "</b></li>");
+if ( aboveTarget)
+{
+buf.push("<li class=\"perf-bullet perf-bullet-msg\"><span class=\"text-overPerform\">" + (null == (jade_interp = positiveMessage) ? "" : jade_interp) + "</span></li>");
+}
+else
+{
+buf.push("<li class=\"perf-bullet perf-bullet-msg\"><span class=\"text-underPerform\">" + (null == (jade_interp = positiveMessage) ? "" : jade_interp) + "</span></li>");
+}
+buf.push("<!--li.perf-bullet.perf-bullet-msg!= positiveMessage--></ul>");}.call(this,"aboveTarget" in locals_for_with?locals_for_with.aboveTarget:typeof aboveTarget!=="undefined"?aboveTarget:undefined,"performance" in locals_for_with?locals_for_with.performance:typeof performance!=="undefined"?performance:undefined,"positiveMessage" in locals_for_with?locals_for_with.positiveMessage:typeof positiveMessage!=="undefined"?positiveMessage:undefined,"tagline" in locals_for_with?locals_for_with.tagline:typeof tagline!=="undefined"?tagline:undefined,"target" in locals_for_with?locals_for_with.target:typeof target!=="undefined"?target:undefined));;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -6716,7 +6734,23 @@ var alt=false
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var indicator = $$obj[$index];
 
-buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><strong" + (jade.cls([indicator.aboveTarget ? 'text-success' : 'text-danger'], [true])) + ">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = (indicator.benchmark*100).toFixed(0)+"%") ? "" : jade_interp)) + "</td><td>");
+buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><!--strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'-->");
+if ( indicator.aboveTarget)
+{
+if ( ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage)
+{
+buf.push("<strong class=\"text-topTen\">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong>");
+}
+else
+{
+buf.push("<strong class=\"text-overPerform\">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong>");
+}
+}
+else
+{
+buf.push("<strong class=\"text-underPerform\">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong>");
+}
+buf.push("<!--strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'--><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = (indicator.benchmark*100).toFixed(0)+"%") ? "" : jade_interp)) + "</td><td>");
 if ( indicator.up)
 {
 buf.push("<i class=\"fa fa-2x fa-caret-up\"></i>");
@@ -6734,7 +6768,23 @@ alt = !alt
     for (var $index in $$obj) {
       $$l++;      var indicator = $$obj[$index];
 
-buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><strong" + (jade.cls([indicator.aboveTarget ? 'text-success' : 'text-danger'], [true])) + ">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = (indicator.benchmark*100).toFixed(0)+"%") ? "" : jade_interp)) + "</td><td>");
+buf.push("<tr" + (jade.attr("data-id", indicator.id, true, false)) + " data-toggle=\"tooltip\" data-placement=\"left\" title=\"Click for more detail\"" + (jade.cls(['standard-row',alt ? 'alternate-row': ''], [null,true])) + "><td><strong>" + (jade.escape(null == (jade_interp = indicator.name) ? "" : jade_interp)) + "</strong><br/><a" + (jade.attr("data-id", indicator.id, true, false)) + " class=\"show-more\">Show more <i class=\"fa fa-caret-down\"></i></a></td><td><!--strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'-->");
+if ( indicator.aboveTarget)
+{
+if ( ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage)
+{
+buf.push("<strong class=\"text-topTen\">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong>");
+}
+else
+{
+buf.push("<strong class=\"text-overPerform\">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong>");
+}
+}
+else
+{
+buf.push("<strong class=\"text-underPerform\">" + (jade.escape(null == (jade_interp = indicator.performance.percentage + '%') ? "" : jade_interp)) + "</strong>");
+}
+buf.push("<!--strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'--><span>" + (jade.escape(null == (jade_interp = ' (' + indicator.performance.fraction + ')') ? "" : jade_interp)) + "</span></td><td>" + (jade.escape(null == (jade_interp = indicator.target) ? "" : jade_interp)) + "</td><td>" + (jade.escape(null == (jade_interp = (indicator.benchmark*100).toFixed(0)+"%") ? "" : jade_interp)) + "</td><td>");
 if ( indicator.up)
 {
 buf.push("<i class=\"fa fa-2x fa-caret-up\"></i>");
