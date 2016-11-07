@@ -139,19 +139,36 @@ async.series([
               i.benchmark = data.benchmark;
             }
 
-			var dtt = data.date.replace(/[^0-9-]/g, "");
-			//replace if already there
-			var dttIdx = i.values[0].indexOf(dtt);
-			if(dttIdx === -1) {
-				i.values[0].push(dtt);
-				i.values[1].push(data.numerator);
-				i.values[2].push(data.denominator);
-				i.values[3].push(data.target);
-			} else {
-				i.values[1][dttIdx] = data.numerator;
-				i.values[2][dttIdx] = data.denominator;
-				i.values[3][dttIdx] = data.target;
-			}
+      			var dtt = data.date.replace(/[^0-9-]/g, "");
+      			//replace if already there
+      			var dttIdx = i.values[0].indexOf(dtt);
+      			if(dttIdx === -1) {
+      				i.values[0].push(dtt);
+      				i.values[1].push(data.numerator);
+      				i.values[2].push(data.denominator);
+      				i.values[3].push(data.target);
+      			} else {
+      				i.values[1][dttIdx] = data.numerator;
+      				i.values[2][dttIdx] = data.denominator;
+      				i.values[3][dttIdx] = data.target;
+      			}
+
+            //Sort them all..
+            var temp = i.values[0].slice(1).map(function(v,idx){
+              return {a:v,b:i.values[1][idx+1],c:i.values[2][idx+1],d:i.values[3][idx+1]};
+            });
+            //sort
+            temp.sort(function(a,b){
+              return a.a===b.a ? 0 : (a.a < b.a ? -1 : 1);
+            });
+
+            //reassign
+            temp.forEach(function(v,idx){
+              i.values[0][idx+1] = v.a;
+              i.values[1][idx+1] = v.b;
+              i.values[2][idx+1] = v.c;
+              i.values[3][idx+1] = v.d;
+            });
           }
         })
         .on('end', function() {
