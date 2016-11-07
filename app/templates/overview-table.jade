@@ -20,7 +20,16 @@
                 | Show more 
                 i.fa.fa-caret-down
             td
-              strong(class=indicator.aboveTarget ? 'text-success' : 'text-danger')= indicator.performance.percentage + '%'
+              //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+              if indicator.aboveTarget
+                if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
+                  strong(class = 'text-topTen')= indicator.performance.percentage + '%'
+                else
+                  strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
+              else
+                strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
+                
+              //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
               span= ' (' + indicator.performance.fraction + ')'
             td= indicator.target
             td= (indicator.benchmark*100).toFixed(0)+"%"
