@@ -20,7 +20,9 @@ var indicatorList = {
         panel.append(html);
       } else {
         //*b* maintain state
-        base.savePanelState();
+        // - state maintainance causes a bug in this place
+        //TODO build a version of state maintainance that doesnt reload if tab is pressed
+        //base.savePanelState();
         panel.html(html);
       }
 

@@ -2,6 +2,7 @@ module.exports = {
   db: {
     url: process.env.PINGR_MONGO_URL
   },
+  //user auth
   passport: {
     secret: process.env.PINGR_PASSPORT_SECRET
   },
