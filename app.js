@@ -3172,7 +3172,9 @@ var indicatorList = {
         panel.append(html);
       } else {
         //*b* maintain state
-        base.savePanelState();
+        // - state maintainance causes a bug in this place
+        //TODO build a version of state maintainance that doesnt reload if tab is pressed
+        //base.savePanelState();
         panel.html(html);
       }
 
@@ -7354,7 +7356,9 @@ var ind = {
       /*console.log("WINDOW HEIGHT: " + $(window).height());
       console.log("TABLE TOP: " + $('.table-scroll').position().top);
       console.log("CSS: " + Math.floor($(window).height()-$('.table-scroll').position().top-200)+"px");*/
-      $('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
+      //var win = $(this);
+      //$('#addedCSS').text('.table-scroll {max-height:' + Math.floor(win.height() - $('.table-scroll').position().top - 200) + 'px;}');
+      //$('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
 
       $(window).off('resize').on('resize', function() {
         var win = $(this); //this = window
