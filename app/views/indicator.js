@@ -141,7 +141,9 @@ var ind = {
       /*console.log("WINDOW HEIGHT: " + $(window).height());
       console.log("TABLE TOP: " + $('.table-scroll').position().top);
       console.log("CSS: " + Math.floor($(window).height()-$('.table-scroll').position().top-200)+"px");*/
-      $('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
+      //var win = $(this);
+      //$('#addedCSS').text('.table-scroll {max-height:' + Math.floor(win.height() - $('.table-scroll').position().top - 200) + 'px;}');
+      //$('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
 
       $(window).off('resize').on('resize', function() {
         var win = $(this); //this = window
