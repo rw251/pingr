@@ -1,6 +1,7 @@
 var base = require('../base.js'),
   data = require('../data.js'),
-  lookup = require('../lookup.js');
+  lookup = require('../lookup.js'),
+  log = require('../log.js');
 var states, loadContFn, ID = "PATIENT_SEARCH";
 
 var ps = {
@@ -60,7 +61,7 @@ var ps = {
   onSelected: function($e, nhsNumberObject) {
     //Hide the suggestions panel
     $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
-
+    log.event("patient-search", window.location.hash, [{key:"patid",value:nhsNumberObject.id}]);
     history.pushState(null, null, '#patients/' + nhsNumberObject.id);
     loadContFn('#patients/' + nhsNumberObject.id, true);
 

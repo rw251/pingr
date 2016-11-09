@@ -88,7 +88,7 @@ var logInfo = function(event, type, href) {
       dataType: "json",
       contentType: "application/json"
     });
-  }, 500);
+  }, 1);
 };
 
 var delay = 500,

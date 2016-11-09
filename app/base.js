@@ -160,7 +160,20 @@ var base = {
 
     client.on('ready', function() {
       client.on('aftercopy', function(event) {
-        console.log('Copied text to clipboard: ' + event.data['text/plain']);
+        var dataText = event.data['text/plain'];
+        var ispatid = dataText.match(/[0-9]{10}/);
+        if(ispatid && ispatid.length>0) {
+          var poss = Object.keys(data.patLookup).filter(function(v){
+            return data.patLookup[v] === ispatid[0];
+          });
+          if(poss & poss.length>0){
+            dataText = poss[0];
+          } else {
+            dataText = "XXX XXX XXXX";
+          }
+        }
+        log.event("copy-button", window.location.hash, [{key:"data",value:dataText}]);
+        console.log('Copied text to clipboard: ' + dataText);
         $(event.target).tooltip('hide');
         $(event.target).popover({
           trigger: 'manual',

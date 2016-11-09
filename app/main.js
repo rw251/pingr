@@ -28,7 +28,7 @@ var main = {
   onSelected: function($e, nhsNumberObject) {
     //Hide the suggestions panel
     $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
-
+    log.event("patient-search", window.location.hash, [{key:"patid",value:nhsNumberObject.id}]);
     history.pushState(null, null, '#patients/' + nhsNumberObject.id);
     template.loadContent('#patients/' + nhsNumberObject.id, true);
 
@@ -42,7 +42,7 @@ var main = {
     }
 
     data.populateNhsLookup(function(){
-      
+
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,

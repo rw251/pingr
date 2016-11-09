@@ -214,6 +214,12 @@ var iap = {
       return false;
     });
 
+    $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
+    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e){
+      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
+      e.stopPropagation();
+    });
+
     iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard);
   },
 

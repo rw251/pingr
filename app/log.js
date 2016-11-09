@@ -117,6 +117,11 @@ var log = {
       name: "actions",
       value: {}
     }]);
+    var dataToSend = [
+      { key: "patient", "value": id },
+      { key: "action", "value": actionId }
+    ];
+    log.event(obj.actions[id][actionId].agree ? "undo-agree" : "undo-disagree", window.location.hash, dataToSend);
     obj.actions[id][actionId].agree = null;
     delete obj.actions[id][actionId].reason;
     log.setObj(obj);
