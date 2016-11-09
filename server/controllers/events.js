@@ -18,6 +18,17 @@ var e = {
     });
   },
 
+  download: function(dateFrom, done){
+    if(dateFrom) {
+
+    } else {
+      Event.find({},function(err, events){
+        if(err) return done(err);
+        return done(null, events);
+      });
+    }
+  },
+
   add: function(event, done){
     if (event) {
       //record to mongo

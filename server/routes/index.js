@@ -103,6 +103,21 @@ module.exports = function(passport) {
     });
   });
 
+  router.get('/eventsdownload', isAuthenticated, isAdmin, function(req, res) {
+    events.download(null, function(err, events) {
+      //res.render('pages/eventlist.jade', { events: events, message: req.flash() });
+
+      //var mimetype = mime.lookup(file);
+
+      //res.setHeader('Content-disposition', 'attachment; filename=test.txt');
+      //res.setHeader('Content-type', mimetype);
+      res.attachment('test.txt');
+      res.send(events);
+      //var filestream = fs.createReadStream(file);
+      //filestream.pipe(res);
+    });
+  });
+
   router.get('/events/:email', isAuthenticated, isAdmin, function(req, res) {
     events.list({user: req.params.email},req.query.skip, req.query.limit, function(err, events) {
       res.render('pages/eventlist.jade', { events: events, message: req.flash() });
