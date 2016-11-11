@@ -19,3 +19,5 @@ app/assets/data/data.json
 pingr.zip
 deploy/dbserver/log/*
 deploy/appserver/data/*
+deploy/dbserver/research-events-medication-htn/
+!deploy/dbserver/research-events-medication-htn/medication-sorter-node.js

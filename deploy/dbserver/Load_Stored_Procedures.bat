@@ -11,10 +11,11 @@ IF %ERRORLEVEL% neq 0 (
 
 SET SMASH.DB=PatientSafety_Records
 
-REM ===========================
-REM == Add code groupings    ==
-REM ===========================
+REM ====================================
+REM == Add code groupings and text    ==
+REM ====================================
 sqlcmd -E -d %SMASH.DB% -i scripts/codeGroups.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/text.sql
 
 REM ===========================
 REM == Add stored procedures ==

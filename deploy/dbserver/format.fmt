@@ -1,0 +1,7 @@
+12.0
+5
+1       SQLCHAR             0       255     ","     1     Rubric           Latin1_General_100_CS_AS
+2       SQLCHAR             0       55      ","     2     Code             Latin1_General_100_CS_AS
+3       SQLCHAR             0       255     ","     3     Family           Latin1_General_100_CS_AS
+4       SQLCHAR             0       255     ","     4     Type             Latin1_General_100_CS_AS
+5       SQLCHAR             0       30      "\r\n"   5     Dose             ""

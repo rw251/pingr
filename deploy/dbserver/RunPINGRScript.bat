@@ -52,21 +52,23 @@ bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impCodes]" queryout %REPORT.DIRECT
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impOppCatsAndActions]" queryout %REPORT.DIRECTORY%/impOppCatsAndActions.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.indicator]" queryout %REPORT.DIRECTORY%/indicator.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.measures]" queryout %REPORT.DIRECTORY%/measures.dat -c -T -b 10000000
-
+bcp "SELECT left(indicatorId,CHARINDEX('.', indicatorId)-1),SUBSTRING(indicatorId,CHARINDEX('.', indicatorId)+1,CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)-1-CHARINDEX('.', indicatorId)),right(indicatorId,len(indicatorId)-CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)),textId, text FROM [%DB%].[dbo].[pingr.text]" queryout %REPORT.DIRECTORY%/text.dat -c -T -b 10000000
 
 REM get number of files in directory
 for /f %%A in ('dir /b %REPORT.DIRECTORY%\^| find /v /c ""') do set cnt=%%A
 echo File count = %cnt%
 
-IF NOT "%cnt%"=="7" (
+SET EXPECTED.FILE.NUMBER=8
+
+IF NOT "%cnt%"=="%EXPECTED.FILE.NUMBER%" (
 	GOTO :extractfailed
 )
 
 GOTO :finalstep
 
 :extractfailed
-echo "There aren't 7 files after export.  Instead there are: %cnt% files"
-cscript sendmail.vbs "The pingr run all stored procedure succeeded but the report extractor failed.  There should be 7 files after export.  Instead there are: %cnt% files"
+echo "There aren't %EXPECTED.FILE.NUMBER% files after export.  Instead there are: %cnt% files"
+cscript sendmail.vbs "The pingr run all stored procedure succeeded but the report extractor failed.  There should be %EXPECTED.FILE.NUMBER% files after export.  Instead there are: %cnt% files"
 goto :end
 
 :copyfailed
