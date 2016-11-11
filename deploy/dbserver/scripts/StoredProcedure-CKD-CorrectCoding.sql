@@ -615,16 +615,19 @@ group by sub.PatID;
 --Suggest exclude
 
 --truncate table outImpOppCatsAndActions
-insert into [output.pingr.impOppCatsAndActions](PatID, indicatorId, impOppCat, action, short_action, long_action, reason, evidence)
+insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonCat, reasonNumber, priority, actionText, supportingText)
 
 --WRONG STAGE
 	--ACR known
-select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as impOppCat,
-		'wrongStageAcrKnown' as action,
-		'Add code ' + c.correct_read as short_action, 
-		'' as long_action, 
-		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: </strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as reason,
-		'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as actionCat,
+		'wrongStageAcrKnown' as reasonCat,
+		1 as reasonNumber,
+		4 as priority,
+		'Add code ' + c.correct_read as actionText, 
+		'Reasoning' +
+			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: </strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + 
+			'<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong>' +
+			'</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -636,12 +639,15 @@ where
 
 union
 	--ACR unknown
-select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as impOppCat,
-		'wrongStageAcrUnknon' as action,
-		'Add code ' + c.correct_read as short_action, 
-		'' as long_action, 
-		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: <strong>Null<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as reason,
-		'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as actionCat,
+		'wrongStageAcrUnknon' as reasonCat,
+		1 as reasonNumber,
+		4 as priority,
+		'Add code ' + c.correct_read as actionText, 
+		'Reasoning' +
+			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
+			'<li></strong>Latest ACR: <strong>Null<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li>' +
+			'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -653,12 +659,16 @@ where
 
 union
 --RIGHT STAGE, WRONG SUBSTAGE (ACR always known)
-select d.PatID, 'ckd.diagnosis.staging', 'rightStageWrongSubstage' as impOppCat,
-		'rightStageWrongSubstage' as action,
-		'Add code ' + c.correct_read as short_action, 
-		'' as long_action, 
-		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: <strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as reason,
-		'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'rightStageWrongSubstage' as actionCat,
+		'rightStageWrongSubstage' as reasonCat,
+		1 as reasonNumber,
+		4 as priority,
+		'Add code ' + c.correct_read as actionText, 
+		'Reasoning' +
+			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
+			'<li></strong>Latest ACR: <strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + 
+			'<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li>' +
+			'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -678,13 +688,16 @@ where
 	and	d.indicator = 'wrong'
 
 union
+
 --ACR TEST NEEDED (ACR unknown)
-select d.PatID, 'ckd.diagnosis.staging', 'acrTest' as impOppCat,
-		'acrTest' as action,
-		'Offer ACR test' as short_action, 
-		'' as long_action,		
-		'Reasoning<ul><li>This patient has CKD<li>They do not have an ACR reading in their record<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as reason,
-		'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'acrTest' as actionCat,
+		'acrTest' as reasonCat,
+		1 as reasonNumber,
+		4 as priority,
+		'Offer ACR test' as actionText, 
+		'Reasoning' +
+			'<ul><li>This patient has CKD<li>They do not have an ACR reading in their record' +
+			'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 from #indicator d
 		inner join #classify c on c.PatID = d.PatID
 		inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -703,62 +716,70 @@ from #indicator d
 		and sub.PatID is null
 
 union
+
 --OVERDIAGNOSED
-select d.PatID, 'ckd.diagnosis.staging', 'overdiagnosed' as impOppCat,
-	'overdiagnosed_eGFR_reading' as action,
-	'Add code 2126E (CKD resolved) [#2126E]' as short_action, 
-	'' as long_action, 
-	'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as reason,
-	'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'overdiagnosed' as actionCat,
+	'overdiagnosed_eGFR_reading' as reasonCat,
+	1 as reasonNumber,
+	4 as priority,
+	'Add code 2126E (CKD resolved) [#2126E]' as actionText, 
+	'Reasoning' +
+		'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
+		'<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li>' +
+		'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 	from #indicator d
 	left outer join #latestEgfrACR as e on d.PatID = e.PatID
 	where d.code is not NULL and e.egfrMax is not NULL and (e.egfrMax >= 60 or d.correct is NULL) and d.indicator = 'wrong'
 
 union
+
 --SUGGEST EXCLUDE CATEGORY
 ---suggestExclude - palliative
-select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as impOppCat,
-	'suggestExcludePal' as action,
-	'Add CKD exception code 9hE0. (palliative) [#9hE0.]' as short_action, 
-	'' as long_action, 
-	'Reasoning<ul><li><strong>Palliative care</strong> code on <strong>' + CONVERT(VARCHAR, l.palDate, 3) + '</strong></li></ul>' as reason,
-	'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
+	'suggestExcludePal' as reasonCat,
+	1 as reasonNumber,
+	4 as priority,
+	'Add CKD exception code 9hE0. (palliative) [#9hE0.]' as actionText, 
+	'Reasoning' +
+		'<ul><li><strong>Palliative care</strong> code on <strong>' + CONVERT(VARCHAR, l.palDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
 	where (l.palliative = 1) and d.indicator = 'wrong'
 
 union
+
 ---suggestExclude - frail
-select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as impOppCat,
-	'suggestExcludeFrail' as action,
-	'Add CKD exception code 9hE0. (frail) [#9hE0.]' as short_action, 
-	'' as long_action, 
-	'Reasoning<ul><li><strong>Frailty</strong> code on <strong>' + CONVERT(VARCHAR, l.frailDate, 3) + '</strong></li></ul>' as reason,
-	'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
+	'suggestExcludeFrail' as reasonCat,
+	1 as reasonNumber,
+	4 as priority,
+	'Add CKD exception code 9hE0. (frail) [#9hE0.]' as actionText, 
+	'Reasoning' +
+		'<ul><li><strong>Frailty</strong> code on <strong>' + CONVERT(VARCHAR, l.frailDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
 	where (l.frail = 1) and d.indicator = 'wrong'
 
 union
 ---suggestExclude - housebound
-select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as impOppCat,
-	'suggestExcludeHouse' as action,
-	'Add CKD exception code 9hE0. (housebound) [#9hE0.]' as short_action, 
-	'' as long_action, 
-	'Reasoning<ul><li><strong>Housebound</strong> code on <strong>' + CONVERT(VARCHAR, l.houseboundDate, 3) + '</strong> (and no ''not housebound'' code afterwards)</li></ul>' as reason,
-	'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
+	'suggestExcludeHouse' as reasonCat,
+	1 as reasonNumber,
+	4 as priority,
+	'Add CKD exception code 9hE0. (housebound) [#9hE0.]' as actionText, 
+	'Reasoning<ul><li><strong>Housebound</strong> code on <strong>' + CONVERT(VARCHAR, l.houseboundDate, 3) + '</strong> (and no ''not housebound'' code afterwards)</li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
 	where (l.housebound = 1) and d.indicator = 'wrong'
 
 union
 ---suggestExclude - three invites
-select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as impOppCat,
-	'suggestExclude3Invites' as action,
-	'Add CKD exception code 9hE.. (3 invites) [#9hE..]' as short_action, 
-	'' as long_action, 
-	'Reasoning<ul><li><strong>Three invites for CKD monitoring</strong> code on <strong>' + CONVERT(VARCHAR, l.threeInvitesDate, 3) + '</strong></li></ul>' as reason,
-	'' as evidence
+select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
+	'suggestExclude3Invites' as reasonCat,
+	1 as reasonNumber,
+	4 as priority,
+	'Add CKD exception code 9hE.. (3 invites) [#9hE..]' as actionText, 
+	'Reasoning<ul><li><strong>Three invites for CKD monitoring</strong> code on <strong>' + CONVERT(VARCHAR, l.threeInvitesDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
 	where (l.threeInvites = 1) and d.indicator = 'wrong'

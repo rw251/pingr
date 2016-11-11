@@ -14,7 +14,7 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 
 --Pt-level data: improvement opportunity categories and actions
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impOppCatsAndActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impOppCatsAndActions]
-CREATE TABLE [output.pingr.impOppCatsAndActions] (PatID int, indicatorId varchar(1000), impOppCat varchar(1000), action varchar(1000), short_action varchar(1000), long_action varchar(1000), reason varchar(1000), evidence varchar(1000))
+CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(1000))
 
 --Pt-level data: Important codes
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]

@@ -32,8 +32,8 @@ IF NOT EXIST %IMPORT_DIR%impCodes.dat (
 	SET ERRRR=impCodes file is missing
 	goto :failed
 )
-IF NOT EXIST %IMPORT_DIR%impOppCatsAndActions.dat (
-	SET ERRRR=impOppCatsAndActions file is missing
+IF NOT EXIST %IMPORT_DIR%patActions.dat (
+	SET ERRRR=patActions file is missing
 	goto :failed
 )
 IF NOT EXIST %IMPORT_DIR%indicator.dat (

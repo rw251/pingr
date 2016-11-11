@@ -10,7 +10,7 @@ var FILENAMES = {
   indicators: 'indicator.dat',
   measurements: 'measures.dat',
   contacts: 'contacts.dat',
-  opportunities: 'impOppCatsAndActions.dat',
+  opportunities: 'patActions.dat',
   text: 'text.dat'
 };
 
