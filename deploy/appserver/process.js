@@ -323,7 +323,7 @@ async.series([
           .pipe(
             csv({
               separator: '\t',
-              headers: ['patientId', 'indicatorId', 'opportunity', 'actionId', 'short', 'long', 'reason', 'link']
+              headers: ['patientId', 'indicatorId', 'opportunity', 'actionId', 'reasonNumber', 'priority', 'short', 'long', 'reason', 'link']
             })
           )
           .on('data', function(data) {
