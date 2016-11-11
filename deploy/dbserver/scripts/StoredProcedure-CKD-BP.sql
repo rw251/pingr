@@ -1,7 +1,7 @@
-IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.monitoring') DROP PROCEDURE [pingr.ckd.monitoring];
+IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.treatment.bp') DROP PROCEDURE [pingr.ckd.treatment.bp];
 
 GO
-CREATE PROCEDURE [pingr.ckd.monitoring] @refdate VARCHAR(10)
+CREATE PROCEDURE [pingr.ckd.treatment.bp] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
 AS
 SET NOCOUNT ON --exclude row count results for call from R
 
@@ -519,7 +519,12 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, 0.80 as target, @val from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
-	group by b.pracID
+	group by b.pracID;
+
+---------------------------------------------------------
+-- Exit if we're just getting the indicator numbers -----
+---------------------------------------------------------
+IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 
 				---------------------------------------------------------------------------------------------------------------------
 				--OBTAIN INFORMATION RELATED TO IMP OPPS FOR EACH PATIENT IN DENOMINATOR BUT *NOT* IN NUMERATOR----------------------
@@ -538,6 +543,7 @@ select s.PatID, latestPalCodeDate, MIN(Rubric) as latestPalCodeMin, MAX(Rubric) 
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestPalCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestPalCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'pal') and EntryDate < @refdate
+							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestPalCodeDate = s.EntryDate
 where 
@@ -555,6 +561,7 @@ select s.PatID, latestPalPermExCodeDate, MIN(Rubric) as latestPalPermExCodeMin, 
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestPalPermExCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestPalPermExCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'palPermEx') and EntryDate < @refdate
+							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestPalPermExCodeDate = s.EntryDate
 where 
@@ -571,6 +578,7 @@ select s.PatID, latestFrailCodeDate, MIN(Rubric) as latestFrailCodeMin, MAX(Rubr
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestFrailCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestFrailCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'frail') and EntryDate < @refdate
+							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestFrailCodeDate = s.EntryDate
 where 
@@ -588,6 +596,7 @@ select s.PatID, latestHouseBedboundCodeDate, MIN(Rubric) as latestHouseBedboundC
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestHouseBedboundCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestHouseBedboundCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] in ('housebound', 'bedridden')) and EntryDate < @refdate
+							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestHouseBedboundCodeDate = s.EntryDate
 where 
@@ -605,6 +614,7 @@ select s.PatID, latestHouseBedboundPermExCodeDate, MIN(Rubric) as latestHouseBed
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestHouseBedboundPermExCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestHouseBedboundPermExCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'houseboundPermEx') and EntryDate < @refdate
+							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestHouseBedboundPermExCodeDate = s.EntryDate
 where 
@@ -622,6 +632,7 @@ select s.PatID, latestCkd3rdInviteCodeDate, MIN(Rubric) as latestCkd3rdInviteCod
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestCkd3rdInviteCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestCkd3rdInviteCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'ckd3rdInvite') and EntryDate < @refdate
+							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestCkd3rdInviteCodeDate = s.EntryDate
 where 
@@ -651,6 +662,7 @@ select s.PatID, latestWhiteCoatCodeDate, MIN(Rubric) as latestWhiteCoatCodeMin, 
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestWhiteCoatCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestWhiteCoatCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'whiteCoat') and EntryDate < @refdate
+							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestWhiteCoatCodeDate = s.EntryDate
 where 
@@ -757,6 +769,7 @@ insert into #latestMedOptimisation
   		inner join 
   			(  
 			 select PatID, MAX(EntryDate) as date from MEDICATION_EVENTS_HTN
+			 where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			 group by PatID
   			) sub on sub.PatID = s.PatID and sub.date = s.EntryDate
 	where 
@@ -772,6 +785,7 @@ insert into #latestMedAdherence
   		inner join 
   			(  
 			 select PatID, MAX(EntryDate) as latestMedAdherenceDate from MEDICATION_EVENTS_HTN
+			 where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			 group by PatID
   			) sub on sub.PatID = s.PatID and sub.latestMedAdherenceDate = s.EntryDate
  where 
@@ -787,6 +801,7 @@ select a.PatID, a.EntryDate, a.Ingredient, a.Family, a.Event, a.Dose, c.MaxDose 
 	inner join 
 		(  
 			select PatID, Ingredient, MAX(EntryDate) as LatestEventDate from MEDICATION_EVENTS_HTN
+			 where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			group by PatID, Ingredient
 		) as b on b.PatID = a.PatID and b.LatestEventDate = a.EntryDate and b.Ingredient = a.Ingredient
  	left outer join
@@ -851,6 +866,7 @@ insert into #latestAllergyThiazideCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'thiazideAllergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -868,6 +884,7 @@ insert into #latestAllergyACEIcode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'ACEIallergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -885,6 +902,7 @@ insert into #latestAllergyARBcode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'ARBallergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -902,6 +920,7 @@ insert into #latestAllergyCCBcode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'CCBallergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -920,6 +939,7 @@ insert into #latestAllergyBBcode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'BBallergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -937,6 +957,7 @@ insert into #latestAllergyPotSpareDiurCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'PotSparDiurAllergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -954,6 +975,7 @@ insert into #latestAllergyAlphaCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -971,6 +993,7 @@ insert into #latestAllergyLoopDiurCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -988,6 +1011,7 @@ insert into #latestAddisonsCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'addisons') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1005,6 +1029,7 @@ insert into #latestGoutCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'gout') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1022,6 +1047,7 @@ insert into #latestGoutDrug
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'goutDrugs') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1039,6 +1065,7 @@ insert into #latestCalcium
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'calcium') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1056,6 +1083,7 @@ insert into #latestSodium
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'sodium') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1073,6 +1101,7 @@ insert into #latestMinPotassium
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'potassium') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1091,6 +1120,7 @@ insert into #latestMaxPotassium
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'potassium') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1108,6 +1138,7 @@ insert into #latestAScode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'AS') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1125,6 +1156,7 @@ insert into #latestASrepairCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'ASrepair') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1142,6 +1174,7 @@ insert into #latestMIcode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'MInow') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1159,6 +1192,7 @@ insert into #latestPorphyriaCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'porphyria') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1176,6 +1210,7 @@ insert into #latestHeartBlockCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = '2/3heartBlock') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1193,6 +1228,7 @@ insert into #latestSickSinusCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'sickSinus') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1210,6 +1246,7 @@ insert into #latestPacemakerCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'pacemakerDefib') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1227,6 +1264,7 @@ insert into #latestPulse
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'pulseRate') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1244,6 +1282,7 @@ insert into #latestAsthmaCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] in ('asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs')) and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1261,6 +1300,7 @@ insert into #latestAsthmaPermExCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'asthmaPermEx') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1280,6 +1320,7 @@ insert into #latestPhaeoCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'phaeo') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1298,6 +1339,7 @@ insert into #latestPosturalHypoCode
 	  			(  
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'posturalHypo') and EntryDate < @refdate
+				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
 		where 
@@ -1656,12 +1698,12 @@ select distinct a.PatID,
 			'<li>NICE recommends an ACE inhibitor first-line <strong>but</strong> there is a documented contraindication (' +
 				(case 
 					when latestAllergyACEIcode is not null then latestAllergyACEIcode + 'on' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3)
-					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + latestMaxPotassium + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
+					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			') and ARBs (' + 
 				(case 
 					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)  
-					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + latestMaxPotassium + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
+					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			'), so a CCB is preferred.</li></ul>'
 		end as reasonText,
@@ -1704,12 +1746,12 @@ select distinct a.PatID,
 			'<ul><li>Patient is prescribed a Calcium Channel Blocker and there are documented contraindications to both ACE Inhibitors (' +
 				(case 
 					when latestAllergyACEIcode is not null then latestAllergyACEIcode + 'on' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3)
-					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + latestMaxPotassium + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
+					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end )+
 			') and ARBs (' + 
 				(case 
 					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)  
-					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + latestMaxPotassium + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
+					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			'), so Indapamide is preferred.</li></ul>'
 		when (a.PatID not in (select PatID from #htnMeds) and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0) and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)) then
@@ -1717,12 +1759,12 @@ select distinct a.PatID,
 			'<li><strong>But</strong> there are contra-indications to ACE Inhibitors (' +
 				(case 
 					when latestAllergyACEIcode is not null then latestAllergyACEIcode + 'on' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3)
-					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + latestMaxPotassium + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
+					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			') and ARBs (' + 
 				(case 
 					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)  
-					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + latestMaxPotassium + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
+					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			') and CCBs' +
 				(case 
@@ -1853,7 +1895,7 @@ select distinct a.PatID,
 			and (currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null)
 			and (currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null)
 		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' + 
-			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'DIUR_POT') else '' end) +
+			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'DIUR_POT') else '' end) +
 			(case when latestAllergyPotSpareDiurCode is not null then latestAllergyPotSpareDiurCode + ' on ' + CONVERT(VARCHAR, latestAllergyPotSpareDiurCodeDate, 3) + '; ' else '' end) +
 			(case when latestMaxPotassium > 4.5 then 'latest potassium ' +  Str(latestMaxPotassium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3) + '; ' else '' end) +
 			(case when latestAddisonsCode is not null then latestAddisonsCode + ' on ' + CONVERT(VARCHAR, latestAddisonsCodeDate, 3) + '; ' else '' end) +
@@ -1863,12 +1905,12 @@ select distinct a.PatID,
 			and (currentMedFamily ='ALPHA' or latestAllergyAlphaCode is not null or latestPosturalHypoCode is not null)
 			and (currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null)
 		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' + 
-			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'DIUR_POT') else '' end) +
+			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'DIUR_POT') else '' end) +
 			(case when latestAllergyPotSpareDiurCode is not null then latestAllergyPotSpareDiurCode + ' on ' + CONVERT(VARCHAR, latestAllergyPotSpareDiurCodeDate, 3) + '; ' else '' end) +
 			(case when latestMaxPotassium > 4.5 then 'latest potassium ' +  Str(latestMaxPotassium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3) + '; ' else '' end) +
 			(case when latestAddisonsCode is not null then latestAddisonsCode + ' on ' + CONVERT(VARCHAR, latestAddisonsCodeDate, 3) + '; ' else '' end) +
 			') and Alpha Blockers (' +
-			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'ALPHA') else '' end) +
+			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'ALPHA') else '' end) +
 			(case when latestAllergyAlphaCode is not null then latestAllergyAlphaCode + ' on ' + CONVERT(VARCHAR, latestAllergyAlphaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPosturalHypoCode is not null then latestPosturalHypoCode + ' on ' + CONVERT(VARCHAR, latestPosturalHypoCodeDate, 3) + '; ' else '' end) +
 			').</li></ul>'	
@@ -1877,12 +1919,12 @@ select distinct a.PatID,
 			and (currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null)
 			and (currentMedFamily ='BB' or latestAllergyBBcode is not null or latestAsthmaCode is not null or latestPulseValue < 46 or latestPhaeoCode is not null or latestHeartBlockCodeDate is not null or latestSickSinusCodeDate is not null)
 		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' + 
-			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'DIUR_POT') else '' end) +
+			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'DIUR_POT') else '' end) +
 			(case when latestAllergyPotSpareDiurCode is not null then latestAllergyPotSpareDiurCode + ' on ' + CONVERT(VARCHAR, latestAllergyPotSpareDiurCodeDate, 3) + '; ' else '' end) +
 			(case when latestMaxPotassium > 4.5 then 'latest potassium ' +  Str(latestMaxPotassium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3) + '; ' else '' end) +
 			(case when latestAddisonsCode is not null then latestAddisonsCode + ' on ' + CONVERT(VARCHAR, latestAddisonsCodeDate, 3) + '; ' else '' end) +
 			') and Beta Blockers (' +
-			(case when currentMedFamily = 'BB' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'BB') else '' end) +
+			(case when currentMedFamily = 'BB' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'BB') else '' end) +
 			(case when latestAllergyBBcode is not null then latestAllergyBBcode + ' on ' + CONVERT(VARCHAR, latestAllergyBBcodeDate, 3) + '; ' else '' end) +
 			(case when latestAsthmaCode is not null then latestAsthmaCode + ' on ' + CONVERT(VARCHAR, latestAsthmaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPulseValue < 46 then 'latest pulse ' +  Str(latestPulseValue, 3, 0) + ' on ' + CONVERT(VARCHAR, latestPulseValue, 3) + '; ' else '' end) +
@@ -1895,11 +1937,11 @@ select distinct a.PatID,
 			and (currentMedFamily ='ALPHA' or latestAllergyAlphaCode is not null or latestPosturalHypoCode is not null)
 			and (currentMedFamily ='BB' or latestAllergyBBcode is not null or latestAsthmaCode is not null or latestPulseValue < 46 or latestPhaeoCode is not null or latestHeartBlockCodeDate is not null or latestSickSinusCodeDate is not null)
 		then '</li>Patient is already prescribed, or has a contra-indication to Alpha Blockers (' + 
-			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'ALPHA') else '' end) +
+			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'ALPHA') else '' end) +
 			(case when latestAllergyAlphaCode is not null then latestAllergyAlphaCode + ' on ' + CONVERT(VARCHAR, latestAllergyAlphaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPosturalHypoCode is not null then latestPosturalHypoCode + ' on ' + CONVERT(VARCHAR, latestPosturalHypoCodeDate, 3) + '; ' else '' end) +
 			') and Beta Blockers (' +
-			(case when currentMedFamily = 'BB' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'BB') else '' end) +
+			(case when currentMedFamily = 'BB' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'BB') else '' end) +
 			(case when latestAllergyBBcode is not null then latestAllergyBBcode + ' on ' + CONVERT(VARCHAR, latestAllergyBBcodeDate, 3) + '; ' else '' end) +
 			(case when latestAsthmaCode is not null then latestAsthmaCode + ' on ' + CONVERT(VARCHAR, latestAsthmaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPulseValue < 46 then 'latest pulse ' +  Str(latestPulseValue, 3, 0) + ' on ' + CONVERT(VARCHAR, latestPulseDate, 3) + '; ' else '' end) +
@@ -1912,7 +1954,7 @@ select distinct a.PatID,
 			and (currentMedFamily ='ALPHA' or latestAllergyAlphaCode is not null or latestPosturalHypoCode is not null)
 			and (currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null)
 		then '</li>Patient has a contra-indication to Alpha Blockers (' +
-			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'ALPHA') else '' end) +
+			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'ALPHA') else '' end) +
 			(case when latestAllergyAlphaCode is not null then latestAllergyAlphaCode + ' on ' + CONVERT(VARCHAR, latestAllergyAlphaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPosturalHypoCode is not null then latestPosturalHypoCode + ' on ' + CONVERT(VARCHAR, latestPosturalHypoCodeDate, 3) + '; ' else '' end) +
 			').</li></ul>'	
@@ -1921,7 +1963,7 @@ select distinct a.PatID,
 			and (currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null)
 			and (currentMedFamily ='BB' or latestAllergyBBcode is not null or latestAsthmaCode is not null or latestPulseValue < 46 or latestPhaeoCode is not null or latestHeartBlockCodeDate is not null or latestSickSinusCodeDate is not null)
 		then '</li>Patient has a contra-indication to Beta Blockers (' +
-			(case when currentMedFamily = 'BB' then 'patient is prescribed ' + (select currentMedIngredient where currentMedFamily = 'BB') else '' end) +
+			(case when currentMedFamily = 'BB' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'BB') else '' end) +
 			(case when latestAllergyBBcode is not null then latestAllergyBBcode + ' on ' + CONVERT(VARCHAR, latestAllergyBBcodeDate, 3) + '; ' else '' end) +
 			(case when latestAsthmaCode is not null then latestAsthmaCode + ' on ' + CONVERT(VARCHAR, latestAsthmaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPulseValue < 46 then 'latest pulse ' +  Str(latestPulseValue, 3, 0) + ' on ' + CONVERT(VARCHAR, latestPulseDate, 3) + '; ' else '' end) +
@@ -1997,11 +2039,11 @@ select distinct a.PatID,
 --		when currentMedFamily = 'ALPHA' and currentMedDose < currentMedMaxDose then 'Alpha Blocker'
 --		when currentMedFamily = 'DIUR_LOOP' and currentMedDose < currentMedMaxDose then 'Loop Diuretic'
 --	end 
-	currentMedIngredient
+	currentMedIngredient COLLATE Latin1_General_CI_AS
 	as family, 
 	'Increase' as start_or_inc, 
 	'<a href="' + BNF + '" target="_blank">Link to BNF</a>' as BNFlink,
-	'<ul><li>Patient is currently prescribed ' + currentMedIngredient + ' ' + Str(currentMedDose, 3, 0) + ' mg per day. Max dose is ' + Str(currentMedMaxDose, 3, 0)+ ' mg per day <a href="' + BNF + '" target="_blank">BNF link</a>).</li></ul>' as reasonText,
+	'<ul><li>Patient is currently prescribed ' + currentMedIngredient COLLATE Latin1_General_CI_AS + ' ' + Str(currentMedDose, 3, 0) + ' mg per day. Max dose is ' + Str(currentMedMaxDose, 3, 0)+ ' mg per day <a href="' + BNF + '" target="_blank">BNF link</a>).</li></ul>' as reasonText,
 	1 as reasonNumber,
 	2 as priority
 from #htnMeds as a
@@ -2062,13 +2104,13 @@ select a.PatID,
 		when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + contact'
 		when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT second latest BP controlled (one-off high)'
 		when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled + medication change after'
-		when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT near target'
+		when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT near target'
 	end as reasonCat,
 	(case when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 1 else 0 end) +
 	(case when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 1 else 0 end) +
 	(case when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end) +
 	(case when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end) +
-	(case when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0)
+	(case when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end)
 	as reasonNumber,
 	2 as priority,
 	'Measure this patient''s BP' as actionText, 
@@ -2152,7 +2194,7 @@ select a.PatID,
 				when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, b.latestAcrDate, 3)
 				else '' 
 			end + 
-			'(' + (select text from actionText where [textId] = 'linkNiceBpTargetsCkd') + ').</li>' + reasonText +
+			'(' + (select text from actionText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' + reasonText +
 	'Useful information' + 
 		'<ul><li>' + 
 			case 
@@ -2164,6 +2206,8 @@ select a.PatID,
 from #medSuggestion as a
 	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 
+union
+	
 --SUGGEST EXCLUDE
 select a.PatID,
 	'ckd.treatment.bp' as indicatorId,

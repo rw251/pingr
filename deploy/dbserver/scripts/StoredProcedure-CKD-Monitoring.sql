@@ -240,7 +240,7 @@
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.monitoring') DROP PROCEDURE [pingr.ckd.monitoring];
 
 GO
-CREATE PROCEDURE [pingr.ckd.monitoring] @refdate VARCHAR(10)
+CREATE PROCEDURE [pingr.ckd.monitoring] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
 AS
 SET NOCOUNT ON --exclude row count results for call from R
 
@@ -569,6 +569,12 @@ select 'ckd.diagnosis.monitoring',b.pracID, CONVERT(char(10), @refdate, 126) as 
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
 --0s full SIR
+
+
+---------------------------------------------------------
+-- Exit if we're just getting the indicator numbers -----
+---------------------------------------------------------
+IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 
 --set @refdate = dateadd(month, 2, @refdate)
 --end --finish loop for indicator table
@@ -946,9 +952,9 @@ union
 ---suggestExclude - housebound
 select d.PatID, 'ckd.diagnosis.monitoring','suggestExclude' as actionCat,
 	'suggestExcludeHouse' as reasonCat,
-	'Add CKD exception code 9hE0. (housebound) [#9hE0.]' as actionText, 
 	1 as reasonNumber,
 	4 as priority,
+	'Add CKD exception code 9hE0. (housebound) [#9hE0.]' as actionText, 
 	'Reasoning<ul><li><strong>Housebound</strong> code on <strong>' + CONVERT(VARCHAR, l.houseboundDate, 3) + '</strong> (and no ''not housebound'' code afterwards)</li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
@@ -958,6 +964,8 @@ union
 ---suggestExclude - three invites
 select d.PatID, 'ckd.diagnosis.monitoring','suggestExclude' as actionCat,
 	'suggestExclude3Invites' as reasonCat,
+	1 as reasonNumber,
+	4 as priority,
 	'Add CKD exception code 9hE.. (3 invites) [#9hE..]' as actionText, 
 	'Reasoning<ul><li><strong>Three invites for CKD monitoring</strong> code on <strong>' + CONVERT(VARCHAR, l.threeInvitesDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d

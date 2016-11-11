@@ -40,6 +40,8 @@ IF OBJECT_ID('dbo.drugIngredients', 'U') IS NOT NULL DROP TABLE dbo.drugIngredie
 CREATE TABLE [dbo].[drugIngredients](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[Ingredient] varchar(255) NOT NULL,
+	[MaxDose] float NOT NULL,
+	[BNF] varchar(500) NOT NULL,
  CONSTRAINT [PK_drugIngredients] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

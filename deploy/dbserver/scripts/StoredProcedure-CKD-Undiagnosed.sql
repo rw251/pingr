@@ -210,7 +210,7 @@
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.undiagnosed') DROP PROCEDURE [pingr.ckd.undiagnosed];
 
 GO
-CREATE PROCEDURE [pingr.ckd.undiagnosed] @refdate VARCHAR(10)
+CREATE PROCEDURE [pingr.ckd.undiagnosed] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
 AS
 SET NOCOUNT ON --exclude row count results for call from R
 
@@ -490,6 +490,12 @@ select 'ckd.diagnosis.undiagnosed',b.pracID, CONVERT(char(10), @refdate, 126) as
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
 --0s full SIR
+
+
+---------------------------------------------------------
+-- Exit if we're just getting the indicator numbers -----
+---------------------------------------------------------
+IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 
 --set @refdate = dateadd(month, 2, @refdate)
 --end --finish loop for indicator table

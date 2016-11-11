@@ -13,8 +13,8 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 							---------------------------------------------------------------
 
 --Pt-level data: improvement opportunity categories and actions
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impOppCatsAndActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impOppCatsAndActions]
-CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(1000))
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.patActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.patActions]
+CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(max))
 
 --Pt-level data: Important codes
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]
@@ -59,6 +59,14 @@ BEGIN
 	SELECT 1001;
 	RETURN;
 END
+
+EXEC	@return_value = [dbo].[pingr.ckd.treatment.bp]
+		@refdate = @ReportDate
+IF @return_value != 0 
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
 							---------------------------------------------------------------
 							---------CREATE AND POPULATE PATIENT-LEVEL DATA TABLES---------
 							---------------------------------------------------------------
@@ -77,7 +85,7 @@ select PatID, EntryDate as date,
 CodeValue as value from SIR_ALL_Records
 where ReadCode in (select code from codeGroups where [group] in ('egfr','acr'))
 	and CodeValue is not NULL
-	and PatID in (select distinct PatID from [dbo].[output.pingr.impOppCatsAndActions])
+	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
 --Contacts
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.contacts]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.contacts]
@@ -149,7 +157,7 @@ select PatID, date,
 						else @CON end
 					) as eventcode,
 					EntryDate as date from SIR_ALL_Records
-					where PatID in (select distinct PatID from [dbo].[output.pingr.impOppCatsAndActions])
+					where PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 					group by EntryDate, PatID
 			) sub
 
@@ -200,7 +208,7 @@ select PatID, EntryDate as date,
 		when ReadCode in ('K052.') then 'G2'
 	end as subcategory from SIR_ALL_Records
 where ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx'))
-and PatID in (select distinct PatID from [dbo].[output.pingr.impOppCatsAndActions])
+and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
 --Demographics
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.demographics]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.demographics]
@@ -208,7 +216,7 @@ CREATE TABLE [output.pingr.demographics] (PatID int, nhsNumber bigint, age int, 
 insert into [output.pingr.demographics]
 select p.patid, n.nhsNumber, YEAR (@ReportDate) - year_of_birth as age, sex, gpcode from dbo.patients p
 inner join patientsNHSNumbers n on n.patid = p.patid
-where p.patid in (select distinct PatID from [dbo].[output.pingr.impOppCatsAndActions])
+where p.patid in (select distinct PatID from [dbo].[output.pingr.patActions])
 
 SELECT 0
 RETURN

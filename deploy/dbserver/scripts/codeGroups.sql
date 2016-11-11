@@ -6,7 +6,6 @@
 --replace with whatever you want, with \1 representing the read code
 --e.g. ('\1', 'pal'),
 --can be referred to in a query like a temp table, but without the '#'
-use P8701617062016
 IF OBJECT_ID('dbo.codeGroups', 'U') IS NOT NULL DROP TABLE dbo.codeGroups;
 CREATE TABLE codeGroups (code varchar(512), [group] varchar(512));
 CREATE NONCLUSTERED INDEX [ix_codegroups_group] ON [dbo].[codeGroups] 

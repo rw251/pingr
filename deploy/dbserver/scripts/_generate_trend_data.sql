@@ -16,7 +16,7 @@ DECLARE @ref varchar(10);
 WHILE (@dt <= @ReportDate) 
   BEGIN 
 	SET @ref = CONVERT(VARCHAR(10), @dt, 111);
-	 EXEC @stored_procedure_name @refdate = @ref;
+	 EXEC @stored_procedure_name @refdate = @ref, @JustTheIndicatorNumbersPlease = 1;
  
 	set @dt = dateadd(month, 2, @dt);
   END -- WHILE
