@@ -1,7 +1,7 @@
 Set MyEmail=CreateObject("CDO.Message")
 
 MyEmail.Subject="PINGR update"
-MyEmail.From="PINGR Alert <info@pingr.srft.nhs.uk>"
+MyEmail.From="PINGR Alert <info@smash.srft.nhs.uk>"
 MyEmail.To="benjamin.brown@manchester.ac.uk;richard.williams2@manchester.ac.uk"
 MyEmail.Bcc="1234richardwilliams@gmail.com"
 MyEmail.TextBody=WScript.Arguments(0)
