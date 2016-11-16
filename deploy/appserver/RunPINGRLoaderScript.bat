@@ -62,13 +62,14 @@ GOTO :nodesuccess
 
 :nodefailed
 cscript sendmail.vbs "The mongo importer failed to load the most recent data. The site is still running but the data is not bang up to date."
+goto :end
 
 :nodesuccess
 
 move %IMPORT_DIR%\* %IMPORT_DIR%\archive\
 
 REM temp until text is auto generated
-move %IMPORT_DIR%\archive\text.dat %IMPORT_DIR%\text.dat
+rem move %IMPORT_DIR%\archive\text.dat %IMPORT_DIR%\text.dat
 
 REM move the files
 mongoimport --db pingr --collection text --drop data/text.json --jsonArray

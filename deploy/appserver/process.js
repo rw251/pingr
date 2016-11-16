@@ -139,35 +139,35 @@ async.series([
               i.benchmark = data.benchmark;
             }
 
-      			var dtt = data.date.replace(/[^0-9-]/g, "");
-      			//replace if already there
-      			var dttIdx = i.values[0].indexOf(dtt);
-      			if(dttIdx === -1) {
-      				i.values[0].push(dtt);
-      				i.values[1].push(data.numerator);
-      				i.values[2].push(data.denominator);
-      				i.values[3].push(data.target);
-      			} else {
-      				i.values[1][dttIdx] = data.numerator;
-      				i.values[2][dttIdx] = data.denominator;
-      				i.values[3][dttIdx] = data.target;
-      			}
+            var dtt = data.date.replace(/[^0-9-]/g, "");
+            //replace if already there
+            var dttIdx = i.values[0].indexOf(dtt);
+            if (dttIdx === -1) {
+              i.values[0].push(dtt);
+              i.values[1].push(data.numerator);
+              i.values[2].push(data.denominator);
+              i.values[3].push(data.target);
+            } else {
+              i.values[1][dttIdx] = data.numerator;
+              i.values[2][dttIdx] = data.denominator;
+              i.values[3][dttIdx] = data.target;
+            }
 
             //Sort them all..
-            var temp = i.values[0].slice(1).map(function(v,idx){
-              return {a:v,b:i.values[1][idx+1],c:i.values[2][idx+1],d:i.values[3][idx+1]};
+            var temp = i.values[0].slice(1).map(function(v, idx) {
+              return { a: v, b: i.values[1][idx + 1], c: i.values[2][idx + 1], d: i.values[3][idx + 1] };
             });
             //sort
-            temp.sort(function(a,b){
-              return a.a===b.a ? 0 : (a.a < b.a ? -1 : 1);
+            temp.sort(function(a, b) {
+              return a.a === b.a ? 0 : (a.a < b.a ? -1 : 1);
             });
 
             //reassign
-            temp.forEach(function(v,idx){
-              i.values[0][idx+1] = v.a;
-              i.values[1][idx+1] = v.b;
-              i.values[2][idx+1] = v.c;
-              i.values[3][idx+1] = v.d;
+            temp.forEach(function(v, idx) {
+              i.values[0][idx + 1] = v.a;
+              i.values[1][idx + 1] = v.b;
+              i.values[2][idx + 1] = v.c;
+              i.values[3][idx + 1] = v.d;
             });
           }
         })
@@ -313,11 +313,11 @@ async.series([
           });
         });
 
-    		indicators.forEach(function(v){
-    		  v.opportunities.forEach(function(vv,ix){
-    		    v.opportunities[ix].patients=[];
-    		  });
-    		});
+        indicators.forEach(function(v) {
+          v.opportunities.forEach(function(vv, ix) {
+            v.opportunities[ix].patients = [];
+          });
+        });
 
         fs.createReadStream(IN_DIR + FILENAMES.opportunities)
           .pipe(
@@ -347,14 +347,14 @@ async.series([
             }
 
             patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
-/*
-RW - maybe need a way to determine if a person has met a standard
-            patients[+data.patientId].standards.forEach(function(v) {
-              if (v.display === indText.tabText) {
-                v.targetMet = false;
-              }
-            });
-*/
+            /*
+            RW - maybe need a way to determine if a person has met a standard
+                        patients[+data.patientId].standards.forEach(function(v) {
+                          if (v.display === indText.tabText) {
+                            v.targetMet = false;
+                          }
+                        });
+            */
             var i = indicators.filter(function(v) {
               return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
             })[0];
@@ -369,6 +369,7 @@ RW - maybe need a way to determine if a person has met a standard
               return v.id === data.opportunity;
             })[0];
             if (!opp) {
+              if (!oppText[data.opportunity]) oppText[data.opportunity] = {};
               console.log(data.opportunity);
               opp = { id: data.opportunity, name: oppText[data.opportunity].name, positionInBarChart: oppText[data.opportunity].positionInBarChart, description: oppText[data.opportunity].description, patients: [] };
               i.opportunities.push(opp);
@@ -402,23 +403,19 @@ RW - maybe need a way to determine if a person has met a standard
             dataFile.text = textFile;
 
 
-            fs.writeFile('data/indicators.json', JSON.stringify(dataFile.indicators, null, 2), function(err) {
-              if (err) return console.log(err);
-            });
+            fs.writeFileSync('data/indicators.json', JSON.stringify(dataFile.indicators, null, 2));
 
 
-            dataFile.patients = Object.keys(dataFile.patients).map(function(v){
+            dataFile.patients = Object.keys(dataFile.patients).map(function(v) {
               return dataFile.patients[v];
             });
 
-			var file = fs.createWriteStream('data/patients.json');
+            var file = fs.createWriteStream('data/patients.json');
             file.on('error', function(err) { /* error handling */ });
             dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
             file.end();
 
-            fs.writeFile('data/text.json', JSON.stringify(textFile, null, 2), function(err) {
-              if (err) return console.log(err);
-            });
+            fs.writeFileSync('data/text.json', JSON.stringify(textFile, null, 2));
 
             if (messages.length > 0) {
               console.log();
@@ -432,6 +429,59 @@ RW - maybe need a way to determine if a person has met a standard
                 console.warn(msg);
               });
             }
+
+            //Generate fake data
+            var fakeNames = ["The Orburn", "Butterfay General Practice", "Snowmaple General Practice", "The Bluepond", "Springfall Medical Practice", "Bridgewald City", "Shadowville General Practice", "Eastbutter Medical Practice", "Strongwyn City", "Marbledell Medical Centre", "Sagedell General Practice", "The Shadowmount", "The Janmount", "Fallcliff General Practice", "Redmont Medical Practice", "Whiteash Medical Centre", "The Ironfield", "Woodcourt Medical Practice", "The Merrowacre", "The Eastholt", "Wellnesse General Practice",
+                            "Fairway City", "The Vertport", "Woodmont General Practice", "Wellbrook City", "Pryborough Medical Practice", "The Swynview", "Ostwyn Medical Centre", "The Cliffbush", "The Brightdell", "Crystalvale", "Violetwinter Medical Centre", "Starryholt Medical Centre", "The Linfort", "Castlepond City", "Greenley Medical Practice", "Glasston General Practice", "Norshore Medical Practice", "The Brooknesse", "Swynbridge General Practice", "The Marblewater", "The Esterwilde", "Stonesummer Medical Centre", "Aelvale Medical Centre", "Westwheat Medical Centre", "The Cleardale", "Mallowbeech Medical Practice"];
+            var newGPIds = [];
+            for (var i = 0; i < 100; i++) {
+              var id = 'P' + (10000 + Math.floor(Math.random() * 80000));
+              if (newGPIds.indexOf(id) === -1) newGPIds.push(id);
+            }
+            var gpLookup = {},
+              cnter = 0;
+            dataFile.indicators.forEach(function(v) {
+              if (!gpLookup[v.practiceId]) {
+                gpLookup[v.practiceId] = { id: newGPIds[cnter], name: fakeNames[cnter] };
+                cnter++;
+              }
+            });
+
+            var newpatientlist = [];
+
+            dataFile.patients.forEach(function(v) {
+              if (Math.random() < 0.1) {
+                v.characteristics.nhs = (v.patientId + '000000000').substr(0, 10);
+                v.characteristics.age = "" + (+v.characteristics.age + (5 - Math.floor(Math.random() * 10)));
+                v.characteristics.practiceId = gpLookup[v.characteristics.practiceId].id;
+                newpatientlist.push(v);
+              } else {
+                dataFile.indicators = dataFile.indicators.map(function(vv) {
+                  if (vv.practiceId === v.characteristics.practiceId) {
+                    vv.opportunities = vv.opportunities.map(function(vvv) {
+                      vvv.patients = vvv.patients.filter(function(vvvv) {
+                        return vvvv != v.patientId;
+                      });
+                    });
+                  }
+                  return v;
+                });
+              }
+            });
+            dataFile.indicators = dataFile.indicators.map(function(v) {
+              v.practiceId = gpLookup[v.practiceId].id;
+              return v;
+            });
+
+            var file2 = fs.createWriteStream('data/dev_patients.json');
+            file2.on('error', function(err) { /* error handling */ });
+            dataFile.patients.forEach(function(v) { file2.write(JSON.stringify(v) + '\n'); });
+            file2.end();
+            fs.writeFileSync('data/dev_indicators.json', JSON.stringify(dataFile.indicators, null, 2));
+            fs.writeFileSync('data/dev_text.json', JSON.stringify(textFile, null, 2));
+            fs.writeFileSync('data/dev_practices.json', JSON.stringify(gpLookup, null, 2));
+
+
           });
       });
     }],
