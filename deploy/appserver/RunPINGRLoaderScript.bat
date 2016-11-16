@@ -79,10 +79,17 @@ mongoimport --db pingr --collection practices --drop in/practices.json --jsonArr
 
 cscript sendmail.vbs "All files successfully loaded into mongo"
 
-goto :end
+goto :dev
 
 :failed
 echo %ERRRR%
 cscript sendmail.vbs "Loading the data into the app mongo db failed because: %ERRRR%"
+goto :end
+
+:dev
+mongoimport -h ds011482.mlab.com:11482 -d pingr -c text -u %PINGR_MONGO_DEV_USER% -p %PINGR_MONGO_DEV_PASSWORD% --drop data/dev_text.json --jsonArray
+mongoimport -h ds011482.mlab.com:11482 -d pingr -c indicators -u %PINGR_MONGO_DEV_USER% -p %PINGR_MONGO_DEV_PASSWORD% --drop data/dev_indicators.json --jsonArray
+mongoimport -h ds011482.mlab.com:11482 -d pingr -c patients -u %PINGR_MONGO_DEV_USER% -p %PINGR_MONGO_DEV_PASSWORD% --drop data/dev_patients.json
+mongoimport -h ds011482.mlab.com:11482 -d pingr -c practices -u %PINGR_MONGO_DEV_USER% -p %PINGR_MONGO_DEV_PASSWORD% --drop data/dev_practices.json --jsonArray
 
 :end

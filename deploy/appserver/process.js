@@ -323,7 +323,7 @@ async.series([
           .pipe(
             csv({
               separator: '\t',
-              headers: ['patientId', 'indicatorId', 'opportunity', 'actionId', 'reasonNumber', 'priority', 'short', 'long', 'reason', 'link']
+              headers: ['patientId', 'indicatorId', 'opportunity', 'actionId', 'reasonNumber', 'priority', 'short', 'reason']
             })
           )
           .on('data', function(data) {
@@ -340,9 +340,7 @@ async.series([
               patients[+data.patientId].actions.push({
                 id: data.actionId,
                 short: data.short,
-                long: data.long,
-                reason: data.reason,
-                link: data.link
+                reason: data.reason
               });
             }
 
@@ -462,24 +460,29 @@ async.series([
                       vvv.patients = vvv.patients.filter(function(vvvv) {
                         return vvvv != v.patientId;
                       });
+                      return vvv;
                     });
                   }
-                  return v;
+                  return vv;
                 });
               }
             });
             dataFile.indicators = dataFile.indicators.map(function(v) {
-              v.practiceId = gpLookup[v.practiceId].id;
+              if(!v.practiceId) {
+                console.log("NO PRACTICE ID: "+ v);
+              } else {
+                v.practiceId = gpLookup[v.practiceId].id;
+              }
               return v;
             });
 
             var file2 = fs.createWriteStream('data/dev_patients.json');
             file2.on('error', function(err) { /* error handling */ });
-            dataFile.patients.forEach(function(v) { file2.write(JSON.stringify(v) + '\n'); });
+            newpatientlist.forEach(function(v) { file2.write(JSON.stringify(v) + '\n'); });
             file2.end();
             fs.writeFileSync('data/dev_indicators.json', JSON.stringify(dataFile.indicators, null, 2));
             fs.writeFileSync('data/dev_text.json', JSON.stringify(textFile, null, 2));
-            fs.writeFileSync('data/dev_practices.json', JSON.stringify(gpLookup, null, 2));
+            fs.writeFileSync('data/dev_practices.json', JSON.stringify(Object.keys(gpLookup).map(function(v){return {_id:gpLookup[v].id, name:gpLookup[v].name};}), null, 2));
 
 
           });
