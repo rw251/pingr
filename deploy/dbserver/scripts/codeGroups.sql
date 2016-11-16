@@ -343,7 +343,7 @@ values
 ('3960.', 'bedridden'),
 ('13C6.', 'bedridden'),--manual search
 
---bp - diastolic sbp
+--bp - diastolic dbp
 --from CKD ruleset_INLIQ_v32.0
 	('246A.', 'dbp'),
 	('246P.', 'dbp'),
@@ -466,14 +466,18 @@ values
 	('1Z1R.', 'ckdPermEx'),
 	('1Z1S.', 'ckdPermEx'),
 	('2126E', 'ckdPermEx'),
+	
 
 --ckd temporary exclusion codes: BP refused, max HTN medication, CKD indicators unsuitable
 --from CKD ruleset_INLIQ_v32.0
 	('9hE..', 'ckdTempEx'), --9hE..	00	Exception reporting: chronic kidney disease quality indicators
 	('9hE1.', 'ckdTempEx'), --9hE0.	00	Excepted from chronic kidney disease quality indicators: Patient unsuitable
 	('9hE0.', 'ckdTempEx'), --9hE1.	00	Excepted from chronic kidney disease quality indicators: Informed dissent
-	('8I3Y.', 'ckdTempEx'), --8I3Y.	00	Blood pressure procedure refused
-	('8BL0.', 'ckdTempEx'), --8BL0.	00	Patient on maximal tolerated antihypertensive therapy
+
+--bp temp ex
+--from CKD ruleset_INLIQ_v32.0
+	('8I3Y.', 'bpTempEx'), --8I3Y.	00	Blood pressure procedure refused
+	('8BL0.', 'bpTempEx'), --8BL0.	00	Patient on maximal tolerated antihypertensive therapy
 
 --dead
 --from codelist creator 13/7/16 (synonyms:"dead", "death", "deceased", "died", "ghost", "fp22", "coroner", "cremation", "burial", "SD17", "post mortem", "med A", "crem. form", "mortality") 
@@ -763,15 +767,17 @@ values
 
 --frail
 --from codelist creator on 20/10/16 (synonyms: "frail", "elderly", "old", "senile", "cachectic", "cachexic")
-	('R200.', 'frail'),
-	('R0331', 'frail'),
-	('C373D', 'frail'),
-	('C373G', 'frail'),
-	('2229.', 'frail'),
-	('2224.', 'frail'),
-	('133R.', 'frail'),
-	('2Jd1.', 'frail'), --browser search - moderate frailty
-	('2Jd2.', 'frail'),	--browser search - severe frailty
+('R200.', 'frail'),
+('R0331', 'frail'),
+('C373D', 'frail'),
+('C373G', 'frail'),
+('2229.', 'frail'),
+('2224.', 'frail'),
+('133R.', 'frail'),
+('2Jd1.', 'frail'), --browser search - moderate frailty
+('2Jd2.', 'frail'),	--browser search - severe frailty
+('69D9.', 'frail'),	--edmonton score - frailty
+('HNGNQRF75', 'frail'),	--edmonton score - severe frailty
 
 --gout
 --from codelist creator 26/10/16 Read v2 April 2016: synonyms ["gout","symptomatic hyperuricaemia","hyperuricaemia","hyperuricemia", "uric acid"
@@ -867,15 +873,15 @@ values
 
 --housebound
 --from codelist creator on 20/10/16 (synonyms: "housebound", "house-bound", "immobil*")
-	('R00C.', 'housebound'),
-	('6AG..', 'housebound'),
-	('3980.', 'housebound'),
-	('13CA.', 'housebound'),
-	('13CC.', 'housebound'),
-
+('R00C.', 'housebound'),
+('6AG..', 'housebound'),
+('3980.', 'housebound'),
+('13CA.', 'housebound'),
+('13CC.', 'housebound'),
+	
 --housebound perm ex
 --manual search
-	('13CW.', 'houseboundPermEx'),
+('13CW.', 'houseboundPermEx'),
 
 --myocardial infarction - contemporary code
 --from codelist creator on 26/10/16 Read v2 April 2016 (synonyms: "myocardial infarction", "heart attack", "stemi", "nstemi", "infarct"

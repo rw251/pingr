@@ -16,13 +16,13 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.patActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.patActions]
 CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(max))
 
---Pt-level data: Important codes
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]
-CREATE TABLE [output.pingr.impCodes] (PatID int, date date, importantCode varchar(100))
-
 --Quality indicator results
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.indicator]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.indicator]
 CREATE TABLE [output.pingr.indicator] (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float)
+
+--Text
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[pingr.text]') AND type in (N'U')) DROP TABLE [dbo].[pingr.text]
+CREATE TABLE [pingr.text] (indicatorId varchar(512), textId varchar(512), text varchar(max))
 
 --Patient-practice lookup table
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ptPractice]') AND type in (N'U')) DROP TABLE [dbo].[ptPractice]
@@ -81,9 +81,12 @@ select PatID, EntryDate as date,
 	case
 		when ReadCode in (select code from codeGroups where [group] = 'egfr') then 'eGFR'
 		when ReadCode in (select code from codeGroups where [group] = 'acr') then 'ACR'
+		when ReadCode in (select code from codeGroups where [group] = 'sbp') then 'SBP'
+		when ReadCode in (select code from codeGroups where [group] = 'dbp') then 'DBP'
+		when ReadCode in (select code from codeGroups where [group] = 'bp') then 'BP'
 	end as measure,
 CodeValue as value from SIR_ALL_Records
-where ReadCode in (select code from codeGroups where [group] in ('egfr','acr'))
+where ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp', 'bp'))
 	and CodeValue is not NULL
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
@@ -160,6 +163,52 @@ select PatID, date,
 					where PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 					group by EntryDate, PatID
 			) sub
+
+--Important codes
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]
+CREATE TABLE [output.pingr.impCodes] (PatID int, date date, importantCode varchar(100))
+insert into [output.pingr.impCodes](PatID, date, importantCode)
+select PatID, EntryDate as date,
+	case
+		when ReadCode in (select code from codeGroups where [group] = 'pal') then 'Palliative'
+		when ReadCode in (select code from codeGroups where [group] = 'frail') then 'Frail'
+		when ReadCode in (select code from codeGroups where [group] = 'housebound') then 'Housebound'
+		when ReadCode in (select code from codeGroups where [group] = 'bedridden') then 'Bedridden'
+		when ReadCode in (select code from codeGroups where [group] = 'houseboundPermEx') then 'Not housebound'
+		when ReadCode in (select code from codeGroups where [group] = 'ckdInvite') then 'CKD invite'
+		when ReadCode in ('9RX..') then 'Urine specimen declined'
+		when ReadCode in (select code from codeGroups where [group] = 'ckdTempEx') then 'CKD exception code'
+		when ReadCode in (select code from codeGroups where [group] = 'bpTempEx') then 'BP exception code'
+		when ReadCode in (select code from codeGroups where [group] = 'posturalHypo') then 'Postural hypotension'
+		when ReadCode in (select code from codeGroups where [group] = 'phaeo') then 'Phaeochromocytoma'
+		when ReadCode in (select code from codeGroups where [group] = 'asthmaPermEx') then 'Asthma resolved'
+		when ReadCode in (select code from codeGroups where [group] in ('asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs')) then 'Asthma'
+		when ReadCode in (select code from codeGroups where [group] = 'pacemakerDefib') then 'Pacemaker or defibrillator'
+		when ReadCode in (select code from codeGroups where [group] = 'sickSinus') then 'Sick sinus syndrome'
+		when ReadCode in (select code from codeGroups where [group] = '2/3heartBlock') then 'Heart block'
+		when ReadCode in (select code from codeGroups where [group] = 'porphyria') then 'Porphyria'
+		when ReadCode in (select code from codeGroups where [group] = 'MInow') then 'Myocardial infarction'
+		when ReadCode in (select code from codeGroups where [group] = 'ASrepair') then 'Aortic repair'
+		when ReadCode in (select code from codeGroups where [group] = 'AS') then 'Aortic stenosis'
+		when ReadCode in (select code from codeGroups where [group] = 'gout') then 'Gout'
+		when ReadCode in (select code from codeGroups where [group] = 'addisons') then 'Addisons'
+		when ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') then 'Loop Diuretic allergy or adverse reaction'
+		when ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') then 'Alpha Blocker allergy or adverse reaction' 
+		when ReadCode in (select code from codeGroups where [group] = 'PotSparDiurAllergyAdverseReaction') then 'Potassium Sparing Diuretic allergy or adverse reaction'
+		when ReadCode in (select code from codeGroups where [group] = 'BBallergyAdverseReaction') then 'Beta Blocker allergy or adverse reaction'
+		when ReadCode in (select code from codeGroups where [group] = 'CCBallergyAdverseReaction') then 'Calcium Channel Blocker allergy or adverse reaction'
+		when ReadCode in (select code from codeGroups where [group] = 'ARBallergyAdverseReaction') then 'ARB allergy or adverse reaction'
+		when ReadCode in (select code from codeGroups where [group] = 'ACEIallergyAdverseReaction') then 'ACE Inhibitor  diuretic allergy or adverse reaction'
+		when ReadCode in (select code from codeGroups where [group] = 'thiazideAllergyAdverseReaction') then 'Thiazide Diuretic allergy or adverse reaction'
+		when ReadCode in (select code from codeGroups where [group] = 'whiteCoat') then 'White coat hypertension'
+	end as importantCode from SIR_ALL_Records
+where ReadCode in (select code from codeGroups where [group] in 
+	('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
+	'phaeo', 'asthmaPermEx', 'asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs', 'pacemakerDefib'
+	'sickSinus', '2/3heartBlock', 'porphyria', 'MInow', 'ASrepair', 'AS', 'gout', 'addisons', 'loopDiurAllergyAdverseReaction'
+	'alphaAllergyAdverseReaction', 'PotSparDiurAllergyAdverseReaction', 'BBallergyAdverseReaction', 'CCBallergyAdverseReaction',
+	'ARBallergyAdverseReaction', 'ACEIallergyAdverseReaction', 'thiazideAllergyAdverseReaction', 'whiteCoat'))
+and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
 --Diagnoses
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.diagnoses]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.diagnoses]

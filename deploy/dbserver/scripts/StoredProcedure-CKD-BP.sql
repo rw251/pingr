@@ -3,7 +3,7 @@ IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.treatm
 GO
 CREATE PROCEDURE [pingr.ckd.treatment.bp] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
 AS
-SET NOCOUNT ON --exclude row count results for call from R
+SET NOCOUNT ON
 
 
 --use P8701617062016
@@ -81,11 +81,11 @@ select s.PatID, latestCkdTempExCodeDate, MIN(Rubric) as latestCkdTempExCodeMin, 
 	inner join (
 		select PatID, MAX(EntryDate) as latestCkdTempExCodeDate from SIR_ALL_Records
 		where PatID in (select PatID from #latestCkd35code)
-		and ReadCode in (select code from codeGroups where [group] = 'ckdTempEx')
+		and ReadCode in (select code from codeGroups where [group] in ('ckdTempEx','bpTempEx'))
 		and EntryDate < @refdate
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestCkdTempExCodeDate = s.EntryDate
-where ReadCode  in (select code from codeGroups where [group] = 'ckdTempEx')
+where ReadCode  in (select code from codeGroups where [group] in ('ckdTempEx','bpTempEx'))
 group by s.PatID, latestCkdTempExCodeDate
 
 --#latestRegisteredCode
@@ -365,7 +365,7 @@ CREATE TABLE #bpTargetMeasuredControlled
 insert into #bpTargetMeasuredControlled
 select a.PatID,
 	case when (dmPatient = 1 or protPatient = 1) then '<130/80' else '<140/90' end as bpTarget, --SS
-	case when (latestSbpDate > DATEADD(month, -6, @achievedate)) and (latestDbpDate > DATEADD(month, -6, @achievedate)) then 1 else 0 end as bpMeasuredOk,  --measured within 6/12 of achievedate (SS)
+	case when (latestSbpDate > DATEADD(month, -12, @achievedate)) and (latestDbpDate > DATEADD(month, -12, @achievedate)) then 1 else 0 end as bpMeasuredOk,  --measured within 12/12 of achievedate (SS)
 	case when 
 		(
 			(dmPatient = 1 or protPatient = 1) and
@@ -521,9 +521,9 @@ select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, s
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
 
----------------------------------------------------------
--- Exit if we're just getting the indicator numbers -----
----------------------------------------------------------
+								---------------------------------------------------------
+								-- Exit if we're just getting the indicator numbers -----
+								---------------------------------------------------------
 IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 
 				---------------------------------------------------------------------------------------------------------------------
@@ -1584,7 +1584,7 @@ insert into #medSuggestion
 select distinct a.PatID, 
 	'ACE inhibitor' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.437242180" target="_blank">lisonopril 5mg or 10mg (BNF)</a>)' + (select text from actionText where [textId] = 'linkNiceAceiArbCkd') as BNFlink,
+	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.437242180" target="_blank">lisonopril 5mg or 10mg (BNF)</a>)' + (select text from regularText where [textId] = 'linkNiceAceiArbCkd') as BNFlink,
 	 case 
 		when 
 			(
@@ -1633,7 +1633,7 @@ union
 select distinct a.PatID, 
 	'ARB' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.958956352" target="_blank">losartan 25mg or 50mg (BNF)</a>)' + (select text from actionText where [textId] = 'linkNiceAceiArbCkd') as BNFlink,
+	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.958956352" target="_blank">losartan 25mg or 50mg (BNF)</a>)' + (select text from regularText where [textId] = 'linkNiceAceiArbCkd') as BNFlink,
 	 case
 		when 
 			(
@@ -1682,7 +1682,7 @@ union
 select distinct a.PatID, 
 	'Calcium Channel Blocker' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.109201061" target="_blank">amlodipine 5mg (BNF)</a> )' + (select text from actionText where [textId] = 'linkNiceCcbHtn') as BNFlink,
+	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.109201061" target="_blank">amlodipine 5mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceCcbHtn') as BNFlink,
 	 case 
 		when (a.PatID not in (select PatID from #htnMeds) and age > 54) then 
 			'<ul><li>Patient is not prescribed anti-hypertensive medication and is 55 years old or older.</li>' +
@@ -1730,7 +1730,7 @@ union
 select distinct a.PatID, 
 	'Indapamide' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.748067014" target="_blank">2.5mg (BNF)</a>) ' + (select text from actionText where [textId] = 'linkNiceThiazideHtn') as BNFlink,
+	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.748067014" target="_blank">2.5mg (BNF)</a>) ' + (select text from regularText where [textId] = 'linkNiceThiazideHtn') as BNFlink,
 	 case
 		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB') then
 			'<ul><li>Patient is prescribed an ACE Inhibitor (or ARB) and a Calcium Channel Blocker.</li>' +
@@ -1803,9 +1803,9 @@ select distinct a.PatID,
 	end as family, 
 	'Start' as start_or_inc, 
 	case 
-		when currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.213718345">25mg (BNF)</a> )' + (select text from actionText where [textId] = 'linkNiceSpiroHtn')
-		when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.782101311">Doxazosin 1mg (BNF)</a> )' + (select text from actionText where [textId] = 'linkNiceAlphaHtn')
-		when currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.281805035">Bisoprolol 5mg (BNF)</a> )' + (select text from actionText where [textId] = 'linkNiceBbHtn')
+		when currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.213718345">25mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceSpiroHtn')
+		when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.782101311">Doxazosin 1mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceAlphaHtn')
+		when currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.281805035">Bisoprolol 5mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceBbHtn')
 	end as BNFlink,
 	case
 		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB' and currentMedFamily = 'DIUR_THI') then
@@ -2100,61 +2100,69 @@ select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Measure BP' as actionCat,
 	case
+		--No BP + no contact
 		when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + no contact' 
+		--No BP + contact
 		when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + contact'
+		--BP uncontrolled BUT second latest BP controlled (one-off high)
 		when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT second latest BP controlled (one-off high)'
+		--BP uncontrolled + medication change after
 		when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled + medication change after'
+		--BP uncontrolled BUT near target
 		when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT near target'
 	end as reasonCat,
+	--No BP + no contact
 	(case when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 1 else 0 end) +
+	--No BP + contact
 	(case when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 1 else 0 end) +
+	--BP uncontrolled BUT second latest BP controlled (one-off high)
 	(case when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end) +
+	--BP uncontrolled + medication change after
 	(case when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end) +
+	--BP uncontrolled BUT near target
 	(case when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end)
 	as reasonNumber,
 	2 as priority,
 	'Measure this patient''s BP' as actionText, 
 	'Reasoning' +
-		case
+		(case
+		--No BP + contact
+			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then '<ul><li>No BP since last April.</ul>'
+		--Any contact
+			else '<ul><li>Last BP was <strong>uncontrolled</strong>: ' + Str(b.latestSbp, 3, 0) + '/' + Str(b.latestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, b.latestSbpDate, 3) + ' (target: ' + b.bpTarget + ').</li>'
+		end) +
+		(case 
+		--BP uncontrolled BUT second latest BP controlled (one-off high)
+			when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
+				'<li><strong>Previous BP</strong> was <strong>controlled</strong>: ' + Str(secondLatestSbp, 3, 0) + '/' + Str(secondLatestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '. So it may be worth re-measuring in case this was a one-off.</li>'
+			else ''
+		end) +
+		(case 
+		--BP uncontrolled + medication change after
+			when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
+				'<li><strong>' + latestMedOptimisationIngredient + '</strong> was <strong>' + latestMedOptimisation + '</strong> on <strong>' + CONVERT(VARCHAR, latestMedOptimisationDate, 3) + '</strong>.</li>' + '. So it may be worth re-measuring BP in case it has now come down.</li>' +
+			else ''
+		end) +
+		(case
+		--BP uncontrolled BUT near target
+			when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
+				'<li>This is only <strong>slightly (<10mmHg)</strong> over target. So it may be worth re-measuring their BP in case it has now come down.</li></ul>' +
+			else ''
+		end) +
+		(case
+		--No BP + no contact
 			when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then
-					'<ul><li>No BP in the last 6 months.</ul>' + 
 				'Because they have <strong>not</strong> had contact with your practice in the last year, it may be best to:' +
 					'<ul><li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
 					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.'
-			when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then
-					'<ul><li>No BP in the last 6 months.</ul>' + 
+			else
+		--Any contact
 				'Because they <strong>have</strong> had contact with your practice in the last year, it may be possible to:' +
 					'<ul><li>Measure their BP <strong>opportunistically</strong> next time they are seen.</li>' +
 					'<li>Put a <strong>message on their prescription</strong> to make an appointment.</li>' +
 					'<li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
 					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li>'
-			when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
-					'<ul><li>Last BP was <strong>uncontrolled</strong>: ' + Str(b.latestSbp, 3, 0) + '/' + Str(b.latestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, b.latestSbpDate, 3) + ' (target: ' + b.bpTarget + ').</li>' +
-					'<li>But <strong>previous BP</strong> was <strong>controlled</strong>: ' + Str(secondLatestSbp, 3, 0) + '/' + Str(secondLatestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '.</li>' +
-					'<li>So it may be worth re-measuring in case the latest BP was a one-off.</li></ul>' +
-				'Because they <strong>have</strong> had contact with your practice in the last year, it may be possible to:' +
-					'<ul><li>Measure their BP <strong>opportunistically</strong> next time they are seen.</li>' +
-					'<li>Put a <strong>message on their prescription</strong> to make an appointment.</li>' +
-					'<li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
-					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li>'
-			when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
-				'<ul><li>Last BP was <strong>uncontrolled</strong>: ' + Str(b.latestSbp, 3, 0) + '/' + Str(b.latestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, b.latestSbpDate, 3) + ' (target: ' + b.bpTarget + ').</li>' +
-				'<li>But <strong>' + latestMedOptimisationIngredient + '</strong> was <strong>' + latestMedOptimisation + '</strong> on <strong>' + CONVERT(VARCHAR, latestMedOptimisationDate, 3) + '</strong>.</li>' +
-				'<li>So it may be worth re-measuring their BP in case it has now come down.</li></ul>' +
-			'Because they <strong>have</strong> had contact with your practice in the last year, it may be possible to:' +
-				'<ul><li>Measure their BP <strong>opportunistically</strong> next time they are seen.</li>' +
-				'<li>Put a <strong>message on their prescription</strong> to make an appointment.</li>' +
-				'<li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
-				'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li>'
-			when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
-				'<ul><li>Last BP was only <strong>slightly (<10mmHg)</strong> over target: ' + Str(b.latestSbp, 3, 0) + '/' + Str(b.latestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, b.latestSbpDate, 3) + ' (target: ' + b.bpTarget + ').</li>' +
-				'<li>So it may be worth re-measuring their BP in case it has now come down.</li></ul>' +
-			'Because they <strong>have</strong> had contact with your practice in the last year, it may be possible to:' +
-				'<ul><li>Measure their BP <strong>opportunistically</strong> next time they are seen.</li>' +
-				'<li>Put a <strong>message on their prescription</strong> to make an appointment.</li>' +
-				'<li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
-				'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li>'
-		end
+		end) +
 	as supportingText
 from #impOppsData as a
 	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient from #eligiblePopulationAllData) as b on b.PatID = a.PatID
@@ -2194,15 +2202,15 @@ select a.PatID,
 				when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, b.latestAcrDate, 3)
 				else '' 
 			end + 
-			'(' + (select text from actionText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' + reasonText +
+			'(' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' + reasonText +
 	'Useful information' + 
 		'<ul><li>' + 
 			case 
-					when dmPatient = 1 then (select text from actionText where [textId] = 'linkNiceBpMxCkdDm')
-					when dmPatient = 0 then (select text from actionText where [textId] = 'linkNiceBpMxCkd') 
+					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
+					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd') 
 			end + '</li>' +
-		'<li>'  + (select text from actionText where [textId] = 'linkBmjCkdBp') + '</li>' + 
-		'<li>'  + (select text from actionText where [textId] = 'linkPilCkdBp') + '</li></ul>' as supportingText
+		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
+		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>' as supportingText
 from #medSuggestion as a
 	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 
@@ -2272,3 +2280,276 @@ from #impOppsData as a
 	left outer join (select PatID, currentMedFamily from #currentHTNmeds) as b on b.PatID = a.PatID
 	left outer join (select PatID, bpMeasuredOK, bpControlledOk from #eligiblePopulationAllData) as c on c.PatID = a.PatID
 
+							---------------------------------------------------------------
+							---------------SORT ORG-LEVEL ACTION PRIORITY ORDER------------
+							---------------------------------------------------------------
+
+--#reason proportions
+IF OBJECT_ID('tempdb..#reasonProportions') IS NOT NULL DROP TABLE #reasonProportions
+CREATE TABLE #reasonProportions
+	(proportionId varchar(32), proportion float);
+insert into #reasonProportions
+values
+--No BP + contact with practice
+('noBpYesContact', 
+	(select COUNT(*) from 
+		(
+				select a.PatID from #eligiblePopulationAllData as a
+				left outer join (select PatID, noPrimCareContactInLastYear from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+				where denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0
+		)
+	)/
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+),
+--Uncontrolled + within 10mmHg of target
+('uncontrolledClose', 
+	(select COUNT(*) from 
+		(
+			select PatID from #eligiblePopulationAllData 
+				where 
+					(
+						((dmPatient = 1 or protPatient = 1) and (b.latestSbp < 140 and b.latestDbp < 90)) or 
+						((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))
+					) 
+					and 
+					denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+		)
+	)/
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+),
+--No optimisation after high reading (therapeutic inertia)
+('rxInertia', 
+	(select COUNT(*) from
+		(
+			select PatID from #eligiblePopulationAllData 
+				left outer join (select PatID, latestMedOptimisationDate from #impOppsData) as b on b.PatID = a.PatID
+				where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+				and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
+		)
+	)/
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+),
+--'measure' actions
+('measureActions', 
+	(select COUNT(*) from (select distinct PatID from [output.pingr.patActions] where indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP'))/
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+),
+--uncontrolled
+('uncontrolled', 
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0)
+	)/
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+)
+
+							---------------------------------------------------------------
+							----------------------ORG-LEVEL ACTIONS------------------------
+							---------------------------------------------------------------
+
+insert into [output.pingr.orgActions](indicatorId, proportion, actionText, supportingText)
+
+--BP MACHINE IN WAITING ROOM
+select 
+	'ckd.treatment.bp' as indicatorId,
+	'Put BP machine in your waiting room' as actionText,
+	--No BP + contact with practice
+	(select proportion from #reasonProportions where proportionId = 'noBpYesContact') as proportion,
+	'Reasoning' +
+		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'noBpYesContact') + 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> had contact with your practice in the last year.</li>' +
+		'<li>With a BP machine in your waiting room, patients can take their own BP whilst they wait and give their readings to your receptionists.' +
+	'Useful information' + 
+		'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li></ul>' as supportingText
+
+union
+
+--WORK WITH LOCAL PHARMACY
+select 
+	'ckd.treatment.bp' as indicatorId,
+	'Work with your local pharmacy to enable them to take blood pressure readings' as actionText,
+	--No BP + medication contact
+	(select proportion from #reasonProportions where proportionId = 'noBpYesContact') as proportion,
+	'Reasoning' +
+		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'noBpYesContact') 
+		+ 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> have had medication issued in the last year.</li>' +
+		'<li>Pharmacies can take their blood pressure when they issue their medication and send the readings to you.' +
+	'Useful information' + 
+		'<ul><li>'  + (select text from regularText where [textId] = 'RpsGuidanceBp') + '</li></ul>' as supportingText
+union
+
+--INTRODUCE ABPM
+select 
+	'ckd.treatment.bp' as indicatorId,
+	'Introduce an ambulatory BP monitoring service' as actionText,
+	--Uncontrolled + within 10mmHg of target
+	(select proportion from #reasonProportions where proportionId = 'uncontrolledClose') as proportion,
+	'Reasoning' +
+		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'uncontrolledClose')
+		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within < 10 mmHg of their BP target.</li>' +
+		'<li>Often high blood pressure readings taken in surgery are normal at home.</li>' +
+		'<li>This would also follow NICE guidance for hypertension diagnosis.' +
+	'Useful information' + 
+		'<ul><li>'  + (select text from regularText where [textId] = 'linkBhsAbpm') + '</li>' +
+		'<ul><li>'  + (select text from regularText where [textId] = 'linkPatientUkAbpm') + '</li>' +
+		'<ul><li>'  + (select text from regularText where [textId] = 'linkNiceHtn') + '</li>' +
+		'</ul>' 
+		as supportingText
+
+union
+
+--ENCOURAGE BP WITH NURSE / AHP
+select
+	'ckd.treatment.bp' as indicatorId,
+	'Encourage patients with CKD to see the nurse or AHP to measure their blood pressure' as actionText,
+	--Uncontrolled + within 10mmHg of target
+	(select proportion from #reasonProportions where proportionId = 'uncontrolledClose') as proportion,
+	'Reasoning' +
+		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'uncontrolledClose')
+		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within < 10 mmHg of their BP target.</li>' +
+		'<li>BP is generally lower when measured with other health professionals other than doctors.</li>' +
+	'Useful information' + 
+		'<ul><li>'  + linkBjgpBpDoctorsHigher + '</li>' +
+		'</ul>' 
+		as supportingText
+
+union
+
+--EDUCATIONAL SESSION
+select 
+	'ckd.treatment.bp' as indicatorId,
+	'Hold an educational session for your practice staff on NICE hypertension guidelines' as actionText,
+	--No optimisation after high reading (therapeutic inertia)
+	(select proportion from #reasonProportions where proportionId = 'rxInertia') as proportion,
+	'Reasoning' +
+		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'rxInertia')
+		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
+		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
+	'Useful information' + 
+		'<ul><li>'  + niceBpPresentation + '</li>' +
+		'</ul>' 
+		as supportingText
+
+union
+
+--PATHWAY PRINT-OUT
+select
+	'ckd.treatment.bp' as indicatorId,
+	'Print a copy of NICE hypertension targets and medication pathway for each room in your practice' as actionText,
+	--No optimisation after high reading (therapeutic inertia)
+	(select proportion from #reasonProportions where proportionId = 'rxInertia') as proportion,
+	'Reasoning' +
+		'<ul><li>' + 
+				STR(select proportion from #reasonProportions where proportionId = 'rxInertia')
+		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
+		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
+	'Useful information' + 
+		'<ul><li>'  + niceBpPathway + '</li>' +
+		'</ul>' 
+		as supportingText
+
+union
+
+--ENCOURAGE HBPM
+select
+	'ckd.treatment.bp' as indicatorId,
+	'Encourage patients with CKD to measure their blood pressure at home' as actionText,
+	--'measure' actions
+	(select proportion from #reasonProportions where proportionId = 'measureActions') as proportion,
+	'Reasoning' +
+		'<ul><li>' + 
+			STR(select proportion from #reasonProportions where proportionId = 'measureActions')
+		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
+		'<li>This could be achieved by asking patients to measure their own BP.</li>' +
+	'Useful information' + 
+		'<ul><li>'  + linkBhsHbpmProtocol + '</li>' +
+		'<ul><li>'  + linkBhsHbpmHowToPatients + '</li>' +
+		'<ul><li>'  + linkBhsHbpmPil + '</li>' +
+		'<ul><li>'  + linkBhsHbpmDiary + '</li>' +
+		'<ul><li>'  + linkBhsHbpmGuide + '</li>' +
+		'<ul><li>'  + linkBhsHbpmCaseStudies + '</li>' +
+		'</ul>' 
+		as supportingText
+
+union
+
+--VACCINATION CLINICS
+select
+	'ckd.treatment.bp' as indicatorId,
+	'Take blood pressure readings during upcoming vaccination programmes e.g. flu, shingles, whooping cough.' as actionText,
+	--'measure' actions
+	(select proportion from #reasonProportions where proportionId = 'measureActions') as proportion,
+	'Reasoning' +
+		'<ul><li>' + 
+			STR(select proportion from #reasonProportions where proportionId = 'measureActions')
+		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
+		'</ul>' 
+		as supportingText
+
+union
+
+--LIFESTYLE
+select
+	'ckd.treatment.bp' as indicatorId,
+	'Reinforce lifestyle advice to patients with CKD at every appointment' as actionText,
+	--uncontrolled
+	(select proportion from #reasonProportions where proportionId = 'uncontrolled') as proportion,
+	'Reasoning' +
+		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'uncontrolled') 
+		+ 'of CKD patients not meeting the CKD BP indicator have uncontrolled blood pressure.</li>' +
+		'<li>Advice on diet, exercise, alcohol reduction, weight loss, smoking cessation and exercise can help reduce blood pressure.</li>' +
+	'Useful information' + 
+		'<ul><li>'  + DashDietSheet + '</li>' +
+		'<ul><li>'  + HtnDietExSheet + '</li>' +
+		'<ul><li>'  + BpUkDietSheet + '</li>' +
+		'<ul><li>'  + BpExSheet + '</li>' +
+		'</ul>' 
+		as supportingText
+
+							---------------------------------------------------------------
+							----------------------TEXT FILE OUTPUTS------------------------
+							---------------------------------------------------------------
+insert into [pingr.text] (indicatorId, textId, text)
+
+values
+--overview tab
+('ckd.treatment.bp','name','CKD blood pressure treatment'), --overview table name
+('ckd.treatment.bp','tabText','CKD BP'), --indicator tab text
+('ckd.treatment.bp','description', --'show more' on overview tab
+	'<strong>Definition:</strong>Patients on the CKD register with a BP recorded in the last 12 months (from last April) where the latest BP is 140/90 or less.<br>' + --Informatica doc
+	'<strong>Why this is important:</strong>Cardiovascular disease is the biggest cause of death in CKD patients. The risk of major cardiovascular events can be reduced by about 1/6 per 5 mmHg reduction in systolic BP.<br>' +
+	'<strong>Useful information:</strong>' +
+	'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
+	'<li>'  + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') + '</li>' +	
+	'<li>'  + (select text from regularText where [textId] = 'linkNiceBpMxCkd') + '</li>' +	
+	'<li>'  + (select text from regularText where [textId] = 'linkSsCkdAki') + '</li>' +	
+	'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'),
+--indicator tab
+--summary text
+('ckd.treatment.bp','tagline','of your patients on the CKD register have had a BP measurement in the 12 months (from last April) where the latest BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">140/90 or less</a>.'),
+('ckd.treatment.bp','positiveMessage','Well done! For tips on how to improve further, look through the recommended improvement actions on this page and for each patient.'),
+--pt lists
+('ckd.treatment.bp','valueId','SBP'),
+('ckd.treatment.bp','valueName','Latest SBP'),
+('ckd.treatment.bp','dateORvalue','value'),
+('ckd.treatment.bp','tableTitle','All patients with improvement opportunities'),
+
+--imp opp charts 
+--based on actionCat
+
+--registered?
+('ckd.treatment.bp','opportunities.Registered?.name','Check registered'),
+('ckd.treatment.bp','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
+('ckd.treatment.bp','opportunities.Registered?.positionInBarChart','3'),
+
+--Measure BP
+('ckd.treatment.bp','opportunities.Measure BP.name','Measure BP'),
+('ckd.treatment.bp','opportunities.Measure BP.description','Patients who may achieve the indicator by simply re-measuring their BP i.e. those without a BP reading, or with a one-off high reading, recent medication optimisation, or only slightly uncontrolled BP.'),
+('ckd.treatment.bp','opportunities.Measure BP.positionInBarChart','1'),
+
+--MEDICATION SUGGESTION
+('ckd.treatment.bp','opportunities.Medication optimisation.name','Medication suggestion'),
+('ckd.treatment.bp','opportunities.Medication optimisation.description','Patients with uncontrolled BP who are prescribed suboptimal medication.'),
+('ckd.treatment.bp','opportunities.Medication optimisation.positionInBarChart',	'2'),
+
+--SUGGEST EXCLUDE
+('ckd.treatment.bp','opportunities.Suggest exclude.name','Suggest exclude'),
+('ckd.treatment.bp','opportunities.Suggest exclude.description','Patients who may benefit from being excluded from this quality indicators.'),
+('ckd.treatment.bp','opportunities.Suggest exclude.positionInBarChart',	'4')
