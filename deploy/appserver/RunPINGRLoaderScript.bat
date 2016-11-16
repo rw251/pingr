@@ -54,6 +54,16 @@ mongoexport --db pingr --collection indicators --out %IMPORT_DIR%existingIndicat
 
 REM run the loader
 node process.js
+IF ERRORLEVEL 1 (
+	GOTO :nodefailed
+)
+
+GOTO :nodesuccess
+
+:nodefailed
+cscript sendmail.vbs "The mongo importer failed to load the most recent data. The site is still running but the data is not bang up to date."
+
+:nodesuccess
 
 move %IMPORT_DIR%\* %IMPORT_DIR%\archive\
 
@@ -63,7 +73,7 @@ move %IMPORT_DIR%\archive\text.dat %IMPORT_DIR%\text.dat
 REM move the files
 mongoimport --db pingr --collection text --drop data/text.json --jsonArray
 mongoimport --db pingr --collection indicators --drop data/indicators.json --jsonArray
-mongoimport --db pingr --collection patients --drop data/patients.json --jsonArray
+mongoimport --db pingr --collection patients --drop data/patients.json
 mongoimport --db pingr --collection practices --drop in/practices.json --jsonArray
 
 cscript sendmail.vbs "All files successfully loaded into mongo"

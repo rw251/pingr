@@ -413,9 +413,7 @@ RW - maybe need a way to determine if a person has met a standard
 
 			var file = fs.createWriteStream('data/patients.json');
             file.on('error', function(err) { /* error handling */ });
-            file.write("[\n");
-            dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + ',\n'); });
-            file.write("]");
+            dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
             file.end();
 
             fs.writeFile('data/text.json', JSON.stringify(textFile, null, 2), function(err) {
@@ -430,10 +428,10 @@ RW - maybe need a way to determine if a person has met a standard
               console.log();
               console.log("The following errors were detected and should be investigated:");
               console.log();
+              messages.forEach(function(msg) {
+                console.warn(msg);
+              });
             }
-            messages.forEach(function(msg) {
-              console.warn(msg);
-            });
           });
       });
     }],
