@@ -17,9 +17,12 @@ dist/
 dist-test/
 app/assets/data/data.json
 pingr.zip
-deploy/dbserver/log/*
-deploy/appserver/data/*
 deploy/testserver/in/*
 deploy/testserver/out/*
+deploy/appserver/data/*
+deploy/appserver/backups/*
+deploy/appserver/dump/*
+deploy/appserver/log/*
+deploy/dbserver/log/*
 deploy/dbserver/research-events-medication-htn/
 !deploy/dbserver/research-events-medication-htn/medication-sorter-node.js

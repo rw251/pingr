@@ -2296,7 +2296,7 @@ values
 	(select COUNT(*) from 
 		(
 				select a.PatID from #eligiblePopulationAllData as a
-				left outer join (select PatID, noPrimCareContactInLastYear from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+				left outer join (select PatID, noPrimCareContactInLastYear from #impOppsData) as b on b.PatID = a.PatID
 				where denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0
 		) sub
 	) /
@@ -2309,8 +2309,8 @@ values
 			select PatID from #eligiblePopulationAllData 
 				where 
 					(
-						((dmPatient = 1 or protPatient = 1) and (b.latestSbp < 140 and b.latestDbp < 90)) or 
-						((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))
+						((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or 
+						((dmPatient = 0 and protPatient = 0) and (latestSbp < 150 and latestDbp < 100))
 					) 
 					and 
 					denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
@@ -2322,7 +2322,7 @@ values
 ('rxInertia', 
 	(select COUNT(*) from
 		(
-			select PatID from #eligiblePopulationAllData 
+			select a.PatID from #eligiblePopulationAllData a
 				left outer join (select PatID, latestMedOptimisationDate from #impOppsData) as b on b.PatID = a.PatID
 				where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
 				and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
@@ -2357,7 +2357,7 @@ set @measureActionsProportion = (select proportion from #reasonProportions where
 declare @uncontrolledProportion float;
 set @uncontrolledProportion = (select proportion from #reasonProportions where proportionId = 'uncontrolled');
 
-insert into [output.pingr.orgActions](indicatorId, proportion, actionText, supportingText)
+insert into [output.pingr.orgActions](indicatorId, actionText, proportion, supportingText)
 
 --BP MACHINE IN WAITING ROOM
 select 

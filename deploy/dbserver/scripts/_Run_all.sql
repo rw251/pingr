@@ -16,6 +16,9 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.patActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.patActions]
 CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(max))
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.orgActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.orgActions]
+CREATE TABLE [output.pingr.orgActions] (indicatorId varchar(1000), proportion float, actionText varchar(1000), supportingText varchar(max))
+
 --Quality indicator results
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.indicator]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.indicator]
 CREATE TABLE [output.pingr.indicator] (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float)
@@ -83,10 +86,9 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'acr') then 'ACR'
 		when ReadCode in (select code from codeGroups where [group] = 'sbp') then 'SBP'
 		when ReadCode in (select code from codeGroups where [group] = 'dbp') then 'DBP'
-		when ReadCode in (select code from codeGroups where [group] = 'bp') then 'BP'
 	end as measure,
 CodeValue as value from SIR_ALL_Records
-where ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp', 'bp'))
+where ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp'))
 	and CodeValue is not NULL
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
