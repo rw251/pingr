@@ -33,7 +33,9 @@ module.exports = function(PORT, PATH, CALLBACK) {
   var expressSession = require('express-session');
   app.use(expressSession({
     secret: config.passport.secret,
-    resave: false,
+    cookie: { maxAge: 4 * 3600 * 1000 }, //4 hours to be sure - but client side 2 hours redirects to signout
+    rolling: true,
+    resave: true,
     saveUninitialized: false
   }));
   app.use(passport.initialize());

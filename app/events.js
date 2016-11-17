@@ -2,6 +2,17 @@
  * Gets an XPath for an element which describes its hierarchical location.
  * Copied from firebug with a BSD licence - https://code.google.com/p/fbug/source/browse/branches/firebug1.6/content/firebug/lib.js?spec=svn12950&r=8828#1332
  */
+var timer = setTimeout(function(){
+  window.location.href='/signout';
+}, 2 * 3600 * 1000); //set session logout to 2 hours
+
+var refreshSession = function(){
+    clearTimeout(timer);
+    timer = setTimeout(function(){
+      window.location.href='/signout';
+    }, 2 * 3600 * 1000); //set session logout to 2 hours
+};
+
 var getElementXPath = function(el) {
   if (el && el.id)
     return '//*[@id="' + el.id + '"]';
@@ -34,6 +45,7 @@ var getElementTreeXPath = function(el) {
 
 
 var logInfo = function(event, type, href) {
+  refreshSession();
   var obj = {};
   obj.url = href ? href : location.href;
   obj.type = type;
