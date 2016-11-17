@@ -14,7 +14,8 @@ var FILENAMES = {
   text: 'text.dat'
 };
 
-var IN_DIR = 'E:\\ImporterPINGR\\';
+var IN_DIR = process.argv[2] || 'E:\\ImporterPINGR\\';
+var OUT_DIR = process.argv[3] || 'data/';
 
 //Load current data
 //make sure opportunities is empty
@@ -401,19 +402,19 @@ async.series([
             dataFile.text = textFile;
 
 
-            fs.writeFileSync('data/indicators.json', JSON.stringify(dataFile.indicators, null, 2));
+            fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
 
 
             dataFile.patients = Object.keys(dataFile.patients).map(function(v) {
               return dataFile.patients[v];
             });
 
-            var file = fs.createWriteStream('data/patients.json');
+            var file = fs.createWriteStream(OUT_DIR + 'patients.json');
             file.on('error', function(err) { /* error handling */ });
             dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
             file.end();
 
-            fs.writeFileSync('data/text.json', JSON.stringify([textFile], null, 2));
+            fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
 
             if (messages.length > 0) {
               console.log();
@@ -484,13 +485,13 @@ async.series([
               return v;
             });
 
-            var file2 = fs.createWriteStream('data/dev_patients.json');
+            var file2 = fs.createWriteStream(OUT_DIR + 'dev_patients.json');
             file2.on('error', function(err) { /* error handling */ });
             newpatientlist.forEach(function(v) { file2.write(JSON.stringify(v) + '\n'); });
             file2.end();
-            fs.writeFileSync('data/dev_indicators.json', JSON.stringify(dataFile.indicators, null, 2));
-            fs.writeFileSync('data/dev_text.json', JSON.stringify([textFile], null, 2));
-            fs.writeFileSync('data/dev_practices.json', JSON.stringify(Object.keys(gpLookup).map(function(v) { return { _id: gpLookup[v].id, name: gpLookup[v].name }; }), null, 2));
+            fs.writeFileSync(OUT_DIR + 'dev_indicators.json', JSON.stringify(dataFile.indicators, null, 2));
+            fs.writeFileSync(OUT_DIR + 'dev_text.json', JSON.stringify([textFile], null, 2));
+            fs.writeFileSync(OUT_DIR + 'dev_practices.json', JSON.stringify(Object.keys(gpLookup).map(function(v) { return { _id: gpLookup[v].id, name: gpLookup[v].name }; }), null, 2));
 
 
           });
