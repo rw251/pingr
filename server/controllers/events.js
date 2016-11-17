@@ -1,4 +1,16 @@
-var Event = require('../models/event');
+var Event = require('../models/event'),
+  json2csv = require('json2csv');
+
+var processEvent = function(event){
+  event = event.toObject();
+  if(event.data) {
+    event.data.forEach(function(v){
+      event["data."+v.key]=v.value;
+    });
+  }
+  delete event.data;
+  return event;
+};
 
 var e = {
 
@@ -18,15 +30,36 @@ var e = {
     });
   },
 
-  download: function(dateFrom, done){
-    if(dateFrom) {
+  //Get list of events for a given type - or all
+  csv: function(filter, skip, limit, done) {
+    Event.find(filter, null, {skip: +skip || 0, limit: +limit || 100, sort: {date: -1}}, function(err, events) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding event list"));
+      }
+      if (!events) {
+        console.log('Error finding event list');
+        return done(null, false);
+      } else {
+        done(null, json2csv({data: events.map(processEvent)}));
+      }
+    });
+  },
 
-    } else {
-      Event.find({},function(err, events){
-        if(err) return done(err);
-        return done(null, events);
-      });
-    }
+  download: function(options, done){
+    var filter={};
+    if(options.from && options.to) filter.date = {$gte:new Date(options.from), $lte:new Date(options.to)};
+    else if(options.from) filter.date = {$gte:new Date(options.from)};
+    else if(options.to) filter.date = {$lte:new Date(options.to)};
+
+    if(options.user) filter.user = options.user;
+
+    Event.find(filter,function(err, events){
+      if(err) return done(err);
+      if(options.csv && options.csv!=="json") return done(null, "csv", json2csv({data: events.map(processEvent)}));
+      else return done(null, "json", events);
+    });
+
   },
 
   add: function(event, done){

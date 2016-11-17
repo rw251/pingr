@@ -72,19 +72,19 @@ module.exports = function(passport) {
   //User registration
   router.get('/register', function(req, res) {
     practices.list(function(err, practices) {
-      res.render('pages/userregister.jade',  { practices: practices });
+      res.render('pages/userregister.jade', { practices: practices });
     });
   });
   router.post('/register', reg.register, function(req, res) {
     practices.list(function(err, practices) {
-      res.render('pages/userregister.jade',  { practices: practices, message: req.flash() });
+      res.render('pages/userregister.jade', { practices: practices, message: req.flash() });
     });
   });
-  router.get('/authorise/:email',  isAuthenticated, isAdmin, reg.authorise, function(req, res){
-    res.render('pages/userauthorise.jade',  { message: req.flash() });
+  router.get('/authorise/:email', isAuthenticated, isAdmin, reg.authorise, function(req, res) {
+    res.render('pages/userauthorise.jade', { message: req.flash() });
   });
-  router.get('/reject/:email',  isAuthenticated, isAdmin, reg.reject, function(req, res){
-    res.render('pages/userauthorise.jade',  { message: req.flash() });
+  router.get('/reject/:email', isAuthenticated, isAdmin, reg.reject, function(req, res) {
+    res.render('pages/userauthorise.jade', { message: req.flash() });
   });
 
 
@@ -104,22 +104,18 @@ module.exports = function(passport) {
   });
 
   router.get('/eventsdownload', isAuthenticated, isAdmin, function(req, res) {
-    events.download(null, function(err, events) {
-      //res.render('pages/eventlist.jade', { events: events, message: req.flash() });
-
-      //var mimetype = mime.lookup(file);
-
-      //res.setHeader('Content-disposition', 'attachment; filename=test.txt');
-      //res.setHeader('Content-type', mimetype);
-      res.attachment('test.txt');
+    events.download(req.query, function(err, fileExtension, events) {
+      if(err) {
+        console.log(err);
+        res.send();
+      }
+      res.attachment('events.' + fileExtension);
       res.send(events);
-      //var filestream = fs.createReadStream(file);
-      //filestream.pipe(res);
     });
   });
 
   router.get('/events/:email', isAuthenticated, isAdmin, function(req, res) {
-    events.list({user: req.params.email},req.query.skip, req.query.limit, function(err, events) {
+    events.list({ user: req.params.email }, req.query.skip, req.query.limit, function(err, events) {
       res.render('pages/eventlist.jade', { events: events, message: req.flash() });
     });
   });
@@ -191,14 +187,14 @@ module.exports = function(passport) {
 
   /* api */
   //store Event
-  router.post('/api/event',function(req,res){
-    if(!req.body.event) {
+  router.post('/api/event', function(req, res) {
+    if (!req.body.event) {
       res.send("No event posted");
     } else {
       req.body.event.sessionId = req.sessionID;
       req.body.event.user = req.user.email;
-      events.add(req.body.event, function(err){
-        if(err) res.send(err);
+      events.add(req.body.event, function(err) {
+        if (err) res.send(err);
         else res.send("");
       });
     }
@@ -212,12 +208,12 @@ module.exports = function(passport) {
   });
 
   //return user data
-  router.get('/api/userDetails', isAuthenticated, function(req, res){
-      res.send({fullname: req.user.fullname, practiceId: req.user.practiceId});
+  router.get('/api/userDetails', isAuthenticated, function(req, res) {
+    res.send({ fullname: req.user.fullname, practiceId: req.user.practiceId });
   });
 
   //return a list of all practices
-  router.get('/api/ListOfPractices', isAuthenticated, function(req, res){
+  router.get('/api/ListOfPractices', isAuthenticated, function(req, res) {
     practices.list(function(err, practices) {
       res.send(practices);
     });
