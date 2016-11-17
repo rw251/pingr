@@ -145,12 +145,205 @@ values
 ('C1541', 'addisons'),
 ('A176.', 'addisons'),
 
+--aortic stenosis
+--from codelist creator 26/10/16 Read v2 April 2016   "synonyms": "aortic stenosis", "stenosis of aorta"
+('P722.', 'AS'),
+('P7224', 'AS'),
+('P722z', 'AS'),
+('P63..', 'AS'),
+('G5411', 'AS'),
+('G5413', 'AS'),
+('G5414', 'AS'),
+('G5415', 'AS'),
+('G130.', 'AS'),
+('G132.', 'AS'),
+('G120.', 'AS'),
+('G122.', 'AS'),
+
+--aortic stenosis
+--from codelist creator 26/10/16 Read v2 April 2016   "synonyms": "aortic", "aorta"
+('79110', 'ASrepair'),
+('79111', 'ASrepair'),
+('79112', 'ASrepair'),
+('79113', 'ASrepair'),
+('79114', 'ASrepair'),
+('79115', 'ASrepair'),
+('79116', 'ASrepair'),
+('79151', 'ASrepair'),
+('79161', 'ASrepair'),
+('79171', 'ASrepair'),
+('79191', 'ASrepair'),
+('79330', 'ASrepair'),
+('7911.', 'ASrepair'),
+('7911y', 'ASrepair'),
+('7911z', 'ASrepair'),
+
+--asthma: diagnostic codes
+--from QOF Asthma ruleset_v34.0
+('H33..', 'asthmaQof'),
+('H330.', 'asthmaQof'),
+('H3300', 'asthmaQof'),
+('H3301', 'asthmaQof'),
+('H330z', 'asthmaQof'),
+('H331.', 'asthmaQof'),
+('H3310', 'asthmaQof'),
+('H3311', 'asthmaQof'),
+('H331z', 'asthmaQof'),
+('H332.', 'asthmaQof'),
+('H334.', 'asthmaQof'),
+('H335.', 'asthmaQof'),
+('H33z.', 'asthmaQof'),
+('H33z0', 'asthmaQof'),
+('H33z1', 'asthmaQof'),
+('H33z2', 'asthmaQof'),
+('H33zz', 'asthmaQof'),
+('H3120', 'asthmaQof'),
+('H3B..', 'asthmaQof'),
+('173A.', 'asthmaQof'),
+--from SMASH
+('14B4.', 'asthmaOther'),	--H/O: asthma	ReadCodeV2	PINCER	Asthma
+('173d.', 'asthmaOther'),	--Work aggravated asthma	ReadCodeV2	PINCER	Asthma
+('1O2..', 'asthmaOther'),	--Asthma confirmed	ReadCodeV2	PINCER	Asthma
+('8H2P.', 'asthmaOther'),	--Emergency admission, asthma	ReadCodeV2	PINCER	Asthma
+('H312000', 'asthmaOther'),	--Chronic asthmatic bronchitis	ReadCodeV2	HeRC	Asthma
+('H312011', 'asthmaOther'),	--Chronic asthmatic bronchitis	ReadCodeV2	HeRC	Asthma
+('H330.', 'asthmaOther'),	--Extrinsic (atopic) asthma	ReadCodeV2	PINCER	Asthma
+('H330000', 'asthmaOther'),	--Extrinsic asthma - no status	ReadCodeV2	HeRC	Asthma
+('H330011', 'asthmaOther'),	--Extrinsic asthma - no status	ReadCodeV2	HeRC	Asthma
+('H3301', 'asthmaOther'),	--Extrinsic asthma + status	ReadCodeV2	PINCER	Asthma
+('H330100', 'asthmaOther'),	--Extrinsic asthma + status	ReadCodeV2	HeRC	Asthma
+('H330111', 'asthmaOther'),	--Extrinsic asthma + status	ReadCodeV2	HeRC	Asthma
+('H330z00', 'asthmaOther'),	--Extrinsic asthma NOS	ReadCodeV2	HeRC	Asthma
+('H331000', 'asthmaOther'),	--Intrinsic asthma - no status	ReadCodeV2	HeRC	Asthma
+('H331111', 'asthmaOther'),	--Intrinsic asthma + status	ReadCodeV2	HeRC	Asthma
+('H331z00', 'asthmaOther'),	--Intrinsic asthma NOS	ReadCodeV2	HeRC	Asthma
+('H333.', 'asthmaOther'),	--Acute exacerbation of asthma	ReadCodeV2	PINCER	Asthma
+('H33z0', 'asthmaOther'),	--Status asthmaticus NOS	ReadCodeV2	PINCER	Asthma
+('H33z000', 'asthmaOther'),	--Status asthmaticus NOS	ReadCodeV2	HeRC	Asthma
+('H33z011', 'asthmaOther'),	--Status asthmaticus NOS	ReadCodeV2	HeRC	Asthma
+('H33z100', 'asthmaOther'),	--Asthma attack	ReadCodeV2	HeRC	Asthma
+('H33z111', 'asthmaOther'),	--Asthma attack	ReadCodeV2	HeRC	Asthma
+('H33z200', 'asthmaOther'),	--Late-onset asthma	ReadCodeV2	HeRC	Asthma
+('H33zz00', 'asthmaOther'),	--Asthma NOS	ReadCodeV2	HeRC	Asthma
+('H33zz11', 'asthmaOther'),	--Asthma NOS	ReadCodeV2	HeRC	Asthma
+('H33zz12', 'asthmaOther'),	--Asthma NOS	ReadCodeV2	HeRC	Asthma
+('H33zz13', 'asthmaOther'),	--Asthma NOS	ReadCodeV2	HeRC	Asthma
+('H47y0', 'asthmaOther'),	--Detergent asthma	ReadCodeV2	PINCER	Asthma
+
+--asthma: other codes (e.g. follow up codes
+--from SS
+('679J.', 'asthmaOther'),	--679J.	00	Health education - asthma
+('679J0', 'asthmaOther'),	--679J0	00	Health education - asthma self management
+('679J1', 'asthmaOther'),	--679J1	00	Health education - structured asthma discussion
+('679J2', 'asthmaOther'),	--679J2	00	Health education - structured patient focused asthma discussion
+('8B3j.', 'asthmaOther'),	--00	Asthma medication review
+('8I3V.', 'asthmaOther'),	--00	Medication review declined
+('663U.', 'asthmaOther'),	--00	Asthma management plan given
+('66Yz0', 'asthmaOther'),	--00	Asthma management plan declined
+('8793.', 'asthmaOther'),	--00	Asthma control step 0
+('8794.', 'asthmaOther'),	--00	Asthma control step 1
+('8795.', 'asthmaOther'),	--00	Asthma control step 2
+('8796.', 'asthmaOther'),	--00	Asthma control step 3
+('8797.', 'asthmaOther'),	--00	Asthma control step 4
+('8798.', 'asthmaOther'),	--00	Asthma control step 5
+--spirometry
+--from QOF Asthma ruleset_v34.0
+('33G1.', 'asthmaSpiro'),	--00	Spirometry reversibility positive
+('33H1.', 'asthmaSpiro'),	--00	Positive reversibility test to salbutamol
+('33I1.', 'asthmaSpiro'),	--00	Positive reversibility test to ipratropium bromide
+('33J1.', 'asthmaSpiro'),	--00	Positive reversibility test to a combination of salbutamol and ipratropium bromide 
+('33K1.', 'asthmaSpiro'),	--00	Positive reversibility test to corticosteroids
+--745D4	00	Post bronchodilator spirometry
+('663J.', 'asthmaSpiro'),	--00	Airways obstruction reversible 
+--8HRC.	00	Referral for spirometry
+--pefr
+--from QOF Asthma ruleset_v34.0
+--339n.	00	Serial peak expiratory flow rate abnormal
+('33950', 'asthmaSpiro'),	--00	Diurnal variation of peak expiratory flow rate
+--339A.	00	Peak flow rate before bronchodilation
+--339B.	00	Peak flow rate after bronchodilation
+--339c.	00	Peak expiratory flow rate pre steroids
+--339d.	00	Peak expiratory flow rate post steroids
+--339g.	00	Serial peak expiratory flow rate
+--66YX.	00	Peak expiratory flow rate monitoring
+--66YY.	00	Peak expiratory flow rate monitoring using diary
+--66Yc.	00	Number of consecutive days at less than 80% peak expiratory flow rate
+--asthma follow up
+--from QOF Asthma ruleset_v34.0
+('66YJ.', 'asthmaReview'),	--00	Asthma annual review
+('66YK.', 'asthmaReview'),	--00	Asthma follow-up
+('66YQ.', 'asthmaReview'),	--00	Asthma monitoring by nurse
+('66YR.', 'asthmaReview'),	--00	Asthma monitoring by doctor
+('8B3j.', 'asthmaReview'),	--00	Asthma medication review
+('9OJA.', 'asthmaReview'),	--00	Asthma monitoring check done
+--asthma RCP question answers
+--from QOF Asthma ruleset_v34.0
+('6635.', 'asthmaRcp6'),
+('663P.', 'asthmaRcp6'),
+('663Q.', 'asthmaRcp6'),
+('663e.', 'asthmaRcp6'),
+('663e0', 'asthmaRcp6'),
+('663e1', 'asthmaRcp6'),
+('663f.', 'asthmaRcp6'),
+('663w.', 'asthmaRcp6'),
+('663x.', 'asthmaRcp6'),
+('663P0', 'asthmaRcp6'),
+('663P1', 'asthmaRcp6'),
+('663P2', 'asthmaRcp6'),
+('663N.', 'asthmaRcp6'),
+('663N0', 'asthmaRcp6'),
+('663N1', 'asthmaRcp6'),
+('663N2', 'asthmaRcp6'),
+('663O.', 'asthmaRcp6'),
+('663O0', 'asthmaRcp6'),
+('663r.', 'asthmaRcp6'),
+('66YP.', 'asthmaRcp6'),
+('66Ys.', 'asthmaRcp6'),
+('66Yq.', 'asthmaRcp6'),
+('66Yr.', 'asthmaRcp6'),
+('663q.', 'asthmaRcp6'),
+('663s.', 'asthmaRcp6'),
+('663t.', 'asthmaRcp6'),
+('663u.', 'asthmaRcp6'),
+('663v.', 'asthmaRcp6')
+
+--asthma: drugs 
+--from QOF Asthma ruleset_v34.0
+	--c1... – c15z. SABAs (not specific to asthma)
+	--c19..% LABA (not specific to asthma)
+	--c1B.. – c1EE. SABAs (not specific to asthma)
+	--c1c..% fluticasone
+	--c2...% (Excluding c23..%, c24..%) c3...% (Excluding c32..%) adrenaline
+	--c4...% (Excluding c42..%, c44..%) aminophylline - also licensed from copd; (theophylline only for asthma - below)
+	--c5...% (Excluding c52..%, c51M., c51N.) compound bronchodilators
+	--c6...% steroids
+insert into codeGroups
+select readcode, 'asthmaDrugs' from SIR_ReadCode_Rubric
+where readcode like 'c43%' --theophyllines
+or readcode like 'c7%' --asthma prophylaxis e.g. cromoglicate inhaler
+or readcode like 'cA%' --leukotreine antagonist 
+or readcode like 'ck1%' -- omalizumab
+group by readcode
+
+--asthma: permanent exclusions
+--from QOF Asthma ruleset_v34.0 and SMASH
+insert into codeGroups
+values
+('21262', 'asthmaPermEx'),	--Asthma resolved	***gets filtered out by SIR***
+('2126200', 'asthmaPermEx'),	--Asthma resolved	SMASH
+('212G.', 'asthmaPermEx'),	--Asthma resolved	ReadCodeV2	PINCER	Asthma resolution
+--asthma: temporary exclusions
+('9OJ2.', 'asthmaTempEx'),	--00	Refuses asthma monitoring
+('9hA..', 'asthmaTempEx'),	--9hA..	00	Exception reporting: asthma quality indicators
+('9hA1.', 'asthmaTempEx'),	--00	Excepted from asthma quality indicators: Patient unsuitable
+('9hA2.', 'asthmaTempEx'),	--00	Excepted from asthma quality indicators: Informed dissent
+
 --bedridden
 --from codelist creator 20/10/16 (synonyms: "bedbound", "bed-ridden", "dependent")
 ('3960.', 'bedridden'),
 ('13C6.', 'bedridden'),--manual search
 
---bp - diastolic sbp
+--bp - diastolic dbp
 --from CKD ruleset_INLIQ_v32.0
 	('246A.', 'dbp'),
 	('246P.', 'dbp'),
@@ -199,17 +392,29 @@ values
 	('246g.', 'bp'),
 	('246o.', 'bp'), 
 
+--calcium
+--from SIR search of 1 GP practice
+('44I8.', 'calcium'),
+('44IC.', 'calcium'),
+('44h7.', 'calcium'),
+('44h9.', 'calcium'),
+('44h4.', 'calcium'),
+('4Q72100', 'calcium'),
+('4Q72.', 'calcium'),
+('44IC000', 'calcium'),
+('44IC0', 'calcium'),
+
 --ckd invite - 3rd
 --from manual search
-	('9Ot2.', 'ckd3rdInvite'),
+('9Ot2.', 'ckd3rdInvite'),
 
 --ckd invite - any
 --from manual search
-	('9Ot0.', 'ckdInvite'),	--Chronic kidney disease monitoring first letter
-	('9Ot1.', 'ckdInvite'),	--Chronic kidney disease monitoring second letter
-	('9Ot2.', 'ckdInvite'), --Chronic kidney disease monitoring third letter
-	('9Ot3.', 'ckdInvite'),	--Chronic kidney disease monitoring verbal invite
-	('9Ot4.', 'ckdInvite'), --Chronic kidney disease monitoring telephone invite
+('9Ot0.', 'ckdInvite'),	--Chronic kidney disease monitoring first letter
+('9Ot1.', 'ckdInvite'),	--Chronic kidney disease monitoring second letter
+('9Ot2.', 'ckdInvite'), --Chronic kidney disease monitoring third letter
+('9Ot3.', 'ckdInvite'),	--Chronic kidney disease monitoring verbal invite
+('9Ot4.', 'ckdInvite'), --Chronic kidney disease monitoring telephone invite
 
 --ckd stages 3-5
 --from v34 QOF
@@ -261,14 +466,18 @@ values
 	('1Z1R.', 'ckdPermEx'),
 	('1Z1S.', 'ckdPermEx'),
 	('2126E', 'ckdPermEx'),
+	
 
 --ckd temporary exclusion codes: BP refused, max HTN medication, CKD indicators unsuitable
 --from CKD ruleset_INLIQ_v32.0
-	('9hE..', 'ckdTempEx'),
-	('9hE1.', 'ckdTempEx'),
-	('9hE0.', 'ckdTempEx'),
-	('8I3Y.', 'ckdTempEx'),
-	('8BL0.', 'ckdTempEx'),
+	('9hE..', 'ckdTempEx'), --9hE..	00	Exception reporting: chronic kidney disease quality indicators
+	('9hE1.', 'ckdTempEx'), --9hE0.	00	Excepted from chronic kidney disease quality indicators: Patient unsuitable
+	('9hE0.', 'ckdTempEx'), --9hE1.	00	Excepted from chronic kidney disease quality indicators: Informed dissent
+
+--bp temp ex
+--from CKD ruleset_INLIQ_v32.0
+	('8I3Y.', 'bpTempEx'), --8I3Y.	00	Blood pressure procedure refused
+	('8BL0.', 'bpTempEx'), --8BL0.	00	Patient on maximal tolerated antihypertensive therapy
 
 --dead
 --from codelist creator 13/7/16 (synonyms:"dead", "death", "deceased", "died", "ghost", "fp22", "coroner", "cremation", "burial", "SD17", "post mortem", "med A", "crem. form", "mortality") 
@@ -558,15 +767,17 @@ values
 
 --frail
 --from codelist creator on 20/10/16 (synonyms: "frail", "elderly", "old", "senile", "cachectic", "cachexic")
-	('R200.', 'frail'),
-	('R0331', 'frail'),
-	('C373D', 'frail'),
-	('C373G', 'frail'),
-	('2229.', 'frail'),
-	('2224.', 'frail'),
-	('133R.', 'frail'),
-	('2Jd1.', 'frail'), --browser search - moderate frailty
-	('2Jd2.', 'frail'),	--browser search - severe frailty
+('R200.', 'frail'),
+('R0331', 'frail'),
+('C373D', 'frail'),
+('C373G', 'frail'),
+('2229.', 'frail'),
+('2224.', 'frail'),
+('133R.', 'frail'),
+('2Jd1.', 'frail'), --browser search - moderate frailty
+('2Jd2.', 'frail'),	--browser search - severe frailty
+('69D9.', 'frail'),	--edmonton score - frailty
+('HNGNQRF75', 'frail'),	--edmonton score - severe frailty
 
 --gout
 --from codelist creator 26/10/16 Read v2 April 2016: synonyms ["gout","symptomatic hyperuricaemia","hyperuricaemia","hyperuricemia", "uric acid"
@@ -642,19 +853,86 @@ values
 ('h8H1.', 'goutDrugs'),
 ('h8H2.', 'goutDrugs'),
 
-
+--heart block: 2nd and 3rd degree
+--from codelist creator on 26/10/16 Read v2 April 2016 (synonyms: "block", "mobitz", "av block", "atrioventricular block", "wenckebach"
+('G560.', '2/3heartBlock'),
+('G561.', '2/3heartBlock'),
+('G5612', '2/3heartBlock'),
+('G5613', '2/3heartBlock'),
+('G5614', '2/3heartBlock'),
+('G561z', '2/3heartBlock'),
+('329..', '2/3heartBlock'),
+('3292.', '2/3heartBlock'),
+('3293.', '2/3heartBlock'),
+('3295.', '2/3heartBlock'),
+('3296.', '2/3heartBlock'),
+('3297.', '2/3heartBlock'),
+('3298.', '2/3heartBlock'),
+('329H.', '2/3heartBlock'),
+('329Z.', '2/3heartBlock'),
 
 --housebound
 --from codelist creator on 20/10/16 (synonyms: "housebound", "house-bound", "immobil*")
-	('R00C.', 'housebound'),
-	('6AG..', 'housebound'),
-	('3980.', 'housebound'),
-	('13CA.', 'housebound'),
-	('13CC.', 'housebound'),
-
+('R00C.', 'housebound'),
+('6AG..', 'housebound'),
+('3980.', 'housebound'),
+('13CA.', 'housebound'),
+('13CC.', 'housebound'),
+	
 --housebound perm ex
 --manual search
-	('13CW.', 'houseboundPermEx'),
+('13CW.', 'houseboundPermEx'),
+
+--myocardial infarction - contemporary code
+--from codelist creator on 26/10/16 Read v2 April 2016 (synonyms: "myocardial infarction", "heart attack", "stemi", "nstemi", "infarct"
+('Gyu34', 'MInow'),
+('Gyu35', 'MInow'),
+('Gyu36', 'MInow'),
+('G30..', 'MInow'),
+('G300.', 'MInow'),
+('G301.', 'MInow'),
+('G302.', 'MInow'),
+('G303.', 'MInow'),
+('G304.', 'MInow'),
+('G305.', 'MInow'),
+('G306.', 'MInow'),
+('G307.', 'MInow'),
+('G308.', 'MInow'),
+('G309.', 'MInow'),
+('G30B.', 'MInow'),
+('G30X.', 'MInow'),
+('G30y.', 'MInow'),
+('G30z.', 'MInow'),
+('G3010', 'MInow'),
+('G3011', 'MInow'),
+('G301z', 'MInow'),
+('G3070', 'MInow'),
+('G3071', 'MInow'),
+('G30X0', 'MInow'),
+('G30y0', 'MInow'),
+('G30y1', 'MInow'),
+('G30y2', 'MInow'),
+('G30yz', 'MInow'),
+('G35..', 'MInow'),
+('G38..', 'MInow'),
+('G350.', 'MInow'),
+('G351.', 'MInow'),
+('G353.', 'MInow'),
+('G35X.', 'MInow'),
+('G380.', 'MInow'),
+('G381.', 'MInow'),
+('G382.', 'MInow'),
+('G383.', 'MInow'),
+('G384.', 'MInow'),
+('G38z.', 'MInow'),
+('323..', 'MInow'),
+('3233.', 'MInow'),
+('3234.', 'MInow'),
+('3235.', 'MInow'),
+('3236.', 'MInow'),
+('323Z.', 'MInow'),
+
+--myocardial infarction - code from anytime
 
 --palliative care
 --from codelist creator on 11/8/16: "synonyms": ["palliative","palliation","terminal","end of life","gold standards","macmillan","last days","liverpool care pathway","advance care planning","anticipatory care plan","ds1500","cancer care plan","anticipated death"]
@@ -777,6 +1055,75 @@ values
 	('66S3.', 'pal'),
 	('66S4.', 'pal'),
 
+--pacemaker and defib
+--from codelist creator on 27/10/16 using April 2016 Read v2 dictionary. synonyms: ["pacemaker","pace maker","defib*"]
+('79360', 'pacemakerDefib'),
+('79361', 'pacemakerDefib'),
+('79362', 'pacemakerDefib'),
+('79363', 'pacemakerDefib'),
+('79364', 'pacemakerDefib'),
+('79365', 'pacemakerDefib'),
+('79366', 'pacemakerDefib'),
+('79367', 'pacemakerDefib'),
+('79368', 'pacemakerDefib'),
+('79369', 'pacemakerDefib'),
+('79370', 'pacemakerDefib'),
+('79371', 'pacemakerDefib'),
+('79372', 'pacemakerDefib'),
+('79373', 'pacemakerDefib'),
+('79375', 'pacemakerDefib'),
+('79377', 'pacemakerDefib'),
+('79378', 'pacemakerDefib'),
+('79379', 'pacemakerDefib'),
+('ZV533', 'pacemakerDefib'),
+('ZV450', 'pacemakerDefib'),
+('ZV45M', 'pacemakerDefib'),
+('TB010', 'pacemakerDefib'),
+('SP001', 'pacemakerDefib'),
+('G56y6', 'pacemakerDefib'),
+('9N2b.', 'pacemakerDefib'),
+('8HRF.', 'pacemakerDefib'),
+('88AA.', 'pacemakerDefib'),
+('7P19.', 'pacemakerDefib'),
+('7P190', 'pacemakerDefib'),
+('7P19y', 'pacemakerDefib'),
+('7P19z', 'pacemakerDefib'),
+('7P1D.', 'pacemakerDefib'),
+('2JS..', 'pacemakerDefib'),
+('14V1.', 'pacemakerDefib'),
+('7936.', 'pacemakerDefib'),
+('7936A', 'pacemakerDefib'),
+('7936B', 'pacemakerDefib'),
+('7936C', 'pacemakerDefib'),
+('7936D', 'pacemakerDefib'),
+('7936E', 'pacemakerDefib'),
+('7936F', 'pacemakerDefib'),
+('7936G', 'pacemakerDefib'),
+('7936H', 'pacemakerDefib'),
+('7936J', 'pacemakerDefib'),
+('7936K', 'pacemakerDefib'),
+('7936y', 'pacemakerDefib'),
+('7936z', 'pacemakerDefib'),
+('7937.', 'pacemakerDefib'),
+('793F.', 'pacemakerDefib'),
+('793P.', 'pacemakerDefib'),
+('7937y', 'pacemakerDefib'),
+('7937z', 'pacemakerDefib'),
+('793F0', 'pacemakerDefib'),
+('793F1', 'pacemakerDefib'),
+('793F2', 'pacemakerDefib'),
+('793F3', 'pacemakerDefib'),
+('793F4', 'pacemakerDefib'),
+('793F5', 'pacemakerDefib'),
+('793Fy', 'pacemakerDefib'),
+('793Fz', 'pacemakerDefib'),
+('793P0', 'pacemakerDefib'),
+('793P1', 'pacemakerDefib'),
+('793P2', 'pacemakerDefib'),
+('793P3', 'pacemakerDefib'),
+('793Py', 'pacemakerDefib'),
+('793Pz', 'pacemakerDefib'),
+
 --palliative care permanent exclusion codes
 --from codelist creator on 11/8/16 using April 2016 Read v2 dictionary
 	('9hB..', 'palPermEx'),
@@ -787,14 +1134,60 @@ values
 	('8IBE.', 'palPermEx'),
 	('8HgW.', 'palPermEx'),
 	('8HgX.', 'palPermEx'),
+	
+--phaeo
+--from codelist creator on 27/10/16 using Read v2 April 2016 dictionary "synonyms": ["Pheochromocytoma","phaeochromocytoma","pcc","pheo","phaeo"
+('BBD9.', 'phaeo'),
+('BBDA.', 'phaeo'),
+('B7H00', 'phaeo'),
+	
+--porphyria
+--from codelist creator on 26/10/16 using Read v2 April 2016 dictionary "synonyms": "porphyria"
+('F3748', 'porphyria'),
+('Cyu8H', 'porphyria'),
+('C3710', 'porphyria'),
+('C3712', 'porphyria'),
+('C3714', 'porphyria'),
+('C371z', 'porphyria'),
+('C3711', 'porphyria'),
+('C3713', 'porphyria'),
+('C3715', 'porphyria'),
+
+--postural hypotension
+--from codelist creator on 26/10/16 using Read v2 April 2016 dictionary ["postural","orthostatic","hypotension"]
+('G870.', 'posturalHypo'),
+('F1303', 'posturalHypo'),
+('2468.', 'posturalHypo'),
+
+
+--potassium
+--from manual search of one GP practice records
+('44h0.', 'potassium'),
+('44h8.', 'potassium'),
+('44I4.', 'potassium'),
+('44I4100', 'potassium'),
+
+--pulse rate
+--from manual search of one GP practice
+('242..', 'pulseRate'),
 
 --registration: patient registration at a practice
 --from codelist creator 13/7/16 (synonyms: "registration", "register", "new patient", "enroll", "new reg") 
-	('9hE..', 'registered'),
-	('9hE1.', 'registered'),
-	('9hE0.', 'registered'),
-	('8I3Y.', 'registered'),
-	('8BL0.', 'registered'),
+('9hE..', 'registered'),
+('9hE1.', 'registered'),
+('9hE0.', 'registered'),
+('8I3Y.', 'registered'),
+('8BL0.', 'registered'),
+
+--sick sinus
+--from codelist creator on 26/10/16 Read v2 April 2016 (synonyms: "block", "mobitz", "av block", "atrioventricular block", "wenckebach"
+('G57y3', 'sickSinus'),
+
+--sodium
+--from manual search of one GP practice records
+('44I5.', 'sodium'),
+('44h6.', 'sodium'),
+('44h1.', 'sodium'),
 
 --whitecoat hypertension
 --from manual search

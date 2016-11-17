@@ -11,17 +11,20 @@ IF %ERRORLEVEL% neq 0 (
 
 SET SMASH.DB=PatientSafety_Records
 
-REM ===========================
-REM == Add code groupings    ==
-REM ===========================
+REM ====================================
+REM == Add code groupings and text    ==
+REM ====================================
 sqlcmd -E -d %SMASH.DB% -i scripts/codeGroups.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/text.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/regularText.sql
 
 REM ===========================
 REM == Add stored procedures ==
 REM ===========================
-sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-CorrectCoding-v3.0-16-07-06.sql
-sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-Monitoring-v3.0-16-07-06.sql
-sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-Undiagnosed-v3.0-16-07-06.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-CorrectCoding.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-Monitoring.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-Undiagnosed.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-BP.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_Run_all.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_generate_trend_data.sql
 
