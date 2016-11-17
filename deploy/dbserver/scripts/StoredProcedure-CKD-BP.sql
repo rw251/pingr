@@ -511,6 +511,7 @@ set @val = (select round(avg(perc),2) from (
 select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when denominator = 1 then 1.0 else 0.0 end) as perc from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
+	having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0
 	order by perc desc) sub);
 
 					-----------------------------------------------------------------------------
@@ -2140,13 +2141,13 @@ select a.PatID,
 		(case 
 		--BP uncontrolled + medication change after
 			when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
-				'<li><strong>' + latestMedOptimisationIngredient + '</strong> was <strong>' + latestMedOptimisation + '</strong> on <strong>' + CONVERT(VARCHAR, latestMedOptimisationDate, 3) + '</strong>.</li>' + '. So it may be worth re-measuring BP in case it has now come down.</li>' +
+				'<li><strong>' + latestMedOptimisationIngredient + '</strong> was <strong>' + latestMedOptimisation + '</strong> on <strong>' + CONVERT(VARCHAR, latestMedOptimisationDate, 3) + '</strong>.</li>' + '. So it may be worth re-measuring BP in case it has now come down.</li>'
 			else ''
 		end) +
 		(case
 		--BP uncontrolled BUT near target
 			when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
-				'<li>This is only <strong>slightly (<10mmHg)</strong> over target. So it may be worth re-measuring their BP in case it has now come down.</li></ul>' +
+				'<li>This is only <strong>slightly (<10mmHg)</strong> over target. So it may be worth re-measuring their BP in case it has now come down.</li></ul>'
 			else ''
 		end) +
 		(case
@@ -2162,7 +2163,7 @@ select a.PatID,
 					'<li>Put a <strong>message on their prescription</strong> to make an appointment.</li>' +
 					'<li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
 					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li>'
-		end) +
+		end) 
 	as supportingText
 from #impOppsData as a
 	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient from #eligiblePopulationAllData) as b on b.PatID = a.PatID
@@ -2297,9 +2298,9 @@ values
 				select a.PatID from #eligiblePopulationAllData as a
 				left outer join (select PatID, noPrimCareContactInLastYear from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 				where denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0
-		)
-	)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+		) sub
+	) /
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --Uncontrolled + within 10mmHg of target
 ('uncontrolledClose', 
@@ -2313,9 +2314,9 @@ values
 					) 
 					and 
 					denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
-		)
+		) sub
 	)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --No optimisation after high reading (therapeutic inertia)
 ('rxInertia', 
@@ -2325,25 +2326,36 @@ values
 				left outer join (select PatID, latestMedOptimisationDate from #impOppsData) as b on b.PatID = a.PatID
 				where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
 				and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
-		)
+		) sub
 	)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --'measure' actions
 ('measureActions', 
-	(select COUNT(*) from (select distinct PatID from [output.pingr.patActions] where indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP'))/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+	(select COUNT(*) from (select distinct PatID from [output.pingr.patActions] where indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP') sub)/
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --uncontrolled
 ('uncontrolled', 
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0)
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0) sub
 	)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1))
+	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 )
 
 							---------------------------------------------------------------
 							----------------------ORG-LEVEL ACTIONS------------------------
 							---------------------------------------------------------------
+
+declare @noBpYesContactProportion float;
+set @noBpYesContactProportion = (select proportion from #reasonProportions where proportionId = 'noBpYesContact');
+declare @uncontrolledCloseProportion float;
+set @uncontrolledCloseProportion = (select proportion from #reasonProportions where proportionId = 'uncontrolledClose');
+declare @rxInertiaProportion float;
+set @rxInertiaProportion = (select proportion from #reasonProportions where proportionId = 'rxInertia');
+declare @measureActionsProportion float;
+set @measureActionsProportion = (select proportion from #reasonProportions where proportionId = 'measureActions');
+declare @uncontrolledProportion float;
+set @uncontrolledProportion = (select proportion from #reasonProportions where proportionId = 'uncontrolled');
 
 insert into [output.pingr.orgActions](indicatorId, proportion, actionText, supportingText)
 
@@ -2352,9 +2364,9 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Put BP machine in your waiting room' as actionText,
 	--No BP + contact with practice
-	(select proportion from #reasonProportions where proportionId = 'noBpYesContact') as proportion,
+	@noBpYesContactProportion as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'noBpYesContact') + 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> had contact with your practice in the last year.</li>' +
+		'<ul><li>' + STR(@noBpYesContactProportion) + 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> had contact with your practice in the last year.</li>' +
 		'<li>With a BP machine in your waiting room, patients can take their own BP whilst they wait and give their readings to your receptionists.' +
 	'Useful information' + 
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li></ul>' as supportingText
@@ -2366,9 +2378,9 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Work with your local pharmacy to enable them to take blood pressure readings' as actionText,
 	--No BP + medication contact
-	(select proportion from #reasonProportions where proportionId = 'noBpYesContact') as proportion,
+	@noBpYesContactProportion as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'noBpYesContact') 
+		'<ul><li>' + STR(@noBpYesContactProportion) 
 		+ 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> have had medication issued in the last year.</li>' +
 		'<li>Pharmacies can take their blood pressure when they issue their medication and send the readings to you.' +
 	'Useful information' + 
@@ -2380,9 +2392,9 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Introduce an ambulatory BP monitoring service' as actionText,
 	--Uncontrolled + within 10mmHg of target
-	(select proportion from #reasonProportions where proportionId = 'uncontrolledClose') as proportion,
+	(@uncontrolledCloseProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'uncontrolledClose')
+		'<ul><li>' + STR(@uncontrolledCloseProportion)
 		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within < 10 mmHg of their BP target.</li>' +
 		'<li>Often high blood pressure readings taken in surgery are normal at home.</li>' +
 		'<li>This would also follow NICE guidance for hypertension diagnosis.' +
@@ -2400,13 +2412,13 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Encourage patients with CKD to see the nurse or AHP to measure their blood pressure' as actionText,
 	--Uncontrolled + within 10mmHg of target
-	(select proportion from #reasonProportions where proportionId = 'uncontrolledClose') as proportion,
+	(@uncontrolledCloseProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'uncontrolledClose')
+		'<ul><li>' + STR(@uncontrolledCloseProportion)
 		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within < 10 mmHg of their BP target.</li>' +
 		'<li>BP is generally lower when measured with other health professionals other than doctors.</li>' +
 	'Useful information' + 
-		'<ul><li>'  + linkBjgpBpDoctorsHigher + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'linkBjgpBpDoctorsHigher') + '</li>' +
 		'</ul>' 
 		as supportingText
 
@@ -2417,13 +2429,13 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Hold an educational session for your practice staff on NICE hypertension guidelines' as actionText,
 	--No optimisation after high reading (therapeutic inertia)
-	(select proportion from #reasonProportions where proportionId = 'rxInertia') as proportion,
+	(@rxInertiaProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'rxInertia')
+		'<ul><li>' + STR(@rxInertiaProportion)
 		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
 		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
 	'Useful information' + 
-		'<ul><li>'  + niceBpPresentation + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'niceBpPresentation') + '</li>' +
 		'</ul>' 
 		as supportingText
 
@@ -2434,14 +2446,14 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Print a copy of NICE hypertension targets and medication pathway for each room in your practice' as actionText,
 	--No optimisation after high reading (therapeutic inertia)
-	(select proportion from #reasonProportions where proportionId = 'rxInertia') as proportion,
+	(@rxInertiaProportion) as proportion,
 	'Reasoning' +
 		'<ul><li>' + 
-				STR(select proportion from #reasonProportions where proportionId = 'rxInertia')
+				STR(@rxInertiaProportion)
 		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
 		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
 	'Useful information' + 
-		'<ul><li>'  + niceBpPathway + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'niceBpPathway') + '</li>' +
 		'</ul>' 
 		as supportingText
 
@@ -2452,19 +2464,19 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Encourage patients with CKD to measure their blood pressure at home' as actionText,
 	--'measure' actions
-	(select proportion from #reasonProportions where proportionId = 'measureActions') as proportion,
+	(@measureActionsProportion) as proportion,
 	'Reasoning' +
 		'<ul><li>' + 
-			STR(select proportion from #reasonProportions where proportionId = 'measureActions')
+			STR(@measureActionsProportion)
 		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
 		'<li>This could be achieved by asking patients to measure their own BP.</li>' +
 	'Useful information' + 
-		'<ul><li>'  + linkBhsHbpmProtocol + '</li>' +
-		'<ul><li>'  + linkBhsHbpmHowToPatients + '</li>' +
-		'<ul><li>'  + linkBhsHbpmPil + '</li>' +
-		'<ul><li>'  + linkBhsHbpmDiary + '</li>' +
-		'<ul><li>'  + linkBhsHbpmGuide + '</li>' +
-		'<ul><li>'  + linkBhsHbpmCaseStudies + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmProtocol') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmHowToPatients') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmPil') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmDiary') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmGuide') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmCaseStudies') + '</li>' +
 		'</ul>' 
 		as supportingText
 
@@ -2475,10 +2487,10 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Take blood pressure readings during upcoming vaccination programmes e.g. flu, shingles, whooping cough.' as actionText,
 	--'measure' actions
-	(select proportion from #reasonProportions where proportionId = 'measureActions') as proportion,
+	(@measureActionsProportion) as proportion,
 	'Reasoning' +
 		'<ul><li>' + 
-			STR(select proportion from #reasonProportions where proportionId = 'measureActions')
+			STR(@measureActionsProportion)
 		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
 		'</ul>' 
 		as supportingText
@@ -2490,16 +2502,16 @@ select
 	'ckd.treatment.bp' as indicatorId,
 	'Reinforce lifestyle advice to patients with CKD at every appointment' as actionText,
 	--uncontrolled
-	(select proportion from #reasonProportions where proportionId = 'uncontrolled') as proportion,
+	(@uncontrolledProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(select proportion from #reasonProportions where proportionId = 'uncontrolled') 
+		'<ul><li>' + STR(@uncontrolledProportion) 
 		+ 'of CKD patients not meeting the CKD BP indicator have uncontrolled blood pressure.</li>' +
 		'<li>Advice on diet, exercise, alcohol reduction, weight loss, smoking cessation and exercise can help reduce blood pressure.</li>' +
 	'Useful information' + 
-		'<ul><li>'  + DashDietSheet + '</li>' +
-		'<ul><li>'  + HtnDietExSheet + '</li>' +
-		'<ul><li>'  + BpUkDietSheet + '</li>' +
-		'<ul><li>'  + BpExSheet + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'DashDietSheet') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'HtnDietExSheet') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'BpUkDietSheet') + '</li>' +
+		'<ul><li>'  + (select text from regularText where textId = 'BpExSheet') + '</li>' +
 		'</ul>' 
 		as supportingText
 

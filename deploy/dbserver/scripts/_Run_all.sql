@@ -204,8 +204,8 @@ select PatID, EntryDate as date,
 	end as importantCode from SIR_ALL_Records
 where ReadCode in (select code from codeGroups where [group] in 
 	('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
-	'phaeo', 'asthmaPermEx', 'asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs', 'pacemakerDefib'
-	'sickSinus', '2/3heartBlock', 'porphyria', 'MInow', 'ASrepair', 'AS', 'gout', 'addisons', 'loopDiurAllergyAdverseReaction'
+	'phaeo', 'asthmaPermEx', 'asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs', 'pacemakerDefib',
+	'sickSinus', '2/3heartBlock', 'porphyria', 'MInow', 'ASrepair', 'AS', 'gout', 'addisons', 'loopDiurAllergyAdverseReaction',
 	'alphaAllergyAdverseReaction', 'PotSparDiurAllergyAdverseReaction', 'BBallergyAdverseReaction', 'CCBallergyAdverseReaction',
 	'ARBallergyAdverseReaction', 'ACEIallergyAdverseReaction', 'thiazideAllergyAdverseReaction', 'whiteCoat'))
 and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])

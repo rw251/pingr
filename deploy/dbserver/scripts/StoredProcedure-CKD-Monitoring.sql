@@ -297,6 +297,7 @@ set @val = (select round(avg(perc),2) from (
 select top 5 sum(case when underMonitored is NULL and overMonitored is NULL then 1.0 else 0.0 end) / cast(count(*) as float) as perc from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
+	having count(*) > 0
 	order by perc desc) sub);
 	
 --------------------------------------------------------------------------------
@@ -710,7 +711,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','suggestExclude' as actionCat,
 							---------------------------------------------------------------
 							----------------------TEXT FILE OUTPUTS------------------------
 							---------------------------------------------------------------
-insert into [pingr.orgActions](indicatorId, proportion, actionText, supportingText)
+insert into [pingr.text](indicatorId, textId, text)
 values
 ('ckd.diagnosis.monitoring','name','Correct CKD monitoring'),
 ('ckd.diagnosis.monitoring','tabText','CKD monitor'),

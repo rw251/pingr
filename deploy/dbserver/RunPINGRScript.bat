@@ -3,6 +3,7 @@ REM move to batch directory
 cd /d %~dp0
 
 SET DB=PatientSafety_Records
+SET DB.TEST=PatientSafety_Records_Test
 SET REPORT.DIRECTORY=D:\pingr\deploy\dbserver\out
 SET RECEIVING.DIRECTORY=\\SRHTNWEHPSTRC1\ImporterPINGR
 
@@ -11,8 +12,9 @@ REM Here we do all the medication stuff
 REM
 REM Execute the query stored procedure
 sqlcmd -E -d %DB% -i scripts/GenerateMedicationTables.sql
+sqlcmd -E -d %DB.TEST% -i scripts/GenerateMedicationTables.sql
 
-bcp [%DB%].[dbo].[drugsOfInterest] in 'research-events-medication-htn/codes/code-list-drugs.csv' -c -T
+bcp [%DB%].[dbo].[drugsOfInterest] in research-events-medication-htn\codes\code-list-drugs.csv -c -T -t ,
 
 REM extract medication data
 bcp "select distinct PatID, EntryDate, CodeValue, ReadCode, CodeUnits from [%DB%].[dbo].SIR_ALL_Records_No_Rubric s INNER JOIN [%DB%].[dbo].[drugsOfInterest] d on d.Code = s.ReadCode WHERE PatID < 50000 AND EntryDate > '2005-01-01' order by PatID, EntryDate" queryout research-events-medication-htn/resources/test-0-49999.dat -c -T -b 10000
@@ -24,11 +26,11 @@ bcp "select distinct PatID, EntryDate, CodeValue, ReadCode, CodeUnits from [%DB%
 cd research-events-medication-htn
 
 REM Process the files
-npm start -- -x resources\test-0-49999.dat
-npm start -- -x resources\test-50000-99999.dat
-npm start -- -x resources\test-100000-149999.dat
-npm start -- -x resources\test-150000-199999.dat
-npm start -- -x resources\test-200000-.dat
+call npm start -- -x resources\test-0-49999.dat
+call npm start -- -x resources\test-50000-99999.dat
+call npm start -- -x resources\test-100000-149999.dat
+call npm start -- -x resources\test-150000-199999.dat
+call npm start -- -x resources\test-200000-.dat
 
 REM Sort the files
 sort < resources\test-0-49999.dat.done > resources\test-0-49999.dat.done.sorted
@@ -51,10 +53,17 @@ bcp [%DB%].dbo.[drugEvents.temp] in resources\test-100000-149999.dat.done.sorted
 bcp [%DB%].dbo.[drugEvents.temp] in resources\test-150000-199999.dat.done.sorted.processed -T -c -e error.txt -b 10000
 bcp [%DB%].dbo.[drugEvents.temp] in resources\test-200000-.dat.done.sorted.processed -T -c -e error.txt -b 10000
 
+bcp [%DB.TEST%].dbo.[drugEvents.temp] in resources\test-0-49999.dat.done.sorted.processed -T -c -e error.txt -b 10000
+bcp [%DB.TEST%].dbo.[drugEvents.temp] in resources\test-50000-99999.dat.done.sorted.processed -T -c -e error.txt -b 10000
+bcp [%DB.TEST%].dbo.[drugEvents.temp] in resources\test-100000-149999.dat.done.sorted.processed -T -c -e error.txt -b 10000
+bcp [%DB.TEST%].dbo.[drugEvents.temp] in resources\test-150000-199999.dat.done.sorted.processed -T -c -e error.txt -b 10000
+bcp [%DB.TEST%].dbo.[drugEvents.temp] in resources\test-200000-.dat.done.sorted.processed -T -c -e error.txt -b 10000
+
 cd ..
 
 REM Populate the medication tables
 sqlcmd -E -d %DB% -i scripts/PopulateMedicationTables.sql
+sqlcmd -E -d %DB.TEST% -i scripts/PopulateMedicationTables.sql
 
 
 REM get todays date in correct format
@@ -103,13 +112,14 @@ bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impCodes]" queryout %REPORT.DIRECT
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.patActions]" queryout %REPORT.DIRECTORY%/patActions.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.indicator]" queryout %REPORT.DIRECTORY%/indicator.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.measures]" queryout %REPORT.DIRECTORY%/measures.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[MEDICATION_EVENTS]" queryout %REPORT.DIRECTORY%/medications.dat -c -T -b 10000000
 bcp "SELECT left(indicatorId,CHARINDEX('.', indicatorId)-1),SUBSTRING(indicatorId,CHARINDEX('.', indicatorId)+1,CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)-1-CHARINDEX('.', indicatorId)),right(indicatorId,len(indicatorId)-CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)),textId, text FROM [%DB%].[dbo].[pingr.text]" queryout %REPORT.DIRECTORY%/text.dat -c -T -b 10000000
 
 REM get number of files in directory
 for /f %%A in ('dir /b %REPORT.DIRECTORY%\^| find /v /c ""') do set cnt=%%A
 echo File count = %cnt%
 
-SET EXPECTED.FILE.NUMBER=8
+SET EXPECTED.FILE.NUMBER=9
 
 IF NOT "%cnt%"=="%EXPECTED.FILE.NUMBER%" (
 	GOTO :extractfailed
