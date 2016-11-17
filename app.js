@@ -311,7 +311,20 @@ var base = {
 
     client.on('ready', function() {
       client.on('aftercopy', function(event) {
-        console.log('Copied text to clipboard: ' + event.data['text/plain']);
+        var dataText = event.data['text/plain'];
+        var ispatid = dataText.match(/[0-9]{10}/);
+        if(ispatid && ispatid.length>0) {
+          var poss = Object.keys(data.patLookup).filter(function(v){
+            return data.patLookup[v] === ispatid[0];
+          });
+          if(poss & poss.length>0){
+            dataText = poss[0];
+          } else {
+            dataText = "XXX XXX XXXX";
+          }
+        }
+        log.event("copy-button", window.location.hash, [{key:"data",value:dataText}]);
+        console.log('Copied text to clipboard: ' + dataText);
         $(event.target).tooltip('hide');
         $(event.target).popover({
           trigger: 'manual',
@@ -878,7 +891,6 @@ var cht = {
       });
     }, 1);
   },
-
   drawBenchmarkChart: function(element, data) {
     cht.destroyCharts([element + '-chart']);
     setTimeout(function() {
@@ -950,119 +962,157 @@ var cht = {
     }, 1);
   },
 
-  drawBenchmarkChartHC: function(element, data) {
+  //drawBenchmarkChartHC: function(element, data) {
 
-    data = [
-      { x: 49.9, p: 'P1', local: true },
-      { x: 71.5, p: 'P2', local: true },
-      { x: 16.4, p: 'P3', local: true },
-      { x: 29.2, p: 'P4', local: true },
-      { x: 44.0, p: 'P5', local: true },
-      { x: 76.0, p: 'P6', local: true },
-      { x: 35.6, p: 'YOU', local: true },
-      { x: 48.5, p: 'P7', local: true },
-      { x: 26.4, p: 'P8', local: true },
-      { x: 94.1, p: 'P9', local: true },
-      { x: 95.6, p: 'P10' },
-      { x: 54.0, p: 'P11' },
-      { x: 39.9, p: 'P12' },
-      { x: 61.5, p: 'P13' },
-      { x: 6.4, p: 'P14' },
-      { x: 19.2, p: 'P15' },
-      { x: 34.0, p: 'P16' },
-      { x: 66.0, p: 'P17' },
-      { x: 25.6, p: 'P18' },
-      { x: 38.5, p: 'P19' },
-      { x: 36.4, p: 'P20' },
-      { x: 84.1, p: 'P21' },
-      { x: 85.6, p: 'P22' },
-      { x: 64.0, p: 'P23' }
-    ];
-    data.sort(function(a, b) {
-      return a.x - b.x;
-    });
+  //  data = [
+  //    { x: 49.9, p: 'P1', local: true },
+  //    { x: 71.5, p: 'P2', local: true },
+  //    { x: 16.4, p: 'P3', local: true },
+  //    { x: 29.2, p: 'P4', local: true },
+  //    { x: 44.0, p: 'P5', local: true },
+  //    { x: 76.0, p: 'P6', local: true },
+  //    { x: 35.6, p: 'YOU', local: true },
+  //    { x: 48.5, p: 'P7', local: true },
+  //    { x: 26.4, p: 'P8', local: true },
+  //    { x: 94.1, p: 'P9', local: true },
+  //    { x: 95.6, p: 'P10' },
+  //    { x: 54.0, p: 'P11' },
+  //    { x: 39.9, p: 'P12' },
+  //    { x: 61.5, p: 'P13' },
+  //    { x: 6.4, p: 'P14' },
+  //    { x: 19.2, p: 'P15' },
+  //    { x: 34.0, p: 'P16' },
+  //    { x: 66.0, p: 'P17' },
+  //    { x: 25.6, p: 'P18' },
+  //    { x: 38.5, p: 'P19' },
+  //    { x: 36.4, p: 'P20' },
+  //    { x: 84.1, p: 'P21' },
+  //    { x: 85.6, p: 'P22' },
+  //    { x: 64.0, p: 'P23' }
+  //  ];
+  //  data.sort(function(a, b) {
+  //    return a.x - b.x;
+  //  });
 
-    var local = true;
-    var bChart = $('#' + element).highcharts({
-        chart: {
-          type: 'column',
-          events: {
-            load: function() {
-              var thisChart = this;
-              thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
-                local = !local;
-                thisChart.xAxis[0].categories = data.filter(function(v) {
-                  if (local) return v.local;
-                  else return true;
-                }).map(function(v) {
-                  return v.p;
-                });
-                thisChart.series[0].setData(data.filter(function(v) {
-                  if (local) return v.local;
-                  else return true;
-                }).map(function(v) {
-                  if (v.p === "YOU") return { y: v.x, color: "red" };
-                  else return v.x;
-                }));
-              }).add();
-            }
+    drawBenchmarkChartHC: function(element, pathwayId, pathwayStage, standard) {
+      //pull all data from data.js
+      var _data;
+
+      //fully async load
+      //pull out the necessary data and structure for display
+      data.getPracticePerformanceData(pathwayId, pathwayStage, standard, function(dataObj){
+          _data = dataObj;
+          //sort these into smallest to largest (last = largest always)
+          _data.sort(function(a, b) {
+            return a.x - b.x;
+          });
+
+          //find max in order to set the ceiling of the chart
+          var maxHeight = Math.round(_data[_data.length-1].x);
+          var maxAdd = Math.round(maxHeight * 0.1);
+          maxHeight += maxAdd;
+          if(maxHeight > 100)
+          {
+              maxHeight = 100;
           }
-        },
-        title: { text: 'Benchmark' },
-        xAxis: {
-          categories: data.filter(function(v) {
-            return v.local === local;
-          }).map(function(v) {
-            return v.p;
-          }),
-          crosshair: true
-        },
-        yAxis: {
-          min: 0,
-          max: 100,
-          title: { text: '% patients meeting target' }
-        },
-        tooltip: {
-          headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
-          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
-          footerFormat: '</table>',
-          shared: true,
-          useHTML: true
-        },
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0
-          }
-        },
-        legend: {
-          enabled: false
-        },
-        series: [{
-          name: 'Performance',
-          data: data.filter(function(v) {
-            return v.local === local;
-          }).map(function(v) {
-            if (v.p === "YOU") return { y: v.x, color: "red" };
-            else return v.x;
-          })
-      }]
+
+          //find min in order to set the floor of the chart - to be implemented if desired
+          var minHeight = 0;
+          var local = true;
+          var bChart = $('#' + element).highcharts({
+            chart: {
+              type: 'column',
+              events: {
+                load: function() {
+                  var thisChart = this;
+                  thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+                    local = !local;
+                    thisChart.xAxis[0].categories = _data.filter(function(v) {
+                      if (local) return v.local;
+                      else return true;
+                    }).map(function(v) {
+                      return v.p;
+                    });
+                    thisChart.series[0].setData(_data.filter(function(v) {
+                      if (local) return v.local;
+                      else return true;
+                    }).map(function(v) {
+                      //this is for the (?local/global) chart...
+                      if (v.p === "You") return { y: v.x, color: "#0EDE61" };
+                      else return v.x;
+                    }));
+                  }).add();
+                }
+              }
+            },
+            title: { text: 'Benchmark' },
+            xAxis: {
+              categories: _data.filter(function(v) {
+                return v.local === local;
+              }).map(function(v) {
+                return v.p;
+              }),
+              crosshair: true
+            },
+            yAxis: {
+              //make the following dynamic
+              min: minHeight,
+              max: maxHeight,
+              title: { text: '% patients meeting target' }
+            },
+            tooltip: {
+              headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+            },
+            plotOptions: {
+              column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+              }
+            },
+            legend: {
+              enabled: false
+            },
+            series: [{
+              name: 'Performance',
+              data: _data.filter(function(v) {
+                return v.local === local;
+              }).map(function(v) {
+                if(v.p === "You")
+                {
+                  //you colour - apple
+                  return { y: v.x, color: "#0EDE61" };
+                }
+                else
+                {
+                  //standrd colour - blue
+                  return { y: v.x, color: "#5187E8" };;
+                }
+              })
+          }]
       },
       function(chart) { // on complete
+        //force chart size based on container parameters
+        chart.setSize($('.highcharts-container').width(), $('#benchmark-chart').height());
+        //set text labels to mid of axies
         var textX = chart.plotLeft + (chart.plotWidth * 0.5);
         var textY = chart.plotTop + (chart.plotHeight * 0.5);
 
-        var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
+        //LEGACY this applied the 'coming soon' text
+        /*var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
         span += '<span style="font-size: 64px">Coming Soon!</span>';
-        span += '</span>';
+        span += '</span>';*/
 
-        $("#benchmark-chart").append(span);
+        /*$("#benchmark-chart").append(span);
         span = $('#pieChartInfoText');
         span.css('left', textX + (span.width() * -0.5));
-        span.css('top', textY + (span.height() * -0.5));
+        span.css('top', textY + (span.height() * -0.5));*/
       });
-
+    });
   },
 
   drawPerformanceTrendChartHC: function(element, data) {
@@ -1484,24 +1534,28 @@ var dt = {
   get: function(callback, json) {
     //get text
     //$.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
-    $.getJSON("/api/Text", function(textfile) {
-      dt.text = textfile;
+    $.getJSON("/api/userDetails", function(userDetails){
+        dt.userDetails = userDetails;
 
-      if (json) {
-        dt.newload(json);
-        if (typeof callback === 'function') callback();
-      } else {
-      /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
-          dt.newload(file);
+      $.getJSON("/api/Text", function(textfile) {
+        dt.text = textfile;
+
+        if (json) {
+          dt.newload(json);
           if (typeof callback === 'function') callback();
-        }).fail(function(err) {
-          alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
-        });*/
-        if (typeof callback === 'function') callback();
-      }
+        } else {
+        /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
+            dt.newload(file);
+            if (typeof callback === 'function') callback();
+          }).fail(function(err) {
+            alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+          });*/
+          if (typeof callback === 'function') callback();
+        }
 
-    }).fail(function(err) {
-      alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+      }).fail(function(err) {
+        alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+      });
     });
   },
 
@@ -1770,30 +1824,135 @@ var dt = {
 
     return indicators;
   },
-
-  getAllIndicatorData: function(practiceId, callback) {
-    if (dt.indicators) {
-      return callback(dt.indicators);
+  //get a raw list of all practices
+  getPractices: function(callback) {
+    if (dt.practices) {
+      return callback(dt.practices);
     } else {
 
       $.ajax({
-        url: "/api/ListOfIndicatorsForPractice",
+        url: "/api/ListOfPractices",
         success: function(file) {
-          if (!dt.indicators) dt.indicators = dt.processIndicators(file);
+          if (!dt.practices)
+          {
+            dt.practices = file;
+          }
 
-          return callback(dt.indicators);
+          return callback(dt.practices);
         },
         error: function() {
-
+            //throw some ungracious issue eventually...
         }
       });
     }
   },
+  //prepare an annoymised ranking demonstrating my postition in amongst other practices
+  getPracticePerformanceData: function(pathwayId, pathwayStage, standard, callback) {
 
+    var practiceObj;
+
+    //get all practice data
+    dt.getPractices(function(_data){
+      //got the practice data!
+      practiceObj = _data;
+      var userPractice = dt.userDetails.practiceId;
+      //generate the pathwayName
+      var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+
+      var rawData = [];
+      var productObj = [];
+      //dynamically identify all calls necessary and create deferred objects
+      var asyncPracticeCalls = [];
+      //generate and push a call for each practice found
+      for(var i = 0; i < practiceObj.length; ++i)
+      {
+        asyncPracticeCalls.push($.ajax({
+              url: "/api/ListOfIndicatorsForPractice/" + practiceObj[i]._id,
+              success: function(file, i) {
+                dt.indicators = dt.processIndicators(file);
+                return dt.indicators;
+              }
+            }));
+      }
+
+      //once all async calls are complete move on to done
+      $.when.apply($, asyncPracticeCalls).done(function() {
+          rawData = arguments;
+          sculptData(rawData);
+          });
+
+      //form raw data into an final product and return
+      function sculptData(rawData){
+        var returnObjs = rawData;
+        for(var i = 0; i < rawData.length; ++i)
+        {
+            //find the object that corresponds to indicatorId
+            var tempData = jQuery.grep(rawData[i][0], function (n, i){
+              return ( n.id == indicatorId);
+            });
+
+            //last is the index of most recent observation from array
+            var last = tempData[0].values[0].length - 1;
+            //identify the practice as either the user or not
+            var _name = "";
+            if(userPractice == tempData[0].practiceId)
+            {
+              _name = "You";
+            }
+            else {
+              _name = "P" + i;
+            }
+            //generate the refined product value
+            var valueOfX = (tempData[0].values[1][last]/tempData[0].values[2][last])*100;
+            //x = value, p = practiceId, local = is this practice local to user practice
+            productObj[i] = {"x": valueOfX, "p": _name,  local: true };
+        }
+        //use the callback to handle the return
+        return callback(productObj);
+      };
+    });
+  },
+  getAllIndicatorData: function(practiceId, callback) {
+    //var addId = '/'+practiceId;
+    var routeURL;
+    if(practiceId)
+    {
+      routeURL = "/api/ListOfIndicatorsForPractice/" + practiceId;
+
+    }
+    else {
+      routeURL = "/api/ListOfIndicatorsForPractice";
+    }
+
+    //we never want to cache this anymore.
+    //  if (dt.indicators) {
+    //  return callback(dt.indicators);
+    //} else {
+
+        $.ajax({
+          url: routeURL,
+          success: function(file) {
+            //if (!dt.indicators) dt.indicators = dt.processIndicators(file);
+
+            //don't retian the object, refresh of object
+            dt.indicators = dt.processIndicators(file);
+
+            return callback(dt.indicators);
+          },
+          error: function() {
+
+          }
+        });
+      //}
+
+    },
+
+  // *b* practice id not used?
   getAllIndicatorDataSync: function(practiceId) {
     if (dt.indicators) {
       return dt.indicators;
     } else {
+      //use practiceId to populate? TODO implement?
       return null;
     }
   },
@@ -1821,6 +1980,7 @@ var dt = {
     if (!isAsync) return dt.indicators[indicatorId];
   },
 
+  // *b* practice id not used??
   getTrendData: function(practiceId, pathwayId, pathwayStage, standard) {
     if (dt.indicators) {
       return dt.indicators.filter(function(v) {
@@ -1831,6 +1991,7 @@ var dt = {
   },
 
   getIndicatorDataSync: function(practiceId, indicatorId) {
+    //practiceId not used in getAllIndicatorDataSync
     dt.getAllIndicatorDataSync(practiceId);
     var indicator = dt.indicators.filter(function(v){
       return v.id === indicatorId;
@@ -2083,7 +2244,7 @@ var logInfo = function(event, type, href) {
       dataType: "json",
       contentType: "application/json"
     });
-  }, 500);
+  }, 1);
 };
 
 var delay = 500,
@@ -2405,6 +2566,11 @@ var log = {
       name: "actions",
       value: {}
     }]);
+    var dataToSend = [
+      { key: "patient", "value": id },
+      { key: "action", "value": actionId }
+    ];
+    log.event(obj.actions[id][actionId].agree ? "undo-agree" : "undo-disagree", window.location.hash, dataToSend);
     obj.actions[id][actionId].agree = null;
     delete obj.actions[id][actionId].reason;
     log.setObj(obj);
@@ -2719,7 +2885,7 @@ var main = {
   onSelected: function($e, nhsNumberObject) {
     //Hide the suggestions panel
     $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
-
+    log.event("patient-search", window.location.hash, [{key:"patid",value:nhsNumberObject.id}]);
     history.pushState(null, null, '#patients/' + nhsNumberObject.id);
     template.loadContent('#patients/' + nhsNumberObject.id, true);
 
@@ -2733,7 +2899,7 @@ var main = {
     }
 
     data.populateNhsLookup(function(){
-      
+
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -3065,10 +3231,16 @@ var iTrend = {
 
     var elem = $("<div id='benchmark-chart' class='fit-to-scrolling-section-height'></div>");
 
-    if (isAppend) panel.append(elem);
-    else panel.html(elem);
+    if (isAppend)
+    {
+      panel.append(elem);
+    }
+    else
+    {
+      panel.html(elem);
+    }
 
-    chart.drawBenchmarkChartHC("benchmark-chart", null);
+    chart.drawBenchmarkChartHC("benchmark-chart", pathwayId, pathwayStage, standard);
 
   },
 
@@ -3094,7 +3266,9 @@ var bd = {
 
   show: function(panel, isAppend, pathwayId, pathwayStage, standard, selectSeriesFn) {
 
-    var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
+    //var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
+    var indicators = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
+
 
     var dataObj = indicators.opportunities.map(function(opp) {
       return [opp.name, opp.description, opp.patients.length];
@@ -3131,7 +3305,8 @@ var hl = {
 
   show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
 
-    var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
+    //var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
+    var indicators = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
 
     var tmpl = require('templates/indicator-headline');
     var html = tmpl(indicators);
@@ -3159,7 +3334,8 @@ var base = require('../base.js'),
 var indicatorList = {
 
   show: function(panel, isAppend, loadContentFn) {
-    data.getAllIndicatorData("P87024", function(indicators) {
+    //data.getAllIndicatorData("P87024", function(indicators) {
+    data.getAllIndicatorData(null, function(indicators) {
       indicators.sort(function(a,b){
         return a.performance.percentage - b.performance.percentage;
       });
@@ -3496,6 +3672,12 @@ var iap = {
       e.preventDefault();
       e.stopPropagation();
       return false;
+    });
+
+    $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
+    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e){
+      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
+      e.stopPropagation();
     });
 
     iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard);
@@ -4515,7 +4697,8 @@ var pl = {
 
     var i, k, prop, header, pList = [];
 
-    data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
+    //data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
+    data.getPatientList(data.userDetails.practiceId, pathwayId, pathwayStage, standard, subsection, function(list) {
 
       if (sortField === undefined) sortField = 2;
       if (sortField !== undefined) {
@@ -4610,7 +4793,8 @@ module.exports = pl;
 require.register("panels/patientSearch.js", function(exports, require, module) {
 var base = require('../base.js'),
   data = require('../data.js'),
-  lookup = require('../lookup.js');
+  lookup = require('../lookup.js'),
+  log = require('../log.js');
 var states, loadContFn, ID = "PATIENT_SEARCH";
 
 var ps = {
@@ -4670,7 +4854,7 @@ var ps = {
   onSelected: function($e, nhsNumberObject) {
     //Hide the suggestions panel
     $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
-
+    log.event("patient-search", window.location.hash, [{key:"patid",value:nhsNumberObject.id}]);
     history.pushState(null, null, '#patients/' + nhsNumberObject.id);
     loadContFn('#patients/' + nhsNumberObject.id, true);
 
