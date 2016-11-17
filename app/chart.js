@@ -241,7 +241,6 @@ var cht = {
       });
     }, 1);
   },
-
   drawBenchmarkChart: function(element, data) {
     cht.destroyCharts([element + '-chart']);
     setTimeout(function() {
@@ -313,119 +312,157 @@ var cht = {
     }, 1);
   },
 
-  drawBenchmarkChartHC: function(element, data) {
+  //drawBenchmarkChartHC: function(element, data) {
 
-    data = [
-      { x: 49.9, p: 'P1', local: true },
-      { x: 71.5, p: 'P2', local: true },
-      { x: 16.4, p: 'P3', local: true },
-      { x: 29.2, p: 'P4', local: true },
-      { x: 44.0, p: 'P5', local: true },
-      { x: 76.0, p: 'P6', local: true },
-      { x: 35.6, p: 'YOU', local: true },
-      { x: 48.5, p: 'P7', local: true },
-      { x: 26.4, p: 'P8', local: true },
-      { x: 94.1, p: 'P9', local: true },
-      { x: 95.6, p: 'P10' },
-      { x: 54.0, p: 'P11' },
-      { x: 39.9, p: 'P12' },
-      { x: 61.5, p: 'P13' },
-      { x: 6.4, p: 'P14' },
-      { x: 19.2, p: 'P15' },
-      { x: 34.0, p: 'P16' },
-      { x: 66.0, p: 'P17' },
-      { x: 25.6, p: 'P18' },
-      { x: 38.5, p: 'P19' },
-      { x: 36.4, p: 'P20' },
-      { x: 84.1, p: 'P21' },
-      { x: 85.6, p: 'P22' },
-      { x: 64.0, p: 'P23' }
-    ];
-    data.sort(function(a, b) {
-      return a.x - b.x;
-    });
+  //  data = [
+  //    { x: 49.9, p: 'P1', local: true },
+  //    { x: 71.5, p: 'P2', local: true },
+  //    { x: 16.4, p: 'P3', local: true },
+  //    { x: 29.2, p: 'P4', local: true },
+  //    { x: 44.0, p: 'P5', local: true },
+  //    { x: 76.0, p: 'P6', local: true },
+  //    { x: 35.6, p: 'YOU', local: true },
+  //    { x: 48.5, p: 'P7', local: true },
+  //    { x: 26.4, p: 'P8', local: true },
+  //    { x: 94.1, p: 'P9', local: true },
+  //    { x: 95.6, p: 'P10' },
+  //    { x: 54.0, p: 'P11' },
+  //    { x: 39.9, p: 'P12' },
+  //    { x: 61.5, p: 'P13' },
+  //    { x: 6.4, p: 'P14' },
+  //    { x: 19.2, p: 'P15' },
+  //    { x: 34.0, p: 'P16' },
+  //    { x: 66.0, p: 'P17' },
+  //    { x: 25.6, p: 'P18' },
+  //    { x: 38.5, p: 'P19' },
+  //    { x: 36.4, p: 'P20' },
+  //    { x: 84.1, p: 'P21' },
+  //    { x: 85.6, p: 'P22' },
+  //    { x: 64.0, p: 'P23' }
+  //  ];
+  //  data.sort(function(a, b) {
+  //    return a.x - b.x;
+  //  });
 
-    var local = true;
-    var bChart = $('#' + element).highcharts({
-        chart: {
-          type: 'column',
-          events: {
-            load: function() {
-              var thisChart = this;
-              thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
-                local = !local;
-                thisChart.xAxis[0].categories = data.filter(function(v) {
-                  if (local) return v.local;
-                  else return true;
-                }).map(function(v) {
-                  return v.p;
-                });
-                thisChart.series[0].setData(data.filter(function(v) {
-                  if (local) return v.local;
-                  else return true;
-                }).map(function(v) {
-                  if (v.p === "YOU") return { y: v.x, color: "red" };
-                  else return v.x;
-                }));
-              }).add();
-            }
+    drawBenchmarkChartHC: function(element, pathwayId, pathwayStage, standard) {
+      //pull all data from data.js
+      var _data;
+
+      //fully async load
+      //pull out the necessary data and structure for display
+      data.getPracticePerformanceData(pathwayId, pathwayStage, standard, function(dataObj){
+          _data = dataObj;
+          //sort these into smallest to largest (last = largest always)
+          _data.sort(function(a, b) {
+            return a.x - b.x;
+          });
+
+          //find max in order to set the ceiling of the chart
+          var maxHeight = Math.round(_data[_data.length-1].x);
+          var maxAdd = Math.round(maxHeight * 0.1);
+          maxHeight += maxAdd;
+          if(maxHeight > 100)
+          {
+              maxHeight = 100;
           }
-        },
-        title: { text: 'Benchmark' },
-        xAxis: {
-          categories: data.filter(function(v) {
-            return v.local === local;
-          }).map(function(v) {
-            return v.p;
-          }),
-          crosshair: true
-        },
-        yAxis: {
-          min: 0,
-          max: 100,
-          title: { text: '% patients meeting target' }
-        },
-        tooltip: {
-          headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
-          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
-          footerFormat: '</table>',
-          shared: true,
-          useHTML: true
-        },
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0
-          }
-        },
-        legend: {
-          enabled: false
-        },
-        series: [{
-          name: 'Performance',
-          data: data.filter(function(v) {
-            return v.local === local;
-          }).map(function(v) {
-            if (v.p === "YOU") return { y: v.x, color: "red" };
-            else return v.x;
-          })
-      }]
+
+          //find min in order to set the floor of the chart - to be implemented if desired
+          var minHeight = 0;
+          var local = true;
+          var bChart = $('#' + element).highcharts({
+            chart: {
+              type: 'column',
+              events: {
+                load: function() {
+                  var thisChart = this;
+                  thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+                    local = !local;
+                    thisChart.xAxis[0].categories = _data.filter(function(v) {
+                      if (local) return v.local;
+                      else return true;
+                    }).map(function(v) {
+                      return v.p;
+                    });
+                    thisChart.series[0].setData(_data.filter(function(v) {
+                      if (local) return v.local;
+                      else return true;
+                    }).map(function(v) {
+                      //this is for the (?local/global) chart...
+                      if (v.p === "You") return { y: v.x, color: "#0EDE61" };
+                      else return v.x;
+                    }));
+                  }).add();
+                }
+              }
+            },
+            title: { text: 'Benchmark' },
+            xAxis: {
+              categories: _data.filter(function(v) {
+                return v.local === local;
+              }).map(function(v) {
+                return v.p;
+              }),
+              crosshair: true
+            },
+            yAxis: {
+              //make the following dynamic
+              min: minHeight,
+              max: maxHeight,
+              title: { text: '% patients meeting target' }
+            },
+            tooltip: {
+              headerFormat: '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+            },
+            plotOptions: {
+              column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+              }
+            },
+            legend: {
+              enabled: false
+            },
+            series: [{
+              name: 'Performance',
+              data: _data.filter(function(v) {
+                return v.local === local;
+              }).map(function(v) {
+                if(v.p === "You")
+                {
+                  //you colour - apple
+                  return { y: v.x, color: "#0EDE61" };
+                }
+                else
+                {
+                  //standrd colour - blue
+                  return { y: v.x, color: "#5187E8" };;
+                }
+              })
+          }]
       },
       function(chart) { // on complete
+        //force chart size based on container parameters
+        chart.setSize($('.highcharts-container').width(), $('#benchmark-chart').height());
+        //set text labels to mid of axies
         var textX = chart.plotLeft + (chart.plotWidth * 0.5);
         var textY = chart.plotTop + (chart.plotHeight * 0.5);
 
-        var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
+        //LEGACY this applied the 'coming soon' text
+        /*var span = '<span id="pieChartInfoText" style="position:absolute; text-align:center;-ms-transform: rotate(335deg);-webkit-transform: rotate(335deg);transform: rotate(335deg);">';
         span += '<span style="font-size: 64px">Coming Soon!</span>';
-        span += '</span>';
+        span += '</span>';*/
 
-        $("#benchmark-chart").append(span);
+        /*$("#benchmark-chart").append(span);
         span = $('#pieChartInfoText');
         span.css('left', textX + (span.width() * -0.5));
-        span.css('top', textY + (span.height() * -0.5));
+        span.css('top', textY + (span.height() * -0.5));*/
       });
-
+    });
   },
 
   drawPerformanceTrendChartHC: function(element, data) {

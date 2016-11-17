@@ -44,7 +44,8 @@ var pl = {
 
     var i, k, prop, header, pList = [];
 
-    data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
+    //data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
+    data.getPatientList(data.userDetails.practiceId, pathwayId, pathwayStage, standard, subsection, function(list) {
 
       if (sortField === undefined) sortField = 2;
       if (sortField !== undefined) {

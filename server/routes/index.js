@@ -211,6 +211,18 @@ module.exports = function(passport) {
     });
   });
 
+  //return user data
+  router.get('/api/userDetails', isAuthenticated, function(req, res){
+      res.send({fullname: req.user.fullname, practiceId: req.user.practiceId});
+  });
+
+  //return a list of all practices
+  router.get('/api/ListOfPractices', isAuthenticated, function(req, res){
+    practices.list(function(err, practices) {
+      res.send(practices);
+    });
+  });
+
   //Return a list of patients - not sure this is needed
   router.get('/api/ListOfPatients', isAuthenticated, function(req, res) {
     patients.list(function(err, patients) {
@@ -230,9 +242,20 @@ module.exports = function(passport) {
     });
   });
 
+  //note for 2xFn's below:
+  //req.user.practiceId = inject current user practiceId
+  //rep.params.practiceId = use practiceId passed by the function
+
   //Get list of indicators for a single practice - for use on the overview screen
   router.get('/api/ListOfIndicatorsForPractice', isAuthenticated, function(req, res) {
     indicators.list(req.user.practiceId, function(err, indicators) {
+      res.send(indicators);
+    });
+  });
+
+  //Get list of indicators for a single practice (inc option) - for use on the overview screen
+  router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, function(req, res) {
+    indicators.list(req.params.practiceId, function(err, indicators) {
       res.send(indicators);
     });
   });
