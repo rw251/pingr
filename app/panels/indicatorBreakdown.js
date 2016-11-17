@@ -9,7 +9,9 @@ var bd = {
 
   show: function(panel, isAppend, pathwayId, pathwayStage, standard, selectSeriesFn) {
 
-    var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
+    //var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
+    var indicators = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
+
 
     var dataObj = indicators.opportunities.map(function(opp) {
       return [opp.name, opp.description, opp.patients.length];

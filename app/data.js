@@ -164,24 +164,28 @@ var dt = {
   get: function(callback, json) {
     //get text
     //$.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
-    $.getJSON("/api/Text", function(textfile) {
-      dt.text = textfile;
+    $.getJSON("/api/userDetails", function(userDetails){
+        dt.userDetails = userDetails;
 
-      if (json) {
-        dt.newload(json);
-        if (typeof callback === 'function') callback();
-      } else {
-      /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
-          dt.newload(file);
+      $.getJSON("/api/Text", function(textfile) {
+        dt.text = textfile;
+
+        if (json) {
+          dt.newload(json);
           if (typeof callback === 'function') callback();
-        }).fail(function(err) {
-          alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
-        });*/
-        if (typeof callback === 'function') callback();
-      }
+        } else {
+        /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
+            dt.newload(file);
+            if (typeof callback === 'function') callback();
+          }).fail(function(err) {
+            alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+          });*/
+          if (typeof callback === 'function') callback();
+        }
 
-    }).fail(function(err) {
-      alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+      }).fail(function(err) {
+        alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+      });
     });
   },
 
@@ -450,30 +454,135 @@ var dt = {
 
     return indicators;
   },
-
-  getAllIndicatorData: function(practiceId, callback) {
-    if (dt.indicators) {
-      return callback(dt.indicators);
+  //get a raw list of all practices
+  getPractices: function(callback) {
+    if (dt.practices) {
+      return callback(dt.practices);
     } else {
 
       $.ajax({
-        url: "/api/ListOfIndicatorsForPractice",
+        url: "/api/ListOfPractices",
         success: function(file) {
-          if (!dt.indicators) dt.indicators = dt.processIndicators(file);
+          if (!dt.practices)
+          {
+            dt.practices = file;
+          }
 
-          return callback(dt.indicators);
+          return callback(dt.practices);
         },
         error: function() {
-
+            //throw some ungracious issue eventually...
         }
       });
     }
   },
+  //prepare an annoymised ranking demonstrating my postition in amongst other practices
+  getPracticePerformanceData: function(pathwayId, pathwayStage, standard, callback) {
 
+    var practiceObj;
+
+    //get all practice data
+    dt.getPractices(function(_data){
+      //got the practice data!
+      practiceObj = _data;
+      var userPractice = dt.userDetails.practiceId;
+      //generate the pathwayName
+      var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+
+      var rawData = [];
+      var productObj = [];
+      //dynamically identify all calls necessary and create deferred objects
+      var asyncPracticeCalls = [];
+      //generate and push a call for each practice found
+      for(var i = 0; i < practiceObj.length; ++i)
+      {
+        asyncPracticeCalls.push($.ajax({
+              url: "/api/ListOfIndicatorsForPractice/" + practiceObj[i]._id,
+              success: function(file, i) {
+                dt.indicators = dt.processIndicators(file);
+                return dt.indicators;
+              }
+            }));
+      }
+
+      //once all async calls are complete move on to done
+      $.when.apply($, asyncPracticeCalls).done(function() {
+          rawData = arguments;
+          sculptData(rawData);
+          });
+
+      //form raw data into an final product and return
+      function sculptData(rawData){
+        var returnObjs = rawData;
+        for(var i = 0; i < rawData.length; ++i)
+        {
+            //find the object that corresponds to indicatorId
+            var tempData = jQuery.grep(rawData[i][0], function (n, i){
+              return ( n.id == indicatorId);
+            });
+
+            //last is the index of most recent observation from array
+            var last = tempData[0].values[0].length - 1;
+            //identify the practice as either the user or not
+            var _name = "";
+            if(userPractice == tempData[0].practiceId)
+            {
+              _name = "You";
+            }
+            else {
+              _name = "P" + i;
+            }
+            //generate the refined product value
+            var valueOfX = (tempData[0].values[1][last]/tempData[0].values[2][last])*100;
+            //x = value, p = practiceId, local = is this practice local to user practice
+            productObj[i] = {"x": valueOfX, "p": _name,  local: true };
+        }
+        //use the callback to handle the return
+        return callback(productObj);
+      };
+    });
+  },
+  getAllIndicatorData: function(practiceId, callback) {
+    //var addId = '/'+practiceId;
+    var routeURL;
+    if(practiceId)
+    {
+      routeURL = "/api/ListOfIndicatorsForPractice/" + practiceId;
+
+    }
+    else {
+      routeURL = "/api/ListOfIndicatorsForPractice";
+    }
+
+    //we never want to cache this anymore.
+    //  if (dt.indicators) {
+    //  return callback(dt.indicators);
+    //} else {
+
+        $.ajax({
+          url: routeURL,
+          success: function(file) {
+            //if (!dt.indicators) dt.indicators = dt.processIndicators(file);
+
+            //don't retian the object, refresh of object
+            dt.indicators = dt.processIndicators(file);
+
+            return callback(dt.indicators);
+          },
+          error: function() {
+
+          }
+        });
+      //}
+
+    },
+
+  // *b* practice id not used?
   getAllIndicatorDataSync: function(practiceId) {
     if (dt.indicators) {
       return dt.indicators;
     } else {
+      //use practiceId to populate? TODO implement?
       return null;
     }
   },
@@ -501,6 +610,7 @@ var dt = {
     if (!isAsync) return dt.indicators[indicatorId];
   },
 
+  // *b* practice id not used??
   getTrendData: function(practiceId, pathwayId, pathwayStage, standard) {
     if (dt.indicators) {
       return dt.indicators.filter(function(v) {
@@ -511,6 +621,7 @@ var dt = {
   },
 
   getIndicatorDataSync: function(practiceId, indicatorId) {
+    //practiceId not used in getAllIndicatorDataSync
     dt.getAllIndicatorDataSync(practiceId);
     var indicator = dt.indicators.filter(function(v){
       return v.id === indicatorId;

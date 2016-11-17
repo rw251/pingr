@@ -11,10 +11,16 @@ var iTrend = {
 
     var elem = $("<div id='benchmark-chart' class='fit-to-scrolling-section-height'></div>");
 
-    if (isAppend) panel.append(elem);
-    else panel.html(elem);
+    if (isAppend)
+    {
+      panel.append(elem);
+    }
+    else
+    {
+      panel.html(elem);
+    }
 
-    chart.drawBenchmarkChartHC("benchmark-chart", null);
+    chart.drawBenchmarkChartHC("benchmark-chart", pathwayId, pathwayStage, standard);
 
   },
 
