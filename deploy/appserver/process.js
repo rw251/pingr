@@ -228,6 +228,10 @@ async.series([
 		console.log("age, sex etc. done");
         //diagnoses
         results[1].forEach(function(v) {
+		  if(!temp[+v.patientId]) {
+			  console.log("Diagnosis for unknown patient: " + v.patientId);
+			  return;
+		  }
           if (!temp[+v.patientId].diag) temp[+v.patientId].diag = {};
           if (!temp[+v.patientId].diag[v.diag]) temp[+v.patientId].diag[v.diag] = [];
           temp[+v.patientId].diag[v.diag].push({ date: new Date(v.date).getTime(), cat: v.cat });
@@ -268,7 +272,10 @@ async.series([
 		console.log("diagnoses done");
         //medications
         results[2].forEach(function(v) {
-		  if(!temp[+v.patientId]) return;
+		  if(!temp[+v.patientId]) {
+			  console.log("Medication for unknown patient: " + v.patientId);
+			  return;
+		  }
           if (!temp[+v.patientId].meds) temp[+v.patientId].meds = {};
           if (!temp[+v.patientId].meds[v.family]) temp[+v.patientId].meds[v.family] = [];
           temp[+v.patientId].meds[v.family].push({ date: new Date(v.date).getTime(), type: v.type });
@@ -310,6 +317,10 @@ async.series([
 
         //measurements
         results[3].forEach(function(v) {
+		  if(!temp[+v.patientId]) {
+			  console.log("Measure for unknown patient: " + v.patientId);
+			  return;
+		  }
           if (!temp[+v.patientId].meas) temp[+v.patientId].meas = {};
 		  if(["SBP","DBP"].indexOf(v.thing)>-1) {
 			if (!temp[+v.patientId].meas.BP) temp[+v.patientId].meas.BP = [];
@@ -406,7 +417,11 @@ async.series([
 		console.log("events done");
 
         //contacts
-        results[5].forEach(function(v) {
+        results[5].forEach(function(v) {			
+		  if(!temp[+v.patientId]) {
+			  console.log("Contact for unknown patient: " + v.patientId);
+			  return;
+		  }
           patients[+v.patientId].contacts.push({
             name: v.contact,
             time: new Date(v.date).getTime(),
@@ -435,7 +450,12 @@ async.series([
             var standard = data.indicatorId.split('.')[2];
 
             var indText = textFile.pathways[pathway][stage].standards[standard];
-            var oppText = indText.opportunities;
+            var oppText = indText.opportunities;	
+			
+			  if(!patients[+data.patientId]) {
+				  console.log("Action for unknown patient: " + v.patientId);
+				  return;
+			  }
 
             if (patients[+data.patientId].actions.filter(function(v) {
                 return v.id === data.actionId;
