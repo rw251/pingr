@@ -3,7 +3,26 @@ include ../partials/head.jade
 div
   .btn-toolbar
     a.btn.btn-info(href='/') Back to interface
-    a.btn.btn-warning(href='/eventsdownload') Download all
+  form.form-inline(action='/eventsdownload', method='get')
+    .form-group
+      label(for='from') From:
+      input.form-control(type='text',name='from',placeholder='Records from (YYYY-MM-DD)')
+    .form-group
+      label(for='to') To::
+      input.form-control(type='text',name='to',placeholder='Records to (YYYY-MM-DD)')
+    .form-group
+      label(for='user') Email:
+      input.form-control(type='text',name='user',placeholder='Filter to a user email')
+    .form-group
+      .radio
+        label
+          input(type='radio',name='csv' id='csv1' value='csv',checked='')
+          |CSV
+      .radio
+        label
+          input(type='radio',name='csv' id='csv2' value='json')
+          |JSON                
+    button.btn.btn-purple(type='submit') Download
   table.table
     thead
       tr
