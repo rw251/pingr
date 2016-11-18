@@ -15,7 +15,6 @@ REM ====================================
 REM == Add code groupings and text    ==
 REM ====================================
 sqlcmd -E -d %SMASH.DB% -i scripts/codeGroups.sql
-sqlcmd -E -d %SMASH.DB% -i scripts/text.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/regularText.sql
 
 REM ===========================

@@ -481,13 +481,26 @@ var dt = {
 
     var practiceObj;
 
+    var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+
+    $.ajax({
+      url: "/api/BenchmarkDataFor/" +indicatorId,
+      success: function(benchmarkData) {
+        return callback(benchmarkData);
+      },
+      error: function() {
+          //throw some ungracious issue eventually...
+      }
+    });
+
+/*
     //get all practice data
     dt.getPractices(function(_data){
       //got the practice data!
       practiceObj = _data;
       var userPractice = dt.userDetails.practiceId;
       //generate the pathwayName
-      var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+      ////////var indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
       var rawData = [];
       var productObj = [];
@@ -554,7 +567,7 @@ var dt = {
         //use the callback to handle the return
         return callback(productObj);
       };
-    });
+    });*/
   },
   getAllIndicatorData: function(practiceId, callback) {
     //var addId = '/'+practiceId;

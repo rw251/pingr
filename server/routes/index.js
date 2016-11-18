@@ -257,8 +257,10 @@ module.exports = function(passport) {
   });
   //Get benchmark data for an indicator
   router.get('/api/BenchmarkDataFor/:indicatorId', isAuthenticated, function(req, res) {
-    indicators.getBenchmark(req.params.indicatorId, function(err, benchmark) {
-      res.send(benchmark);
+    practices.list(function(err, practices) {
+      indicators.getBenchmark(req.user.practiceId, practices, req.params.indicatorId, function(err, benchmark) {
+        res.send(benchmark);
+      });
     });
   });
   //Get trend data for a practice and an indicator
