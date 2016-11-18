@@ -508,11 +508,12 @@ var dt = {
       //once all async calls are complete move on to done
       $.when.apply($, asyncPracticeCalls).done(function() {
           rawData = arguments;
-          sculptData(rawData);
+          //pass the practice object so that full names are available
+          sculptData(rawData, practiceObj);
           });
 
       //form raw data into an final product and return
-      function sculptData(rawData){
+      function sculptData(rawData, practiceObj){
         var returnObjs = rawData;
         for(var i = 0; i < rawData.length; ++i)
         {
@@ -525,17 +526,30 @@ var dt = {
             var last = tempData[0].values[0].length - 1;
             //identify the practice as either the user or not
             var _name = "";
+            var _fullName = tempData[0].practiceId;
             if(userPractice == tempData[0].practiceId)
             {
+
               _name = "You";
+              _fullName = "You";
             }
             else {
               _name = "P" + i;
+              if(practiceObj[i].name)
+              {
+                _fullName = practiceObj[i].name;
+              }
             }
             //generate the refined product value
             var valueOfX = (tempData[0].values[1][last]/tempData[0].values[2][last])*100;
             //x = value, p = practiceId, local = is this practice local to user practice
-            productObj[i] = {"x": valueOfX, "p": _name,  local: true };
+            if(i < 10 || _name === "You")
+            {
+              productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName, local: true };
+            }
+            else {
+              productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName };
+            }
         }
         //use the callback to handle the return
         return callback(productObj);

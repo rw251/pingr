@@ -82,15 +82,15 @@ var bd = {
     });
   },
 
-    showTab: function(panel, tabSet, name, tabLabel, subPanels, isActive) {
+    showTab: function(panel, tabSet, name, tooltipDesc, routeSuffix, subPanels, isActive) {
 
       //*b* name must be made something sensible --!!!!
 
       //change this to add li
       var sectionElement = panel;
-      var tabSection = $('<li id="'+ tabLabel.toLowerCase() +'" data-toggle="tooltip" title="'+ tabLabel.toLowerCase() +'"><a id="'+ tabLabel.toLowerCase() +'PaneTab" href="#'+ tabLabel.toLowerCase() +'PaneTab">'+name+'</a></li>');
+      var tabSection = $('<li id="'+ routeSuffix.toLowerCase() +'" data-toggle="tooltip" title="'+ tooltipDesc.toLowerCase() +'"><a id="'+ routeSuffix.toLowerCase() +'PaneTab" href="#'+ routeSuffix.toLowerCase() +'PaneTab">'+name+'</a></li>');
 
-      var contentObject = $('<div id="'+ tabLabel.toLowerCase() +'-content"></div>');
+      var contentObject = $('<div id="'+ routeSuffix.toLowerCase() +'-content"></div>');
       $(sectionElement).append(contentObject);
 
       //append to tabSet

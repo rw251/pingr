@@ -95,7 +95,7 @@ var ind = {
         farRightPanel.append(tabContent);
 
         // *B* 1st tabbed panel
-        wrapper.showTab(tabContent, tabList, "Improvement opportunities",  "Overview", [
+        wrapper.showTab(tabContent, tabList, "Improvement opportunities", "A summary of all the relevant information",  "Overview", [
           {
             show: indicatorHeadlines.show,
             args: [pathwayId, pathwayStage, standard]
@@ -110,7 +110,7 @@ var ind = {
        ], true);
 
   	    // *B* 2nd tabbed panel
-        wrapper.showTab(tabContent, tabList, "Current and future trend", "indicator", [
+        wrapper.showTab(tabContent, tabList, "Current and future trend", "A table to show indication information - descrition to be updated", "indicator", [
           {
             show: indicatorTrend.show,
             args: [pathwayId, pathwayStage, standard]
@@ -118,13 +118,43 @@ var ind = {
         ], false);
 
   	     // *B* 3rd tabbed panel
-        wrapper.showTab(tabContent, tabList, "Comparison to other practices", "patient", [
+        wrapper.showTab(tabContent, tabList, "Comparison to other practices", "A graph that illustrates where you are amongst other practicese in Salford", "patient", [
           {
             show: indicatorBenchmark.show,
             args: [pathwayId, pathwayStage, standard]
           }
         ], false);
 
+/*          wrapper.showTab(tabContent, tabList, "Improvement opportunities",  "Overview", [
+            {
+              show: indicatorHeadlines.show,
+              args: [pathwayId, pathwayStage, standard]
+              //args: [pathwayId, pathways, standard]
+            }, {
+              show: indicatorBreakdown.show,
+             args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
+           }, {
+              show: patientList.show,
+              args: [pathwayId, pathwayStage, standard, loadContentFn]
+           }
+         ], true);
+
+    	    // *B* 2nd tabbed panel
+          wrapper.showTab(tabContent, tabList, "Current and future trend", "indicator", [
+            {
+              show: indicatorTrend.show,
+              args: [pathwayId, pathwayStage, standard]
+            }
+          ], false);
+
+    	     // *B* 3rd tabbed panel
+          wrapper.showTab(tabContent, tabList, "Comparison to other practices", "patient", [
+            {
+              show: indicatorBenchmark.show,
+              args: [pathwayId, pathwayStage, standard]
+            }
+          ], false);
+*/
         //setup tab buttons
         wrapper.wireUp();
       }

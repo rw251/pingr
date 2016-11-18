@@ -357,6 +357,7 @@ var cht = {
             return a.x - b.x;
           });
 
+          var title = "An illustration of your current performance amongst other practices in Salford";
           //find max in order to set the ceiling of the chart
           var maxHeight = Math.round(_data[_data.length-1].x);
           var maxAdd = Math.round(maxHeight * 0.1);
@@ -375,32 +376,49 @@ var cht = {
               events: {
                 load: function() {
                   var thisChart = this;
-                  thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+                  thisChart.renderer.button('Toggle neighbourhood - simulated', thisChart.plotWidth - 160, 0, function() {
                     local = !local;
                     thisChart.xAxis[0].categories = _data.filter(function(v) {
                       if (local) return v.local;
                       else return true;
                     }).map(function(v) {
-                      return v.p;
+                      return v.pFull;
                     });
                     thisChart.series[0].setData(_data.filter(function(v) {
-                      if (local) return v.local;
-                      else return true;
+                      if (local) {
+                        return  v.local;
+                      }
+                      else {
+                        return true;
+                      }
                     }).map(function(v) {
                       //this is for the (?local/global) chart...
-                      if (v.p === "You") return { y: v.x, color: "#0EDE61" };
-                      else return v.x;
+                      if (v.p === "You")
+                      {
+                        //apple
+                        return { y: v.x, color: "#0EDE61" };
+                      }
+                      else if(v.local)
+                      {
+                        //dark
+                        return { y: v.x, color: "#444444" };
+                      }
+                      else
+                      {
+                        //blue
+                        return { y: v.x, color: "#5187E8" };
+                      }
                     }));
                   }).add();
                 }
               }
             },
-            title: { text: 'Benchmark' },
+            title: { text: title },
             xAxis: {
               categories: _data.filter(function(v) {
                 return v.local === local;
               }).map(function(v) {
-                return v.p;
+                return v.pFull;
               }),
               crosshair: true
             },
@@ -439,8 +457,8 @@ var cht = {
                 }
                 else
                 {
-                  //standrd colour - blue
-                  return { y: v.x, color: "#5187E8" };;
+                  //standrd colour - dark
+                  return { y: v.x, color: "#444444" };;
                 }
               })
           }]
