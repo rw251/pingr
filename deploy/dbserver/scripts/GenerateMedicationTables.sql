@@ -23,7 +23,9 @@ CREATE TABLE [dbo].[drugsOfInterest](
 	[Code] varchar(55) NOT NULL,
 	[Family] varchar(255) NOT NULL,
 	[Type] varchar(255) NOT NULL,
-	[Dose] [float] NULL
+	[Dose] [float] NULL,
+	[MaxDose] float NULL,
+	[BNF] varchar(500) NULL
 ) ON [PRIMARY]
 GO
 IF OBJECT_ID('dbo.drugFamilies', 'U') IS NOT NULL DROP TABLE dbo.drugFamilies;
