@@ -1007,6 +1007,7 @@ var cht = {
             return a.x - b.x;
           });
 
+          var title = "An illustration of your current performance amongst other practices in Salford";
           //find max in order to set the ceiling of the chart
           var maxHeight = Math.round(_data[_data.length-1].x);
           var maxAdd = Math.round(maxHeight * 0.1);
@@ -1025,32 +1026,49 @@ var cht = {
               events: {
                 load: function() {
                   var thisChart = this;
-                  thisChart.renderer.button('Toggle neighbourhood / CCG', thisChart.plotWidth - 100, 0, function() {
+                  thisChart.renderer.button('Toggle neighbourhood - simulated', thisChart.plotWidth - 160, 0, function() {
                     local = !local;
                     thisChart.xAxis[0].categories = _data.filter(function(v) {
                       if (local) return v.local;
                       else return true;
                     }).map(function(v) {
-                      return v.p;
+                      return v.pFull;
                     });
                     thisChart.series[0].setData(_data.filter(function(v) {
-                      if (local) return v.local;
-                      else return true;
+                      if (local) {
+                        return  v.local;
+                      }
+                      else {
+                        return true;
+                      }
                     }).map(function(v) {
                       //this is for the (?local/global) chart...
-                      if (v.p === "You") return { y: v.x, color: "#0EDE61" };
-                      else return v.x;
+                      if (v.p === "You")
+                      {
+                        //apple
+                        return { y: v.x, color: "#0EDE61" };
+                      }
+                      else if(v.local)
+                      {
+                        //dark
+                        return { y: v.x, color: "#444444" };
+                      }
+                      else
+                      {
+                        //blue
+                        return { y: v.x, color: "#5187E8" };
+                      }
                     }));
                   }).add();
                 }
               }
             },
-            title: { text: 'Benchmark' },
+            title: { text: title },
             xAxis: {
               categories: _data.filter(function(v) {
                 return v.local === local;
               }).map(function(v) {
-                return v.p;
+                return v.pFull;
               }),
               crosshair: true
             },
@@ -1089,8 +1107,8 @@ var cht = {
                 }
                 else
                 {
-                  //standrd colour - blue
-                  return { y: v.x, color: "#5187E8" };;
+                  //standrd colour - dark
+                  return { y: v.x, color: "#444444" };;
                 }
               })
           }]
@@ -1878,11 +1896,12 @@ var dt = {
       //once all async calls are complete move on to done
       $.when.apply($, asyncPracticeCalls).done(function() {
           rawData = arguments;
-          sculptData(rawData);
+          //pass the practice object so that full names are available
+          sculptData(rawData, practiceObj);
           });
 
       //form raw data into an final product and return
-      function sculptData(rawData){
+      function sculptData(rawData, practiceObj){
         var returnObjs = rawData;
         for(var i = 0; i < rawData.length; ++i)
         {
@@ -1895,17 +1914,30 @@ var dt = {
             var last = tempData[0].values[0].length - 1;
             //identify the practice as either the user or not
             var _name = "";
+            var _fullName = tempData[0].practiceId;
             if(userPractice == tempData[0].practiceId)
             {
+
               _name = "You";
+              _fullName = "You";
             }
             else {
               _name = "P" + i;
+              if(practiceObj[i].name)
+              {
+                _fullName = practiceObj[i].name;
+              }
             }
             //generate the refined product value
             var valueOfX = (tempData[0].values[1][last]/tempData[0].values[2][last])*100;
             //x = value, p = practiceId, local = is this practice local to user practice
-            productObj[i] = {"x": valueOfX, "p": _name,  local: true };
+            if(i < 10 || _name === "You")
+            {
+              productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName, local: true };
+            }
+            else {
+              productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName };
+            }
         }
         //use the callback to handle the return
         return callback(productObj);
@@ -2158,6 +2190,17 @@ require.register("events.js", function(exports, require, module) {
  * Gets an XPath for an element which describes its hierarchical location.
  * Copied from firebug with a BSD licence - https://code.google.com/p/fbug/source/browse/branches/firebug1.6/content/firebug/lib.js?spec=svn12950&r=8828#1332
  */
+var timer = setTimeout(function(){
+  window.location.href='/signout';
+}, 2 * 3600 * 1000); //set session logout to 2 hours
+
+var refreshSession = function(){
+    clearTimeout(timer);
+    timer = setTimeout(function(){
+      window.location.href='/signout';
+    }, 2 * 3600 * 1000); //set session logout to 2 hours
+};
+
 var getElementXPath = function(el) {
   if (el && el.id)
     return '//*[@id="' + el.id + '"]';
@@ -2190,6 +2233,7 @@ var getElementTreeXPath = function(el) {
 
 
 var logInfo = function(event, type, href) {
+  refreshSession();
   var obj = {};
   obj.url = href ? href : location.href;
   obj.type = type;
@@ -5836,15 +5880,15 @@ var bd = {
     });
   },
 
-    showTab: function(panel, tabSet, name, tabLabel, subPanels, isActive) {
+    showTab: function(panel, tabSet, name, tooltipDesc, routeSuffix, subPanels, isActive) {
 
       //*b* name must be made something sensible --!!!!
 
       //change this to add li
       var sectionElement = panel;
-      var tabSection = $('<li id="'+ tabLabel.toLowerCase() +'" data-toggle="tooltip" title="'+ tabLabel.toLowerCase() +'"><a id="'+ tabLabel.toLowerCase() +'PaneTab" href="#'+ tabLabel.toLowerCase() +'PaneTab">'+name+'</a></li>');
+      var tabSection = $('<li id="'+ routeSuffix.toLowerCase() +'" data-toggle="tooltip" title="'+ tooltipDesc.toLowerCase() +'"><a id="'+ routeSuffix.toLowerCase() +'PaneTab" href="#'+ routeSuffix.toLowerCase() +'PaneTab">'+name+'</a></li>');
 
-      var contentObject = $('<div id="'+ tabLabel.toLowerCase() +'-content"></div>');
+      var contentObject = $('<div id="'+ routeSuffix.toLowerCase() +'-content"></div>');
       $(sectionElement).append(contentObject);
 
       //append to tabSet
@@ -7494,7 +7538,7 @@ var ind = {
         farRightPanel.append(tabContent);
 
         // *B* 1st tabbed panel
-        wrapper.showTab(tabContent, tabList, "Improvement opportunities",  "Overview", [
+        wrapper.showTab(tabContent, tabList, "Improvement opportunities", "A summary of all the relevant information",  "Overview", [
           {
             show: indicatorHeadlines.show,
             args: [pathwayId, pathwayStage, standard]
@@ -7509,7 +7553,7 @@ var ind = {
        ], true);
 
   	    // *B* 2nd tabbed panel
-        wrapper.showTab(tabContent, tabList, "Current and future trend", "indicator", [
+        wrapper.showTab(tabContent, tabList, "Current and future trend", "A table to show indication information - descrition to be updated", "indicator", [
           {
             show: indicatorTrend.show,
             args: [pathwayId, pathwayStage, standard]
@@ -7517,13 +7561,43 @@ var ind = {
         ], false);
 
   	     // *B* 3rd tabbed panel
-        wrapper.showTab(tabContent, tabList, "Comparison to other practices", "patient", [
+        wrapper.showTab(tabContent, tabList, "Comparison to other practices", "A graph that illustrates where you are amongst other practicese in Salford", "patient", [
           {
             show: indicatorBenchmark.show,
             args: [pathwayId, pathwayStage, standard]
           }
         ], false);
 
+/*          wrapper.showTab(tabContent, tabList, "Improvement opportunities",  "Overview", [
+            {
+              show: indicatorHeadlines.show,
+              args: [pathwayId, pathwayStage, standard]
+              //args: [pathwayId, pathways, standard]
+            }, {
+              show: indicatorBreakdown.show,
+             args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
+           }, {
+              show: patientList.show,
+              args: [pathwayId, pathwayStage, standard, loadContentFn]
+           }
+         ], true);
+
+    	    // *B* 2nd tabbed panel
+          wrapper.showTab(tabContent, tabList, "Current and future trend", "indicator", [
+            {
+              show: indicatorTrend.show,
+              args: [pathwayId, pathwayStage, standard]
+            }
+          ], false);
+
+    	     // *B* 3rd tabbed panel
+          wrapper.showTab(tabContent, tabList, "Comparison to other practices", "patient", [
+            {
+              show: indicatorBenchmark.show,
+              args: [pathwayId, pathwayStage, standard]
+            }
+          ], false);
+*/
         //setup tab buttons
         wrapper.wireUp();
       }
@@ -7762,3 +7836,5 @@ require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 
+
+//# sourceMappingURL=app.js.map
