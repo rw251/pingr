@@ -376,7 +376,7 @@ var cht = {
               events: {
                 load: function() {
                   var thisChart = this;
-                  thisChart.renderer.button('Toggle neighbourhood - simulated', thisChart.plotWidth - 160, 0, function() {
+                  thisChart.renderer.button('Toggle neighbourhood - ccg', thisChart.plotWidth - 160, 0, function() {
                     local = !local;
                     thisChart.xAxis[0].categories = _data.filter(function(v) {
                       if (local) return v.local;

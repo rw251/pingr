@@ -35,7 +35,11 @@ module.exports = {
   },
 
   //Get benchmark data for an indicator
-  getBenchmark: function(indicatorId, done) {
+  getBenchmark: function(practiceId, practices, indicatorId, done) {
+    var pLookup = {};
+    practices.forEach(function(v){
+      pLookup[v._id]=[v.name,v.neighbourhood];
+    });
     Indicator.find({ id: indicatorId }, function(err, indicators) {
       if (err) {
         console.log(err);
@@ -45,11 +49,14 @@ module.exports = {
         console.log('Error finding indicators for:  ' + indicatorId);
         return done(null, false);
       } else {
-        var benchmark = indicators.map(function(v) {
+        var benchmark = indicators.filter(function(v){
+          return v.values && v.values.length>0;
+        }).map(function(v) {
           return {
-            practiceId: v.practiceId,
-            numerator: +v.values[1][v.values[1].length - 1],
-            denominator: +v.values[2][v.values[2].length - 1]
+            x: +v.values[1][v.values[1].length - 1]*100/+v.values[2][v.values[2].length - 1],
+            p: v.practiceId === practiceId ? "You" : practiceId,
+            pFull: v.practiceId === practiceId ? "You" : (pLookup[v.practiceId] ? pLookup[v.practiceId][0] : v.practiceId),
+            local: pLookup[v.practiceId] ? pLookup[v.practiceId][1]===pLookup[practiceId][1] : false
           };
         });
         done(null, benchmark);
