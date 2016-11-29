@@ -1,4 +1,5 @@
 doctype html
+<!-- [if lte IE 9]><html class="unsuppotedIE"><![endif]-->
 head
   meta(charset='utf-8')
   meta(content='IE=edge', http-equiv='X-UA-Compatible')
@@ -15,6 +16,9 @@ head
   
   // My styling
   link(href='/app.css', rel='stylesheet', type='text/css')
+  
+  // jQuery from CDN - *b* moved from footer because it is loaded late in some instances 
+  script(src='https://code.jquery.com/jquery-1.12.3.min.js', integrity='sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=', crossorigin='anonymous')
   // HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries
   // WARNING: Respond.js doesn't work if you view the page via file://
   <!--[if lt IE 9]> 
