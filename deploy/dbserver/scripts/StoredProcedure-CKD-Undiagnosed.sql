@@ -398,7 +398,7 @@ select d.PatID, 'ckd.diagnosis.undiagnosed', 'addCode' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Add code ' + c.correct_read as actionText, 
-		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: <strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '<li></strong>Latest CKD code: <strong> Nil</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '<li></strong>Latest CKD code: <strong> Nil</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 	from #indicator d
 		inner join #classify c on c.PatID = d.PatID
 		inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -411,7 +411,7 @@ select d.PatID, 'ckd.diagnosis.undiagnosed', 'addCode' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Add code ' + c.correct_read as actionText, 
-		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li>Latest ACR: <strong>Nil</strong></li><li></strong>Latest CKD code: <strong> Nil</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li>Latest ACR: <strong>Nil</strong></li><li></strong>Latest CKD code: <strong> Nil</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 	from #indicator d
 		inner join #classify c on c.PatID = d.PatID
 		inner join #latestEgfrACR e on e.PatID = d.PatID

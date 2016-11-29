@@ -16,6 +16,7 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.patActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.patActions]
 CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(max))
 
+--Org level actions
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.orgActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.orgActions]
 CREATE TABLE [output.pingr.orgActions] (indicatorId varchar(1000), proportion float, actionText varchar(1000), supportingText varchar(max))
 
@@ -111,8 +112,8 @@ insert into [output.pingr.contacts](PatID, date, event)
 select PatID, date, 
 	case
 		when eventcode = 5 then 'Telephone contact'
-		when eventcode = 4 then 'Face-to-face'
-		when eventcode <=3 then 'Other contact'
+		when eventcode = 4 then 'Face-to-face contact'
+		when eventcode <=3 then 'Other code'
 		end as event from 
 			(
 				select PatID,
@@ -182,18 +183,12 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'ckdTempEx') then 'CKD exception code'
 		when ReadCode in (select code from codeGroups where [group] = 'bpTempEx') then 'BP exception code'
 		when ReadCode in (select code from codeGroups where [group] = 'posturalHypo') then 'Postural hypotension'
-		when ReadCode in (select code from codeGroups where [group] = 'phaeo') then 'Phaeochromocytoma'
-		when ReadCode in (select code from codeGroups where [group] = 'asthmaPermEx') then 'Asthma resolved'
-		when ReadCode in (select code from codeGroups where [group] in ('asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs')) then 'Asthma'
+		when ReadCode in (select code from codeGroups where [group] in ('asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs')) then 'Asthma-related code'
 		when ReadCode in (select code from codeGroups where [group] = 'pacemakerDefib') then 'Pacemaker or defibrillator'
 		when ReadCode in (select code from codeGroups where [group] = 'sickSinus') then 'Sick sinus syndrome'
 		when ReadCode in (select code from codeGroups where [group] = '2/3heartBlock') then 'Heart block'
-		when ReadCode in (select code from codeGroups where [group] = 'porphyria') then 'Porphyria'
 		when ReadCode in (select code from codeGroups where [group] = 'MInow') then 'Myocardial infarction'
 		when ReadCode in (select code from codeGroups where [group] = 'ASrepair') then 'Aortic repair'
-		when ReadCode in (select code from codeGroups where [group] = 'AS') then 'Aortic stenosis'
-		when ReadCode in (select code from codeGroups where [group] = 'gout') then 'Gout'
-		when ReadCode in (select code from codeGroups where [group] = 'addisons') then 'Addisons'
 		when ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') then 'Loop Diuretic allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') then 'Alpha Blocker allergy or adverse reaction' 
 		when ReadCode in (select code from codeGroups where [group] = 'PotSparDiurAllergyAdverseReaction') then 'Potassium Sparing Diuretic allergy or adverse reaction'
@@ -202,7 +197,6 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'ARBallergyAdverseReaction') then 'ARB allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'ACEIallergyAdverseReaction') then 'ACE Inhibitor  diuretic allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'thiazideAllergyAdverseReaction') then 'Thiazide Diuretic allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'whiteCoat') then 'White coat hypertension'
 	end as importantCode from SIR_ALL_Records
 where ReadCode in (select code from codeGroups where [group] in 
 	('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
@@ -219,44 +213,56 @@ insert into [output.pingr.diagnoses](PatID, date, diagnosis, subcategory)
 select PatID, EntryDate as date,
 	case
 		when ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx')) then 'CKD'
+		when ReadCode in (select code from codeGroups where [group] in ('dm','dmPermEx')) then 'Diabetes'
+		when ReadCode in (select code from codeGroups where [group] = 'phaeo') then 'Phaeochromocytoma'
+		when ReadCode in (select code from codeGroups where [group] in ('asthmaQof', 'asthmaPermEx')) then 'Asthma'
+		when ReadCode in (select code from codeGroups where [group] = 'porphyria') then 'Porphyria'
+		when ReadCode in (select code from codeGroups where [group] = 'MInow') then 'Post-MI'
+		when ReadCode in (select code from codeGroups where [group] = 'AS') then 'Aortic stenosis'
+		when ReadCode in (select code from codeGroups where [group] = 'gout') then 'Gout'
+		when ReadCode in (select code from codeGroups where [group] = 'addisons') then 'Addisons'
+		when ReadCode in (select code from codeGroups where [group] = 'whiteCoat') then 'White coat hypertension'
+
 	end as diagnosis,
 	case
-		when ReadCode in ('1Z12.','K053.') then 'G3'
-		when ReadCode in ('1Z13.','K054.') then 'G4'
-		when ReadCode in ('1Z14.','K055.') then 'G5'
-		when ReadCode in ('1Z15.') then 'G3a'
-		when ReadCode in ('1Z16.') then 'G3b'
-		when ReadCode in ('1Z1B.') then 'G3 A2/3'
-		when ReadCode in ('1Z1C.') then 'G3 A1'
-		when ReadCode in ('1Z1D.') then 'G3a A2/3'
-		when ReadCode in ('1Z1E.', '1Z1T.') then 'G3a A1'
-		when ReadCode in ('1Z1F.') then 'G3b A2/3'
-		when ReadCode in ('1Z1G.', '1Z1X.') then 'G3b A1'
-		when ReadCode in ('1Z1H.') then 'G4 A2/3'
-		when ReadCode in ('1Z1J.', '1Z1a.') then 'G4 A1'
-		when ReadCode in ('1Z1K.') then 'G5 A2/3'
-		when ReadCode in ('1Z1L.', '1Z1d.') then 'G5 A1'
-		when ReadCode in ('1Z1V.') then 'G3a A2'
-		when ReadCode in ('1Z1W.') then 'G3a A3'
-		when ReadCode in ('1Z1Y.') then 'G3b A2'
-		when ReadCode in ('1Z1Z.') then 'G3b A2'
-		when ReadCode in ('1Z1b.') then 'G4 A2'
-		when ReadCode in ('1Z1c.') then 'G4 A3'
-		when ReadCode in ('1Z1e.') then 'G5 A2'
-		when ReadCode in ('1Z1f.') then 'G5 A3'
+		when ReadCode in ('1Z12.','K053.') then 'Stage 3'
+		when ReadCode in ('1Z13.','K054.') then 'Stage 4'
+		when ReadCode in ('1Z14.','K055.') then 'Stage 5'
+		when ReadCode in ('1Z15.') then 'Stage 3a'
+		when ReadCode in ('1Z16.') then 'Stage 3b'
+		when ReadCode in ('1Z1B.') then 'Stage 3 A2/3'
+		when ReadCode in ('1Z1C.') then 'Stage 3 A1'
+		when ReadCode in ('1Z1D.') then 'Stage 3a A2/3'
+		when ReadCode in ('1Z1E.', '1Z1T.') then 'Stage 3a A1'
+		when ReadCode in ('1Z1F.') then 'Stage 3b A2/3'
+		when ReadCode in ('1Z1Stage .', '1Z1X.') then 'Stage 3b A1'
+		when ReadCode in ('1Z1H.') then 'Stage 4 A2/3'
+		when ReadCode in ('1Z1J.', '1Z1a.') then 'Stage 4 A1'
+		when ReadCode in ('1Z1K.') then 'Stage 5 A2/3'
+		when ReadCode in ('1Z1L.', '1Z1d.') then 'Stage 5 A1'
+		when ReadCode in ('1Z1V.') then 'Stage 3a A2'
+		when ReadCode in ('1Z1W.') then 'Stage 3a A3'
+		when ReadCode in ('1Z1Y.') then 'Stage 3b A2'
+		when ReadCode in ('1Z1Z.') then 'Stage 3b A2'
+		when ReadCode in ('1Z1b.') then 'Stage 4 A2'
+		when ReadCode in ('1Z1c.') then 'Stage 4 A3'
+		when ReadCode in ('1Z1e.') then 'Stage 5 A2'
+		when ReadCode in ('1Z1f.') then 'Stage 5 A3'
 		when ReadCode in ('2126E') then 'CKD resolved'
-		when ReadCode in ('1Z10.') then 'G1'
-		when ReadCode in ('1Z11.') then 'G2'
-		when ReadCode in ('1Z17.') then 'G1 A2/A3'
-		when ReadCode in ('1Z18.', '1Z1M.') then 'G1 A1'
-		when ReadCode in ('1Z19.') then 'G2 A2/A3'
-		when ReadCode in ('1Z1A.', '1Z1Q.') then 'G2 A1'
-		when ReadCode in ('1Z1N.') then 'G1 A2'
-		when ReadCode in ('1Z1P.') then 'G1 A3'
-		when ReadCode in ('1Z1R.') then 'G2 A2'
-		when ReadCode in ('1Z1S.') then 'G2 A3'
-		when ReadCode in ('K051.') then 'G1'
-		when ReadCode in ('K052.') then 'G2'
+		when ReadCode in ('1Z10.') then 'Stage 1'
+		when ReadCode in ('1Z11.') then 'Stage 2'
+		when ReadCode in ('1Z17.') then 'Stage 1 A2/A3'
+		when ReadCode in ('1Z18.', '1Z1M.') then 'Stage 1 A1'
+		when ReadCode in ('1Z19.') then 'Stage 2 A2/A3'
+		when ReadCode in ('1Z1A.', '1Z1Q.') then 'Stage 2 A1'
+		when ReadCode in ('1Z1N.') then 'Stage 1 A2'
+		when ReadCode in ('1Z1P.') then 'Stage 1 A3'
+		when ReadCode in ('1Z1R.') then 'Stage 2 A2'
+		when ReadCode in ('1Z1S.') then 'Stage 2 A3'
+		when ReadCode in ('K051.') then 'Stage 1'
+		when ReadCode in ('K052.') then 'Stage 2'
+		when ReadCode in (select code from codeGroups where [group] in ('dmPermEx')) then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] in ('asthmaPermEx')) then 'Resolved'
 	end as subcategory from SIR_ALL_Records
 where ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx'))
 and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])

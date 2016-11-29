@@ -500,7 +500,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','underContact' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Offer eGFR test via phone or letter' as actionText, 
-		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -522,7 +522,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','underContact' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Offer eGFR test via phone or letter' as actionText, 
-		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>Nil</strong></li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>Nil</strong></li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -546,7 +546,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','underNoContact' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Check this patient is still registered at your practice' as actionText, 
-		'Reasoning<ul><li>This patient has not had contact with your practice for > 1 year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>This patient has not had contact with your practice for > 1 year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -568,7 +568,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','underNoContact' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Check this patient is still registered at your practice' as actionText, 
-		'Reasoning<ul><li>This patient has not had contact with your practice for > 1 year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li></li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>This patient has not had contact with your practice for > 1 year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li></li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -591,7 +591,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','overMonitored' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Add to patient''s record: CKD monitoring not needed until ' + CONVERT(VARCHAR, g.egfrDue, 3) as actionText, 
-		'Reasoning<ul><li>This patient has had > 4 eGFRs in the last year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR next due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>This patient has had > 4 eGFRs in the last year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR next due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -608,7 +608,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','overMonitored' as actionCat,
 		1 as reasonNumber,
 		4 as priority,
 		'Add to patient''s record: CKD monitoring not needed until ' + CONVERT(VARCHAR, g.egfrDue, 3) as actionText, 
-		'Reasoning<ul><li>This patient has had > 4 eGFRs in the last year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong> Nil</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR next due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
+		'Reasoning<ul><li>This patient has had > 4 eGFRs in the last year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong> Nil</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR next due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
@@ -649,7 +649,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','overdiagnosed' as actionCat,
 	1 as reasonNumber,
 	4 as priority,
 	'Add code 2126E (CKD resolved) [#2126E]' as actionText, 
-	'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
+	'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 	from #indicator d
 	left outer join #latestEgfrACR as e on d.PatID = e.PatID
 	where 

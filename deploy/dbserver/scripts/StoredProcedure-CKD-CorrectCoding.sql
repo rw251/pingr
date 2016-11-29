@@ -210,22 +210,22 @@ select PatID, egfrMax, acrMax, code,
 		when egfrMax < 15 and acrMax > 30 then 'G5 A3'
 	end as correct,
 	case
-		when egfrMax between 45 and 59 and acrMax is null then '1Z15. (CKD stage G3a) [#1Z15.]'
-		when egfrMax between 45 and 59 and acrMax < 3 then '1Z1T. (CKD stage G3aA1) [#1Z1T.]'
-		when egfrMax between 45 and 59 and acrMax between 3 and 30 then '1Z1V. (CKD stage G3aA2) [#1Z1V.]'
-		when egfrMax between 45 and 59 and acrMax > 30 then '1Z1W. (CKD stage G3aA3) [#1Z1W.]'
-		when egfrMax between 30 and 44 and acrMax is null then '1Z16. (CKD stage G3b ) [#1Z16.]'
-		when egfrMax between 30 and 44 and acrMax < 3 then '1Z1X. (CKD stage G3bA1) [#1Z1X.]'
-		when egfrMax between 30 and 44 and acrMax between 3 and 30 then '1Z1Y. (CKD stage G3bA2) [#1Z1Y.]'
-		when egfrMax between 30 and 44 and acrMax > 30 then '1Z1Z. (CKD stage G3bA3) [#1Z1Z.]'
-		when egfrMax between 15 and 29 and acrMax is null then 'K054. (CKD stage G4) [#K054.]'
-		when egfrMax between 15 and 29 and acrMax < 3 then '1Z1a. (CKD stage G4A1) [#1Z1a.]'
-		when egfrMax between 15 and 29 and acrMax between 3 and 30 then '1Z1b. (CKD stage G4A2) [#1Z1b.]'
-		when egfrMax between 15 and 29 and acrMax > 30 then '1Z1c. (CKD stage G4A3) [#1Z1c.]'
+		when egfrMax between 45 and 59 and acrMax is null then '1Z15. (CKD stage 3a) [#1Z15.]'
+		when egfrMax between 45 and 59 and acrMax < 3 then '1Z1T. (CKD stage 3a A1) [#1Z1T.]'
+		when egfrMax between 45 and 59 and acrMax between 3 and 30 then '1Z1V. (CKD stage 3a A2) [#1Z1V.]'
+		when egfrMax between 45 and 59 and acrMax > 30 then '1Z1W. (CKD stage 3a A3) [#1Z1W.]'
+		when egfrMax between 30 and 44 and acrMax is null then '1Z16. (CKD stage 3b ) [#1Z16.]'
+		when egfrMax between 30 and 44 and acrMax < 3 then '1Z1X. (CKD stage 3b A1) [#1Z1X.]'
+		when egfrMax between 30 and 44 and acrMax between 3 and 30 then '1Z1Y. (CKD stage 3b A2) [#1Z1Y.]'
+		when egfrMax between 30 and 44 and acrMax > 30 then '1Z1Z. (CKD stage 3b A3) [#1Z1Z.]'
+		when egfrMax between 15 and 29 and acrMax is null then 'K054. (CKD stage 4) [#K054.]'
+		when egfrMax between 15 and 29 and acrMax < 3 then '1Z1a. (CKD stage 4 A1) [#1Z1a.]'
+		when egfrMax between 15 and 29 and acrMax between 3 and 30 then '1Z1b. (CKD stage 4 A2) [#1Z1b.]'
+		when egfrMax between 15 and 29 and acrMax > 30 then '1Z1c. (CKD stage 4 A3) [#1Z1c.]'
 		when egfrMax < 15 and acrMax is null then 'K055. (CKD stage G5) [#K055.]'
-		when egfrMax < 15 and acrMax < 3 then '1Z1d. (CKD stage G5A1) [#1Z1d.]'
-		when egfrMax < 15 and acrMax between 3 and 30 then '1Z1e. (CKD stage G5A2) [#1Z1e.]'
-		when egfrMax < 15 and acrMax > 30 then '1Z1f. (CKD stage G5A3) [#1Z1f.]'
+		when egfrMax < 15 and acrMax < 3 then '1Z1d. (CKD stage 5 A1) [#1Z1d.]'
+		when egfrMax < 15 and acrMax between 3 and 30 then '1Z1e. (CKD stage 5 A2) [#1Z1e.]'
+		when egfrMax < 15 and acrMax > 30 then '1Z1f. (CKD stage 5 A3) [#1Z1f.]'
 	end as correct_read
 from #latestEgfrACR;
 
@@ -390,39 +390,40 @@ select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as actionCat,
 		'wrongStageAcrKnown' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Add code ' + c.correct_read as actionText, 
+		'Add code ' + c.correct_read + ' to patient''s record' as actionText, 
 		'Reasoning' +
-			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: </strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + 
+			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: </strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + 
 			'<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong>' +
 			'</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
 where 
-	((d.correct in ('G3a A1','G3a A2','G3a A3','G3b A1','G3b A2','G3b A3') and d.code not in ('G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
+	((d.correct in ('G3a A1','G3a A2','G3a A3','G3b A1','G3b A2','G3b A3') and d.code not in ('G3', 'G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
 	(d.correct in ('G4 A1','G4 A2','G4 A3') and d.code not in ('G4','G4 A1','G4 A2','G4 A3','G4 A2/3')) or
 	(d.correct in ('G5 A1','G5 A2','G5 A3') and d.code not in ('G5','G5 A1','G5 A2','G5 A3','G5 A2/3')))
 	and	d.indicator = 'wrong'
 
-union
+--union
 	--ACR unknown
-select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as actionCat,
-		'wrongStageAcrUnknon' as reasonCat,
-		1 as reasonNumber,
-		4 as priority,
-		'Add code ' + c.correct_read as actionText, 
-		'Reasoning' +
-			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
-			'<li></strong>Latest ACR: <strong>Null<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li>' +
-			'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
-from #indicator d
-	inner join #classify c on c.PatID = d.PatID
-	inner join #latestEgfrACR e on e.PatID = d.PatID
-where 
-	((d.correct in ('G3a','G3b') and d.code not in ('G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
-	(d.correct in ('G4') and d.code not in ('G4','G4 A1','G4 A2','G4 A3','G4 A2/3')) or
-	(d.correct in ('G5') and d.code not in ('G5','G5 A1','G5 A2','G5 A3','G5 A2/3')))
-	and	d.indicator = 'wrong'
+	--Don't suggest a code for these patients until they've got an ACR
+--select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as actionCat,
+--		'wrongStageAcrUnknon' as reasonCat,
+--		1 as reasonNumber,
+--		4 as priority,
+--		'Add code ' + c.correct_read as actionText, 
+--		'Reasoning' +
+--			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
+--			'<li></strong>Latest ACR: <strong>Null<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li>' +
+--			'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
+--from #indicator d
+--	inner join #classify c on c.PatID = d.PatID
+--	inner join #latestEgfrACR e on e.PatID = d.PatID
+--where 
+--	((d.correct in ('G3a','G3b') and d.code not in ('G3', 'G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
+--	(d.correct in ('G4') and d.code not in ('G4','G4 A1','G4 A2','G4 A3','G4 A2/3')) or
+--	(d.correct in ('G5') and d.code not in ('G5','G5 A1','G5 A2','G5 A3','G5 A2/3')))
+--	and	d.indicator = 'wrong'
 
 union
 --RIGHT STAGE, WRONG SUBSTAGE (ACR always known)
@@ -430,22 +431,22 @@ select d.PatID, 'ckd.diagnosis.staging', 'rightStageWrongSubstage' as actionCat,
 		'rightStageWrongSubstage' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Add code ' + c.correct_read as actionText, 
+		'Add code ' + c.correct_read + 'to patient''s record' as actionText, 
 		'Reasoning' +
-			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
-			'<li></strong>Latest ACR: <strong>' + Str(e.acrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + 
+			'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
+			'<li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + 
 			'<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li>' +
 			'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
 where 
-	((d.correct = 'G3a A1' and d.code in ('G3a','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
-	(d.correct = 'G3a A2' and d.code in ('G3a','G3a A1','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3b A2/3')) or
-	(d.correct = 'G3a A3' and d.code in ('G3a','G3a A1','G3a A2','G3b','G3b A1','G3b A2','G3b A3','G3b A2/3')) or
-	(d.correct = 'G3b A1' and d.code in ('G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
-	(d.correct = 'G3b A2' and d.code in ('G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A3','G3a A2/3')) or
-	(d.correct = 'G3b A3' and d.code in ('G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3a A2/3')) or
+	((d.correct = 'G3a A1' and d.code in ('G3', 'G3a','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
+	(d.correct = 'G3a A2' and d.code in ('G3', 'G3a','G3a A1','G3a A3','G3b','G3b A1','G3b A2','G3b A3','G3b A2/3')) or
+	(d.correct = 'G3a A3' and d.code in ('G3', 'G3a','G3a A1','G3a A2','G3b','G3b A1','G3b A2','G3b A3','G3b A2/3')) or
+	(d.correct = 'G3b A1' and d.code in ('G3', 'G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A2','G3b A3','G3a A2/3','G3b A2/3')) or
+	(d.correct = 'G3b A2' and d.code in ('G3', 'G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A3','G3a A2/3')) or
+	(d.correct = 'G3b A3' and d.code in ('G3', 'G3a','G3a A1','G3a A2','G3a A3','G3b','G3b A1','G3b A2','G3a A2/3')) or
 	(d.correct = 'G4 A1' and d.code in ('G4','G4 A2','G4 A3','G4 A2/3')) or
 	(d.correct = 'G4 A2' and d.code in ('G4','G4 A1','G4 A3')) or
 	(d.correct = 'G4 A3' and d.code in ('G4','G4 A1','G4 A2')) or
@@ -491,7 +492,7 @@ select d.PatID, 'ckd.diagnosis.staging', 'overdiagnosed' as actionCat,
 	4 as priority,
 	'Add code 2126E (CKD resolved) [#2126E]' as actionText, 
 	'Reasoning' +
-		'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax, 2, 0) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
+		'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + 
 		'<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li>' +
 		'<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 	from #indicator d
@@ -559,8 +560,8 @@ select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
 							---------------------------------------------------------------
 insert into [pingr.text](indicatorId, textId, text)
 values
-('ckd.diagnosis.staging','name','CKD staging'),
-('ckd.diagnosis.staging','tabText','CKD stage'),
+('ckd.diagnosis.staging','name','CKD coding'),
+('ckd.diagnosis.staging','tabText','CKD coding'),
 ('ckd.diagnosis.staging','description','<strong>Description:</strong> Patients with correct coding of CKD staging (Stage 3 or above) based on their latest <a target=''_blank'' href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2''>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with a CKD diagnostic code (stage 3 or above) without an exclusion code. <br> <strong>Correct patients:</strong> Patients with a CKD staging code <a target=''_blank'' href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2''>matching their latest eGFR and/or ACR readings</a>.'),
 ('ckd.diagnosis.staging','tagline','of your patients with a CKD code have the correct stage recorded based on their <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'' target=''_blank''>eGFR and ACR readings</a>.'),
 ('ckd.diagnosis.staging','positiveMessage','There''s room for improvement - but don''t be disheartened! Look through the recommended improvement actions on this page and for each patient.'),

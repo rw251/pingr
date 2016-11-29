@@ -12,7 +12,7 @@ values
 ('linkNiceBbHtn', '<a href="http://cks.nice.org.uk/hypertension-not-diabetic#!prescribinginfosub:35" target="_blank">NICE advice on prescribing Beta Blockers</a>'),
 
 --NICE guidance links
-('linkNiceBpTargetsCkd', '<a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5" target="_blank" title="NICE BP targets in CKD">NICE guidance on BP targets in CKD</a>'),
+('linkNiceBpTargetsCkd', '<a href="https://pathways.nice.org.uk/pathways/chronic-kidney-disease#path=view%3A/pathways/chronic-kidney-disease/management-of-chronic-kidney-disease.xml&content=view-node%3Anodes-blood-pressure-control-and-antihypertensive-treatment" target="_blank" title="NICE BP targets in CKD">NICE guidance on BP targets in CKD</a>'),
 ('linkNiceBpMxCkd', '<a href="https://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5" target="_blank">NICE guidance on hypertension management in CKD (NOT diabetic)</a>'),
 ('linkNiceBpMxCkdDm', '<a href="http://cks.nice.org.uk/diabetes-type-2#!scenarioclarification:13" target="_blank">NICE guidance on hypertension management in CKD (diabetic)</a>'),
 ('linkNiceHtn', '<a href="https://www.nice.org.uk/guidance/cg127/chapter/1-Guidance" target="_blank" title="NICE Hypertension Guidelines">NICE Hypertension guidelines</a>'),
@@ -38,9 +38,10 @@ values
 ('HtnDietExSheet', '<a href="https://www.nhlbi.nih.gov/files/docs/public/heart/hbp_low.pdf" title="National Heart, Lung, and Blood Institute" target="_blank">Exercise and diet guide to reduce blood pressure (patient information sheet)</a>'),
 ('BpUkDietSheet', '<a href="http://www.bloodpressureuk.org/BloodPressureandyou/Yourlifestyle/Eatingwell/main_content/EvQ2/downloadPublication" title="Blood Pressure UK" target="_blank">Eating a healthy blood pressure diet (patient information sheet)</a>'),
 ('BpExSheet', '<a href="http://www.acsm.org/docs/brochures/exercising-your-way-to-lower-blood-pressure.pdf" title="American College of Sports Medicine" target="_blank">Exercising Your Way to Lower Blood Pressure (patient information sheet)</a>'),
+('ExceptionReportingReasons', '<a href="http://qualitysafety.bmj.com/content/25/9/653.full#boxed-text-1" title="BMJ Quality and Safety" target="_blank">Eligible reasons for exception reporting</a>'),
 
 --evidence
-('linkBmjCkdBp', '<a href="http://www.bmj.com/content/347/bmj.f5680" target="_blank" target="_blank">Why it is important to control BP in CKD (BMJ article)</a>'),
+('linkBmjCkdBp', '<a href="http://www.bmj.com/content/347/bmj.f5680" target="_blank" title="BMJ">Why it is important to control BP in CKD (BMJ article)</a>'),
 ('linkBjgpBpDoctorsHigher', '<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964448/pdf/bjgpapr2014-64-621-e223.pdf" target="_blank" title="British Journal ofGeneralPractice">Doctors record higher blood pressures than nurses: systematic review and meta-analysis (BJGP article)</a>'),
 
 --PILs

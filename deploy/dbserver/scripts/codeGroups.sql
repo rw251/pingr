@@ -390,7 +390,92 @@ values
 	('246J.', 'bp'),
 	('246Z.', 'bp'),
 	('246g.', 'bp'),
-	('246o.', 'bp'), 
+	('246o.', 'bp'),
+
+--copd
+--from COPD QOF V32 codes
+('H3...', 'copdQof'),	--	Chronic obstructive pulmonary disease
+('H31..', 'copdQof'),	--	Chronic bronchitis
+('H310.', 'copdQof'),	--	Simple chronic bronchitis
+('H3100', 'copdQof'),	--	Chronic catarrhal bronchitis
+('H310z', 'copdQof'),	--	Simple chronic bronchitis NOS
+('H311.', 'copdQof'),	--	Mucopurulent chronic bronchitis
+('H3110', 'copdQof'),	--	Purulent chronic bronchitis
+('H3111', 'copdQof'),	--	Fetid chronic bronchitis
+('H311z', 'copdQof'),	--	Mucopurulent chronic bronchitis NOS
+('H312.', 'copdQof'),	--	Obstructive chronic bronchitis
+('H3120', 'copdQof'),	--	Chronic asthmatic bronchitis
+('H3121', 'copdQof'),	--	Emphysematous bronchitis
+('H3123', 'copdQof'),	--	Bronchiolitis obliterans
+('H312z', 'copdQof'),	--	Obstructive chronic bronchitis NOS
+('H313.', 'copdQof'),	--	Mixed simple and mucopurulent chronic bronchitis
+('H31y.', 'copdQof'),	--	Other chronic bronchitis
+('H31y1', 'copdQof'),	--	Chronic tracheobronchitis
+('H31yz', 'copdQof'),	--	Other chronic bronchitis NOS
+('H31z.', 'copdQof'),	--	Chronic bronchitis NOS
+('H32..', 'copdQof'),	--	Emphysema
+('H320.', 'copdQof'),	--	Chronic bullous emphysema
+('H3200', 'copdQof'),	--	Segmental bullous emphysema
+('H3201', 'copdQof'),	--	Zonal bullous emphysema
+('H3202', 'copdQof'),	--	Giant bullous emphysema
+('H3203', 'copdQof'),	--	Bullous emphysema with collapse
+('H320z', 'copdQof'),	--	Chronic bullous emphysema NOS
+('H321.', 'copdQof'),	--	Panlobular emphysema
+('H322.', 'copdQof'),	--	Centrilobular emphysema
+('H32y.', 'copdQof'),	--	Other emphysema
+('H32y0', 'copdQof'),	--	Acute vesicular emphysema
+('H32y1', 'copdQof'),	--	Atrophic (senile) emphysema
+('H32y2', 'copdQof'),	--	MacLeods unilateral emphysema
+('H32yz', 'copdQof'),	--	Other emphysema NOS
+('H32z.', 'copdQof'),	--	Emphysema NOS
+('H36..', 'copdQof'),	--	Mild chronic obstructive pulmonary disease
+('H37..', 'copdQof'),	--	Moderate chronic obstructive pulmonary disease
+('H38..', 'copdQof'),	--	Severe chronic obstructive pulmonary disease
+('H39..', 'copdQof'),	--	Very severe chronic obstructive pulmonary disease
+('H3A..', 'copdQof'),	--	End stage chronic obstructive airways disease
+('H3B..', 'copdQof'),	--	Asthma-chronic obstructive pulmonary disease overlap syndrome
+('H3y..', 'copdQof'),	--	Other specified chronic obstructive airways disease
+('H3z..', 'copdQof'),	--	Chronic obstructive airways disease NOS
+('H4640', 'copdQof'),
+('H4641', 'copdQof'),
+('H5832', 'copdQof'),
+('Hyu30', 'copdQof'),
+('Hyu31', 'copdQof'),
+
+--copdexac
+--from SS
+('H3122', 'copdExacSs'),
+
+--copd temp ex
+--from COPD ruleset_v34.0 Version Date: 31/03/2016
+('9h5..', 'copdTempEx'),	--	Exception reporting: COPD quality indicators
+('9h51.', 'copdTempEx'),	--	Excepted from COPD quality indicators: Patient unsuitable
+('9h52.', 'copdTempEx'),	--	Excepted from COPD quality indicators: Informed dissent
+
+--copd temp ex
+--from COPD ruleset_v34.0 Version Date: 31/03/2016
+('2126F', 'copdPermEx'),	-- Chronic obstructive pulmonary disease resolved
+
+--mrc2
+--from SS
+('173I.', 'mrc2'),
+
+--mrc
+--from SS
+('173H.', 'mrc'),  --	00	MRC Breathlessness Scale: grade 1
+('173I.', 'mrc'),  --	00	MRC Breathlessness Scale: grade 2
+('173J.', 'mrc'),  --	00	MRC Breathlessness Scale: grade 3
+('173K.', 'mrc'),  --	00	MRC Breathlessness Scale: grade 4
+('173L.', 'mrc'),  --	00	MRC Breathlessness Scale: grade 5
+
+--pulmonary rehab offered
+--from SS
+('9NSL.', 'pulRehabOfferedSs'),	--Pulmonary rehabilitation offered
+
+--pulmonary rehab temp ex
+--from SS
+('9kf0.', 'pulRehabTempExSs'),	--Chronic obstructive pulmonary disease patient unsuitable for pulmonary rehabilitation - enhanced services administration
+('8IA9.', 'pulRehabTempExSs'),	--Pulmonary rehabilitation declined
 
 --calcium
 --from SIR search of 1 GP practice
@@ -415,6 +500,18 @@ values
 ('9Ot2.', 'ckdInvite'), --Chronic kidney disease monitoring third letter
 ('9Ot3.', 'ckdInvite'),	--Chronic kidney disease monitoring verbal invite
 ('9Ot4.', 'ckdInvite'), --Chronic kidney disease monitoring telephone invite
+
+--copd invite - 3rd
+--from manual search
+('9Oi2.', 'copd3rdInvite'), --	Chronic obstructive pulmonary disease monitoring 3rd letter
+
+--copd invite - any
+--from manual search
+('9Oi0.', 'copdInvite'),	--	00	Chronic obstructive pulmonary disease monitoring 1st letter
+('9Oi1.', 'copdInvite'),	--	00	Chronic obstructive pulmonary disease monitoring 2nd letter
+('9Oi2.', 'copdInvite'), --	00	Chronic obstructive pulmonary disease monitoring 3rd letter
+('9Oi3.', 'copdInvite'),	--	00	Chronic obstructive pulmonary disease monitoring verbal invite
+('9Oi4.', 'copdInvite'), --	00	Chronic obstructive pulmonary disease monitoring phone invite
 
 --ckd stages 3-5
 --from v34 QOF
@@ -754,8 +851,8 @@ values
 
 --dm permanent exclusion: i.e. DM resolved
 --from QOF Diabetes ruleset_v34.0
-	('21263', 'dmPermEx'),
-	('212H.', 'dmPermEx'),
+	('21263', 'dmPermEx'), --	00	Diabetes resolved
+	('212H.', 'dmPermEx'), --	00	Diabetes resolved
 	
 --egfr
 ('451E.', 'egfr'),

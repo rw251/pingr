@@ -1,18 +1,16 @@
+									--TO RUN AS STORED PROCEDURE--
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.treatment.bp') DROP PROCEDURE [pingr.ckd.treatment.bp];
-
 GO
 CREATE PROCEDURE [pingr.ckd.treatment.bp] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
 AS
 SET NOCOUNT ON
 
-
---use P8701617062016
-declare @achieveDate datetime;
---set @refdate = GETDATE();
---set @achieveDate = '2016-06-17'
-set @achieveDate = (select case
-	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
-	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' end); --31st March
+									--TO TEST ON THE FLY--
+--use PatientSafety_Records_Test
+--declare @refdate VARCHAR(10);
+--declare @JustTheIndicatorNumbersPlease bit;
+--set @refdate = '2016-11-17';
+--set @JustTheIndicatorNumbersPlease= 0;
 	
 -----------------------------------------------------------------------------------
 --DEFINE ELIGIBLE POPULATION, EXCLUSIONS, DENOMINATOR, AND NUMERATOR --------------
@@ -22,6 +20,10 @@ set @achieveDate = (select case
 --COMBINE TABLES TOGETHER THAT NEED TO BE QUERIED TO CREATE NEW TABLES
 --THEN COMBINE ALL TABLES TOGETHER INTO ONE BIG TABLE TO BE QUERIED IN FUTURE
 -----------------------------------------------------------------------------------
+declare @achieveDate datetime;
+set @achieveDate = (select case
+	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
+	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' end); --31st March
 
 --#latestCkd35code 
 --ELIGIBLE POPULATION
@@ -517,7 +519,14 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 					-----------------------------------------------------------------------------
 					--DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE-------------
 					-----------------------------------------------------------------------------
+									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+--CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+--insert into #indicator
+
 select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, 0.80 as target, @val from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
@@ -1576,16 +1585,16 @@ where denominator = 1 and numerator = 0
 							-------------------MEDICATION SUGGESTIONS----------------------
 							---------------------------------------------------------------
 
+
 IF OBJECT_ID('tempdb..#medSuggestion') IS NOT NULL DROP TABLE #medSuggestion
 CREATE TABLE #medSuggestion
-	(PatID int, family varchar(32), start_or_inc varchar(8),  BNFlink varchar(1000), reasonText varchar(1000), reasonNumber int, priority int);
+	(PatID int, family varchar(max), start_or_inc varchar(12), reasonText varchar(max), reasonNumber int, priority int);
 insert into #medSuggestion
 
 --1st line: start ACEI
 select distinct a.PatID, 
-	'ACE inhibitor' as family, 
+	'ACE inhibitor (e.g. <a href="http://dx.doi.org/10.18578/BNF.437242180" title="BNF" target="_blank">lisonopril 5mg or 10mg</a>)' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.437242180" target="_blank">lisonopril 5mg or 10mg (BNF)</a>)' + (select text from regularText where [textId] = 'linkNiceAceiArbCkd') as BNFlink,
 	 case 
 		when 
 			(
@@ -1632,9 +1641,8 @@ union
 
 --1st line (alternative): start ARB
 select distinct a.PatID, 
-	'ARB' as family, 
+	'ARB (e.g. <a href="http://dx.doi.org/10.18578/BNF.958956352" title="BNF" target="_blank">losartan 25mg or 50mg</a>)' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.958956352" target="_blank">losartan 25mg or 50mg (BNF)</a>)' + (select text from regularText where [textId] = 'linkNiceAceiArbCkd') as BNFlink,
 	 case
 		when 
 			(
@@ -1681,9 +1689,8 @@ union
 
 --1st line (also): start CCB
 select distinct a.PatID, 
-	'Calcium Channel Blocker' as family, 
+	'Calcium Channel Blocker (e.g. <a href="http://dx.doi.org/10.18578/BNF.109201061" title="BNF" target="_blank">amlodipine 5mg</a>)' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.109201061" target="_blank">amlodipine 5mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceCcbHtn') as BNFlink,
 	 case 
 		when (a.PatID not in (select PatID from #htnMeds) and age > 54) then 
 			'<ul><li>Patient is not prescribed anti-hypertensive medication and is 55 years old or older.</li>' +
@@ -1729,9 +1736,8 @@ union
 
 --2nd line: start thiazide
 select distinct a.PatID, 
-	'Indapamide' as family, 
+	'Indapamide (e.g. <a href="http://dx.doi.org/10.18578/BNF.748067014" title="BNF" target="_blank">2.5mg</a>)' as family, 
 	'Start' as start_or_inc,
-	'(e.g. <a href="http://dx.doi.org/10.18578/BNF.748067014" target="_blank">2.5mg (BNF)</a>) ' + (select text from regularText where [textId] = 'linkNiceThiazideHtn') as BNFlink,
 	 case
 		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB') then
 			'<ul><li>Patient is prescribed an ACE Inhibitor (or ARB) and a Calcium Channel Blocker.</li>' +
@@ -1798,16 +1804,11 @@ union
 --3rd line: spironolactone, alpha, or beta
 select distinct a.PatID, 
 	case 
-		when currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null then 'Spironolactone' 
-		when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then 'Alpha Blocker'
-		when currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null then 'Beta Blocker'
+		when currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null then 'Spironolactone (e.g. <a http://dx.doi.org/10.18578/BNF.213718345" title="Spironolactone BNF" target="_blank">25mg</a>)' 
+		when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then 'Alpha Blocker (e.g. <a http://dx.doi.org/10.18578/BNF.782101311" title="Doxazosin BNF" target="_blank" >Doxazosin 1mg</a>)'
+		when currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null then 'Beta Blocker (e.g. <a http://dx.doi.org/10.18578/BNF.281805035" title="BNF" target="_blank">Bisoprolol 5mg</a>)'
 	end as family, 
 	'Start' as start_or_inc, 
-	case 
-		when currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.213718345">25mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceSpiroHtn')
-		when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.782101311">Doxazosin 1mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceAlphaHtn')
-		when currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null then '(e.g. <a http://dx.doi.org/10.18578/BNF.281805035">Bisoprolol 5mg (BNF)</a> )' + (select text from regularText where [textId] = 'linkNiceBbHtn')
-	end as BNFlink,
 	case
 		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB' and currentMedFamily = 'DIUR_THI') then
 			'<ul><li>Patient is prescribed an ACE Inhibitor (or ARB), Calcium Channel Blocker, and Thiazide-type Diuretic.</li>'
@@ -2028,6 +2029,7 @@ where
 	
 union
 
+
 --increase current medication
 select distinct a.PatID, 
 --	case
@@ -2040,10 +2042,8 @@ select distinct a.PatID,
 --		when currentMedFamily = 'ALPHA' and currentMedDose < currentMedMaxDose then 'Alpha Blocker'
 --		when currentMedFamily = 'DIUR_LOOP' and currentMedDose < currentMedMaxDose then 'Loop Diuretic'
 --	end 
-	currentMedIngredient COLLATE Latin1_General_CI_AS
-	as family, 
+	'<a href="' + BNF + '" target="_blank">' + currentMedIngredient + '</a>'  COLLATE Latin1_General_CI_AS as family, 
 	'Increase' as start_or_inc, 
-	'<a href="' + BNF + '" target="_blank">Link to BNF</a>' as BNFlink,
 	'<ul><li>Patient is currently prescribed ' + currentMedIngredient COLLATE Latin1_General_CI_AS + ' ' + Str(currentMedDose, 3, 0) + ' mg per day. Max dose is ' + Str(currentMedMaxDose, 3, 0)+ ' mg per day <a href="' + BNF + '" target="_blank">BNF link</a>).</li></ul>' as reasonText,
 	1 as reasonNumber,
 	2 as priority
@@ -2075,11 +2075,19 @@ where
 							---------------------------------------------------------------
 							----------------------PT-LEVEL ACTIONS-------------------------
 							---------------------------------------------------------------
-
+									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonCat, reasonNumber, priority, actionText, supportingText)
 
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+--CREATE TABLE #patActions
+--	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #patActions
+
+
 --CHECK REGISTERED
-select PatID, 
+select a.PatID, 
 	'ckd.treatment.bp' as indicatorId,
 	'Registered?' as actionCat,
 	'No contact' as reasonCat,
@@ -2088,9 +2096,19 @@ select PatID,
 	'Check this patient is registered' as actionText, 
 	'Reasoning' +
 		'<ul><li>No contact with your practice in the last year.</ul>' + 
-	'If <strong>not registered</strong> please add code <strong>92...</strong> [#92...] to their records.<br>' +
-	'If <strong>dead</strong> please add code <strong>9134.</strong> [#9134.] to their records.' as supportingText
-from #impOppsData
+	'If <strong>not registered</strong> please add code <strong>92...</strong> [#92...] to their records.<br><br>' +
+	'If <strong>dead</strong> please add code <strong>9134.</strong> [#9134.] to their records.<br><br>' +
+	'Useful information' + 
+		'<ul><li>' + 
+			case 
+					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
+					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd') 
+			end + '</li>' +
+		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
+		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
+	as supportingText
+from #impOppsData as a
+left outer join (select PatID, dmPatient, protPatient from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 	where 
 		noPrimCareContactInLastYear = 1
 	
@@ -2127,16 +2145,40 @@ select a.PatID,
 	'Measure this patient''s BP' as actionText, 
 	'Reasoning' +
 		(case
-		--No BP + contact
-			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then '<ul><li>No BP since last April.</ul>'
-		--Any contact
-			else '<ul><li>Last BP was <strong>uncontrolled</strong>: ' + Str(b.latestSbp, 3, 0) + '/' + Str(b.latestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, b.latestSbpDate, 3) + ' (target: ' + b.bpTarget + ').</li>'
+		--No BP
+			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then '<ul><li>No BP reading since last April.</ul>'
+		--Any BP
+			else 
+				'<ul><li>Last BP was <strong>uncontrolled</strong>: ' + 
+					case 
+						when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
+						else Str(latestSbp)
+					end
+				+ '/' + 
+					case 
+						when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
+						else Str(latestDbp)
+					end
+				+ ' on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+				'<li>Target: ' + b.bpTarget + ' - because patient has CKD' + 
+					case 
+						when dmPatient = 1 then ' and diabetes' 
+						when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3)
+						else '' 
+					end + 
+			' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>'
+		end) +
+		(case
+		--BP uncontrolled BUT near target
+			when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
+				'<li>This is only <strong>slightly (<10mmHg)</strong> over target. So it may be worth re-measuring their BP in case it has now come down.</li></ul>'
+			else ''
 		end) +
 		(case 
 		--BP uncontrolled BUT second latest BP controlled (one-off high)
 			when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
-				'<li><strong>Previous BP</strong> was <strong>controlled</strong>: ' + Str(secondLatestSbp, 3, 0) + '/' + Str(secondLatestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '. So it may be worth re-measuring in case this was a one-off.</li>'
-			else ''
+				'<li><strong>Previous BP</strong> was <strong>controlled</strong>: ' + Str(secondLatestSbp) + '/' + Str(secondLatestDbp) + ' on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '. So it may be worth re-measuring in case this was a one-off.</li>'
+			else ''			
 		end) +
 		(case 
 		--BP uncontrolled + medication change after
@@ -2145,28 +2187,30 @@ select a.PatID,
 			else ''
 		end) +
 		(case
-		--BP uncontrolled BUT near target
-			when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
-				'<li>This is only <strong>slightly (<10mmHg)</strong> over target. So it may be worth re-measuring their BP in case it has now come down.</li></ul>'
-			else ''
-		end) +
-		(case
 		--No BP + no contact
 			when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then
 				'Because they have <strong>not</strong> had contact with your practice in the last year, it may be best to:' +
 					'<ul><li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
-					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.'
+					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li></ul>'
 			else
 		--Any contact
 				'Because they <strong>have</strong> had contact with your practice in the last year, it may be possible to:' +
 					'<ul><li>Measure their BP <strong>opportunistically</strong> next time they are seen.</li>' +
 					'<li>Put a <strong>message on their prescription</strong> to make an appointment.</li>' +
 					'<li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
-					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li>'
-		end) 
+					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li></ul>'
+		end) +
+	'Useful information' + 
+		'<ul><li>' + 
+			case 
+					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
+					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd') 
+			end + '</li>' +
+		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
+		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0)
 	or 
@@ -2187,6 +2231,7 @@ where
 	
 union
 
+
 --MEDICATION SUGGESTION
 select a.PatID, 
 	'ckd.treatment.bp' as indicatorId,
@@ -2194,17 +2239,39 @@ select a.PatID,
 	start_or_inc + ' ' + family as reasonCat,
 	reasonNumber as reasonNumber,
 	priority as priority,
-	start_or_inc + ' ' + family + ' ' + BNFlink as actionText, 
+	start_or_inc + ' ' + family as actionText, 
 	'Reasoning' +
-		'<ul><li>Last BP was ' + Str(latestSbp, 3, 0) + '/' + Str(latestDbp, 3, 0) + ' on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-		'<li>Target BP is ' + b.bpTarget + ' - because patient has CKD' + 
-			case 
-				when dmPatient = 1 then ' and diabetes' 
-				when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, b.latestAcrDate, 3)
-				else '' 
-			end + 
-			'(' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' + reasonText +
+		'<ul><li>Last BP was <strong>uncontrolled</strong>: ' + 
+				case 
+					when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
+					else Str(latestSbp)
+				end
+			+ '/' + 
+				case 
+					when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
+					else Str(latestDbp)
+				end
+			+ ' on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+			'<li>Target: ' + b.bpTarget + ' - because patient has CKD' + 
+				case 
+					when dmPatient = 1 then ' and diabetes' 
+					when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, b.latestAcrDate, 3)
+					else '' 
+				end + 
+		' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>'
+	+ reasonText +
 	'Useful information' + 
+		'<ul><li>' + 
+			case 
+				when family like '%ACE inhibitor%' then (select text from regularText where [textId] = 'linkNiceAceiArbCkd')
+				when family like '%ARB%' then (select text from regularText where [textId] = 'linkNiceAceiArbCkd')
+				when family like '%Calcium Channel Blocker%' then (select text from regularText where [textId] = 'linkNiceCcbHtn')
+				when family like '%Indapamide%' then (select text from regularText where [textId] = 'linkNiceThiazideHtn')
+				when family like '%Spironolactone%' then (select text from regularText where [textId] = 'linkNiceSpiroHtn')
+				when family like '%Alpha Blocker%' then (select text from regularText where [textId] = 'linkNiceAlphaHtn')
+				when family like '%Beta Blocker%' then (select text from regularText where [textId] = 'linkNiceBbHtn')
+				else ''
+			end + '</li>' +
 		'<ul><li>' + 
 			case 
 					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
@@ -2216,7 +2283,7 @@ from #medSuggestion as a
 	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 
 union
-	
+
 --SUGGEST EXCLUDE
 select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
@@ -2226,18 +2293,20 @@ select a.PatID,
 		when latestFrailCode is not null then 'Frail'
 		when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate) then 'House or bed bound'
 		when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 then '3 invites'
-		--when (count(*) currentMedFamily) > 4 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum medication'
+--		when (select COUNT(*) from (select currentMedFamily from #currentHTNmeds) sub) > 3 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum medication'
 		when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum tolerated medication'
+		else ''
 	end as reasonCat,
 	(case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate) 
-	then '1' else 0 end) +
+	then 1 else 0 end) +
 	(case when latestFrailCode is not null
 	then 1 else 0 end) +
 	(case when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate)
 	then 1 else 0 end) +
 	(case when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 
 	then 1 else 0 end) +
-	--when (count(*) currentMedFamily) > 4 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum medication'
+--	(case when (select COUNT(*) from (select currentMedFamily from #currentHTNmeds) sub) > 3 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
+--	then 1 else 0 end) +
 	(case when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 	then 1 else 0 end)
 	as reasonNumber,
@@ -2258,7 +2327,11 @@ select a.PatID,
 		then '9hE0. (informed dissent) [9hE0.] '
 		else ''
 	end) +
-		--when count(*) currentMedFamily > 4 and a.PatiD in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum medication'
+--	(case
+--		when (select COUNT(*) from (select currentMedFamily from #currentHTNmeds) sub) > 3 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
+--		then '8BL0. (maximal therapy) [8BL0.] '
+--		else ''
+--	end) +
 	(case
 		when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) 
 		then '8BL0. (maximal therapy) [8BL0.] '
@@ -2266,20 +2339,74 @@ select a.PatID,
 	end) as actionText,
 	'Reasoning<ul>' +
 		(case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate) 
-		then '<li>Patient has code ' + latestPalCode + ' on ' + CONVERT(VARCHAR, latestPalCodeDate, 3) + '.</li>' else '' end) +
+		then '<li>Patient has code <strong> ''' + latestPalCode + '''</strong> on ' + CONVERT(VARCHAR, latestPalCodeDate, 3) + '.</li>' else '' end) +
 		(case when latestFrailCode is not null
-		then '<li>Patient has code ' + latestFrailCode + ' on ' + CONVERT(VARCHAR, latestFrailCodeDate, 3) + '.</li>' else '' end) +
+		then '<li>Patient has code <strong>''' + latestFrailCode + '''</strong> on ' + CONVERT(VARCHAR, latestFrailCodeDate, 3) + '.</li>' else '' end) +
 		(case when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate)
-		then '<li>Patient has code ' + latestHouseBedboundCode + ' on ' + CONVERT(VARCHAR, latestHouseBedboundCodeDate, 3) + '.</li>' else '' end) +
+		then '<li>Patient has code <strong>''' + latestHouseBedboundCode + '''</strong> on ' + CONVERT(VARCHAR, latestHouseBedboundCodeDate, 3) + '.</li>' else '' end) +
 		(case when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 
 		then '<li>Patient has had 3 CKD invites since last April.</li>' else '' end) +
-		--when (count(*) currentMedFamily) > 4 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum medication'
-		(case when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
-		then '<li>Patient has contraindications to, or is taking all BP medications recommendeded by NICE.</li>' else '' end)
+--		(case 
+--			when (select COUNT(*) from (select currentMedFamily from #currentHTNmeds) sub) > 3 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
+--			then 
+--				'<li>Last BP was <strong>uncontrolled</strong>: ' + 
+--						case 
+--							when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
+--							else Str(latestSbp)
+--						end
+--					+ '/' + 
+--						case 
+--							when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
+--							else Str(latestDbp)
+--						end
+--					+ ' on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+--					'<li>Target: ' + bpTarget + ' - because patient has CKD' + 
+--						case 
+--							when dmPatient = 1 then ' and diabetes' 
+--							when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3)
+--							else '' 
+--						end + 
+--				' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' +		
+--				'<li><strong>And</strong> patient is prescribed <strong>4 or more</strong> classes of hypertensive medication.</li>' 
+--			else '' 
+--			end) +
+		(case 
+			when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
+			then 
+				'<li>Last BP was <strong>uncontrolled</strong>: ' + 
+						case 
+							when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
+							else Str(latestSbp)
+						end
+					+ '/' + 
+						case 
+							when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
+							else Str(latestDbp)
+						end
+					+ ' on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+					'<li>Target: ' + bpTarget + ' - because patient has CKD' + 
+						case 
+							when dmPatient = 1 then ' and diabetes' 
+							when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3)
+							else '' 
+						end + 
+				' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' +		
+				'<li>Patient has contraindications to, or is taking all BP medications recommendeded by NICE.</li>' 
+			else '' 
+			end) +
+	'Useful information' + 
+		'<ul><li>' + (select text from regularText where [textId] = 'ExceptionReportingReasons') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
 	left outer join (select PatID, currentMedFamily from #currentHTNmeds) as b on b.PatID = a.PatID
-	left outer join (select PatID, bpMeasuredOK, bpControlledOk from #eligiblePopulationAllData) as c on c.PatID = a.PatID
+	left outer join (select PatID, bpMeasuredOK, bpControlledOk, dmPatient, protPatient, latestSbp, latestDbp, latestSbpDate, bpTarget, latestAcrDate from #eligiblePopulationAllData) as c on c.PatID = a.PatID
+where
+	((latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate))
+	or (latestFrailCode is not null)
+	or((latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate))
+	or((latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2)
+--	or((select COUNT(*) from (select currentMedFamily from #currentHTNmeds) sub) > 3 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0))
+	or(a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0))
 
 							---------------------------------------------------------------
 							---------------SORT ORG-LEVEL ACTION PRIORITY ORDER------------
@@ -2522,7 +2649,7 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --overview tab
-('ckd.treatment.bp','name','CKD blood pressure treatment'), --overview table name
+('ckd.treatment.bp','name','CKD blood pressure control'), --overview table name
 ('ckd.treatment.bp','tabText','CKD BP'), --indicator tab text
 ('ckd.treatment.bp','description', --'show more' on overview tab
 	'<strong>Definition:</strong>Patients on the CKD register with a BP recorded in the last 12 months (from last April) where the latest BP is 140/90 or less.<br>' + --Informatica doc
