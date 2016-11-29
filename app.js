@@ -1020,7 +1020,6 @@ var cht = {
           //find min in order to set the floor of the chart - to be implemented if desired
           var minHeight = 0;
           var local = true;
-
           var bChart = $('#' + element).highcharts({
             chart: {
               type: 'column',
