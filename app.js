@@ -4497,9 +4497,16 @@ var ll = {
           data: [],
           color: colour.next()
         };
+
+        var latestIntervalEndDate;
+
         $.each(task.intervals, function(j, interval) {
+          if(!latestIntervalEndDate) latestIntervalEndDate = interval.to;
+          else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
           item.data.push([i + 0.49, interval.from, interval.to]);
         });
+
+        if(latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
 
         series.push(item);
       });
@@ -4528,7 +4535,9 @@ var ll = {
             spacingBottom: 20,
             type: 'columnrange',
             inverted: true,
-            backgroundColor: '#F3F9F9'
+            backgroundColor: '#F3F9F9',
+            borderWidth: 2,
+            borderColor: '#ddd'
           },
           lang: {
             noData: "No relevant medications"
@@ -4542,17 +4551,6 @@ var ll = {
           },
 
           title: '',
-          /*{
-                      text: 'Patient medications',
-                      align: 'left',
-                      margin: 1,
-                      style: {
-                        color: "#333333",
-                        fontSize: "12px",
-                        fontWeight: "bold"
-                      }
-                    },*/
-
 
           yAxis: {
             type: 'datetime',
@@ -4622,6 +4620,7 @@ var ll = {
 
           plotOptions: {
             columnrange: {
+              pointWidth:20,
               grouping: false,
               dataLabels: {
                 allowOverlap: true,
