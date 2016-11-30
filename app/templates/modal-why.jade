@@ -9,21 +9,16 @@
         if item
           label You have disagreed with the following suggested action:
           p
-          span(style='font-style:italic')= item
+          span.text-warning(style='font-style:italic')= (item.split("Show"))[0]
         form
-          .form-group
-            p
-            label Why?
-              each reason in reasons
-                .radio
-                  label
-                    input(type='radio', name='reason', value=reason.reason, checked=reason.checked ? 'checked' : undefined, required='')
-                    =reason.reason
-          .form-group
-            label
-              ='Please tell us more' + hasReasons ? '- whatever your selection above:' : ''
-            textarea.form-control(rows='3', style='resize:none', placeholder=placeholder)
+          div.form-group
+            //text entry section
+            h3 That's fair enough! 
+            p  All we need is a bit about your reasoning in this box!
+            //placeholder remains until I can figure out where 'placeholder' lives and something better to say!
+            textarea.form-control(rows='3', style='resize:none', placeholder=placeholder)          
           button.btn.btn-primary.save-plan(type='submit') Save
+          span  
           if isUndo
             button.btn.btn-warning.undo-plan(type='button', data-dismiss='modal') Undo disagree
           button.btn.btn-default(type='button', data-dismiss='modal') Cancel

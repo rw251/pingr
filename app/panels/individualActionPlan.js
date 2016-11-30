@@ -245,6 +245,8 @@ var iap = {
     //success - user completed - green background / strikethrough text
     //danger - user disagrees - red background / strikethrough text
 
+    //TODO *b* inspect and amend danger and success to have more appropriate colours
+
     $('#advice-list').add('#personalPlanIndividual').find('tr.suggestion').each(function() {
       var self = $(this);
       var id = self.data("id");
