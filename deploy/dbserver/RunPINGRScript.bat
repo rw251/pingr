@@ -7,7 +7,7 @@ SET DB.TEST=PatientSafety_Records_Test
 SET REPORT.DIRECTORY=D:\pingr\deploy\dbserver\out
 SET RECEIVING.DIRECTORY=\\SRHTNWEHPSTRC1\ImporterPINGR
 
-REM 
+REM
 REM Here we do all the medication stuff
 REM
 REM Execute the query stored procedure
@@ -71,7 +71,7 @@ for /f "tokens=2 delims==" %%a in ('wmic OS Get localdatetime /value') do set "d
 set "YY=%dt:~2,2%" & set "YYYY=%dt:~0,4%" & set "MM=%dt:~4,2%" & set "DD=%dt:~6,2%"
 set "HH=%dt:~8,2%" & set "Min=%dt:~10,2%" & set "Sec=%dt:~12,2%"
 
-set "datestamp=%YYYY%-%MM%-%DD%" 
+set "datestamp=%YYYY%-%MM%-%DD%"
 
 REM Execute the query stored procedure
 sqlcmd -E -d %DB% -Q "EXEC [pingr.run-all] @ReportDate = $(ReportDate)" -v ReportDate = '%datestamp%' -h -1 -o log\pingr_query_result.txt
@@ -112,7 +112,7 @@ bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impCodes]" queryout %REPORT.DIRECT
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.patActions]" queryout %REPORT.DIRECTORY%/patActions.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.indicator]" queryout %REPORT.DIRECTORY%/indicator.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.measures]" queryout %REPORT.DIRECTORY%/measures.dat -c -T -b 10000000
-bcp "SELECT * FROM [%DB%].[dbo].[MEDICATION_EVENTS]" queryout %REPORT.DIRECTORY%/medications.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[MEDICATION_EVENTS] WHERE PatID in (select distinct PatID from [%DB%].[dbo].[output.pingr.patActions])" queryout %REPORT.DIRECTORY%/medications.dat -c -T -b 10000000
 bcp "SELECT left(indicatorId,CHARINDEX('.', indicatorId)-1),SUBSTRING(indicatorId,CHARINDEX('.', indicatorId)+1,CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)-1-CHARINDEX('.', indicatorId)),right(indicatorId,len(indicatorId)-CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)),textId, text FROM [%DB%].[dbo].[pingr.text]" queryout %REPORT.DIRECTORY%/text.dat -c -T -b 10000000
 
 REM get number of files in directory
