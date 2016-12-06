@@ -2,11 +2,10 @@ INSERT INTO dbo.drugEventIds ([Event])
 SELECT [Event] FROM dbo.[drugEvents.temp] GROUP BY [Event]
 EXCEPT SELECT [Event] FROM dbo.drugEventIds;
 
-INSERT INTO dbo.drugIngredients (Ingredient)
+INSERT INTO dbo.drugIngredients (Ingredient, MaxDose, BNF)
 SELECT Ingredient, MIN(MaxDose), MAX(BNF) FROM dbo.[drugEvents.temp]  t
 INNER JOIN drugsOfInterest i on t.Ingredient = i.Type
-GROUP BY Ingredient
-EXCEPT SELECT Ingredient FROM dbo.drugIngredients;
+GROUP BY Ingredient;
 
 INSERT INTO dbo.drugFamilies(Family)
 SELECT Family FROM dbo.[drugEvents.temp] GROUP BY Family
