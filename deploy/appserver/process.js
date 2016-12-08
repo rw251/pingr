@@ -494,7 +494,7 @@ async.series([
               console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
               patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
             }
-            if(patientsStandard.length>1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
+            else if(patientsStandard.length>1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
             else patientsStandard[0].targetMet=false;
 
             var i = indicators.filter(function(v) {
