@@ -289,7 +289,7 @@ select 'ckd.diagnosis.undiagnosed',b.pracID, CONVERT(char(10), @refdate, 126) as
 ----------------------------------------------
 insert into [output.pingr.denominators](PatID, indicatorId)
 select PatID, 'ckd.diagnosis.undiagnosed' from #indicator
-when code is not null;
+where code is not null;
 
 ---------------------------------------------------------
 -- Exit if we're just getting the indicator numbers -----
