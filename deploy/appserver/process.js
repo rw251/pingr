@@ -301,7 +301,7 @@ async.series([
                     label: d + " " + d.mg + "mg" || ""
                   });
                 }
-                return e.event === "STOP" ? null : cur;
+                return d.event === "STOP" ? null : cur;
               });
               if(last){
                 intervals.push({
