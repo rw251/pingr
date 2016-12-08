@@ -297,10 +297,10 @@ async.series([
                   intervals.push({
                     from: prev.date,
                     to: end.getTime(),
-                    label: d + " " + d.mg + "mg" || ""
+                    label: d + " " + prev.mg + "mg" || ""
                   });
                 }
-                return d.event === "STOP" ? null : cur;
+                return d.event === "STOPPED" ? null : cur;
               });
               if (last) {
                 intervals.push({
