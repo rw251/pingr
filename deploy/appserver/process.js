@@ -297,7 +297,7 @@ async.series([
                   intervals.push({
                     from: prev.date,
                     to: end.getTime(),
-                    label: d + " " + prev.mg + "mg" || ""
+                    label: prev.mg + "mg" || ""
                   });
                 }
                 return d.event === "STOPPED" ? null : cur;
@@ -306,7 +306,7 @@ async.series([
                 intervals.push({
                   from: last.date,
                   to: new Date().getTime(),
-                  label: last.type + " " + last.mg + "mg" || ""
+                  label: last.mg + "mg" || ""
                 });
               }
               patients[p].medications.push({

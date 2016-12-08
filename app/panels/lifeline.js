@@ -660,7 +660,7 @@ var ll = {
                 return yCoord >= v.from && yCoord <= v.to;
               });
               var label = labelTmp.length > 0 ? labelTmp[0].label : "No label C";
-              return '<b>' + medications[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
+              return '<b>' + medications[Math.floor(this.x)].name + (label ? ' ' + label : '') + '</b><br/>' +
                 Highcharts.dateFormat('%d/%m/%Y', this.point.options.low) +
                 ' - ' + Highcharts.dateFormat('%d/%m/%Y', this.point.options.high);
             },
