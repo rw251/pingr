@@ -107,6 +107,7 @@ REM cscript sendmail.vbs "Latest sql log dump" "E:\xfer\safety-data-importer\Bat
 REM DO EXTRACT
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.contacts]" queryout %REPORT.DIRECTORY%/contacts.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.demographics]" queryout %REPORT.DIRECTORY%/demographics.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.denominators]" queryout %REPORT.DIRECTORY%/denominators.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.diagnoses]" queryout %REPORT.DIRECTORY%/diagnoses.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impCodes]" queryout %REPORT.DIRECTORY%/impCodes.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.patActions]" queryout %REPORT.DIRECTORY%/patActions.dat -c -T -b 10000000
@@ -120,7 +121,7 @@ REM get number of files in directory
 for /f %%A in ('dir /b %REPORT.DIRECTORY%\^| find /v /c ""') do set cnt=%%A
 echo File count = %cnt%
 
-SET EXPECTED.FILE.NUMBER=10
+SET EXPECTED.FILE.NUMBER=11
 
 IF NOT "%cnt%"=="%EXPECTED.FILE.NUMBER%" (
 	GOTO :extractfailed

@@ -5,6 +5,7 @@ var csv = require('csv-parser'),
 
 var FILENAMES = {
   demographics: 'demographics.dat',
+  denominators: 'denominators.dat',
   diagnoses: 'diagnoses.dat',
   medications: 'medications.dat',
   events: 'impCodes.dat',
@@ -201,7 +202,8 @@ async.series([
         { file: IN_DIR + FILENAMES.medications, headers: ['patientId', 'date', 'type', 'family', 'mg', 'event'] },
         { file: IN_DIR + FILENAMES.measurements, headers: ['patientId', 'date', 'thing', 'value'] },
         { file: IN_DIR + FILENAMES.events, headers: ['patientId', 'date', 'event'] },
-        { file: IN_DIR + FILENAMES.contacts, headers: ['patientId', 'date', 'contact'] }
+        { file: IN_DIR + FILENAMES.contacts, headers: ['patientId', 'date', 'contact'] },
+        { file: IN_DIR + FILENAMES.denominators, headers: ['patientId', 'indicatorId'] }
       ], readCsvAsync, function(err, results) {
         console.log("all files loaded");
         if (err) {
@@ -217,13 +219,10 @@ async.series([
             patients[+v.patientId].events = [];
             patients[+v.patientId].contacts = [];
             patients[+v.patientId].measurements = [];
-            patients[+v.patientId].standards = []; //[{ display: indText.tabText, targetMet: true }];
+            patients[+v.patientId].standards = [];
             patients[+v.patientId].medications = [];
             patients[+v.patientId].actions = [];
           }
-          /* else {
-                      patients[+v.patientId].standards.push({ display: indText.tabText, targetMet: true });
-                    }*/
         });
         results[0] = null;
         console.log("age, sex etc. done");
@@ -303,7 +302,7 @@ async.series([
                 }
                 return d.event === "STOP" ? null : cur;
               });
-              if(last){
+              if (last) {
                 intervals.push({
                   from: last.date,
                   to: new Date().getTime(),
@@ -436,6 +435,22 @@ async.series([
         results[5] = null;
         console.log("contacts done");
 
+        //indicators
+        results[6].forEach(function(v) {
+          if (!temp[+v.patientId]) {
+            console.log("Indicator for unknown patient: " + v.patientId);
+            return;
+          }
+          var pathway = v.indicatorId.split('.')[0];
+          var stage = v.indicatorId.split('.')[1];
+          var standard = v.indicatorId.split('.')[2];
+
+          var indText = textFile.pathways[pathway][stage].standards[standard];
+          patients[+v.patientId].standards.push({ display: indText.tabText, targetMet: true });
+        });
+        results[6] = null;
+        console.log("indicators done");
+
         indicators.forEach(function(v) {
           v.opportunities.forEach(function(vv, ix) {
             v.opportunities[ix].patients = [];
@@ -472,15 +487,16 @@ async.series([
               });
             }
 
-            patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
-            /*
-            RW - maybe need a way to determine if a person has met a standard
-                        patients[+data.patientId].standards.forEach(function(v) {
-                          if (v.display === indText.tabText) {
-                            v.targetMet = false;
-                          }
-                        });
-            */
+            var patientsStandard = patients[+data.patientId].standards.filter(function(v){
+              return v.display === indText.tabText;
+            });
+            if(patientsStandard.length===0) {
+              console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
+              patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
+            }
+            if(patientsStandard.length>1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
+            else patientsStandard[0].targetMet=false;
+
             var i = indicators.filter(function(v) {
               return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
             })[0];
