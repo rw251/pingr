@@ -11,7 +11,8 @@ var FILENAMES = {
   indicators: 'indicator.dat',
   measurements: 'measures.dat',
   contacts: 'contacts.dat',
-  opportunities: 'patActions.dat',
+  patientActions: 'patActions.dat',
+  orgActions: 'orgActions.dat',
   text: 'text.dat'
 };
 
@@ -197,12 +198,12 @@ async.series([
       async.map([
         { file: IN_DIR + FILENAMES.demographics, headers: ['patientId', 'nhsnumber', 'age', 'sex', 'gpcode'] },
         { file: IN_DIR + FILENAMES.diagnoses, headers: ['patientId', 'date', 'diag', 'cat'] },
-        { file: IN_DIR + FILENAMES.medications, headers: ['patientId', 'date', 'type', 'family', 'mg','event'] },
+        { file: IN_DIR + FILENAMES.medications, headers: ['patientId', 'date', 'type', 'family', 'mg', 'event'] },
         { file: IN_DIR + FILENAMES.measurements, headers: ['patientId', 'date', 'thing', 'value'] },
         { file: IN_DIR + FILENAMES.events, headers: ['patientId', 'date', 'event'] },
         { file: IN_DIR + FILENAMES.contacts, headers: ['patientId', 'date', 'contact'] }
       ], readCsvAsync, function(err, results) {
-		  console.log("all files loaded");
+        console.log("all files loaded");
         if (err) {
           return callback(err);
         }
@@ -224,14 +225,14 @@ async.series([
                       patients[+v.patientId].standards.push({ display: indText.tabText, targetMet: true });
                     }*/
         });
-		results[0]=null;
-		console.log("age, sex etc. done");
+        results[0] = null;
+        console.log("age, sex etc. done");
         //diagnoses
         results[1].forEach(function(v) {
-		  if(!temp[+v.patientId]) {
-			  console.log("Diagnosis for unknown patient: " + v.patientId);
-			  return;
-		  }
+          if (!temp[+v.patientId]) {
+            console.log("Diagnosis for unknown patient: " + v.patientId);
+            return;
+          }
           if (!temp[+v.patientId].diag) temp[+v.patientId].diag = {};
           if (!temp[+v.patientId].diag[v.diag]) temp[+v.patientId].diag[v.diag] = [];
           temp[+v.patientId].diag[v.diag].push({ date: new Date(v.date).getTime(), cat: v.cat });
@@ -268,17 +269,17 @@ async.series([
             });
           }
         });
-		results[1]=null;
-		console.log("diagnoses done");
+        results[1] = null;
+        console.log("diagnoses done");
         //medications
         results[2].forEach(function(v) {
-		  if(!temp[+v.patientId]) {
-			  console.log("Medication for unknown patient: " + v.patientId);
-			  return;
-		  }
+          if (!temp[+v.patientId]) {
+            console.log("Medication for unknown patient: " + v.patientId);
+            return;
+          }
           if (!temp[+v.patientId].meds) temp[+v.patientId].meds = {};
-          if (!temp[+v.patientId].meds[v.family]) temp[+v.patientId].meds[v.family] = [];
-          temp[+v.patientId].meds[v.family].push({ date: new Date(v.date).getTime(), type: v.type });
+          if (!temp[+v.patientId].meds[v.type]) temp[+v.patientId].meds[v.type] = [];
+          temp[+v.patientId].meds[v.type].push({ date: new Date(v.date).getTime(), type: v.type, family: v.family, mg: v.mg, event: v.event });
         });
 
         Object.keys(temp).forEach(function(p) {
@@ -293,18 +294,22 @@ async.series([
               var last = temp[p].meds[d].reduce(function(prev, cur) {
                 var end = new Date(cur.date);
                 end.setDate(end.getDate() - 1);
+                if (prev) {
+                  intervals.push({
+                    from: prev.date,
+                    to: end.getTime(),
+                    label: d + " " + d.mg + "mg" || ""
+                  });
+                }
+                return e.event === "STOP" ? null : cur;
+              });
+              if(last){
                 intervals.push({
-                  from: prev.date,
-                  to: end.getTime(),
-                  label: prev.type || ""
+                  from: last.date,
+                  to: new Date().getTime(),
+                  label: last.type + " " + last.mg + "mg" || ""
                 });
-                return cur;
-              });
-              intervals.push({
-                from: last.date,
-                to: new Date().getTime(),
-                label: last.type
-              });
+              }
               patients[p].medications.push({
                 name: d,
                 intervals: intervals
@@ -312,30 +317,30 @@ async.series([
             });
           }
         });
-		results[2]=null;
-		console.log("medications done");
+        results[2] = null;
+        console.log("medications done");
 
         //measurements
         results[3].forEach(function(v) {
-		  if(!temp[+v.patientId]) {
-			  console.log("Measure for unknown patient: " + v.patientId);
-			  return;
-		  }
+          if (!temp[+v.patientId]) {
+            console.log("Measure for unknown patient: " + v.patientId);
+            return;
+          }
           if (!temp[+v.patientId].meas) temp[+v.patientId].meas = {};
-		  if(["SBP","DBP"].indexOf(v.thing)>-1) {
-			if (!temp[+v.patientId].meas.BP) temp[+v.patientId].meas.BP = [];
-			temp[+v.patientId].meas.BP.push({ date: new Date(v.date).getTime(), value: v.value, thing: v.thing });
-		  } else if(v.thing==="BP") {
-			  return;
-		  } else {
-			if (!temp[+v.patientId].meas[v.thing]) temp[+v.patientId].meas[v.thing] = [];
-			temp[+v.patientId].meas[v.thing].push({ date: new Date(v.date).getTime(), value: v.value });
-		  }
-          
+          if (["SBP", "DBP"].indexOf(v.thing) > -1) {
+            if (!temp[+v.patientId].meas.BP) temp[+v.patientId].meas.BP = [];
+            temp[+v.patientId].meas.BP.push({ date: new Date(v.date).getTime(), value: v.value, thing: v.thing });
+          } else if (v.thing === "BP") {
+            return;
+          } else {
+            if (!temp[+v.patientId].meas[v.thing]) temp[+v.patientId].meas[v.thing] = [];
+            temp[+v.patientId].meas[v.thing].push({ date: new Date(v.date).getTime(), value: v.value });
+          }
+
         });
 
-		var tempbp = {};
-			
+        var tempbp = {};
+
         Object.keys(temp).forEach(function(p) {
           if (temp[p].meas && patients[p].measurements.filter(function(v) {
               return Object.keys(temp[p].meas).indexOf(v.id) > -1;
@@ -345,61 +350,61 @@ async.series([
                 return a.date - b.date;
               });
               var mData = [];
-			  if(d==="BP"){
-				  var lastdate;
-				  var sbp,dbp;
-				  for(var i = 0; i < temp[p].meas[d].length; i++){
-					  if(lastdate===temp[p].meas[d][i].date){
-						  if(temp[p].meas[d][i].thing==="SBP") {
-							  sbp=+temp[p].meas[d][i].value;
-						  } else {
-							  dbp=+temp[p].meas[d][i].value;
-						  }
-						  if(sbp&&dbp) {
-							  mData.push([lastdate, sbp,dbp]);
-							sbp=null;
-							dbp=null;
-							lastdate=null;
-						  }
-					  } else {
-						  sbp=null;
-						  dbp=null;
-						  lastdate=temp[p].meas[d][i].date;
-						  if(temp[p].meas[d][i].thing==="SBP") {
-							  sbp=temp[p].meas[d][i].value;
-						  } else {
-							  dbp=temp[p].meas[d][i].value;
-						  }
-					  }
-				  }
-				  
-				patients[p].measurements.push({
-					"id": d,
-					"name": "BP",
-					"data": mData,
-					"unit": "mmHg",
-					"type": "errorbar",
-					"valueDecimals": 0
-				  });
-			  } else {
-				  temp[p].meas[d].forEach(function(v) {
-					mData.push([v.date, +v.value]);
-				  });
+              if (d === "BP") {
+                var lastdate;
+                var sbp, dbp;
+                for (var i = 0; i < temp[p].meas[d].length; i++) {
+                  if (lastdate === temp[p].meas[d][i].date) {
+                    if (temp[p].meas[d][i].thing === "SBP") {
+                      sbp = +temp[p].meas[d][i].value;
+                    } else {
+                      dbp = +temp[p].meas[d][i].value;
+                    }
+                    if (sbp && dbp) {
+                      mData.push([lastdate, sbp, dbp]);
+                      sbp = null;
+                      dbp = null;
+                      lastdate = null;
+                    }
+                  } else {
+                    sbp = null;
+                    dbp = null;
+                    lastdate = temp[p].meas[d][i].date;
+                    if (temp[p].meas[d][i].thing === "SBP") {
+                      sbp = temp[p].meas[d][i].value;
+                    } else {
+                      dbp = temp[p].meas[d][i].value;
+                    }
+                  }
+                }
 
-				  patients[p].measurements.push({
-					"id": d,
-					"name": textFile.measurements[d].name,
-					"data": mData,
-					"unit": textFile.measurements[d].unit,
-					"type": textFile.measurements[d].type,
-					"valueDecimals": textFile.measurements[d].valueDecimals
-				  });
-			  }
+                patients[p].measurements.push({
+                  "id": d,
+                  "name": "BP",
+                  "data": mData,
+                  "unit": "mmHg",
+                  "type": "errorbar",
+                  "valueDecimals": 0
+                });
+              } else {
+                temp[p].meas[d].forEach(function(v) {
+                  mData.push([v.date, +v.value]);
+                });
+
+                patients[p].measurements.push({
+                  "id": d,
+                  "name": textFile.measurements[d].name,
+                  "data": mData,
+                  "unit": textFile.measurements[d].unit,
+                  "type": textFile.measurements[d].type,
+                  "valueDecimals": textFile.measurements[d].valueDecimals
+                });
+              }
             });
           }
         });
-		results[3]=null;
-		console.log("measurements done");
+        results[3] = null;
+        console.log("measurements done");
 
 
         //events
@@ -413,23 +418,23 @@ async.series([
             });
           }
         });
-		results[4]=null;
-		console.log("events done");
+        results[4] = null;
+        console.log("events done");
 
         //contacts
-        results[5].forEach(function(v) {			
-		  if(!temp[+v.patientId]) {
-			  console.log("Contact for unknown patient: " + v.patientId);
-			  return;
-		  }
+        results[5].forEach(function(v) {
+          if (!temp[+v.patientId]) {
+            console.log("Contact for unknown patient: " + v.patientId);
+            return;
+          }
           patients[+v.patientId].contacts.push({
             name: v.contact,
             time: new Date(v.date).getTime(),
             task: 2
           });
         });
-		results[5]=null;
-		console.log("contacts done");
+        results[5] = null;
+        console.log("contacts done");
 
         indicators.forEach(function(v) {
           v.opportunities.forEach(function(vv, ix) {
@@ -437,7 +442,7 @@ async.series([
           });
         });
 
-        fs.createReadStream(IN_DIR + FILENAMES.opportunities)
+        fs.createReadStream(IN_DIR + FILENAMES.patientActions)
           .pipe(
             csv({
               separator: '\t',
@@ -450,12 +455,12 @@ async.series([
             var standard = data.indicatorId.split('.')[2];
 
             var indText = textFile.pathways[pathway][stage].standards[standard];
-            var oppText = indText.opportunities;	
-			
-			  if(!patients[+data.patientId]) {
-				  console.log("Action for unknown patient: " + v.patientId);
-				  return;
-			  }
+            var oppText = indText.opportunities;
+
+            if (!patients[+data.patientId]) {
+              console.log("Action for unknown patient: " + v.patientId);
+              return;
+            }
 
             if (patients[+data.patientId].actions.filter(function(v) {
                 return v.id === data.actionId;
@@ -502,7 +507,7 @@ async.series([
           })
           .on('end', function() {
 
-		console.log("opps done");
+            console.log("opps done");
             //Deduplicate contacts
             /*console.log("Removing duplicate contacts...");
             Object.keys(patients).forEach(function(pid) {
