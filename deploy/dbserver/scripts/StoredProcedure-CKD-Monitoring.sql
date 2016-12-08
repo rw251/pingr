@@ -78,7 +78,7 @@ SELECT c.PatID, 0 as egfr, 1 as diag, 0 as exclusion from
      LEFT OUTER JOIN
 		(SELECT PatID, MAX(EntryDate) AS ckd FROM SIR_ALL_Records
 			inner join patients p on p.patid = SIR_ALL_Records.PatID and p.dead != 1 --and p.gpcode='P87016'
-			WHERE ReadCode IN ('2126E', '1Z10.', '1Z11.', '1Z17.', '1Z18.', '1Z19.', '1Z1A.', '1Z1M.', '1Z1Q.', 'K051.', 'K052.', '1Z1N.', '1Z1P.', '1Z1R.', '1Z1S.')                                            
+			WHERE ReadCode IN ('2126E', '1Z10.', '1Z11.', '1Z17.', '1Z18.', '1Z19.', '1Z1A.', '1Z1M.', '1Z1Q.', 'K051.', 'K052.', '1Z1N.', '1Z1P.', '1Z1R.', '1Z1S.')
      and EntryDate < @refdate
      GROUP BY PatID) AS B ON c.PatID = B.PatID
 )
@@ -93,7 +93,7 @@ inner join patients p on p.patid = a.PatID and p.dead != 1 --and p.gpcode='P8701
 where ReadCode in ('9hE0.','9hE1.','9hE..')
 and EntryDate > DATEADD(month, -12, @refdate)
 and EntryDate < @refdate
-group by a.PatID 
+group by a.PatID
 
 --Close denominator table
 ) sub
@@ -135,12 +135,12 @@ select s.PatID, NULL as egfrMax, Null as latestEgfrDate, MAX(CodeValue) as acrMa
 		group by PatID ) sub on sub.PatID = s.PatID and sub.latestAcrDate = s.EntryDate
 		where ReadCode in ('46TC.', '46TD.')
 		and EntryDate < @refdate
-		group by s.PatID		
+		group by s.PatID
 
 union
 
 --Obtain latest CKD diagnostic code for each patient in #denominator table EXCLUDING EXCEPTIONS
-select s.PatID, NULL as egfrMax, NULL as latestEgfrDate, NULL as acrMax, NULL as latestAcrDate, case 
+select s.PatID, NULL as egfrMax, NULL as latestEgfrDate, NULL as acrMax, NULL as latestAcrDate, case
 	when ReadCode in ('1Z12.','K053.') then 'G3'
 	when ReadCode in ('1Z13.','K054.') then 'G4'
 	when ReadCode in ('1Z14.','K055.') then 'G5'
@@ -176,7 +176,7 @@ end as code, MAX(latestCodeDate) as CodeDate from SIR_ALL_Records as s
 		where ReadCode in ('1Z12.','1Z13.','1Z14.','1Z15.','1Z16.','1Z1B.','1Z1C.','1Z1D.','1Z1E.','1Z1F.','1Z1G.','1Z1H.','1Z1J.','1Z1K.','1Z1L.','K053.','K054.','K055.', '1Z1f.', '1Z1a.', '1Z1b.', '1Z1c.', '1Z1c.', '1Z1e.', '1Z1T.', '1Z1V.', '1Z1W.', '1Z1X.', '1Z1Y.', '1Z1Z.')
 		and EntryDate < @refdate
 		group by s.PatID, ReadCode
-	
+
 --Close latestEgfrACR table
 ) sub
 group by sub.PatID;
@@ -189,7 +189,7 @@ group by sub.PatID;
 --truncate table #classify
 insert into #classify (PatID, egfrMax, latestEgfrDate, acrMax, latestAcrDate, code, correct, correct_read)
 select PatID, egfrMax, latestEgfrDate, acrMax, latestAcrDate, code,
-	case	
+	case
 		--when egfrMax > 90 and acrMax is null then 'G1'
 		--when egfrMax > 90 and acrMax < 3 then 'G1 A1'
 		--when egfrMax > 90 and acrMax between 3 and 30 then 'G1 A2'
@@ -263,7 +263,7 @@ select PatID, COUNT(*) as noEgfrs
 		where ReadCode in ('451E.','451F.', '451G.', '451M.', '451N.', '451K.')
 		and Source not like 'salfordt%' --not hospital results
 		and EntryDate > DATEADD(year,-1, @refdate)
-		group by PatID, EntryDate 
+		group by PatID, EntryDate
 		) sub
 		group by sub.PatID
 
@@ -299,14 +299,14 @@ select top 5 sum(case when underMonitored is NULL and overMonitored is NULL then
 	group by b.pracID
 	having count(*) > 0
 	order by perc desc) sub);
-	
+
 --------------------------------------------------------------------------------
 --Declare indicator, numerator, denominator, target
 --------------------------------------------------------------------------------
 --declare @numerator int;
 --declare @denominator int;
 --set @numerator = (select COUNT(*) from #indicator where underMonitored is NULL and overMonitored is NULL);
---set @denominator = (select COUNT(*) from #indicator);  
+--set @denominator = (select COUNT(*) from #indicator);
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 --select CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
 select 'ckd.diagnosis.monitoring',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when underMonitored is NULL and overMonitored is NULL then 1 else 0 end) as numerator, COUNT(*) as denominator, 0.75 as target, @val from #indicator as a
@@ -314,6 +314,11 @@ select 'ckd.diagnosis.monitoring',b.pracID, CONVERT(char(10), @refdate, 126) as 
 	group by b.pracID
 --0s full SIR
 
+----------------------------------------------
+--POPULATE MAIN DENOMINATOR TABLE-------------
+----------------------------------------------
+insert into [output.pingr.denominators](PatID, indicatorId)
+select PatID, 'ckd.diagnosis.monitoring' from #indicator;
 
 ---------------------------------------------------------
 -- Exit if we're just getting the indicator numbers -----
@@ -348,7 +353,7 @@ group by a.PatID
 union
 
 --Insert patients with a housebound read code at ANY TIME and no non-housebound code afterwards
-SELECT c.PatID, 0 as palliative, NULL as paldate, 0 as frail, NULL as frailDate, 1 as housebound, c.house as houseboundDate, 0 as threeInvites, NULL as threeInvitesDate FROM 
+SELECT c.PatID, 0 as palliative, NULL as paldate, 0 as frail, NULL as frailDate, 1 as housebound, c.house as houseboundDate, 0 as threeInvites, NULL as threeInvitesDate FROM
 -----select most recent housebound code
 (
 	(SELECT PatID, MAX(EntryDate) AS house FROM SIR_ALL_Records
@@ -360,7 +365,7 @@ SELECT c.PatID, 0 as palliative, NULL as paldate, 0 as frail, NULL as frailDate,
      LEFT OUTER JOIN
 		(SELECT PatID, MAX(EntryDate) AS house FROM SIR_ALL_Records
 			inner join patients p on p.patid = SIR_ALL_Records.PatID and p.dead != 1 --and p.gpcode='P87016'
-			WHERE ReadCode IN ('13CW.')                                            
+			WHERE ReadCode IN ('13CW.')
      and EntryDate < @refdate
      GROUP BY PatID) AS B ON c.PatID = B.PatID
 )
@@ -371,29 +376,29 @@ union
 --Insert patients with 3 CKD invites since the lastest April date
 select a.PatID, 0 as palliative, NULL as paldate, 0 as frail, NULL as frailDate, 0 as housebound, NULL as houseboundDate, 1 as threeInvites, MAX(EntryDate) as threeInvitesDate from SIR_ALL_Records a
 	inner join patients p on p.patid = a.PatID and p.dead != 1 --and p.gpcode='P87016'
-where ReadCode in ('9Ot2.') 
-and 
+where ReadCode in ('9Ot2.')
+and
 (
 	(
 		month(@refdate) >= 4 and month(EntryDate)>=4 and year(EntryDate)=year(@refdate)
 	)
-	
+
 	OR
-	
+
 	(
 		(
 			month(@refdate) < 4
 		)
-		
+
 		AND
-		 
+
 		(
 			(
 				month(EntryDate)>=4 and year(EntryDate)=year(@refdate)-1
-			) 
-			
-			OR 
-			
+			)
+
+			OR
+
 			(
 				month(EntryDate)<4 and year(EntryDate)=year(@refdate)
 			)
@@ -401,7 +406,7 @@ and
 	)
 )
 and EntryDate < @refdate
-group by a.PatID 
+group by a.PatID
 
 --Close #suggestExclude table
 ) sub
@@ -424,16 +429,16 @@ set @MED = 2;
 set @REC = 1;
 set @OTH = 0;
 insert into #contacts(PatID, date, event)
-select PatID, date, 
+select PatID, date,
 	case
 		when eventcode = 5 then 'Telephone contact'
 		when eventcode = 4 then 'Face-to-face'
 		when eventcode = 3 then 'Other contact'
 		when eventcode = 2 then 'Medication'
 		when eventcode <= 1 then 'Other'
-		end as event from 
+		end as event from
 			(select l.PatID,
-				max(case 
+				max(case
 						when (ReadCode like 'ALLERGY%' OR ReadCode like 'EMIS' OR ReadCode like 'EGTON' OR ReadCode like 'CLEAT') then @CON
 						when LEN(ReadCode) >= 8 then @MED
 						when LEN(ReadCode) = 6 then @MED
@@ -484,7 +489,7 @@ select PatID, date,
 							 ) as d
 						on l.PatID = d.PatID
 						group by EntryDate, l.PatID) as m
-						
+
 -------------------------------------------------------------------------------------
 ---Create improvement analytic categories + associated actions (one query per action)
 -------------------------------------------------------------------------------------
@@ -492,14 +497,14 @@ select PatID, date,
 --truncate table outImpOppCatsAndActions
 insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonCat, reasonNumber, priority, actionText, supportingText)
 
---UNDERMONITORED 
+--UNDERMONITORED
 -- F2F/TEL/MED CONTACT IN LAST 1 year
 	--Acr known
 select d.PatID, 'ckd.diagnosis.monitoring','underContact' as actionCat,
 		'underContactAcrKnown' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Offer eGFR test via phone or letter' as actionText, 
+		'Offer eGFR test via phone or letter' as actionText,
 		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
@@ -510,7 +515,7 @@ from #indicator d
 		where event in ('Telephone contact','Face-to-face','Other contact','Medication')
 		group by PatID
 		) f on f.PatID = d.PatID
-where 
+where
 	d.underMonitored = 1 and
 	d.correct in ('G3a A1', 'G3a A2', 'G3a A3', 'G3b A1', 'G3b A2', 'G3b A3', 'G4 A1', 'G4 A2', 'G4 A3', 'G5 A1', 'G5 A2', 'G5 A3') and
 	f.MostRecentContact > dateadd(year, -1, @refdate) --contact in last 1 year
@@ -521,7 +526,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','underContact' as actionCat,
 		'underContactAcrUnknown' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Offer eGFR test via phone or letter' as actionText, 
+		'Offer eGFR test via phone or letter' as actionText,
 		'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>Nil</strong></li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
@@ -532,20 +537,20 @@ from #indicator d
 		where event in ('Telephone contact','Face-to-face','Other contact','Medication')
 		group by PatID
 		) f on f.PatID = d.PatID
-where 
+where
 	d.underMonitored = 1 and
 	d.correct in ('G3a', 'G3b', 'G4', 'G5') and
 	f.MostRecentContact > dateadd(year, -1, @refdate) --contact in last 1 year
-	
+
 union
---UNDERMONITORED 
+--UNDERMONITORED
 -- NO CONTACT IN LAST 1 year
 	--Acr known
 select d.PatID, 'ckd.diagnosis.monitoring','underNoContact' as actionCat,
 		'underNoContactAcrKnown' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Check this patient is still registered at your practice' as actionText, 
+		'Check this patient is still registered at your practice' as actionText,
 		'Reasoning<ul><li>This patient has not had contact with your practice for > 1 year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
@@ -556,18 +561,18 @@ from #indicator d
 		where event in ('Telephone contact','Face-to-face','Other contact','Medication')
 		group by PatID
 		) f on f.PatID = d.PatID
-where 
-	d.underMonitored = 1 and  
+where
+	d.underMonitored = 1 and
 	d.correct in ('G3a A1', 'G3a A2', 'G3a A3', 'G3b A1', 'G3b A2', 'G3b A3', 'G4 A1', 'G4 A2', 'G4 A3', 'G5 A1', 'G5 A2', 'G5 A3') and
 	f.MostRecentContact <= dateadd(year, -1, @refdate) --NO contact in <= 1 year
-	
+
 union
 	--Acr unknown
 select d.PatID, 'ckd.diagnosis.monitoring','underNoContact' as actionCat,
 		'underNoContactAcrUnknown' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Check this patient is still registered at your practice' as actionText, 
+		'Check this patient is still registered at your practice' as actionText,
 		'Reasoning<ul><li>This patient has not had contact with your practice for > 1 year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li></li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR was due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
@@ -578,27 +583,27 @@ from #indicator d
 		where event in ('Telephone contact','Face-to-face','Other contact','Medication')
 		group by PatID
 		) f on f.PatID = d.PatID
-where 
-	d.underMonitored = 1 and 
+where
+	d.underMonitored = 1 and
 	d.correct in ('G3a', 'G3b', 'G4', 'G5') and
 	f.MostRecentContact <= dateadd(year, -1, @refdate) --NO contact in <= 1 year
-	
+
 union
---OVERMONITORED 
+--OVERMONITORED
 	--Acr known
 select d.PatID, 'ckd.diagnosis.monitoring','overMonitored' as actionCat,
 		'overMonitoredAcrKnown' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Add to patient''s record: CKD monitoring not needed until ' + CONVERT(VARCHAR, g.egfrDue, 3) as actionText, 
+		'Add to patient''s record: CKD monitoring not needed until ' + CONVERT(VARCHAR, g.egfrDue, 3) as actionText,
 		'Reasoning<ul><li>This patient has had > 4 eGFRs in the last year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) + '</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR next due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
 	inner join #contacts f on f.PatID = d.PatID
 	inner join #egfrDue g on g.PatID = d.PatID
-where 
-	d.correct in ('G3a A1', 'G3a A2', 'G3a A3', 'G3b A1', 'G3b A2', 'G3b A3', 'G4 A1', 'G4 A2', 'G4 A3', 'G5 A1', 'G5 A2', 'G5 A3') and 
+where
+	d.correct in ('G3a A1', 'G3a A2', 'G3a A3', 'G3b A1', 'G3b A2', 'G3b A3', 'G4 A1', 'G4 A2', 'G4 A3', 'G5 A1', 'G5 A2', 'G5 A3') and
 	d.overMonitored = 1
 
 union
@@ -607,16 +612,16 @@ select d.PatID, 'ckd.diagnosis.monitoring','overMonitored' as actionCat,
 		'overMonitoredAcrUnknown' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Add to patient''s record: CKD monitoring not needed until ' + CONVERT(VARCHAR, g.egfrDue, 3) as actionText, 
+		'Add to patient''s record: CKD monitoring not needed until ' + CONVERT(VARCHAR, g.egfrDue, 3) as actionText,
 		'Reasoning<ul><li>This patient has had > 4 eGFRs in the last year</li><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '</li><li></strong>Latest ACR: <strong> Nil</li><li></strong>Correct CKD stage: <strong>' + c.correct + '</strong></li><li>eGFR next due:<strong> ' + CONVERT(VARCHAR, g.egfrDue, 3) + '</li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:2/-616197" target="_blank"><strong>NICE guidance on CKD monitoring</strong></a></li></ul>' as supportingText
 from #indicator d
 	inner join #classify c on c.PatID = d.PatID
 	inner join #latestEgfrACR e on e.PatID = d.PatID
 	inner join #contacts f on f.PatID = d.PatID
 	inner join #egfrDue g on g.PatID = d.PatID
-where 
+where
 	d.correct in ('G3a', 'G3b', 'G4', 'G5') and
-	d.overMonitored = 1	
+	d.overMonitored = 1
 
 union
 --ACR TEST NEEDED (ACR unknown)
@@ -624,7 +629,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','acrTest' as actionCat,
 		'acrTest' as reasonCat,
 		1 as reasonNumber,
 		4 as priority,
-		'Offer ACR test' as actionText, 
+		'Offer ACR test' as actionText,
 		'Reasoning<ul><li>This patient has CKD<li>They do not have an ACR reading in their record<li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 from #indicator d
 		inner join #classify c on c.PatID = d.PatID
@@ -648,13 +653,13 @@ select d.PatID, 'ckd.diagnosis.monitoring','overdiagnosed' as actionCat,
 	'overdiagnosed_eGFR_reading' as reasonCat,
 	1 as reasonNumber,
 	4 as priority,
-	'Add code 2126E (CKD resolved) [#2126E]' as actionText, 
+	'Add code 2126E (CKD resolved) [#2126E]' as actionText,
 	'Reasoning<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong></li><li><a href="http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2" target="_blank"><strong>NICE guidance on CKD diagnosis</strong></a></li></ul>' as supportingText
 	from #indicator d
 	left outer join #latestEgfrACR as e on d.PatID = e.PatID
-	where 
-		d.code is not NULL and 
-		d.correct is NULL and 
+	where
+		d.code is not NULL and
+		d.correct is NULL and
 		(d.underMonitored = 1 or d.overMonitored = 1)
 
 union
@@ -664,7 +669,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','suggestExclude' as actionCat,
 	'suggestExcludePal' as reasonCat,
 	1 as reasonNumber,
 	4 as priority,
-	'Add CKD exception code 9hE0. (palliative) [#9hE0.]' as actionText, 
+	'Add CKD exception code 9hE0. (palliative) [#9hE0.]' as actionText,
 	'Reasoning<ul><li><strong>Palliative care</strong> code on <strong>' + CONVERT(VARCHAR, l.palDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
@@ -676,7 +681,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','suggestExclude' as actionCat,
 	'suggestExcludeFrail' as reasonCat,
 	1 as reasonNumber,
 	4 as priority,
-	'Add CKD exception code 9hE0. (frail) [#9hE0.]' as actionText, 
+	'Add CKD exception code 9hE0. (frail) [#9hE0.]' as actionText,
 	'Reasoning<ul><li><strong>Frailty</strong> code on <strong>' + CONVERT(VARCHAR, l.frailDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
@@ -688,7 +693,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','suggestExclude' as actionCat,
 	'suggestExcludeHouse' as reasonCat,
 	1 as reasonNumber,
 	4 as priority,
-	'Add CKD exception code 9hE0. (housebound) [#9hE0.]' as actionText, 
+	'Add CKD exception code 9hE0. (housebound) [#9hE0.]' as actionText,
 	'Reasoning<ul><li><strong>Housebound</strong> code on <strong>' + CONVERT(VARCHAR, l.houseboundDate, 3) + '</strong> (and no ''not housebound'' code afterwards)</li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
@@ -700,7 +705,7 @@ select d.PatID, 'ckd.diagnosis.monitoring','suggestExclude' as actionCat,
 	'suggestExclude3Invites' as reasonCat,
 	1 as reasonNumber,
 	4 as priority,
-	'Add CKD exception code 9hE.. (3 invites) [#9hE..]' as actionText, 
+	'Add CKD exception code 9hE.. (3 invites) [#9hE..]' as actionText,
 	'Reasoning<ul><li><strong>Three invites for CKD monitoring</strong> code on <strong>' + CONVERT(VARCHAR, l.threeInvitesDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID

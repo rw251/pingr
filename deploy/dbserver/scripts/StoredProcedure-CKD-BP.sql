@@ -11,7 +11,7 @@ SET NOCOUNT ON
 --declare @JustTheIndicatorNumbersPlease bit;
 --set @refdate = '2016-11-17';
 --set @JustTheIndicatorNumbersPlease= 0;
-	
+
 -----------------------------------------------------------------------------------
 --DEFINE ELIGIBLE POPULATION, EXCLUSIONS, DENOMINATOR, AND NUMERATOR --------------
 -----------------------------------------------------------------------------------
@@ -25,13 +25,13 @@ set @achieveDate = (select case
 	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
 	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' end); --31st March
 
---#latestCkd35code 
+--#latestCkd35code
 --ELIGIBLE POPULATION
 --NB min/max rubric checks if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestCkd35code') IS NOT NULL DROP TABLE #latestCkd35code
 CREATE TABLE #latestCkd35code (PatID int, latestCkd35codeDate date, latestCkd35codeMin varchar(512), latestCkd35codeMax varchar(512), latestCkd35code varchar(512));
 insert into #latestCkd35code (PatID, latestCkd35codeDate, latestCkd35codeMin, latestCkd35codeMax, latestCkd35code)
-select s.PatID, latestCkd35codeDate, MIN(Rubric) as latestCkd35codeMin, MAX(Rubric) as latestCkd35codeMax, 
+select s.PatID, latestCkd35codeDate, MIN(Rubric) as latestCkd35codeMin, MAX(Rubric) as latestCkd35codeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestCkd35code from SIR_ALL_Records s
 	inner join (
 		select PatID, MAX(EntryDate) as latestCkd35codeDate from SIR_ALL_Records
@@ -51,14 +51,14 @@ select PatID, YEAR(@achieveDate) - year_of_birth as age from #latestCkd35code as
 		(select patid, year_of_birth from dbo.patients) as d on c.PatID = d.patid
 
 --#latestCkdPermExCode
---permanent exclusions codes: CKD1/2, or ckd resolved	
+--permanent exclusions codes: CKD1/2, or ckd resolved
 --NB min/max rubric check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestCkdPermExCode') IS NOT NULL DROP TABLE #latestCkdPermExCode
-CREATE TABLE #latestCkdPermExCode (PatID int, latestCkdPermExCodeDate date, latestCkdPermExCodeMin varchar(512), latestCkdPermExCodeMax varchar(512), 
+CREATE TABLE #latestCkdPermExCode (PatID int, latestCkdPermExCodeDate date, latestCkdPermExCodeMin varchar(512), latestCkdPermExCodeMax varchar(512),
 	latestCkdPermExCode varchar(512));
-insert into #latestCkdPermExCode 
+insert into #latestCkdPermExCode
 	(PatID, latestCkdPermExCodeDate, latestCkdPermExCodeMin, latestCkdPermExCodeMax, latestCkdPermExCode)
-select s.PatID, latestCkdPermExCodeDate, MIN(Rubric) as latestCkdPermExCodeMin, MAX(Rubric) as latestCkdPermExCodeMax, 
+select s.PatID, latestCkdPermExCodeDate, MIN(Rubric) as latestCkdPermExCodeMin, MAX(Rubric) as latestCkdPermExCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestCkdPermExCode from SIR_ALL_Records s
 	inner join (
 		select PatID, MAX(EntryDate) as latestCkdPermExCodeDate from SIR_ALL_Records
@@ -71,14 +71,14 @@ where ReadCode  in (select code from codeGroups where [group] = 'ckdPermEx')
 group by s.PatID, latestCkdPermExCodeDate
 
 --#latestCkdTempExCode
---temp exceptions: BP refused, max HTN medication, CKD indicators unsuitable			
+--temp exceptions: BP refused, max HTN medication, CKD indicators unsuitable
 --NB min/max rubric check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestCkdTempExCode') IS NOT NULL DROP TABLE #latestCkdTempExCode
-CREATE TABLE #latestCkdTempExCode (PatID int, latestCkdTempExCodeDate date, latestCkdTempExCodeMin varchar(512), 
+CREATE TABLE #latestCkdTempExCode (PatID int, latestCkdTempExCodeDate date, latestCkdTempExCodeMin varchar(512),
 	latestCkdTempExCodeMax varchar(512), latestCkdTempExCode varchar(512));
-insert into #latestCkdTempExCode 
+insert into #latestCkdTempExCode
 	(PatID, latestCkdTempExCodeDate, latestCkdTempExCodeMin, latestCkdTempExCodeMax, latestCkdTempExCode)
-select s.PatID, latestCkdTempExCodeDate, MIN(Rubric) as latestCkdTempExCodeMin, MAX(Rubric) as latestCkdTempExCodeMax, 
+select s.PatID, latestCkdTempExCodeDate, MIN(Rubric) as latestCkdTempExCodeMin, MAX(Rubric) as latestCkdTempExCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestCkdTempExCode from SIR_ALL_Records s
 	inner join (
 		select PatID, MAX(EntryDate) as latestCkdTempExCodeDate from SIR_ALL_Records
@@ -94,11 +94,11 @@ group by s.PatID, latestCkdTempExCodeDate
 --codes relating to patient registration
 --NB min/max rubric check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestRegisteredCode') IS NOT NULL DROP TABLE #latestRegisteredCode
-CREATE TABLE #latestRegisteredCode (PatID int, latestRegisteredCodeDate date, latestRegisteredCodeMin varchar(512), latestRegisteredCodeMax varchar(512), 
+CREATE TABLE #latestRegisteredCode (PatID int, latestRegisteredCodeDate date, latestRegisteredCodeMin varchar(512), latestRegisteredCodeMax varchar(512),
 	latestRegisteredCode varchar(512));
-insert into #latestRegisteredCode 
+insert into #latestRegisteredCode
 	(PatID, latestRegisteredCodeDate, latestRegisteredCodeMin, latestRegisteredCodeMax, latestRegisteredCode)
-select s.PatID, latestRegisteredCodeDate, MIN(Rubric) as latestRegisteredCodeMin, MAX(Rubric) as latestRegisteredCodeMax, 
+select s.PatID, latestRegisteredCodeDate, MIN(Rubric) as latestRegisteredCodeMin, MAX(Rubric) as latestRegisteredCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestRegisteredCode from SIR_ALL_Records s
 	inner join (
 		select PatID, MAX(EntryDate) as latestRegisteredCodeDate from SIR_ALL_Records
@@ -114,11 +114,11 @@ group by s.PatID, latestRegisteredCodeDate
 --codes relating to patient DEregistration
 --NB min/max rubric check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestDeregCode') IS NOT NULL DROP TABLE #latestDeregCode
-CREATE TABLE #latestDeregCode (PatID int, latestDeregCodeDate date, latestDeregCodeMin varchar(512), latestDeregCodeMax varchar(512), 
+CREATE TABLE #latestDeregCode (PatID int, latestDeregCodeDate date, latestDeregCodeMin varchar(512), latestDeregCodeMax varchar(512),
 	latestDeregCode varchar(512));
-insert into #latestDeregCode 
+insert into #latestDeregCode
 	(PatID, latestDeregCodeDate, latestDeregCodeMin, latestDeregCodeMax, latestDeregCode)
-select s.PatID, latestDeregCodeDate, MIN(Rubric) as latestDeregCodeMin, MAX(Rubric) as latestDeregCodeMax, 
+select s.PatID, latestDeregCodeDate, MIN(Rubric) as latestDeregCodeMin, MAX(Rubric) as latestDeregCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestDeregCode from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestDeregCodeDate from SIR_ALL_Records
@@ -130,15 +130,15 @@ select s.PatID, latestDeregCodeDate, MIN(Rubric) as latestDeregCodeMin, MAX(Rubr
 where ReadCode in (select code from codeGroups where [group] = 'deRegistered')
 group by s.PatID, latestDeregCodeDate
 
---#latestDeadCode 
+--#latestDeadCode
 --codes relating to patient death
 --NB min/max rubric check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestDeadCode') IS NOT NULL DROP TABLE #latestDeadCode
-CREATE TABLE #latestDeadCode (PatID int, latestDeadCodeDate date, latestDeadCodeMin varchar(512), latestDeadCodeMax varchar(512), 
+CREATE TABLE #latestDeadCode (PatID int, latestDeadCodeDate date, latestDeadCodeMin varchar(512), latestDeadCodeMax varchar(512),
 	latestDeadCode varchar(512));
-insert into #latestDeadCode 
+insert into #latestDeadCode
 	(PatID, latestDeadCodeDate, latestDeadCodeMin, latestDeadCodeMax, latestDeadCode)
-select s.PatID, latestDeadCodeDate, MIN(Rubric) as latestDeadCodeMin, MAX(Rubric) as latestDeadCodeMax, 
+select s.PatID, latestDeadCodeDate, MIN(Rubric) as latestDeadCodeMin, MAX(Rubric) as latestDeadCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestDeadCode from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestDeadCodeDate from SIR_ALL_Records
@@ -150,26 +150,26 @@ select s.PatID, latestDeadCodeDate, MIN(Rubric) as latestDeadCodeMin, MAX(Rubric
 where ReadCode in (select code from codeGroups where [group] = 'dead')
 group by s.PatID, latestDeadCodeDate
 
---#deadTable 
+--#deadTable
 --patients marked as dead in the demographics table
 IF OBJECT_ID('tempdb..#deadTable') IS NOT NULL DROP TABLE #deadTable
 CREATE TABLE #deadTable (PatID int, deadTable int, deadTableMonth int, deadTableYear int);
 insert into #deadTable
-	(PatID, deadTable, deadTableMonth, deadTableYear)	
+	(PatID, deadTable, deadTableMonth, deadTableYear)
 select PatID, deadTable, deadTableMonth, deadTableYear from #latestCkd35code as c
 	left outer join
 		(select patid, dead as deadTable, month_of_death as deadTableMonth, year_of_death as deadTableYear from patients) as d on c.PatID = d.patid
-			
---#firstCkd35code 
+
+--#firstCkd35code
 --needed for the 'diagnosis within 9/12 exclusion criterion'
 --patients' first CKD 3-5 date
 --NB min/max codes check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#firstCkd35code') IS NOT NULL DROP TABLE #firstCkd35code
-CREATE TABLE #firstCkd35code (PatID int, firstCkd35codeDate date, firstCkd35codeMin varchar(512), firstCkd35codeMax varchar(512), 
+CREATE TABLE #firstCkd35code (PatID int, firstCkd35codeDate date, firstCkd35codeMin varchar(512), firstCkd35codeMax varchar(512),
 	firstCkd35code varchar(512));
-insert into #firstCkd35code 
+insert into #firstCkd35code
 	(PatID, firstCkd35codeDate, firstCkd35codeMin, firstCkd35codeMax, firstCkd35code)
-select s.PatID, firstCkd35codeDate, MIN(Rubric) as firstCkd35codeMin, MAX(Rubric) as firstCkd35codeMax, 
+select s.PatID, firstCkd35codeDate, MIN(Rubric) as firstCkd35codeMin, MAX(Rubric) as firstCkd35codeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as firstCkd35code from SIR_ALL_Records s
 	inner join (
 		select PatID, MIN(EntryDate) as firstCkd35codeDate from SIR_ALL_Records
@@ -186,11 +186,11 @@ group by s.PatID, firstCkd35codeDate
 --needed for the 'diagnosis within 9/12 exclusion criterion'
 --NB min/max codes check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#firstCkd35codeAfter') IS NOT NULL DROP TABLE #firstCkd35codeAfter
-CREATE TABLE #firstCkd35codeAfter (PatID int, firstCkd35codeAfterDate date, firstCkd35codeAfterMin varchar(512), 
+CREATE TABLE #firstCkd35codeAfter (PatID int, firstCkd35codeAfterDate date, firstCkd35codeAfterMin varchar(512),
 	firstCkd35codeAfterMax varchar(512), firstCkd35codeAfter varchar(512)); --need this to exclude patients who have been diagnosed within 9/12 of target date as per QOF
 insert into #firstCkd35codeAfter
 	(PatID, firstCkd35codeAfterDate, firstCkd35codeAfterMin, firstCkd35codeAfterMax, firstCkd35codeAfter)
-select s.PatID, firstCkd35codeAfterDate, MIN(Rubric) as firstCkd35codeAfterMin, MAX(Rubric) as firstCkd35codeAfterMax, 
+select s.PatID, firstCkd35codeAfterDate, MIN(Rubric) as firstCkd35codeAfterMin, MAX(Rubric) as firstCkd35codeAfterMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as firstCkd35codeAfter from SIR_ALL_Records as s
 	inner join (
 		select r.PatID, MIN(EntryDate) as firstCkd35codeAfterDate from SIR_ALL_Records as r
@@ -208,9 +208,9 @@ group by s.PatID, firstCkd35codeAfterDate
 --NB min/max codes check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestDmCode') IS NOT NULL DROP TABLE #latestDmCode
 CREATE TABLE #latestDmCode (PatID int, latestDmCodeDate date, latestDmCodeMin varchar(512), latestDmCodeMax varchar(512), latestDmCode varchar(512));
-insert into #latestDmCode 
+insert into #latestDmCode
 	(PatID, latestDmCodeDate, latestDmCodeMin, latestDmCodeMax, latestDmCode)
-select s.PatID, latestDmCodeDate, MIN(Rubric) as latestDmCodeMin, MAX(Rubric) as latestDmCodeMax, 
+select s.PatID, latestDmCodeDate, MIN(Rubric) as latestDmCodeMin, MAX(Rubric) as latestDmCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestDmCode from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestDmCodeDate from SIR_ALL_Records
@@ -222,16 +222,16 @@ where ReadCode in (select code from codeGroups where [group] = 'dm')
 and s.PatID in (select PatID from #latestCkd35code)
 group by s.PatID, latestDmCodeDate
 
---#latestDmPermExCode 
+--#latestDmPermExCode
 --dm perm exclusions - i.e. DM resolved
 --dm temp ex codes not included because this is a CKD indicator NOT a dm indicator
 --NB min/max codes check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#latestDmPermExCode') IS NOT NULL DROP TABLE #latestDmPermExCode
-CREATE TABLE #latestDmPermExCode (PatID int, latestDmPermExCodeDate date, latestDmPermExCodeMin varchar(512), latestDmPermExCodeMax varchar(512), 
+CREATE TABLE #latestDmPermExCode (PatID int, latestDmPermExCodeDate date, latestDmPermExCodeMin varchar(512), latestDmPermExCodeMax varchar(512),
 	latestDmPermExCode varchar(512));
 insert into #latestDmPermExCode
 	(PatID, latestDmPermExCodeDate, latestDmPermExCodeMin, latestDmPermExCodeMax, latestDmPermExCode)
-select s.PatID, latestDmPermExCodeDate, MIN(Rubric) as latestDmPermExCodeMin, MAX(Rubric) as latestDmPermExCodeMax, 
+select s.PatID, latestDmPermExCodeDate, MIN(Rubric) as latestDmPermExCodeMin, MAX(Rubric) as latestDmPermExCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestDmPermExCode from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestDmPermExCodeDate from SIR_ALL_Records
@@ -249,9 +249,9 @@ group by s.PatID, latestDmPermExCodeDate
 --NB min/max codes check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#firstDmCode') IS NOT NULL DROP TABLE #firstDmCode
 CREATE TABLE #firstDmCode (PatID int, firstDmCodeDate date, firstDmCodeMin varchar(512), firstDmCodeMax varchar(512), firstDmCode varchar(512));
-insert into #firstDmCode 
+insert into #firstDmCode
 	(PatID, firstDmCodeDate, firstDmCodeMin, firstDmCodeMax, firstDmCode)
-select s.PatID, firstDmCodeDate, MIN(Rubric) as latestDmCodeMin, MAX(Rubric) as latestDmCodeMax, 
+select s.PatID, firstDmCodeDate, MIN(Rubric) as latestDmCodeMin, MAX(Rubric) as latestDmCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as firstDmCode from SIR_ALL_Records as s
 	inner join (
 		select PatID, MIN(EntryDate) as firstDmCodeDate from SIR_ALL_Records
@@ -268,11 +268,11 @@ group by s.PatID, firstDmCodeDate
 --needed for the 'diagnosis within 9/12 exclusion criterion'
 --NB min/max codes check if there have been different codes on the same day
 IF OBJECT_ID('tempdb..#firstDmCodeAfter') IS NOT NULL DROP TABLE #firstDmCodeAfter
-CREATE TABLE #firstDmCodeAfter (PatID int, firstDmCodeAfterDate date, firstDmCodeAfterMin varchar(512), 
+CREATE TABLE #firstDmCodeAfter (PatID int, firstDmCodeAfterDate date, firstDmCodeAfterMin varchar(512),
 	firstDmCodeAfterMax varchar(512), firstDmCodeAfter varchar(512)); --need this to exclude patients who have been diagnosed within 9/12 of target date as per QOF
 insert into #firstDmCodeAfter
 	(PatID, firstDmCodeAfterDate, firstDmCodeAfterMin, firstDmCodeAfterMax, firstDmCodeAfter)
-select s.PatID, firstDmCodeAfterDate, MIN(Rubric) as firstDmCodeAfterMin, MAX(Rubric) as firstDmCodeAfterMax, 
+select s.PatID, firstDmCodeAfterDate, MIN(Rubric) as firstDmCodeAfterMin, MAX(Rubric) as firstDmCodeAfterMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as firstDmCodeAfter from SIR_ALL_Records as s
 	inner join (
 		select r.PatID, MIN(EntryDate) as firstDmCodeAfterDate from SIR_ALL_Records as r
@@ -289,14 +289,14 @@ group by s.PatID, firstDmCodeAfterDate
 --#latestSbp
 IF OBJECT_ID('tempdb..#latestSbp') IS NOT NULL DROP TABLE #latestSbp
 CREATE TABLE #latestSbp (PatID int, latestSbpDate date, latestSbp int);
-insert into #latestSbp 
+insert into #latestSbp
 	(PatID, latestSbpDate, latestSbp)
 select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestSbpDate  from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'sbp')
 		and EntryDate < @refdate
-		and CodeValue is not null 
+		and CodeValue is not null
 		and CodeValue > 0
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestSbpDate = s.EntryDate
@@ -307,14 +307,14 @@ group by s.PatID, latestSbpDate
 --#latestDbp
 IF OBJECT_ID('tempdb..#latestDbp') IS NOT NULL DROP TABLE #latestDbp
 CREATE TABLE #latestDbp (PatID int, latestDbpDate date, latestDbp int);
-insert into #latestDbp 
+insert into #latestDbp
 	(PatID, latestDbpDate, latestDbp)
 select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestDbpDate  from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'dbp')
 		and EntryDate < @refdate
-		and CodeValue is not null 
+		and CodeValue is not null
 		and CodeValue > 0
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestDbpDate = s.EntryDate
@@ -325,7 +325,7 @@ group by s.PatID, latestDbpDate
 --#latestAcr
 IF OBJECT_ID('tempdb..#latestAcr') IS NOT NULL DROP TABLE #latestAcr
 CREATE TABLE #latestAcr (PatID int, latestAcrDate date, latestAcr int);
-insert into #latestAcr 
+insert into #latestAcr
 	(PatID, latestAcrDate, latestAcr)
 select s.PatID, latestAcrDate, MIN(CodeValue) as latestAcr from SIR_ALL_Records as s
 	inner join (
@@ -359,16 +359,16 @@ from #firstCkd35code as a
 		left outer join (select PatID, firstDmCodeDate from #firstDmCode) d on d.PatID = a.PatID
 		left outer join (select PatID, firstDmCodeAfterDate from #firstDmCodeAfter) e on e.PatID = a.PatID
 		left outer join (select PatID, latestAcr from #latestAcr) f on f.PatID = a.PatID
-		
+
 --#bpTargetMeasuredControlled
 IF OBJECT_ID('tempdb..#bpTargetMeasuredControlled') IS NOT NULL DROP TABLE #bpTargetMeasuredControlled
-CREATE TABLE #bpTargetMeasuredControlled 
+CREATE TABLE #bpTargetMeasuredControlled
 	(PatID int, bpTarget varchar(512), bpMeasuredOk int, bpControlledOk int);
 insert into #bpTargetMeasuredControlled
 select a.PatID,
 	case when (dmPatient = 1 or protPatient = 1) then '&lt;130/80' else '&lt;140/90' end as bpTarget, --SS
 	case when (latestSbpDate > DATEADD(month, -12, @achievedate)) and (latestDbpDate > DATEADD(month, -12, @achievedate)) then 1 else 0 end as bpMeasuredOk,  --measured within 12/12 of achievedate (SS)
-	case when 
+	case when
 		(
 			(dmPatient = 1 or protPatient = 1) and
 			(latestSbp < 130 and latestDbp < 80) --SS
@@ -385,8 +385,8 @@ from #firstCkd35code as a
 
 --#exclusions
 IF OBJECT_ID('tempdb..#exclusions') IS NOT NULL DROP TABLE #exclusions
-CREATE TABLE #exclusions 
-	(PatID int, ageExclude int, regCodeExclude int, deRegCodeExclude int, tempExExclude int, 
+CREATE TABLE #exclusions
+	(PatID int, ageExclude int, regCodeExclude int, deRegCodeExclude int, tempExExclude int,
 	deadCodeExclude int, deadTableExclude int, diagExclude int, permExExclude int);
 insert into #exclusions
 select a.PatID,
@@ -414,11 +414,11 @@ IF OBJECT_ID('tempdb..#denominator') IS NOT NULL DROP TABLE #denominator
 CREATE TABLE #denominator (PatID int, denominator int);
 insert into #denominator
 select a.PatID,
-	case when ageExclude = 0 and permExExclude  = 0 and tempExExclude  = 0 and regCodeExclude  = 0 
-		and diagExclude  = 0 and deRegCodeExclude  = 0 and 	deadCodeExclude  = 0 and deadTableExclude  = 0 
+	case when ageExclude = 0 and permExExclude  = 0 and tempExExclude  = 0 and regCodeExclude  = 0
+		and diagExclude  = 0 and deRegCodeExclude  = 0 and 	deadCodeExclude  = 0 and deadTableExclude  = 0
 		then 1 else 0 end as denominator
 from #latestCkd35code as a
-	left outer join (select PatID, ageExclude, permExExclude, tempExExclude, regCodeExclude, diagExclude, 
+	left outer join (select PatID, ageExclude, permExExclude, tempExExclude, regCodeExclude, diagExclude,
 					deRegCodeExclude, deadCodeExclude, deadTableExclude from #exclusions) b on b.PatID = a.PatID
 
 --#numerator
@@ -434,52 +434,52 @@ from #latestCkd35code as a
 --#eligiblePopulationAllData
 --all data from above combined into one table, plus numerator column
 IF OBJECT_ID('tempdb..#eligiblePopulationAllData') IS NOT NULL DROP TABLE #eligiblePopulationAllData
-CREATE TABLE #eligiblePopulationAllData (PatID int, 
-	age int, 
-	latestCkd35codeDate date, latestCkd35code varchar(512), 
-	latestCkdPermExCode varchar(512), latestCkdPermExCodeDate date, 
-	latestCkdTempExCode varchar(512), latestCkdTempExCodeDate date, 
-	latestRegisteredCode varchar(512), latestRegisteredCodeDate date, 
-	latestDeregCode varchar(512), latestDeregCodeDate date, 
-	latestDeadCode varchar(512), latestDeadCodeDate date, 
-	deadTable int, deadTableMonth int, deadTableYear int, 
-	firstCkd35code varchar(512), firstCkd35codeDate date, 
-	firstCkd35codeAfter varchar(512), firstCkd35codeAfterDate date, 
-	latestDmCode varchar(512), latestDmCodeDate date, 
-	latestDmPermExCode varchar(512), latestDmPermExCodeDate date, 
-	firstDmCode varchar(512), firstDmCodeDate date, 
-	firstDmCodeAfter varchar(512), firstDmCodeAfterDate date, 
-	latestSbpDate date, latestSbp int, 
-	latestDbpDate date, latestDbp int, 
-	latestAcrDate date, latestAcr int, 
-	dmPatient int, protPatient int, 
-	bpMeasuredOK int, bpTarget varchar(512), bpControlledOk int, 
-	ageExclude int, permExExclude int, tempExExclude int, regCodeExclude int, diagExclude int, deRegCodeExclude int, deadCodeExclude int, deadTableExclude int, 
-	denominator int, 
+CREATE TABLE #eligiblePopulationAllData (PatID int,
+	age int,
+	latestCkd35codeDate date, latestCkd35code varchar(512),
+	latestCkdPermExCode varchar(512), latestCkdPermExCodeDate date,
+	latestCkdTempExCode varchar(512), latestCkdTempExCodeDate date,
+	latestRegisteredCode varchar(512), latestRegisteredCodeDate date,
+	latestDeregCode varchar(512), latestDeregCodeDate date,
+	latestDeadCode varchar(512), latestDeadCodeDate date,
+	deadTable int, deadTableMonth int, deadTableYear int,
+	firstCkd35code varchar(512), firstCkd35codeDate date,
+	firstCkd35codeAfter varchar(512), firstCkd35codeAfterDate date,
+	latestDmCode varchar(512), latestDmCodeDate date,
+	latestDmPermExCode varchar(512), latestDmPermExCodeDate date,
+	firstDmCode varchar(512), firstDmCodeDate date,
+	firstDmCodeAfter varchar(512), firstDmCodeAfterDate date,
+	latestSbpDate date, latestSbp int,
+	latestDbpDate date, latestDbp int,
+	latestAcrDate date, latestAcr int,
+	dmPatient int, protPatient int,
+	bpMeasuredOK int, bpTarget varchar(512), bpControlledOk int,
+	ageExclude int, permExExclude int, tempExExclude int, regCodeExclude int, diagExclude int, deRegCodeExclude int, deadCodeExclude int, deadTableExclude int,
+	denominator int,
 	numerator int);
 insert into #eligiblePopulationAllData
-select a.PatID, 
-	age, 
-	a.latestCkd35codeDate, a.latestCkd35code, 
-	latestCkdPermExCode, latestCkdPermExCodeDate, 
-	latestCkdTempExCode, latestCkdTempExCodeDate, 
-	latestRegisteredCode, latestRegisteredCodeDate, 
-	latestDeregCode, latestDeregCodeDate, 
-	latestDeadCode, latestDeadCodeDate, 
-	deadTable, deadTableMonth, deadTableYear, 
-	firstCkd35code, firstCkd35codeDate, 
-	firstCkd35codeAfter, firstCkd35codeAfterDate, 
-	latestDmCode, latestDmCodeDate, 
-	latestDmPermExCode, latestDmPermExCodeDate, 
-	firstDmCode, firstDmCodeDate, 
-	firstDmCodeAfter, firstDmCodeAfterDate, 
-	latestSbpDate, latestSbp, 
-	latestDbpDate, latestDbp, 
-	latestAcrDate, latestAcr, 
-	dmPatient, protPatient, 
-	bpMeasuredOk, bpTarget, bpControlledOk, 
-	ageExclude, permExExclude, tempExExclude, regCodeExclude, diagExclude, deRegCodeExclude, deadCodeExclude, deadTableExclude, 
-	denominator, 
+select a.PatID,
+	age,
+	a.latestCkd35codeDate, a.latestCkd35code,
+	latestCkdPermExCode, latestCkdPermExCodeDate,
+	latestCkdTempExCode, latestCkdTempExCodeDate,
+	latestRegisteredCode, latestRegisteredCodeDate,
+	latestDeregCode, latestDeregCodeDate,
+	latestDeadCode, latestDeadCodeDate,
+	deadTable, deadTableMonth, deadTableYear,
+	firstCkd35code, firstCkd35codeDate,
+	firstCkd35codeAfter, firstCkd35codeAfterDate,
+	latestDmCode, latestDmCodeDate,
+	latestDmPermExCode, latestDmPermExCodeDate,
+	firstDmCode, firstDmCodeDate,
+	firstDmCodeAfter, firstDmCodeAfterDate,
+	latestSbpDate, latestSbp,
+	latestDbpDate, latestDbp,
+	latestAcrDate, latestAcr,
+	dmPatient, protPatient,
+	bpMeasuredOk, bpTarget, bpControlledOk,
+	ageExclude, permExExclude, tempExExclude, regCodeExclude, diagExclude, deRegCodeExclude, deadCodeExclude, deadTableExclude,
+	denominator,
 	numerator
 from #latestCkd35code as a
 		left outer join (select PatID, age from #age) b on b.PatID = a.PatID
@@ -500,11 +500,11 @@ from #latestCkd35code as a
 		left outer join (select PatID, latestAcrDate, latestAcr from #latestAcr) r on r.PatID = a.PatID
 		left outer join (select PatID, dmPatient, protPatient from #dmProtPatient) s on s.PatID = a.PatID
 		left outer join (select PatID, bpMeasuredOk, bpTarget, bpControlledOk from #bpTargetMeasuredControlled) t on t.PatID = a.PatID
-		left outer join (select PatID, ageExclude, permExExclude, tempExExclude, regCodeExclude, diagExclude, deRegCodeExclude, 
+		left outer join (select PatID, ageExclude, permExExclude, tempExExclude, regCodeExclude, diagExclude, deRegCodeExclude,
 						deadCodeExclude, deadTableExclude from #exclusions) u on u.PatID = a.PatID
 		left outer join (select PatID, denominator from #denominator) v on v.PatID = a.PatID
 		left outer join (select PatID, numerator from #numerator) w on w.PatID = a.PatID
-		
+
 					-----------------------------------------------------------------------------
 					---------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
 					-----------------------------------------------------------------------------
@@ -531,6 +531,13 @@ select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, s
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
 
+					----------------------------------------------
+					--POPULATE MAIN DENOMINATOR TABLE-------------
+					----------------------------------------------
+insert into [output.pingr.denominators](PatID, indicatorId)
+select PatID, 'ckd.treatment.bp' from #eligiblePopulationAllData;
+
+
 								---------------------------------------------------------
 								-- Exit if we're just getting the indicator numbers -----
 								---------------------------------------------------------
@@ -546,136 +553,136 @@ IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 
 --#latestPalCode
 IF OBJECT_ID('tempdb..#latestPalCode') IS NOT NULL DROP TABLE #latestPalCode
-CREATE TABLE #latestPalCode 
+CREATE TABLE #latestPalCode
 	(PatID int, latestPalCodeDate date, latestPalCodeMin varchar(512), latestPalCodeMax varchar(512), latestPalCode varchar(512));
 insert into #latestPalCode
-select s.PatID, latestPalCodeDate, MIN(Rubric) as latestPalCodeMin, MAX(Rubric) as latestPalCodeMax, 
+select s.PatID, latestPalCodeDate, MIN(Rubric) as latestPalCodeMin, MAX(Rubric) as latestPalCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestPalCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestPalCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'pal') and EntryDate < @refdate
 							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestPalCodeDate = s.EntryDate
-where 
+where
 	ReadCode in (select code from codeGroups where [group] = 'pal')
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, latestPalCodeDate
 
 --#latestPalPermExCode
 IF OBJECT_ID('tempdb..#latestPalPermExCode') IS NOT NULL DROP TABLE #latestPalPermExCode
-CREATE TABLE #latestPalPermExCode 
-	(PatID int, latestPalPermExCodeDate date, latestPalPermExCodeMin varchar(512), latestPalPermExCodeMax varchar(512), 
+CREATE TABLE #latestPalPermExCode
+	(PatID int, latestPalPermExCodeDate date, latestPalPermExCodeMin varchar(512), latestPalPermExCodeMax varchar(512),
 		latestPalPermExCode varchar(512));
 insert into #latestPalPermExCode
-select s.PatID, latestPalPermExCodeDate, MIN(Rubric) as latestPalPermExCodeMin, MAX(Rubric) as latestPalPermExCodeMax, 
+select s.PatID, latestPalPermExCodeDate, MIN(Rubric) as latestPalPermExCodeMin, MAX(Rubric) as latestPalPermExCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestPalPermExCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestPalPermExCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'palPermEx') and EntryDate < @refdate
 							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestPalPermExCodeDate = s.EntryDate
-where 
+where
 	ReadCode in (select code from codeGroups where [group] = 'palPermEx')
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, latestPalPermExCodeDate
 
 --#latestFrailCode
 IF OBJECT_ID('tempdb..#latestFrailCode') IS NOT NULL DROP TABLE #latestFrailCode
-CREATE TABLE #latestFrailCode 
+CREATE TABLE #latestFrailCode
 	(PatID int, latestFrailCodeDate date, latestFrailCodeMin varchar(512), latestFrailCodeMax varchar(512), latestFrailCode varchar(512));
 insert into #latestFrailCode
-select s.PatID, latestFrailCodeDate, MIN(Rubric) as latestFrailCodeMin, MAX(Rubric) as latestFrailCodeMax, 
+select s.PatID, latestFrailCodeDate, MIN(Rubric) as latestFrailCodeMin, MAX(Rubric) as latestFrailCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestFrailCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestFrailCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'frail') and EntryDate < @refdate
 							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestFrailCodeDate = s.EntryDate
-where 
+where
 	ReadCode in (select code from codeGroups where [group] = 'frail')
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, latestFrailCodeDate
 
 --#latestHouseBedboundCode
 IF OBJECT_ID('tempdb..#latestHouseBedboundCode') IS NOT NULL DROP TABLE #latestHouseBedboundCode
-CREATE TABLE #latestHouseBedboundCode 
-	(PatID int, latestHouseBedboundCodeDate date, latestHouseBedboundCodeMin varchar(512), latestHouseBedboundCodeMax varchar(512), 
+CREATE TABLE #latestHouseBedboundCode
+	(PatID int, latestHouseBedboundCodeDate date, latestHouseBedboundCodeMin varchar(512), latestHouseBedboundCodeMax varchar(512),
 		latestHouseBedboundCode varchar(512));
 insert into #latestHouseBedboundCode
-select s.PatID, latestHouseBedboundCodeDate, MIN(Rubric) as latestHouseBedboundCodeMin, MAX(Rubric) as latestHouseBedboundCodeMax, 
+select s.PatID, latestHouseBedboundCodeDate, MIN(Rubric) as latestHouseBedboundCodeMin, MAX(Rubric) as latestHouseBedboundCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestHouseBedboundCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestHouseBedboundCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] in ('housebound', 'bedridden')) and EntryDate < @refdate
 							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestHouseBedboundCodeDate = s.EntryDate
-where 
+where
 	ReadCode in (select code from codeGroups where [group] in ('housebound', 'bedridden'))
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, latestHouseBedboundCodeDate
 
 --#latestHouseBedboundPermExCode
 IF OBJECT_ID('tempdb..#latestHouseBedboundPermExCode') IS NOT NULL DROP TABLE #latestHouseBedboundPermExCode
-CREATE TABLE #latestHouseBedboundPermExCode 
-	(PatID int, latestHouseBedboundPermExCodeDate date, latestHouseBedboundPermExCodeMin varchar(512), latestHouseBedboundPermExCodeMax varchar(512), 
+CREATE TABLE #latestHouseBedboundPermExCode
+	(PatID int, latestHouseBedboundPermExCodeDate date, latestHouseBedboundPermExCodeMin varchar(512), latestHouseBedboundPermExCodeMax varchar(512),
 		latestHouseBedboundPermExCode varchar(512));
 insert into #latestHouseBedboundPermExCode
-select s.PatID, latestHouseBedboundPermExCodeDate, MIN(Rubric) as latestHouseBedboundPermExCodeMin, MAX(Rubric) as latestHouseBedboundPermExCodeMax, 
+select s.PatID, latestHouseBedboundPermExCodeDate, MIN(Rubric) as latestHouseBedboundPermExCodeMin, MAX(Rubric) as latestHouseBedboundPermExCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestHouseBedboundPermExCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestHouseBedboundPermExCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'houseboundPermEx') and EntryDate < @refdate
 							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestHouseBedboundPermExCodeDate = s.EntryDate
-where 
+where
 	ReadCode in (select code from codeGroups where [group] = 'houseboundPermEx')
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, latestHouseBedboundPermExCodeDate
 
 --#latestCkd3rdInviteCode
 IF OBJECT_ID('tempdb..#latestCkd3rdInviteCode') IS NOT NULL DROP TABLE #latestCkd3rdInviteCode
-CREATE TABLE #latestCkd3rdInviteCode 
-	(PatID int, latestCkd3rdInviteCodeDate date, latestCkd3rdInviteCodeMin varchar(512), latestCkd3rdInviteCodeMax varchar(512), 
+CREATE TABLE #latestCkd3rdInviteCode
+	(PatID int, latestCkd3rdInviteCodeDate date, latestCkd3rdInviteCodeMin varchar(512), latestCkd3rdInviteCodeMax varchar(512),
 		latestCkd3rdInviteCode varchar(512));
 insert into #latestCkd3rdInviteCode
-select s.PatID, latestCkd3rdInviteCodeDate, MIN(Rubric) as latestCkd3rdInviteCodeMin, MAX(Rubric) as latestCkd3rdInviteCodeMax, 
+select s.PatID, latestCkd3rdInviteCodeDate, MIN(Rubric) as latestCkd3rdInviteCodeMin, MAX(Rubric) as latestCkd3rdInviteCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestCkd3rdInviteCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestCkd3rdInviteCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'ckd3rdInvite') and EntryDate < @refdate
 							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestCkd3rdInviteCodeDate = s.EntryDate
-where 
+where
 	ReadCode in (select code from codeGroups where [group] = 'ckd3rdInvite')
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, latestCkd3rdInviteCodeDate
 
 --#numberOfCkdInviteCodesThisFinancialYear
 IF OBJECT_ID('tempdb..#numberOfCkdInviteCodesThisFinancialYear') IS NOT NULL DROP TABLE #numberOfCkdInviteCodesThisFinancialYear
-CREATE TABLE #numberOfCkdInviteCodesThisFinancialYear 
+CREATE TABLE #numberOfCkdInviteCodesThisFinancialYear
 	(PatID int, numberOfCkdInviteCodesThisFinancialYear int);
 insert into #numberOfCkdInviteCodesThisFinancialYear
 select PatID, count (*) from SIR_ALL_Records as numberOfCkdInviteCodesThisYear
-	where ReadCode in (select code from codeGroups where [group] = 'ckdInvite') 
-		and EntryDate < @refdate 
+	where ReadCode in (select code from codeGroups where [group] = 'ckdInvite')
+		and EntryDate < @refdate
 		and EntryDate > DATEADD(year, -1, @achievedate)
 		and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 	group by PatID
 
 --#latestWhiteCoatCode
 IF OBJECT_ID('tempdb..#latestWhiteCoatCode') IS NOT NULL DROP TABLE #latestWhiteCoatCode
-CREATE TABLE #latestWhiteCoatCode 
-	(PatID int, latestWhiteCoatCodeDate date, latestWhiteCoatCodeMin varchar(512), latestWhiteCoatCodeMax varchar(512), 
-		latestWhiteCoatCode varchar(512));	
+CREATE TABLE #latestWhiteCoatCode
+	(PatID int, latestWhiteCoatCodeDate date, latestWhiteCoatCodeMin varchar(512), latestWhiteCoatCodeMax varchar(512),
+		latestWhiteCoatCode varchar(512));
 insert into #latestWhiteCoatCode
-select s.PatID, latestWhiteCoatCodeDate, MIN(Rubric) as latestWhiteCoatCodeMin, MAX(Rubric) as latestWhiteCoatCodeMax, 
+select s.PatID, latestWhiteCoatCodeDate, MIN(Rubric) as latestWhiteCoatCodeMin, MAX(Rubric) as latestWhiteCoatCodeMax,
 	case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as latestWhiteCoatCode from SIR_ALL_Records as s
 		inner join (select PatID, MAX(EntryDate) as latestWhiteCoatCodeDate from SIR_ALL_Records
 							where ReadCode in (select code from codeGroups where [group] = 'whiteCoat') and EntryDate < @refdate
 							and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 							group by PatID
 					) sub on sub.PatID = s.PatID and sub.latestWhiteCoatCodeDate = s.EntryDate
-where 
+where
 	ReadCode in (select code from codeGroups where [group] = 'whiteCoat')
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, latestWhiteCoatCodeDate
@@ -687,7 +694,7 @@ CREATE TABLE #primCareContactInLastYear
 	(PatID int);
 insert into #primCareContactInLastYear
 select PatID from SIR_ALL_Records
-where EntryDate < @refdate 
+where EntryDate < @refdate
 	and Source !='salfordt' --not hospital code
 	and ReadCode not in (select code from codeGroups where [group] in ('occupations', 'admin', 'recordOpen', 'letterReceived', 'contactAttempt', 'dna')) --not admin code
 	and EntryDate > DATEADD(year, -1, @refdate)
@@ -699,8 +706,8 @@ IF OBJECT_ID('tempdb..#noPrimCareContactInLastYear') IS NOT NULL DROP TABLE #noP
 CREATE TABLE #noPrimCareContactInLastYear
 	(PatID int, noPrimCareContactInLastYear int);
 insert into #noPrimCareContactInLastYear
-select PatID, case when PatID in (select PatID from #primCareContactInLastYear) then 0 else 1 end as noPrimCareContactInLastYear 
-from #eligiblePopulationAllData 
+select PatID, case when PatID in (select PatID from #primCareContactInLastYear) then 0 else 1 end as noPrimCareContactInLastYear
+from #eligiblePopulationAllData
 where denominator = 1 and numerator = 0
 
 --#secondLatestSbp
@@ -711,7 +718,7 @@ select a.PatID, secondLatestSbpDate, MIN(a.CodeValue) from SIR_ALL_Records as a
 	inner join
 		(
 			select s.PatID, max(s.EntryDate) as secondLatestSbpDate from SIR_ALL_Records as s
-				inner join 
+				inner join
 					(
 						select PatID, latestSbpDate from #latestSbp --i.e. select latest SBP date
 					)sub on sub.PatID = s.PatID and sub.latestSbpDate > s.EntryDate --i.e. select max date where the latest SBP date is still greate (the second to last date)
@@ -731,7 +738,7 @@ select a.PatID, secondLatestDbpDate, MIN(a.CodeValue) from SIR_ALL_Records as a
 	inner join
 		(
 			select s.PatID, max(s.EntryDate) as secondLatestDbpDate from SIR_ALL_Records as s
-				inner join 
+				inner join
 					(
 						select PatID, latestDbpDate from #latestDbp --i.e. select latest DBP date
 					)sub on sub.PatID = s.PatID and sub.latestDbpDate > s.EntryDate --i.e. select max date where the latest SBP date is still greate (the second to last date)
@@ -749,7 +756,7 @@ CREATE TABLE #secondLatestBpControlled
 	(PatID int, secondLatestBpControlled int);
 insert into #secondLatestBpControlled
 select a.PatID,
-	case when 
+	case when
 		(
 			(dmPatient = 1 or protPatient = 1) and
 			(secondLatestSbp < 130 and secondLatestDbp < 80) --SS
@@ -770,19 +777,19 @@ where denominator = 1 and numerator = 0
 
 --#latestMedOptimisation
 IF OBJECT_ID('tempdb..#latestMedOptimisation') IS NOT NULL DROP TABLE #latestMedOptimisation
-CREATE TABLE #latestMedOptimisation 
-	(PatID int, latestMedOptimisation varchar(512), latestMedOptimisationDate date, 
-	latestMedOptimisationIngredient varchar(512), latestMedOptimisationDose float, 
+CREATE TABLE #latestMedOptimisation
+	(PatID int, latestMedOptimisation varchar(512), latestMedOptimisationDate date,
+	latestMedOptimisationIngredient varchar(512), latestMedOptimisationDose float,
 	latestMedOptimisationFamily varchar(512));
 insert into #latestMedOptimisation
-	select s.PatID, s.Event, s.EntryDate, s.Ingredient, s.Dose, s.Family from MEDICATION_EVENTS_HTN as s 
-  		inner join 
-  			(  
+	select s.PatID, s.Event, s.EntryDate, s.Ingredient, s.Dose, s.Family from MEDICATION_EVENTS_HTN as s
+  		inner join
+  			(
 			 select PatID, MAX(EntryDate) as date from MEDICATION_EVENTS_HTN
 			 where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			 group by PatID
   			) sub on sub.PatID = s.PatID and sub.date = s.EntryDate
-	where 
+	where
  		[Event] in ('DOSE INCREASED', 'STARTED', 'RESTARTED')
 		and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 
@@ -791,25 +798,25 @@ IF OBJECT_ID('tempdb..#latestMedAdherence') IS NOT NULL DROP TABLE #latestMedAdh
 CREATE TABLE #latestMedAdherence
 	(PatID int, latestMedAdherenceDate date, latestMedAdherenceIngredient varchar(512), latestMedAdherenceDose float, latestMedAdherenceFamily varchar(512));
 insert into #latestMedAdherence
-		select s.PatID, s.EntryDate, s.Ingredient, s.Dose, s.Family from MEDICATION_EVENTS_HTN as s 
-  		inner join 
-  			(  
+		select s.PatID, s.EntryDate, s.Ingredient, s.Dose, s.Family from MEDICATION_EVENTS_HTN as s
+  		inner join
+  			(
 			 select PatID, MAX(EntryDate) as latestMedAdherenceDate from MEDICATION_EVENTS_HTN
 			 where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			 group by PatID
   			) sub on sub.PatID = s.PatID and sub.latestMedAdherenceDate = s.EntryDate
- where 
+ where
  	[Event] = 'ADHERENCE'
 	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 
 --#currentHTNmeds
 IF OBJECT_ID('tempdb..#currentHTNmeds') IS NOT NULL DROP TABLE #currentHTNmeds
-CREATE TABLE #currentHTNmeds 
+CREATE TABLE #currentHTNmeds
 	(PatID int, currentMedEventDate date, currentMedIngredient varchar(512), currentMedFamily varchar(512), currentMedEvent varchar(512), currentMedDose float, currentMedMaxDose float);
 insert into #currentHTNmeds
 select a.PatID, a.EntryDate, a.Ingredient, a.Family, a.Event, a.Dose, c.MaxDose from MEDICATION_EVENTS_HTN as a
-	inner join 
-		(  
+	inner join
+		(
 			select PatID, Ingredient, MAX(EntryDate) as LatestEventDate from MEDICATION_EVENTS_HTN
 			 where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			group by PatID, Ingredient
@@ -822,7 +829,7 @@ and a.PatID in (select PatID from #eligiblePopulationAllData where denominator =
 --#htnMeds
 --above table plus a column stating the number of different drugs in the same family the patient is taking
 IF OBJECT_ID('tempdb..#htnMeds') IS NOT NULL DROP TABLE #htnMeds
-CREATE TABLE #htnMeds 
+CREATE TABLE #htnMeds
 	(PatID int, currentMedEventDate date, currentMedIngredient varchar(512) COLLATE Latin1_General_100_CS_AS, currentMedFamily varchar(512), currentMedEvent varchar(512), currentMedDose float, currentMedMaxDose float, noIngredientsInFamily int);
 insert into #htnMeds
 select a.PatID, currentMedEventDate, a.currentMedIngredient, a.currentMedFamily, currentMedEvent, currentMedDose, currentMedMaxDose, noIngredientsInFamily from #currentHTNmeds as a
@@ -836,10 +843,10 @@ select a.PatID, currentMedEventDate, a.currentMedIngredient, a.currentMedFamily,
 --ALLERGIES AND CONTRA-INDICATIONS TO ANT-HTN MEDS
 --------------------------------------------------
 --1. Thiazides http://dx.doi.org/10.18578/BNF.748067014
-	--Addison’s disease; hypercalcaemia; hyponatraemia; refractory hypokalaemia; symptomatic hyperuricaemia
+	--Addisonï¿½s disease; hypercalcaemia; hyponatraemia; refractory hypokalaemia; symptomatic hyperuricaemia
 --2. ACEI http://dx.doi.org/10.18578/BNF.569976968
 	-- NIL!
---3. ARB http://dx.doi.org/10.18578/BNF.479478171 
+--3. ARB http://dx.doi.org/10.18578/BNF.479478171
 	--NIL!
 --4. CCB
 	--AMLODIPINE http://dx.doi.org/10.18578/BNF.109201061 Cardiogenic shock; ***significant aortic stenosis***; unstable angina
@@ -849,21 +856,21 @@ select a.PatID, currentMedEventDate, a.currentMedIngredient, a.currentMedFamily,
 	--ISRADIPINE http://dx.doi.org/10.18578/BNF.786204349 ***Acute porphyrias***; cardiogenic shock;***during or within 1 month of myocardial infarction***; unstable angina
 	--FELODIPINE http://dx.doi.org/10.18578/BNF.405039793 Cardiac outflow obstruction; significant cardiac valvular obstruction (e.g. ***aortic stenosis***); uncontrolled heart failure; unstable angina; ***within 1 month of myocardial infarction***
 	--DILTIAZEM http://dx.doi.org/10.18578/BNF.873608533 ***Acute porphyrias***; left ventricular failure with pulmonary congestion; ***second- or third-degree AV block (unless pacemaker fitted)***; ***severe bradycardia***; ***sick sinus syndrome***
---5. BB http://dx.doi.org/10.18578/BNF.281805035 
-	--Asthma; cardiogenic shock; hypotension; marked bradycardia; metabolic acidosis; 
-	--phaeochromocytoma (apart from specific use with alpha-blockers); Prinzmetal’s angina; second-degree AV block; 
+--5. BB http://dx.doi.org/10.18578/BNF.281805035
+	--Asthma; cardiogenic shock; hypotension; marked bradycardia; metabolic acidosis;
+	--phaeochromocytoma (apart from specific use with alpha-blockers); Prinzmetalï¿½s angina; second-degree AV block;
 	--severe peripheral arterial disease; sick sinus syndrome; third-degree AV block; uncontrolled heart failure
 --6. Potassium Sparing Diuretics
 	--EPLERENONE http://dx.doi.org/10.18578/BNF.845539498 ***Hyperkalaemia***
-	--SPIRONOLACTONE http://dx.doi.org/10.18578/BNF.213718345 ***Addison’s disease***; anuria; ***hyperkalaemia***
-	--AMILORIDE http://dx.doi.org/10.18578/BNF.840584388 ***Addison’s disease***; anuria; ***hyperkalaemia***
+	--SPIRONOLACTONE http://dx.doi.org/10.18578/BNF.213718345 ***Addisonï¿½s disease***; anuria; ***hyperkalaemia***
+	--AMILORIDE http://dx.doi.org/10.18578/BNF.840584388 ***Addisonï¿½s disease***; anuria; ***hyperkalaemia***
 --7. Alpha blockers
 	--DOXAZOSIN http://dx.doi.org/10.18578/BNF.782101311 History of micturition syncope (in patients with benign prostatic hypertrophy); ***history of postural hypotension***; monotherapy in patients with overflow bladder or anuria
 	--INDORAMIN http://dx.doi.org/10.18578/BNF.222025343 ***Established heart failure***; history micturition syncope (when used for benign prostatic hyperplasia); ***history of postural hypotension (when used for benign prostatic hyperplasia)***
 	--PRAZOSIN http://dx.doi.org/10.18578/BNF.444050694 History of micturition syncope; ***history of postural hypotension***; not recommended for congestive heart failure due to mechanical obstruction (e.g. ***aortic stenosis***)
 	--TERAZOSIN http://dx.doi.org/10.18578/BNF.434025504 History of micturition syncope (in benign prostatic hyperplasia); ***history of postural hypotension (in benign prostatic hyperplasia)***
---8. Loop diuretics http://dx.doi.org/10.18578/BNF.267274341 
-	--Anuria; comatose and precomatose states associated with liver cirrhosis; renal failure due to nephrotoxic or hepatotoxic drugs; 
+--8. Loop diuretics http://dx.doi.org/10.18578/BNF.267274341
+	--Anuria; comatose and precomatose states associated with liver cirrhosis; renal failure due to nephrotoxic or hepatotoxic drugs;
 	--***severe hypokalaemia***; ***severe hyponatraemia***
 
 --#latestAllergyThiazideCode - i.e. allergy and 'adverse reaction' codes
@@ -871,15 +878,15 @@ IF OBJECT_ID('tempdb..#latestAllergyThiazideCode') IS NOT NULL DROP TABLE #lates
 CREATE TABLE #latestAllergyThiazideCode
 	(PatID int, latestAllergyThiazideCodeDate date, latestAllergyThiazideCode varchar(512));
 insert into #latestAllergyThiazideCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'thiazideAllergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'thiazideAllergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -889,15 +896,15 @@ IF OBJECT_ID('tempdb..#latestAllergyACEIcode') IS NOT NULL DROP TABLE #latestAll
 CREATE TABLE #latestAllergyACEIcode
 	(PatID int, latestAllergyACEIcodeDate date, latestAllergyACEIcode varchar(512));
 insert into #latestAllergyACEIcode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'ACEIallergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'ACEIallergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -907,15 +914,15 @@ IF OBJECT_ID('tempdb..#latestAllergyARBcode') IS NOT NULL DROP TABLE #latestAlle
 CREATE TABLE #latestAllergyARBcode
 	(PatID int, latestAllergyARBcodeDate date, latestAllergyARBcode varchar(512));
 insert into #latestAllergyARBcode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'ARBallergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'ARBallergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -925,15 +932,15 @@ IF OBJECT_ID('tempdb..#latestAllergyCCBcode') IS NOT NULL DROP TABLE #latestAlle
 CREATE TABLE #latestAllergyCCBcode
 	(PatID int, latestAllergyCCBcodeDate date, latestAllergyCCBcode varchar(512));
 insert into #latestAllergyCCBcode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'CCBallergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'CCBallergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -944,15 +951,15 @@ CREATE TABLE #latestAllergyBBcode
 	(PatID int, latestAllergyBBcodeDate date, latestAllergyBBcode varchar(512));
 insert into #latestAllergyBBcode
 	(PatID, latestAllergyBBcodeDate, latestAllergyBBcode)
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'BBallergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'BBallergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -962,15 +969,15 @@ IF OBJECT_ID('tempdb..#latestAllergyPotSpareDiurCode') IS NOT NULL DROP TABLE #l
 CREATE TABLE #latestAllergyPotSpareDiurCode
 	(PatID int, latestAllergyPotSpareDiurCodeDate date, latestAllergyPotSpareDiurCode varchar(512));
 insert into #latestAllergyPotSpareDiurCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'PotSparDiurAllergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'PotSparDiurAllergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -980,15 +987,15 @@ IF OBJECT_ID('tempdb..#latestAllergyAlphaCode') IS NOT NULL DROP TABLE #latestAl
 CREATE TABLE #latestAllergyAlphaCode
 	(PatID int, latestAllergyAlphaCodeDate date, latestAllergyAlphaCode varchar(512));
 insert into #latestAllergyAlphaCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -998,15 +1005,15 @@ IF OBJECT_ID('tempdb..#latestAllergyLoopDiurCode') IS NOT NULL DROP TABLE #lates
 CREATE TABLE #latestAllergyLoopDiurCode
 	(PatID int, latestAllergyLoopDiurCodeDate date, latestAllergyLoopDiurCode varchar(512));
 insert into #latestAllergyLoopDiurCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1016,15 +1023,15 @@ IF OBJECT_ID('tempdb..#latestAddisonsCode') IS NOT NULL DROP TABLE #latestAddiso
 CREATE TABLE #latestAddisonsCode
 	(PatID int, latestAddisonsCodeDate date, latestAddisonsCode varchar(512));
 insert into #latestAddisonsCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'addisons') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'addisons') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1034,15 +1041,15 @@ IF OBJECT_ID('tempdb..#latestGoutCode') IS NOT NULL DROP TABLE #latestGoutCode
 CREATE TABLE #latestGoutCode
 	(PatID int, latestGoutCodeDate date, latestGoutCode varchar(512));
 insert into #latestGoutCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'gout') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'gout') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1052,15 +1059,15 @@ IF OBJECT_ID('tempdb..#latestGoutDrug') IS NOT NULL DROP TABLE #latestGoutDrug
 CREATE TABLE #latestGoutDrug
 	(PatID int, latestGoutDrugDate date, latestGoutDrug varchar(512));
 insert into #latestGoutDrug
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'goutDrugs') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'goutDrugs') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1071,14 +1078,14 @@ CREATE TABLE #latestCalcium
 	(PatID int, latestCalciumDate date, latestCalcium float, latestCalciumSource varchar(512));
 insert into #latestCalcium
 		select s.PatID, s.EntryDate, MAX(CodeValue), min(Source) from SIR_ALL_Records as s --max calcium on that day
-	  		inner join 
-	  			(  
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'calcium') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'calcium') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1089,14 +1096,14 @@ CREATE TABLE #latestSodium
 	(PatID int, latestSodiumDate date, latestSodium float, latestSodiumSource varchar(512));
 insert into #latestSodium
 		select s.PatID, s.EntryDate, MIN(CodeValue), min(Source) from SIR_ALL_Records as s --min sodium on that day
-	  		inner join 
-	  			(  
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'sodium') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'sodium') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1107,14 +1114,14 @@ CREATE TABLE #latestMinPotassium
 	(PatID int, latestMinPotassiumDate date, latestMinPotassium float, latestMinPotassiumSource varchar(512));
 insert into #latestMinPotassium
 		select s.PatID, s.EntryDate, MIN(CodeValue), min(Source) from SIR_ALL_Records as s --min Potassium on that day
-	  		inner join 
-	  			(  
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'potassium') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'potassium') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1126,14 +1133,14 @@ CREATE TABLE #latestMaxPotassium
 	(PatID int, latestMaxPotassiumDate date, latestMaxPotassium float, latestMaxPotassiumSource varchar (512));
 insert into #latestMaxPotassium
 		select s.PatID, s.EntryDate, max(CodeValue), min(Source) from SIR_ALL_Records as s --max Potassium on that day
-	  		inner join 
-	  			(  
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'potassium') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'potassium') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1143,33 +1150,33 @@ IF OBJECT_ID('tempdb..#latestAScode') IS NOT NULL DROP TABLE #latestAScode
 CREATE TABLE #latestAScode
 	(PatID int, latestAScodeDate date, latestAScode varchar(512));
 insert into #latestAScode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'AS') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'AS') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
-		
+
 --#latestASrepairCode
 IF OBJECT_ID('tempdb..#latestASrepairCode') IS NOT NULL DROP TABLE #latestASrepairCode
 CREATE TABLE #latestASrepairCode
 	(PatID int, latestASrepairCodeDate date, latestASrepairCode varchar(512));
 insert into #latestASrepairCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'ASrepair') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'ASrepair') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1179,15 +1186,15 @@ IF OBJECT_ID('tempdb..#latestMIcode') IS NOT NULL DROP TABLE #latestMIcode
 CREATE TABLE #latestMIcode
 	(PatID int, latestMIcodeDate date, latestMIcode varchar(512));
 insert into #latestMIcode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'MInow') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'MInow') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1197,15 +1204,15 @@ IF OBJECT_ID('tempdb..#latestPorphyriaCode') IS NOT NULL DROP TABLE #latestPorph
 CREATE TABLE #latestPorphyriaCode
 	(PatID int, latestPorphyriaCodeDate date, latestPorphyriaCode varchar(512));
 insert into #latestPorphyriaCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'porphyria') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'porphyria') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1215,33 +1222,33 @@ IF OBJECT_ID('tempdb..#latestHeartBlockCode') IS NOT NULL DROP TABLE #latestHear
 CREATE TABLE #latestHeartBlockCode
 	(PatID int, latestHeartBlockCodeDate date, latestHeartBlockCode varchar(512));
 insert into #latestHeartBlockCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = '2/3heartBlock') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = '2/3heartBlock') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
-		
+
 --#latestSickSinusCode
 IF OBJECT_ID('tempdb..#latestSickSinusCode') IS NOT NULL DROP TABLE #latestSickSinusCode
 CREATE TABLE #latestSickSinusCode
 	(PatID int, latestSickSinusCodeDate date, latestSickSinusCode varchar(512));
 insert into #latestSickSinusCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'sickSinus') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'sickSinus') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1251,15 +1258,15 @@ IF OBJECT_ID('tempdb..#latestPacemakerCode') IS NOT NULL DROP TABLE #latestPacem
 CREATE TABLE #latestPacemakerCode
 	(PatID int, latestPacemakerCodeDate date, latestPacemakerCode varchar(512));
 insert into #latestPacemakerCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'pacemakerDefib') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'pacemakerDefib') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1270,14 +1277,14 @@ CREATE TABLE #latestPulse
 	(PatID int, latestPulseDate date, latestPulseValue int);
 insert into #latestPulse
 		select s.PatID, s.EntryDate, MIN(CodeValue) from SIR_ALL_Records as s --min pulse on the latest day
-	  		inner join 
-	  			(  
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'pulseRate') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'pulseRate') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1287,15 +1294,15 @@ IF OBJECT_ID('tempdb..#latestAsthmaCode') IS NOT NULL DROP TABLE #latestAsthmaCo
 CREATE TABLE #latestAsthmaCode
 	(PatID int, latestAsthmaCodeDate date, latestAsthmaCode varchar(512));
 insert into #latestAsthmaCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] in ('asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs')) and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] in ('asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs')) and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1305,15 +1312,15 @@ IF OBJECT_ID('tempdb..#latestAsthmaPermExCode') IS NOT NULL DROP TABLE #latestAs
 CREATE TABLE #latestAsthmaPermExCode
 	(PatID int, latestAsthmaPermExCodeDate date, latestAsthmaPermExCode varchar(512));
 insert into #latestAsthmaPermExCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'asthmaPermEx') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'asthmaPermEx') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
@@ -1325,50 +1332,50 @@ CREATE TABLE #latestPhaeoCode
 	(PatID int, latestPhaeoCodeDate date, latestPhaeoCode varchar(512));
 insert into #latestPhaeoCode
 	(PatID, latestPhaeoCodeDate, latestPhaeoCode)
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'phaeo') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'phaeo') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
-		
+
 
 --#latestPosturalHypoCode
 IF OBJECT_ID('tempdb..#latestPosturalHypoCode') IS NOT NULL DROP TABLE #latestPosturalHypoCode
 CREATE TABLE #latestPosturalHypoCode
 	(PatID int, latestPosturalHypoCodeDate date, latestPosturalHypoCode varchar(512));
 insert into #latestPosturalHypoCode
-		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s 
-	  		inner join 
-	  			(  
+		select s.PatID, s.EntryDate, MAX(Rubric) from SIR_ALL_Records as s
+	  		inner join
+	  			(
 				 select PatID, MAX(EntryDate) as codeDate from SIR_ALL_Records
 				 where ReadCode in (select code from codeGroups where [group] = 'posturalHypo') and EntryDate < @refdate
 				 and PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 				 group by PatID
 	  			) sub on sub.PatID = s.PatID and sub.codeDate = s.EntryDate
-		where 
+		where
 			ReadCode in (select code from codeGroups where [group] = 'posturalHypo') and
 			s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 		group by s.PatID, s.EntryDate
-		
+
 
 --#impOppsData
 --all data from above combined into one table
 IF OBJECT_ID('tempdb..#impOppsData') IS NOT NULL DROP TABLE #impOppsData
-CREATE TABLE #impOppsData 
+CREATE TABLE #impOppsData
 	(PatID int,
 		latestPalCodeDate date, latestPalCode varchar(512),
-		latestPalPermExCodeDate date, latestPalPermExCode varchar(512), 
+		latestPalPermExCodeDate date, latestPalPermExCode varchar(512),
 		latestFrailCodeDate date, latestFrailCode varchar(512),
-		latestHouseBedboundCodeDate date, latestHouseBedboundCode varchar(512), 
+		latestHouseBedboundCodeDate date, latestHouseBedboundCode varchar(512),
 		latestHouseBedboundPermExCodeDate date, latestHouseBedboundPermExCode varchar(512),
-		latestCkd3rdInviteCodeDate date, latestCkd3rdInviteCode varchar(512), 
+		latestCkd3rdInviteCodeDate date, latestCkd3rdInviteCode varchar(512),
 		numberOfCkdInviteCodesThisFinancialYear int,
 		latestWhiteCoatCodeDate date, latestWhiteCoatCode varchar(512),
 		noPrimCareContactInLastYear int,
@@ -1377,7 +1384,7 @@ CREATE TABLE #impOppsData
 		secondLatestBpControlled int,
 		latestMedOptimisation varchar(512), latestMedOptimisationDate date, latestMedOptimisationIngredient varchar(512), latestMedOptimisationDose float, latestMedOptimisationFamily varchar(512),
 		latestMedAdherenceDate date, latestMedAdherenceIngredient varchar(512), latestMedAdherenceDose float, latestMedAdherenceFamily varchar(512),
-			
+
 		currentACEI_EventDate date, currentACEI_Ingredient varchar(512), currentACEI_Family varchar(512), currentACEI_Event varchar(512), currentACEI_Dose float, ACEI_MaxDose float, currentACEI_Nos int,
 		currentARB_EventDate date, currentARB_Ingredient varchar(512), currentARB_Family varchar(512), currentARB_Event varchar(512), currentARB_Dose float, ARB_MaxDose float, currentARB_Nos int,
 		currentCCB_EventDate date, currentCCB_Ingredient varchar(512), currentCCB_Family varchar(512), currentCCB_Event varchar(512), currentCCB_Dose float, CCB_MaxDose float, currentCCB_Nos int,
@@ -1386,7 +1393,7 @@ CREATE TABLE #impOppsData
 		currentDIUR_POT_EventDate date, currentDIUR_POT_Ingredient varchar(512), currentDIUR_POT_Family varchar(512), currentDIUR_POT_Event varchar(512), currentDIUR_POT_Dose float, DIUR_POT_MaxDose float, currentDIUR_POT_Nos int,
 		currentALPHA_EventDate date, currentALPHA_Ingredient varchar(512), currentALPHA_Family varchar(512), currentALPHA_Event varchar(512), currentALPHA_Dose float, ALPHA_MaxDose float, currentALPHA_Nos int,
 		currentBB_EventDate date, currentBB_Ingredient varchar(512), currentBB_Family varchar(512), currentBB_Event varchar(512), currentBB_Dose float, BB_MaxDose float, currentBB_Nos int,
-				
+
 		latestAllergyThiazideCodeDate date, latestAllergyThiazideCode varchar(512),
 		latestAllergyACEIcodeDate date, latestAllergyACEIcode varchar(512),
 		latestAllergyARBcodeDate date, latestAllergyARBcode varchar(512),
@@ -1416,23 +1423,23 @@ CREATE TABLE #impOppsData
 		latestPosturalHypoCodeDate date, latestPosturalHypoCode varchar(512)
 	);
 insert into #impOppsData
-select a.PatID, 
+select a.PatID,
 		latestPalCodeDate, latestPalCode,
-		latestPalPermExCodeDate, latestPalPermExCode, 
+		latestPalPermExCodeDate, latestPalPermExCode,
 		latestFrailCodeDate, latestFrailCode,
-		latestHouseBedboundCodeDate, latestHouseBedboundCode, 
+		latestHouseBedboundCodeDate, latestHouseBedboundCode,
 		latestHouseBedboundPermExCodeDate, latestHouseBedboundPermExCode,
-		latestCkd3rdInviteCodeDate, latestCkd3rdInviteCode, 
+		latestCkd3rdInviteCodeDate, latestCkd3rdInviteCode,
 		numberOfCkdInviteCodesThisFinancialYear,
 		latestWhiteCoatCodeDate, latestWhiteCoatCode,
-		noPrimCareContactInLastYear, 
+		noPrimCareContactInLastYear,
 		secondLatestSbpDate, secondLatestSbp,
 		secondLatestDbpDate, secondLatestDbp,
 		secondLatestBpControlled,
 
 		latestMedOptimisation, latestMedOptimisationDate, latestMedOptimisationIngredient, latestMedOptimisationDose, latestMedOptimisationFamily,
 		latestMedAdherenceDate, latestMedAdherenceIngredient, latestMedAdherenceDose, latestMedAdherenceFamily,
-			
+
 		currentACEI_EventDate, currentACEI_Ingredient, currentACEI_Family, currentACEI_Event, currentACEI_Dose, ACEI_MaxDose, currentACEI_Nos,
 		currentARB_EventDate, currentARB_Ingredient, currentARB_Family, currentARB_Event, currentARB_Dose, ARB_MaxDose, currentARB_Nos,
 		currentCCB_EventDate, currentCCB_Ingredient, currentCCB_Family, currentCCB_Event, currentCCB_Dose, CCB_MaxDose, currentCCB_Nos,
@@ -1441,7 +1448,7 @@ select a.PatID,
 		currentDIUR_POT_EventDate, currentDIUR_POT_Ingredient, currentDIUR_POT_Family, currentDIUR_POT_Event, currentDIUR_POT_Dose, DIUR_POT_MaxDose, currentDIUR_POT_Nos,
 		currentALPHA_EventDate, currentALPHA_Ingredient, currentALPHA_Family, currentALPHA_Event, currentALPHA_Dose, ALPHA_MaxDose, currentALPHA_Nos,
 		currentBB_EventDate, currentBB_Ingredient, currentBB_Family, currentBB_Event, currentBB_Dose, BB_MaxDose, currentBB_Nos,
-				
+
 		latestAllergyThiazideCodeDate, latestAllergyThiazideCode,
 		latestAllergyACEIcodeDate, latestAllergyACEIcode,
 		latestAllergyARBcodeDate, latestAllergyARBcode,
@@ -1592,22 +1599,22 @@ CREATE TABLE #medSuggestion
 insert into #medSuggestion
 
 --1st line: start ACEI
-select distinct a.PatID, 
+select distinct a.PatID,
 	'ACE inhibitor (e.g. '+
 	--<a href="http://dx.doi.org/10.18578/BNF.437242180" title="BNF" target="_blank">
 	'lisinopril 5mg or 10mg'+
 	--</a>
-	')' as family, 
+	')' as family,
 	'Start' as start_or_inc,
-	 case 
-		when 
+	 case
+		when
 			(
-			a.PatID not in (select PatID from #htnMeds) 
+			a.PatID not in (select PatID from #htnMeds)
 			and (age < 55 or (dmPatient = 1 or protPatient = 1)) --no HTN meds and under 55 / DM or proteinuria
-			) then 
+			) then
 			'<li>Patient is not prescribed anti-hypertensive medication' +
 				(case when age < 55 then ' and is &lt; 55 years old' else '' end) +
-				(case when dmPatient = 1 then ' and has diabetes' else '' end) + 
+				(case when dmPatient = 1 then ' and has diabetes' else '' end) +
 				(case when protPatient = 1 then ' and has an ACR &gt; 70' else '' end) + '.</li>' +
 			'<li>NICE recommends an ACE inhibitor first-line (patient has no documented allergies or contra-indications).</li></ul>'
 		when (currentMedFamily not in ('CCB', 'ACEI', 'ARB')) then
@@ -1632,9 +1639,9 @@ where
 	and
 	(
 		(
-			a.PatID not in (select PatID from #htnMeds) 
+			a.PatID not in (select PatID from #htnMeds)
 			and (age < 55 or (dmPatient = 1 or protPatient = 1)) --no HTN meds and under 55 / DM or proteinuria
-		) 
+		)
 		or
 		(currentMedFamily not in ('ACEI', 'ARB')) --on HTN meds BUT not ACEI or ARB
 		or
@@ -1645,22 +1652,22 @@ where
 union
 
 --1st line (alternative): start ARB
-select distinct a.PatID, 
+select distinct a.PatID,
 	'ARB (e.g. '+
 	--<a href="http://dx.doi.org/10.18578/BNF.958956352" title="BNF" target="_blank">
 	'losartan 25mg or 50mg'+
 	--</a>
-	')' as family, 
+	')' as family,
 	'Start' as start_or_inc,
 	 case
-		when 
+		when
 			(
-			a.PatID not in (select PatID from #htnMeds) 
+			a.PatID not in (select PatID from #htnMeds)
 			and (age < 55 or (dmPatient = 1 or protPatient = 1)) --no HTN meds and under 55 / DM or proteinuria
-			) then 
+			) then
 			'<li>Patient is not prescribed anti-hypertensive medication' +
 				(case when age < 55 then ' and is &lt; 55 years old' else '' end) +
-				(case when dmPatient = 1 then ' and has diabetes' else '' end) + 
+				(case when dmPatient = 1 then ' and has diabetes' else '' end) +
 				(case when protPatient = 1 then ' and has an ACR &gt; 70' else '' end) + '.</li>' +
 			'<li>NICE recommends an ACE inhibitor first-line <strong>but</strong> there is a documented contraindication on ' +  CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3) + ', so an ARB is preferred.</li></ul>'
 		when (currentMedFamily not in ('CCB', 'ACEI', 'ARB')) then
@@ -1692,21 +1699,21 @@ where
 		or
 		(a.PatID not in (select PatID from #htnMeds) and age > 54) and ((latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)) --indication for CCB but CI present
 	)
-		and (latestAllergyACEIcode is not null) --allergy to ACEI 
+		and (latestAllergyACEIcode is not null) --allergy to ACEI
 		and (latestAllergyARBcode is null and latestMaxPotassium < 5.1) --no CIs to ARBs: http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!prescribinginfosub
 
 union
 
 --1st line (also): start CCB
-select distinct a.PatID, 
+select distinct a.PatID,
 	'Calcium Channel Blocker (e.g. '+
 	--<a href="http://dx.doi.org/10.18578/BNF.109201061" title="BNF" target="_blank">
 	'amlodipine 5mg'+
 	--</a>
-	')' as family, 
+	')' as family,
 	'Start' as start_or_inc,
-	 case 
-		when (a.PatID not in (select PatID from #htnMeds) and age > 54) then 
+	 case
+		when (a.PatID not in (select PatID from #htnMeds) and age > 54) then
 			'<li>Patient is not prescribed anti-hypertensive medication and is 55 years old or older.</li>' +
 			'<li>NICE recommends a Calcium Channel Blocker  first-line (patient has no documented allergies or contra-indications).</li></ul>'
 		when (currentMedFamily not in ('CCB', 'ACEI', 'ARB')) then
@@ -1715,16 +1722,16 @@ select distinct a.PatID,
 		when (currentMedFamily != 'CCB' and currentMedFamily in ('ACEI', 'ARB')) then
 			'<li>Patient is on anti-hypertensive medication (including an ACE Inhibitor or ARB) but not a Calcium Channel Blocker.</li>' +
 			'<li>NICE recommends a Calcium Channel Blocker (patient has no documented allergies or contra-indications).</li></ul>'
-		when (a.PatID not in (select PatID from #htnMeds) and age < 55) and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0) then 
+		when (a.PatID not in (select PatID from #htnMeds) and age < 55) and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0) then
 			'<li>Patient is not currently prescribed anti-hypertensive medication and is &lt; 55 years old.</li>' +
 			'<li>NICE recommends an ACE inhibitor first-line <strong>but</strong> there is a documented contraindication (' +
-				(case 
+				(case
 					when latestAllergyACEIcode is not null then latestAllergyACEIcode + 'on' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3)
 					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
-			') and ARBs (' + 
-				(case 
-					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)  
+			') and ARBs (' +
+				(case
+					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)
 					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			'), so a CCB is preferred.</li></ul>'
@@ -1750,12 +1757,12 @@ where
 union
 
 --2nd line: start thiazide
-select distinct a.PatID, 
+select distinct a.PatID,
 	'Indapamide (e.g. '+
 	--<a href="http://dx.doi.org/10.18578/BNF.748067014" title="BNF" target="_blank">
 	'2.5mg'+
 	--</a>
-	')' as family, 
+	')' as family,
 	'Start' as start_or_inc,
 	 case
 		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB') then
@@ -1763,37 +1770,37 @@ select distinct a.PatID,
 			'<li>NICE recommends starting Indapamide (patient has no documented allergies or contra-indications).</li></ul>'
 		when (currentMedFamily in ('ACEI', 'ARB') and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)) then
 			'<li>Patient is prescribed an ACE Inhibitor (or ARB) and there is a documented contraindication to Calcium Channel Blockers' +
-				case 
+				case
 					when latestAllergyCCBcode is not null then '(' + latestAllergyCCBcode + 'on' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) +')'
 					when latestAllergyCCBcode is null then ''
 				end +
 			', so Indapamide is preferred.</li></ul>'
 		when (currentMedFamily in ('CCB') and  ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)) then
 			'<li>Patient is prescribed a Calcium Channel Blocker and there are documented contraindications to both ACE Inhibitors (' +
-				(case 
+				(case
 					when latestAllergyACEIcode is not null then latestAllergyACEIcode + 'on' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3)
 					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end )+
-			') and ARBs (' + 
-				(case 
-					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)  
+			') and ARBs (' +
+				(case
+					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)
 					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			'), so Indapamide is preferred.</li></ul>'
 		when (a.PatID not in (select PatID from #htnMeds) and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0) and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)) then
 			'<li>Patient is not prescribed anti-hypertensive medication.</li>' +
 			'<li><strong>But</strong> there are contra-indications to ACE Inhibitors (' +
-				(case 
+				(case
 					when latestAllergyACEIcode is not null then latestAllergyACEIcode + 'on' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3)
 					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
-			') and ARBs (' + 
-				(case 
-					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)  
+			') and ARBs (' +
+				(case
+					when latestAllergyARBcode is not null then latestAllergyARBcode + 'on' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3)
 					when latestAllergyARBcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end) +
 			') and CCBs' +
-				(case 
+				(case
 					when latestAllergyCCBcode is not null then '(' + latestAllergyCCBcode + 'on' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) +')'
 					when latestAllergyCCBcode is null then ''
 				end) +
@@ -1808,7 +1815,7 @@ where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 	and
 	(	--at stage 2 (i.e. on an ACEI or ARB, and on a CCB)
-		(currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB') 
+		(currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB')
 		or --on ACEI / ARB but CI to CCB
 		(currentMedFamily in ('ACEI', 'ARB') and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null))
 		or --on CCB but CI to both ACEI and ARB
@@ -1822,14 +1829,14 @@ where
 union
 
 --3rd line: spironolactone, alpha, or beta
-select distinct a.PatID, 
-	case 
+select distinct a.PatID,
+	case
 		when currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null then 'Spironolactone (e.g. '+
 		-- <a http://dx.doi.org/10.18578/BNF.213718345" title="Spironolactone BNF" target="_blank">
 		'25mg'+
 		--</a>
-		')' 
-		when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then 'Alpha Blocker (e.g. '+ 
+		')'
+		when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then 'Alpha Blocker (e.g. '+
 		--<a http://dx.doi.org/10.18578/BNF.782101311" title="Doxazosin BNF" target="_blank" >
 		'Doxazosin 1mg'+
 		--</a>
@@ -1839,8 +1846,8 @@ select distinct a.PatID,
 		'Bisoprolol 5mg'+
 		--</a>
 		')'
-	end as family, 
-	'Start' as start_or_inc, 
+	end as family,
+	'Start' as start_or_inc,
 	case
 		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'CCB' and currentMedFamily = 'DIUR_THI') then
 			'<li>Patient is prescribed an ACE Inhibitor (or ARB), Calcium Channel Blocker, and Thiazide-type Diuretic.</li>'
@@ -1852,8 +1859,8 @@ select distinct a.PatID,
 				(case when latestSodium < 130 then 'latest sodium ' +  Str(latestSodium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestSodiumDate, 3) + '; ' else '' end) +
 				(case when latestGoutCode is not null then latestGoutCode + ' on ' + CONVERT(VARCHAR, latestGoutCodeDate, 3) + '; ' else '' end) +
 			').</li>'
-		when (currentMedFamily in ('ACEI', 'ARB')) 
-			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null) 
+		when (currentMedFamily in ('ACEI', 'ARB'))
+			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)
 			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null) then
 			'<li>Patient is prescribed an ACE Inhibitor (or ARB) and has contraindications to Calcium Channel Blockers (' +
 				(case when latestAllergyCCBcode is not null then latestAllergyCCBcode + ' on ' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) + '; ' else '' end) +
@@ -1867,7 +1874,7 @@ select distinct a.PatID,
 				(case when latestSodium < 130 then 'latest sodium ' +  Str(latestSodium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestSodiumDate, 3) + '; ' else '' end) +
 				(case when latestGoutCode is not null then latestGoutCode + ' on ' + CONVERT(VARCHAR, latestGoutCodeDate, 3) + '; ' else '' end) +
 			').</li>'
-		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'DIUR_THI') 
+		when (currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'DIUR_THI')
 			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null) then
 			'<li>Patient is prescribed an ACE Inhibitor (or ARB) and Thiazide-type Diuretic, but has contraindications to Calcium Channel Blockers (' +
 				(case when latestAllergyCCBcode is not null then latestAllergyCCBcode + ' on ' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) + '; ' else '' end) +
@@ -1883,7 +1890,7 @@ select distinct a.PatID,
 				(case when latestAllergyARBcode is not null then latestAllergyARBcode + ' on ' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3) + '; ' else '' end) +
 				(case when latestMaxPotassium > 5.0 then 'latest potassium ' +  Str(latestMaxPotassium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3) + '; ' else '' end) +
 			').</li>'
-		when (currentMedFamily = 'CCB') 
+		when (currentMedFamily = 'CCB')
 			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
 			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0) then
 			'<li>Patient is prescribed a Calcium Channel Blocker but has contraindications to Thiazide-type Diuretics (' +
@@ -1915,30 +1922,30 @@ select distinct a.PatID,
 				(case when latestCalcium >2.9 then 'latest calcium ' +  Str(latestCalcium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestCalciumDate, 3) + '; ' else '' end) +
 				(case when latestSodium < 130 then 'latest sodium ' +  Str(latestSodium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestSodiumDate, 3) + '; ' else '' end) +
 				(case when latestGoutCode is not null then latestGoutCode + ' on ' + CONVERT(VARCHAR, latestGoutCodeDate, 3) + '; ' else '' end) +
-			').</li>'	
+			').</li>'
 	end +
 	'<li>NICE recommends starting either Spironolactone, an Alpha Blocker, or a Beta Blocker.</li>' +
 	case
-		when 
+		when
 			(currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null)
 			and (currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null)
 			and (currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null)
 		then '</li>Patient has no contra-indications to any of these medications.</li></ul>'
-		when 
+		when
 			(currentMedFamily = 'DIUR_POT' or latestAllergyPotSpareDiurCode is not null or latestMaxPotassium > 4.5 or latestAddisonsCode is not null)
 			and (currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null)
 			and (currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null)
-		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' + 
+		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' +
 			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'DIUR_POT') else '' end) +
 			(case when latestAllergyPotSpareDiurCode is not null then latestAllergyPotSpareDiurCode + ' on ' + CONVERT(VARCHAR, latestAllergyPotSpareDiurCodeDate, 3) + '; ' else '' end) +
 			(case when latestMaxPotassium > 4.5 then 'latest potassium ' +  Str(latestMaxPotassium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3) + '; ' else '' end) +
 			(case when latestAddisonsCode is not null then latestAddisonsCode + ' on ' + CONVERT(VARCHAR, latestAddisonsCodeDate, 3) + '; ' else '' end) +
-			').</li></ul>'	
-		when 
+			').</li></ul>'
+		when
 			(currentMedFamily = 'DIUR_POT' or latestAllergyPotSpareDiurCode is not null or latestMaxPotassium > 4.5 or latestAddisonsCode is not null)
 			and (currentMedFamily ='ALPHA' or latestAllergyAlphaCode is not null or latestPosturalHypoCode is not null)
 			and (currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null)
-		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' + 
+		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' +
 			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'DIUR_POT') else '' end) +
 			(case when latestAllergyPotSpareDiurCode is not null then latestAllergyPotSpareDiurCode + ' on ' + CONVERT(VARCHAR, latestAllergyPotSpareDiurCodeDate, 3) + '; ' else '' end) +
 			(case when latestMaxPotassium > 4.5 then 'latest potassium ' +  Str(latestMaxPotassium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3) + '; ' else '' end) +
@@ -1947,12 +1954,12 @@ select distinct a.PatID,
 			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'ALPHA') else '' end) +
 			(case when latestAllergyAlphaCode is not null then latestAllergyAlphaCode + ' on ' + CONVERT(VARCHAR, latestAllergyAlphaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPosturalHypoCode is not null then latestPosturalHypoCode + ' on ' + CONVERT(VARCHAR, latestPosturalHypoCodeDate, 3) + '; ' else '' end) +
-			').</li></ul>'	
-		when 
+			').</li></ul>'
+		when
 			(currentMedFamily = 'DIUR_POT' or latestAllergyPotSpareDiurCode is not null or latestMaxPotassium > 4.5 or latestAddisonsCode is not null)
 			and (currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null)
 			and (currentMedFamily ='BB' or latestAllergyBBcode is not null or latestAsthmaCode is not null or latestPulseValue < 46 or latestPhaeoCode is not null or latestHeartBlockCodeDate is not null or latestSickSinusCodeDate is not null)
-		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' + 
+		then '</li>Patient is already prescribed, or has a contra-indication to Spironolactone (' +
 			(case when currentMedFamily = 'DIUR_POT' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'DIUR_POT') else '' end) +
 			(case when latestAllergyPotSpareDiurCode is not null then latestAllergyPotSpareDiurCode + ' on ' + CONVERT(VARCHAR, latestAllergyPotSpareDiurCodeDate, 3) + '; ' else '' end) +
 			(case when latestMaxPotassium > 4.5 then 'latest potassium ' +  Str(latestMaxPotassium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3) + '; ' else '' end) +
@@ -1965,12 +1972,12 @@ select distinct a.PatID,
 			(case when latestPhaeoCode is not null then latestPhaeoCode + ' on ' + CONVERT(VARCHAR, latestPhaeoCodeDate, 3) + '; ' else '' end) +
 			(case when latestHeartBlockCode is not null then latestHeartBlockCode + ' on ' + CONVERT(VARCHAR, latestHeartBlockCodeDate, 3) + '; ' else '' end) +
 			(case when latestSickSinusCode is not null then latestSickSinusCode + ' on ' + CONVERT(VARCHAR, latestSickSinusCodeDate, 3) + '; ' else '' end) +
-			').</li></ul>'	
-		when 
+			').</li></ul>'
+		when
 			(currentMedFamily != 'DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null)
 			and (currentMedFamily ='ALPHA' or latestAllergyAlphaCode is not null or latestPosturalHypoCode is not null)
 			and (currentMedFamily ='BB' or latestAllergyBBcode is not null or latestAsthmaCode is not null or latestPulseValue < 46 or latestPhaeoCode is not null or latestHeartBlockCodeDate is not null or latestSickSinusCodeDate is not null)
-		then '</li>Patient is already prescribed, or has a contra-indication to Alpha Blockers (' + 
+		then '</li>Patient is already prescribed, or has a contra-indication to Alpha Blockers (' +
 			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'ALPHA') else '' end) +
 			(case when latestAllergyAlphaCode is not null then latestAllergyAlphaCode + ' on ' + CONVERT(VARCHAR, latestAllergyAlphaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPosturalHypoCode is not null then latestPosturalHypoCode + ' on ' + CONVERT(VARCHAR, latestPosturalHypoCodeDate, 3) + '; ' else '' end) +
@@ -1982,8 +1989,8 @@ select distinct a.PatID,
 			(case when latestPhaeoCode is not null then latestPhaeoCode + ' on ' + CONVERT(VARCHAR, latestPhaeoCodeDate, 3) + '; ' else '' end) +
 			(case when latestHeartBlockCode is not null then latestHeartBlockCode + ' on ' + CONVERT(VARCHAR, latestHeartBlockCodeDate, 3) + '; ' else '' end) +
 			(case when latestSickSinusCode is not null then latestSickSinusCode + ' on ' + CONVERT(VARCHAR, latestSickSinusCodeDate, 3) + '; ' else '' end) +
-			').</li></ul>'	
-		when 
+			').</li></ul>'
+		when
 			(currentMedFamily != 'DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null)
 			and (currentMedFamily ='ALPHA' or latestAllergyAlphaCode is not null or latestPosturalHypoCode is not null)
 			and (currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null)
@@ -1991,8 +1998,8 @@ select distinct a.PatID,
 			(case when currentMedFamily = 'ALPHA' then 'patient is prescribed ' + (select currentMedIngredient from #currentHTNmeds where currentMedFamily = 'ALPHA') else '' end) +
 			(case when latestAllergyAlphaCode is not null then latestAllergyAlphaCode + ' on ' + CONVERT(VARCHAR, latestAllergyAlphaCodeDate, 3) + '; ' else '' end) +
 			(case when latestPosturalHypoCode is not null then latestPosturalHypoCode + ' on ' + CONVERT(VARCHAR, latestPosturalHypoCodeDate, 3) + '; ' else '' end) +
-			').</li></ul>'	
-		when 
+			').</li></ul>'
+		when
 			(currentMedFamily != 'DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null)
 			and (currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null)
 			and (currentMedFamily ='BB' or latestAllergyBBcode is not null or latestAsthmaCode is not null or latestPulseValue < 46 or latestPhaeoCode is not null or latestHeartBlockCodeDate is not null or latestSickSinusCodeDate is not null)
@@ -2004,9 +2011,9 @@ select distinct a.PatID,
 			(case when latestPhaeoCode is not null then latestPhaeoCode + ' on ' + CONVERT(VARCHAR, latestPhaeoCodeDate, 3) + '; ' else '' end) +
 			(case when latestHeartBlockCode is not null then latestHeartBlockCode + ' on ' + CONVERT(VARCHAR, latestHeartBlockCodeDate, 3) + '; ' else '' end) +
 			(case when latestSickSinusCode is not null then latestSickSinusCode + ' on ' + CONVERT(VARCHAR, latestSickSinusCodeDate, 3) + '; ' else '' end) +
-			').</li></ul>'	
+			').</li></ul>'
 	end as reasonText,
-		case 
+		case
 			when currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null then (select text from regularText where [textId] = 'linkNiceSpiroHtn')
 			when currentMedFamily !='ALPHA' and latestAllergyAlphaCode is null and latestPosturalHypoCode is null then (select text from regularText where [textId] = 'linkNiceAlphaHtn')
 			when currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null then (select text from regularText where [textId] = 'linkNiceBbHtn')
@@ -2027,35 +2034,35 @@ where
 		)
 		or --on ACEI / ARB but CI to CCB and thiazide
 		(
-			(currentMedFamily in ('ACEI', 'ARB')) 
-			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null) 
+			(currentMedFamily in ('ACEI', 'ARB'))
+			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)
 			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
 		)
 		or --on ACEI / ARB and thiazide but CI to CCB
 		(
-			(currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'DIUR_THI') 
+			(currentMedFamily in ('ACEI', 'ARB') and currentMedFamily = 'DIUR_THI')
 			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)
 		)
 		or --on CCB and thiazide but CI to ACEI / ARB
 		(
-			(currentMedFamily = 'CCB' and currentMedFamily = 'DIUR_THI') 
+			(currentMedFamily = 'CCB' and currentMedFamily = 'DIUR_THI')
 			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)
 		)
 		or --on CCB but CI to thiazide and ACEI / ARB
 		(
-			(currentMedFamily = 'CCB') 
+			(currentMedFamily = 'CCB')
 			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
 			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)
 		)
 		or --not on htn meds but CI to ACEI / ARB and CCB and thiazide
 		(
-			a.PatID not in (select PatID from #htnMeds) 
+			a.PatID not in (select PatID from #htnMeds)
 			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)
 			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)
 			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
 		)
 	)
-	and 
+	and
 	(
 		(currentMedFamily !='DIUR_POT' and latestAllergyPotSpareDiurCode is null and latestMaxPotassium < 4.6 and latestAddisonsCode is null) --not already on a pot sparing diuretic and no CIs
 		or
@@ -2063,12 +2070,12 @@ where
 		or
 		(currentMedFamily !='BB' and latestAllergyBBcode is null and latestAsthmaCode is null and latestPulseValue > 45 and latestPhaeoCode is null and latestHeartBlockCodeDate is null and latestSickSinusCodeDate is null) --not already on BB and no CIs
 	)
-	
+
 union
 
 
 --increase current medication
-select distinct a.PatID, 
+select distinct a.PatID,
 --	case
 --		when currentMedFamily = 'ACEI' and currentMedDose < currentMedMaxDose and latestMaxPotassium < 5.1 then 'ACE inhibitor'
 --		when currentMedFamily = 'CCB' and currentMedDose < currentMedMaxDose then 'Calcium Channel Blocker'
@@ -2078,13 +2085,13 @@ select distinct a.PatID,
 --		when currentMedFamily = 'DIUR_POT' and currentMedDose < currentMedMaxDose then 'Potassium-sparing Diuretic'
 --		when currentMedFamily = 'ALPHA' and currentMedDose < currentMedMaxDose then 'Alpha Blocker'
 --		when currentMedFamily = 'DIUR_LOOP' and currentMedDose < currentMedMaxDose then 'Loop Diuretic'
---	end 
-	--'<a href="' + BNF + '" target="_blank">' + 
-	currentMedIngredient 
-	--+ '</a>'  
-	COLLATE Latin1_General_CI_AS as family, 
-	'Increase' as start_or_inc, 
-	'<li>Patient is currently prescribed ' + currentMedIngredient COLLATE Latin1_General_CI_AS + ' ' + 
+--	end
+	--'<a href="' + BNF + '" target="_blank">' +
+	currentMedIngredient
+	--+ '</a>'
+	COLLATE Latin1_General_CI_AS as family,
+	'Increase' as start_or_inc,
+	'<li>Patient is currently prescribed ' + currentMedIngredient COLLATE Latin1_General_CI_AS + ' ' +
 		case
 			when currentMedIngredient COLLATE Latin1_General_CI_AS = 'Bisoprolol' then Str(currentMedDose, 6, 2)
 			else Str(currentMedDose, 6)
@@ -2115,7 +2122,7 @@ where
 		or
 		(currentMedFamily = 'ALPHA' and currentMedDose < currentMedMaxDose)
 		or
-		(currentMedFamily = 'DIUR_LOOP' and currentMedDose < currentMedMaxDose)	
+		(currentMedFamily = 'DIUR_LOOP' and currentMedDose < currentMedMaxDose)
 	)
 
 							---------------------------------------------------------------
@@ -2132,40 +2139,40 @@ insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonCat, 
 --insert into #patActions
 
 --CHECK REGISTERED
-select a.PatID, 
+select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Registered?' as actionCat,
 	'No contact' as reasonCat,
 	1 as reasonNumber,
 	2 as priority,
-	'Check this patient is registered' as actionText, 
+	'Check this patient is registered' as actionText,
 	'Reasoning' +
-		'<ul><li>No contact with your practice in the last year.</ul>' + 
+		'<ul><li>No contact with your practice in the last year.</ul>' +
 	'If <strong>not registered</strong> please add code <strong>92...</strong> [#92...] to their records.<br><br>' +
 	'If <strong>dead</strong> please add code <strong>9134.</strong> [#9134.] to their records.<br><br>' +
-	'Useful information' + 
-		'<ul><li>' + 
-			case 
+	'Useful information' +
+		'<ul><li>' +
+			case
 					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
-					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd') 
+					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd')
 			end + '</li>' +
-		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
+		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
 left outer join (select PatID, dmPatient, protPatient from #eligiblePopulationAllData) as b on b.PatID = a.PatID
-	where 
+	where
 		noPrimCareContactInLastYear = 1
-	
+
 union
 
 --MEASURE BP
-select a.PatID, 
+select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Measure BP' as actionCat,
 	case
 		--No BP + no contact
-		when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + no contact' 
+		when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + no contact'
 		--No BP + contact
 		when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + contact'
 		--BP uncontrolled BUT second latest BP controlled (one-off high)
@@ -2187,30 +2194,30 @@ select a.PatID,
 	(case when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end)
 	as reasonNumber,
 	2 as priority,
-	'Measure this patient''s BP' as actionText, 
+	'Measure this patient''s BP' as actionText,
 	'Reasoning' +
 		(case
 		--No BP
 			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then '<ul><li>No BP reading since last April.</ul>'
 		--Any BP
-			else 
-				'<ul><li>Last BP was <strong>uncontrolled</strong>: ' + 
-					case 
+			else
+				'<ul><li>Last BP was <strong>uncontrolled</strong>: ' +
+					case
 						when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
 						else Str(latestSbp)
 					end
-				+ '/' + 
-					case 
+				+ '/' +
+					case
 						when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
 						else Str(latestDbp)
 					end
 				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-				'<li>Target: ' + b.bpTarget + ' - because patient has CKD' + 
-					case 
-						when dmPatient = 1 then ' and diabetes' 
+				'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
+					case
+						when dmPatient = 1 then ' and diabetes'
 						when protPatient = 1 then ' and ACR &gt; 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3)
-						else '' 
-					end + 
+						else ''
+					end +
 			' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>'
 		end) +
 		(case
@@ -2219,13 +2226,13 @@ select a.PatID,
 				'<li>This is only <strong>slightly (&lt;10mmHg)</strong> over target. So it may be worth re-measuring their BP in case it has now come down.</li></ul>'
 			else ''
 		end) +
-		(case 
+		(case
 		--BP uncontrolled BUT second latest BP controlled (one-off high)
 			when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
 				'<li><strong>Previous BP</strong> was <strong>controlled</strong>: ' + Str(secondLatestSbp) + '/' + Str(secondLatestDbp) + ' on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '. So it may be worth re-measuring in case this was a one-off.</li>'
-			else ''			
+			else ''
 		end) +
-		(case 
+		(case
 		--BP uncontrolled + medication change after
 			when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then
 				'<li><strong>' + latestMedOptimisationIngredient + '</strong> was <strong>' + latestMedOptimisation + '</strong> on <strong>' + CONVERT(VARCHAR, latestMedOptimisationDate, 3) + '</strong>.</li>' + '. So it may be worth re-measuring BP in case it has now come down.</li>'
@@ -2245,73 +2252,73 @@ select a.PatID,
 					'<li><strong>Telephone</strong> them. If so, please add code <strong>9Ot4. (CKD telephone invite)</strong> [#9Ot4.] to their records.</li>' +
 					'<li>Send them a <strong>letter</strong>. If so, please add code <strong>9Ot0. (CKD 1st letter)</strong> [#9Ot0.] or <strong>9Ot1. (CKD 2nd letter)</strong> or <strong>9Ot2. (CKD 3rd letter)</strong> to their records.</li></ul>'
 		end) +
-	'Useful information' + 
-		'<ul><li>' + 
-			case 
+	'Useful information' +
+		'<ul><li>' +
+			case
 					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
-					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd') 
+					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd')
 			end + '</li>' +
-		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
+		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
 	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0)
-	or 
+	or
 	(
 		a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
-		and 
-		(	
+		and
+		(
 			(secondLatestBpControlled = 1)
 			or
 			(latestMedOptimisationDate >= latestSbpDate)
 			or
-			((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) 
-			or 
+			((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90))
+			or
 			((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))
 		)
-			
+
 	)
-	
+
 union
 
 --MEDICATION SUGGESTION
-select a.PatID, 
+select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Medication optimisation' as actionCat,
 	start_or_inc + ' ' + family as reasonCat,
 	reasonNumber as reasonNumber,
 	priority as priority,
-	start_or_inc + ' ' + family as actionText, 
+	start_or_inc + ' ' + family as actionText,
 	'Reasoning' +
-		'<ul><li>Last BP was <strong>uncontrolled</strong>: ' + 
-				case 
+		'<ul><li>Last BP was <strong>uncontrolled</strong>: ' +
+				case
 					when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
 					else Str(latestSbp)
 				end
-			+ '/' + 
-				case 
+			+ '/' +
+				case
 					when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
 					else Str(latestDbp)
 				end
 			+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-			'<li>Target: ' + b.bpTarget + ' - because patient has CKD' + 
-				case 
-					when dmPatient = 1 then ' and diabetes' 
+			'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
+				case
+					when dmPatient = 1 then ' and diabetes'
 					when protPatient = 1 then ' and ACR &gt; 70 on ' + CONVERT(VARCHAR, b.latestAcrDate, 3)
-					else '' 
-				end + 
+					else ''
+				end +
 		' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>'
 	+ reasonText +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>' + usefulInfo + '</li>' +
-		'<li>' + 
-			case 
+		'<li>' +
+			case
 					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
-					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd') 
+					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd')
 			end + '</li>' +
-		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
+		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>' as supportingText
 from #medSuggestion as a
 	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
@@ -2333,13 +2340,13 @@ select a.PatID,
 		when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum tolerated medication'
 		else ''
 	end as reasonCat,
-	(case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate) 
+	(case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate)
 	then 1 else 0 end) +
 	(case when latestFrailCode is not null
 	then 1 else 0 end) +
 	(case when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate)
 	then 1 else 0 end) +
-	(case when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 
+	(case when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2
 	then 1 else 0 end) +
 --	(case when (select COUNT(*) from (select currentMedFamily from #currentHTNmeds) sub) > 3 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 --	then 1 else 0 end) +
@@ -2347,9 +2354,9 @@ select a.PatID,
 	then 1 else 0 end)
 	as reasonNumber,
 	3 as priority,
-	'Exclude this patient from CKD BP indicator using code(s): ' + 
+	'Exclude this patient from CKD BP indicator using code(s): ' +
 	(case
-		when 
+		when
 			((latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate))
 			or
 			(latestFrailCode is not null)
@@ -2357,9 +2364,9 @@ select a.PatID,
 			((latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate))
 		then '9hE1. (patient unsuitable) [9hE1.] '
 		else ''
-	end) +  
+	end) +
 	(case
-		when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 
+		when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2
 		then '9hE0. (informed dissent) [9hE0.] '
 		else ''
 	end) +
@@ -2369,68 +2376,68 @@ select a.PatID,
 --		else ''
 --	end) +
 	(case
-		when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) 
+		when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 		then '8BL0. (maximal therapy) [8BL0.] '
 		else ''
 	end) as actionText,
 	'Reasoning<ul>' +
-		(case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate) 
+		(case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate)
 		then '<li>Patient has code <strong> ''' + latestPalCode + '''</strong> on ' + CONVERT(VARCHAR, latestPalCodeDate, 3) + '.</li>' else '' end) +
 		(case when latestFrailCode is not null
 		then '<li>Patient has code <strong>''' + latestFrailCode + '''</strong> on ' + CONVERT(VARCHAR, latestFrailCodeDate, 3) + '.</li>' else '' end) +
 		(case when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate)
 		then '<li>Patient has code <strong>''' + latestHouseBedboundCode + '''</strong> on ' + CONVERT(VARCHAR, latestHouseBedboundCodeDate, 3) + '.</li>' else '' end) +
-		(case when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 
+		(case when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2
 		then '<li>Patient has had 3 CKD invites since last April.</li>' else '' end) +
---		(case 
+--		(case
 --			when (select COUNT(*) from (select currentMedFamily from #currentHTNmeds) sub) > 3 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
---			then 
---				'<li>Last BP was <strong>uncontrolled</strong>: ' + 
---						case 
+--			then
+--				'<li>Last BP was <strong>uncontrolled</strong>: ' +
+--						case
 --							when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
 --							else Str(latestSbp)
 --						end
---					+ '/' + 
---						case 
+--					+ '/' +
+--						case
 --							when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
 --							else Str(latestDbp)
 --						end
 --					+ ' on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
---					'<li>Target: ' + bpTarget + ' - because patient has CKD' + 
---						case 
---							when dmPatient = 1 then ' and diabetes' 
+--					'<li>Target: ' + bpTarget + ' - because patient has CKD' +
+--						case
+--							when dmPatient = 1 then ' and diabetes'
 --							when protPatient = 1 then ' and ACR > 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3)
---							else '' 
---						end + 
---				' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' +		
---				'<li><strong>And</strong> patient is prescribed <strong>4 or more</strong> classes of hypertensive medication.</li>' 
---			else '' 
+--							else ''
+--						end +
+--				' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' +
+--				'<li><strong>And</strong> patient is prescribed <strong>4 or more</strong> classes of hypertensive medication.</li>'
+--			else ''
 --			end) +
-		(case 
+		(case
 			when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
-			then 
-				'<li>Last BP was <strong>uncontrolled</strong>: ' + 
-						case 
+			then
+				'<li>Last BP was <strong>uncontrolled</strong>: ' +
+						case
 							when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
 							else Str(latestSbp)
 						end
-					+ '/' + 
-						case 
+					+ '/' +
+						case
 							when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
 							else Str(latestDbp)
 						end
 					+ ' on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-					'<li>Target: ' + bpTarget + ' - because patient has CKD' + 
-						case 
-							when dmPatient = 1 then ' and diabetes' 
+					'<li>Target: ' + bpTarget + ' - because patient has CKD' +
+						case
+							when dmPatient = 1 then ' and diabetes'
 							when protPatient = 1 then ' and ACR &gt; 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3)
-							else '' 
-						end + 
-				' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' +		
-				'<li>Patient has contraindications to, or is taking all BP medications recommendeded by NICE.</li>' 
-			else '' 
+							else ''
+						end +
+				' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>' +
+				'<li>Patient has contraindications to, or is taking all BP medications recommendeded by NICE.</li>'
+			else ''
 			end) +
-	'</ul>Useful information' + 
+	'</ul>Useful information' +
 		'<ul><li>' + (select text from regularText where [textId] = 'ExceptionReportingReasons') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
@@ -2455,8 +2462,8 @@ CREATE TABLE #reasonProportions
 insert into #reasonProportions
 values
 --No BP + contact with practice
-('noBpYesContact', 
-	(select COUNT(*) from 
+('noBpYesContact',
+	(select COUNT(*) from
 		(
 				select a.PatID from #eligiblePopulationAllData as a
 				left outer join (select PatID, noPrimCareContactInLastYear from #impOppsData) as b on b.PatID = a.PatID
@@ -2466,23 +2473,23 @@ values
 	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --Uncontrolled + within 10mmHg of target
-('uncontrolledClose', 
-	(select COUNT(*) from 
+('uncontrolledClose',
+	(select COUNT(*) from
 		(
-			select PatID from #eligiblePopulationAllData 
-				where 
+			select PatID from #eligiblePopulationAllData
+				where
 					(
-						((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or 
+						((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or
 						((dmPatient = 0 and protPatient = 0) and (latestSbp < 150 and latestDbp < 100))
-					) 
-					and 
+					)
+					and
 					denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
 		) sub
 	)/
 	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --No optimisation after high reading (therapeutic inertia)
-('rxInertia', 
+('rxInertia',
 	(select COUNT(*) from
 		(
 			select a.PatID from #eligiblePopulationAllData a
@@ -2494,12 +2501,12 @@ values
 	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --'measure' actions
-('measureActions', 
+('measureActions',
 	(select COUNT(*) from (select distinct PatID from [output.pingr.patActions] where indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP') sub)/
 	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
 ),
 --uncontrolled
-('uncontrolled', 
+('uncontrolled',
 	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0) sub
 	)/
 	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
@@ -2523,7 +2530,7 @@ set @uncontrolledProportion = (select proportion from #reasonProportions where p
 insert into [output.pingr.orgActions](indicatorId, actionText, proportion, supportingText)
 
 --BP MACHINE IN WAITING ROOM
-select 
+select
 	'ckd.treatment.bp' as indicatorId,
 	'Put BP machine in your waiting room' as actionText,
 	--No BP + contact with practice
@@ -2531,27 +2538,27 @@ select
 	'Reasoning' +
 		'<ul><li>' + STR(@noBpYesContactProportion) + 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> had contact with your practice in the last year.</li>' +
 		'<li>With a BP machine in your waiting room, patients can take their own BP whilst they wait and give their readings to your receptionists.' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li></ul>' as supportingText
 
 union
 
 --WORK WITH LOCAL PHARMACY
-select 
+select
 	'ckd.treatment.bp' as indicatorId,
 	'Work with your local pharmacy to enable them to take blood pressure readings' as actionText,
 	--No BP + medication contact
 	@noBpYesContactProportion as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(@noBpYesContactProportion) 
+		'<ul><li>' + STR(@noBpYesContactProportion)
 		+ 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> have had medication issued in the last year.</li>' +
 		'<li>Pharmacies can take their blood pressure when they issue their medication and send the readings to you.' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'RpsGuidanceBp') + '</li></ul>' as supportingText
 union
 
 --INTRODUCE ABPM
-select 
+select
 	'ckd.treatment.bp' as indicatorId,
 	'Introduce an ambulatory BP monitoring service' as actionText,
 	--Uncontrolled + within 10mmHg of target
@@ -2561,11 +2568,11 @@ select
 		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
 		'<li>Often high blood pressure readings taken in surgery are normal at home.</li>' +
 		'<li>This would also follow NICE guidance for hypertension diagnosis.' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBhsAbpm') + '</li>' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkPatientUkAbpm') + '</li>' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkNiceHtn') + '</li>' +
-		'</ul>' 
+		'</ul>'
 		as supportingText
 
 union
@@ -2580,15 +2587,15 @@ select
 		'<ul><li>' + STR(@uncontrolledCloseProportion)
 		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
 		'<li>BP is on average 7/4 mmHg lower when measured with nurses rather than doctors.</li>' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBjgpBpDoctorsHigher') + '</li>' +
-		'</ul>' 
+		'</ul>'
 		as supportingText
 
 union
 
 --EDUCATIONAL SESSION
-select 
+select
 	'ckd.treatment.bp' as indicatorId,
 	'Hold an educational session for your practice staff on NICE hypertension guidelines' as actionText,
 	--No optimisation after high reading (therapeutic inertia)
@@ -2597,9 +2604,9 @@ select
 		'<ul><li>' + STR(@rxInertiaProportion)
 		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
 		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'niceBpPresentation') + '</li>' +
-		'</ul>' 
+		'</ul>'
 		as supportingText
 
 union
@@ -2611,13 +2618,13 @@ select
 	--No optimisation after high reading (therapeutic inertia)
 	(@rxInertiaProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + 
+		'<ul><li>' +
 				STR(@rxInertiaProportion)
 		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
 		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'niceBpPathway') + '</li>' +
-		'</ul>' 
+		'</ul>'
 		as supportingText
 
 union
@@ -2629,18 +2636,18 @@ select
 	--'measure' actions
 	(@measureActionsProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + 
+		'<ul><li>' +
 			STR(@measureActionsProportion)
 		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
 		'<li>This could be achieved by asking patients to measure their own BP.</li>' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmProtocol') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmHowToPatients') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmPil') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmDiary') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmGuide') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmCaseStudies') + '</li>' +
-		'</ul>' 
+		'</ul>'
 		as supportingText
 
 union
@@ -2652,10 +2659,10 @@ select
 	--'measure' actions
 	(@measureActionsProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + 
+		'<ul><li>' +
 			STR(@measureActionsProportion)
 		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
-		'</ul>' 
+		'</ul>'
 		as supportingText
 
 union
@@ -2667,15 +2674,15 @@ select
 	--uncontrolled
 	(@uncontrolledProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(@uncontrolledProportion) 
+		'<ul><li>' + STR(@uncontrolledProportion)
 		+ 'of CKD patients not meeting the CKD BP indicator have uncontrolled blood pressure.</li>' +
 		'<li>Advice on diet, exercise, alcohol reduction, weight loss, smoking cessation and exercise can help reduce blood pressure.</li>' +
-	'Useful information' + 
+	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'DashDietSheet') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'HtnDietExSheet') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'BpUkDietSheet') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'BpExSheet') + '</li>' +
-		'</ul>' 
+		'</ul>'
 		as supportingText
 
 							---------------------------------------------------------------
@@ -2691,10 +2698,10 @@ values
 	'<strong>Definition:</strong>Patients on the CKD register with a BP recorded in the last 12 months (from last April) where the latest BP is 140/90 or less.<br>' + --Informatica doc
 	'<strong>Why this is important:</strong>Cardiovascular disease is the biggest cause of death in CKD patients. The risk of major cardiovascular events can be reduced by about 1/6 per 5 mmHg reduction in systolic BP.<br>' +
 	'<strong>Useful information:</strong>' +
-	'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' + 
-	'<li>'  + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') + '</li>' +	
-	'<li>'  + (select text from regularText where [textId] = 'linkNiceBpMxCkd') + '</li>' +	
-	'<li>'  + (select text from regularText where [textId] = 'linkSsCkdAki') + '</li>' +	
+	'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
+	'<li>'  + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') + '</li>' +
+	'<li>'  + (select text from regularText where [textId] = 'linkNiceBpMxCkd') + '</li>' +
+	'<li>'  + (select text from regularText where [textId] = 'linkSsCkdAki') + '</li>' +
 	'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'),
 --indicator tab
 --summary text
@@ -2706,7 +2713,7 @@ values
 ('ckd.treatment.bp','dateORvalue','value'),
 ('ckd.treatment.bp','tableTitle','All patients with improvement opportunities'),
 
---imp opp charts 
+--imp opp charts
 --based on actionCat
 
 --registered?

@@ -4,13 +4,16 @@ GO
 CREATE PROCEDURE [pingr.run-all] @ReportDate VARCHAR(10)
 AS
 SET NOCOUNT ON --exclude row count results for call from R
-SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an aggregate or other SET operation." error though BB needs to check this out at some point 
+SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an aggregate or other SET operation." error though BB needs to check this out at some point
 
 							---------------------------------------------------------------
 							--------------CREATE TABLES USED BY STORED PROCEDURES----------
 							---------------------------------------------------------------
 							--------------i.e.data unique to each indicator query----------
 							---------------------------------------------------------------
+--Denominator data: patient ids and indicator
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.denominators]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.denominators]
+CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000))
 
 --Pt-level data: improvement opportunity categories and actions
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.patActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.patActions]
@@ -42,7 +45,7 @@ DECLARE	@return_value int
 
 EXEC	@return_value = [dbo].[pingr.ckd.coding]
 		@refdate = @ReportDate
-IF @return_value != 0 
+IF @return_value != 0
 BEGIN
 	SELECT 1001;
 	RETURN;
@@ -50,7 +53,7 @@ END
 
 EXEC	@return_value = [dbo].[pingr.ckd.undiagnosed]
 		@refdate = @ReportDate
-IF @return_value != 0 
+IF @return_value != 0
 BEGIN
 	SELECT 1001;
 	RETURN;
@@ -58,7 +61,7 @@ END
 
 EXEC	@return_value = [dbo].[pingr.ckd.monitoring]
 		@refdate = @ReportDate
-IF @return_value != 0 
+IF @return_value != 0
 BEGIN
 	SELECT 1001;
 	RETURN;
@@ -66,7 +69,7 @@ END
 
 EXEC	@return_value = [dbo].[pingr.ckd.treatment.bp]
 		@refdate = @ReportDate
-IF @return_value != 0 
+IF @return_value != 0
 BEGIN
 	SELECT 1001;
 	RETURN;
@@ -109,16 +112,16 @@ CREATE TABLE [output.pingr.contacts] (PatID int, date date, event varchar(100))
 	set @REC = 1;
 	set @OTH = 0;
 insert into [output.pingr.contacts](PatID, date, event)
-select PatID, date, 
+select PatID, date,
 	case
 		when eventcode = 5 then 'Telephone contact'
 		when eventcode = 4 then 'Face-to-face contact'
 		when eventcode <=3 then 'Other code'
-		end as event from 
+		end as event from
 			(
 				select PatID,
 				max(
-					case 
+					case
 						when (ReadCode like 'ALLERGY%' OR ReadCode like 'EMIS' OR ReadCode like 'EGTON' OR ReadCode like 'CLEAT') then @CON
 						when LEN(ReadCode) >= 8 then @MED
 						when LEN(ReadCode) = 6 then @MED
@@ -190,7 +193,7 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'MInow') then 'Myocardial infarction'
 		when ReadCode in (select code from codeGroups where [group] = 'ASrepair') then 'Aortic repair'
 		when ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') then 'Loop Diuretic allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') then 'Alpha Blocker allergy or adverse reaction' 
+		when ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') then 'Alpha Blocker allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'PotSparDiurAllergyAdverseReaction') then 'Potassium Sparing Diuretic allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'BBallergyAdverseReaction') then 'Beta Blocker allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'CCBallergyAdverseReaction') then 'Calcium Channel Blocker allergy or adverse reaction'
@@ -198,7 +201,7 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'ACEIallergyAdverseReaction') then 'ACE Inhibitor  diuretic allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'thiazideAllergyAdverseReaction') then 'Thiazide Diuretic allergy or adverse reaction'
 	end as importantCode from SIR_ALL_Records
-where ReadCode in (select code from codeGroups where [group] in 
+where ReadCode in (select code from codeGroups where [group] in
 	('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
 	'phaeo', 'asthmaPermEx', 'asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs', 'pacemakerDefib',
 	'sickSinus', '2/3heartBlock', 'porphyria', 'MInow', 'ASrepair', 'AS', 'gout', 'addisons', 'loopDiurAllergyAdverseReaction',
@@ -273,7 +276,6 @@ CREATE TABLE [output.pingr.demographics] (PatID int, nhsNumber bigint, age int, 
 insert into [output.pingr.demographics]
 select p.patid, n.nhsNumber, YEAR (@ReportDate) - year_of_birth as age, sex, gpcode from dbo.patients p
 inner join patientsNHSNumbers n on n.patid = p.patid
-where p.patid in (select distinct PatID from [dbo].[output.pingr.patActions])
 
 SELECT 0
 RETURN

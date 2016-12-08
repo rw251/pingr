@@ -13,6 +13,7 @@ bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.demographics]" queryout %REPORT.DI
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.diagnoses]" queryout %REPORT.DIRECTORY%/diagnoses.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impCodes]" queryout %REPORT.DIRECTORY%/impCodes.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.patActions]" queryout %REPORT.DIRECTORY%/patActions.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.orgActions]" queryout %REPORT.DIRECTORY%/orgActions.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.indicator]" queryout %REPORT.DIRECTORY%/indicator.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.measures]" queryout %REPORT.DIRECTORY%/measures.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[MEDICATION_EVENTS] WHERE PatID in (select distinct PatID from [%DB%].[dbo].[output.pingr.patActions])" queryout %REPORT.DIRECTORY%/medications.dat -c -T -b 10000000
