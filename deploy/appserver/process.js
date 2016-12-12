@@ -532,21 +532,21 @@ async.series([
                 csv({
                   separator: '\t',
                   //headers: ['indicatorId', 'practiceId', 'proportion', 'actionId', 'priority', 'actionText', 'supportingText']
-                  headers: ['indicatorId', 'proportion', 'actionText', 'supportingText']
+                  headers: ['indicatorId', 'proportion', 'actionText', 'supportingText'] //TODO CHANGE THIS
                 })
               ) //NEED practiceId, actionId and priority
               .on('data', function(data) {
 
                 var i = indicators.filter(function(v) {
-                  return v.id === data.indicatorId && v.practiceId === data.practiceId;
+                  return v.id === data.indicatorId && v.practiceId === 'P87027';//TODO CHANGE THIS
                 })[0];
 
                 i.actions.push({
-                  id: data.actionId || "default_to_change",
+                  id: data.actionId || "default_to_change",//TODO CHANGE THIS
                   indicatorId: data.indicatorId,
                   short: data.actionText,
                   reason: data.supportingText,
-                  priority: data.priority || 1
+                  priority: data.priority || 1//TODO CHANGE THIS
                 });
               })
               .on('end', function() {
