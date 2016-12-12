@@ -73,7 +73,7 @@ var ind = {
       //The three panels we need to show
       //Panels decide whether they need to redraw themselves
       // *B* insect this and make sure its not redundant
-      teamActionPlan.show(farLeftPanel);
+      teamActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard);
 
       base.updateTab("indicators", data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 

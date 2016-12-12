@@ -326,6 +326,31 @@ var base = {
     return suggestions;
   },
 
+  mergeTeamStuff: function(suggestions) {
+    var teamActions = log.listActions();
+    if (!teamActions.team) return suggestions;
+
+    suggestions = base.addDisagree(suggestions, teamActions, "team");
+    return suggestions;
+  },
+
+  addDisagree: function(suggestions, actions, id) {
+    for (var i = 0; i < suggestions.length; i++) {
+      if (actions[id][suggestions[i].id]) {
+        if (actions[id][suggestions[i].id].agree) {
+          suggestions[i].agree = true;
+          suggestions[i].disagree = false;
+        } else if (actions[id][suggestions[i].id].agree === false) {
+          suggestions[i].agree = false;
+          suggestions[i].disagree = true;
+        }
+        if (actions[id][suggestions[i].id].done) suggestions[i].done = actions[id][suggestions[i].id].done;
+        else suggestions[i].done = false;
+      }
+    }
+    return suggestions;
+  },
+
   switchTo110Layout: function() {
     if (base.layout === "110") return;
     base.layout = "110";
