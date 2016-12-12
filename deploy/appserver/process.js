@@ -482,20 +482,21 @@ async.series([
               }).length === 0) {
               patients[+data.patientId].actions.push({
                 id: data.actionId,
+                indicatorId: data.indicatorId,
                 short: data.short,
-                reason: data.reason
+                reason: data.reason,
+                priority: data.priority
               });
             }
 
-            var patientsStandard = patients[+data.patientId].standards.filter(function(v){
+            var patientsStandard = patients[+data.patientId].standards.filter(function(v) {
               return v.display === indText.tabText;
             });
-            if(patientsStandard.length===0) {
+            if (patientsStandard.length === 0) {
               console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
               patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
-            }
-            else if(patientsStandard.length>1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
-            else patientsStandard[0].targetMet=false;
+            } else if (patientsStandard.length > 1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
+            else patientsStandard[0].targetMet = false;
 
             var i = indicators.filter(function(v) {
               return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
@@ -524,54 +525,80 @@ async.series([
           .on('end', function() {
 
             console.log("opps done");
-            //Deduplicate contacts
-            /*console.log("Removing duplicate contacts...");
-            Object.keys(patients).forEach(function(pid) {
-              var item, tempContact = {},
-                i, n;
-              for (i = 0, n = patients[pid].contacts.length; i < n; i++) {
-                item = patients[pid].contacts[i];
-                tempContact[item.name + item.time] = item;
-              }
-              i = 0;
-              var nonDuplicatedArray = [];
-              for (item in tempContact) {
-                nonDuplicatedArray[i++] = tempContact[item];
-              }
-              patients[pid].contacts = nonDuplicatedArray;
-              console.log(pid + ": " + n + " contacts reduced to " + patients[pid].contacts.length);
-            });
-            console.log("Duplicate contacts removed.");*/
 
-            dataFile.text = textFile;
+            //now for the orgactions
+            fs.createReadStream(IN_DIR + FILENAMES.orgActions)
+              .pipe(
+                csv({
+                  separator: '\t',
+                  //headers: ['indicatorId', 'practiceId', 'proportion', 'actionId', 'priority', 'actionText', 'supportingText']
+                  headers: ['indicatorId', 'proportion', 'actionText', 'supportingText']
+                })
+              ) //NEED practiceId, actionId and priority
+              .on('data', function(data) {
+
+                var i = indicators.filter(function(v) {
+                  return v.id === data.indicatorId && v.practiceId === data.practiceId;
+                })[0];
+
+                i.actions.push({
+                  id: data.actionId || "default_to_change",
+                  indicatorId: data.indicatorId,
+                  short: data.actionText,
+                  reason: data.supportingText,
+                  priority: data.priority || 1
+                });
+              })
+              .on('end', function() {
+                //Deduplicate contacts
+                /*console.log("Removing duplicate contacts...");
+                Object.keys(patients).forEach(function(pid) {
+                  var item, tempContact = {},
+                    i, n;
+                  for (i = 0, n = patients[pid].contacts.length; i < n; i++) {
+                    item = patients[pid].contacts[i];
+                    tempContact[item.name + item.time] = item;
+                  }
+                  i = 0;
+                  var nonDuplicatedArray = [];
+                  for (item in tempContact) {
+                    nonDuplicatedArray[i++] = tempContact[item];
+                  }
+                  patients[pid].contacts = nonDuplicatedArray;
+                  console.log(pid + ": " + n + " contacts reduced to " + patients[pid].contacts.length);
+                });
+                console.log("Duplicate contacts removed.");*/
+
+                dataFile.text = textFile;
 
 
-            fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
+                fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
 
 
-            dataFile.patients = Object.keys(dataFile.patients).map(function(v) {
-              return dataFile.patients[v];
-            });
+                dataFile.patients = Object.keys(dataFile.patients).map(function(v) {
+                  return dataFile.patients[v];
+                });
 
-            var file = fs.createWriteStream(OUT_DIR + 'patients.json');
-            file.on('error', function(err) { /* error handling */ });
-            dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
-            file.end();
+                var file = fs.createWriteStream(OUT_DIR + 'patients.json');
+                file.on('error', function(err) { /* error handling */ });
+                dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
+                file.end();
 
-            fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
+                fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
 
-            if (messages.length > 0) {
-              console.log();
-              console.log("################");
-              console.log("## WARNING!!! ##");
-              console.log("################");
-              console.log();
-              console.log("The following errors were detected and should be investigated:");
-              console.log();
-              messages.forEach(function(msg) {
-                console.warn(msg);
+                if (messages.length > 0) {
+                  console.log();
+                  console.log("################");
+                  console.log("## WARNING!!! ##");
+                  console.log("################");
+                  console.log();
+                  console.log("The following errors were detected and should be investigated:");
+                  console.log();
+                  messages.forEach(function(msg) {
+                    console.warn(msg);
+                  });
+                }
               });
-            }
           });
       });
     }],
