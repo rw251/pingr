@@ -541,6 +541,8 @@ async.series([
                   return v.id === data.indicatorId && v.practiceId === 'P87027';//TODO CHANGE THIS
                 })[0];
 
+                if(!i.actions) i.actions = [];
+
                 i.actions.push({
                   id: data.actionId || "default_to_change"+Math.random(),//TODO CHANGE THIS
                   indicatorId: data.indicatorId,
