@@ -542,7 +542,7 @@ async.series([
                 })[0];
 
                 i.actions.push({
-                  id: data.actionId || "default_to_change",//TODO CHANGE THIS
+                  id: data.actionId || "default_to_change"+Math.random(),//TODO CHANGE THIS
                   indicatorId: data.indicatorId,
                   short: data.actionText,
                   reason: data.supportingText,

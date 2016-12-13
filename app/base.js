@@ -265,7 +265,10 @@ var base = {
   },
 
   sortSuggestions: function(suggestions) {
-    suggestions.sort(function(a, b) {
+    suggestions.sort(function(a,b){
+      return a.priority - b.priority;
+    });
+    /*suggestions.sort(function(a, b) {
       if (a.agree && !a.done) {
         if (b.agree && !b.done) return 0;
         return -1;
@@ -281,7 +284,7 @@ var base = {
         if (b.disagree) return 0;
         return 1;
       }
-    });
+    });*/
 
     return suggestions;
   },

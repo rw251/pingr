@@ -10,7 +10,7 @@ else
         th(style='width: 105px')
     tbody
       - var alt = false
-      each suggestion in suggestions
+      each suggestion in suggestions.slice(0,3)
         tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined, class=alt ? 'alternate-row': '')
           td
             span(data-subsection=suggestion.subsection)
