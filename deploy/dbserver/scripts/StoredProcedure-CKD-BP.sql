@@ -531,12 +531,20 @@ select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, s
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
 
-					----------------------------------------------
-					--POPULATE MAIN DENOMINATOR TABLE-------------
-					----------------------------------------------
+									----------------------------------------------
+									-------POPULATE MAIN DENOMINATOR TABLE--------
+									----------------------------------------------
 insert into [output.pingr.denominators](PatID, indicatorId)
-select PatID, 'ckd.treatment.bp' from #eligiblePopulationAllData;
+select PatID, 'ckd.treatment.bp' from #eligiblePopulationAllData where denominator = 1;
 
+									----------------------------------------------
+									-------DEFINE % POINTS PER PATIENT------------
+									----------------------------------------------
+
+declare @ptPercPoints float;
+set @ptPercPoints = 
+(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end) 
+from #eligiblePopulationAllData);
 
 								---------------------------------------------------------
 								-- Exit if we're just getting the indicator numbers -----
@@ -778,11 +786,18 @@ where denominator = 1 and numerator = 0
 --#latestMedOptimisation
 IF OBJECT_ID('tempdb..#latestMedOptimisation') IS NOT NULL DROP TABLE #latestMedOptimisation
 CREATE TABLE #latestMedOptimisation
-	(PatID int, latestMedOptimisation varchar(512), latestMedOptimisationDate date,
-	latestMedOptimisationIngredient varchar(512), latestMedOptimisationDose float,
-	latestMedOptimisationFamily varchar(512));
+	(PatID int, latestMedOptimisationDate date,
+	latestMedOptimisationMin varchar(512), latestMedOptimisationMax varchar(512), latestMedOptimisation varchar(512), 
+	latestMedOptimisationIngredientMin varchar(512), latestMedOptimisationIngredientMax varchar(512), latestMedOptimisationIngredient varchar(512),
+	latestMedOptimisationDoseMin float, latestMedOptimisationDoseMax float, latestMedOptimisationDose float,
+	latestMedOptimisationFamilyMin varchar(512), latestMedOptimisationFamilyMax varchar(512), latestMedOptimisationFamily varchar(512));
 insert into #latestMedOptimisation
-	select s.PatID, s.Event, s.EntryDate, s.Ingredient, s.Dose, s.Family from MEDICATION_EVENTS_HTN as s
+	select s.PatID, s.EntryDate,
+		min(s.Event), max(s.Event), case when min(s.Event)=max(s.Event) then max(s.Event) else 'multiple medications' end,
+		min(s.Ingredient), max(s.Ingredient), case when min(s.Ingredient)=max(s.Ingredient) then max(s.Ingredient) else 'multiple medications' end,
+		min(s.Dose), max(s.Dose), case when min(s.Dose)=max(s.Dose) then max(s.Dose) else null end,
+		min(s.Family), max(s.Family), case when min(s.Family)=max(s.Family) then max(s.Family) else 'multiple medications' end
+		from MEDICATION_EVENTS_HTN as s
   		inner join
   			(
 			 select PatID, MAX(EntryDate) as date from MEDICATION_EVENTS_HTN
@@ -792,22 +807,31 @@ insert into #latestMedOptimisation
 	where
  		[Event] in ('DOSE INCREASED', 'STARTED', 'RESTARTED')
 		and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
-
+group by s.PatID, s.EntryDate
+	
 --#latestMedAdherence i.e. latest occurrence of anti-HTN (any) medication non-adherence
 IF OBJECT_ID('tempdb..#latestMedAdherence') IS NOT NULL DROP TABLE #latestMedAdherence
 CREATE TABLE #latestMedAdherence
-	(PatID int, latestMedAdherenceDate date, latestMedAdherenceIngredient varchar(512), latestMedAdherenceDose float, latestMedAdherenceFamily varchar(512));
+	(PatID int, latestMedAdherenceDate date, 
+	latestMedAdherenceIngredientMin varchar(512), latestMedAdherenceIngredientMax varchar(512), latestMedAdherenceIngredient varchar(512), 
+	latestMedAdherenceDoseMin float, latestMedAdherenceDoseMax float, latestMedAdherenceDose float,
+	latestMedAdherenceFamilyMin varchar(512), latestMedAdherenceFamilyMax varchar(512), latestMedAdherenceFamily varchar(512));
 insert into #latestMedAdherence
-		select s.PatID, s.EntryDate, s.Ingredient, s.Dose, s.Family from MEDICATION_EVENTS_HTN as s
+	select s.PatID, s.EntryDate, 
+		min(s.Ingredient), max(s.Ingredient), case when min(s.Ingredient)=max(s.Ingredient) then max(s.Ingredient) else 'multiple medications' end,  
+		min(s.Dose), max(s.Dose), case when min(s.Dose)=max(s.Dose) then max(s.Dose) else 'multiple medications' end,  
+		min(s.Family), max(s.Family), case when min(s.Family)=max(s.Family) then max(s.Family) else 'multiple medications' end  
+		from MEDICATION_EVENTS_HTN as s
   		inner join
   			(
 			 select PatID, MAX(EntryDate) as latestMedAdherenceDate from MEDICATION_EVENTS_HTN
 			 where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			 group by PatID
   			) sub on sub.PatID = s.PatID and sub.latestMedAdherenceDate = s.EntryDate
- where
- 	[Event] = 'ADHERENCE'
-	and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
+	where
+ 		[Event] = 'ADHERENCE'
+		and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
+group by s.PatID, s.EntryDate
 
 --#currentHTNmeds
 IF OBJECT_ID('tempdb..#currentHTNmeds') IS NOT NULL DROP TABLE #currentHTNmeds
@@ -1384,16 +1408,6 @@ CREATE TABLE #impOppsData
 		secondLatestBpControlled int,
 		latestMedOptimisation varchar(512), latestMedOptimisationDate date, latestMedOptimisationIngredient varchar(512), latestMedOptimisationDose float, latestMedOptimisationFamily varchar(512),
 		latestMedAdherenceDate date, latestMedAdherenceIngredient varchar(512), latestMedAdherenceDose float, latestMedAdherenceFamily varchar(512),
-
-		currentACEI_EventDate date, currentACEI_Ingredient varchar(512), currentACEI_Family varchar(512), currentACEI_Event varchar(512), currentACEI_Dose float, ACEI_MaxDose float, currentACEI_Nos int,
-		currentARB_EventDate date, currentARB_Ingredient varchar(512), currentARB_Family varchar(512), currentARB_Event varchar(512), currentARB_Dose float, ARB_MaxDose float, currentARB_Nos int,
-		currentCCB_EventDate date, currentCCB_Ingredient varchar(512), currentCCB_Family varchar(512), currentCCB_Event varchar(512), currentCCB_Dose float, CCB_MaxDose float, currentCCB_Nos int,
-		currentDIUR_THI_EventDate date, currentDIUR_THI_Ingredient varchar(512), currentDIUR_THI_Family varchar(512), currentDIUR_THI_Event varchar(512), currentDIUR_THI_Dose float, DIUR_THI_MaxDose float, currentDIUR_THI_Nos int,
-		currentDIUR_LOOP_EventDate date, currentDIUR_LOOP_Ingredient varchar(512), currentDIUR_LOOP_Family varchar(512), currentDIUR_LOOP_Event varchar(512), currentDIUR_LOOP_Dose float, DIUR_LOOP_MaxDose float, currentDIUR_LOOP_Nos int,
-		currentDIUR_POT_EventDate date, currentDIUR_POT_Ingredient varchar(512), currentDIUR_POT_Family varchar(512), currentDIUR_POT_Event varchar(512), currentDIUR_POT_Dose float, DIUR_POT_MaxDose float, currentDIUR_POT_Nos int,
-		currentALPHA_EventDate date, currentALPHA_Ingredient varchar(512), currentALPHA_Family varchar(512), currentALPHA_Event varchar(512), currentALPHA_Dose float, ALPHA_MaxDose float, currentALPHA_Nos int,
-		currentBB_EventDate date, currentBB_Ingredient varchar(512), currentBB_Family varchar(512), currentBB_Event varchar(512), currentBB_Dose float, BB_MaxDose float, currentBB_Nos int,
-
 		latestAllergyThiazideCodeDate date, latestAllergyThiazideCode varchar(512),
 		latestAllergyACEIcodeDate date, latestAllergyACEIcode varchar(512),
 		latestAllergyARBcodeDate date, latestAllergyARBcode varchar(512),
@@ -1440,15 +1454,6 @@ select a.PatID,
 		latestMedOptimisation, latestMedOptimisationDate, latestMedOptimisationIngredient, latestMedOptimisationDose, latestMedOptimisationFamily,
 		latestMedAdherenceDate, latestMedAdherenceIngredient, latestMedAdherenceDose, latestMedAdherenceFamily,
 
-		currentACEI_EventDate, currentACEI_Ingredient, currentACEI_Family, currentACEI_Event, currentACEI_Dose, ACEI_MaxDose, currentACEI_Nos,
-		currentARB_EventDate, currentARB_Ingredient, currentARB_Family, currentARB_Event, currentARB_Dose, ARB_MaxDose, currentARB_Nos,
-		currentCCB_EventDate, currentCCB_Ingredient, currentCCB_Family, currentCCB_Event, currentCCB_Dose, CCB_MaxDose, currentCCB_Nos,
-		currentDIUR_THI_EventDate, currentDIUR_THI_Ingredient, currentDIUR_THI_Family, currentDIUR_THI_Event, currentDIUR_THI_Dose, DIUR_THI_MaxDose, currentDIUR_THI_Nos,
-		currentDIUR_LOOP_EventDate, currentDIUR_LOOP_Ingredient, currentDIUR_LOOP_Family, currentDIUR_LOOP_Event, currentDIUR_LOOP_Dose, DIUR_LOOP_MaxDose, currentDIUR_LOOP_Nos,
-		currentDIUR_POT_EventDate, currentDIUR_POT_Ingredient, currentDIUR_POT_Family, currentDIUR_POT_Event, currentDIUR_POT_Dose, DIUR_POT_MaxDose, currentDIUR_POT_Nos,
-		currentALPHA_EventDate, currentALPHA_Ingredient, currentALPHA_Family, currentALPHA_Event, currentALPHA_Dose, ALPHA_MaxDose, currentALPHA_Nos,
-		currentBB_EventDate, currentBB_Ingredient, currentBB_Family, currentBB_Event, currentBB_Dose, BB_MaxDose, currentBB_Nos,
-
 		latestAllergyThiazideCodeDate, latestAllergyThiazideCode,
 		latestAllergyACEIcodeDate, latestAllergyACEIcode,
 		latestAllergyARBcodeDate, latestAllergyARBcode,
@@ -1491,74 +1496,6 @@ from #eligiblePopulationAllData as a
 		left outer join (select PatID, secondLatestBpControlled from #secondLatestBpControlled) ss on ss.PatID = a.PatID
 		left outer join (select PatID, latestMedOptimisation, latestMedOptimisationDate, latestMedOptimisationIngredient, latestMedOptimisationDose, latestMedOptimisationFamily from #latestMedOptimisation) l on l.PatID = a.PatID
 		left outer join (select PatID, latestMedAdherenceDate, latestMedAdherenceIngredient, latestMedAdherenceDose, latestMedAdherenceFamily from #latestMedAdherence) m on m.PatID = a.PatID
-		left outer join
-					(
-					select PatID,
-						max(case when currentMedFamily='ACEI' then currentMedEventDate else null end) as currentACEI_EventDate,
-						max(case when currentMedFamily='ACEI' then currentMedIngredient else null end) as currentACEI_Ingredient,
-						max(case when currentMedFamily='ACEI' then currentMedFamily else null end) as currentACEI_Family,
-						max(case when currentMedFamily='ACEI' then currentMedEvent else null end) as currentACEI_Event,
-						max(case when currentMedFamily='ACEI' then currentMedDose else null end) as currentACEI_Dose,
-						max(case when currentMedFamily='ACEI' then currentMedMaxDose else null end) as ACEI_MaxDose,
-						max(case when currentMedFamily='ACEI' then noIngredientsInFamily else null end) as currentACEI_Nos,
-
-						max(case when currentMedFamily='ARB' then currentMedEventDate else null end) as currentARB_EventDate,
-						max(case when currentMedFamily='ARB' then currentMedIngredient else null end) as currentARB_Ingredient,
-						max(case when currentMedFamily='ARB' then currentMedFamily else null end) as currentARB_Family,
-						max(case when currentMedFamily='ARB' then currentMedEvent else null end) as currentARB_Event,
-						max(case when currentMedFamily='ARB' then currentMedDose else null end) as currentARB_Dose,
-						max(case when currentMedFamily='ARB' then currentMedMaxDose else null end) as ARB_MaxDose,
-						max(case when currentMedFamily='ARB' then noIngredientsInFamily else null end) as currentARB_Nos,
-
-						max(case when currentMedFamily='CCB' then currentMedEventDate else null end) as currentCCB_EventDate,
-						max(case when currentMedFamily='CCB' then currentMedIngredient else null end) as currentCCB_Ingredient,
-						max(case when currentMedFamily='CCB' then currentMedFamily else null end) as currentCCB_Family,
-						max(case when currentMedFamily='CCB' then currentMedEvent else null end) as currentCCB_Event,
-						max(case when currentMedFamily='CCB' then currentMedDose else null end) as currentCCB_Dose,
-						max(case when currentMedFamily='CCB' then currentMedMaxDose else null end) as CCB_MaxDose,
-						max(case when currentMedFamily='CCB' then noIngredientsInFamily else null end) as currentCCB_Nos,
-
-						max(case when currentMedFamily='DIUR_THI' then currentMedEventDate else null end) as currentDIUR_THI_EventDate,
-						max(case when currentMedFamily='DIUR_THI' then currentMedIngredient else null end) as currentDIUR_THI_Ingredient,
-						max(case when currentMedFamily='DIUR_THI' then currentMedFamily else null end) as currentDIUR_THI_Family,
-						max(case when currentMedFamily='DIUR_THI' then currentMedEvent else null end) as currentDIUR_THI_Event,
-						max(case when currentMedFamily='DIUR_THI' then currentMedDose else null end) as currentDIUR_THI_Dose,
-						max(case when currentMedFamily='DIUR_THI' then currentMedMaxDose else null end) as DIUR_THI_MaxDose,
-						max(case when currentMedFamily='DIUR_THI' then noIngredientsInFamily else null end) as currentDIUR_THI_Nos,
-
-						max(case when currentMedFamily='DIUR_LOOP' then currentMedEventDate else null end) as currentDIUR_LOOP_EventDate,
-						max(case when currentMedFamily='DIUR_LOOP' then currentMedIngredient else null end) as currentDIUR_LOOP_Ingredient,
-						max(case when currentMedFamily='DIUR_LOOP' then currentMedFamily else null end) as currentDIUR_LOOP_Family,
-						max(case when currentMedFamily='DIUR_LOOP' then currentMedEvent else null end) as currentDIUR_LOOP_Event,
-						max(case when currentMedFamily='DIUR_LOOP' then currentMedDose else null end) as currentDIUR_LOOP_Dose,
-						max(case when currentMedFamily='DIUR_LOOP' then currentMedMaxDose else null end) as DIUR_LOOP_MaxDose,
-						max(case when currentMedFamily='DIUR_LOOP' then noIngredientsInFamily else null end) as currentDIUR_LOOP_Nos,
-
-						max(case when currentMedFamily='DIUR_POT' then currentMedEventDate else null end) as currentDIUR_POT_EventDate,
-						max(case when currentMedFamily='DIUR_POT' then currentMedIngredient else null end) as currentDIUR_POT_Ingredient,
-						max(case when currentMedFamily='DIUR_POT' then currentMedFamily else null end) as currentDIUR_POT_Family,
-						max(case when currentMedFamily='DIUR_POT' then currentMedEvent else null end) as currentDIUR_POT_Event,
-						max(case when currentMedFamily='DIUR_POT' then currentMedDose else null end) as currentDIUR_POT_Dose,
-						max(case when currentMedFamily='DIUR_POT' then currentMedMaxDose else null end) as DIUR_POT_MaxDose,
-						max(case when currentMedFamily='DIUR_POT' then noIngredientsInFamily else null end) as currentDIUR_POT_Nos,
-
-						max(case when currentMedFamily='ALPHA' then currentMedEventDate else null end) as currentALPHA_EventDate,
-						max(case when currentMedFamily='ALPHA' then currentMedIngredient else null end) as currentALPHA_Ingredient,
-						max(case when currentMedFamily='ALPHA' then currentMedFamily else null end) as currentALPHA_Family,
-						max(case when currentMedFamily='ALPHA' then currentMedEvent else null end) as currentALPHA_Event,
-						max(case when currentMedFamily='ALPHA' then currentMedDose else null end) as currentALPHA_Dose,
-						max(case when currentMedFamily='ALPHA' then currentMedMaxDose else null end) as ALPHA_MaxDose,
-						max(case when currentMedFamily='ALPHA' then noIngredientsInFamily else null end) as currentALPHA_Nos,
-
-						max(case when currentMedFamily='BB' then currentMedEventDate else null end) as currentBB_EventDate,
-						max(case when currentMedFamily='BB' then currentMedIngredient else null end) as currentBB_Ingredient,
-						max(case when currentMedFamily='BB' then currentMedFamily else null end) as currentBB_Family,
-						max(case when currentMedFamily='BB' then currentMedEvent else null end) as currentBB_Event,
-						max(case when currentMedFamily='BB' then currentMedDose else null end) as currentBB_Dose,
-						max(case when currentMedFamily='BB' then currentMedMaxDose else null end) as BB_MaxDose,
-						max(case when currentMedFamily='BB' then noIngredientsInFamily else null end) as currentBB_Nos
-						from #htnMeds group by PatID
-					) n on n.PatID = a.PatID
 		left outer join (select PatID, latestAllergyThiazideCodeDate, latestAllergyThiazideCode from #latestAllergyThiazideCode) o on o.PatID = a.PatID
 		left outer join (select PatID, latestAllergyACEIcodeDate, latestAllergyACEIcode from #latestAllergyACEIcode) p on p.PatID = a.PatID
 		left outer join (select PatID, latestAllergyARBcodeDate, latestAllergyARBcode from #latestAllergyARBcode) q on q.PatID = a.PatID
@@ -2455,191 +2392,267 @@ where
 							---------------SORT ORG-LEVEL ACTION PRIORITY ORDER------------
 							---------------------------------------------------------------
 
---#reason proportions
 IF OBJECT_ID('tempdb..#reasonProportions') IS NOT NULL DROP TABLE #reasonProportions
 CREATE TABLE #reasonProportions
-	(proportionId varchar(32), proportion float);
+	(pracID varchar(32), proportionId varchar(32), proportion float, numberPatients int, pointsPerAction float);
 insert into #reasonProportions
-values
+
 --No BP + contact with practice
-('noBpYesContact',
-	(select COUNT(*) from
-		(
-				select a.PatID from #eligiblePopulationAllData as a
-				left outer join (select PatID, noPrimCareContactInLastYear from #impOppsData) as b on b.PatID = a.PatID
-				where denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0
-		) sub
-	) /
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
-),
+select c.pracID, 'noBpYesContact', 
+	SUM(case when denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0 then 1.0 else 0.0 end)
+	/
+	SUM(case when denominator = 1 then 1.0 else 0.0 end),
+	SUM(case when denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0 then 1.0 else 0.0 end),	
+	SUM(case when denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0 then 1.0 else 0.0 end)*@ptPercPoints
+from #eligiblePopulationAllData as a
+left outer join (select PatID, noPrimCareContactInLastYear from #impOppsData) as b on b.PatID = a.PatID
+left outer join ptPractice as c on c.PatID = a.PatID
+group by c.pracID
+having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is not 0
+
+union
 --Uncontrolled + within 10mmHg of target
-('uncontrolledClose',
-	(select COUNT(*) from
+select c.pracID, 'uncontrolledClose', 
+	SUM(case when
 		(
-			select PatID from #eligiblePopulationAllData
-				where
-					(
-						((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or
-						((dmPatient = 0 and protPatient = 0) and (latestSbp < 150 and latestDbp < 100))
-					)
-					and
-					denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
-		) sub
-	)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
-),
+			((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or
+			((dmPatient = 0 and protPatient = 0) and (latestSbp < 150 and latestDbp < 100))
+		)
+		and
+		denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+	then 1.0 else 0.0 end)
+	/
+	SUM(case when denominator = 1 then 1.0 else 0.0 end),
+	SUM(case when
+		(
+			((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or
+			((dmPatient = 0 and protPatient = 0) and (latestSbp < 150 and latestDbp < 100))
+		)
+		and
+		denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+	then 1.0 else 0.0 end),
+	SUM(case when
+	(
+		((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or
+		((dmPatient = 0 and protPatient = 0) and (latestSbp < 150 and latestDbp < 100))
+	)
+	and
+	denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+	then 1.0 else 0.0 end)*@ptPercPoints
+from #eligiblePopulationAllData as a
+left outer join ptPractice as c on c.PatID = a.PatID
+group by c.pracID
+having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is not 0
+
+union
 --No optimisation after high reading (therapeutic inertia)
-('rxInertia',
-	(select COUNT(*) from
-		(
-			select a.PatID from #eligiblePopulationAllData a
-				left outer join (select PatID, latestMedOptimisationDate from #impOppsData) as b on b.PatID = a.PatID
-				where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
-				and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
-		) sub
-	)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
-),
+select c.pracID, 'rxInertia', 
+	SUM(case when
+		denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+		and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
+	then 1.0 else 0.0 end)
+	/
+	SUM(case when denominator = 1 then 1.0 else 0.0 end),
+	SUM(case when
+		denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+		and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
+	then 1.0 else 0.0 end),
+	SUM(case when
+		denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
+		and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
+	then 1.0 else 0.0 end)*@ptPercPoints
+from #eligiblePopulationAllData as a
+left outer join (select PatID, latestMedOptimisationDate from #impOppsData) as b on b.PatID = a.PatID
+left outer join ptPractice as c on c.PatID = a.PatID
+group by c.pracID
+having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is not 0
+
+union
 --'measure' actions
-('measureActions',
-	(select COUNT(*) from (select distinct PatID from [output.pingr.patActions] where indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP') sub)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
-),
+select c.pracID, 'measureActions', 
+	SUM(case when indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP' then 1.0 else 0.0 end)
+	/
+	SUM(case when denominator = 1 then 1.0 else 0.0 end),
+	SUM(case when indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP' then 1.0 else 0.0 end),
+	SUM(case when indicatorId = 'ckd.treatment.bp' and actionCat = 'Measure BP' then 1.0 else 0.0 end)*@ptPercPoints
+from #eligiblePopulationAllData as a
+left outer join (select PatID, indicatorId, actionCat from [output.pingr.patActions]) as b on b.PatID = a.PatID
+left outer join ptPractice as c on c.PatID = a.PatID
+group by c.pracID
+having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is not 0
+
+union
 --uncontrolled
-('uncontrolled',
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0) sub
-	)/
-	(select COUNT(*) from (select PatID from #eligiblePopulationAllData where denominator = 1) sub)
-)
+select c.pracID, 'uncontrolled', 
+	SUM(case when denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0 then 1.0 else 0.0 end)
+	/
+	SUM(case when denominator = 1 then 1.0 else 0.0 end),
+	SUM(case when denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0 then 1.0 else 0.0 end),
+	SUM(case when denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0 then 1.0 else 0.0 end)*@ptPercPoints
+from #eligiblePopulationAllData as a
+left outer join ptPractice as c on c.PatID = a.PatID
+group by c.pracID
+having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is not 0
+
 
 							---------------------------------------------------------------
 							----------------------ORG-LEVEL ACTIONS------------------------
 							---------------------------------------------------------------
 
-declare @noBpYesContactProportion float;
-set @noBpYesContactProportion = (select proportion from #reasonProportions where proportionId = 'noBpYesContact');
-declare @uncontrolledCloseProportion float;
-set @uncontrolledCloseProportion = (select proportion from #reasonProportions where proportionId = 'uncontrolledClose');
-declare @rxInertiaProportion float;
-set @rxInertiaProportion = (select proportion from #reasonProportions where proportionId = 'rxInertia');
-declare @measureActionsProportion float;
-set @measureActionsProportion = (select proportion from #reasonProportions where proportionId = 'measureActions');
-declare @uncontrolledProportion float;
-set @uncontrolledProportion = (select proportion from #reasonProportions where proportionId = 'uncontrolled');
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
 
-insert into [output.pingr.orgActions](indicatorId, actionText, proportion, supportingText)
+										--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+--CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #orgActions
 
 --BP MACHINE IN WAITING ROOM
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
-	'Put BP machine in your waiting room' as actionText,
-	--No BP + contact with practice
-	@noBpYesContactProportion as proportion,
+	'BpMachineWr' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	3 as priority,
+	'Put BP machine in waiting room' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(@noBpYesContactProportion) + 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> had contact with your practice in the last year.</li>' +
-		'<li>With a BP machine in your waiting room, patients can take their own BP whilst they wait and give their readings to your receptionists.' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients are not meeting the CKD BP indicator because they haven''t had their BP measured <strong>BUT</strong> have had contact with your practice in the last year.</li>' +
+		'<li>With a BP machine in your waiting room, patients can take their own BP whilst they wait and give their readings to your receptionists.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li></ul>' as supportingText
+from #reasonProportions
+where proportionId = 'noBpYesContact' 
+
 
 union
-
 --WORK WITH LOCAL PHARMACY
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'localPharmacy' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	3 as priority,
 	'Work with your local pharmacy to enable them to take blood pressure readings' as actionText,
-	--No BP + medication contact
-	@noBpYesContactProportion as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(@noBpYesContactProportion)
-		+ 'of patients not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> have had medication issued in the last year.</li>' +
-		'<li>Pharmacies can take their blood pressure when they issue their medication and send the readings to you.' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients are not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> have had medication issued in the last year.</li>' +
+		'<li>Pharmacies can take their blood pressure when they issue their medication and send the readings to you.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'RpsGuidanceBp') + '</li></ul>' as supportingText
-union
+from #reasonProportions
+where proportionId = 'noBpYesContact' 
 
+union
 --INTRODUCE ABPM
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'abpm' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	1 as priority, --higher priority because also inline with NICE guidelines for HTN diagnosis
 	'Introduce an ambulatory BP monitoring service' as actionText,
-	--Uncontrolled + within 10mmHg of target
-	(@uncontrolledCloseProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(@uncontrolledCloseProportion)
-		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients are not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
 		'<li>Often high blood pressure readings taken in surgery are normal at home.</li>' +
-		'<li>This would also follow NICE guidance for hypertension diagnosis.' +
+		'<li>This would also follow NICE guidance for hypertension diagnosis.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBhsAbpm') + '</li>' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkPatientUkAbpm') + '</li>' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkNiceHtn') + '</li>' +
 		'</ul>'
-		as supportingText
+	as supportingText
+from #reasonProportions
+where proportionId = 'uncontrolledClose' 
 
 union
-
 --ENCOURAGE BP WITH NURSE / AHP
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'nurseMeasure' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	2 as priority, --higher priority because good practice and evidence-based
 	'Encourage patients with CKD to see the nurse or AHP to measure their blood pressure' as actionText,
-	--Uncontrolled + within 10mmHg of target
-	(@uncontrolledCloseProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(@uncontrolledCloseProportion)
-		+ 'of patients not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
-		'<li>BP is on average 7/4 mmHg lower when measured with nurses rather than doctors.</li>' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients are not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
+		'<li>BP is on average 7/4 mmHg lower when measured with nurses rather than doctors.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBjgpBpDoctorsHigher') + '</li>' +
 		'</ul>'
-		as supportingText
+	as supportingText
+from #reasonProportions
+where proportionId = 'uncontrolledClose' 
 
 union
-
 --EDUCATIONAL SESSION
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'educationSession' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	3 as priority,
 	'Hold an educational session for your practice staff on NICE hypertension guidelines' as actionText,
-	--No optimisation after high reading (therapeutic inertia)
-	(@rxInertiaProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(@rxInertiaProportion)
-		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
-		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients not meeting the CKD BP indicator did not have their medication changed after their latest <strong>uncontrolled</strong> BP reading.</li>' +
+		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'niceBpPresentation') + '</li>' +
 		'</ul>'
 		as supportingText
+from #reasonProportions
+where proportionId = 'rxInertia' 
 
 union
-
 --PATHWAY PRINT-OUT
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'pathwayPrint' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	3 as priority,
 	'Print a copy of NICE hypertension targets and medication pathway for each room in your practice' as actionText,
-	--No optimisation after high reading (therapeutic inertia)
-	(@rxInertiaProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' +
-				STR(@rxInertiaProportion)
-		+ 'of CKD patients with <strong>uncontrolled</strong> BP did not have their medication optimised after their latest reading.</li>' +
-		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li>' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients not meeting the CKD BP indicator did not have their medication changed after their latest <strong>uncontrolled</strong> BP reading.</li>' +
+		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'niceBpPathway') + '</li>' +
 		'</ul>'
 		as supportingText
+from #reasonProportions
+where proportionId = 'rxInertia' 
 
 union
-
 --ENCOURAGE HBPM
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'hbpm' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	2 as priority, --higher because good practice
 	'Encourage patients with CKD to measure their blood pressure at home' as actionText,
-	--'measure' actions
-	(@measureActionsProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' +
-			STR(@measureActionsProportion)
-		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
-		'<li>This could be achieved by asking patients to measure their own BP.</li>' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients not meeting the CKD BP indicator may benefit from having their BP re-measured (e.g. they have not had their BP measured, or are only just over their target).</li>' +
+		'<li>This could be achieved by asking patients to measure their own BP.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmProtocol') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmHowToPatients') + '</li>' +
@@ -2649,34 +2662,43 @@ select
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmCaseStudies') + '</li>' +
 		'</ul>'
 		as supportingText
+from #reasonProportions
+where proportionId = 'measureActions' 
 
 union
-
 --VACCINATION CLINICS
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'vaccClinic' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	3 as priority,
 	'Take blood pressure readings during upcoming vaccination programmes e.g. flu, shingles, whooping cough.' as actionText,
-	--'measure' actions
-	(@measureActionsProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' +
-			STR(@measureActionsProportion)
-		+ 'of CKD patients not meeting the CKD BP indicator have suggested ''measured'' actions (e.g. have not had their BP measured, or are just over their target).</li>' +
-		'</ul>'
-		as supportingText
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients not meeting the CKD BP indicator may benefit from having their BP re-measured (e.g. they have not had their BP measured, or are only just over their target).</li></ul>' +
+		'Useful information' +
+		'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li></ul>' as supportingText
+from #reasonProportions
+where proportionId = 'measureActions' 
 
 union
-
 --LIFESTYLE
 select
+	pracID as pracID,
 	'ckd.treatment.bp' as indicatorId,
+	'lifestyle' as actionCat,
+	proportion as proportion,
+	numberPatients as numberPatients,
+	pointsPerAction as pointsPerAction,
+	3 as priority,
 	'Reinforce lifestyle advice to patients with CKD at every appointment' as actionText,
-	--uncontrolled
-	(@uncontrolledProportion) as proportion,
 	'Reasoning' +
-		'<ul><li>' + STR(@uncontrolledProportion)
-		+ 'of CKD patients not meeting the CKD BP indicator have uncontrolled blood pressure.</li>' +
-		'<li>Advice on diet, exercise, alcohol reduction, weight loss, smoking cessation and exercise can help reduce blood pressure.</li>' +
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		+ '%) patients not meeting the CKD BP indicator have uncontrolled blood pressure.</li>' +
+		'<li>Advice on diet, exercise, alcohol reduction, weight loss, smoking cessation and exercise can help reduce blood pressure.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'DashDietSheet') + '</li>' +
 		'<ul><li>'  + (select text from regularText where textId = 'HtnDietExSheet') + '</li>' +
@@ -2684,6 +2706,8 @@ select
 		'<ul><li>'  + (select text from regularText where textId = 'BpExSheet') + '</li>' +
 		'</ul>'
 		as supportingText
+from #reasonProportions
+where proportionId = 'uncontrolled' 
 
 							---------------------------------------------------------------
 							----------------------TEXT FILE OUTPUTS------------------------

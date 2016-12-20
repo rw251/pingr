@@ -531,24 +531,25 @@ async.series([
               .pipe(
                 csv({
                   separator: '\t',
-                  //headers: ['indicatorId', 'practiceId', 'proportion', 'actionId', 'priority', 'actionText', 'supportingText']
-                  headers: ['indicatorId', 'proportion', 'actionText', 'supportingText'] //TODO CHANGE THIS
+                  headers: ['practiceId', 'indicatorId', 'actionId', 'proportion', 'numberPatients', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
                 })
               ) //NEED practiceId, actionId and priority
               .on('data', function(data) {
 
                 var i = indicators.filter(function(v) {
-                  return v.id === data.indicatorId && v.practiceId === 'P87027';//TODO CHANGE THIS
+                  return v.id === data.indicatorId && v.practiceId === data.practiceId;
                 })[0];
 
                 if(!i.actions) i.actions = [];
 
                 i.actions.push({
-                  id: data.actionId || "default_to_change"+Math.random(),//TODO CHANGE THIS
+                  id: data.actionId,
                   indicatorId: data.indicatorId,
                   short: data.actionText,
                   reason: data.supportingText,
-                  priority: data.priority || 1//TODO CHANGE THIS
+                  numberPatients: data.numberPatients,
+                  pointsPerAction: data.pointsPerAction,
+                  priority: data.priority
                 });
               })
               .on('end', function() {

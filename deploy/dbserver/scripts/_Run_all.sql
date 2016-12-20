@@ -21,7 +21,7 @@ CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), ac
 
 --Org level actions
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.orgActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.orgActions]
-CREATE TABLE [output.pingr.orgActions] (indicatorId varchar(1000), proportion float, actionText varchar(1000), supportingText varchar(max))
+CREATE TABLE [output.pingr.orgActions] (pracID varchar(1000), indicatorId varchar(1000),  actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max))
 
 --Quality indicator results
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.indicator]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.indicator]
