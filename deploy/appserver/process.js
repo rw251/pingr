@@ -455,6 +455,7 @@ async.series([
           v.opportunities.forEach(function(vv, ix) {
             v.opportunities[ix].patients = [];
           });
+          v.actions=[];
         });
 
         fs.createReadStream(IN_DIR + FILENAMES.patientActions)
