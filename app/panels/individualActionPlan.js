@@ -5,12 +5,12 @@ var base = require('../base.js'),
 
 var iap = {
 
-  create: function(pathwayStage) {
-    return require("templates/individual-action-plan")();
+  create: function(nhs) {
+    return require("templates/individual-action-plan")({nhs:nhs});
   },
 
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
-    panel.html(iap.create(pathwayStage));
+    panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
 
     panel.find('div.fit-to-screen-height').niceScroll({

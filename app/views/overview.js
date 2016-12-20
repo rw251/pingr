@@ -43,7 +43,7 @@ var overview = {
 
       //The two panels we need to show
       //Panels decide whether they need to redraw themselves
-      teamActionPlan.show(farLeftPanel);
+      teamActionPlan.show(farLeftPanel, "Top 3 suggested actions for your practice");
       indicatorList.show(farRightPanel, false, loadContentFn);
 
       $('#overview-pane').show();

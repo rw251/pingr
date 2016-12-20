@@ -5,12 +5,12 @@ var base = require('../base.js'),
 
 var tap = {
 
-  create: function(pathwayStage) {
-    return require("templates/team-action-plan")();
+  create: function(title) {
+    return require("templates/team-action-plan")({title: title});
   },
 
-  show: function(panel, pathwayId, pathwayStage, standard) {
-    panel.html(tap.create(pathwayStage));
+  show: function(panel, title, pathwayId, pathwayStage, standard) {
+    panel.html(tap.create(title));
     tap.wireUp(pathwayId, pathwayStage, standard);
 
     panel.find('div.fit-to-screen-height').niceScroll({
@@ -220,7 +220,7 @@ var tap = {
       e.stopPropagation();
     });
 
-    tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard);
+    tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard);
   },
 
   updateTeamSapRows: function() {
@@ -313,16 +313,24 @@ var tap = {
     tap.updateTeamSapRows();
   },
 
-  populateTeamSuggestedActions: function(pathwayId, pathwayStage, standard) {
+  getAndPopulateTeamSuggestedActions: function(pathwayId, pathwayStage, standard) {
     if(!pathwayId || !pathwayStage || !standard) {
-      tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
-      return;
+      data.getAllIndicatorData(null, function(indicators){
+        var actions = [];
+        indicators.forEach(function(v){
+          actions = actions.concat(v.actions);
+        });
+        tap.populateTeamSuggestedActions(actions, pathwayId, pathwayStage, standard);
+      });
+    } else {
+      indicatorData = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
+      tap.populateTeamSuggestedActions(indicatorData.actions, pathwayId, pathwayStage, standard);
     }
+  },
+
+  populateTeamSuggestedActions: function(actions, pathwayId, pathwayStage, standard) {
     var localData = {
     };
-
-    var indicatorData = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
-
     var fn = function(val) {
       return {
         "id": val,
@@ -330,10 +338,10 @@ var tap = {
       };
     };
 
-    if (indicatorData.actions.length === 0) {
+    if (actions.length === 0) {
       localData.noSuggestions = true;
     } else {
-      localData.suggestions = base.sortSuggestions(base.mergeTeamStuff(indicatorData.actions));
+      localData.suggestions = base.sortSuggestions(base.mergeTeamStuff(actions));
     }
 
     $('#advice-placeholder').hide();
