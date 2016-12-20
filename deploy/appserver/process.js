@@ -540,6 +540,13 @@ async.series([
                   return v.id === data.indicatorId && v.practiceId === data.practiceId;
                 })[0];
 
+                if(!i) {
+                  console.log("hmm - an org action for an as yet unknown indicator or practice...");
+                  console.log("Indicator: " + data.indicatorId);
+                  console.log("Practice : " + data.practiceId);
+                  return;
+                }
+
                 if(!i.actions) i.actions = [];
 
                 i.actions.push({
