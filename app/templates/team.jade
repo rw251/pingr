@@ -10,8 +10,14 @@ else
         th(style='width: 105px')
     tbody
       - var alt = false
-      each suggestion in suggestions.slice(0,3)
-        tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined, class=alt ? 'alternate-row': '')
+      each suggestion, index in suggestions
+        if index === 4 && !visible
+          tr
+            td
+              a.show-more-than-3
+                | Show more than 3 actions 
+                i.fa.fa-caret-down
+        tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
           td
             span(data-subsection=suggestion.subsection)
               strong.black.f20!= suggestion.short

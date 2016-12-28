@@ -197,6 +197,11 @@ var iap = {
       }
     });
 
+    $('#advice-list').off('click', '.show-more-than-3');
+    $('#advice-list').on('click', '.show-more-than-3', function(e) {
+      iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard, true);
+    });
+
     $('#advice-list').off('click', '.show-more');
     $('#advice-list').on('click', '.show-more', function(e) {
       var id = $(this).data("id");
@@ -220,7 +225,7 @@ var iap = {
       e.stopPropagation();
     });
 
-    iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard);
+    iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard, false);
   },
 
   updateIndividualSapRows: function() {
@@ -313,10 +318,11 @@ var iap = {
     iap.updateIndividualSapRows();
   },
 
-  populateIndividualSuggestedActions: function(patientId, pathwayId, pathwayStage, standard) {
+  populateIndividualSuggestedActions: function(patientId, pathwayId, pathwayStage, standard, visible) {
     var localData = {
       "nhsNumber": data.patLookup ? data.patLookup[patientId] : patientId,
-      "patientId": patientId
+      "patientId": patientId,
+      visible: visible
     };
 
     var patientData = data.getPatientData(patientId);

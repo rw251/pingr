@@ -197,6 +197,11 @@ var tap = {
       }
     });
 
+    $('#advice-list').off('click', '.show-more-than-3');
+    $('#advice-list').on('click', '.show-more-than-3', function(e) {
+      tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, true);
+    });
+
     $('#advice-list').off('click', '.show-more');
     $('#advice-list').on('click', '.show-more', function(e) {
       var id = $(this).data("id");
@@ -220,7 +225,7 @@ var tap = {
       e.stopPropagation();
     });
 
-    tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard);
+    tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, false);
   },
 
   updateTeamSapRows: function() {
@@ -313,23 +318,24 @@ var tap = {
     tap.updateTeamSapRows();
   },
 
-  getAndPopulateTeamSuggestedActions: function(pathwayId, pathwayStage, standard) {
+  getAndPopulateTeamSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
     if(!pathwayId || !pathwayStage || !standard) {
       data.getAllIndicatorData(null, function(indicators){
         var actions = [];
         indicators.forEach(function(v){
           actions = actions.concat(v.actions);
         });
-        tap.populateTeamSuggestedActions(actions, pathwayId, pathwayStage, standard);
+        tap.populateTeamSuggestedActions(actions, pathwayId, pathwayStage, standard, visible);
       });
     } else {
       indicatorData = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
-      tap.populateTeamSuggestedActions(indicatorData.actions, pathwayId, pathwayStage, standard);
+      tap.populateTeamSuggestedActions(indicatorData.actions, pathwayId, pathwayStage, standard, visible);
     }
   },
 
-  populateTeamSuggestedActions: function(actions, pathwayId, pathwayStage, standard) {
+  populateTeamSuggestedActions: function(actions, pathwayId, pathwayStage, standard, visible) {
     var localData = {
+      visible: visible
     };
     var fn = function(val) {
       return {
