@@ -2565,8 +2565,8 @@ select
 		'<li>This would also follow NICE guidance for hypertension diagnosis.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBhsAbpm') + '</li>' +
-		'<ul><li>'  + (select text from regularText where [textId] = 'linkPatientUkAbpm') + '</li>' +
-		'<ul><li>'  + (select text from regularText where [textId] = 'linkNiceHtn') + '</li>' +
+		'<li>'  + (select text from regularText where [textId] = 'linkPatientUkAbpm') + '</li>' +
+		'<li>'  + (select text from regularText where [textId] = 'linkNiceHtn') + '</li>' +
 		'</ul>'
 	as supportingText
 from #reasonProportions
@@ -2655,11 +2655,11 @@ select
 		'<li>This could be achieved by asking patients to measure their own BP.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmProtocol') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmHowToPatients') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmPil') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmDiary') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmGuide') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmCaseStudies') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmHowToPatients') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmPil') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmDiary') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmGuide') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmCaseStudies') + '</li>' +
 		'</ul>'
 		as supportingText
 from #reasonProportions
@@ -2701,9 +2701,9 @@ select
 		'<li>Advice on diet, exercise, alcohol reduction, weight loss, smoking cessation and exercise can help reduce blood pressure.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where textId = 'DashDietSheet') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'HtnDietExSheet') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'BpUkDietSheet') + '</li>' +
-		'<ul><li>'  + (select text from regularText where textId = 'BpExSheet') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'HtnDietExSheet') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'BpUkDietSheet') + '</li>' +
+		'<li>'  + (select text from regularText where textId = 'BpExSheet') + '</li>' +
 		'</ul>'
 		as supportingText
 from #reasonProportions
