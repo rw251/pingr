@@ -24,6 +24,8 @@ var overview = {
     //before further execution
     setTimeout(function() {
 
+      var practiceName = $('#practice_name').text();
+
       if (layout.view !== ID) {
         //Not already in this view so we need to rejig a few things
         base.clearBox();
@@ -31,7 +33,7 @@ var overview = {
         layout.showMainView();
 
         $('#mainTitle').show();
-        base.updateTitle("Overview of your practice performance");
+        base.updateTitle("Overview of " + practiceName + "'s performance");
 
         base.removeFullPage(farRightPanel);
         base.hidePanels(farRightPanel);
@@ -43,7 +45,7 @@ var overview = {
 
       //The two panels we need to show
       //Panels decide whether they need to redraw themselves
-      teamActionPlan.show(farLeftPanel, "Top 3 suggested actions for your practice");
+      teamActionPlan.show(farLeftPanel, "Top 3 suggested actions for " + practiceName);
       indicatorList.show(farRightPanel, false, loadContentFn);
 
       $('#overview-pane').show();

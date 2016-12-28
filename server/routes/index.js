@@ -277,7 +277,7 @@ module.exports = function(passport) {
   });
 
   router.get('/', isAuthenticated, function(req, res, next) {
-    res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname });
+    res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_name: req.user.practiceName });
   });
 
   /* Ensure all html/js resources are only accessible if authenticated */
