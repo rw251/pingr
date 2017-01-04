@@ -89,9 +89,15 @@ var template = {
 
         base.wireUpTooltips();
       }
-
-      $('#suggs').off('click').on('click', function(e){
+      //manages the suggestions
+      $('#suggestionsModalLauncher').off('click').on('click', function(e){
         base.launchSuggestionModal();
+        e.preventDefault();
+      });
+
+      //tutorial system entry point
+      $('#tutorialLaunch').off('click').on('click', function(e){
+        introJs().start();
         e.preventDefault();
       });
     }

@@ -13,7 +13,7 @@ section#main
     nav.navbar.navbar-default.navbar-fixed-top.hidden-xs(role='navigation')
       .navbar-inner
         .container
-          ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist')
+          ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
             li.active(role='presentation', style='width:20%', data-id='overview')
               a(href='#overview', data-href='#overview', role='tab') OVERVIEW
               .nav-arrow
@@ -30,7 +30,10 @@ section#main
               a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
           ul.nav.navbar-nav.navbar-right
             li
-              a(href='#help') Help
+              //TODO *b* sort out the spacing properly!
+              //a( href='' style='margin-top:-8px' onClick)
+              button#tutorialLaunch.btn.btn-danger(style='margin:7px') Help
+              //a(class='btn btn-danger' href='#help') Help
             li
               a(href='#contact') Contact us
             li.dropdown
@@ -59,4 +62,4 @@ section#main
                     i.fa.fa-sign-out.fa-fw
                     |  Logout
             li
-              button#suggs.btn.btn-warning(style='margin:7px') Send a comment
+              button#suggestionsModalLauncher.btn.btn-warning(style='margin:7px' data-intro="hello world! *bTut*" data-step="2") Send a comment
