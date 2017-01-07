@@ -1,8 +1,9 @@
 module.exports = {
   // See http://brunch.io for documentation.
+  // see http://brunch.io/docs/config for syntax and setup
   paths: {
     public: 'dist',
-    watched: ['app','vendor']
+      watched: ['app','vendor']
   },
 
   files: {
@@ -22,14 +23,15 @@ module.exports = {
       }
     },
     stylesheets: {
-      joinTo: 'app.css',
-      order: {
-        before: ['vendor/styles/bootstrap.scss']
+      joinTo: {
+        'app.css' : /^app\/styles\/style/,
+        'ct_dash.css' : /^app\/styles\/dash/
       }
     },
 
     templates: {
       joinTo: 'app.js'
+      
     }
   }
 };

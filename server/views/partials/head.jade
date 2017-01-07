@@ -5,7 +5,8 @@ head
   meta(content='IE=edge', http-equiv='X-UA-Compatible')
   meta(content='width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0' name='viewport')
   title PINGR
-  link(href='images/icons/pingr_neo_thk_64.png', rel='icon', type='image/png')
+  link(href='images/icons/apple-icon.png', rel='apple-touch-icon', type='image/png')
+  link(href='images/icons/favicon', rel="icon", type="image/png")
   meta(name="viewport" content="width=device-width")
   // Fonts
   link(href='https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,300', rel='stylesheet', type='text/css')
@@ -15,10 +16,13 @@ head
   // jQuery from CDN - *b* moved from footer because it is loaded late in some instances  
   script(src='https://code.jquery.com/jquery-1.12.3.min.js', integrity='sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=', crossorigin='anonymous') 
   
-  // My styling
+
+  // bootstrap
+  link(href='/assets/css/bootstrap/bootstrap.css', rel='stylesheet', type='text/css')
+  // ct_dash after bootstrap
+  link(href='/ct_dash.css', rel='stylesheet', type='text/css')
+  // My styling after everything
   link(href='/app.css', rel='stylesheet', type='text/css')
-  // bootstrap after locol
-  link(href='')
   
   //intro.js styling -non production css - TODO swap for min after testing
   link(href='/css/introjs/introjs.css', rel='stylesheet', type='text/css')
