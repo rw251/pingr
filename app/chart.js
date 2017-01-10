@@ -497,7 +497,8 @@ var cht = {
 
     var target = 75,
       maxValue = target,
-      maxXvalue = 0;
+      maxXvalue = 0,
+      minXvalue=999999999;
 
     var series = [
       { type: 'line', name: 'Trend', data: [] },
@@ -522,6 +523,8 @@ var cht = {
     lastApril.setDate(1);
     aprilBeforeThat.setDate(1);
     nextApril.setDate(1);
+
+    minXvalue = aprilBeforeThat.getTime();
 
     var n = 0,
       sumX = 0,
@@ -551,6 +554,7 @@ var cht = {
       series[0].data.push([time, y]);
       maxValue = Math.max(maxValue, y);
       maxXvalue = Math.max(maxXvalue, time);
+      minXvalue = Math.min(minXvalue, time);
     });
 
     intercept = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX * sumX);
@@ -558,7 +562,6 @@ var cht = {
 
     var newCompDate = new Date(lastApril.getTime());
     series[1].data.push([maxXvalue, maxXvalue * gradient + intercept]);
-    var newCompDate = new Date(lastApril.getTime());
     for (var i = 0; i < 13; i++) {
       var x = newCompDate.getTime();
       if (x < maxXvalue) {
@@ -566,6 +569,7 @@ var cht = {
         continue;
       }
       series[1].data.push([x, x * gradient + intercept]);
+      maxValue = Math.max(maxValue, x * gradient + intercept);
       var m = newCompDate.getMonth();
       newCompDate.setMonth(newCompDate.getMonth() + 1);
     }
@@ -579,6 +583,7 @@ var cht = {
     var c = $('#' + element).highcharts({
       title: { text: '' },
       xAxis: {
+        min: minXvalue,
         max: nextApril.getTime(),
         type: 'datetime'
       },
@@ -608,7 +613,7 @@ var cht = {
       series: series
     });
 
-    c.highcharts().axes[0].setExtremes(aprilBeforeThat.getTime(), lastApril.getTime(), undefined, false);
+    c.highcharts().axes[0].setExtremes(lastApril.getTime(), nextApril.getTime(), undefined, false);
 
   },
 
