@@ -141,6 +141,10 @@ async.series([
               indicators.push(i);
             } else {
               i.benchmark = data.benchmark;
+              i.measurementId = indText.valueId;
+              i.displayDate = indText.dateORvalue === "date";
+              i.name = indText.name;
+              i.description = indText.description;
             }
 
             var dtt = data.date.replace(/[^0-9-]/g, "");
