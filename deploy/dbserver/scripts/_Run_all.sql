@@ -74,6 +74,31 @@ BEGIN
 	SELECT 1001;
 	RETURN;
 END
+
+EXEC	@return_value = [dbo].[pingr.ckdAndDm.treatment.bp]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
+EXEC	@return_value = [dbo].[pingr.ckdAndProt.treatment.bp]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
+EXEC	@return_value = [dbo].[pingr.htn.treatment.bp]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
 							---------------------------------------------------------------
 							---------CREATE AND POPULATE PATIENT-LEVEL DATA TABLES---------
 							---------------------------------------------------------------
