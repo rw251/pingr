@@ -11,15 +11,63 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 							---------------------------------------------------------------
 							--------------i.e.data unique to each indicator query----------
 							---------------------------------------------------------------
---Denominator data: patient ids and indicator
+-----------------------------------------------
+--Denominator data: patient ids and indicator--
+--A row for each patient in the denominator  --
+--for each indicator. Patients not in the    --
+--numerator also get a "why"                 --
+-----------------------------------------------
+-- PatID 		Patient id
+-- indicatorId	Indicator id
+-- why			Why this patient is flagging 
+--				this indicator.
+-----------------------------------------------
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.denominators]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.denominators]
-CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000))
+CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000), why varchar(max))
 
---Pt-level data: improvement opportunity categories and actions
+------------------------------------------------------------------------------------------
+--Pt-level data: improvement opportunity categories and actions							--
+------------------------------------------------------------------------------------------
+-- PatID 			Patient id
+-- indicatorId		Indicator id
+-- actionCat		Determines the bar that this belongs in on the 
+--					"Patients with imp opps" chart
+-- reasonNumber		The number of reasons for this action.
+--					Could be used for prioritisation but not at present
+-- pointsPerAction	Number of % points that this patient represents in this indicator
+--					Used to prioritise. (data driven prioritisation)
+-- priority			How important the action is. Could be used for (subjective)
+--					prioritisation but not at present.
+-- actionText		The big bold text displayed to the user. THIS IS THE FIELD
+--					THAT DETERMINES WHETHER TO DEDUPLICATE. e.g. Two actions with
+--					the same actionText will be collapsed into one.
+-- supportingText	The text that appears after clicking "show more". On deduplication
+--					we just pick one of the supportingTexts - though in future could
+--					get more clever about this.
+--------------------------------------------------------------------------------------------
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.patActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.patActions]
-CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(max))
+CREATE TABLE [output.pingr.patActions] (PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max))
 
+------------------------------------------------------------------------------------------
 --Org level actions
+------------------------------------------------------------------------------------------
+-- pracID 			Practice id
+-- indicatorId		Indicator id
+-- actionCat		Not currently used but perhaps if aggregation at ccg level is needed.
+-- proportion		Proportion of patients affected by this indicator?? Not currently used.
+-- numberPatients	Number of patients for this action. Not currently used. Could be used
+--					for prioritisation
+-- pointsPerAction	Number of % points that this action represents in this indicator
+--					Used to prioritise. (data driven prioritisation)
+-- priority			How important the action is. Could be used for (subjective)
+--					prioritisation but not at present.
+-- actionText		The big bold text displayed to the user. THIS IS THE FIELD
+--					THAT DETERMINES WHETHER TO DEDUPLICATE. e.g. Two actions with
+--					the same actionText will be collapsed into one.
+-- supportingText	The text that appears after clicking "show more". On deduplication
+--					we just pick one of the supportingTexts - though in future could
+--					get more clever about this.
+--------------------------------------------------------------------------------------------
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.orgActions]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.orgActions]
 CREATE TABLE [output.pingr.orgActions] (pracID varchar(1000), indicatorId varchar(1000),  actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max))
 
@@ -107,8 +155,8 @@ END
 
 --physiological measures
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.measures]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.measures]
-CREATE TABLE [output.pingr.measures] (PatID int, date date, measure varchar(100), value float)
-insert into [output.pingr.measures](PatID, date, measure, value)
+CREATE TABLE [output.pingr.measures] (PatID int, date date, measure varchar(100), value float, source varchar(20))
+insert into [output.pingr.measures](PatID, date, measure, value, source)
 select PatID, EntryDate as date,
 	case
 		when ReadCode in (select code from codeGroups where [group] = 'egfr') then 'eGFR'
@@ -116,7 +164,7 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'sbp') then 'SBP'
 		when ReadCode in (select code from codeGroups where [group] = 'dbp') then 'DBP'
 	end as measure,
-CodeValue as value from SIR_ALL_Records
+CodeValue as value, Source from SIR_ALL_Records
 where ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp'))
 	and CodeValue is not NULL
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
