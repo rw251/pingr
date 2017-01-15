@@ -71,11 +71,11 @@ module.exports = {
             var meas = "?";
             if (patient.measurements) {
               if(indicator.measurementId === "SBP"){
-                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][1];
+                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
                 // for dbp use:
-                //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
               } else {
-                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][1];
+                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
               }
             }
             var opps = indicator.opportunities.filter(function(v) {

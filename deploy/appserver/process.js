@@ -133,6 +133,7 @@ async.series([
                 measurementId: indText.valueId,
                 benchmark: data.benchmark,
                 displayDate: indText.dateORvalue === "date",
+                sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0]==="a" : "desc",
                 name: indText.name,
                 description: indText.description,
                 values: [["x"], ["numerator"], ["denominator"], ["target"]],
@@ -332,12 +333,12 @@ async.series([
           if (!temp[+v.patientId].meas) temp[+v.patientId].meas = {};
           if (["SBP", "DBP"].indexOf(v.thing) > -1) {
             if (!temp[+v.patientId].meas.BP) temp[+v.patientId].meas.BP = [];
-            temp[+v.patientId].meas.BP.push({ date: new Date(v.date).getTime(), value: v.value, thing: v.thing, source: v.source });
+            temp[+v.patientId].meas.BP.push({ date: new Date(v.date).getTime(), value: parseInt(v.value), thing: v.thing, source: v.source });
           } else if (v.thing === "BP") {
             return;
           } else {
             if (!temp[+v.patientId].meas[v.thing]) temp[+v.patientId].meas[v.thing] = [];
-            temp[+v.patientId].meas[v.thing].push({ date: new Date(v.date).getTime(), value: v.value, source: v.source });
+            temp[+v.patientId].meas[v.thing].push({ date: new Date(v.date).getTime(), value: parseFloat(v.value), source: v.source });
           }
 
         });

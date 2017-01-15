@@ -350,6 +350,11 @@ var iap = {
       }*/
 
       localData.suggestions = base.sortSuggestions(base.mergeIndividualStuff(patientData.actions, patientId));
+
+      localData.suggestions.map(function(v){
+        v.id = v.actionText.replace(/[^A-Za-z0-9]/g,"");
+        return v;
+      });
       /*localData.section = {
         "name": data[pathwayId][pathwayStage].bdown[subsection].name,
         "agree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
