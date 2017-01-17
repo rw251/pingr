@@ -563,7 +563,7 @@ async.series([
                   id: data.actionId,
                   indicatorId: data.indicatorId,
                   actionText: data.actionText,
-                  reason: data.supportingText,
+                  supportingText: data.supportingText,
                   numberPatients: data.numberPatients,
                   pointsPerAction: data.pointsPerAction,
                   priority: data.priority
