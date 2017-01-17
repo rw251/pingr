@@ -298,7 +298,6 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'gout') then 'Gout'
 		when ReadCode in (select code from codeGroups where [group] = 'addisons') then 'Addisons'
 		when ReadCode in (select code from codeGroups where [group] = 'whiteCoat') then 'White coat hypertension'
-
 	end as diagnosis,
 	case
 		when ReadCode in ('1Z12.','K053.') then 'Stage 3'
@@ -311,7 +310,7 @@ select PatID, EntryDate as date,
 		when ReadCode in ('1Z1D.') then 'Stage 3a A2/3'
 		when ReadCode in ('1Z1E.', '1Z1T.') then 'Stage 3a A1'
 		when ReadCode in ('1Z1F.') then 'Stage 3b A2/3'
-		when ReadCode in ('1Z1Stage .', '1Z1X.') then 'Stage 3b A1'
+		when ReadCode in ('1Z1G.', '1Z1X.') then 'Stage 3b A1'
 		when ReadCode in ('1Z1H.') then 'Stage 4 A2/3'
 		when ReadCode in ('1Z1J.', '1Z1a.') then 'Stage 4 A1'
 		when ReadCode in ('1Z1K.') then 'Stage 5 A2/3'
@@ -340,7 +339,13 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] in ('dmPermEx')) then 'Resolved'
 		when ReadCode in (select code from codeGroups where [group] in ('asthmaPermEx')) then 'Resolved'
 	end as subcategory from SIR_ALL_Records
-where ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx'))
+where 
+	(
+		ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx', 'dm','dmPermEx','phaeo','asthmaQof', 'asthmaPermEx','porphyria','MInow','AS','gout','addisons','whiteCoat','dmPermEx','asthmaPermEx'))
+		or ReadCode in ('1Z12.','K053.','1Z13.','K054.','1Z14.','K055.','1Z15.','1Z16.','1Z1B.','1Z1C.','1Z1D.','1Z1E.', '1Z1T.',
+		'1Z1F.','1Z1G.','1Z1X.','1Z1H.','1Z1J.', '1Z1a.','1Z1K.','1Z1L.', '1Z1d.','1Z1V.','1Z1W.','1Z1Y.','1Z1Z.','1Z1b.','1Z1c.',
+		'1Z1e.','1Z1f.','2126E','1Z10.','1Z11.','1Z17.','1Z18.', '1Z1M.','1Z19.','1Z1A.', '1Z1Q.','1Z1N.','1Z1P.','1Z1R.','1Z1S.','K051.','K052.')
+	)
 and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
 --Demographics

@@ -1,16 +1,16 @@
 									--TO RUN AS STORED PROCEDURE--
---IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.treatment.bp') DROP PROCEDURE [pingr.ckd.treatment.bp];
---GO
---CREATE PROCEDURE [pingr.ckd.treatment.bp] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
---AS
---SET NOCOUNT ON
+IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.treatment.bp') DROP PROCEDURE [pingr.ckd.treatment.bp];
+GO
+CREATE PROCEDURE [pingr.ckd.treatment.bp] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
+AS
+SET NOCOUNT ON
 
 									--TO TEST ON THE FLY--
-use PatientSafety_Records_Test
-declare @refdate VARCHAR(10);
-declare @JustTheIndicatorNumbersPlease bit;
-set @refdate = '2016-11-17';
-set @JustTheIndicatorNumbersPlease= 0;
+--use PatientSafety_Records_Test
+--declare @refdate VARCHAR(10);
+--declare @JustTheIndicatorNumbersPlease bit;
+--set @refdate = '2016-11-17';
+--set @JustTheIndicatorNumbersPlease= 0;
 
 -----------------------------------------------------------------------------------
 --DEFINE ELIGIBLE POPULATION, EXCLUSIONS, DENOMINATOR, AND NUMERATOR --------------
@@ -293,7 +293,7 @@ group by s.PatID, firstDmCodeAfterDate
 IF OBJECT_ID('tempdb..#latestSbp') IS NOT NULL DROP TABLE #latestSbp
 CREATE TABLE #latestSbp (PatID int, latestSbpDate date, latestSbp int, sourceSbp varchar(12));
 insert into #latestSbp
-select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp, Source as sourceSbp from SIR_ALL_Records as s
+select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp, max(Source) as sourceSbp from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestSbpDate  from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'sbp')
@@ -304,13 +304,13 @@ select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp, Source as sourceSbp 
 	) sub on sub.PatID = s.PatID and sub.latestSbpDate = s.EntryDate
 where ReadCode in (select code from codeGroups where [group] = 'sbp')
 and s.PatID in (select PatID from #latestCkd35code)
-group by s.PatID, latestSbpDate, Source
+group by s.PatID, latestSbpDate
 
 --#latestDbp
 IF OBJECT_ID('tempdb..#latestDbp') IS NOT NULL DROP TABLE #latestDbp
 CREATE TABLE #latestDbp (PatID int, latestDbpDate date, latestDbp int, sourceDbp varchar(12));
 insert into #latestDbp
-select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp, Source as sourceDbp from SIR_ALL_Records as s
+select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp, max(Source) as sourceDbp from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestDbpDate  from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'dbp')
@@ -321,7 +321,7 @@ select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp, Source as sourceDbp 
 	) sub on sub.PatID = s.PatID and sub.latestDbpDate = s.EntryDate
 where ReadCode in (select code from codeGroups where [group] = 'dbp')
 and s.PatID in (select PatID from #latestCkd35code)
-group by s.PatID, latestDbpDate, Source
+group by s.PatID, latestDbpDate
 
 --#latestAcr
 IF OBJECT_ID('tempdb..#latestAcr') IS NOT NULL DROP TABLE #latestAcr
@@ -496,6 +496,7 @@ from #latestCkd35code as a
 		left outer join (select PatID, denominator from #denominator) v on v.PatID = a.PatID
 		left outer join (select PatID, numerator from #numerator) w on w.PatID = a.PatID
 
+
 					-----------------------------------------------------------------------------
 					---------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
 					-----------------------------------------------------------------------------
@@ -516,12 +517,12 @@ declare @target float;
 set @target = 0.80;
 
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 
 									--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
-CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
-insert into #indicator
+--IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+--CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+--insert into #indicator
 
 select 'ckd.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, NULL as numerator, NULL as denominator, @target, @abc from #eligiblePopulationAllData as a
 union
@@ -532,13 +533,13 @@ select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, s
 									----------------------------------------------
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
-									--TO TEST ON THE FLY--
---insert into [output.pingr.denominators](PatID, indicatorId, why)
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.denominators](PatID, indicatorId, why)
 
 									--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
-CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
-insert into #denominators
+--IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--insert into #denominators
 
 select PatID, 'ckd.treatment.bp',
 	case
@@ -827,6 +828,7 @@ from #eligiblePopulationAllData as a
 		left outer join (select PatID, secondLatestSbp, secondLatestSbpDate from #secondLatestSbp) b on b.PatID = a.PatID
 		left outer join (select PatID, secondLatestDbp, secondLatestDbpDate from #secondLatestDbp) c on c.PatID = a.PatID
 where denominator = 1 and numerator = 0
+
 
 							-----------------------------------------------------
 							--------------------MEDICATIONS----------------------
@@ -2235,13 +2237,13 @@ where
 							----------------------PT-LEVEL ACTIONS-------------------------
 							---------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
+insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
 
 									--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
-CREATE TABLE #patActions
-	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
-insert into #patActions
+--IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+--CREATE TABLE #patActions
+--	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #patActions
 
 --CHECK REGISTERED
 select a.PatID,
@@ -2664,12 +2666,12 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 							---------------------------------------------------------------
 
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
+insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
 
 										--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
-CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
-insert into #orgActions
+--IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+--CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #orgActions
 
 --BP MACHINE IN WAITING ROOM
 select
@@ -2877,12 +2879,12 @@ where proportionId = 'uncontrolled'
 							----------------------TEXT FILE OUTPUTS------------------------
 							---------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
---insert into [pingr.text] (indicatorId, textId, text)
+insert into [pingr.text] (indicatorId, textId, text)
 
 										--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#text') IS NOT NULL DROP TABLE #text
-CREATE TABLE #text (indicatorId varchar(1000), textId varchar(1000), text varchar(max))
-insert into #text
+--IF OBJECT_ID('tempdb..#text') IS NOT NULL DROP TABLE #text
+--CREATE TABLE #text (indicatorId varchar(1000), textId varchar(1000), text varchar(max))
+--insert into #text
 
 values
 --overview tab
@@ -2922,7 +2924,7 @@ values
 ('ckd.treatment.bp','valueId','SBP'),
 ('ckd.treatment.bp','valueName','Latest SBP'),
 ('ckd.treatment.bp','dateORvalue','value'),
-('ckd.diagnosis.undiagnosed','valueSortDirection','desc'),  -- 'asc' or 'desc'
+('ckd.treatment.bp','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('ckd.treatment.bp','tableTitle','All patients with improvement opportunities'),
 
 --imp opp charts
