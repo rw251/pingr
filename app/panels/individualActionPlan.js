@@ -298,7 +298,7 @@ var iap = {
   },
 
   displayPersonalisedIndividualActionPlan: function(id, parentElem) {
-    var plans = base.dedupeAndSortActions(base.addDisagreePersonalTeam(log.listPlans(id)));
+    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans(id)));
 
     /*base.createPanelShow(actionPlanList, parentElem, {
       "hasSuggestions": plans && plans.length > 0,
@@ -349,7 +349,7 @@ var iap = {
           data[pathwayId][pathwayStage].bdown[subsection].suggestions.map(fn) : []);
       }*/
 
-      localData.suggestions = base.sortSuggestions(base.mergeIndividualStuff(patientData.actions, patientId));
+      localData.suggestions = base.dedupeAndSortActions(base.mergeIndividualStuff(patientData.actions, patientId));
 
       localData.suggestions.map(function(v){
         v.id = v.actionText.replace(/[^A-Za-z0-9]/g,"");
