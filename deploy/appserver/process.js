@@ -562,7 +562,7 @@ async.series([
                 i.actions.push({
                   id: data.actionId,
                   indicatorId: data.indicatorId,
-                  short: data.actionText,
+                  actionText: data.actionText,
                   reason: data.supportingText,
                   numberPatients: data.numberPatients,
                   pointsPerAction: data.pointsPerAction,

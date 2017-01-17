@@ -347,7 +347,7 @@ var tap = {
     if (actions.length === 0) {
       localData.noSuggestions = true;
     } else {
-      localData.suggestions = base.sortSuggestions(base.mergeTeamStuff(actions));
+      localData.suggestions = base.dedupeAndSortActions(base.mergeTeamStuff(actions));
     }
 
     $('#advice-placeholder').hide();

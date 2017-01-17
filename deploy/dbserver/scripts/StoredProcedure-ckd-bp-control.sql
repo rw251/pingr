@@ -1,16 +1,16 @@
 									--TO RUN AS STORED PROCEDURE--
-IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.treatment.bp') DROP PROCEDURE [pingr.ckd.treatment.bp];
-GO
-CREATE PROCEDURE [pingr.ckd.treatment.bp] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
-AS
-SET NOCOUNT ON
+--IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.ckd.treatment.bp') DROP PROCEDURE [pingr.ckd.treatment.bp];
+--GO
+--CREATE PROCEDURE [pingr.ckd.treatment.bp] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
+--AS
+--SET NOCOUNT ON
 
 									--TO TEST ON THE FLY--
---use PatientSafety_Records_Test
---declare @refdate VARCHAR(10);
---declare @JustTheIndicatorNumbersPlease bit;
---set @refdate = '2016-11-17';
---set @JustTheIndicatorNumbersPlease= 0;
+use PatientSafety_Records_Test
+declare @refdate VARCHAR(10);
+declare @JustTheIndicatorNumbersPlease bit;
+set @refdate = '2016-11-17';
+set @JustTheIndicatorNumbersPlease= 0;
 
 -----------------------------------------------------------------------------------
 --DEFINE ELIGIBLE POPULATION, EXCLUSIONS, DENOMINATOR, AND NUMERATOR --------------
@@ -291,10 +291,9 @@ group by s.PatID, firstDmCodeAfterDate
 
 --#latestSbp
 IF OBJECT_ID('tempdb..#latestSbp') IS NOT NULL DROP TABLE #latestSbp
-CREATE TABLE #latestSbp (PatID int, latestSbpDate date, latestSbp int);
+CREATE TABLE #latestSbp (PatID int, latestSbpDate date, latestSbp int, sourceSbp varchar(12));
 insert into #latestSbp
-	(PatID, latestSbpDate, latestSbp)
-select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp from SIR_ALL_Records as s
+select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp, Source as sourceSbp from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestSbpDate  from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'sbp')
@@ -305,14 +304,13 @@ select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp from SIR_ALL_Records 
 	) sub on sub.PatID = s.PatID and sub.latestSbpDate = s.EntryDate
 where ReadCode in (select code from codeGroups where [group] = 'sbp')
 and s.PatID in (select PatID from #latestCkd35code)
-group by s.PatID, latestSbpDate
+group by s.PatID, latestSbpDate, Source
 
 --#latestDbp
 IF OBJECT_ID('tempdb..#latestDbp') IS NOT NULL DROP TABLE #latestDbp
-CREATE TABLE #latestDbp (PatID int, latestDbpDate date, latestDbp int);
+CREATE TABLE #latestDbp (PatID int, latestDbpDate date, latestDbp int, sourceDbp varchar(12));
 insert into #latestDbp
-	(PatID, latestDbpDate, latestDbp)
-select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp from SIR_ALL_Records as s
+select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp, Source as sourceDbp from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestDbpDate  from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'dbp')
@@ -323,7 +321,7 @@ select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp from SIR_ALL_Records 
 	) sub on sub.PatID = s.PatID and sub.latestDbpDate = s.EntryDate
 where ReadCode in (select code from codeGroups where [group] = 'dbp')
 and s.PatID in (select PatID from #latestCkd35code)
-group by s.PatID, latestDbpDate
+group by s.PatID, latestDbpDate, Source
 
 --#latestAcr
 IF OBJECT_ID('tempdb..#latestAcr') IS NOT NULL DROP TABLE #latestAcr
@@ -442,8 +440,8 @@ CREATE TABLE #eligiblePopulationAllData (PatID int,
 	latestDmPermExCode varchar(512), latestDmPermExCodeDate date,
 	firstDmCode varchar(512), firstDmCodeDate date,
 	firstDmCodeAfter varchar(512), firstDmCodeAfterDate date,
-	latestSbpDate date, latestSbp int,
-	latestDbpDate date, latestDbp int,
+	latestSbpDate date, latestSbp int, sourceSbp varchar(12),
+	latestDbpDate date, latestDbp int, sourceDbp varchar(12),
 	latestAcrDate date, latestAcr int,
 	dmPatient int, protPatient int,
 	bpMeasuredOK int, bpTarget varchar(512), bpControlledOk int,
@@ -466,8 +464,8 @@ select a.PatID,
 	latestDmPermExCode, latestDmPermExCodeDate,
 	firstDmCode, firstDmCodeDate,
 	firstDmCodeAfter, firstDmCodeAfterDate,
-	latestSbpDate, latestSbp,
-	latestDbpDate, latestDbp,
+	latestSbpDate, latestSbp, sourceSbp,
+	latestDbpDate, latestDbp, sourceDbp,
 	latestAcrDate, latestAcr,
 	dmPatient, protPatient,
 	bpMeasuredOk, bpTarget, bpControlledOk,
@@ -488,8 +486,8 @@ from #latestCkd35code as a
 		left outer join (select PatID, latestDmPermExCode, latestDmPermExCodeDate from #latestDmPermExCode) l on l.PatID = a.PatID
 		left outer join (select PatID, firstDmCode, firstDmCodeDate from #firstDmCode) m on m.PatID = a.PatID
 		left outer join (select PatID, firstDmCodeAfter, firstDmCodeAfterDate from #firstDmCodeAfter) n on n.PatID = a.PatID
-		left outer join (select PatID, latestSbpDate, latestSbp from #latestSbp) o on o.PatID = a.PatID
-		left outer join (select PatID, latestDbpDate, latestDbp from #latestDbp) p on p.PatID = a.PatID
+		left outer join (select PatID, latestSbpDate, latestSbp, sourceSbp from #latestSbp) o on o.PatID = a.PatID
+		left outer join (select PatID, latestDbpDate, latestDbp, sourceDbp from #latestDbp) p on p.PatID = a.PatID
 		left outer join (select PatID, latestAcrDate, latestAcr from #latestAcr) r on r.PatID = a.PatID
 		left outer join (select PatID, dmPatient, protPatient from #dmProtPatient) s on s.PatID = a.PatID
 		left outer join (select PatID, bpMeasuredOk, bpTarget, bpControlledOk from #bpTargetMeasuredControlled) t on t.PatID = a.PatID
@@ -518,22 +516,75 @@ declare @target float;
 set @target = 0.80;
 
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+--insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 
 									--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
---CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
---insert into #indicator
+IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+insert into #indicator
 
+select 'ckd.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, NULL as numerator, NULL as denominator, @target, @abc from #eligiblePopulationAllData as a
+union
 select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
-
+	
 									----------------------------------------------
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
-insert into [output.pingr.denominators](PatID, indicatorId)
-select PatID, 'ckd.treatment.bp' from #eligiblePopulationAllData where denominator = 1;
+									--TO TEST ON THE FLY--
+--insert into [output.pingr.denominators](PatID, indicatorId, why)
+
+									--TO TEST ON THE FLY--
+IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+insert into #denominators
+
+select PatID, 'ckd.treatment.bp',
+	case
+		when bpMeasuredOK = 0 then 
+			'<ul><li>Patient is on CKD register.</li>
+			<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
+			<li>Salford Standards recommend BP should be measured in the 6 months since ' +
+				case
+					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
+					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
+					when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
+				end +'.</li></ul>'
+		when bpMeasuredOK = 1 and bpControlledOk = 0 then
+			'<ul><li>Patient is on CKD register.</li>
+			<li>Target BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">&lt;140/90 mmHg</a>.</li>
+			<li>Last BP was <strong>uncontrolled</strong>: ' +
+					case
+						when latestSbp >= 140 then '<strong>' + Str(latestSbp) + '</strong>'
+						else Str(latestSbp)
+					end
+				+ '/' +
+					case
+						when latestDbp >= 90 then '<strong>' + Str(latestDbp) + '</strong>'
+						else Str(latestDbp)
+					end
+				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' + 
+			case 
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li></ul>'
+			else '</ul>'
+			end			
+		when numerator = 1 then
+			'<ul><li>Patient is on CKD register.</li>
+			<li>Last BP was controlled and taken in the last 6 months since ' +
+				case
+					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
+					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
+					when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
+				end +': ' + Str(latestSbp) + '/' + Str(latestDbp) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>
+			<li>This is in accordance with both the Salford Standards and <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">NICE guidelines</a>.</li>' +
+			case 
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li></ul>'
+			else '</ul>'
+			end			
+		else ''
+		end 
+from #eligiblePopulationAllData where denominator = 1;
 
 									----------------------------------------------
 									-------DEFINE % POINTS PER PATIENT------------
@@ -1525,6 +1576,7 @@ from #eligiblePopulationAllData as a
 		left outer join (select PatID, latestPosturalHypoCodeDate, latestPosturalHypoCode from #latestPosturalHypoCode) oo on oo.PatID = a.PatID
 where denominator = 1 and numerator = 0
 
+
 							---------------------------------------------------------------
 							-------------------MEDICATION SUGGESTIONS----------------------
 							---------------------------------------------------------------
@@ -2183,20 +2235,20 @@ where
 							----------------------PT-LEVEL ACTIONS-------------------------
 							---------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonCat, reasonNumber, priority, actionText, supportingText)
+--insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
 
 									--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
---CREATE TABLE #patActions
---	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonCat varchar(1000), reasonNumber int, priority int, actionText varchar(1000), supportingText varchar(max));
---insert into #patActions
+IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+CREATE TABLE #patActions
+	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+insert into #patActions
 
 --CHECK REGISTERED
 select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Registered?' as actionCat,
-	'No contact' as reasonCat,
 	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	2 as priority,
 	'Check this patient is registered' as actionText,
 	'Reasoning' +
@@ -2218,23 +2270,22 @@ left outer join (select PatID, dmPatient, protPatient from #eligiblePopulationAl
 		noPrimCareContactInLastYear = 1
 
 union
-
 --MEASURE BP
 select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Measure BP' as actionCat,
-	case
-		--No BP + no contact
-		when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + no contact'
-		--No BP + contact
-		when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + contact'
-		--BP uncontrolled BUT second latest BP controlled (one-off high)
-		when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT second latest BP controlled (one-off high)'
-		--BP uncontrolled + medication change after
-		when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled + medication change after'
-		--BP uncontrolled BUT near target
-		when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT near target'
-	end as reasonCat,
+--	case
+--		--No BP + no contact
+--		when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + no contact'
+--		--No BP + contact
+--		when noPrimCareContactInLastYear = 0 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 'No BP + contact'
+--		--BP uncontrolled BUT second latest BP controlled (one-off high)
+--		when secondLatestBpControlled = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT second latest BP controlled (one-off high)'
+--		--BP uncontrolled + medication change after
+--		when latestMedOptimisationDate >= latestSbpDate and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled + medication change after'
+--		--BP uncontrolled BUT near target
+--		when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'BP uncontrolled BUT near target'
+--	end as reasonCat,
 	--No BP + no contact
 	(case when noPrimCareContactInLastYear = 1 and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 1 else 0 end) +
 	--No BP + contact
@@ -2246,6 +2297,7 @@ select a.PatID,
 	--BP uncontrolled BUT near target
 	(case when (((dmPatient = 1 or protPatient = 1) and	(b.latestSbp < 140 and b.latestDbp < 90)) or ((dmPatient = 0 and protPatient = 0) and (b.latestSbp < 150 and b.latestDbp < 100))) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 1 else 0 end)
 	as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	2 as priority,
 	'Measure this patient''s BP' as actionText,
 	'Reasoning' +
@@ -2340,59 +2392,54 @@ union
 select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Medication optimisation' as actionCat,
-	start_or_inc + ' ' + family as reasonCat,
+--	start_or_inc + ' ' + family as reasonCat,
 	reasonNumber as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	priority as priority,
 	start_or_inc + ' ' + family as actionText,
 	'Reasoning' +
 		'<ul><li>Last BP was <strong>uncontrolled</strong>: ' +
-				case
-					when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
-					else Str(latestSbp)
-				end
-			+ '/' +
-				case
-					when ((dmPatient = 1 or protPatient = 1) and (latestDbp >= 80)) or ((dmPatient = 0 and protPatient = 0) and (latestDbp >= 90)) then '<strong>' + Str(latestDbp) + '</strong>'
-					else Str(latestDbp)
-				end
-			+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+					case
+						when latestSbp >= 140 then '<strong>' + Str(latestSbp) + '</strong>'
+						else Str(latestSbp)
+					end
+				+ '/' +
+					case
+						when latestDbp >= 90 then '<strong>' + Str(latestDbp) + '</strong>'
+						else Str(latestDbp)
+					end
+				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' + 
+			case 
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li></ul>'
+			else '</ul>'
+			end	+
 			'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
-				case
-					when dmPatient = 1 then ' and diabetes'
-					when protPatient = 1 then ' and ACR &gt; 70 on ' + CONVERT(VARCHAR, b.latestAcrDate, 3)
-					else ''
-				end +
 		' (' + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') COLLATE Latin1_General_CI_AS + ').</li>'
 	+ reasonText +
 	'Useful information' +
 		'<ul><li>' + usefulInfo + '</li>' +
-		'<li>' +
-			case
-					when dmPatient = 1 then (select text from regularText where [textId] = 'linkNiceBpMxCkdDm')
-					when dmPatient = 0 then (select text from regularText where [textId] = 'linkNiceBpMxCkd')
-			end + '</li>' +
+		'<li>' + (select text from regularText where [textId] = 'linkNiceBpMxCkd') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>' as supportingText
 from #medSuggestion as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, sourceSbp, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 	left outer join (select PatID, currentMedIngredient from #htnMeds) as c on c.PatID = a.PatID
 	left outer join (select Ingredient, BNF from drugIngredients) as d on d.Ingredient = c.currentMedIngredient
 
 union
-
 --SUGGEST EXCLUDE
 select a.PatID,
 	'ckd.treatment.bp' as indicatorId,
 	'Suggest exclude' as actionCat,
-	case
-		when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate) then 'Palliative'
-		when latestFrailCode is not null then 'Frail'
-		when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate) then 'House or bed bound'
-		when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 then '3 invites'
-		when a.PatID in (select PatID from #currentHTNmeds group by PatID having count(distinct currentMedFamily) > 3) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum medication'
-		when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum tolerated medication'
-		else ''
-	end as reasonCat,
+--	case
+--		when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate) then 'Palliative'
+--		when latestFrailCode is not null then 'Frail'
+--		when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate) then 'House or bed bound'
+--		when (latestCkd3rdInviteCodeDate > DATEADD(year, -1, @achievedate)) or numberOfCkdInviteCodesThisFinancialYear > 2 then '3 invites'
+--		when a.PatID in (select PatID from #currentHTNmeds group by PatID having count(distinct currentMedFamily) > 3) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum medication'
+--		when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0) then 'Maximum tolerated medication'
+--		else ''
+--	end as reasonCat,
 	(case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate)
 	then 1 else 0 end) +
 	(case when latestFrailCode is not null
@@ -2406,6 +2453,7 @@ select a.PatID,
 	(case when a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 	then 1 else 0 end)
 	as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	3 as priority,
 	'Exclude this patient from CKD BP indicator using code(s): ' +
 	(case
@@ -2504,7 +2552,6 @@ where
 	or(a.PatID in (select PatID from #currentHTNmeds group by PatID having count(distinct currentMedFamily) > 3) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0))
 	or(a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0))
 
- 
 							---------------------------------------------------------------
 							---------------SORT ORG-LEVEL ACTION PRIORITY ORDER------------
 							---------------------------------------------------------------
@@ -2617,12 +2664,12 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 							---------------------------------------------------------------
 
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
+--insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
 
 										--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
---CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
---insert into #orgActions
+IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+insert into #orgActions
 
 --BP MACHINE IN WAITING ROOM
 select
@@ -2830,12 +2877,12 @@ where proportionId = 'uncontrolled'
 							----------------------TEXT FILE OUTPUTS------------------------
 							---------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [pingr.text] (indicatorId, textId, text)
+--insert into [pingr.text] (indicatorId, textId, text)
 
 										--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#text') IS NOT NULL DROP TABLE #text
---CREATE TABLE #text (indicatorId varchar(1000), textId varchar(1000), text varchar(max))
---insert into #text
+IF OBJECT_ID('tempdb..#text') IS NOT NULL DROP TABLE #text
+CREATE TABLE #text (indicatorId varchar(1000), textId varchar(1000), text varchar(max))
+insert into #text
 
 values
 --overview tab
@@ -2844,7 +2891,7 @@ values
 ('ckd.treatment.bp','description', --'show more' on overview tab
 	'<strong>Definition:</strong>Patients on the CKD register with a BP recorded in the last 6 months (since ' +
 		case
-			when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,YEAR(@refdate - 1)) --when today's date is before April, it's 1st October LAST year
+			when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
 			when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 			when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 		end +
@@ -2859,8 +2906,8 @@ values
 --indicator tab
 --summary text
 ('ckd.treatment.bp','tagline','of your patients on the CKD register have had a BP measurement in the 6 months (from ' +
-		case
-			when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,YEAR(@refdate - 1)) --when today's date is before April, it's 1st October LAST year
+		case											
+			when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
 			when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 			when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 		end +
@@ -2875,6 +2922,7 @@ values
 ('ckd.treatment.bp','valueId','SBP'),
 ('ckd.treatment.bp','valueName','Latest SBP'),
 ('ckd.treatment.bp','dateORvalue','value'),
+('ckd.diagnosis.undiagnosed','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('ckd.treatment.bp','tableTitle','All patients with improvement opportunities'),
 
 --imp opp charts

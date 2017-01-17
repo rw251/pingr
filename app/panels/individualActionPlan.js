@@ -298,7 +298,7 @@ var iap = {
   },
 
   displayPersonalisedIndividualActionPlan: function(id, parentElem) {
-    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans(id)));
+    var plans = base.dedupeAndSortActions(base.addDisagreePersonalTeam(log.listPlans(id)));
 
     /*base.createPanelShow(actionPlanList, parentElem, {
       "hasSuggestions": plans && plans.length > 0,

@@ -14,7 +14,7 @@
         each indicator in indicators
           tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
             td
-              strong= indicator.name
+              strong!= indicator.name
               br
               a.show-more(data-id=indicator.id)
                 | Show more 

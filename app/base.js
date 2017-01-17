@@ -264,6 +264,36 @@ var base = {
     }).modal();
   },
 
+  dedupeAndSortActions: function(actions){
+    var uniqueActions = {};
+
+    //de dupe and sum the pointsPerAction
+    actions.forEach(function(v){
+      var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+      v.pointsPerAction = +v.pointsPerAction;
+      v.actionId = actionIdFromText;
+      if(!uniqueActions[actionIdFromText]) {
+        uniqueActions[actionIdFromText] = v;
+      } else {
+        if(!uniqueActions[actionIdFromText].indicatorList) {
+          uniqueActions[actionIdFromText].indicatorList = [uniqueActions[actionIdFromText].indicatorId];
+        }
+        uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
+        uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
+        // how about numberPatients and priority
+      }
+    });
+
+    //convert back to array and sort
+    var rtn = Object.keys(uniqueActions).map(function(v){
+      return uniqueActions[v];
+    }).sort(function(a,b){
+      return b.pointsPerAction - a.pointsPerAction;
+    });
+
+    return rtn;
+  },
+
   sortSuggestions: function(suggestions) {
     suggestions.sort(function(a,b){
       return a.priority - b.priority;
