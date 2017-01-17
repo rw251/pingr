@@ -19,7 +19,7 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 -----------------------------------------------
 -- PatID 		Patient id
 -- indicatorId	Indicator id
--- why			Why this patient is flagging 
+-- why			Why this patient is flagging
 --				this indicator.
 -----------------------------------------------
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.denominators]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.denominators]
@@ -30,7 +30,7 @@ CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000), 
 ------------------------------------------------------------------------------------------
 -- PatID 			Patient id
 -- indicatorId		Indicator id
--- actionCat		Determines the bar that this belongs in on the 
+-- actionCat		Determines the bar that this belongs in on the
 --					"Patients with imp opps" chart
 -- reasonNumber		The number of reasons for this action.
 --					Could be used for prioritisation but not at present
@@ -339,7 +339,7 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] in ('dmPermEx')) then 'Resolved'
 		when ReadCode in (select code from codeGroups where [group] in ('asthmaPermEx')) then 'Resolved'
 	end as subcategory from SIR_ALL_Records
-where 
+where
 	(
 		ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx', 'dm','dmPermEx','phaeo','asthmaQof', 'asthmaPermEx','porphyria','MInow','AS','gout','addisons','whiteCoat','dmPermEx','asthmaPermEx'))
 		or ReadCode in ('1Z12.','K053.','1Z13.','K054.','1Z14.','K055.','1Z15.','1Z16.','1Z1B.','1Z1C.','1Z1D.','1Z1E.', '1Z1T.',
@@ -354,6 +354,7 @@ CREATE TABLE [output.pingr.demographics] (PatID int, nhsNumber bigint, age int, 
 insert into [output.pingr.demographics]
 select p.patid, n.nhsNumber, YEAR (@ReportDate) - year_of_birth as age, sex, gpcode from dbo.patients p
 inner join patientsNHSNumbers n on n.patid = p.patid
+where p.patid in (SELECT PatID FROM [output.pingr.denominators])
 
 SELECT 0
 RETURN
