@@ -69,7 +69,7 @@ module.exports = {
           var p = patients.map(function(patient) {
             patient = patient.toObject();
             var meas = "?";
-            if (patient.measurements && patient.measurements.length>0) {
+            if (patient.measurements && patient.measurements.length>0 && patient.measurements[0].data && patient.measurements[0].data.length>2) {
               if(indicator.measurementId === "SBP"){
                 meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
                 // for dbp use:
