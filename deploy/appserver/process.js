@@ -481,7 +481,7 @@ async.series([
             var oppText = indText.opportunities;
 
             if (!patients[+data.patientId]) {
-              console.log("Action for unknown patient: " + v.patientId);
+              console.log("Action for unknown patient: " + data.patientId);
               return;
             }
 
