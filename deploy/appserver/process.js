@@ -527,6 +527,7 @@ async.series([
                             return;
                           }
 
+                          if(!patients[+data.patientId].actions) patients[+data.patientId].actions = [];
                           if (patients[+data.patientId].actions.filter(function(v) {
                               return v.actionText === data.actionText;
                             }).length === 0) {
