@@ -84,7 +84,7 @@ var readCsvAsync = function(input, callback) {
 };
 
 var indicators = dataFile.indicators;
-var patients = {};
+var patients = dataFile.patients;
 
 var assign = function(obj, prop, value) {
   if (typeof prop === "string")
