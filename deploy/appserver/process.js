@@ -64,7 +64,7 @@ var readCsvAsync = function(input, callback) {
 };
 
 var indicators = dataFile.indicators;
-var patients = dataFile.patients;
+var patients = {};
 
 var assign = function(obj, prop, value) {
   if (typeof prop === "string")
@@ -203,11 +203,6 @@ async.series([
       console.log("2 series");
       async.map([
         { file: IN_DIR + FILENAMES.demographics, headers: ['patientId', 'nhsnumber', 'age', 'sex', 'gpcode'] },
-        { file: IN_DIR + FILENAMES.diagnoses, headers: ['patientId', 'date', 'diag', 'cat'] },
-        { file: IN_DIR + FILENAMES.medications, headers: ['patientId', 'date', 'type', 'family', 'mg', 'event'] },
-        { file: IN_DIR + FILENAMES.measurements, headers: ['patientId', 'date', 'thing', 'value', 'source'] },
-        { file: IN_DIR + FILENAMES.events, headers: ['patientId', 'date', 'event'] },
-        { file: IN_DIR + FILENAMES.contacts, headers: ['patientId', 'date', 'contact'] },
         { file: IN_DIR + FILENAMES.denominators, headers: ['patientId', 'indicatorId', 'why'] }
       ], readCsvAsync, function(err, results) {
         console.log("all files loaded");
@@ -220,230 +215,22 @@ async.series([
           temp[+v.patientId] = {};
           if (!patients[+v.patientId]) {
             patients[+v.patientId] = { patientId: +v.patientId, characteristics: { nhs: v.nhsnumber, age: v.age, sex: v.sex, practiceId: v.gpcode } };
-            patients[+v.patientId].conditions = [];
+          /*  patients[+v.patientId].conditions = [];
             patients[+v.patientId].events = [];
             patients[+v.patientId].contacts = [];
             patients[+v.patientId].measurements = [];
             patients[+v.patientId].standards = [];
             patients[+v.patientId].medications = [];
-            patients[+v.patientId].actions = [];
+            patients[+v.patientId].actions = [];*/
           }
         });
         results[0] = null;
         console.log("age, sex etc. done");
-        //diagnoses
-        results[1].forEach(function(v) {
-          if (!temp[+v.patientId]) {
-            console.log("Diagnosis for unknown patient: " + v.patientId);
-            return;
-          }
-          if (!temp[+v.patientId].diag) temp[+v.patientId].diag = {};
-          if (!temp[+v.patientId].diag[v.diag]) temp[+v.patientId].diag[v.diag] = [];
-          temp[+v.patientId].diag[v.diag].push({ date: new Date(v.date).getTime(), cat: v.cat });
-        });
-
-        Object.keys(temp).forEach(function(p) {
-          if (temp[p].diag && patients[p].conditions.filter(function(v) {
-              return Object.keys(temp[p].diag).indexOf(v.name) > -1;
-            }).length === 0) {
-            Object.keys(temp[p].diag).forEach(function(d) {
-              temp[p].diag[d].sort(function(a, b) {
-                return a.date - b.date;
-              });
-              var intervals = [];
-              var last = temp[p].diag[d].reduce(function(prev, cur) {
-                var end = new Date(cur.date);
-                end.setDate(end.getDate() - 1);
-                intervals.push({
-                  from: prev.date,
-                  to: end.getTime(),
-                  label: prev.cat || ""
-                });
-                return cur;
-              });
-              intervals.push({
-                from: last.date,
-                to: new Date().getTime(),
-                label: last.cat
-              });
-              patients[p].conditions.push({
-                name: d,
-                intervals: intervals
-              });
-            });
-          }
-        });
-        results[1] = null;
-        console.log("diagnoses done");
-        //medications
-        results[2].forEach(function(v) {
-          if (!temp[+v.patientId]) {
-            console.log("Medication for unknown patient: " + v.patientId);
-            return;
-          }
-          if (!temp[+v.patientId].meds) temp[+v.patientId].meds = {};
-          if (!temp[+v.patientId].meds[v.type]) temp[+v.patientId].meds[v.type] = [];
-          temp[+v.patientId].meds[v.type].push({ date: new Date(v.date).getTime(), type: v.type, family: v.family, mg: v.mg, event: v.event });
-        });
-
-        Object.keys(temp).forEach(function(p) {
-          if (temp[p].meds && patients[p].medications.filter(function(v) {
-              return Object.keys(temp[p].meds).indexOf(v.name) > -1;
-            }).length === 0) {
-            Object.keys(temp[p].meds).forEach(function(d) {
-              temp[p].meds[d].sort(function(a, b) {
-                return a.date - b.date;
-              });
-              var intervals = [];
-              var last = temp[p].meds[d].reduce(function(prev, cur) {
-                var end = new Date(cur.date);
-                end.setDate(end.getDate() - 1);
-                if (prev) {
-                  intervals.push({
-                    from: prev.date,
-                    to: end.getTime(),
-                    label: prev.mg + "mg" || ""
-                  });
-                }
-                return d.event === "STOPPED" ? null : cur;
-              });
-              if (last) {
-                intervals.push({
-                  from: last.date,
-                  to: new Date().getTime(),
-                  label: last.mg + "mg" || ""
-                });
-              }
-              patients[p].medications.push({
-                name: d,
-                intervals: intervals
-              });
-            });
-          }
-        });
-        results[2] = null;
-        console.log("medications done");
-
-        //measurements
-        results[3].forEach(function(v) {
-          if (!temp[+v.patientId]) {
-            console.log("Measure for unknown patient: " + v.patientId);
-            return;
-          }
-          if (!temp[+v.patientId].meas) temp[+v.patientId].meas = {};
-          if (["SBP", "DBP"].indexOf(v.thing) > -1) {
-            if (!temp[+v.patientId].meas.BP) temp[+v.patientId].meas.BP = [];
-            temp[+v.patientId].meas.BP.push({ date: new Date(v.date).getTime(), value: parseInt(v.value), thing: v.thing, source: v.source });
-          } else if (v.thing === "BP") {
-            return;
-          } else {
-            if (!temp[+v.patientId].meas[v.thing]) temp[+v.patientId].meas[v.thing] = [];
-            temp[+v.patientId].meas[v.thing].push({ date: new Date(v.date).getTime(), value: parseFloat(v.value), source: v.source });
-          }
-
-        });
-
-        var tempbp = {};
-
-        Object.keys(temp).forEach(function(p) {
-          if (temp[p].meas && patients[p].measurements.filter(function(v) {
-              return Object.keys(temp[p].meas).indexOf(v.id) > -1;
-            }).length === 0) {
-            Object.keys(temp[p].meas).forEach(function(d) {
-              temp[p].meas[d].sort(function(a, b) {
-                return a.date - b.date;
-              });
-              var mData = [];
-              if (d === "BP") {
-                var lastdate;
-                var sbp, dbp;
-                for (var i = 0; i < temp[p].meas[d].length; i++) {
-                  if (lastdate === temp[p].meas[d][i].date) {
-                    if (temp[p].meas[d][i].thing === "SBP") {
-                      sbp = +temp[p].meas[d][i].value;
-                    } else {
-                      dbp = +temp[p].meas[d][i].value;
-                    }
-                    if (sbp && dbp) {
-                      mData.push([lastdate, temp[p].meas[d][i].source, sbp, dbp]);
-                      sbp = null;
-                      dbp = null;
-                      lastdate = null;
-                    }
-                  } else {
-                    sbp = null;
-                    dbp = null;
-                    lastdate = temp[p].meas[d][i].date;
-                    if (temp[p].meas[d][i].thing === "SBP") {
-                      sbp = temp[p].meas[d][i].value;
-                    } else {
-                      dbp = temp[p].meas[d][i].value;
-                    }
-                  }
-                }
-
-                patients[p].measurements.push({
-                  "id": d,
-                  "name": "BP",
-                  "data": mData,
-                  "unit": "mmHg",
-                  "type": "errorbar",
-                  "valueDecimals": 0
-                });
-              } else {
-                temp[p].meas[d].forEach(function(v) {
-                  mData.push([v.date, v.source, +v.value]);
-                });
-
-                patients[p].measurements.push({
-                  "id": d,
-                  "name": textFile.measurements[d].name,
-                  "data": mData,
-                  "unit": textFile.measurements[d].unit,
-                  "type": textFile.measurements[d].type,
-                  "valueDecimals": textFile.measurements[d].valueDecimals
-                });
-              }
-            });
-          }
-        });
-        results[3] = null;
-        console.log("measurements done");
-
-
-        //events
-        results[4].forEach(function(v) {
-          if (!patients[+v.patientId]) console.log("Event without patient:" + JSON.stringify(v));
-          else {
-            patients[+v.patientId].events.push({
-              name: v.event,
-              time: new Date(v.date).getTime(),
-              task: 1
-            });
-          }
-        });
-        results[4] = null;
-        console.log("events done");
-
-        //contacts
-        results[5].forEach(function(v) {
-          if (!temp[+v.patientId]) {
-            console.log("Contact for unknown patient: " + v.patientId);
-            return;
-          }
-          patients[+v.patientId].contacts.push({
-            name: v.contact,
-            time: new Date(v.date).getTime(),
-            task: 2
-          });
-        });
-        results[5] = null;
-        console.log("contacts done");
 
         //denominator
-        results[6].forEach(function(v) {
+        results[1].forEach(function(v) {
           if (!temp[+v.patientId]) {
-            console.log("Indicator for unknown patient: " + v.patientId);
+            console.log("Denominator for unknown patient: " + v.patientId);
             return;
           }
           var pathway = v.indicatorId.split('.')[0];
@@ -453,10 +240,11 @@ async.series([
           var indText = textFile.pathways[pathway][stage].standards[standard];
           var item = { display: indText.tabText, targetMet: true };
           if(v.why && v.why !=="") item.why = v.why;
+          if(!patients[+v.patientId].standards) patients[+v.patientId].standards = [];
           patients[+v.patientId].standards.push(item);
         });
-        results[6] = null;
-        console.log("indicators done");
+        results[1] = null;
+        console.log("denominators done");
 
         indicators.forEach(function(v) {
           v.opportunities.forEach(function(vv, ix) {
