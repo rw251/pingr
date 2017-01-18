@@ -354,7 +354,6 @@ CREATE TABLE [output.pingr.demographics] (PatID int, nhsNumber bigint, age int, 
 insert into [output.pingr.demographics]
 select p.patid, n.nhsNumber, YEAR (@ReportDate) - year_of_birth as age, sex, gpcode from dbo.patients p
 inner join patientsNHSNumbers n on n.patid = p.patid
-where p.patid in (SELECT PatID FROM [output.pingr.denominators])
 
 SELECT 0
 RETURN
