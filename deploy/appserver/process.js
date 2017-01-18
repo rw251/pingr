@@ -64,18 +64,18 @@ var readCsvAsyncToObject = function(input, callback) {
 };
 
 //for files of the form PatID, Date, Thing
-var readCsvAsync = function(input, thing, task, callback) {
+var readCsvAsync = function(input, callback) {
   var obj = [];
   fs.createReadStream(input.file)
     .pipe(csv({ separator: '\t', headers: ['patientId', 'date', 'thing'] }))
     .on('data', function(data) {
-      if (!patients[data.patientId]) console.log(thing + " without patient:" + JSON.stringify(data));
+      if (!patients[+data.patientId]) console.log(input.thing + " without patient:" + JSON.stringify(data));
       else {
-        if (!patients[data.patientId][thing]) patients[data.patientId][thing] = [];
-        patients[+data.patientId][thing].push({
+        if (!patients[+data.patientId][input.thing]) patients[+data.patientId][input.thing] = [];
+        patients[+data.patientId][input.thing].push({
           name: data.thing,
           time: new Date(data.date).getTime(),
-          task: task
+          task: input.task
         });
       }
     })
