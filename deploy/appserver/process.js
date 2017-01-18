@@ -48,7 +48,7 @@ var textFile = {
 
 var messages = [];
 
-var readCsvAsync = function(input, callback) {
+var readCsvAsyncToObject = function(input, callback) {
   var obj = [];
   fs.createReadStream(input.file)
     .pipe(csv({ separator: '\t', headers: input.headers }))
@@ -61,6 +61,26 @@ var readCsvAsync = function(input, callback) {
     })
     .on('err', function(err) { callback(err); })
     .on('end', function() { callback(null, obj); });
+};
+
+//for files of the form PatID, Date, Thing
+var readCsvAsync = function(input, thing, task, callback) {
+  var obj = [];
+  fs.createReadStream(input.file)
+    .pipe(csv({ separator: '\t', headers: ['patientId', 'date', 'thing'] }))
+    .on('data', function(data) {
+      if (!patients[data.patientId]) console.log(thing + " without patient:" + JSON.stringify(data));
+      else {
+        if (!patients[data.patientId][thing]) patients[data.patientId][thing] = [];
+        patients[+data.patientId][thing].push({
+          name: data.thing,
+          time: new Date(data.date).getTime(),
+          task: task
+        });
+      }
+    })
+    .on('err', function(err) { callback(err); })
+    .on('end', function() { callback(null); });
 };
 
 var indicators = dataFile.indicators;
@@ -133,7 +153,7 @@ async.series([
                 measurementId: indText.valueId,
                 benchmark: data.benchmark,
                 displayDate: indText.dateORvalue === "date",
-                sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0]==="a" : "desc",
+                sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
                 name: indText.name,
                 description: indText.description,
                 values: [["x"], ["numerator"], ["denominator"], ["target"]],
@@ -204,7 +224,7 @@ async.series([
       async.map([
         { file: IN_DIR + FILENAMES.demographics, headers: ['patientId', 'nhsnumber', 'age', 'sex', 'gpcode'] },
         { file: IN_DIR + FILENAMES.denominators, headers: ['patientId', 'indicatorId', 'why'] }
-      ], readCsvAsync, function(err, results) {
+      ], readCsvAsyncToObject, function(err, results) {
         console.log("all files loaded");
         if (err) {
           return callback(err);
@@ -215,13 +235,13 @@ async.series([
           temp[+v.patientId] = {};
           if (!patients[+v.patientId]) {
             patients[+v.patientId] = { patientId: +v.patientId, characteristics: { nhs: v.nhsnumber, age: v.age, sex: v.sex, practiceId: v.gpcode } };
-          /*  patients[+v.patientId].conditions = [];
-            patients[+v.patientId].events = [];
-            patients[+v.patientId].contacts = [];
-            patients[+v.patientId].measurements = [];
-            patients[+v.patientId].standards = [];
-            patients[+v.patientId].medications = [];
-            patients[+v.patientId].actions = [];*/
+            /*  patients[+v.patientId].conditions = [];
+              patients[+v.patientId].events = [];
+              patients[+v.patientId].contacts = [];
+              patients[+v.patientId].measurements = [];
+              patients[+v.patientId].standards = [];
+              patients[+v.patientId].medications = [];
+              patients[+v.patientId].actions = [];*/
           }
         });
         results[0] = null;
@@ -239,175 +259,186 @@ async.series([
 
           var indText = textFile.pathways[pathway][stage].standards[standard];
           var item = { display: indText.tabText, targetMet: true };
-          if(v.why && v.why !=="") item.why = v.why;
-          if(!patients[+v.patientId].standards) patients[+v.patientId].standards = [];
+          if (v.why && v.why !== "") item.why = v.why;
+          if (!patients[+v.patientId].standards) patients[+v.patientId].standards = [];
           patients[+v.patientId].standards.push(item);
         });
         results[1] = null;
         console.log("denominators done");
 
-        indicators.forEach(function(v) {
-          v.opportunities.forEach(function(vv, ix) {
-            v.opportunities[ix].patients = [];
-          });
-          v.actions=[];
-        });
+        async.map([
+          { file: IN_DIR + FILENAMES.events, thing: 'events', task: 1 },
+          { file: IN_DIR + FILENAMES.contacts, thing: 'contacts', task: 2 }
+        ], readCsvAsync, function(err) {
+          console.log("events and contacts processed");
+          if (err) {
+            return callback(err);
+          }
 
-        fs.createReadStream(IN_DIR + FILENAMES.patientActions)
-          .pipe(
-            csv({
-              separator: '\t',
-              headers: ['patientId','indicatorId','actionCat','reasonNumber','pointsPerAction', 'priority', 'actionText', 'supportingText']
-            })
-          )
-          .on('data', function(data) {
-            var pathway = data.indicatorId.split('.')[0];
-            var stage = data.indicatorId.split('.')[1];
-            var standard = data.indicatorId.split('.')[2];
 
-            var indText = textFile.pathways[pathway][stage].standards[standard];
-            var oppText = indText.opportunities;
-
-            if (!patients[+data.patientId]) {
-              console.log("Action for unknown patient: " + data.patientId);
-              return;
-            }
-
-            if (patients[+data.patientId].actions.filter(function(v) {
-                return v.actionText === data.actionText;
-              }).length === 0) {
-              patients[+data.patientId].actions.push({
-                indicatorId: data.indicatorId,
-                actionCat: data.actionCat,
-                reasonNumber: data.reasonNumber,
-                pointsPerAction: data.pointsPerAction,
-                priority: data.priority,
-                actionText: data.actionText,
-                supportingText: data.supportingText
-              });
-            }
-
-            var patientsStandard = patients[+data.patientId].standards.filter(function(v) {
-              return v.display === indText.tabText;
+          indicators.forEach(function(v) {
+            v.opportunities.forEach(function(vv, ix) {
+              v.opportunities[ix].patients = [];
             });
-            if (patientsStandard.length === 0) {
-              console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
-              patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
-            } else if (patientsStandard.length > 1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
-            else patientsStandard[0].targetMet = false;
-
-            var i = indicators.filter(function(v) {
-              return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
-            })[0];
-
-            if (!i) {
-              console.log("no indicator for" + JSON.stringify(data));
-              return;
-            }
-            if (!i.opportunities) i.opportunities = [];
-
-            var opp = i.opportunities.filter(function(v) {
-              return v.id === data.actionCat;
-            })[0];
-            if (!opp) {
-              if (!oppText[data.actionCat]) oppText[data.actionCat] = {};
-              console.log(data.actionCat);
-              opp = { id: data.actionCat, name: oppText[data.actionCat].name, positionInBarChart: oppText[data.actionCat].positionInBarChart, description: oppText[data.actionCat].description, patients: [] };
-              i.opportunities.push(opp);
-              i.opportunities.sort(function(a, b) {
-                return a.positionInBarChart - b.positionInBarChart;
-              });
-            }
-            if (opp.patients.indexOf(+data.patientId) === -1) opp.patients.push(+data.patientId);
-          })
-          .on('end', function() {
-
-            console.log("opps done");
-
-            //now for the orgactions
-            fs.createReadStream(IN_DIR + FILENAMES.orgActions)
-              .pipe(
-                csv({
-                  separator: '\t',
-                  headers: ['practiceId', 'indicatorId', 'actionId', 'proportion', 'numberPatients', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
-                })
-              ) //NEED practiceId, actionId and priority
-              .on('data', function(data) {
-
-                var i = indicators.filter(function(v) {
-                  return v.id === data.indicatorId && v.practiceId === data.practiceId;
-                })[0];
-
-                if(!i) {
-                  console.log("hmm - an org action for an as yet unknown indicator or practice...");
-                  console.log("Indicator: " + data.indicatorId);
-                  console.log("Practice : " + data.practiceId);
-                  return;
-                }
-
-                if(!i.actions) i.actions = [];
-
-                i.actions.push({
-                  id: data.actionId,
-                  indicatorId: data.indicatorId,
-                  actionText: data.actionText,
-                  supportingText: data.supportingText,
-                  numberPatients: data.numberPatients,
-                  pointsPerAction: data.pointsPerAction,
-                  priority: data.priority
-                });
-              })
-              .on('end', function() {
-                //Deduplicate contacts
-                /*console.log("Removing duplicate contacts...");
-                Object.keys(patients).forEach(function(pid) {
-                  var item, tempContact = {},
-                    i, n;
-                  for (i = 0, n = patients[pid].contacts.length; i < n; i++) {
-                    item = patients[pid].contacts[i];
-                    tempContact[item.name + item.time] = item;
-                  }
-                  i = 0;
-                  var nonDuplicatedArray = [];
-                  for (item in tempContact) {
-                    nonDuplicatedArray[i++] = tempContact[item];
-                  }
-                  patients[pid].contacts = nonDuplicatedArray;
-                  console.log(pid + ": " + n + " contacts reduced to " + patients[pid].contacts.length);
-                });
-                console.log("Duplicate contacts removed.");*/
-
-                dataFile.text = textFile;
-
-
-                fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
-
-
-                dataFile.patients = Object.keys(dataFile.patients).map(function(v) {
-                  return dataFile.patients[v];
-                });
-
-                var file = fs.createWriteStream(OUT_DIR + 'patients.json');
-                file.on('error', function(err) { /* error handling */ });
-                dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
-                file.end();
-
-                fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
-
-                if (messages.length > 0) {
-                  console.log();
-                  console.log("################");
-                  console.log("## WARNING!!! ##");
-                  console.log("################");
-                  console.log();
-                  console.log("The following errors were detected and should be investigated:");
-                  console.log();
-                  messages.forEach(function(msg) {
-                    console.warn(msg);
-                  });
-                }
-              });
+            v.actions = [];
           });
+
+          fs.createReadStream(IN_DIR + FILENAMES.patientActions)
+            .pipe(
+              csv({
+                separator: '\t',
+                headers: ['patientId', 'indicatorId', 'actionCat', 'reasonNumber', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
+              })
+            )
+            .on('data', function(data) {
+              var pathway = data.indicatorId.split('.')[0];
+              var stage = data.indicatorId.split('.')[1];
+              var standard = data.indicatorId.split('.')[2];
+
+              var indText = textFile.pathways[pathway][stage].standards[standard];
+              var oppText = indText.opportunities;
+
+              if (!patients[+data.patientId]) {
+                console.log("Action for unknown patient: " + data.patientId);
+                return;
+              }
+
+              if (patients[+data.patientId].actions.filter(function(v) {
+                  return v.actionText === data.actionText;
+                }).length === 0) {
+                patients[+data.patientId].actions.push({
+                  indicatorId: data.indicatorId,
+                  actionCat: data.actionCat,
+                  reasonNumber: data.reasonNumber,
+                  pointsPerAction: data.pointsPerAction,
+                  priority: data.priority,
+                  actionText: data.actionText,
+                  supportingText: data.supportingText
+                });
+              }
+
+              var patientsStandard = patients[+data.patientId].standards.filter(function(v) {
+                return v.display === indText.tabText;
+              });
+              if (patientsStandard.length === 0) {
+                console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
+                patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
+              } else if (patientsStandard.length > 1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
+              else patientsStandard[0].targetMet = false;
+
+              var i = indicators.filter(function(v) {
+                return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
+              })[0];
+
+              if (!i) {
+                console.log("no indicator for" + JSON.stringify(data));
+                return;
+              }
+              if (!i.opportunities) i.opportunities = [];
+
+              var opp = i.opportunities.filter(function(v) {
+                return v.id === data.actionCat;
+              })[0];
+              if (!opp) {
+                if (!oppText[data.actionCat]) oppText[data.actionCat] = {};
+                console.log(data.actionCat);
+                opp = { id: data.actionCat, name: oppText[data.actionCat].name, positionInBarChart: oppText[data.actionCat].positionInBarChart, description: oppText[data.actionCat].description, patients: [] };
+                i.opportunities.push(opp);
+                i.opportunities.sort(function(a, b) {
+                  return a.positionInBarChart - b.positionInBarChart;
+                });
+              }
+              if (opp.patients.indexOf(+data.patientId) === -1) opp.patients.push(+data.patientId);
+            })
+            .on('end', function() {
+
+              console.log("opps done");
+
+              //now for the orgactions
+              fs.createReadStream(IN_DIR + FILENAMES.orgActions)
+                .pipe(
+                  csv({
+                    separator: '\t',
+                    headers: ['practiceId', 'indicatorId', 'actionId', 'proportion', 'numberPatients', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
+                  })
+                ) //NEED practiceId, actionId and priority
+                .on('data', function(data) {
+
+                  var i = indicators.filter(function(v) {
+                    return v.id === data.indicatorId && v.practiceId === data.practiceId;
+                  })[0];
+
+                  if (!i) {
+                    console.log("hmm - an org action for an as yet unknown indicator or practice...");
+                    console.log("Indicator: " + data.indicatorId);
+                    console.log("Practice : " + data.practiceId);
+                    return;
+                  }
+
+                  if (!i.actions) i.actions = [];
+
+                  i.actions.push({
+                    id: data.actionId,
+                    indicatorId: data.indicatorId,
+                    actionText: data.actionText,
+                    supportingText: data.supportingText,
+                    numberPatients: data.numberPatients,
+                    pointsPerAction: data.pointsPerAction,
+                    priority: data.priority
+                  });
+                })
+                .on('end', function() {
+                  //Deduplicate contacts
+                  /*console.log("Removing duplicate contacts...");
+                  Object.keys(patients).forEach(function(pid) {
+                    var item, tempContact = {},
+                      i, n;
+                    for (i = 0, n = patients[pid].contacts.length; i < n; i++) {
+                      item = patients[pid].contacts[i];
+                      tempContact[item.name + item.time] = item;
+                    }
+                    i = 0;
+                    var nonDuplicatedArray = [];
+                    for (item in tempContact) {
+                      nonDuplicatedArray[i++] = tempContact[item];
+                    }
+                    patients[pid].contacts = nonDuplicatedArray;
+                    console.log(pid + ": " + n + " contacts reduced to " + patients[pid].contacts.length);
+                  });
+                  console.log("Duplicate contacts removed.");*/
+
+                  dataFile.text = textFile;
+
+
+                  fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
+
+
+                  dataFile.patients = Object.keys(dataFile.patients).map(function(v) {
+                    return dataFile.patients[v];
+                  });
+
+                  var file = fs.createWriteStream(OUT_DIR + 'patients.json');
+                  file.on('error', function(err) { /* error handling */ });
+                  dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
+                  file.end();
+
+                  fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
+
+                  if (messages.length > 0) {
+                    console.log();
+                    console.log("################");
+                    console.log("## WARNING!!! ##");
+                    console.log("################");
+                    console.log();
+                    console.log("The following errors were detected and should be investigated:");
+                    console.log();
+                    messages.forEach(function(msg) {
+                      console.warn(msg);
+                    });
+                  }
+                });
+            });
+        });
       });
     }],
   // optional callback
