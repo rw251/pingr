@@ -385,7 +385,7 @@ async.series([
                     lastPatId = +data.patientId;
                   }
                   if (!patients[lastPatId]) {
-                    console.log("Medication for unknown patient: " + patientId);
+                    console.log("Medication for unknown patient: " + lastPatId);
                     return;
                   }
                   if (!temp.meds) temp.meds = {};
@@ -479,7 +479,7 @@ async.series([
                         lastPatId = +data.patientId;
                       }
                       if (!patients[lastPatId]) {
-                        console.log("Measure for unknown patient: " + patientId);
+                        console.log("Measure for unknown patient: " + lastPatId);
                         return;
                       }
                       if (!temp.meas) temp.meas = {};
