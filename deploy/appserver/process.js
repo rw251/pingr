@@ -542,9 +542,9 @@ async.series([
                             });
                           }
 
-                          var patientsStandard = patients[+data.patientId].standards.filter(function(v) {
+                          var patientsStandard = patients[+data.patientId].standards ? patients[+data.patientId].standards.filter(function(v) {
                             return v.display === indText.tabText;
-                          });
+                          }) : [];
                           if (patientsStandard.length === 0) {
                             console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
                             patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
