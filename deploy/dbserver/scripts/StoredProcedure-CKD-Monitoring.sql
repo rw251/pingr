@@ -318,9 +318,12 @@ from #indicator);
 --set @numerator = (select COUNT(*) from #indicator where underMonitored is NULL and overMonitored is NULL);
 --set @denominator = (select COUNT(*) from #indicator);
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+
 --select CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
-select 'ckd.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, NULL as numerator, NULL as denominator, 0.75 as target, @val from #indicator as a
+--CCG view
+select 'ckd.diagnosis.monitoring', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when underMonitored is NULL and overMonitored is NULL then 1 else 0 end) as numerator, COUNT(*) as denominator, 0.75 as target, @val from #indicator as a
 union
+--Practice view
 select 'ckd.diagnosis.monitoring',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when underMonitored is NULL and overMonitored is NULL then 1 else 0 end) as numerator, COUNT(*) as denominator, 0.75 as target, @val from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID

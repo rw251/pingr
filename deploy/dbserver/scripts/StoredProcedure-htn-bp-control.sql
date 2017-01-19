@@ -527,9 +527,11 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
-select 'ckd.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, NULL as numerator, NULL as denominator, @target, @abc from #eligiblePopulationAllData as a
+--CCG view
+select 'htn.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
 union
-select 'htn.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, 0.80 as target, @abc from #eligiblePopulationAllData as a
+--Individual practice views
+select 'htn.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
 
@@ -550,7 +552,7 @@ select PatID, 'htn.treatment.bp',
 		when bpMeasuredOK = 0 then 
 			'<ul><li>Patient is on hypertension register.</li>
 			<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
-			<li>Salford Standards recommend BP should be measured every 12 months from April.</li></ul>' -- since ' +
+			<li>NICE recommends BP should be measured every 12 months from April.</li></ul>' -- since ' +
 --				case
 --					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,YEAR(@refdate - 1)) --when today's date is before April, it's 1st October LAST year
 --					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
@@ -2835,9 +2837,9 @@ select
 		'<ul><li>'  + (select text from regularText where textId = 'linkBhsHbpmProtocol') + '</li>' +
 		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmHowToPatients') + '</li>' +
 		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmPil') + '</li>' +
-		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmDiary') + '</li>' +
-		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmGuide') + '</li>' +
-		'<li>'  + (select text from regularText where textId = 'linkBhsHbpmCaseStudies') + '</li>' +
+		--'<li>'  + (select text from regularText where textId = 'linkBhsHbpmDiary') + '</li>' +
+		--'<li>'  + (select text from regularText where textId = 'linkBhsHbpmGuide') + '</li>' +
+		--'<li>'  + (select text from regularText where textId = 'linkBhsHbpmCaseStudies') + '</li>' +
 		'</ul>'
 		as supportingText
 from #reasonProportions
