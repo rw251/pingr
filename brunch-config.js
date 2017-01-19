@@ -23,15 +23,15 @@ module.exports = {
       }
     },
     stylesheets: {
-      joinTo: {
-        'app.css' : /^app\/styles\/style/,
-        'ct_dash.css' : /^app\/styles\/dash/
+      joinTo: 'app.css',
+      order: {
+        before: ['vendor/styles/bootstrap.scss']
       }
     },
 
     templates: {
       joinTo: 'app.js'
-      
+
     }
   }
 };

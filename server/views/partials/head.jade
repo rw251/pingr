@@ -14,28 +14,22 @@ head
   // fonts
   
   // jQuery from CDN - *b* moved from footer because it is loaded late in some instances  
+  //script(src='https://code.jquery.com/jquery-3.1.1.min.js', integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=', crossorigin='anonymous')  
   script(src='https://code.jquery.com/jquery-1.12.3.min.js', integrity='sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=', crossorigin='anonymous') 
   
 
   // bootstrap
-  link(href='/assets/css/bootstrap/bootstrap.css', rel='stylesheet', type='text/css')
+  //link(href='/assets/css/bootstrap/bootstrap.css', rel='stylesheet', type='text/css')
   // ct_dash after bootstrap
-  link(href='/ct_dash.css', rel='stylesheet', type='text/css')
+  //link(href='/ct_dash.css', rel='stylesheet', type='text/css')
   // My styling after everything
   link(href='/app.css', rel='stylesheet', type='text/css')
   
   //intro.js styling -non production css - TODO swap for min after testing
   link(href='/css/introjs/introjs.css', rel='stylesheet', type='text/css')
   
-  //intro.js script -non production js - TODO swap for min after testing
-  script(src='/js/introjs/intro.js')
-  
-  
-  // jQuery from CDN - *b* moved from footer because it is loaded late in some instances 
-  script(src='https://code.jquery.com/jquery-1.12.3.min.js', integrity='sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=', crossorigin='anonymous')
   // HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries
   // WARNING: Respond.js doesn't work if you view the page via file://
-  <!--[if lt IE 9]> 
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+  
+  <!--[if lt IE 9]><script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script><![endif]-->
+  <!--[if lt IE 9]><script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->

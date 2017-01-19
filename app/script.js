@@ -22,7 +22,7 @@ var template = require('./template'),
 
 var App = {
   init: function init() {
-    $(window).load(function() {
+    $(window).on("load", function() {
       $('.loading-container').fadeOut(1000, function() {
         //$(this).remove();
       });
