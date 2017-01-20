@@ -3,13 +3,22 @@
     thead
       tr
         th Quality indicator
-        th Target met?
+        th Target met? (Hover for reason)
+        th
+          if indicatorId
+            a.btn.btn-info(href='/#patient/'+patientId) Show all actions
     tbody
       each standard in standards
         tr(class=standard.targetMet ? 'success' : 'danger')
           td= standard.display
           td
             if standard.targetMet
-              i.fa.fa-check.text-success
+              i.fa.fa-check.text-success(data-toggle='tooltip', data-placement='right', title=standard.why)
             else
-              i.fa.fa-times.text-danger
+              i.fa.fa-times.text-danger(data-toggle='tooltip', data-placement='right', title=standard.why)
+          td
+            if standard.indicatorId === indicatorId
+              span Currently showing actions for this indicator
+            else 
+              if !standard.targetMet
+                a.btn.btn-info(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator

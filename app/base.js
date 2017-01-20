@@ -280,12 +280,12 @@ var base = {
     actions.forEach(function(v){
       var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
       v.pointsPerAction = +v.pointsPerAction;
-      v.indicatorList = [base.getShortTextForIndicator(v.indicatorId)];
+      v.indicatorList = [v.indicatorId];
       v.actionId = actionIdFromText;
       if(!uniqueActions[actionIdFromText]) {
         uniqueActions[actionIdFromText] = v;
       } else {
-        uniqueActions[actionIdFromText].indicatorList.push(base.getShortTextForIndicator(v.indicatorId));
+        uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
         uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
         // how about numberPatients and priority
       }

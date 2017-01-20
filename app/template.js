@@ -51,7 +51,7 @@ var template = {
         indicatorView.create(urlBits[1], urlBits[2], urlBits[3], params.tab || "trend", template.loadContent);
 
       } else if (urlBits[0] === "#help") {
-        layout.view="HELP";
+        layout.view = "HELP";
         lookup.suggestionModalText = "Screen: Help\n===========\n";
         base.clearBox();
         base.selectTab("");
@@ -60,7 +60,7 @@ var template = {
         layout.showHeaderBarItems();
 
       } else if (urlBits[0] === "#contact") {
-        layout.view="CONTACT";
+        layout.view = "CONTACT";
         lookup.suggestionModalText = "Screen: Contact us\n===========\n";
         base.clearBox();
         base.selectTab("");
@@ -77,7 +77,7 @@ var template = {
 
         patientId = urlBits[1];
 
-        patientView.create(null, null, null, patientId, template.loadContent);
+        patientView.create(urlBits[2], urlBits[3], urlBits[4], patientId, template.loadContent);
 
       } else if (urlBits[0] === "#agreedactions") {
 
@@ -90,7 +90,7 @@ var template = {
         base.wireUpTooltips();
       }
 
-      $('#suggs').off('click').on('click', function(e){
+      $('#suggs').off('click').on('click', function(e) {
         base.launchSuggestionModal();
         e.preventDefault();
       });

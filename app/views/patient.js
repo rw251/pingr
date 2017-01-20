@@ -73,7 +73,7 @@ var pv = {
           data.pathwayId = pathwayId;
 
           patientSearch.show($('#title-right'), true, loadContentFn);
-          qualityStandards.show(farRightPanel, false, patientId);
+          qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
 
           lifeline.show(farRightPanel, true, patientId, patientData);
           individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);

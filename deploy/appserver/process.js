@@ -271,7 +271,7 @@ async.series([
 
           checkTextFile(pathway, stage, standard, FILENAMES.denominators);
           var indText = textFile.pathways[pathway][stage].standards[standard];
-          var item = { display: indText.tabText, targetMet: true };
+          var item = { indicatorId: v.indicatorId, display: indText.tabText, targetMet: true };
           if (v.why && v.why !== "") item.why = v.why;
           if (!patients[+v.patientId].standards) patients[+v.patientId].standards = [];
           patients[+v.patientId].standards.push(item);

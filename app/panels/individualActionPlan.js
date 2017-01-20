@@ -5,12 +5,20 @@ var base = require('../base.js'),
 
 var iap = {
 
-  create: function(nhs) {
-    return require("templates/individual-action-plan")({nhs:nhs});
+  create: function(nhs, pathwayId, pathwayStage, standard) {
+	var dataObj = {nhs:nhs};
+	console.log(pathwayId, pathwayStage, standard);
+	if(data.text.pathways[pathwayId] && data.text.pathways[pathwayId][pathwayStage] && data.text.pathways[pathwayId][pathwayStage].standards[standard]) {
+	  dataObj.indicator = data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText;
+	  console.log(dataObj.indicator);
+	} else {
+	  dataObj.indicator = null;
+	}
+    return require("templates/individual-action-plan")(dataObj);
   },
 
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
-    panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId));
+    panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId, pathwayId, pathwayStage, standard));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
 
     panel.find('div.fit-to-screen-height').niceScroll({
@@ -206,7 +214,7 @@ var iap = {
     $('#advice-list').on('click', '.show-more', function(e) {
       var id = $(this).data("id");
       var elem = $('.show-more-row[data-id="' + id + '"]');
-      if(elem.is(':visible')){
+      if (elem.is(':visible')) {
         $('.show-more[data-id="' + id + '"]:first').show();
         elem.hide();
       } else {
@@ -220,8 +228,8 @@ var iap = {
     });
 
     $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
-    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e){
-      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
+    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e) {
+      log.event("nice-link-clicked", window.location.hash, [{ key: "link", value: e.currentTarget.href }]);
       e.stopPropagation();
     });
 
@@ -327,10 +335,6 @@ var iap = {
 
     var patientData = data.getPatientData(patientId);
 
-    var breaches = data.patients[patientId].breach ? data.patients[patientId].breach.filter(function(v) {
-      return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
-    }) : [];
-
     var fn = function(val) {
       return {
         "id": val,
@@ -338,21 +342,19 @@ var iap = {
       };
     };
 
-    if (patientData.actions.length === 0) {
+    if (patientData.actions.length === 0 || (pathwayId && pathwayStage && standard && patientData.actions.filter(function(v){
+      return v.indicatorId === [pathwayId, pathwayStage, standard].join(".");
+    }).length===0)) {
       localData.noSuggestions = true;
     } else {
-      /*var suggestions = [],
-        subsection = "";
-      for (var i = 0; i < breaches.length; i++) {
-        subsection = breaches[i].subsection;
-        suggestions = suggestions.concat(data[pathwayId][pathwayStage].bdown[subsection].suggestions ?
-          data[pathwayId][pathwayStage].bdown[subsection].suggestions.map(fn) : []);
-      }*/
 
       localData.suggestions = base.dedupeAndSortActions(base.mergeIndividualStuff(patientData.actions, patientId));
 
-      localData.suggestions.map(function(v){
-        v.id = v.actionText.replace(/[^A-Za-z0-9]/g,"");
+      localData.suggestions = localData.suggestions.filter(function(v) {
+        if(!pathwayId || !pathwayStage || !standard) return true;
+        return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join("."))>-1;
+      }).map(function(v) {
+        v.id = v.actionText.replace(/[^A-Za-z0-9]/g, "");
         return v;
       });
       /*localData.section = {
