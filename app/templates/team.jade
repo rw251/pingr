@@ -32,10 +32,14 @@ else
           tr.show-more-row(data-id=suggestion.actionId, class=alt ? 'alternate-row': '')
             td(colspan='2')
               != suggestion.supportingText
+              |Relevant indicators:
+              ul
+                each indicator in suggestion.indicatorList
+                  li= indicator
+              small= "Points: " + suggestion.pointsPerAction.toFixed(1)
               br
               a.show-more(data-id=suggestion.actionId)
                 | Show less 
                 i.fa.fa-caret-up
-              small.v-small= suggestion.pointsPerAction
         - alt = !alt
 include mixins/personal-action-plan

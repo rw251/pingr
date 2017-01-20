@@ -264,6 +264,15 @@ var base = {
     }).modal();
   },
 
+  getShortTextForIndicator: function(indicator) {
+    var bits = indicator.split(".");
+    if(data.text.pathways[bits[0]] &&data.text.pathways[bits[0]][bits[1]] && data.text.pathways[bits[0]][bits[1]].standards[bits[2]]) {
+      return data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText;
+    } else {
+      return "";
+    }
+  },
+
   dedupeAndSortActions: function(actions){
     var uniqueActions = {};
 
@@ -271,14 +280,12 @@ var base = {
     actions.forEach(function(v){
       var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
       v.pointsPerAction = +v.pointsPerAction;
+      v.indicatorList = [base.getShortTextForIndicator(v.indicatorId)];
       v.actionId = actionIdFromText;
       if(!uniqueActions[actionIdFromText]) {
         uniqueActions[actionIdFromText] = v;
       } else {
-        if(!uniqueActions[actionIdFromText].indicatorList) {
-          uniqueActions[actionIdFromText].indicatorList = [uniqueActions[actionIdFromText].indicatorId];
-        }
-        uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
+        uniqueActions[actionIdFromText].indicatorList.push(base.getShortTextForIndicator(v.indicatorId));
         uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
         // how about numberPatients and priority
       }
