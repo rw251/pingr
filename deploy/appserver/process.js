@@ -122,6 +122,17 @@ fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function(li
 });
 
 var tempDates = [];
+
+var checkTextFile = function(pathway, stage, standard, file) {
+  if (!textFile.pathways[pathway] || !textFile.pathways[pathway][stage] || !textFile.pathways[pathway][stage].standards[standard]) {
+    console.log("#######################");
+    console.log("##    ERROR         ###");
+    console.error([pathway, stage, standard].join(".") + " occurs in the " + file +" file - but you don't have anything in the text file ");
+    console.log("#######################");
+    process.exit(1);
+  }
+};
+
 async.series([
     function(callback) {
       console.log("1 series");
@@ -143,6 +154,7 @@ async.series([
             var stage = data.indicatorid.split('.')[1];
             var standard = data.indicatorid.split('.')[2];
 
+            checkTextFile(pathway, stage, standard, FILENAMES.indicators);
             var indText = textFile.pathways[pathway][stage].standards[standard];
             var oppText = indText.opportunities;
 
@@ -257,6 +269,7 @@ async.series([
           var stage = v.indicatorId.split('.')[1];
           var standard = v.indicatorId.split('.')[2];
 
+          checkTextFile(pathway, stage, standard, FILENAMES.denominators);
           var indText = textFile.pathways[pathway][stage].standards[standard];
           var item = { display: indText.tabText, targetMet: true };
           if (v.why && v.why !== "") item.why = v.why;
@@ -519,6 +532,7 @@ async.series([
                           var stage = data.indicatorId.split('.')[1];
                           var standard = data.indicatorId.split('.')[2];
 
+                          checkTextFile(pathway, stage, standard, FILENAMES.patientActions);
                           var indText = textFile.pathways[pathway][stage].standards[standard];
                           var oppText = indText.opportunities;
 
@@ -527,7 +541,7 @@ async.series([
                             return;
                           }
 
-                          if(!patients[+data.patientId].actions) patients[+data.patientId].actions = [];
+                          if (!patients[+data.patientId].actions) patients[+data.patientId].actions = [];
                           if (patients[+data.patientId].actions.filter(function(v) {
                               return v.actionText === data.actionText;
                             }).length === 0) {
@@ -547,7 +561,7 @@ async.series([
                           }) : [];
                           if (patientsStandard.length === 0) {
                             console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
-                            if(!patients[+data.patientId].standards) patients[+data.patientId].standards=[];
+                            if (!patients[+data.patientId].standards) patients[+data.patientId].standards = [];
                             patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
                           } else if (patientsStandard.length > 1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
                           else patientsStandard[0].targetMet = false;

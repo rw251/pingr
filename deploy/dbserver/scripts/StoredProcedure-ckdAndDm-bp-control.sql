@@ -547,18 +547,18 @@ insert into [output.pingr.denominators](PatID, indicatorId, why)
 select PatID, 'ckdAndDm.treatment.bp',
 	case
 		when bpMeasuredOK = 0 then 
-			'<ul><li>Patient is on CKD register and has diabetes.</li>
-			<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
-			<li>Salford Standards recommend BP should be measured every 6 months since' +
+			'<ul><li>Patient is on CKD register and has diabetes.</li>' +
+			'<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>' +
+			'<li>Salford Standards recommend BP should be measured every 6 months since' +
 				case
 					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
 					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 					when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 				end +'.</li></ul>'
 		when bpMeasuredOK = 1 and bpControlledOk = 0 then
-			'<ul><li>Patient is on CKD register and has diabetes.</li>
-			<li>Target BP is <a href=''https://cks.nice.org.uk/diabetes-type-2#!scenariorecommendation:7'' target=''_blank'' title="NICE BP">&lt;130/80 mmHg</a>.</li>
-			<li>Last BP was <strong>uncontrolled</strong>: ' +
+			'<ul><li>Patient is on CKD register and has diabetes.</li>' +
+			'<li>Target BP is <a href=''https://cks.nice.org.uk/diabetes-type-2#!scenariorecommendation:7'' target=''_blank'' title="NICE BP">&lt;130/80 mmHg</a>.</li>' +
+			'<li>Last BP was <strong>uncontrolled</strong>: ' +
 				case
 						when latestSbp >= 130 then '<strong>' + Str(latestSbp) + '</strong>'
 						else Str(latestSbp)
@@ -570,22 +570,22 @@ select PatID, 'ckdAndDm.treatment.bp',
 					end
 				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' + 
 			case 
-				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li></ul>'
-			else '</ul>'
-			end			
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
+			else ''
+			end	
 		when numerator = 1 then
-			'<ul><li>Patient is on CKD register and has diabetes.</li>
-			<li>Last BP was controlled and taken in the last 6 months since' +
+			'<ul><li>Patient is on CKD register and has diabetes.</li>' +
+			'<li>Last BP was controlled and taken in the last 6 months since' +
 				case
 					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
 					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 					when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
-				end +': ' + Str(latestSbp) + '/' + Str(latestDbp) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>
-			<li>This is in accordance with both the Salford Standards and <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets">NICE guidelines</a>.</li>' +
+				end +': ' + Str(latestSbp) + '/' + Str(latestDbp) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+			'<li>This is in accordance with both the Salford Standards and <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets">NICE guidelines</a>.</li>' +
 			case 
-				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li></ul>'
-			else '</ul>'
-			end			
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
+			else ''
+			end		
 		else ''
 		end
 from #eligiblePopulationAllData where denominator = 1;
@@ -2309,9 +2309,9 @@ select a.PatID,
 		(case
 		--No BP
 			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 
-				'<ul><li>Patient is on CKD register and has diabetes.</li>
-				<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
-				<li>Salford Standards recommend BP should be measured every 6 months since' +
+				'<ul><li>Patient is on CKD register and has diabetes.</li>' +
+				'<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>' +
+				'<li>Salford Standards recommend BP should be measured every 6 months since' +
 					case
 						when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
 						when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
@@ -2330,6 +2330,10 @@ select a.PatID,
 						else Str(latestDbp)
 					end
 				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+				case 
+					when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
+				else ''
+				end	+		
 				'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
 					case
 						when dmPatient = 1 then ' and diabetes'

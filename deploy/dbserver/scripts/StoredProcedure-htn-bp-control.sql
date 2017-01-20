@@ -550,18 +550,18 @@ insert into [output.pingr.denominators](PatID, indicatorId, why)
 select PatID, 'htn.treatment.bp',
 	case
 		when bpMeasuredOK = 0 then 
-			'<ul><li>Patient is on hypertension register.</li>
-			<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
-			<li>NICE recommends BP should be measured every 12 months from April.</li></ul>' -- since ' +
+			'<ul><li>Patient is on hypertension register.</li>' +
+			'<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>' +
+			'<li>NICE recommends BP should be measured every 12 months from last April.</li></ul>' -- since ' +
 --				case
 --					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,YEAR(@refdate - 1)) --when today's date is before April, it's 1st October LAST year
 --					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 --					when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 --				end +'.</li></ul>'
 		when bpMeasuredOK = 1 and bpControlledOk = 0 then
-			'<ul><li>Patient is on hypertension register and is ' + str(age) + ' years old.</li>
-			<li>Target BP is <a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!scenario:1'' target=''_blank'' title="NICE BP">&lt;140/90 mmHg in patients under 80 years and &lt;150/90 mmHg in patients 80 years or older</a>.</li>
-			<li>Last BP was <strong>uncontrolled</strong>: ' +
+			'<ul><li>Patient is on hypertension register and is ' + str(age) + ' years old.</li>' +
+			'<li>Target BP is <a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!scenario:1'' target=''_blank'' title="NICE BP">&lt;140/90 mmHg in patients under 80 years and &lt;150/90 mmHg in patients 80 years or older</a>.</li>' +
+			'<li>Last BP was <strong>uncontrolled</strong>: ' +
 				case
 						when (age <80 and latestSbp >= 140) or (age >=80 and latestSbp >= 150) then '<strong>' + Str(latestSbp) + '</strong>'
 						else Str(latestSbp)
@@ -573,12 +573,12 @@ select PatID, 'htn.treatment.bp',
 					end
 				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' + 
 			case 
-				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li></ul>'
-			else '</ul>'
-			end			
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
+			else ''
+			end		
 		when numerator = 1 then
-			'<ul><li>Patient is on CKD register.</li>
-			<li>Last BP was controlled and taken in the last 6 months' + --since ' +
+			'<ul><li>Patient is on CKD register.</li>' +
+			'<li>Last BP was controlled and taken in the last 6 months' + --since ' +
 --				case
 --					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,YEAR(@refdate - 1)) --when today's date is before April, it's 1st October LAST year
 --					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
@@ -587,9 +587,9 @@ select PatID, 'htn.treatment.bp',
 			': ' + Str(latestSbp) + '/' + Str(latestDbp) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>
 			<li>This is in accordance with both the Salford Standards and <a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!scenario:1'' target=''_blank'' title="NICE BP targets">NICE guidelines</a>.</li>' +
 			case 
-				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li></ul>'
-			else '</ul>'
-			end			
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
+			else ''
+			end	
 		else ''
 		end 
 from #eligiblePopulationAllData where denominator = 1;
@@ -2312,10 +2312,10 @@ select a.PatID,
 	'Reasoning' +
 		(case
 		--No BP
-			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then '<ul><li>No BP reading since last April.</ul>'
+			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then '<ul><li>Patient has hypertension and has no BP reading since last April.</ul>'
 		--Any BP
 			else
-				'<ul><li>Last BP was <strong>uncontrolled</strong>: ' +
+				'<ul><li>Patient has hypertension and their last BP was <strong>uncontrolled</strong>: ' +
 					case
 						when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
 						else Str(latestSbp)
@@ -2326,6 +2326,10 @@ select a.PatID,
 						else Str(latestDbp)
 					end
 				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+				case 
+					when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
+				else ''
+				end	+		
 				'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
 					case
 						when dmPatient = 1 then ' and diabetes'
@@ -2407,7 +2411,7 @@ select a.PatID,
 	priority as priority,
 	start_or_inc + ' ' + family as actionText,
 	'Reasoning' +
-		'<ul><li>Last BP was <strong>uncontrolled</strong>: ' +
+		'<ul><li>Patient has hypertension and their last BP was <strong>uncontrolled</strong>: ' +
 				case
 					when ((dmPatient = 1 or protPatient = 1) and (latestSbp >= 130)) or ((dmPatient = 0 and protPatient = 0) and (latestSbp >= 140)) then '<strong>' + Str(latestSbp) + '</strong>'
 					else Str(latestSbp)
@@ -2418,6 +2422,10 @@ select a.PatID,
 					else Str(latestDbp)
 				end
 			+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+			case 
+				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
+			else ''
+			end	+		
 			'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
 				case
 					when dmPatient = 1 then ' and diabetes'
@@ -2470,7 +2478,7 @@ select a.PatID,
 	as reasonNumber,
 	@ptPercPoints as pointsPerAction,
 	3 as priority,
-	'Exclude this patient from CKD BP indicator using code(s): ' +
+	'Exclude this patient from hypertension indicators using code(s): ' +
 	(case
 		when
 			((latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate))
