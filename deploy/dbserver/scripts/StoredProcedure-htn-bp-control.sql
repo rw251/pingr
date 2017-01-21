@@ -2380,7 +2380,7 @@ select a.PatID,
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate, sourceSbp from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0)
 	or
@@ -2444,7 +2444,7 @@ select a.PatID,
 		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>' as supportingText
 from #medSuggestion as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate, sourceSbp from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 	left outer join (select PatID, currentMedIngredient from #htnMeds) as c on c.PatID = a.PatID
 	left outer join (select Ingredient, BNF from drugIngredients) as d on d.Ingredient = c.currentMedIngredient
 
