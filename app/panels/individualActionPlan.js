@@ -5,12 +5,20 @@ var base = require('../base.js'),
 
 var iap = {
 
-  create: function(pathwayStage) {
-    return require("templates/individual-action-plan")();
+  create: function(nhs, pathwayId, pathwayStage, standard) {
+	var dataObj = {nhs:nhs};
+	console.log(pathwayId, pathwayStage, standard);
+	if(data.text.pathways[pathwayId] && data.text.pathways[pathwayId][pathwayStage] && data.text.pathways[pathwayId][pathwayStage].standards[standard]) {
+	  dataObj.indicator = data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText;
+	  console.log(dataObj.indicator);
+	} else {
+	  dataObj.indicator = null;
+	}
+    return require("templates/individual-action-plan")(dataObj);
   },
 
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
-    panel.html(iap.create(pathwayStage));
+    panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId, pathwayId, pathwayStage, standard));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
 
     panel.find('div.fit-to-screen-height').niceScroll({
@@ -197,11 +205,16 @@ var iap = {
       }
     });
 
+    $('#advice-list').off('click', '.show-more-than-3');
+    $('#advice-list').on('click', '.show-more-than-3', function(e) {
+      iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard, true);
+    });
+
     $('#advice-list').off('click', '.show-more');
     $('#advice-list').on('click', '.show-more', function(e) {
       var id = $(this).data("id");
       var elem = $('.show-more-row[data-id="' + id + '"]');
-      if(elem.is(':visible')){
+      if (elem.is(':visible')) {
         $('.show-more[data-id="' + id + '"]:first').show();
         elem.hide();
       } else {
@@ -215,12 +228,12 @@ var iap = {
     });
 
     $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
-    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e){
-      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
+    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e) {
+      log.event("nice-link-clicked", window.location.hash, [{ key: "link", value: e.currentTarget.href }]);
       e.stopPropagation();
     });
 
-    iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard);
+    iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard, false);
   },
 
   updateIndividualSapRows: function() {
@@ -313,17 +326,14 @@ var iap = {
     iap.updateIndividualSapRows();
   },
 
-  populateIndividualSuggestedActions: function(patientId, pathwayId, pathwayStage, standard) {
+  populateIndividualSuggestedActions: function(patientId, pathwayId, pathwayStage, standard, visible) {
     var localData = {
       "nhsNumber": data.patLookup ? data.patLookup[patientId] : patientId,
-      "patientId": patientId
+      "patientId": patientId,
+      visible: visible
     };
 
     var patientData = data.getPatientData(patientId);
-
-    var breaches = data.patients[patientId].breach ? data.patients[patientId].breach.filter(function(v) {
-      return v.pathwayId === pathwayId && v.pathwayStage === pathwayStage && v.standard === standard;
-    }) : [];
 
     var fn = function(val) {
       return {
@@ -332,18 +342,21 @@ var iap = {
       };
     };
 
-    if (patientData.actions.length === 0) {
+    if (patientData.actions.length === 0 || (pathwayId && pathwayStage && standard && patientData.actions.filter(function(v){
+      return v.indicatorId === [pathwayId, pathwayStage, standard].join(".");
+    }).length===0)) {
       localData.noSuggestions = true;
     } else {
-      /*var suggestions = [],
-        subsection = "";
-      for (var i = 0; i < breaches.length; i++) {
-        subsection = breaches[i].subsection;
-        suggestions = suggestions.concat(data[pathwayId][pathwayStage].bdown[subsection].suggestions ?
-          data[pathwayId][pathwayStage].bdown[subsection].suggestions.map(fn) : []);
-      }*/
 
-      localData.suggestions = base.sortSuggestions(base.mergeIndividualStuff(patientData.actions, patientId));
+      localData.suggestions = base.dedupeAndSortActions(base.mergeIndividualStuff(patientData.actions, patientId));
+
+      localData.suggestions = localData.suggestions.filter(function(v) {
+        if(!pathwayId || !pathwayStage || !standard) return true;
+        return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join("."))>-1;
+      }).map(function(v) {
+        v.id = v.actionText.replace(/[^A-Za-z0-9]/g, "");
+        return v;
+      });
       /*localData.section = {
         "name": data[pathwayId][pathwayStage].bdown[subsection].name,
         "agree": log.getPatientAgree(pathwayId, pathwayStage, patientId, "section") === true,
@@ -368,7 +381,7 @@ var iap = {
       var html = $(this).html();
       $(this).html(html.replace(/\[COPY:([^\]]*)\]/g, '$1 <button type="button" data-clipboard-text="$1" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
-    $('#advice-list').find('span:contains("[")').each(function() {
+    $('#advice-list').find('td:contains("[")').each(function() {
       var html = $(this).html();
       $(this).html(html.replace(/\[([^\]]*)\]/g, ' <button type="button" data-clipboard-text="$1" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });

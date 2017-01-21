@@ -54,9 +54,8 @@ var PatientSchema = new Schema({
   actions: [
     {
       id: String,
-      short: String,
-      long: String,
-      reason: String,
+      actionText: String,
+      supportingText: String,
       link: String,
       agree: Boolean,
       done: Boolean,

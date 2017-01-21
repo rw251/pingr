@@ -93,10 +93,11 @@ var pl = {
         }
       }
 
-      base.createPanelShow(require('templates/patient-list'), patientsPanel, list);/*, {
-        "header-item": require('src/templates/partials/_patient-list-header-item')(),
-        "item": require('src/templates/partials/_patient-list-item')()
-      });*/
+      base.createPanelShow(require('templates/patient-list'), patientsPanel, list);
+      /*, {
+              "header-item": require('src/templates/partials/_patient-list-header-item')(),
+              "item": require('src/templates/partials/_patient-list-item')()
+            });*/
 
       $('#patients-placeholder').hide();
 
@@ -125,8 +126,10 @@ var pl = {
     else panel.html(tmpl());
 
     pl.wireUp(function(patientId) {
-      history.pushState(null, null, '#patient/' + patientId);
-      loadContentFn('#patient/' + patientId);
+      var url = '#patient/' + patientId;
+      if (pathwayId && pathwayStage && standard) url += '/' + [pathwayId, pathwayStage, standard].join("/");
+      history.pushState(null, null, url);
+      loadContentFn(url);
     });
     pl.populate(pathwayId, pathwayStage, standard, null);
   }

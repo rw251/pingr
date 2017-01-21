@@ -405,7 +405,10 @@ var ll = {
             }
           },
           series: [{
-            data: dataset.data,
+            data: dataset.data.map(function(v){
+              v.splice(1,1);
+              return v;
+            }),
             name: dataset.name,
             type: dataset.type,
             color: colour.next(),

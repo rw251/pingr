@@ -39,6 +39,7 @@ section#main
             li.dropdown
               a.dropdown-toggle(data-toggle='dropdown', href='#')
                 span#user_fullname.hide-if-bit-small= fullname + " "
+                span#practice_name(style="display:none")= practice_name
                 i.fa.fa-user.fa-fw
                 i.fa.fa-caret-down
               ul.dropdown-menu.dropdown-user

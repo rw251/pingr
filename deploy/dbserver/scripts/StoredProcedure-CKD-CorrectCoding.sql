@@ -5,10 +5,12 @@ CREATE PROCEDURE [pingr.ckd.coding] @refdate VARCHAR(10), @JustTheIndicatorNumbe
 AS
 SET NOCOUNT ON --exclude row count results for call from R
 
---declare @refdate datetime;
---set @refdate = '2016-06-17'; --SIR_ALL
---declare @window int;
---set @window = 12;
+									--TO TEST ON THE FLY--
+--use PatientSafety_Records_Test
+--declare @refdate VARCHAR(10);
+--declare @JustTheIndicatorNumbersPlease bit;
+--set @refdate = '2016-11-17';
+--set @JustTheIndicatorNumbersPlease= 0;
 
 --create temp tables
 IF OBJECT_ID('tempdb..#denominator') IS NOT NULL DROP TABLE #denominator
@@ -268,18 +270,45 @@ select top 5 sum(case when indicator='right' then 1.0 else 0.0 end) / SUM(case w
 --set @numerator = (select COUNT(*) from #indicator where indicator='right');
 --set @denominator = (select COUNT(*) from #indicator where code is not null); --only select pts for denominator where they have a CKD code in their records
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+
 --select 'pingr.ckd.coding', CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
+--CCG view
+select 'ckd.diagnosis.staging', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
+union
+--practice views
 select 'ckd.diagnosis.staging',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
 --0s full SIR
 
+									----------------------------------------------
+									-------DEFINE % POINTS PER PATIENT------------
+									----------------------------------------------
+
+declare @ptPercPoints float;
+set @ptPercPoints = 
+(select 100 / SUM(case when code is not null then 1 else 0 end)
+from #indicator);
+
+
 ----------------------------------------------
 --POPULATE MAIN DENOMINATOR TABLE-------------
 ----------------------------------------------
-insert into [output.pingr.denominators](PatID, indicatorId)
-select PatID, 'ckd.diagnosis.staging' from #indicator
-where code is not null;
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.denominators](PatID, indicatorId, why)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--insert into #denominators
+select d.PatID, 'ckd.diagnosis.staging',
+		'<ul><li>Latest eGFR:<strong> ' + Str(e.egfrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestEgfrDate, 3) + '<li></strong>Latest ACR: </strong>' + Str(e.acrMax) + '</strong> on <strong>' + CONVERT(VARCHAR, e.latestAcrDate, 3) +
+		'<li></strong>Latest CKD code: <strong>' + d.code + '</strong> on <strong>' + CONVERT(VARCHAR, e.codeDate, 3) + '</strong>'
+from #indicator d
+		inner join #classify c on c.PatID = d.PatID
+		inner join #latestEgfrACR e on e.PatID = d.PatID
+where d.code is not null;
+
 
 ---------------------------------------------------------
 -- Exit if we're just getting the indicator numbers -----
@@ -387,14 +416,21 @@ group by sub.PatID;
 --ACR test needed (ACR unknown)
 --Suggest exclude
 
---truncate table outImpOppCatsAndActions
-insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonCat, reasonNumber, priority, actionText, supportingText)
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+--CREATE TABLE #patActions
+--	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #patActions
 
 --WRONG STAGE
 	--ACR known
 select d.PatID, 'ckd.diagnosis.staging', 'wrongStage' as actionCat,
-		'wrongStageAcrKnown' as reasonCat,
+--		'wrongStageAcrKnown' as reasonCat,
 		1 as reasonNumber,
+		@ptPercPoints as pointsPerAction,
 		4 as priority,
 		'Add code ' + c.correct_read + ' to patient''s record' as actionText,
 		'Reasoning' +
@@ -434,8 +470,9 @@ where
 union
 --RIGHT STAGE, WRONG SUBSTAGE (ACR always known)
 select d.PatID, 'ckd.diagnosis.staging', 'rightStageWrongSubstage' as actionCat,
-		'rightStageWrongSubstage' as reasonCat,
+--		'rightStageWrongSubstage' as reasonCat,
 		1 as reasonNumber,
+		@ptPercPoints as pointsPerAction,
 		4 as priority,
 		'Add code ' + c.correct_read + 'to patient''s record' as actionText,
 		'Reasoning' +
@@ -465,7 +502,8 @@ union
 
 --ACR TEST NEEDED (ACR unknown)
 select d.PatID, 'ckd.diagnosis.staging', 'acrTest' as actionCat,
-		'acrTest' as reasonCat,
+--		'acrTest' as reasonCat,
+		@ptPercPoints as pointsPerAction,
 		1 as reasonNumber,
 		4 as priority,
 		'Offer ACR test' as actionText,
@@ -493,7 +531,8 @@ union
 
 --OVERDIAGNOSED
 select d.PatID, 'ckd.diagnosis.staging', 'overdiagnosed' as actionCat,
-	'overdiagnosed_eGFR_reading' as reasonCat,
+--	'overdiagnosed_eGFR_reading' as reasonCat,
+	@ptPercPoints as pointsPerAction,
 	1 as reasonNumber,
 	4 as priority,
 	'Add code 2126E (CKD resolved) [#2126E]' as actionText,
@@ -510,8 +549,9 @@ union
 --SUGGEST EXCLUDE CATEGORY
 ---suggestExclude - palliative
 select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
-	'suggestExcludePal' as reasonCat,
+--	'suggestExcludePal' as reasonCat,
 	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	4 as priority,
 	'Add CKD exception code 9hE0. (palliative) [#9hE0.]' as actionText,
 	'Reasoning' +
@@ -524,8 +564,9 @@ union
 
 ---suggestExclude - frail
 select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
-	'suggestExcludeFrail' as reasonCat,
+--	'suggestExcludeFrail' as reasonCat,
 	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	4 as priority,
 	'Add CKD exception code 9hE0. (frail) [#9hE0.]' as actionText,
 	'Reasoning' +
@@ -537,8 +578,9 @@ select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
 union
 ---suggestExclude - housebound
 select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
-	'suggestExcludeHouse' as reasonCat,
+--	'suggestExcludeHouse' as reasonCat,
 	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	4 as priority,
 	'Add CKD exception code 9hE0. (housebound) [#9hE0.]' as actionText,
 	'Reasoning<ul><li><strong>Housebound</strong> code on <strong>' + CONVERT(VARCHAR, l.houseboundDate, 3) + '</strong> (and no ''not housebound'' code afterwards)</li></ul>' as supportingText
@@ -549,8 +591,9 @@ select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
 union
 ---suggestExclude - three invites
 select d.PatID, 'ckd.diagnosis.staging', 'suggestExclude' as actionCat,
-	'suggestExclude3Invites' as reasonCat,
+--	'suggestExclude3Invites' as reasonCat,
 	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
 	4 as priority,
 	'Add CKD exception code 9hE.. (3 invites) [#9hE..]' as actionText,
 	'Reasoning<ul><li><strong>Three invites for CKD monitoring</strong> code on <strong>' + CONVERT(VARCHAR, l.threeInvitesDate, 3) + '</strong></li></ul>' as supportingText
@@ -574,6 +617,7 @@ values
 ('ckd.diagnosis.staging','valueId','eGFR'),
 ('ckd.diagnosis.staging','valueName','Latest eGFR'),
 ('ckd.diagnosis.staging','dateORvalue','value'),
+('ckd.diagnosis.staging','valueSortDirection','asc'),
 ('ckd.diagnosis.staging','tableTitle','All patients with improvement opportunities'),
 ('ckd.diagnosis.staging','opportunities.wrongStage.name','Wrong stage'),
 ('ckd.diagnosis.staging','opportunities.wrongStage.description','Patients who have the <strong>wrong CKD stage</strong> in their records according to their latest eGFR and ACR readings.'),

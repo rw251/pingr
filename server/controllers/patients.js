@@ -61,13 +61,22 @@ module.exports = {
         });
       }, []);
 
-      Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, measurements: { $elemMatch: { id: indicator.measurementId } }, "measurements.data": { $slice: -1 } },
+      var indicatorValue = indicator.measurementId;
+      if(indicatorValue==="SBP") indicatorValue="BP";
+
+      Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, measurements: { $elemMatch: { id: indicatorValue } }, "measurements.data": { $slice: -1 } },
         function(err, patients) {
           var p = patients.map(function(patient) {
             patient = patient.toObject();
             var meas = "?";
-            if (patient.measurements) {
-              meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][1];
+            if (patient.measurements && patient.measurements.length>0 && patient.measurements[0].data && patient.measurements[0].data.length>0 && patient.measurements[0].data[0].length>2) {
+              if(indicator.measurementId === "SBP"){
+                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                // for dbp use:
+                //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
+              } else {
+                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+              }
             }
             var opps = indicator.opportunities.filter(function(v) {
               return v.patients.indexOf(""+patient.patientId) > -1;

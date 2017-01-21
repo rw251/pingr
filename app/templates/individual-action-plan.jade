@@ -1,7 +1,5 @@
 .affix.panel.panel-default
-  .clearfix.panel-heading
-    | Recommended actions: 
-    span(style='color: black;font-weight:bold')  Patient-level 
+  .clearfix.panel-heading= "Top 3 suggested actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " for patient with NHS number " + nhs
   #tab-plan-individual.panel-body.fit-to-screen-height
     #advice-placeholder
       | Select an individual patient from the patient panel to view advice

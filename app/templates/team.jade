@@ -1,9 +1,9 @@
 include mixins/thumbs
 
 if noSuggestions
-  p There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
+  p There are no improvement action suggestions from PINGR for this indicator.
 else 
-  table#individual-suggested-actions-table.table
+  table#team-suggested-actions-table.table
     thead
       tr
         th
@@ -17,19 +17,19 @@ else
               a.show-more-than-3
                 | Show more than 3 actions 
                 i.fa.fa-caret-down
-        tr.suggestion(data-id=suggestion.id, data-indx=index, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
+        tr.suggestion(data-id=suggestion.actionId, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
           td
             span(data-subsection=suggestion.subsection)
               strong.black.f20!= suggestion.actionText
               if suggestion.supportingText
                 br
-                a.show-more(data-id=suggestion.id)
+                a.show-more(data-id=suggestion.actionId)
                   | Show more 
                   i.fa.fa-caret-down
           td
             +thumbs(suggestion)
         if suggestion.supportingText
-          tr.show-more-row(data-id=suggestion.id, class=alt ? 'alternate-row': '')
+          tr.show-more-row(data-id=suggestion.actionId, class=alt ? 'alternate-row': '')
             td(colspan='2')
               != suggestion.supportingText
               |Relevant indicators:
@@ -38,7 +38,7 @@ else
                   li= indicator
               small= "Points: " + suggestion.pointsPerAction.toFixed(1)
               br
-              a.show-more(data-id=suggestion.id)
+              a.show-more(data-id=suggestion.actionId)
                 | Show less 
                 i.fa.fa-caret-up
         - alt = !alt

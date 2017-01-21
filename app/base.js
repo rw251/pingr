@@ -264,8 +264,48 @@ var base = {
     }).modal();
   },
 
+  getShortTextForIndicator: function(indicator) {
+    var bits = indicator.split(".");
+    if(data.text.pathways[bits[0]] &&data.text.pathways[bits[0]][bits[1]] && data.text.pathways[bits[0]][bits[1]].standards[bits[2]]) {
+      return data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText;
+    } else {
+      return "";
+    }
+  },
+
+  dedupeAndSortActions: function(actions){
+    var uniqueActions = {};
+
+    //de dupe and sum the pointsPerAction
+    actions.forEach(function(v){
+      var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+      v.pointsPerAction = +v.pointsPerAction;
+      v.indicatorList = [v.indicatorId];
+      v.actionId = actionIdFromText;
+      if(!uniqueActions[actionIdFromText]) {
+        uniqueActions[actionIdFromText] = v;
+      } else {
+        uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
+        uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
+        // how about numberPatients and priority
+      }
+    });
+
+    //convert back to array and sort
+    var rtn = Object.keys(uniqueActions).map(function(v){
+      return uniqueActions[v];
+    }).sort(function(a,b){
+      return b.pointsPerAction - a.pointsPerAction;
+    });
+
+    return rtn;
+  },
+
   sortSuggestions: function(suggestions) {
-    suggestions.sort(function(a, b) {
+    suggestions.sort(function(a,b){
+      return a.priority - b.priority;
+    });
+    /*suggestions.sort(function(a, b) {
       if (a.agree && !a.done) {
         if (b.agree && !b.done) return 0;
         return -1;
@@ -281,7 +321,7 @@ var base = {
         if (b.disagree) return 0;
         return 1;
       }
-    });
+    });*/
 
     return suggestions;
   },
@@ -321,6 +361,31 @@ var base = {
           suggestions[i].disagree = true;
         }
         if (localActions[patientId][suggestions[i].id].done) suggestions[i].done = localActions[patientId][suggestions[i].id].done;
+      }
+    }
+    return suggestions;
+  },
+
+  mergeTeamStuff: function(suggestions) {
+    var teamActions = log.listActions();
+    if (!teamActions.team) return suggestions;
+
+    suggestions = base.addDisagree(suggestions, teamActions, "team");
+    return suggestions;
+  },
+
+  addDisagree: function(suggestions, actions, id) {
+    for (var i = 0; i < suggestions.length; i++) {
+      if (actions[id][suggestions[i].id]) {
+        if (actions[id][suggestions[i].id].agree) {
+          suggestions[i].agree = true;
+          suggestions[i].disagree = false;
+        } else if (actions[id][suggestions[i].id].agree === false) {
+          suggestions[i].agree = false;
+          suggestions[i].disagree = true;
+        }
+        if (actions[id][suggestions[i].id].done) suggestions[i].done = actions[id][suggestions[i].id].done;
+        else suggestions[i].done = false;
       }
     }
     return suggestions;
