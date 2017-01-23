@@ -5,6 +5,7 @@
   "main": "script.js",
   "scripts": {
     "start": "brunch watch --server",
+	"testing": "brunch watch --server --debug",
     "build": "brunch build --production",
     "postinstall": "brunch build --production",
     "watch": "brunch watch",
