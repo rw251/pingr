@@ -599,12 +599,17 @@ async.series([
                             if (!all_practice_hack[v.id]) {
                               all_practice_hack[v.id] = JSON.parse(JSON.stringify(v));
                               all_practice_hack[v.id].practiceId = "ALL2";
-                              all_practice_hack[v.id].patients = [];
-                              all_practice_hack[v.id].patientCount = 0;
+                              all_practice_hack[v.id].opportunities = all_practice_hack[v.id].opportunities.map(function(vv){
+                                vv.patients = [];
+                                vv.patientCount = 0;
+                                return vv;
+                              });
                               all_practice_hack[v.id].values = [];
                               all_practice_hack[v.id].data = {};
                             }
-                            all_practice_hack[v.id].patientCount += v.patients.length;
+                            all_practice_hack[v.id].opportunities.forEach(function(vv,i){
+                              vv.patientCount += v.opportunities[i].patients.length;
+                            });
                             if (v.values && v.values[0].length > 0) {
                               v.values[0].slice(1).forEach(function(v, i) {
                                 if (!all_practice_hack[v.id].data[v]) {
