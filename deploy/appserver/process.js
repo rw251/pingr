@@ -83,9 +83,10 @@ var readCsvAsync = function(input, callback) {
     .on('end', function() { callback(null); });
 };
 
-var indicators = dataFile.indicators.filter(function(v){
+dataFile.indicators = dataFile.indicators.filter(function(v){
   return v.practiceId !== "ALL";
 });
+var indicators = dataFile.indicators;
 var patients = dataFile.patients;
 
 var assign = function(obj, prop, value) {
