@@ -598,8 +598,8 @@ async.series([
                           indicators.forEach(function(v) {
                             if (!all_practice_hack[v.id]) {
                               all_practice_hack[v.id] = JSON.parse(JSON.stringify(v));
-                              all_practice_hack[v.id].practiceId = "ALL2";
-                              all_practice_hack[v.id].opportunities = all_practice_hack[v.id].opportunities.map(function(vv){
+                              all_practice_hack[v.id].practiceId = "ALL";
+                              all_practice_hack[v.id].opportunities = all_practice_hack[v.id].opportunities.map(function(vv) {
                                 vv.patients = [];
                                 vv.patientCount = 0;
                                 return vv;
@@ -607,27 +607,40 @@ async.series([
                               all_practice_hack[v.id].values = [];
                               all_practice_hack[v.id].data = {};
                             }
-                            all_practice_hack[v.id].opportunities.forEach(function(vv,i){
-                              vv.patientCount += v.opportunities[i].patients.length;
+                            v.opportunities.forEach(function(vv){
+                              var opp = all_practice_hack[v.id].opportunities.filter(function(vvv){
+                                return vvv.id===vv.id;
+                              });
+                              if(opp.length===0) {
+                                opp = JSON.parse(JSON.stringify(vv));
+                                opp.patients=[];
+                                opp.patientCount=0;
+                                all_practice_hack[v.id].opportunities.push(opp);
+                              } else {
+                                opp = opp[0];
+                              }
+                              opp.patientCount += vv.patients.length;
                             });
                             if (v.values && v.values[0].length > 0) {
-                              v.values[0].slice(1).forEach(function(v, i) {
-                                if (!all_practice_hack[v.id].data[v]) {
-                                  all_practice_hack[v.id].data[v].n = +v.values[1][i + 1];
-                                  all_practice_hack[v.id].data[v].d = +v.values[2][i + 1];
-                                  all_practice_hack[v.id].data[v].t = v.values[3][i + 1];
+                              v.values[0].slice(1).forEach(function(vv, i) {
+                                if (!all_practice_hack[v.id].data[vv]) {
+                                  all_practice_hack[v.id].data[vv] = {
+                                    n: +v.values[1][i + 1],
+                                    d: +v.values[2][i + 1],
+                                    t: +v.values[3][i + 1]
+                                  };
                                 } else {
-                                  all_practice_hack[v.id].data[v].n += +v.values[1][i + 1];
-                                  all_practice_hack[v.id].data[v].d += +v.values[2][i + 1];
+                                  all_practice_hack[v.id].data[vv].n += +v.values[1][i + 1];
+                                  all_practice_hack[v.id].data[vv].d += +v.values[2][i + 1];
                                 }
                               });
                             }
                           });
 
-                          Object.keys(all_practice_hack).forEach(function(v){
+                          Object.keys(all_practice_hack).forEach(function(v) {
                             var x = all_practice_hack[v];
-                            x.values = [["x"],["numerator"],["denominator"],["target"]];
-                            Object.keys(x.data).forEach(function(vv){
+                            x.values = [["x"], ["numerator"], ["denominator"], ["target"]];
+                            Object.keys(x.data).forEach(function(vv) {
                               x.values[0].push(vv);
                               x.values[1].push(x.data[vv].n);
                               x.values[2].push(x.data[vv].d);

@@ -273,8 +273,8 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 
 --select 'pingr.ckd.coding', CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
 --CCG view
-select 'ckd.diagnosis.staging', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
-union
+--select 'ckd.diagnosis.staging', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
+--union
 --practice views
 select 'ckd.diagnosis.staging',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
@@ -286,7 +286,7 @@ select 'ckd.diagnosis.staging',b.pracID, CONVERT(char(10), @refdate, 126) as dat
 									----------------------------------------------
 
 declare @ptPercPoints float;
-set @ptPercPoints = 
+set @ptPercPoints =
 (select 100 / SUM(case when code is not null then 1 else 0 end)
 from #indicator);
 

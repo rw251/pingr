@@ -21,7 +21,7 @@ SET NOCOUNT ON
 --THEN COMBINE ALL TABLES TOGETHER INTO ONE BIG TABLE TO BE QUERIED IN FUTURE
 -----------------------------------------------------------------------------------
 declare @achieveDate datetime;
-set @achieveDate = (select 
+set @achieveDate = (select
 case --for 6 monthly targets
 	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --when today's date is before April, refdate is 31st March this year
 	when MONTH(@refdate) >3 and MONTH(@refdate) <10 then CONVERT(VARCHAR,(YEAR(@refdate))) + '-09-30' --when today's date is after March BUT before October, refdate is 30th September this year
@@ -400,7 +400,7 @@ from #latestCkd35code as a
 	left outer join (select PatID, firstCkd35codeDate, firstCkd35code from #firstCkd35code) h on h.PatID = a.PatID
 	left outer join (select PatID, firstCkd35codeAfterDate, firstCkd35codeAfter from #firstCkd35codeAfter) i on i.PatID = a.PatID
 	left outer join (select PatID, protPatient from #dmProtPatient) k on k.PatID = a.PatID
-	
+
 --#denominator
 IF OBJECT_ID('tempdb..#denominator') IS NOT NULL DROP TABLE #denominator
 CREATE TABLE #denominator (PatID int, denominator int);
@@ -525,8 +525,8 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --insert into #indicator
 
 --CCG view
-select 'ckdAndProt.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
-union
+--select 'ckdAndProt.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
+--union
 --Practice view
 select 'ckdAndProt.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
@@ -545,7 +545,7 @@ insert into [output.pingr.denominators](PatID, indicatorId, why)
 
 select PatID, 'ckdAndProt.treatment.bp',
 	case
-		when bpMeasuredOK = 0 then 
+		when bpMeasuredOK = 0 then
 			'<ul><li>Patient is on CKD register.</li>' +
 			'<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>' +
 			'<li>Salford Standards recommend BP should be measured every 6 months since ' +
@@ -556,10 +556,10 @@ select PatID, 'ckdAndProt.treatment.bp',
 				end +'.</li></ul>'
 		when bpMeasuredOK = 1 and bpControlledOk = 0 then
 			'<ul><li>Patient is on CKD register and their last ACR was greater than 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3) +'.' +
-				case 
+				case
 					when sourceAcr = 'salfordt' then '(This ACR was taken in <strong>hospital</strong> so may not appear in the GP record)'
 				else ''
-				end +			
+				end +
 			'</li>' +
 			'<li>Target BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP">&lt;130/80 mmHg</a>.</li>' +
 			'<li>Last BP was <strong>uncontrolled</strong>: ' +
@@ -572,17 +572,17 @@ select PatID, 'ckdAndProt.treatment.bp',
 						when latestDbp >= 80 then '<strong>' + Str(latestDbp) + '</strong>'
 						else Str(latestDbp)
 					end
-				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' + 
-			case 
+				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
+			case
 				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
 			else ''
-			end			
+			end
 		when numerator = 1 then
 			'<ul><li>Patient is on CKD register and their last ACR was greater than 70 on ' + CONVERT(VARCHAR, latestAcrDate, 3) + '.' +
-				case 
+				case
 					when sourceAcr = 'salfordt' then '(This ACR was taken in <strong>hospital</strong> so may not appear in the GP record)'
 				else ''
-				end +			
+				end +
 			'</li>' +
 			'<li>Last BP was controlled and taken in the last 6 months since ' +
 				case
@@ -591,12 +591,12 @@ select PatID, 'ckdAndProt.treatment.bp',
 					when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 				end +': ' + Str(latestSbp) + '/' + Str(latestDbp) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
 			'<li>This is in accordance with both the Salford Standards and <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets">NICE guidelines</a>.</li>' +
-			case 
+			case
 				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
 			else ''
-			end			
+			end
 		else ''
-		end 
+		end
 from #eligiblePopulationAllData where denominator = 1;
 
 
@@ -605,8 +605,8 @@ from #eligiblePopulationAllData where denominator = 1;
 									----------------------------------------------
 
 declare @ptPercPoints float;
-set @ptPercPoints = 
-(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end) 
+set @ptPercPoints =
+(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end)
 from #eligiblePopulationAllData);
 
 								---------------------------------------------------------
@@ -850,7 +850,7 @@ where denominator = 1 and numerator = 0
 IF OBJECT_ID('tempdb..#latestMedOptimisation') IS NOT NULL DROP TABLE #latestMedOptimisation
 CREATE TABLE #latestMedOptimisation
 	(PatID int, latestMedOptimisationDate date,
-	latestMedOptimisationMin varchar(512), latestMedOptimisationMax varchar(512), latestMedOptimisation varchar(512), 
+	latestMedOptimisationMin varchar(512), latestMedOptimisationMax varchar(512), latestMedOptimisation varchar(512),
 	latestMedOptimisationIngredientMin varchar(512), latestMedOptimisationIngredientMax varchar(512), latestMedOptimisationIngredient varchar(512),
 	latestMedOptimisationDoseMin float, latestMedOptimisationDoseMax float, latestMedOptimisationDose float,
 	latestMedOptimisationFamilyMin varchar(512), latestMedOptimisationFamilyMax varchar(512), latestMedOptimisationFamily varchar(512));
@@ -871,19 +871,19 @@ insert into #latestMedOptimisation
  		[Event] in ('DOSE INCREASED', 'STARTED', 'RESTARTED')
 		and s.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 group by s.PatID, s.EntryDate
-	
+
 --#latestMedAdherence i.e. latest occurrence of anti-HTN (any) medication non-adherence
 IF OBJECT_ID('tempdb..#latestMedAdherence') IS NOT NULL DROP TABLE #latestMedAdherence
 CREATE TABLE #latestMedAdherence
-	(PatID int, latestMedAdherenceDate date, 
-	latestMedAdherenceIngredientMin varchar(512), latestMedAdherenceIngredientMax varchar(512), latestMedAdherenceIngredient varchar(512), 
+	(PatID int, latestMedAdherenceDate date,
+	latestMedAdherenceIngredientMin varchar(512), latestMedAdherenceIngredientMax varchar(512), latestMedAdherenceIngredient varchar(512),
 	latestMedAdherenceDoseMin float, latestMedAdherenceDoseMax float, latestMedAdherenceDose float,
 	latestMedAdherenceFamilyMin varchar(512), latestMedAdherenceFamilyMax varchar(512), latestMedAdherenceFamily varchar(512));
 insert into #latestMedAdherence
-	select s.PatID, s.EntryDate, 
-		min(s.Ingredient), max(s.Ingredient), case when min(s.Ingredient)=max(s.Ingredient) then max(s.Ingredient) else 'multiple medications' end,  
-		min(s.Dose), max(s.Dose), case when min(s.Dose)=max(s.Dose) then max(s.Dose) else 'multiple medications' end,  
-		min(s.Family), max(s.Family), case when min(s.Family)=max(s.Family) then max(s.Family) else 'multiple medications' end  
+	select s.PatID, s.EntryDate,
+		min(s.Ingredient), max(s.Ingredient), case when min(s.Ingredient)=max(s.Ingredient) then max(s.Ingredient) else 'multiple medications' end,
+		min(s.Dose), max(s.Dose), case when min(s.Dose)=max(s.Dose) then max(s.Dose) else 'multiple medications' end,
+		min(s.Family), max(s.Family), case when min(s.Family)=max(s.Family) then max(s.Family) else 'multiple medications' end
 		from MEDICATION_EVENTS_HTN as s
   		inner join
   			(
@@ -905,15 +905,15 @@ select a.PatID, a.EntryDate, a.Ingredient, a.Family, a.Event, a.Dose, c.MaxDose 
 	inner join
 		(
 --select LAST event for EACH ingredient the patient has ever been prescribed
-			select PatID, Ingredient, MAX(EntryDate) as LatestEventDate from MEDICATION_EVENTS_HTN 
+			select PatID, Ingredient, MAX(EntryDate) as LatestEventDate from MEDICATION_EVENTS_HTN
 			where PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 			group by PatID, Ingredient
 		) as b on b.PatID = a.PatID and b.LatestEventDate = a.EntryDate and b.Ingredient = a.Ingredient
  	left outer join
  		(select Ingredient, MaxDose from drugIngredients) as c on b.Ingredient = c.Ingredient
-where a.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0) 
+where a.PatID in (select PatID from #eligiblePopulationAllData where denominator = 1 and numerator = 0)
 --EXCLUDE any events that are a 'stopped' or 'error' event
-and [Event] in ('DOSE DECREASED','DOSE INCREASED', 'STARTED', 'RESTARTED','ADHERENCE') 
+and [Event] in ('DOSE DECREASED','DOSE INCREASED', 'STARTED', 'RESTARTED','ADHERENCE')
 
 --#htnMeds
 --above table plus a column stating the number of different drugs in the same family the patient is taking
@@ -1607,7 +1607,7 @@ insert into #medSuggestion
 	--not:
 	--PatID not in (select PatID from #htnMeds where currentMedFamily in ('ACEI','ARB'))
 	--because the second example is looking for rows where a medication is BOTH an acei AND an arb, which is impossible
---2) to state that a patient is NOT on a medication, it has to be written that: 
+--2) to state that a patient is NOT on a medication, it has to be written that:
 	--'they are NOT in the group of patients prescribed that medication'
 	--e.g. PatID NOT in (select PatID from #htnMeds where currentMedFamily = 'ACEI')
 	--not, 'they are in the group of patients NOT prescribed that medication'
@@ -1616,7 +1616,7 @@ insert into #medSuggestion
 
 --1st line: start ACEI
 	--not on htn meds OR on htn meds but not ace/arb
-	--AND 
+	--AND
 			--<55 or or is a dm or is a prot patient
 			--or (>= 55 AND is not dm and is not a prot patient) AND has CI/allergy to CCB
 		--OR on htn meds including a CCB but not ace/arb
@@ -1628,7 +1628,7 @@ select distinct a.PatID,
 	--</a>
 	')' as family,
 	'Start' as start_or_inc,
-	case 
+	case
 		when a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 		then '<li>Patient has hypertension but isn''t prescribed an ACE inhibitor, ARB or CCB. ' +
 			case when age < 55 then 'Patient is &lt; 55 years old. ' else '' end +
@@ -1638,7 +1638,7 @@ select distinct a.PatID,
 		then '<li>Patient has hypertension and is prescribed a CCB but not an ACE inhibitor or ARB.'
 	else ''
 	end + '</li><li>' +
-	case 
+	case
 		when age > 54 and ((latestAllergyCCBcode is not null and latestAScode is not null and (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) and latestPorphyriaCode is not null))
 		then 'Patient is 55 years or older, so NICE usually recommends starting a CCB <strong>but</strong> there is a documented contraindication (' +
 			case when latestAllergyCCBcode is not null then latestAllergyCCBcode + ' on ' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) + '; ' else '' end +
@@ -1660,7 +1660,7 @@ where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 	and
 	--not on htn meds OR on htn meds but not ace/arb
-	--AND 
+	--AND
 			--<55 or is a dm or is a prot patient
 			--or (>= 55 AND is not dm and is not a prot patient) AND has CI/allergy to CCB
 		--OR on htn meds including a CCB but not ace/arb
@@ -1669,23 +1669,23 @@ where
 				(
 					a.PatID not in (select PatID from #htnMeds) --not on htn meds
 						or ( --OR on htn meds but not ace/arb
-							a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ACEI') 
+							a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ACEI')
 							and a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ARB')
 							)
 				)
-					and 
+					and
 					(
 						age < 55 or dmPatient = 1 or protPatient = 1 --<55 or is a dm or is a prot patient
 						or
 						(
 							age > 54 --or >= 55 AND is not dm and is not a prot patient
 							and ((latestAllergyCCBcode is not null and latestAScode is not null and (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) and latestPorphyriaCode is not null)) --AND has CI/allergy to CCB
-						) 
+						)
 					)
 			)
-			or 
+			or
 			( --OR on htn meds including a CCB but not ace/arb
-				a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB') 
+				a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 				and a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ACEI')
 				and a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ARB')
 			)
@@ -1702,7 +1702,7 @@ select distinct a.PatID,
 	--</a>
 	')' as family,
 	'Start' as start_or_inc,
-	case 
+	case
 		when a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 		then '<li>Patient has hypertension but isn''t prescribed an ACE inhibitor, ARB or CCB. ' +
 			case when age < 55 then 'Patient is &lt; 55 years old. ' else '' end +
@@ -1712,7 +1712,7 @@ select distinct a.PatID,
 		then '<li>Patient has hypertension and is prescribed a CCB but not an ACE inhibitor or ARB'
 	else ''
 	end + '</li><li>' +
-	case 
+	case
 		when age > 54 and ((latestAllergyCCBcode is not null and latestAScode is not null and (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) and latestPorphyriaCode is not null))
 		then 'Patient is 55 years or older, so NICE usually recommends starting a CCB <strong>but</strong> there is a documented contraindication (' +
 			case when latestAllergyCCBcode is not null then latestAllergyCCBcode + ' on ' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) + '; ' else '' end +
@@ -1726,7 +1726,7 @@ select distinct a.PatID,
 					when latestAllergyACEIcode is null and latestMaxPotassium > 5.0 then 'potassium ' + STR(latestMaxPotassium) + 'on' + CONVERT(VARCHAR, latestMaxPotassiumDate, 3)
 				end +
 		'). Therefore NICE recommends starting an ARB instead.</li></ul>'
-	else ''	
+	else ''
 	end as reasonText,
 	(select text from regularText where [textId] = 'linkNiceAceiArbCkd') as usefulInfo,
 	(case when age < 55 then 1 else 0 end) + (case when dmPatient = 1 then 1 else 0 end) + (case when protPatient = 1 then 1 else 0 end) as reasonNumber,
@@ -1738,7 +1738,7 @@ where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 	and
 	--not on htn meds OR on htn meds but not ace/arb
-	--AND 
+	--AND
 			--<55 or is a dm or is a prot patient
 			-- or (>= 55 AND is not dm and is not a prot patient) AND has CI/allergy to CCB
 		--OR on htn meds including a CCB but not ace/arb
@@ -1747,23 +1747,23 @@ where
 				(
 					a.PatID not in (select PatID from #htnMeds) --not on htn meds
 						or ( --OR on htn meds but not ace/arb
-							a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ACEI') 
+							a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ACEI')
 							and a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ARB')
 							)
 				)
-					and 
+					and
 					(
 						age < 55 or dmPatient = 1 or protPatient = 1 --<55 or is a dm or is a prot patient
 						or
 						(
 							age > 54 --or (>= 55 AND is not dm and is not a prot patient)
 							and ((latestAllergyCCBcode is not null and latestAScode is not null and (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) and latestPorphyriaCode is not null)) --AND has CI/allergy to CCB
-						) 
+						)
 					)
 			)
-			or 
+			or
 			( --OR on htn meds including a CCB but not ace/arb
-				a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB') 
+				a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 				and a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ACEI')
 				and a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ARB')
 			)
@@ -1776,7 +1776,7 @@ union
 --1st line (also): start CCB
 --OPPOSITE INIDICATIONS TO ACE/ARB i.e.
 	--not on htn meds OR on htn meds but not CCB
-	--AND 
+	--AND
 			--(<55 or is a dm ro is a prot patient) AND has CI/allergy to ACE AND ARB
 			--OR >= 55
 		--OR on htn meds including an ace/arb but not CCB
@@ -1788,7 +1788,7 @@ select distinct a.PatID,
 	--</a>
 	')' as family,
 	'Start' as start_or_inc,
-	case 
+	case
 		when a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ACEI') and a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'ARB')
 		then '<li>Patient has hypertension but isn''t prescribed an ACE inhibitor, ARB or CCB' +
 			case when age > 54 then '. Patient is 55 years or older' else '' end --+
@@ -1796,7 +1796,7 @@ select distinct a.PatID,
 		then '<li>Patient has hypertension and is prescribed an ACE inhibitor or ARB but not a CCB'
 	else ''
 	end + '.</li><li>' +
-	case 
+	case
 		when (age < 55 or dmPatient = 1 or protPatient = 1) and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium >= 5.1)
 		then 'Patient ' +
 			case when age < 55 then 'is less than 55 years old;' else '' end +
@@ -1828,7 +1828,7 @@ from #impOppsData as a
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 	--not on htn meds OR on htn meds but not CCB
-	--AND 
+	--AND
 			--(<55 or is a dm or is a prot patient) AND has CI/allergy to ACE AND ARB
 			--OR >= 55
 		--OR on htn meds including an ace/arb but not CCB
@@ -1836,16 +1836,16 @@ where
 	and	(
 			(
 				(a.PatID not in (select PatID from #htnMeds) or a.PatID NOT in (select PatID from #htnMeds where currentMedFamily = 'CCB'))
-					and 
+					and
 					(--(<55 or is a dm or is a prot patient) AND has CI/allergy to ACE AND ARB
 						((age < 55 or dmPatient = 1 or protPatient = 1) and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium >= 5.1))
 						or --OR >= 55
-						age > 54 
+						age > 54
 					)
 			)
-			or 
-			(a.PatID NOT in (select PatID from #htnMeds where currentMedFamily = 'CCB') 
-				and 
+			or
+			(a.PatID NOT in (select PatID from #htnMeds where currentMedFamily = 'CCB')
+				and
 					(
 						a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI')
 						or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB')
@@ -1914,14 +1914,14 @@ from #impOppsData as a
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0)
 	and
-	(	
+	(
 		( --at stage 2 (i.e. on an ACEI or ARB, and on a CCB)
-			a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB') 
+			a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 			and (
 					a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI')
 					or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB')
 				)
-		) 
+		)
 		or --on ACEI / ARB but CI to CCB
 		(
 			(a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB'))
@@ -1958,22 +1958,22 @@ select distinct a.PatID,
 	end as family,
 	'Start' as start_or_inc,
 	case
-		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB')) 
+		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB'))
 			and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 			and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'DIUR_THI')
 		then '<li>Patient is prescribed an ACE Inhibitor (or ARB), Calcium Channel Blocker, and Thiazide-type Diuretic.</li>'
-		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB')) 
+		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB'))
 			and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
-			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null) 
+			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
 		then '<li>Patient is prescribed an ACE Inhibitor (or ARB) and Calcium Channel Blocker, and has a contraindication to Thiazide-type diuretics (' +
 				case when latestAllergyThiazideCode is not null then latestAllergyThiazideCode + ' on ' + CONVERT(VARCHAR, latestAllergyThiazideCodeDate, 3) + '; ' else '' end +
 				case when latestCalcium >2.9 then 'latest calcium ' +  Str(latestCalcium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestCalciumDate, 3) + '; ' else '' end +
 				case when latestSodium < 130 then 'latest sodium ' +  Str(latestSodium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestSodiumDate, 3) + '; ' else '' end +
 				case when latestGoutCode is not null then latestGoutCode + ' on ' + CONVERT(VARCHAR, latestGoutCodeDate, 3) + '; ' else '' end +
 			').</li>'
-		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB')) 
+		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB'))
 			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)
-			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null) 
+			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
 		then '<li>Patient is prescribed an ACE Inhibitor (or ARB) and has contraindications to Calcium Channel Blockers (' +
 				case when latestAllergyCCBcode is not null then latestAllergyCCBcode + ' on ' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) + '; ' else '' end +
 				case when latestAScode is not null then latestAScode + ' on ' + CONVERT(VARCHAR, latestAScodeDate, 3) + '; ' else '' end +
@@ -1986,9 +1986,9 @@ select distinct a.PatID,
 				case when latestSodium < 130 then 'latest sodium ' +  Str(latestSodium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestSodiumDate, 3) + '; ' else '' end +
 				case when latestGoutCode is not null then latestGoutCode + ' on ' + CONVERT(VARCHAR, latestGoutCodeDate, 3) + '; ' else '' end +
 			').</li>'
-		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB')) 
+		when (a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB'))
 			and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'DIUR_THI')
-			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null) 
+			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)
 		then '<li>Patient is prescribed an ACE Inhibitor (or ARB) and Thiazide-type Diuretic, but has contraindications to Calcium Channel Blockers (' +
 				case when latestAllergyCCBcode is not null then latestAllergyCCBcode + ' on ' + CONVERT(VARCHAR, latestAllergyCCBcodeDate, 3) + '; ' else '' end +
 				case when latestAScode is not null then latestAScode + ' on ' + CONVERT(VARCHAR, latestAScodeDate, 3) + '; ' else '' end +
@@ -1996,9 +1996,9 @@ select distinct a.PatID,
 				case when latestMIcodeDate > DATEADD(month, -1, @refdate) then latestMIcode + ' on ' + CONVERT(VARCHAR, latestMIcodeDate, 3) + '; ' else '' end +
 				case when latestPorphyriaCode is not null then latestPorphyriaCode + ' on ' + CONVERT(VARCHAR, latestPorphyriaCodeDate, 3) + '; ' else '' end +
 			').</li>'
-		when a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB') 
+		when a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 			and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'DIUR_THI')
-			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0) 
+			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)
 		then '<li>Patient is prescribed a Calcium Channel Blocker and Thiazide-type Diuretic, but has contraindications to ACE Inhibitors and ARBs (' +
 				case when latestAllergyACEIcode is not null then latestAllergyACEIcode + ' on ' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3) + '; ' else '' end +
 				case when latestAllergyARBcode is not null then latestAllergyARBcode + ' on ' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3) + '; ' else '' end +
@@ -2006,7 +2006,7 @@ select distinct a.PatID,
 			').</li>'
 		when a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
-			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0) 
+			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)
 		then '<li>Patient is prescribed a Calcium Channel Blocker but has contraindications to Thiazide-type Diuretics (' +
 				case when latestAllergyThiazideCode is not null then latestAllergyThiazideCode + ' on ' + CONVERT(VARCHAR, latestAllergyThiazideCodeDate, 3) + '; ' else '' end +
 				case when latestCalcium > 2.9 then 'latest calcium ' +  Str(latestCalcium, 3, 0) + ' on ' + CONVERT(VARCHAR, latestCalciumDate, 3) + '; ' else '' end +
@@ -2020,7 +2020,7 @@ select distinct a.PatID,
 		when a.PatID not in (select PatID from #htnMeds)
 			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)
 			and (latestAllergyCCBcode is not null or latestAScode is not null or (latestMIcodeDate is not null or latestMIcodeDate > DATEADD(month, -1, @refdate)) or latestPorphyriaCode is not null)
-			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null) 
+			and (latestAllergyThiazideCode is not null or latestCalcium > 2.9 or latestSodium < 130 or latestGoutCode is not null)
 		then '<li>Patient is not on antihypertensive medication but has contraindications to ACE Inhibitors and ARBs (' +
 				case when latestAllergyACEIcode is not null then latestAllergyACEIcode + ' on ' + CONVERT(VARCHAR, latestAllergyACEIcodeDate, 3) + '; ' else '' end +
 				case when latestAllergyARBcode is not null then latestAllergyARBcode + ' on ' + CONVERT(VARCHAR, latestAllergyARBcodeDate, 3) + '; ' else '' end +
@@ -2143,7 +2143,7 @@ where
 	and
 	(--at stage 3 (i.e. on an ACEI or ARB, CCB, and thiazide)
 	(a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ACEI') or a.PatID in (select PatID from #htnMeds where currentMedFamily = 'ARB'))
-	and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB') 
+	and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 	and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'DIUR_THI')
 		or --on ACEI / ARB and CCB but CI to thiazide
 		(
@@ -2165,7 +2165,7 @@ where
 		)
 		or --on CCB and thiazide but CI to ACEI / ARB
 		(
-			a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB') 
+			a.PatID in (select PatID from #htnMeds where currentMedFamily = 'CCB')
 			and a.PatID in (select PatID from #htnMeds where currentMedFamily = 'DIUR_THI')
 			and ((latestAllergyACEIcode is not null and latestAllergyARBcode is not null) or latestMaxPotassium > 5.0)
 		)
@@ -2318,7 +2318,7 @@ select a.PatID,
 	'Reasoning' +
 		(case
 		--No BP
-			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 
+			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then
 			'<ul><li>Patient is on CKD register.</li>
 			<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
 			<li>Salford Standards recommend BP should be measured every 6 months since ' +
@@ -2340,10 +2340,10 @@ select a.PatID,
 						else Str(latestDbp)
 					end
 				+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-				case 
+				case
 					when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
 				else ''
-				end	+		
+				end	+
 				'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
 					case
 						when dmPatient = 1 then ' and diabetes'
@@ -2436,10 +2436,10 @@ select a.PatID,
 					else Str(latestDbp)
 				end
 			+ ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-			case 
+			case
 				when sourceSbp = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in the GP record.</li>'
 			else ''
-			end	+		
+			end	+
 			'<li>Target: ' + b.bpTarget + ' - because patient has CKD' +
 				case
 					when dmPatient = 1 then ' and diabetes'
@@ -2589,7 +2589,7 @@ where
 	or(a.PatID in (select PatID from #currentHTNmeds group by PatID having count(distinct currentMedFamily) > 3) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0))
 	or(a.PatID in (select PatID from #htnMeds) and a.PatID NOT in (select PatID from #medSuggestion) and a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 1 and bpControlledOk = 0))
 
- 
+
 							---------------------------------------------------------------
 							---------------SORT ORG-LEVEL ACTION PRIORITY ORDER------------
 							---------------------------------------------------------------
@@ -2600,11 +2600,11 @@ CREATE TABLE #reasonProportions
 insert into #reasonProportions
 
 --No BP + contact with practice
-select c.pracID, 'noBpYesContact', 
+select c.pracID, 'noBpYesContact',
 	SUM(case when denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0 then 1.0 else 0.0 end)
 	/
 	SUM(case when denominator = 1 then 1.0 else 0.0 end),
-	SUM(case when denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0 then 1.0 else 0.0 end),	
+	SUM(case when denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0 then 1.0 else 0.0 end),
 	SUM(case when denominator = 1 and bpMeasuredOK = 0 and noPrimCareContactInLastYear = 0 then 1.0 else 0.0 end)*@ptPercPoints
 from #eligiblePopulationAllData as a
 left outer join (select PatID, noPrimCareContactInLastYear from #impOppsData) as b on b.PatID = a.PatID
@@ -2614,7 +2614,7 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 
 union
 --Uncontrolled + within 10mmHg of target
-select c.pracID, 'uncontrolledClose', 
+select c.pracID, 'uncontrolledClose',
 	SUM(case when
 		(
 			((dmPatient = 1 or protPatient = 1) and (latestSbp < 140 and latestDbp < 90)) or
@@ -2648,7 +2648,7 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 
 union
 --No optimisation after high reading (therapeutic inertia)
-select c.pracID, 'rxInertia', 
+select c.pracID, 'rxInertia',
 	SUM(case when
 		denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0
 		and (latestMedOptimisationDate is null or (latestMedOptimisationDate < latestSbpDate))
@@ -2671,7 +2671,7 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 
 union
 --'measure' actions
-select c.pracID, 'measureActions', 
+select c.pracID, 'measureActions',
 	SUM(case when indicatorId = 'ckdAndProt.treatment.bp' and actionCat = 'Measure BP' then 1.0 else 0.0 end)
 	/
 	SUM(case when denominator = 1 then 1.0 else 0.0 end),
@@ -2685,7 +2685,7 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 
 union
 --uncontrolled
-select c.pracID, 'uncontrolled', 
+select c.pracID, 'uncontrolled',
 	SUM(case when denominator = 1 and bpMeasuredOK = 1 and bpControlledOk = 0 then 1.0 else 0.0 end)
 	/
 	SUM(case when denominator = 1 then 1.0 else 0.0 end),
@@ -2720,13 +2720,13 @@ select
 	3 as priority,
 	'Put BP machine in waiting room' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients are not meeting the CKD BP indicator because they haven''t had their BP measured <strong>BUT</strong> have had contact with your practice in the last year.</li>' +
 		'<li>With a BP machine in your waiting room, patients can take their own BP whilst they wait and give their readings to your receptionists.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li></ul>' as supportingText
 from #reasonProportions
-where proportionId = 'noBpYesContact' 
+where proportionId = 'noBpYesContact'
 
 
 union
@@ -2741,13 +2741,13 @@ select
 	3 as priority,
 	'Work with your local pharmacy to enable them to take blood pressure readings' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients are not meeting the CKD BP indicator because they have not had their BP measured <strong>BUT</strong> have had medication issued in the last year.</li>' +
 		'<li>Pharmacies can take their blood pressure when they issue their medication and send the readings to you.</li></ul>' +
 	'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'RpsGuidanceBp') + '</li></ul>' as supportingText
 from #reasonProportions
-where proportionId = 'noBpYesContact' 
+where proportionId = 'noBpYesContact'
 
 union
 --INTRODUCE ABPM
@@ -2761,7 +2761,7 @@ select
 	1 as priority, --higher priority because also inline with NICE guidelines for HTN diagnosis
 	'Introduce an ambulatory BP monitoring service' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients are not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
 		'<li>Often high blood pressure readings taken in surgery are normal at home.</li>' +
 		'<li>This would also follow NICE guidance for hypertension diagnosis.</li></ul>' +
@@ -2772,7 +2772,7 @@ select
 		'</ul>'
 	as supportingText
 from #reasonProportions
-where proportionId = 'uncontrolledClose' 
+where proportionId = 'uncontrolledClose'
 
 union
 --ENCOURAGE BP WITH NURSE / AHP
@@ -2786,7 +2786,7 @@ select
 	2 as priority, --higher priority because good practice and evidence-based
 	'Encourage patients with CKD to see the nurse or AHP to measure their blood pressure' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients are not meeting the CKD BP indicator because they have uncontrolled BP <strong>but</strong> are within &lt; 10 mmHg of their BP target.</li>' +
 		'<li>BP is on average 7/4 mmHg lower when measured with nurses rather than doctors.</li></ul>' +
 	'Useful information' +
@@ -2794,7 +2794,7 @@ select
 		'</ul>'
 	as supportingText
 from #reasonProportions
-where proportionId = 'uncontrolledClose' 
+where proportionId = 'uncontrolledClose'
 
 union
 --EDUCATIONAL SESSION
@@ -2808,7 +2808,7 @@ select
 	3 as priority,
 	'Hold an educational session for your practice staff on NICE hypertension guidelines' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients not meeting the CKD BP indicator did not have their medication changed after their latest <strong>uncontrolled</strong> BP reading.</li>' +
 		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li></ul>' +
 	'Useful information' +
@@ -2816,7 +2816,7 @@ select
 		'</ul>'
 		as supportingText
 from #reasonProportions
-where proportionId = 'rxInertia' 
+where proportionId = 'rxInertia'
 
 union
 --PATHWAY PRINT-OUT
@@ -2830,7 +2830,7 @@ select
 	3 as priority,
 	'Print a copy of NICE hypertension targets and medication pathway for each room in your practice' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients not meeting the CKD BP indicator did not have their medication changed after their latest <strong>uncontrolled</strong> BP reading.</li>' +
 		'<li>This <strong>may</strong> indicate that staff are unaware of medication optimisation guidelines or the importance of BP control.</li></ul>' +
 	'Useful information' +
@@ -2838,7 +2838,7 @@ select
 		'</ul>'
 		as supportingText
 from #reasonProportions
-where proportionId = 'rxInertia' 
+where proportionId = 'rxInertia'
 
 union
 --ENCOURAGE HBPM
@@ -2852,7 +2852,7 @@ select
 	2 as priority, --higher because good practice
 	'Encourage patients with CKD to measure their blood pressure at home' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients not meeting the CKD BP indicator may benefit from having their BP re-measured (e.g. they have not had their BP measured, or are only just over their target).</li>' +
 		'<li>This could be achieved by asking patients to measure their own BP.</li></ul>' +
 	'Useful information' +
@@ -2865,7 +2865,7 @@ select
 		'</ul>'
 		as supportingText
 from #reasonProportions
-where proportionId = 'measureActions' 
+where proportionId = 'measureActions'
 
 union
 --VACCINATION CLINICS
@@ -2879,12 +2879,12 @@ select
 	3 as priority,
 	'Take blood pressure readings during upcoming vaccination programmes e.g. flu, shingles, whooping cough.' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients not meeting the CKD BP indicator may benefit from having their BP re-measured (e.g. they have not had their BP measured, or are only just over their target).</li></ul>' +
 		'Useful information' +
 		'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li></ul>' as supportingText
 from #reasonProportions
-where proportionId = 'measureActions' 
+where proportionId = 'measureActions'
 
 union
 --LIFESTYLE
@@ -2898,7 +2898,7 @@ select
 	3 as priority,
 	'Reinforce lifestyle advice to patients with CKD at every appointment' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) patients not meeting the CKD BP indicator have uncontrolled blood pressure.</li>' +
 		'<li>Advice on diet, exercise, alcohol reduction, weight loss, smoking cessation and exercise can help reduce blood pressure.</li></ul>' +
 	'Useful information' +
@@ -2909,7 +2909,7 @@ select
 		'</ul>'
 		as supportingText
 from #reasonProportions
-where proportionId = 'uncontrolled' 
+where proportionId = 'uncontrolled'
 
 							---------------------------------------------------------------
 							----------------------TEXT FILE OUTPUTS------------------------
@@ -2927,7 +2927,7 @@ values
 			when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 			when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 		end +
-	') where the latest BP is &lt;130/80 mmHg.<br>' + 
+	') where the latest BP is &lt;130/80 mmHg.<br>' +
 	'<strong>Why this is important:</strong>Cardiovascular disease is the biggest cause of death in CKD patients. The risk of major cardiovascular events can be reduced by about 1/6 per 5 mmHg reduction in systolic BP.<br>' +
 	'<strong>Useful information:</strong>' +
 	'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
@@ -2945,7 +2945,7 @@ values
 		end +
 	') where the latest BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">&lt;140/90 mmHg</a>.'),
 ('ckdAndProt.treatment.bp','positiveMessage', --tailored text
-	case 
+	case
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Salford Standard target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
 		when @indicatorScore >= @target and @indicatorScore < @abc then 'Well done! You’ve achieved the Salford Standard target! To improve even further, look through the recommended actions on this page and for the patients below.'
 		else 'You''ve not yet achieved the Salford Standard target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'

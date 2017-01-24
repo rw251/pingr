@@ -269,14 +269,14 @@ select top 5 sum(case when indicator='right' then 1.0 else 0.0 end) / SUM(case w
 	group by b.pracID
 	having SUM(case when code is not null then 1.0 else 0.0 end) > 0
 	order by perc desc) sub);
-	
+
 									----------------------------------------------
 									-------DEFINE % POINTS PER PATIENT------------
 									----------------------------------------------
 
 declare @ptPercPoints float;
-set @ptPercPoints = 
-(select 100 / SUM(case when code is not null then 1.0 else 0.0 end) 
+set @ptPercPoints =
+(select 100 / SUM(case when code is not null then 1.0 else 0.0 end)
 from #indicator);
 
 
@@ -289,8 +289,8 @@ from #indicator);
 --set @denominator = (select COUNT(*) from #indicator where correct is not null); --only select pts for denominator where they have CKD based on eGFR readings; excludes overdiagnosed from the denominator
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 --select CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
-select 'ckd.diagnosis.undiagnosed', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
-union
+--select 'ckd.diagnosis.undiagnosed', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
+--union
 select 'ckd.diagnosis.undiagnosed',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
@@ -302,7 +302,7 @@ select 'ckd.diagnosis.undiagnosed',b.pracID, CONVERT(char(10), @refdate, 126) as
 
 									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.denominators](PatID, indicatorId, why)
-									
+
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
 --CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
