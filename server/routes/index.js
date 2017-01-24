@@ -277,7 +277,9 @@ module.exports = function(passport) {
   });
 
   router.get('/', isAuthenticated, function(req, res, next) {
-    res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_id: req.user.practiceId, practice_name: req.user.practiceName });
+    practices.get(req.user.practiceId, function(err, practice){
+      res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_id: req.user.practiceId, practice_name: req.user.practiceName, practice_system: practice ? practice.ehr : "" });
+    });
   });
 
   /* Ensure all html/js resources are only accessible if authenticated */
