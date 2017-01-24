@@ -127,7 +127,7 @@ var checkTextFile = function(pathway, stage, standard, file) {
   if (!textFile.pathways[pathway] || !textFile.pathways[pathway][stage] || !textFile.pathways[pathway][stage].standards[standard]) {
     console.log("#######################");
     console.log("##    ERROR         ###");
-    console.error([pathway, stage, standard].join(".") + " occurs in the " + file +" file - but you don't have anything in the text file ");
+    console.error([pathway, stage, standard].join(".") + " occurs in the " + file + " file - but you don't have anything in the text file ");
     console.log("#######################");
     process.exit(1);
   }
@@ -516,6 +516,7 @@ async.series([
                       indicators.forEach(function(v) {
                         v.opportunities.forEach(function(vv, ix) {
                           v.opportunities[ix].patients = [];
+                          v.opportunities[ix].patientCount = 0;
                         });
                         v.actions = [];
                       });
@@ -591,6 +592,45 @@ async.series([
                           if (opp.patients.indexOf(+data.patientId) === -1) opp.patients.push(+data.patientId);
                         })
                         .on('end', function() {
+
+                          var all_practice_hack = {};
+
+                          indicators.forEach(function(v) {
+                            if (!all_practice_hack[v.id]) {
+                              all_practice_hack[v.id] = JSON.parse(JSON.stringify(v));
+                              all_practice_hack[v.id].practiceId = "ALL2";
+                              all_practice_hack[v.id].patients = [];
+                              all_practice_hack[v.id].patientCount = 0;
+                              all_practice_hack[v.id].values = [];
+                              all_practice_hack[v.id].data = {};
+                            }
+                            all_practice_hack[v.id].patientCount += v.patients.length;
+                            if (v.values && v.values[0].length > 0) {
+                              v.values[0].slice(1).forEach(function(v, i) {
+                                if (!all_practice_hack[v.id].data[v]) {
+                                  all_practice_hack[v.id].data[v].n = +v.values[1][i + 1];
+                                  all_practice_hack[v.id].data[v].d = +v.values[2][i + 1];
+                                  all_practice_hack[v.id].data[v].t = v.values[3][i + 1];
+                                } else {
+                                  all_practice_hack[v.id].data[v].n += +v.values[1][i + 1];
+                                  all_practice_hack[v.id].data[v].d += +v.values[2][i + 1];
+                                }
+                              });
+                            }
+                          });
+
+                          Object.keys(all_practice_hack).forEach(function(v){
+                            var x = all_practice_hack[v];
+                            x.values = [["x"],["numerator"],["denominator"],["target"]];
+                            Object.keys(x.data).forEach(function(vv){
+                              x.values[0].push(vv);
+                              x.values[1].push(x.data[vv].n);
+                              x.values[2].push(x.data[vv].d);
+                              x.values[3].push(x.data[vv].t);
+                            });
+                            delete x.data;
+                            indicators.push(x);
+                          });
 
                           console.log("opps done");
 

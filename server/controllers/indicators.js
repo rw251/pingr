@@ -50,7 +50,7 @@ module.exports = {
         return done(null, false);
       } else {
         var benchmark = indicators.filter(function(v){
-          return v.values && v.values.length>0;
+          return v.values && v.values.length>0 && v.practiceId !== "ALL";
         }).map(function(v) {
           return {
             x: +v.values[1][v.values[1].length - 1]*100/+v.values[2][v.values[2].length - 1],
