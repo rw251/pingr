@@ -2319,9 +2319,9 @@ select a.PatID,
 		(case
 		--No BP
 			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then
-			'<ul><li>Patient is on CKD register.</li>
-			<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
-			<li>Salford Standards recommend BP should be measured every 6 months since ' +
+			'<ul><li>Patient is on CKD register.</li>' +
+			'<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>' +
+			'<li>Salford Standards recommend BP should be measured every 6 months since ' +
 				case
 					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
 					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
