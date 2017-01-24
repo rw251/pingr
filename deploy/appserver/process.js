@@ -649,6 +649,7 @@ async.series([
                               x.values[2].push(x.data[vv].d);
                               x.values[3].push(x.data[vv].t);
                             });
+                            delete x._id;
                             delete x.data;
                             indicators.push(x);
                           });
