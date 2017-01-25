@@ -30,7 +30,13 @@ module.exports = function(passport) {
             }
             else {
               console.log('match'); // -> Password123: true
-              return done(null, user);
+              user.last_login = new Date();
+              user.save(function(err) {
+                if (err) {
+                  console.log('Error in updating users last login date: ' + err);
+                }
+                return done(null, user);
+              });
             }
           });
         }

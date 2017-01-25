@@ -55,6 +55,20 @@ module.exports = function(passport) {
     res.render('pages/changepassword.jade', { message: req.flash() });
   });
 
+  router.get('/emailpreference', isAuthenticated, isAdmin, function(req, res) {
+    res.render('pages/optOut.jade', { user: req.user });
+  });
+
+  router.post('/emailpreference', isAuthenticated, isAdmin, function(req, res) {
+    users.updateEmailPreference(req.user.email, req.body.optout, function(err, user, msg) {
+      if (err || msg) {
+        res.render('pages/optOut.jade', { user: req.user });
+      } else {
+        res.render('pages/optOut.jade', { user: user , message: {success: "Email preference updated. " + (req.body.optout ? "You wil not longer receive our reminder emails.":"You are currently set to receive reminder emails.")}});
+      }
+    });
+  });
+
   //User forgets password
   router.get('/forgot', function(req, res) {
     res.render('pages/userforgot.jade');

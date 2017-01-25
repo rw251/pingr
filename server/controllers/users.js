@@ -31,6 +31,33 @@ module.exports = {
     User.find({ email: email }).remove(done);
   },
 
+  updateEmailPreference: function(email, userOptsOut, done){
+    User.findOne({
+      'email': email
+    }, function(err, user) {
+      // In case of any error, return using the done method
+      if (err) {
+        console.log('Error in email preference update: ' + err);
+        return done(err);
+      }
+      // doesn't exist
+      if (!user) {
+        console.log('User doesnt exist with email: ' + email);
+        return done(null, false, 'Trying to edit a user with an email not found in the system');
+      } else {
+        user.email_opt_out = userOptsOut;
+        user.save(function(err) {
+          if (err) {
+            console.log('Error in Saving user: ' + err);
+            throw err;
+          }
+          console.log('User edit succesful');
+          return done(null, user);
+        });
+      }
+    });
+  },
+
   edit: function(email, req, done) {
     User.findOne({
       'email': email
@@ -53,6 +80,7 @@ module.exports = {
         if(email === req.body.email){
           //email not changing so update is fine
           user.fullname = req.body.fullname;
+          user.email_opt_out = !req.body.optout;
           var els = req.body.practice.split("|");
           user.practiceId = els[0] !== "" ? els[0] : "";
           user.practiceName = els[0] !== "" ? els[1] : "None";
@@ -77,6 +105,7 @@ module.exports = {
               return done(null, false, 'Trying to change the email to one that already appears in the system.');
             } else {
               originalUser.email = req.body.email;
+              originalUser.email_opt_out = !req.body.optout;
               originalUser.fullname = req.body.fullname;
               var els = req.body.practice.split("|");
               originalUser.practiceId = els[0] !== "" ? els[0] : "";
@@ -120,6 +149,7 @@ module.exports = {
         var els = req.body.practice.split("|");
         var newUser = new User({
           email: req.body.email,
+          email_opt_out: !req.body.optout,
           password: req.body.password,
           fullname: req.body.fullname,
           practiceId: els[0] !== "" ? els[0] : "",

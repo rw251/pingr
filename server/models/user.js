@@ -37,7 +37,9 @@ var UserSchema = new Schema({
   password_recovery_expiry: {
       type: Date
   },
-  roles:[String]
+  roles:[String],
+  last_login: Date,
+  email_opt_out: Boolean
 });
 
 UserSchema.pre('save', function(next) {
