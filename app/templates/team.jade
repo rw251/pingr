@@ -35,7 +35,8 @@ else
               |Relevant indicators:
               ul
                 each indicator in suggestion.indicatorList
-                  li= indicator
+                  li
+                    a(href='/#indicators/'+indicator.id.replace(/\./g,"/"))= indicator.text
               small= "Points: " + suggestion.pointsPerAction.toFixed(1)
               br
               a.show-more(data-id=suggestion.actionId)

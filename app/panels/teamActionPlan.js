@@ -348,6 +348,13 @@ var tap = {
       localData.noSuggestions = true;
     } else {
       localData.suggestions = base.dedupeAndSortActions(base.mergeTeamStuff(actions));
+
+      localData.suggestions = localData.suggestions.map(function(v) {
+        v.indicatorList = v.indicatorList.map(function(vv){
+          return {id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText};
+        });
+        return v;
+      });
     }
 
     $('#advice-placeholder').hide();

@@ -3,17 +3,19 @@
     thead
       tr
         th Quality indicator
-        th Target met? (Hover for reason)
-        th
+        th Target met?
+        th Reason
+        th Filter actions
     tbody
       each standard in standards
         tr(class=standard.targetMet ? 'success' : 'danger')
           td= standard.display
           td
             if standard.targetMet
-              i.fa.fa-check.text-success(data-toggle='tooltip', data-placement='right', title=standard.why)
+              i.fa.fa-check.text-success
             else
-              i.fa.fa-times.text-danger(data-toggle='tooltip', data-placement='right', title=standard.why)
+              i.fa.fa-times.text-danger
+          td!= standard.why
           td
             if standard.indicatorId === indicatorId
               span Currently showing actions for this indicator 
