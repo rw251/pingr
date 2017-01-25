@@ -354,6 +354,9 @@ var iap = {
         if(!pathwayId || !pathwayStage || !standard) return true;
         return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join("."))>-1;
       }).map(function(v) {
+        v.indicatorList = v.indicatorList.map(function(vv){
+          return {id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText};
+        });
         v.id = v.actionText.replace(/[^A-Za-z0-9]/g, "");
         return v;
       });
