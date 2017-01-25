@@ -1,0 +1,23 @@
+include ../partials/head.jade
+.container-narrow.starter-template-high
+  .btn-toolbar
+    a.btn.btn-info(href='/') Back to PINGR
+  if message && message.error
+    .alert.alert-danger.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.error
+  if message && message.success
+    .alert.alert-success.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.success
+  form(action='/emailpreference', method='post')
+    .form-group
+      label.cr-styled
+        input(name='optout', type='checkbox', checked=user.email_opt_out ? 'checked' : undefined)
+        i.fa
+      |               Please check this box to opt out of reminder emails
+    button.btn.btn-purple.btn-block.history(type='submit')
+      | Update
+      span.fa.fa-arrow-circle-right
