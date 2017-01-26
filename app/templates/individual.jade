@@ -20,7 +20,8 @@ else
         tr.suggestion(data-id=suggestion.id, data-indx=index, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
           td
             span(data-subsection=suggestion.subsection)
-              strong.black.f20!= suggestion.actionText
+              strong.black.f20
+                != suggestion.actionText
               if suggestion.supportingText
                 br
                 a.show-more(data-id=suggestion.id)
@@ -37,7 +38,9 @@ else
                 each indicator in suggestion.indicatorList
                   li
                     a(href='/#indicators/'+indicator.id.replace(/\./g,"/"))= indicator.text
-              small= "Points: " + suggestion.pointsPerAction.toFixed(1)
+              span
+                = "Number of points this is worth: " + suggestion.pointsPerAction.toFixed(1)
+                a(data-toggle='tooltip', data-placement='right', title='A patient is worth a number of percentage points for each indicator they are in. If a patient is in more than one indicator, these points are added together') What does this mean?
               br
               a.show-more(data-id=suggestion.id)
                 | Show less 
