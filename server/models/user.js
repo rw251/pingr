@@ -39,6 +39,7 @@ var UserSchema = new Schema({
   },
   roles:[String],
   last_login: Date,
+  last_email_reminder: Date,
   email_opt_out: Boolean
 });
 

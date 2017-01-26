@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 var IndicatorSchema = new Schema({
   practiceId: String,
   id: String,
+  name: String,
   values: [[String]],
   benchmark: Number,
   opportunities: [{ id: String, patients: [Number] }],
