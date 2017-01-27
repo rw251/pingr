@@ -290,6 +290,11 @@ module.exports = function(passport) {
     });
   });
 
+  router.get('/t/:token', function(req, res) {
+    events.emailReminderTokenCheck(req.params.token);
+    res.redirect('/login');
+  });
+
   router.get('/', isAuthenticated, function(req, res, next) {
     practices.get(req.user.practiceId, function(err, practice){
       res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_id: req.user.practiceId, practice_name: req.user.practiceName, practice_system: practice ? practice.ehr : "" });
