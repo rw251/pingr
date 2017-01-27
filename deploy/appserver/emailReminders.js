@@ -11,7 +11,7 @@ var mailConfig = config.mail;
 
 var now = new Date();
 var twoWeeksAgo = new Date();
-twoWeeksAgo.setMinutes(twoWeeksAgo.getMinutes() - 1);
+twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
 User.find({
   "$and": [
