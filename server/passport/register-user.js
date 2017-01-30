@@ -48,12 +48,12 @@ console.log(JSON.stringify(mailConfig));
           localMailConfig.options.from = mailConfig.options.from;
 console.log(JSON.stringify(localMailConfig));
           //to is now in config file
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, function(error, info) {
+          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, null, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
             }
             localMailConfig.options.to = newUser.email;
-            emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'We have received your request to access ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1] + '\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR', null, function(error, info) {
+            emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'We have received your request to access ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1] + '\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR', null, null, function(error, info) {
               if (error) {
                 console.log("email not sent: " + error);
               }
@@ -102,7 +102,7 @@ console.log(JSON.stringify(localMailConfig));
           };
           localMailConfig.options.to = user.email;
           localMailConfig.options.from = mailConfig.options.from;
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been authorised to view PINGR for practice ' + user.practiceName + '\n\nYou can access the site at ' + config.server.url + '.\n\nRegards\n\nPINGR', null, function(error, info) {
+          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been authorised to view PINGR for practice ' + user.practiceName + '\n\nYou can access the site at ' + config.server.url + '.\n\nRegards\n\nPINGR', null, null, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User authorised but confirmation email failed to send.');
@@ -142,7 +142,7 @@ console.log(JSON.stringify(localMailConfig));
           };
           localMailConfig.options.to = user.email;
           localMailConfig.options.from = mailConfig.options.from;
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been denied access to view PINGR for practice ' + user.practiceNameNotAuthorised + '\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR', null, function(error, info) {
+          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been denied access to view PINGR for practice ' + user.practiceNameNotAuthorised + '\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR', null, null, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User rejected but confirmation email failed to send.');

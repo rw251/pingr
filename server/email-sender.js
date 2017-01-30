@@ -3,7 +3,7 @@ var nodemailer = require('nodemailer'),
 
 //attachment if not null should be of the form:
 //{"name":"<filename>","content","<content as string>"}
-exports.sendEmail = function(mailConfig, subject, text, attachment, callback) {
+exports.sendEmail = function(mailConfig, subject, text, html, attachment, callback) {
 
     var smtpProperties = {};
     smtpProperties.host = mailConfig.smtp.host;
@@ -27,6 +27,7 @@ exports.sendEmail = function(mailConfig, subject, text, attachment, callback) {
         subject: subject, // Subject line
         text: text // plaintext body
     };
+    if(html) mailOptions.html = html;
 
     if(attachment && attachment.name && attachment.content){
       mailOptions.attachments = [{'filename': attachment.name, 'content': attachment.content}];

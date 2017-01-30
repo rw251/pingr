@@ -33,33 +33,71 @@ User.find({
     process.exit(0);
   }
   users.forEach(function(v) {
+    /*if (v.email.toLowerCase().indexOf('ben') > -1) {
+      console.log("Not doing: " + v.email);
+      usersUpdated++;
+      emailsSent++;
+      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+      return;
+    }*/
+    console.log("Doing: " + v.email);
     indicators.list(v.practiceId, function(err, list) {
-      //construct email
-      var performance = list.filter(function(vv) {
-        return vv.values && vv.values[0].length > 1;
-      }).map(function(vv) {
-        var lastid = vv.values[0].length - 1;
-        return vv.name + ": " + (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "% (target: " + (100 * vv.values[3][lastid]) + "%, benchmark: " + (100 * +vv.benchmark) + "%)";
-      }).join("\n\n");
-
-      var body = "Your practice's current performance is: \n\n" +
-        performance + "\n\n\nYou will receive an email reminder every two weeks " +
-        "but if you wish to opt out please log in to PINGR and update your email preferences.\n\nThe PINGR team.";
 
       crypto.randomBytes(6, function(err, buf) {
         var token = buf.toString('hex');
-        if (!v.last_login) {
-          //email how they haven't logged in
-          body = "Hi\n\n You don't appear to have logged into PINGR (" + config.server.url + "/t/"+token+") yet. \n\n" + body;
-          console.log(v.email);
-          usersUpdated++;
-          emailsSent++;
-          if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
-          return;
-        } else {
-          //email about it being two weeks since login or email
-          body = 'Hi\n\nYou last logged into PINGR (' + config.server.url + '/t/'+token+') on ' + v.last_login + '.\n\n' + body;
+        var urlBase = config.server.url + "/t/" + token + "/";
+        //construct email
+        var performanceText = v.practiceName + "'s current performance is:\n\n" +list.filter(function(vv) {
+          return vv.values && vv.values[0].length > 1;
+        }).sort(function(a,b){
+          var lastidA = a.values[0].length - 1;
+          var lastidB = b.values[0].length - 1;
+          return (b.values[1][lastidB] * 100 / b.values[2][lastidB]) - (a.values[1][lastidA] * 100 / a.values[2][lastidA]);
+        }).map(function(vv) {
+          var lastid = vv.values[0].length - 1;
+          return vv.name + ": " + (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "% (target: " + (100 * vv.values[3][lastid]) + "%, benchmark: " + (100 * +vv.benchmark) + "%)";
+        }).join("\n\n");
+
+        var performanceHTML = "<p>"+ v.practiceName + "'s current performance is:<ul>" + list.filter(function(vv) {
+          return vv.values && vv.values[0].length > 1;
+        }).sort(function(a,b){
+          var lastidA = a.values[0].length - 1;
+          var lastidB = b.values[0].length - 1;
+          return (b.values[1][lastidB] * 100 / b.values[2][lastidB]) - (a.values[1][lastidA] * 100 / a.values[2][lastidA]);
+        }).map(function(vv) {
+          var lastid = vv.values[0].length - 1;
+          return "<li><strong><a href=" + urlBase + "indicators/" + vv.id.replace(/\./g,"/") + ">" + vv.name + "</a></strong>: " +
+            (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "% (" +
+            vv.values[1][lastid] +"/"+ vv.values[2][lastid]+ ", Target: " + (100 * vv.values[3][lastid]) + "%, Salford Benchmark: " + (100 * +vv.benchmark) + "%)</li>";
+        }).join("") + "</ul></p>";
+
+        var numWeeks = 0;
+        var preambleText = "You haven't yet logged into PINGR (" + urlBase + ")";
+        var preambleHTML = "<p>You haven't yet logged into <a href='" + urlBase + "'>PINGR</a>";
+        if(v.last_login) {
+          numWeeks = Math.round((now - v.last_login) / (7 * 24 * 60 * 60 * 1000));
+          preambleText = "You last visited PINGR (" + urlBase + ") "+numWeeks+" weeks ago";
+          preambleHTML = "<p>You last visited <a href='" + urlBase + "'>PINGR</a> "+numWeeks+" weeks ago";
         }
+
+        var body = "Hello " + v.fullname + "!\n\n" +
+          preambleText + ", so we thought we'd let you know how " +
+          v.practiceName + " is doing. Remember, you can log directly into PINGR (" + urlBase + ") for more detail, including:\n\n" +
+          "  - lists of patients not achieving each quality indicator\n\n" +
+          "  - suggested improvement actions for these patients, and for [name of practice] in general\n\n" +
+          "  - comparison of your performance with other practices in Salford\n\n" +
+          performanceText +
+          "\n\nWe only send you emails if you haven't visited PINGR for two weeks. If you wish to stop receiving them" +
+          " please visit PINGR and update your email preferences.\n\nThe PINGR team.";
+        var htmlBody = "<html><body><p>Hello " + v.fullname + "!</p>" +
+          preambleHTML + ", so we thought we'd let you know how " +
+          v.practiceName + " is doing. Remember, you can log directly into <a href='" + urlBase + "'>PINGR</a> for more detail, including:" +
+          "<ul><li>lists of patients not achieving each quality indicator</li>" +
+          "<li>suggested improvement actions for these patients, and for [name of practice] in general</li>" +
+          "<li>comparison of your performance with other practices in Salford</li></ul></p>"+
+          performanceHTML +
+          "<p>We only send you emails if you haven't visited PINGR for two weeks. If you wish to stop receiving them" +
+          " please visit PINGR and update your email preferences.</p><p>The PINGR team.</p></body></html>";
 
         //send email
         var localMailConfig = {
@@ -67,13 +105,14 @@ User.find({
           smtp: mailConfig.smtp,
           options: {}
         };
+        var subject = "PINGR: " + v.practiceName + "'s Report";
         console.log(JSON.stringify(config));
         console.log(JSON.stringify(mailConfig));
         localMailConfig.options.to = v.email;
         localMailConfig.options.from = mailConfig.options.from;
         console.log(JSON.stringify(localMailConfig));
         //to is now in config file
-        emailSender.sendEmail(localMailConfig, 'PINGR: Reminder', body, null, function(error, info) {
+        emailSender.sendEmail(localMailConfig, subject, body, htmlBody, null, function(error, info) {
           emailsSent++;
           if (error) {
             console.log("email not sent: " + error);

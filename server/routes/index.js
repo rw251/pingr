@@ -290,8 +290,13 @@ module.exports = function(passport) {
     });
   });
 
+  router.get('/t/:token/*', function(req, res) {
+    events.emailReminderTokenCheck(req.params.token, req.url);
+    res.redirect('/login');
+  });
+
   router.get('/t/:token', function(req, res) {
-    events.emailReminderTokenCheck(req.params.token);
+    events.emailReminderTokenCheck(req.params.token, req.url);
     res.redirect('/login');
   });
 

@@ -100,10 +100,10 @@ var e = {
     });
   },
 
-  emailReminderTokenCheck: function(token) {
+  emailReminderTokenCheck: function(token, url) {
     User.findOne({email_url_tracking_code: token},function(err,user){
       if (user) {
-        var newEvent = new Event({user: user.email, type: "emailReminderLinkClicked"});
+        var newEvent = new Event({user: user.email, type: "emailReminderLinkClicked", url:url});
 
         // save the event
         newEvent.save(function(err) {
