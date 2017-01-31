@@ -42,7 +42,9 @@ var textFile = {
       "name": "BP",
       "unit": "mmHg",
       "type": "errorbar"
-    }
+    },
+    "SBP":{},
+    "DBP":{}
   }
 };
 
@@ -488,7 +490,7 @@ async.series([
                       })
                     )
                     .on('data', function(data) {
-
+                      if(!textFile.measurements[data.thing]) return;
                       if (+data.patientId !== lastPatId) {
                         processMeasurements(lastPatId);
                         temp = {};
