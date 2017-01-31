@@ -1,72 +1,87 @@
-<!--[if lte IE 9]><div class="unsuppotedIE hidden"></div><![endif]-->
 include ../partials/head.jade
 body
-  #login.starter-template-high.page.login-page
-    .container.login-container
-      .login-panel.panel.panel-default.plain.animated.bounceIn
-        .panel-body
-          //img(alt='...', width='200', height='200', src='images/icons/PINGR_logo-250px.png', style='display: block; margin-left: auto;margin-right: auto')
-          img(alt='...', width='200px', height='200px', src='images/icons/pingr_neo_256.png', style='display: block; margin-left: auto;margin-right: auto')
-          h3(style='text-align: center;')
-            strong
-              | The Performance 
-              | Improvement
-              | plaN 
-              | GeneratoR (PINGR)
-          p(style='font-size: 1.5em;font-style: italic;text-align: center')
-            | Improvement actions
-            br
-            | for GP practices  
-            if message && message.error
-              .alert.alert-danger.alert-dismissible.fade-in(role="alert")
-                button.close(type="button" data-dismiss="alert" aria-label="Close")
-                  span(aria-hidden="true") ×
-                p= message.error
-          div#lock-hook
-            br
-            form(action='/login', method='post', id='login')
-              .form-group.input-group
-                span.input-group-addon
-                  i.fa.fa-envelope
-                input#inpEmail.form-control(type='text', name='username', placeholder='Email address', required='', autofocus='')
-              .form-group.input-group
-                span.input-group-addon
-                  i.fa.fa-key
-                input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
-              .form-group
-                a.small(href='/forgot') Forgot password 
-                a.small.pull-right(href='/register') Register
-              script document.write('<input type="hidden" name="hash" value="'+(document.location.href.split("#")[1] || '')+'"/>');
-              button#signin.btn.btn-purple.btn-block.history(type='submit')
-                // href="#overview">
-                | Sign in 
-                span.fa.fa-arrow-circle-right
-          
-          div#alt-suggestion
-            h2.text-center.text-danger Wait a minute! 
-            p I'm afraid we don't support your browser. 
+  div.wrapper.wrapper-full-page
+    div.full-page.login-page(filter-color="black" data-image="../../assets/img/login.jpeg")
+      //you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose "
+      div.content
+        div.container
+          div.row
+            div.col-md-4.col-sm-6.col-md-offset-4.col-sm-offset-3
+              form(action='/login', method='post', id='login')
+                div.card.card-login.card-hidden
+                  div.card-header.text-center(data-background-color="blue")
+                    img(alt='...', src='images/icons/pingr_clip_512.png', style='display: block; width: 50%; margin-left: auto; margin-right: auto')
+                    h3.card-title 
+                      strong
+                        | The Performance 
+                        | Improvement
+                        | plaN 
+                        | GeneratoR (PINGR)
+                    div.social-line
+                      //a.btn.btn-just-icon.btn-simple(href="#btn")
+                        //i.fa.fa-facebook-square
+                      //a.btn.btn-just-icon.btn-simple(href="#pablo")
+                        //i.fa.fa-twitter
+                      //a.btn.btn-just-icon.btn-simple(href="#eugen")
+                        //i.fa.fa-google-plus
+                      h5.category.text-center PINGR is here to help you spot hidden patterns amongst your patients
+                  div.card-content
+                    //div.input-group
+                    //  span.input-group-addon
+                    //    i.material-icons face
+                    //  div.form-group.label-floating
+                    //    label.control-label First Name
+                    //    input.form-control(type"text")
+                    div#inpEmail.input-group
+                      span.input-group-addon
+                        i.material-icons email
+                      div.form-group.label-floating
+                        label.control-label Email address
+                        input.form-control(type='text', name='username', required='', autofocus='')
+                    div.input-group
+                      span.input-group-addon
+                        i.material-icons lock_outline
+                      div.form-group.label-floating
+                        label.control-label Password
+                        input.form-control(type='password', name='password', required='')
+                    div.input-group
+                      span.input-group-addon
+                        a.btn.btn-rose.btn-simple.btn-sl.pull-left(href='/forgot') Forgot password 
+                        a.btn.btn-rose.btn-simple.btn-sl.pull-right(href='/register') Register
+                  div.footer.text-center
+                    script document.write('<input type="hidden" name="hash" value="'+(document.location.href.split("#")[1] || '')+'"/>');
+                    button#signin.btn.btn-rose.btn-simple.btn-wd.btn-lg Let's go!(type='submit')
+      footer.footer
+        div.container
+          nav.pull-left
+            ul
+              li
+                a(href="#") Home
+              li
+                a(href="#") Company
+              li
+                a(href="#") Portfolio
+          p.copyright.pull-right &copy
+            script.
+              document.write(new Date().getFullYear() + " HeRC // University of Manchester: #dataSavesLives")
 
-            p To use this webtool we recommend either Chrome or Firefox, either of which can be downloaded for free with these buttons!
-            div
-              a.chrome-button(href='https://www.google.co.uk/chrome/')
-                button.btn.btn-info.btn-block 
-                  h4 Go get Chrome
-            br
-            div
-              a.firefox-button(href='https://www.mozilla.org/en-GB/firefox/new/')
-                button.btn.btn-warning.btn-block 
-                  h4 Go get Firefox
-          
-  script(type="text/javascript"). 
-    //*b* using comment process to assert this 
-    var ie9OrLess = $('.unsuppotedIE').length < 1;
-    //remove is a deliberate choice to avoid inappropriate attempts to access
-    if(ie9OrLess)
-    {
-      $('#alt-suggestion').remove();
-      $('#lock-hook').show();  
-    }
-    else {
-      $('#lock-hook').remove();
-      $('#alt-suggestion').show();  
-    }
+ 
+  script.
+      $().ready(function() {
+
+          $page = $('.full-page');
+          //update image location
+          //image_src = $page.data('image');
+          image_src = '../../img/login.jpeg';
+
+          if(image_src !== undefined){
+              image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
+              $page.append(image_container);
+          }
+
+          setTimeout(function() {
+              // after 1000 ms we add the class animated to the login/register card
+              $('.card').removeClass('card-hidden');
+          }, 700)
+      });
+    
