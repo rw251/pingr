@@ -694,7 +694,7 @@ select PatID, 'copd.exacerbation.rehab',
 		'<li>Patient has COPD (since ' + CONVERT(VARCHAR, firstCopdCodeDate, 3) + ').</li>'+
 		'<li>Latest COPD exacerbation was on ' + CONVERT(VARCHAR, latestCopdExacThisFinancialYearDate, 3) + '.' +
 			case 
-				when latestCopdExacThisFinancialYearType = 'tabs' then '(This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids'
+				when latestCopdExacThisFinancialYearType = 'tabs' then ' (This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids).'
 				else ''
 			end + 
 		'</li>'+
@@ -1144,24 +1144,24 @@ select a.PatID,
 	1 as reasonNumber,
 	@ptPercPoints as pointsPerAction,
 	1 as priority,
-	'Offer pulmonary rehab (using code 9NSL. [#9NSL.])' as actionText,
+	'Offer pulmonary rehab (using code 9NSL. [9NSL.])' as actionText,
 	'Suggested action'+
 		'<ul>'+
-		'<li>Offer pulmonary rehab using code 9NSL. [#9NSL.].</li>'+
+		'<li>Offer pulmonary rehab using code 9NSL. [9NSL.].</li>'+
 			'<ul>'+
 			'<li>Patients can self-refer via <a href="http://www.salfordcommunityleisure.co.uk/lifestyles/active-lifestyles/cardiac-pulmonary-cancer-rehab-classes" target="_blank" title="Salford Community Lifestyles: Pulmonary Rehabilitation Classes">Salford Community Lifestyles</a> or <a href="https://www.way2wellbeing.org.uk/health/long-term-conditions/copd/getting-support/" target="_blank" title="way2wellbeing: COPD information">Breathing Better</a>.</li>'+
 			'<li>Provide a <a href="https://www.blf.org.uk/support-for-you/exercise/pulmonary-rehabilitation" title="British Lung Foundation" target="_blank">Patient Information Leaflet on Pulmonary Rehabilitation</a>.</li>'+
 			'</ul>'+
 		'</li>'+
-		'<li>If patient is unsuitable, use code 9kf0. [#9kf0.]</li>'+
-		'<li>If patient declines, use code 8IA9. [#8IA9.]</li>'+
+		'<li>If patient is unsuitable, use code 9kf0. [9kf0.]</li>'+
+		'<li>If patient declines, use code 8IA9. [8IA9.]</li>'+
 		'</ul>'+
 	'Reasoning'+
 		'<ul>'+
 		'<li>Patient has COPD (since ' + CONVERT(VARCHAR, firstCopdCodeDate, 3) + ').</li>'+
 		'<li>Latest COPD exacerbation was on ' + CONVERT(VARCHAR, latestCopdExacThisFinancialYearDate, 3) + '.' +
 			case 
-				when latestCopdExacThisFinancialYearType = 'tabs' then '(This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids'
+				when latestCopdExacThisFinancialYearType = 'tabs' then ' (This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids.)'
 				else ''
 			end + 
 		'</li>'+
@@ -1181,24 +1181,24 @@ select a.PatID,
 	1 as reasonNumber,
 	@ptPercPoints as pointsPerAction,
 	1 as priority,
-	'Offer pulmonary rehab (using code 9NSL. [#9NSL.])' as actionText,
+	'Offer pulmonary rehab (using code 9NSL. [9NSL.])' as actionText,
 	'Suggested action'+
 		'<ul>'+
-		'<li>Offer pulmonary rehab using code 9NSL. [#9NSL.].</li>'+
+		'<li>Offer pulmonary rehab using code 9NSL. [9NSL.].</li>'+
 			'<ul>'+
 			'<li>Patients can self-refer via <a href="http://www.salfordcommunityleisure.co.uk/lifestyles/active-lifestyles/cardiac-pulmonary-cancer-rehab-classes" target="_blank" title="Salford Community Lifestyles: Pulmonary Rehabilitation Classes">Salford Community Lifestyles</a> or <a href="https://www.way2wellbeing.org.uk/health/long-term-conditions/copd/getting-support/" target="_blank" title="way2wellbeing: COPD information">Breathing Better</a>.</li>'+
 			'<li>Provide a <a href="https://www.blf.org.uk/support-for-you/exercise/pulmonary-rehabilitation" title="British Lung Foundation" target="_blank">Patient Information Leaflet on Pulmonary Rehabilitation</a>.</li>'+
 			'</ul>'+
 		'</li>'+
-		'<li>If patient is unsuitable, use code 9kf0. [#9kf0.]</li>'+
-		'<li>If patient declines, use code 8IA9. [#8IA9.]</li>'+
+		'<li>If patient is unsuitable, use code 9kf0. [9kf0.]</li>'+
+		'<li>If patient declines, use code 8IA9. [8IA9.]</li>'+
 		'</ul>'+
 	'Reasoning'+
 		'<ul>'+
 		'<li>Patient has COPD (since ' + CONVERT(VARCHAR, firstCopdCodeDate, 3) + ').</li>'+
 		'<li>Latest COPD exacerbation was on ' + CONVERT(VARCHAR, latestCopdExacThisFinancialYearDate, 3) + '.' +
 			case 
-				when latestCopdExacThisFinancialYearType = 'tabs' then '(This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids'
+				when latestCopdExacThisFinancialYearType = 'tabs' then ' (This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids.)'
 				else ''
 			end + 
 		'</li>'+
@@ -1245,10 +1245,10 @@ select a.PatID,
 	1 as reasonNumber,
 	@ptPercPoints as pointsPerAction,
 	1 as priority,
-	'Record ''Pulmonary rehabilitation offered'' (using code 9NSL. [#9NSL.])' as actionText,
+	'Record ''Pulmonary rehabilitation offered'' (using code 9NSL. [9NSL.])' as actionText,
 	'Suggested action'+
 		'<ul>'+
-		'<li>Record ''Pulmonary rehabilitation offered'' using code 9NSL. [#9NSL.] on date ' +
+		'<li>Record ''Pulmonary rehabilitation offered'' using code 9NSL. [9NSL.] on date ' +
 			case
 				when 
 					firstUncodedPulRehabCodeAfterExacDate <= DATEADD(MONTH, 2, latestCopdExacThisFinancialYearDate) 
@@ -1267,7 +1267,7 @@ select a.PatID,
 		'<li>Patient has COPD (since ' + CONVERT(VARCHAR, firstCopdCodeDate, 3) + ').</li>'+
 		'<li>Latest COPD exacerbation was on ' + CONVERT(VARCHAR, latestCopdExacThisFinancialYearDate, 3) + '.' +
 			case 
-				when latestCopdExacThisFinancialYearType = 'tabs' then '(This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids'
+				when latestCopdExacThisFinancialYearType = 'tabs' then ' (This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids.)'
 				else ''
 			end + 
 		'</li>'+
@@ -1310,7 +1310,7 @@ select a.PatID,
 				else 'either during or < 2 months after their latest COPD exacerbation'
 			end +
 		'</li>'+
-		'<li>This only counts towards your <a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards score</a> if you use code 9NSL. [#9NSL.] (''Pulmonary rehabilitation offered'') to record they received pulmonary rehabilitation.</li>'+
+		'<li>This only counts towards your <a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards score</a> if you use code 9NSL. [9NSL.] (''Pulmonary rehabilitation offered'') to record they received pulmonary rehabilitation.</li>'+
 		'</ul>'
 	as supportingText
 from #impOppsData as a
@@ -1355,7 +1355,7 @@ select a.PatID,
 			(latestMiNowCodeDate > DATEADD(MONTH, -6, @achievedate) or latestUnstableAnginaCodeDate > DATEADD(year, -1, @refdate))
 			or
 			(latestAnyExceptionCodeDate > DATEADD(year, -1, @achievedate))
-		then '9kf0. ''Patient unsuitable for pulmonary rehabilitation'' [#9kf0.]'
+		then '9kf0. ''Patient unsuitable for pulmonary rehabilitation'' [9kf0.]'
 		else ''
 	end) +
 	(case
@@ -1368,7 +1368,7 @@ select a.PatID,
 			(latestCopdAsthmaDrugCodeDate < DATEADD(year, -1, @refdate))
 			or
 			(latestCopdExcludedCodeDate > latestCopdCodeDate)
-		then '2126F ''COPD resolved'' [#2126F]'
+		then '2126F ''COPD resolved'' [2126F]'
 		else ''
 	end)
 	as actionText,
@@ -1377,12 +1377,12 @@ select a.PatID,
 		'<li>Patient has COPD (since ' + CONVERT(VARCHAR, firstCopdCodeDate, 3) + ').</li>'+
 		'<li>Latest COPD exacerbation was on ' + CONVERT(VARCHAR, latestCopdExacThisFinancialYearDate, 3) + '.' +
 			case 
-				when latestCopdExacThisFinancialYearType = 'tabs' then '(This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids'
+				when latestCopdExacThisFinancialYearType = 'tabs' then ' (This may not be coded in the record, and may only appear as a prescription of antibiotics and/or steroids.)'
 				else ''
 			end + 
 		'</li>'+
-		'<li>Last recorded breathlessness level was <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!diagnosisadditional:2" target="_blank" title="NICE Clinical Knowledge Summary: COPD">MRC stage 2</a> on ' + CONVERT(VARCHAR, latestMrc2CodeDate, 3) + '. </li>'+
-		'<li><a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend these patients are offered pulmonary rehabilitation < 2 months afterwards because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.</li>'+
+--		'<li>Last recorded breathlessness level was <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!diagnosisadditional:2" target="_blank" title="NICE Clinical Knowledge Summary: COPD">MRC stage 2</a> on ' + CONVERT(VARCHAR, latestMrc2CodeDate, 3) + '. </li>'+
+--		'<li><a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend these patients are offered pulmonary rehabilitation < 2 months afterwards because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.</li>'+
 		(case
 			when
 				((latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate))
@@ -1397,15 +1397,15 @@ select a.PatID,
 			then
 				'<li>Patient has' +
 					case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate)
-					then 'code <strong>' + latestPalCode + '</strong> on ' + CONVERT(VARCHAR, latestPalCodeDate, 3) COLLATE Latin1_General_CI_AS + '; ' else '' end +
+					then '<strong>' + latestPalCode + '</strong> code on ' + CONVERT(VARCHAR, latestPalCodeDate, 3) COLLATE Latin1_General_CI_AS + '; ' else '' end +
 					case when latestFrailCode is not null
-					then '<li>code <strong>' + latestFrailCode + '</strong> on ' + CONVERT(VARCHAR, latestFrailCodeDate, 3) + '; ' else '' end +
+					then '<strong>' + latestFrailCode + '</strong> code on ' + CONVERT(VARCHAR, latestFrailCodeDate, 3) + '; ' else '' end +
 					case when (latestHouseBedboundCodeDate is not null) and (latestHouseBedboundPermExCodeDate is null or latestHouseBedboundPermExCodeDate < latestHouseBedboundCodeDate)
-					then '<li>code <strong>' + latestHouseBedboundCode + '</strong> on ' + CONVERT(VARCHAR, latestHouseBedboundCodeDate, 3) COLLATE Latin1_General_CI_AS + ';' else '' end +
+					then '<strong>' + latestHouseBedboundCode + '</strong> code on ' + CONVERT(VARCHAR, latestHouseBedboundCodeDate, 3) COLLATE Latin1_General_CI_AS + ';' else '' end +
 					case when latestMiNowCodeDate > DATEADD(MONTH, -6, @achievedate)
-					then '<li>code <strong>' + latestMiNowCode + '</strong> on ' + CONVERT(VARCHAR, latestMiNowCodeDate, 3) COLLATE Latin1_General_CI_AS + '; ' else '' end +
+					then '<strong>' + latestMiNowCode + '</strong> code on ' + CONVERT(VARCHAR, latestMiNowCodeDate, 3) COLLATE Latin1_General_CI_AS + '; ' else '' end +
 					case when latestUnstableAnginaCodeDate > DATEADD(year, -1, @refdate)
-					then '<li>code <strong>' + latestUnstableAnginaCode + '</strong> on ' + CONVERT(VARCHAR, latestUnstableAnginaCodeDate, 3) COLLATE Latin1_General_CI_AS + '; ' else '' end +
+					then '<strong>' + latestUnstableAnginaCode + '</strong> code on ' + CONVERT(VARCHAR, latestUnstableAnginaCodeDate, 3) COLLATE Latin1_General_CI_AS + '; ' else '' end +
 			' so is likely <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">unsuitable for pulmonary rehab according to NICE</a>.</li>'
 			else ''
 		end) +
@@ -1507,7 +1507,8 @@ select
 	'Reasoning' +
 		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
 		+ '%) of eligible patients did not meet the <a href="#indicators/copd/exacerbation/rehab">COPD exacerbation pulmonary rehab referral standard</a> because they were not referred to pulmonary rehab within 2 months of an exacerbation.</li>' +
-		'<li><a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend COPD patients with MRC 2 stage breathlessness are offered pulmonary rehabilitation < 2 months after an exacerbation because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.</li>'
+		'<li><a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend COPD patients with MRC 2 stage breathlessness are offered pulmonary rehabilitation < 2 months after an exacerbation because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.</li>'+
+		'/ul>'
 from #reasonProportions
 where proportionId = 'missedRehab' 
 
@@ -1528,7 +1529,7 @@ select
 		'<li>Ensure all clinicians are aware to refer relevant  patients for pulmonary rehab when they diagnose an exacerbation.</li>' +
 		'<li>Consult PINGR at least monthly to see which patients have recently had an exacerbation <a href="#indicators/copd/exacerbation/rehab">here</a>.</li>' +
 		'<li>Inform patients on how to self-refer to pulmonary rehab self-refer via <a href="http://www.salfordcommunityleisure.co.uk/lifestyles/active-lifestyles/cardiac-pulmonary-cancer-rehab-classes" target="_blank" title="Salford Community Lifestyles: Pulmonary Rehabilitation Classes">Salford Community Lifestyles</a> or <a href="https://www.way2wellbeing.org.uk/health/long-term-conditions/copd/getting-support/" target="_blank" title="way2wellbeing: COPD information">Breathing Better</a>.</li>' +
-		'<li>Code this in their record using 9NSL. [#9NSL.].</li>'+
+		'<li>Code this in their record using 9NSL. [9NSL.].</li>'+
 		'</ul>'+
 	'Reasoning' +
 		'<ul>'+
@@ -1554,7 +1555,7 @@ select
 		'<ul>'+
 		'<li>Inform patients on how to self-refer to pulmonary rehab self-refer via <a href="http://www.salfordcommunityleisure.co.uk/lifestyles/active-lifestyles/cardiac-pulmonary-cancer-rehab-classes" target="_blank" title="Salford Community Lifestyles: Pulmonary Rehabilitation Classes">Salford Community Lifestyles</a> or <a href="https://www.way2wellbeing.org.uk/health/long-term-conditions/copd/getting-support/" target="_blank" title="way2wellbeing: COPD information">Breathing Better</a>.</li>' +
 		'<li>Provide a <a href="https://www.blf.org.uk/support-for-you/exercise/pulmonary-rehabilitation" title="British Lung Foundation" target="_blank">Patient Information Leaflet on Pulmonary Rehabilitation</a>.</li>'+
-		'<li>When this happens, code it in their record using 9NSL. [#9NSL.].</li>'+
+		'<li>When this happens, code it in their record using 9NSL. [9NSL.].</li>'+
 		'</ul>'+
 	'Reasoning' +
 		'<ul>'+
@@ -1575,7 +1576,7 @@ select
 	numberPatients as numberPatients,
 	pointsPerAction as pointsPerAction,
 	3 as priority,
-	'Advise to code COPD exacerbations using code H3122 ''Acute exacerbation of COPD'' [H3122]' as actionText,
+	'Advise clinicians to code COPD exacerbations using code H3122 ''Acute exacerbation of COPD'' [H3122]' as actionText,
 	'Reasoning' +
 		'<ul>'+
 		'<li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
@@ -1596,21 +1597,21 @@ values
 ('copd.exacerbation.rehab','name','COPD MRC Stage 2 Pulmonary Rehab Following Exacerbation'), --overview table name
 ('copd.exacerbation.rehab','tabText','COPD Pul Rehab'), --indicator tab text
 ('copd.exacerbation.rehab','description', --'show more' on overview tab
-	'<strong>Definition:</strong>Patients with COPD identified as MRC 2 in last 5 years with an exacerbation (coded or <strong>or uncoded</strong>) recorded after '+ 
+	'<strong>Definition:</strong>Patients with COPD identified as MRC 2 in last 5 years with an exacerbation (<strong>coded or uncoded</strong>) recorded after '+ 
 		case
-			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+			when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
+			when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
 		end +
-	' who have been offered or declined Pulmonary Rehabilitation within 2 months of exacerbation.<br>'+
+	' who have been offered or declined Pulmonary Rehabilitation within 2 months of their latest exacerbation.<br>'+
 	'<strong>Why this is important:<a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend COPD patients with MRC 2 stage breathlessness are offered pulmonary rehabilitation < 2 months after an exacerbation because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.<br>'),
 --INDICATOR TAB
 	--summary text
-('copd.exacerbation.rehab','tagline',' of patients with COPD and MRC 2 breathlesssness in last 5 years with an exacerbation (coded or <strong>or uncoded</strong>) after '+ 
+('copd.exacerbation.rehab','tagline',' of patients with COPD and MRC 2 breathlesssness in last 5 years with an exacerbation (<strong>coded or uncoded</strong>) after '+ 
 	case
-		when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-		when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+		when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
+		when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
 	end +
-	' have been offered or declined Pulmonary Rehabilitation within 2 months of exacerbation.'),
+	' have been offered or declined Pulmonary Rehabilitation within 2 months of their latest exacerbation.'),
 ('copd.exacerbation.rehab','positiveMessage', --tailored text
 	case 
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Salford Standard target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
@@ -1627,12 +1628,12 @@ values
 	--imp opp charts (based on actionCat)
 --EXACERBATION (CODED OR UNCODED) < 2/12 AGO
 ('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).name','COPD exacerbation &lt; 2 ago - no pulmonary rehab'),
-('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).description','COPD patients with MRC Stage 2 breathlessness who have had a COPD exacerbation in the last 2 months (coded or <strong>or uncoded</strong>) and have not been referred for pulmonary rehab'),
+('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).description','COPD patients with MRC Stage 2 breathlessness who have had a COPD exacerbation in the last 2 months (<strong>coded or uncoded</strong>) and have not been referred for pulmonary rehab'),
 ('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).positionInBarChart','1'),
 
 --EXACERBATION (CODED OR UNCODED) > 2/12 AGO - AND STILL NO REHAB
 ('copd.exacerbation.rehab','opportunities.Offer pul rehab (gt 2/12).name','COPD exacerbation &gt; 2 ago - no pulmonary rehab'),
-('copd.exacerbation.rehab','opportunities.Offer pul rehab (gt 2/12).description','COPD patients with MRC Stage 2 breathlessness who had an exacerbation (coded or <strong>or uncoded</strong>) after '+
+('copd.exacerbation.rehab','opportunities.Offer pul rehab (gt 2/12).description','COPD patients with MRC Stage 2 breathlessness who had an exacerbation (<strong>coded or uncoded</strong>) after '+
 		case
 			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
 			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
@@ -1652,7 +1653,7 @@ values
 
 --UNCODED REHAB NEAR EXAC (CODED OR UNCODED)
 ('copd.exacerbation.rehab','opportunities.Code pul rehab.name','Code pulmonary rehabilitation'),
-('copd.exacerbation.rehab','opportunities.Code pul rehab.description','COPD patients with MRC Stage 2 breathlessness that had uncoded pulmonary rehabilitation around the time of an exacerbation (coded or <strong>or uncoded</strong>) after '+
+('copd.exacerbation.rehab','opportunities.Code pul rehab.description','COPD patients with MRC Stage 2 breathlessness that had uncoded pulmonary rehabilitation around the time of an exacerbation (<strong>coded or uncoded</strong>) after '+
 		case
 			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
 			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
@@ -1662,7 +1663,7 @@ values
 
 --SUGGEST EXCLUDE
 ('copd.exacerbation.rehab','opportunities.Suggest exclude.name','Suggest exclude'),
-('copd.exacerbation.rehab','opportunities.Suggest exclude.description','COPD patients with MRC Stage 2 breathlessness that had an exacerbation (coded or <strong>or uncoded</strong>) since '+
+('copd.exacerbation.rehab','opportunities.Suggest exclude.description','COPD patients with MRC Stage 2 breathlessness that had an exacerbation (<strong>coded or uncoded</strong>) since '+
 		case
 			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
 			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))

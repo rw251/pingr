@@ -352,7 +352,7 @@ select a.PatID,
 					(
 						(firstDmCodeDate > DATEADD(month, -9, @achievedate)) or (firstDmCodeAfterDate > DATEADD(month, -9, @achievedate)) --first DM code is within 9/12 of achievement date, or have been perm ex but then re-diagnosed within 9/12
 					) then 0 else 1 end as dmPatient, --DM patient
-	case when (latestAcr is null) or (latestAcr < 70) then 0 else 1 end as protPatient
+	case when latestAcr >= 70 then 1 else 0 end as protPatient
 from #firstCkd35code as a
 		left outer join (select PatID, latestDmCodeDate, latestDmCode from #latestDmCode) b on b.PatID = a.PatID
 		left outer join (select PatID, latestDmPermExCodeDate from #latestDmPermExCode) c on c.PatID = a.PatID
@@ -380,7 +380,7 @@ CREATE TABLE #exclusions
 	deadCodeExclude int, deadTableExclude int, diagExclude int, permExExclude int);
 insert into #exclusions
 select a.PatID,
-	case when protPatient = 0 then 1 else 0 end as noDmExclude, -- Demographic exclusions: Under 18 at achievement date (from QOF v34 business rules)
+	case when protPatient = 0 then 1 else 0 end as noProtExclude, 
 	case when age < 17 then 1 else 0 end as ageExclude, -- Demographic exclusions: Under 18 at achievement date (from QOF v34 business rules)
 	case when latestRegisteredCodeDate > DATEADD(month, -9, @achievedate) then 1 else 0 end as regCodeExclude, -- Registration date: > achievement date - 9/12 (from CKD ruleset_INLIQ_v32.0)
 	case when latestDeregCodeDate > latestCkd35codeDate then 1 else 0 end as deRegCodeExclude, -- Exclude patients with deregistered codes AFTER their latest CKD 35 code
@@ -2940,7 +2940,7 @@ values
 			when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 			when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 		end +
-	') where the latest BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">&lt;140/90 mmHg</a>.'),
+	') where the latest BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">&lt;130/80 mmHg</a>.'),
 ('ckdAndProt.treatment.bp','positiveMessage', --tailored text
 	case 
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Salford Standard target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'

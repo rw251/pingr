@@ -11,7 +11,7 @@ var mailConfig = config.mail;
 
 var now = new Date();
 var twoWeeksAgo = new Date();
-twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 0);
 
 User.find({
   "$and": [
@@ -47,57 +47,58 @@ User.find({
         var token = buf.toString('hex');
         var urlBase = config.server.url + "/t/" + token + "/";
         //construct email
-        var performanceText = v.practiceName + "'s current performance is:\n\n" +list.filter(function(vv) {
+        var performanceText = v.practiceName + "'s current performance is:\n\n" + list.filter(function(vv) {
           return vv.values && vv.values[0].length > 1;
-        }).sort(function(a,b){
+        }).sort(function(a, b) {
           var lastidA = a.values[0].length - 1;
           var lastidB = b.values[0].length - 1;
-          return (b.values[1][lastidB] * 100 / b.values[2][lastidB]) - (a.values[1][lastidA] * 100 / a.values[2][lastidA]);
+          return (a.values[1][lastidA] * 100 / a.values[2][lastidA]) - (b.values[1][lastidB] * 100 / b.values[2][lastidB]);
         }).map(function(vv) {
           var lastid = vv.values[0].length - 1;
           return vv.name + ": " + (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "% (target: " + (100 * vv.values[3][lastid]) + "%, benchmark: " + (100 * +vv.benchmark) + "%)";
         }).join("\n\n");
 
-        var performanceHTML = "<p>"+ v.practiceName + "'s current performance is:<ul>" + list.filter(function(vv) {
+        var performanceHTML = "<p>" + v.practiceName + "'s current performance is:</p><table><thead style='font-weight:bold'><th><tr style='font-weight:bold'><td>Indicator</td><td>Current Performance</td><td>Target</td><td>Salford Benchmark</td></tr></th></thead><tbody>" + list.filter(function(vv) {
           return vv.values && vv.values[0].length > 1;
-        }).sort(function(a,b){
+        }).sort(function(a, b) {
           var lastidA = a.values[0].length - 1;
           var lastidB = b.values[0].length - 1;
-          return (b.values[1][lastidB] * 100 / b.values[2][lastidB]) - (a.values[1][lastidA] * 100 / a.values[2][lastidA]);
+          return (a.values[1][lastidA] * 100 / a.values[2][lastidA]) - (b.values[1][lastidB] * 100 / b.values[2][lastidB]);
         }).map(function(vv) {
           var lastid = vv.values[0].length - 1;
-          return "<li><strong><a href=" + urlBase + "indicators/" + vv.id.replace(/\./g,"/") + ">" + vv.name + "</a></strong>: " +
-            (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "% (" +
-            vv.values[1][lastid] +"/"+ vv.values[2][lastid]+ ", Target: " + (100 * vv.values[3][lastid]) + "%, Salford Benchmark: " + (100 * +vv.benchmark) + "%)</li>";
-        }).join("") + "</ul></p>";
+          return "<tr><td><strong><a href=" + urlBase + "indicators/" + vv.id.replace(/\./g, "/") + ">" + vv.name + "</a></strong>:</td><td><strong>" +
+            (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "%</strong> (Number of patients: " +
+            vv.values[1][lastid] + "/" + vv.values[2][lastid] + ")</td><td>" + (100 * vv.values[3][lastid]) + "%</td><td>" + (100 * +vv.benchmark) + "%</td></tr>";
+        }).join("") + "</tbody></table>";
 
         var numWeeks = 0;
+        var lkup = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
         var preambleText = "You haven't yet logged into PINGR (" + urlBase + ")";
         var preambleHTML = "<p>You haven't yet logged into <a href='" + urlBase + "'>PINGR</a>";
-        if(v.last_login) {
+        if (v.last_login) {
           numWeeks = Math.round((now - v.last_login) / (7 * 24 * 60 * 60 * 1000));
-          preambleText = "You last visited PINGR (" + urlBase + ") "+numWeeks+" weeks ago";
-          preambleHTML = "<p>You last visited <a href='" + urlBase + "'>PINGR</a> "+numWeeks+" weeks ago";
+          preambleText = "You last visited PINGR (" + urlBase + ") " + (lkup.length > numWeeks ? lkup[numWeeks] : numWeeks) + " weeks ago";
+          preambleHTML = "<p>You last visited <a href='" + urlBase + "'>PINGR</a> " + (lkup.length > numWeeks ? lkup[numWeeks] : numWeeks) + " weeks ago";
         }
 
         var body = "Hello " + v.fullname + "!\n\n" +
           preambleText + ", so we thought we'd let you know how " +
           v.practiceName + " is doing. Remember, you can log directly into PINGR (" + urlBase + ") for more detail, including:\n\n" +
-          "  - lists of patients not achieving each quality indicator\n\n" +
-          "  - suggested improvement actions for these patients, and for [name of practice] in general\n\n" +
-          "  - comparison of your performance with other practices in Salford\n\n" +
+          "  - Lists of patients not achieving each quality indicator\n\n" +
+          "  - Suggested improvement actions for these patients, and for " + v.practiceName + " in general\n\n" +
+          "  - Comparison of your performance with other practices in Salford\n\n" +
           performanceText +
           "\n\nWe only send you emails if you haven't visited PINGR for two weeks. If you wish to stop receiving them" +
-          " please visit PINGR and update your email preferences.\n\nThe PINGR team.";
+          " please visit PINGR (" + urlBase + ") and update your email preferences.\n\nThe PINGR team.";
         var htmlBody = "<html><body><p>Hello " + v.fullname + "!</p>" +
           preambleHTML + ", so we thought we'd let you know how " +
           v.practiceName + " is doing. Remember, you can log directly into <a href='" + urlBase + "'>PINGR</a> for more detail, including:" +
-          "<ul><li>lists of patients not achieving each quality indicator</li>" +
-          "<li>suggested improvement actions for these patients, and for [name of practice] in general</li>" +
-          "<li>comparison of your performance with other practices in Salford</li></ul></p>"+
+          "<ul><li>Lists of patients not achieving each quality indicator</li>" +
+          "<li>Suggested improvement actions for these patients, and for " + v.practiceName + " in general</li>" +
+          "<li>Comparison of your performance with other practices in Salford</li></ul></p>" +
           performanceHTML +
           "<p>We only send you emails if you haven't visited PINGR for two weeks. If you wish to stop receiving them" +
-          " please visit PINGR and update your email preferences.</p><p>The PINGR team.</p></body></html>";
+          " please visit <a href='" + urlBase + "'>PINGR</a> and update your email preferences.</p><p>The PINGR team.</p></body></html>";
 
         //send email
         var localMailConfig = {

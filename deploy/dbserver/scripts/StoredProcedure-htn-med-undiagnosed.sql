@@ -1,16 +1,16 @@
 									--TO RUN AS STORED PROCEDURE--
-IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.htn.undiagnosed.med') DROP PROCEDURE [pingr.htn.undiagnosed.med];
-GO
-CREATE PROCEDURE [pingr.htn.undiagnosed.med] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
-AS
-SET NOCOUNT ON
+--IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.htn.undiagnosed.med') DROP PROCEDURE [pingr.htn.undiagnosed.med];
+--GO
+--CREATE PROCEDURE [pingr.htn.undiagnosed.med] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
+--AS
+--SET NOCOUNT ON
 
 									--TO TEST ON THE FLY--
---use PatientSafety_Records_Test
---declare @refdate VARCHAR(10);
---declare @JustTheIndicatorNumbersPlease bit;
---set @refdate = '2016-11-17';
---set @JustTheIndicatorNumbersPlease= 0;
+use PatientSafety_Records_Test
+declare @refdate VARCHAR(10);
+declare @JustTheIndicatorNumbersPlease bit;
+set @refdate = '2016-11-17';
+set @JustTheIndicatorNumbersPlease= 0;
 
 -----------------------------------------------------------------------------------
 --DEFINE ELIGIBLE POPULATION, EXCLUSIONS, DENOMINATOR, AND NUMERATOR --------------
@@ -608,12 +608,12 @@ declare @target float;
 set @target = 0.80;
 
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+--insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 
 									--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
---CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
---insert into #indicator
+IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+insert into #indicator
 
 select 'htn.undiagnosed.med', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
 	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
@@ -626,13 +626,13 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+--insert into [output.pingr.denominators](PatID, indicatorId, why)
 
 
 									--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
---insert into #denominators
+IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+insert into #denominators
 
 select PatID, 'htn.undiagnosed.med',
 case
@@ -692,13 +692,13 @@ and c.Ingredient not in ('Sotalol', 'Triamterene', 'Bumetanide', 'Eplerenone', '
 							----------------------PT-LEVEL ACTIONS-------------------------
 							---------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
+--insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
 
 									--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
---CREATE TABLE #patActions
---	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
---insert into #patActions
+IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+CREATE TABLE #patActions
+	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+insert into #patActions
 
 --EXPLANATORY CONDITION ABSENT
 select PatID,
@@ -710,14 +710,14 @@ select PatID,
 	'Add Hypertension diagnosis using code G2... [G2...]' as actionText,
 	'Reasoning' +
 	'<ul>'+
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') then '<li>Patient is prescribed a thiazide diuretic but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') then '<li>Patient is prescribed a potassium-sparing diuretic (e.g. spironolactone) but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') then '<li>Patient is prescribed a loop diuretic (e.g. furosemide) but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') then '<li>Patient is prescribed an ACE-inhibitor but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') then '<li>Patient is prescribed an Angiotensin Receptor Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'CCB') then '<li>Patient is prescribed an Calcium Channel Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'BB') then '<li>Patient is prescribed an Beta Blocker but has no evidence of other indications for it (e.g. ischaemic heart disease, heart failure, AF or ACR &gt; 30).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ALPHA') then '<li>Patient is prescribed an Alpha Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) then '<li>Patient is prescribed a thiazide diuretic but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) then '<li>Patient is prescribed a potassium-sparing diuretic (e.g. spironolactone) but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate))then '<li>Patient is prescribed a loop diuretic (e.g. furosemide) but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))) then '<li>Patient is prescribed an ACE-inhibitor but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate)))then '<li>Patient is prescribed an Angiotensin Receptor Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'CCB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))) then '<li>Patient is prescribed an Calcium Channel Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'BB') and (latestChd is null and (latestHf is null or (latestHfPermExDate >= latestHfDate)) and (latestAf is null or (latestAfPermExDate >= latestAfDate)) and (latestAcr <30 or latestAcr is null)) then '<li>Patient is prescribed an Beta Blocker but has no evidence of other indications for it (e.g. ischaemic heart disease, heart failure, AF or ACR &gt; 30).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ALPHA') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))) then '<li>Patient is prescribed an Alpha Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
 	'<li>So it is likely they are prescribed these medications for hypertension.</li>'+
 	'<li>This is important because currently the recorded prevalence of hypertension in Salford is lower than expected. And finding undiagnosed patients can help provide better care and increase your QOF scores.</li>'+
 	'<li>If they <strong>do not</strong> have hypertension please add code 21261 ''Hypertension resolved'' [21261].</li>'+
@@ -834,12 +834,12 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 							---------------------------------------------------------------
 
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
+--insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
 
 										--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
---CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
---insert into #orgActions
+IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+insert into #orgActions
 
 --CODE HTN
 select
@@ -853,7 +853,7 @@ select
 	'Inform all clinical staff to record hypertension in patient''s records using code G2... [G2...] ' as actionText,
 	'Reasoning' +
 		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
-		+ '%) patients on anti-hypertensive medication with no other clinical indication <strong>do not</strong> have a recorded diagnosis of hyptertension.</li>' +
+		+ '%) of patients on anti-hypertensive medication with no other clinical indication <strong>do not</strong> have a recorded diagnosis of hyptertension.</li>' +
 		'<li>This is important because currently the recorded prevalence of hypertension in Salford is lower than expected. Finding undiagnosed patients can help provide better care and increase your QOF scores.</li></ul>'
 from #reasonProportions
 where proportionId = 'Condition absent' 
@@ -868,11 +868,11 @@ values
 ('htn.undiagnosed.med','name','Undiagnosed hypertension - medication'), --overview table name
 ('htn.undiagnosed.med','tabText','HTN Diagnosis - Medication'), --indicator tab text
 ('htn.undiagnosed.med','description', --'show more' on overview tab
-	'<strong>Definition:</strong> Patients prescribed anti-hypertensive medication that are on the hypertension register. (NB: Some patients may have these medications prescribed for reasons other than hypertension though.)<br>' + 
+	'<strong>Definition:</strong> Patients prescribed anti-hypertensive medication that are on the hypertension register. (NB: Some patients may have these medications prescribed for reasons other than hypertension.)<br>' + 
 	'<strong>Why this is important:</strong> The recorded prevalence of hypertension in Salford is lower than expected. Finding undiagnosed patients can help provide better care and increase your QOF scores.<br>'),
 --indicator tab
 --summary text
-('htn.undiagnosed.med','tagline','of patients currently prescribed anti-hypertensive medication are on the hypertension register. (NB: Some may have these medications prescribed for reasons other than hypertension though.)'),
+('htn.undiagnosed.med','tagline','of patients currently prescribed anti-hypertensive medication are on the hypertension register. (NB: Some may have these medications prescribed for reasons other than hypertension.)'),
 ('htn.undiagnosed.med','positiveMessage', --tailored text
 	case 
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
