@@ -2905,8 +2905,8 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --overview tab
-('htn.treatment.bp','name','Hypternsion blood pressure control'), --overview table name
-('htn.treatment.bp','tabText','Hypertension BP Control'), --indicator tab text
+('htn.treatment.bp','name','Hypertension blood pressure control'), --overview table name
+('htn.treatment.bp','tabText','HTN BP Control'), --indicator tab text
 ('htn.treatment.bp','description', --'show more' on overview tab
 	'<strong>Definition:</strong>Patients on the hypertension register with a BP recorded in the last 12 months (since ' +
 	case
