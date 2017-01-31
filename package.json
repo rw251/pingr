@@ -5,8 +5,9 @@
   "main": "script.js",
   "scripts": {
     "start": "brunch watch --server",
+    "prebuild": "cp node_modules/zeroclipboard/dist/ZeroClipboard.swf ./app/assets/",
     "build": "brunch build --production",
-    "postinstall": "brunch build --production",
+    "postinstall": "npm run build",
     "watch": "brunch watch",
     "predebug": "echo In one window launch brunch without server: npm run watch",
     "debug": "echo Then in second window launch server with debug: node-debug app.js",
