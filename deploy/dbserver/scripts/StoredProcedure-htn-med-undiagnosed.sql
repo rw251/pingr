@@ -1,16 +1,16 @@
 									--TO RUN AS STORED PROCEDURE--
---IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.htn.undiagnosed.med') DROP PROCEDURE [pingr.htn.undiagnosed.med];
---GO
---CREATE PROCEDURE [pingr.htn.undiagnosed.med] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
---AS
---SET NOCOUNT ON
+IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.htn.undiagnosed.med') DROP PROCEDURE [pingr.htn.undiagnosed.med];
+GO
+CREATE PROCEDURE [pingr.htn.undiagnosed.med] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
+AS
+SET NOCOUNT ON
 
 									--TO TEST ON THE FLY--
-use PatientSafety_Records_Test
-declare @refdate VARCHAR(10);
-declare @JustTheIndicatorNumbersPlease bit;
-set @refdate = '2016-11-17';
-set @JustTheIndicatorNumbersPlease= 0;
+--use PatientSafety_Records_Test
+--declare @refdate VARCHAR(10);
+--declare @JustTheIndicatorNumbersPlease bit;
+--set @refdate = '2016-11-17';
+--set @JustTheIndicatorNumbersPlease= 0;
 
 -----------------------------------------------------------------------------------
 --DEFINE ELIGIBLE POPULATION, EXCLUSIONS, DENOMINATOR, AND NUMERATOR --------------
@@ -608,12 +608,12 @@ declare @target float;
 set @target = 0.80;
 
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 
 									--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
-CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
-insert into #indicator
+--IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+--CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+--insert into #indicator
 
 select 'htn.undiagnosed.med', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
 	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
@@ -626,13 +626,13 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why)
 
 
 									--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
-CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
-insert into #denominators
+--IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--insert into #denominators
 
 select PatID, 'htn.undiagnosed.med',
 case
@@ -692,13 +692,13 @@ and c.Ingredient not in ('Sotalol', 'Triamterene', 'Bumetanide', 'Eplerenone', '
 							----------------------PT-LEVEL ACTIONS-------------------------
 							---------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
+insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
 
 									--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
-CREATE TABLE #patActions
-	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
-insert into #patActions
+--IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+--CREATE TABLE #patActions
+--	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #patActions
 
 --EXPLANATORY CONDITION ABSENT
 select PatID,
@@ -834,12 +834,12 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 							---------------------------------------------------------------
 
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
+insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
 
 										--TO TEST ON THE FLY--
-IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
-CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
-insert into #orgActions
+--IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+--CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #orgActions
 
 --CODE HTN
 select
