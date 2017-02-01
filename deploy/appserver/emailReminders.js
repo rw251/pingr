@@ -33,13 +33,13 @@ User.find({
     process.exit(0);
   }
   users.forEach(function(v) {
-    /*if (v.email.toLowerCase().indexOf('ben') > -1) {
+    if (v.email.toLowerCase().indexOf('green') > -1) {
       console.log("Not doing: " + v.email);
       usersUpdated++;
       emailsSent++;
       if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
       return;
-    }*/
+    }
     console.log("Doing: " + v.email);
     indicators.list(v.practiceId, function(err, list) {
 
@@ -58,17 +58,22 @@ User.find({
           return vv.name + ": " + (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "% (target: " + (100 * vv.values[3][lastid]) + "%, benchmark: " + (100 * +vv.benchmark) + "%)";
         }).join("\n\n");
 
-        var performanceHTML = "<p>" + v.practiceName + "'s current performance is:</p><table><thead style='font-weight:bold'><th><tr style='font-weight:bold'><td>Indicator</td><td>Current Performance</td><td>Target</td><td>Salford Benchmark</td></tr></th></thead><tbody>" + list.filter(function(vv) {
+        var performanceHTML = "<p>" + v.practiceName + "'s current performance is:</p><table><thead style='font-weight:bold'><th><tr style='font-weight:bold'><td>Indicator</td><td>Current Performance</td><td>Number of Patients</td><td>Target</td><td>Salford Benchmark</td></tr></th></thead><tbody>" + list.filter(function(vv) {
           return vv.values && vv.values[0].length > 1;
         }).sort(function(a, b) {
           var lastidA = a.values[0].length - 1;
           var lastidB = b.values[0].length - 1;
+
+          if(+a.values[2][lastidA] === 0 && +b.values[2][lastidB] === 0) return 0;
+          if(+a.values[2][lastidA] === 0) return 1;
+          if(+b.values[2][lastidB] === 0) return -1;
+
           return (a.values[1][lastidA] * 100 / a.values[2][lastidA]) - (b.values[1][lastidB] * 100 / b.values[2][lastidB]);
         }).map(function(vv) {
           var lastid = vv.values[0].length - 1;
           return "<tr><td><strong><a href=" + urlBase + "indicators/" + vv.id.replace(/\./g, "/") + ">" + vv.name + "</a></strong>:</td><td><strong>" +
-            (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "%</strong> (Number of patients: " +
-            vv.values[1][lastid] + "/" + vv.values[2][lastid] + ")</td><td>" + (100 * vv.values[3][lastid]) + "%</td><td>" + (100 * +vv.benchmark) + "%</td></tr>";
+            (vv.values[2][lastid] > 0 ? (vv.values[1][lastid] * 100 / vv.values[2][lastid]).toFixed(0) + "%" : "N/A") + "</strong></td><td>" +
+            vv.values[1][lastid] + "/" + vv.values[2][lastid] + "</td><td>" + (100 * vv.values[3][lastid]) + "%</td><td>" + (100 * +vv.benchmark) + "%</td></tr>";
         }).join("") + "</tbody></table>";
 
         var numWeeks = 0;

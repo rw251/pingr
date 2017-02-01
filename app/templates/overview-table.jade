@@ -21,7 +21,9 @@
                 i.fa.fa-caret-down
             td
               //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-              if indicator.aboveTarget
+              if isNaN(indicator.performance.percentage)
+                strong(class = 'text-underPerform') N/A
+              else if indicator.aboveTarget
                 if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
                   strong(class = 'text-topTen')= indicator.performance.percentage + '%'
                 else
