@@ -11,7 +11,7 @@ var mailConfig = config.mail;
 
 var now = new Date();
 var twoWeeksAgo = new Date();
-twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 0);
+twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
 User.find({
   "$and": [
@@ -103,7 +103,8 @@ User.find({
           "<li>Comparison of your performance with other practices in Salford</li></ul></p>" +
           performanceHTML +
           "<p>We only send you emails if you haven't visited PINGR for two weeks. If you wish to stop receiving them" +
-          " please visit <a href='" + urlBase + "'>PINGR</a> and update your email preferences.</p><p>The PINGR team.</p></body></html>";
+          " please visit <a href='" + urlBase + "'>PINGR</a> and update your email preferences.</p><p>The PINGR team.</p>" +
+          "<p><strong>Tip: </strong>If you’re having trouble accessing PINGR: open Google Chrome, copy PINGR's address ( "+ urlBase +" ) and paste it into the address bar at the top. If you're still having problems accessing PINGR, please email benjamin.brown@manchester.ac.uk for help.</p></body></html>";
 
         //send email
         var localMailConfig = {
