@@ -24,8 +24,8 @@ SET NOCOUNT ON
 
 declare @achieveDate datetime;
 set @achieveDate = (select case
-	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
-	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' end); --31st March
+	when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-03-31' --31st March
+	when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' end); --31st March
 
 
 --ELIGIBLE POPULATION
@@ -661,6 +661,11 @@ declare @indicatorScore float;
 set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
 declare @target float;
 set @target = 0.75;
+declare @numerator int;
+set @numerator = (select sum(case when numerator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
+declare @denominator int;
+set @denominator = (select sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
+
 
 									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
@@ -1599,8 +1604,8 @@ values
 ('copd.exacerbation.rehab','description', --'show more' on overview tab
 	'<strong>Definition:</strong>Patients with COPD identified as MRC 2 in last 5 years with an exacerbation (<strong>coded or uncoded</strong>) recorded after '+ 
 		case
-			when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
-			when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+			when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+			when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 		end +
 	' who have been offered or declined Pulmonary Rehabilitation within 2 months of their latest exacerbation.<br>'+
 	'<strong>Why this is important:<a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend COPD patients with MRC 2 stage breathlessness are offered pulmonary rehabilitation < 2 months after an exacerbation because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.<br>'),
@@ -1608,14 +1613,15 @@ values
 	--summary text
 ('copd.exacerbation.rehab','tagline',' of patients with COPD and MRC 2 breathlesssness in last 5 years with an exacerbation (<strong>coded or uncoded</strong>) after '+ 
 	case
-		when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
-		when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+		when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+		when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 	end +
 	' have been offered or declined Pulmonary Rehabilitation within 2 months of their latest exacerbation.'),
 ('copd.exacerbation.rehab','positiveMessage', --tailored text
 	case 
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Salford Standard target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
 		when @indicatorScore >= @target and @indicatorScore < @abc then 'Well done! You’ve achieved the Salford Standard target! To improve even further, look through the recommended actions on this page and for the patients below.'
+		when @denominator = 0  then 'You don''t have any patients eligible for this indicator. If you think this is incorrect, please send us a comment using the orange box in the top right of this page.'
 		else 'You''ve not yet achieved the Salford Standard target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'
 	end),
 	--pt lists
@@ -1627,16 +1633,16 @@ values
 
 	--imp opp charts (based on actionCat)
 --EXACERBATION (CODED OR UNCODED) < 2/12 AGO
-('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).name','COPD exacerbation &lt; 2 ago - no pulmonary rehab'),
+('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).name','COPD exacerbation &lt; 2 months ago - no pulmonary rehab'),
 ('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).description','COPD patients with MRC Stage 2 breathlessness who have had a COPD exacerbation in the last 2 months (<strong>coded or uncoded</strong>) and have not been referred for pulmonary rehab'),
 ('copd.exacerbation.rehab','opportunities.Offer pul rehab (lt 2/12).positionInBarChart','1'),
 
 --EXACERBATION (CODED OR UNCODED) > 2/12 AGO - AND STILL NO REHAB
-('copd.exacerbation.rehab','opportunities.Offer pul rehab (gt 2/12).name','COPD exacerbation &gt; 2 ago - no pulmonary rehab'),
+('copd.exacerbation.rehab','opportunities.Offer pul rehab (gt 2/12).name','COPD exacerbation &gt; 2 months ago - no pulmonary rehab'),
 ('copd.exacerbation.rehab','opportunities.Offer pul rehab (gt 2/12).description','COPD patients with MRC Stage 2 breathlessness who had an exacerbation (<strong>coded or uncoded</strong>) after '+
 		case
-			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+			when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+			when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 		end +
 	' but more than 2 months ago and have not been offered pulmonary rehab'),
 ('copd.exacerbation.rehab','opportunities.Offer pul rehab (gt 2/12).positionInBarChart','2'),
@@ -1645,8 +1651,8 @@ values
 ('copd.exacerbation.rehab','opportunities.Uncoded exac.name','Uncoded COPD exacerbation'),
 ('copd.exacerbation.rehab','opportunities.Uncoded exac.description','COPD patients with MRC Stage 2 breathlessness who had an <strong>uncoded</strong> exacerbation after '+
 		case
-			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+			when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+			when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 		end +
 	' - this should be coded to improve record keeping'),
 ('copd.exacerbation.rehab','opportunities.Uncoded exac.positionInBarChart','3'),
@@ -1655,8 +1661,8 @@ values
 ('copd.exacerbation.rehab','opportunities.Code pul rehab.name','Code pulmonary rehabilitation'),
 ('copd.exacerbation.rehab','opportunities.Code pul rehab.description','COPD patients with MRC Stage 2 breathlessness that had uncoded pulmonary rehabilitation around the time of an exacerbation (<strong>coded or uncoded</strong>) after '+
 		case
-			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+			when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+			when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 		end +
 	' - this should be coded to improve your Salford Standards score and record-keeping'),
 ('copd.exacerbation.rehab','opportunities.Code pul rehab.positionInBarChart','4'),
@@ -1665,8 +1671,8 @@ values
 ('copd.exacerbation.rehab','opportunities.Suggest exclude.name','Suggest exclude'),
 ('copd.exacerbation.rehab','opportunities.Suggest exclude.description','COPD patients with MRC Stage 2 breathlessness that had an exacerbation (<strong>coded or uncoded</strong>) since '+
 		case
-			when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-			when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+			when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+			when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 		end +
 	' but may be unsuitable for pulmonary rehab and should therefore be excluded from this quality indicator.'),
 ('copd.exacerbation.rehab','opportunities.Suggest exclude.positionInBarChart','5');
