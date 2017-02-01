@@ -551,8 +551,8 @@ var base = {
   },
 
   hideLoading: function() {
-    $('.loading-container').fadeOut(1000);
-    $('#title-row').fadeIn(1000);
+    $('.loading-container').fadeOut(0);
+    $('#title-row').fadeIn(0);
   },
 
 };

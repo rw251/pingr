@@ -588,9 +588,9 @@ var dt = {
     }
 
     //we never want to cache this anymore.
-    //  if (dt.indicators) {
-    //  return callback(dt.indicators);
-    //} else {
+    if (dt.indicators) {
+      return callback(dt.indicators);
+    } else {
 
         $.ajax({
           url: routeURL,
@@ -606,7 +606,7 @@ var dt = {
 
           }
         });
-      //}
+      }
 
     },
 
