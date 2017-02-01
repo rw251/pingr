@@ -23,6 +23,13 @@ var pv = {
 
   create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
 
+    if(layout.view === ID && patientId === layout.patientId) {
+      //the view is the same just need to update the actions
+      individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+      qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+      return;
+    }
+
     base.selectTab("patient");
     base.showLoading();
 
