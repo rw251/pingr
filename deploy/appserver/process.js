@@ -519,10 +519,7 @@ async.series([
                       console.log('measurements done');
 
                       indicators.forEach(function(v) {
-                        v.opportunities.forEach(function(vv, ix) {
-                          v.opportunities[ix].patients = [];
-                          v.opportunities[ix].patientCount = 0;
-                        });
+                        v.opportunities=[];
                         v.actions = [];
                       });
 
