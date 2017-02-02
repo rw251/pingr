@@ -128,8 +128,15 @@ fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function(li
 
 var tempDates = [];
 
-var checkTextFile = function(pathway, stage, standard, file) {
+var isInTextFile = function(pathway, stage, standard) {
   if (!textFile.pathways[pathway] || !textFile.pathways[pathway][stage] || !textFile.pathways[pathway][stage].standards[standard]) {
+    return false;
+  }
+  return true;
+};
+
+var checkTextFile = function(pathway, stage, standard, file) {
+  if (!isInTextFile(pathway, stage, standard)) {
     console.log("#######################");
     console.log("##    ERROR         ###");
     console.error([pathway, stage, standard].join(".") + " occurs in the " + file + " file - but you don't have anything in the text file ");
@@ -137,6 +144,13 @@ var checkTextFile = function(pathway, stage, standard, file) {
     process.exit(1);
   }
 };
+
+indicators = indicators.filter(function(v){
+  var pathway = v.id.split('.')[0];
+  var stage = v.id.split('.')[1];
+  var standard = v.id.split('.')[2];
+  return isInTextFile(pathway, stage, standard);
+});
 
 async.series([
     function(callback) {
