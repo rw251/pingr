@@ -16,7 +16,8 @@ twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 User.find({
   "$and": [
     { "$or": [{ "last_login": { "$exists": false } }, { "last_login": { "$lte": twoWeeksAgo } }] },
-    { "$or": [{ "last_email_reminder": { "$exists": false } }, { "last_email_reminder": { "$lte": twoWeeksAgo } }] }
+    { "$or": [{ "last_email_reminder": { "$exists": false } }, { "last_email_reminder": { "$lte": twoWeeksAgo } }] },
+    { "practiceId" : {$exists: true}}
   ],
   "practiceId": { $not: /ALL/ },
   "email_opt_out": { $ne: true }
@@ -33,13 +34,13 @@ User.find({
     process.exit(0);
   }
   users.forEach(function(v) {
-    if (v.email.toLowerCase().indexOf('green') > -1) {
+    /*if (v.email.toLowerCase().indexOf('green') > -1) {
       console.log("Not doing: " + v.email);
       usersUpdated++;
       emailsSent++;
       if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
       return;
-    }
+    }*/
     console.log("Doing: " + v.email);
     indicators.list(v.practiceId, function(err, list) {
 
