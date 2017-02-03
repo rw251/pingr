@@ -327,16 +327,16 @@ group by s.PatID, latestDbpDate
 IF OBJECT_ID('tempdb..#latestAcr') IS NOT NULL DROP TABLE #latestAcr
 CREATE TABLE #latestAcr (PatID int, latestAcrDate date, latestAcr int, sourceAcr varchar(12));
 insert into #latestAcr
-select s.PatID, latestAcrDate, MIN(CodeValue) as latestAcr, max(Source) as sourceAcr from SIR_ALL_Records as s
+select s.PatID, latestAcrDate, max(CodeValue) as latestAcr, max(Source) as sourceAcr from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestAcrDate from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'acr')
 		and EntryDate < @refdate
-		and CodeValue > 0
+--		and CodeValue > 0
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestAcrDate = s.EntryDate
 where ReadCode in (select code from codeGroups where [group] = 'acr')
-and CodeValue > 0
+--and CodeValue > 0
 and s.PatID in (select PatID from #latestCkd35code)
 group by s.PatID, latestAcrDate
 

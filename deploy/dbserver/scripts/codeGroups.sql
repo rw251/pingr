@@ -134,6 +134,94 @@ values
 ----------------------------------------------
 ---OTHER CODES--------------------------------
 ----------------------------------------------
+--anxiety
+--from code list cretor 3/2/17 Read v2 April 2016   "synonyms":     "anxiety",   "anxious",   "panic",   "nerves",   "nervous",   "neurotic",   "hysteria",   "phobia",   "fear",   "phobic",   "stress",   "adjustment"
+('TG11.', 'anxiety'), --
+('TG110', 'anxiety'), --
+('TG111', 'anxiety'), --
+('TG112', 'anxiety'), --
+('TG11z', 'anxiety'), --
+('TG1..', 'anxiety'), --
+('Eu930', 'anxiety'), --
+('Eu931', 'anxiety'), --
+('Eu932', 'anxiety'), --
+('Eu606', 'anxiety'), --
+('Eu40.', 'anxiety'), --
+('Eu400', 'anxiety'), --
+('Eu401', 'anxiety'), --
+('Eu402', 'anxiety'), --
+('Eu403', 'anxiety'), --
+('Eu40y', 'anxiety'), --
+('Eu40z', 'anxiety'), --
+('Eu4..', 'anxiety'), --
+('Eu41.', 'anxiety'), --
+('Eu410', 'anxiety'), --
+('Eu411', 'anxiety'), --
+('Eu412', 'anxiety'), --
+('Eu413', 'anxiety'), --
+('Eu41y', 'anxiety'), --
+('Eu41z', 'anxiety'), --
+('Eu43.', 'anxiety'), --
+('Eu054', 'anxiety'), --
+('E2D0.', 'anxiety'), --
+('E2D00', 'anxiety'), --
+('E2D01', 'anxiety'), --
+('E2D0z', 'anxiety'), --
+('E2920', 'anxiety'), --
+('E292.', 'anxiety'), --
+('E2924', 'anxiety'), --
+('E292y', 'anxiety'), --
+('E292z', 'anxiety'), --
+('E280.', 'anxiety'), --
+('E28..', 'anxiety'), --
+('E281.', 'anxiety'), --
+('E282.', 'anxiety'), --
+('E283.', 'anxiety'), --
+('E284.', 'anxiety'), --
+('E28z.', 'anxiety'), --
+('E2021', 'anxiety'), --
+('E202.', 'anxiety'), --
+('E2022', 'anxiety'), --
+('E2020', 'anxiety'), --
+('E2023', 'anxiety'), --
+('E2024', 'anxiety'), --
+('E2025', 'anxiety'), --
+('E2026', 'anxiety'), --
+('E2027', 'anxiety'), --
+('E2028', 'anxiety'), --
+('E2029', 'anxiety'), --
+('E202A', 'anxiety'), --
+('E202B', 'anxiety'), --
+('E202C', 'anxiety'), --
+('E202D', 'anxiety'), --
+('E202E', 'anxiety'), --
+('E202z', 'anxiety'), --
+('E200.', 'anxiety'), --
+('E2000', 'anxiety'), --
+('E2001', 'anxiety'), --
+('E2002', 'anxiety'), --
+('E2003', 'anxiety'), --
+('E2004', 'anxiety'), --
+('E2005', 'anxiety'), --
+('E200z', 'anxiety'), --
+('E20..', 'anxiety'), --
+('E201.', 'anxiety'), --
+('E204.', 'anxiety'), --
+('8T23.', 'anxiety'), --
+('8HHp.', 'anxiety'), --
+('8G94.', 'anxiety'), --
+('38Du1', 'anxiety'), --
+('2258.', 'anxiety'), --
+('225J.', 'anxiety'), --
+('2259.', 'anxiety'), --
+('1B1V.', 'anxiety'), --
+('1B12.', 'anxiety'), --
+('1B13.', 'anxiety'), --
+('173f.', 'anxiety'), --
+
+--anxiety resolved
+('2126J', 'anxietyPermEx'),--	00	Anxiety resolved
+
 --ACR
 --from SS
 ('46TC.', 'acr'),
@@ -1729,10 +1817,28 @@ values
 --manual search
 ('13CW.', 'houseboundPermEx');
 
---lrti
---from codelist creator on 7/12/16 (synonyms:  "lrti",  "respiratory tract infection",  "chest infection",  "respiratory infection",  "lung infection",  "pneumonia",  "pleurisy",  "pleuritic",  "pleural effusion",  "pulmonary infection",  "pulmonary abscess",  "tuberculosis",  "tuberculous",  "bronchitis",  "bronchiolitis",  "resp tract infection",  "chest cold",  "lung consolidation",  "empyema",  "pleural abscess",  "pyopneumothorax",  "pyothorax",  "pulmonary aspergillus",  "pulmonary aspergillosis",  "pulmonary histoplas*")
+--hyperthyroidism
+--browser search
+insert into codeGroups
+select readcode, 'hyperthyroid' from SIR_ReadCode_Rubric
+where readcode like 'C020%'
+or readcode like 'C021%'
+or readcode like 'C022%'
+or readcode like 'C023%'
+or readcode like 'C024%'
+or readcode like 'C02y%'
+or readcode like 'C02z%'
+or readcode in ('C02..','1431.')
+group by readcode
+
+--hyperthyroidism resolved
+--browser search
 insert into codeGroups
 values
+('212P.', 'hyperthyroidPermEx'), --	00	Hyperthyroidism resolved
+
+--lrti
+--from codelist creator on 7/12/16 (synonyms:  "lrti",  "respiratory tract infection",  "chest infection",  "respiratory infection",  "lung infection",  "pneumonia",  "pleurisy",  "pleuritic",  "pleural effusion",  "pulmonary infection",  "pulmonary abscess",  "tuberculosis",  "tuberculous",  "bronchitis",  "bronchiolitis",  "resp tract infection",  "chest cold",  "lung consolidation",  "empyema",  "pleural abscess",  "pyopneumothorax",  "pyothorax",  "pulmonary aspergillus",  "pulmonary aspergillosis",  "pulmonary histoplas*")
 ('SP131', 'lrti'), --
 ('SP132', 'lrti'), --
 ('Hyu10', 'lrti'), --
@@ -2439,11 +2545,16 @@ values
 
 --registration: patient registration at a practice
 --from codelist creator 13/7/16 (synonyms: "registration", "register", "new patient", "enroll", "new reg") 
-('9hE..', 'registered'),
-('9hE1.', 'registered'),
-('9hE0.', 'registered'),
-('8I3Y.', 'registered'),
-('8BL0.', 'registered'),
+('9OW..', 'registered'), --
+('9OW1.', 'registered'), --
+('9OW3.', 'registered'), --
+('9OWZ.', 'registered'), --
+('9N79.', 'registered'), --
+('988..', 'registered'), --
+('9881.', 'registered'), --
+('9882.', 'registered'), --
+('9883.', 'registered'), --
+('988Z.', 'registered'), --
 
 --sick sinus
 --from codelist creator on 26/10/16 Read v2 April 2016 (synonyms: "block", "mobitz", "av block", "atrioventricular block", "wenckebach"

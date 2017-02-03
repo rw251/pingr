@@ -225,7 +225,7 @@ group by s.PatID, latestCkdPermExCodeDate
 
 --#latestAcr
 IF OBJECT_ID('tempdb..#latestAcr') IS NOT NULL DROP TABLE #latestAcr
-CREATE TABLE #latestAcr (PatID int, latestAcrDate date, latestAcr int, sourceAcr varchar(12));
+CREATE TABLE #latestAcr (PatID int, latestAcrDate date, latestAcr int, sourceAcr varchar(256));
 insert into #latestAcr
 select s.PatID, latestAcrDate, MIN(CodeValue) as latestAcr, max(Source) as sourceAcr from SIR_ALL_Records as s
 	inner join (
@@ -240,9 +240,9 @@ group by s.PatID, latestAcrDate
 
 --#latestOedema
 IF OBJECT_ID('tempdb..#latestOedema') IS NOT NULL DROP TABLE #latestOedema
-CREATE TABLE #latestOedema (PatID int, latestOedemaDate date, latestOedema varchar(12));
+CREATE TABLE #latestOedema (PatID int, latestOedemaDate date, latestOedema varchar(256));
 insert into #latestOedema
-select s.PatID, latestOedemaDate, max(CodeValue) as latestOedema from SIR_ALL_Records as s
+select s.PatID, latestOedemaDate, max(Rubric) as latestOedema from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestOedemaDate from SIR_ALL_Records
 		where PatID in (select PatID from #currentHTNmedPts)
@@ -255,9 +255,9 @@ group by s.PatID, latestOedemaDate
 
 --#latestOedemaPermEx
 IF OBJECT_ID('tempdb..#latestOedemaPermEx') IS NOT NULL DROP TABLE #latestOedemaPermEx
-CREATE TABLE #latestOedemaPermEx (PatID int, latestOedemaPermExDate date, latestOedemaPermEx varchar(12));
+CREATE TABLE #latestOedemaPermEx (PatID int, latestOedemaPermExDate date, latestOedemaPermEx varchar(256));
 insert into #latestOedemaPermEx
-select s.PatID, latestOedemaPermExDate, max(CodeValue) as latestOedemaPermEx from SIR_ALL_Records as s
+select s.PatID, latestOedemaPermExDate, max(Rubric) as latestOedemaPermEx from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestOedemaPermExDate from SIR_ALL_Records
 		where PatID in (select PatID from #currentHTNmedPts)
@@ -270,9 +270,9 @@ group by s.PatID, latestOedemaPermExDate
 
 --#latestAf
 IF OBJECT_ID('tempdb..#latestAf') IS NOT NULL DROP TABLE #latestAf
-CREATE TABLE #latestAf (PatID int, latestAfDate date, latestAf varchar(12));
+CREATE TABLE #latestAf (PatID int, latestAfDate date, latestAf varchar(256));
 insert into #latestAf
-select s.PatID, latestAfDate, max(CodeValue) as latestAf from SIR_ALL_Records as s
+select s.PatID, latestAfDate, max(Rubric) as latestAf from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestAfDate from SIR_ALL_Records
 		where PatID in (select PatID from #currentHTNmedPts)
@@ -285,9 +285,9 @@ group by s.PatID, latestAfDate
 
 --#latestAfPermEx
 IF OBJECT_ID('tempdb..#latestAfPermEx') IS NOT NULL DROP TABLE #latestAfPermEx
-CREATE TABLE #latestAfPermEx (PatID int, latestAfPermExDate date, latestAfPermEx varchar(12));
+CREATE TABLE #latestAfPermEx (PatID int, latestAfPermExDate date, latestAfPermEx varchar(256));
 insert into #latestAfPermEx
-select s.PatID, latestAfPermExDate, max(CodeValue) as latestAfPermEx from SIR_ALL_Records as s
+select s.PatID, latestAfPermExDate, max(Rubric) as latestAfPermEx from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestAfPermExDate from SIR_ALL_Records
 		where PatID in (select PatID from #currentHTNmedPts)
@@ -300,24 +300,24 @@ group by s.PatID, latestAfPermExDate
 
 --#latestChd
 IF OBJECT_ID('tempdb..#latestChd') IS NOT NULL DROP TABLE #latestChd
-CREATE TABLE #latestChd (PatID int, latestChdDate date, latestChd varchar(12));
+CREATE TABLE #latestChd (PatID int, latestChdDate date, latestChd varchar(256));
 insert into #latestChd
-select s.PatID, latestChdDate, max(CodeValue) as latestChd from SIR_ALL_Records as s
+select s.PatID, latestChdDate, max(Rubric) as latestChd from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestChdDate from SIR_ALL_Records
 		where PatID in (select PatID from #currentHTNmedPts)
-		and ReadCode in (select code from codeGroups where [group] = 'chdQof')
+		and ReadCode in (select code from codeGroups where [group] in ('chdQof','MInow'))
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestChdDate = s.EntryDate
 where s.PatID in (select PatID from #currentHTNmedPts)
-and ReadCode in (select code from codeGroups where [group] = 'chdQof')
+and ReadCode in (select code from codeGroups where [group] in ('chdQof','MInow'))
 group by s.PatID, latestChdDate
 
 --#latestHf
 IF OBJECT_ID('tempdb..#latestHf') IS NOT NULL DROP TABLE #latestHf
-CREATE TABLE #latestHf (PatID int, latestHfDate date, latestHf varchar(12));
+CREATE TABLE #latestHf (PatID int, latestHfDate date, latestHf varchar(256));
 insert into #latestHf
-select s.PatID, latestHfDate, max(CodeValue) as latestHf from SIR_ALL_Records as s
+select s.PatID, latestHfDate, max(Rubric) as latestHf from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestHfDate from SIR_ALL_Records
 		where PatID in (select PatID from #currentHTNmedPts)
@@ -330,9 +330,9 @@ group by s.PatID, latestHfDate
 
 --#latestHfPermEx
 IF OBJECT_ID('tempdb..#latestHfPermEx') IS NOT NULL DROP TABLE #latestHfPermEx
-CREATE TABLE #latestHfPermEx (PatID int, latestHfPermExDate date, latestHfPermEx varchar(12));
+CREATE TABLE #latestHfPermEx (PatID int, latestHfPermExDate date, latestHfPermEx varchar(256));
 insert into #latestHfPermEx
-select s.PatID, latestHfPermExDate, max(CodeValue) as latestHfPermEx from SIR_ALL_Records as s
+select s.PatID, latestHfPermExDate, max(Rubric) as latestHfPermEx from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestHfPermExDate from SIR_ALL_Records
 		where PatID in (select PatID from #currentHTNmedPts)
@@ -345,7 +345,7 @@ group by s.PatID, latestHfPermExDate
 
 --#latestSbp
 IF OBJECT_ID('tempdb..#latestSbp') IS NOT NULL DROP TABLE #latestSbp
-CREATE TABLE #latestSbp (PatID int, latestSbpDate date, latestSbp int, sourceSbp varchar(12));
+CREATE TABLE #latestSbp (PatID int, latestSbpDate date, latestSbp int, sourceSbp varchar(256));
 insert into #latestSbp
 select s.PatID, latestSbpDate, MIN(CodeValue) as latestSbp, max(Source) as sourceSbp from SIR_ALL_Records as s
 	inner join (
@@ -363,7 +363,7 @@ group by s.PatID, latestSbpDate
 
 --#latestDbp
 IF OBJECT_ID('tempdb..#latestDbp') IS NOT NULL DROP TABLE #latestDbp
-CREATE TABLE #latestDbp (PatID int, latestDbpDate date, latestDbp int, sourceSbp varchar(12));
+CREATE TABLE #latestDbp (PatID int, latestDbpDate date, latestDbp int, sourceSbp varchar(256));
 insert into #latestDbp
 select s.PatID, latestDbpDate, MIN(CodeValue) as latestDbp, max(Source) as sourceSbp from SIR_ALL_Records as s
 	inner join (
@@ -381,7 +381,7 @@ group by s.PatID, latestDbpDate
 
 --#secondLatestSbp
 IF OBJECT_ID('tempdb..#secondLatestSbp') IS NOT NULL DROP TABLE #secondLatestSbp
-CREATE TABLE #secondLatestSbp (PatID int, secondLatestSbpDate date, secondLatestSbp int, sourceSecondLatestSbp varchar(12));
+CREATE TABLE #secondLatestSbp (PatID int, secondLatestSbpDate date, secondLatestSbp int, sourceSecondLatestSbp varchar(256));
 insert into #secondLatestSbp
 select a.PatID, secondLatestSbpDate, MIN(a.CodeValue), max(Source) as sourceSecondLatestSbp from SIR_ALL_Records as a
 	inner join
@@ -401,7 +401,7 @@ group by a.PatID, secondLatestSbpDate
 
 --#secondLatestDbp
 IF OBJECT_ID('tempdb..#secondLatestDbp') IS NOT NULL DROP TABLE #secondLatestDbp
-CREATE TABLE #secondLatestDbp (PatID int, secondLatestDbpDate date, secondLatestDbp int, sourceSecondLatestDbp varchar(12));
+CREATE TABLE #secondLatestDbp (PatID int, secondLatestDbpDate date, secondLatestDbp int, sourceSecondLatestDbp varchar(256));
 insert into #secondLatestDbp
 select a.PatID, secondLatestDbpDate, MIN(a.CodeValue), max(Source) as sourceSecondLatestDbp from SIR_ALL_Records as a
 	inner join
@@ -449,6 +449,65 @@ where s.PatID in (select PatID from #currentHTNmedPts)
 and ReadCode in (select code from codeGroups where [group] = 'adbp')
 group by s.PatID, latestAdbpDate
 
+--#latestAnxiety
+IF OBJECT_ID('tempdb..#latestAnxiety') IS NOT NULL DROP TABLE #latestAnxiety
+CREATE TABLE #latestAnxiety (PatID int, latestAnxietyDate date, latestAnxiety varchar(256));
+insert into #latestAnxiety
+select s.PatID, latestAnxietyDate, max(Rubric) as latestAnxiety from SIR_ALL_Records as s
+	inner join (
+		select PatID, MAX(EntryDate) as latestAnxietyDate from SIR_ALL_Records
+		where PatID in (select PatID from #currentHTNmedPts)
+		and ReadCode in (select code from codeGroups where [group] = 'anxiety')
+		group by PatID
+	) sub on sub.PatID = s.PatID and sub.latestAnxietyDate = s.EntryDate
+where s.PatID in (select PatID from #currentHTNmedPts)
+and ReadCode in (select code from codeGroups where [group] = 'anxiety')
+group by s.PatID, latestAnxietyDate
+
+--#latestAnxietyPermEx
+IF OBJECT_ID('tempdb..#latestAnxietyPermEx') IS NOT NULL DROP TABLE #latestAnxietyPermEx
+CREATE TABLE #latestAnxietyPermEx (PatID int, latestAnxietyPermExDate date, latestAnxietyPermEx varchar(256));
+insert into #latestAnxietyPermEx
+select s.PatID, latestAnxietyPermExDate, max(Rubric) as latestAnxietyPermEx from SIR_ALL_Records as s
+	inner join (
+		select PatID, MAX(EntryDate) as latestAnxietyPermExDate from SIR_ALL_Records
+		where PatID in (select PatID from #currentHTNmedPts)
+		and ReadCode in (select code from codeGroups where [group] = 'anxietyPermEx')
+		group by PatID
+	) sub on sub.PatID = s.PatID and sub.latestAnxietyPermExDate = s.EntryDate
+where s.PatID in (select PatID from #currentHTNmedPts)
+and ReadCode in (select code from codeGroups where [group] = 'anxietyPermEx')
+group by s.PatID, latestAnxietyPermExDate
+
+--#latestHyperthyroid
+IF OBJECT_ID('tempdb..#latestHyperthyroid') IS NOT NULL DROP TABLE #latestHyperthyroid
+CREATE TABLE #latestHyperthyroid (PatID int, latestHyperthyroidDate date, latestHyperthyroid varchar(256));
+insert into #latestHyperthyroid
+select s.PatID, latestHyperthyroidDate, max(Rubric) as latestHyperthyroid from SIR_ALL_Records as s
+	inner join (
+		select PatID, MAX(EntryDate) as latestHyperthyroidDate from SIR_ALL_Records
+		where PatID in (select PatID from #currentHTNmedPts)
+		and ReadCode in (select code from codeGroups where [group] = 'hyperthyroid')
+		group by PatID
+	) sub on sub.PatID = s.PatID and sub.latestHyperthyroidDate = s.EntryDate
+where s.PatID in (select PatID from #currentHTNmedPts)
+and ReadCode in (select code from codeGroups where [group] = 'hyperthyroid')
+group by s.PatID, latestHyperthyroidDate
+
+--#latestHyperthyroidPermEx
+IF OBJECT_ID('tempdb..#latestHyperthyroidPermEx') IS NOT NULL DROP TABLE #latestHyperthyroidPermEx
+CREATE TABLE #latestHyperthyroidPermEx (PatID int, latestHyperthyroidPermExDate date, latestHyperthyroidPermEx varchar(256));
+insert into #latestHyperthyroidPermEx
+select s.PatID, latestHyperthyroidPermExDate, max(Rubric) as latestHyperthyroidPermEx from SIR_ALL_Records as s
+	inner join (
+		select PatID, MAX(EntryDate) as latestHyperthyroidPermExDate from SIR_ALL_Records
+		where PatID in (select PatID from #currentHTNmedPts)
+		and ReadCode in (select code from codeGroups where [group] = 'hyperthyroidPermEx')
+		group by PatID
+	) sub on sub.PatID = s.PatID and sub.latestHyperthyroidPermExDate = s.EntryDate
+where s.PatID in (select PatID from #currentHTNmedPts)
+and ReadCode in (select code from codeGroups where [group] = 'hyperthyroidPermEx')
+group by s.PatID, latestHyperthyroidPermExDate
 
 --#exclusions
 IF OBJECT_ID('tempdb..#exclusions') IS NOT NULL DROP TABLE #exclusions
@@ -515,18 +574,22 @@ CREATE TABLE #eligiblePopulationAllData (
 	latestDmPermExCode varchar(512), latestDmPermExCodeDate date,
 	latestCkd35codeDate date, latestCkd35code varchar(512),
 	latestCkdPermExCodeDate date, latestCkdPermExCode varchar(512),
-	latestAcrDate date, latestAcr int, sourceAcr varchar(12),
-	latestOedemaDate date, latestOedema varchar(12),
-	latestOedemaPermExDate date, latestOedemaPermEx varchar(12),
-	latestAfDate date, latestAf varchar(12),
-	latestAfPermExDate date, latestAfPermEx varchar(12),
-	latestChdDate date, latestChd varchar(12),
-	latestHfDate date, latestHf varchar(12),
-	latestHfPermExDate date, latestHfPermEx varchar(12),
+	latestAcrDate date, latestAcr int, sourceAcr varchar(256),
+	latestOedemaDate date, latestOedema varchar(256),
+	latestOedemaPermExDate date, latestOedemaPermEx varchar(256),
+	latestAfDate date, latestAf varchar(256),
+	latestAfPermExDate date, latestAfPermEx varchar(256),
+	latestChdDate date, latestChd varchar(256),
+	latestHfDate date, latestHf varchar(256),
+	latestHfPermExDate date, latestHfPermEx varchar(256),
 	latestSbpDate date, latestSbp int,
 	latestDbpDate date, latestDbp int,
 	latestAsbpDate date, latestAsbp int,
 	latestAdbpDate date, latestAdbp int,
+	latestAnxietyDate date, latestAnxiety varchar(256),
+	latestAnxietyPermExDate date, latestAnxietyPermEx varchar(256),
+	latestHyperthyroidDate date, latestHyperthyroid varchar(256),
+	latestHyperthyroidPermExDate date, latestHyperthyroidPermEx varchar(256),
 	ageExclude int, regCodeExclude int, deRegCodeExclude int, deadCodeExclude int, deadTableExclude int,
 	denominator int,
 	numerator int);
@@ -556,6 +619,10 @@ select
 	latestDbpDate, latestDbp,
 	latestAsbpDate, latestAsbp,
 	latestAdbpDate, latestAdbp,
+	latestAnxietyDate, latestAnxiety,
+	latestAnxietyPermExDate, latestAnxietyPermEx,
+	latestHyperthyroidDate, latestHyperthyroid,
+	latestHyperthyroidPermExDate, latestHyperthyroidPermEx,
 	ageExclude, regCodeExclude, deRegCodeExclude, deadCodeExclude, deadTableExclude,
 	denominator,
 	numerator
@@ -587,6 +654,10 @@ from #currentHTNmedPts as a
 		left outer join (select PatID, latestDbpDate, latestDbp from #latestDbp) jj on jj.PatID = a.PatID
 		left outer join (select PatID, latestAsbpDate, latestAsbp from #latestAsbp) mm on w.PatID = mm.PatID
 		left outer join (select PatID, latestAdbpDate, latestAdbp from #latestAdbp) nn on w.PatID = nn.PatID
+		left outer join (select PatID, latestAnxiety, latestAnxietyDate from #latestAnxiety) oo on oo.PatID = a.PatID
+		left outer join (select PatID, latestAnxietyPermEx, latestAnxietyPermExDate from #latestAnxietyPermEx) pp on pp.PatID = a.PatID
+		left outer join (select PatID, latestHyperthyroid, latestHyperthyroidDate from #latestHyperthyroid) qq on qq.PatID = mm.PatID
+		left outer join (select PatID, latestHyperthyroidPermEx, latestHyperthyroidPermExDate from #latestHyperthyroidPermEx) rr on rr.PatID = nn.PatID
 
 					-----------------------------------------------------------------------------
 					---------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
@@ -710,14 +781,15 @@ select PatID,
 	'Add Hypertension diagnosis using code G2... [G2...]' as actionText,
 	'Reasoning' +
 	'<ul>'+
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) then '<li>Patient is prescribed a thiazide diuretic but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) then '<li>Patient is prescribed a potassium-sparing diuretic (e.g. spironolactone) but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate))then '<li>Patient is prescribed a loop diuretic (e.g. furosemide) but has no evidence of other indications for it (e.g. oedema).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))) then '<li>Patient is prescribed an ACE-inhibitor but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate)))then '<li>Patient is prescribed an Angiotensin Receptor Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate)) then '<li>Patient is prescribed a thiazide diuretic but has no evidence of other indications for it (e.g. oedema or heart failure).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate)) then '<li>Patient is prescribed a potassium-sparing diuretic (e.g. spironolactone) but has no evidence of other indications for it (e.g. oedema or heart failure).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate)) then '<li>Patient is prescribed a loop diuretic (e.g. furosemide) but has no evidence of other indications for it (e.g. oedema or heart failure).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate))) then '<li>Patient is prescribed an ACE-inhibitor but has no evidence of other indications for it (e.g. ACR &ge; 30, diabetes or heart failure).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate))) then '<li>Patient is prescribed an Angiotensin Receptor Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes or heart failure).</li>' else '' end +
 	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'CCB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))) then '<li>Patient is prescribed an Calcium Channel Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
-	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'BB') and (latestChd is null and (latestHf is null or (latestHfPermExDate >= latestHfDate)) and (latestAf is null or (latestAfPermExDate >= latestAfDate)) and (latestAcr <30 or latestAcr is null)) then '<li>Patient is prescribed an Beta Blocker but has no evidence of other indications for it (e.g. ischaemic heart disease, heart failure, AF or ACR &gt; 30).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'BB') and (latestChd is null and (latestHf is null or (latestHfPermExDate >= latestHfDate)) and (latestAf is null or (latestAfPermExDate >= latestAfDate)) and (latestAcr <30 or latestAcr is null)) then '<li>Patient is prescribed an Beta Blocker but has no evidence of other indications for it (e.g. ischaemic heart disease, heart failure, AF or ACR &gt; 30.</li>' else '' end +
 	case when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ALPHA') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))) then '<li>Patient is prescribed an Alpha Blocker but has no evidence of other indications for it (e.g. ACR &ge; 30 or diabetes).</li>' else '' end +
+	case when PatID in (select PatID from #currentHTNmeds where currentMedIngredient = 'Propranolol') and (latestAnxiety is null or (latestAnxietyPermExDate >= latestAnxietyDate)) and (latestHyperthyroid is null or (latestHyperthyroidPermExDate >= latestHyperthyroidDate)) then '<li>Patient is prescribed Propranolol but has no evidence of other indications for it (e.g. hyperthyroidism or anxiety).</li>' else '' end +
 	'<li>So it is likely they are prescribed these medications for hypertension.</li>'+
 	'<li>This is important because currently the recorded prevalence of hypertension in Salford is lower than expected. And finding undiagnosed patients can help provide better care and increase your QOF scores.</li>'+
 	'<li>If they <strong>do not</strong> have hypertension please add code 21261 ''Hypertension resolved'' [21261].</li>'+
@@ -727,16 +799,17 @@ from #eligiblePopulationAllData
 where denominator = 1 and numerator = 0
 and 
 	(
-		(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)))
-	or	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)))
-	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)))
-	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))))
-	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))))
+		(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate)))
+	or	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate)) )
+	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and (latestOedemaDate is null or (latestOedemaPermExDate >= latestOedemaDate)) and (latestHf is null or (latestHfPermExDate >= latestHfDate)) )
+	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))) and (latestHf is null or (latestHfPermExDate >= latestHfDate)))
+	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate)))  and (latestHf is null or (latestHfPermExDate >= latestHfDate)))
 	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'CCB') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))))
 	or	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'BB') and (latestChd is null and (latestHf is null or (latestHfPermExDate >= latestHfDate)) and (latestAf is null or (latestAfPermExDate >= latestAfDate)) and (latestAcr <30 or latestAcr is null)))
 	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ALPHA') and ((latestAcr <30 or latestAcr is null) and (latestDmCode is null or (latestDmPermExCodeDate >= latestDmCodeDate))))
+	or	(PatID in (select PatID from #currentHTNmeds where currentMedIngredient = 'Propranolol') and (latestAnxiety is null or (latestAnxietyPermExDate >= latestAnxietyDate)) and (latestHyperthyroid is null or (latestHyperthyroidPermExDate >= latestHyperthyroidDate)))
 	)		
-
+	
 union
 --EXPLANATORY CONDITION PRESENT
 select PatID,
@@ -749,28 +822,28 @@ select PatID,
 	'Reasoning' +
 	'<ul>'+
 		case 
-			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))
-			then '<li>Patient is prescribed a thiazide diuretic. This may be because they have oedema.</li>' 
+			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and ((latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))))
+			then '<li>Patient is prescribed a thiazide diuretic. This may be because they have oedema or heart failure.</li>' 
 			else '' 
 		end +
 		case 
-			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))
-			then '<li>Patient is prescribed a potassium-sparing diuretic (e.g. spironolactone). This may be because they have oedema.</li>'
+			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and ((latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))))
+			then '<li>Patient is prescribed a potassium-sparing diuretic (e.g. spironolactone). This may be because they have oedema or heart failure.</li>'
 			else '' 
 		end +
 		case 
-			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate)) 
-			then '<li>Patient is prescribed a loop diuretic (e.g. furosemide). This may be because they have oedema.</li>' 
+			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and ((latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))))
+			then '<li>Patient is prescribed a loop diuretic (e.g. furosemide). This may be because they have oedema or heart failure.</li>' 
 			else '' 
 		end +
 		case 
-			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate))))
-			then '<li>Patient is prescribed an ACE-inhibitor. This maybe because their latest ACR is &ge; 30 AND/OR they have diabetes.</li>' 
+			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))))
+			then '<li>Patient is prescribed an ACE-inhibitor. This maybe because their latest ACR is &ge; 30, or they have diabetes or heart failure.</li>' 
 			else '' 
 		end +
 		case 
-			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate))))
-			then '<li>Patient is prescribed an Angiotensin Receptor Blocker. This maybe because their latest ACR is &ge; 30 AND/OR they have diabetes.</li>'
+			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))))
+			then '<li>Patient is prescribed an Angiotensin Receptor Blocker. This maybe because their latest ACR is &ge; 30, or they have diabetes or heart failure.</li>'
 			else '' 
 		end +
 		case 
@@ -780,12 +853,17 @@ select PatID,
 		end +
 		case 
 			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'BB') and (latestChd is not null or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))) or (latestAf is not null and (latestAfPermEx is null or (latestAfPermExDate < latestAfDate))) or latestAcr >= 30)
-			then '<li>Patient is prescribed an Beta Blocker. This maybe because they have ischaemic heart disease, heart failure, AF or ACR &ge; 30).</li>' 
+			then '<li>Patient is prescribed an Beta Blocker. This maybe because they have ischaemic heart disease, heart failure, AF or ACR &ge; 30.</li>' 
 			else ''
 		end +
 		case 
 			when PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ALPHA') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate))))
 			then '<li>Patient is prescribed an Alpha Blocker. This maybe because their latest ACR is &ge; 30 AND/OR they have diabetes.</li>'
+			else '' 
+		end +
+		case 
+			when PatID in (select PatID from #currentHTNmeds where currentMedIngredient = 'Propranolol') and ((latestAnxietyDate is not null and (latestAnxietyPermExDate is null or (latestAnxietyPermExDate < latestAnxietyDate))) or (latestHyperthyroid is not null and (latestHyperthyroidPermEx is null or (latestHyperthyroidPermExDate < latestHyperthyroidDate))))
+			then '<li>Patient is prescribed Propranolol. This may be because they have anxiety or hyperthyroidism.</li>'
 			else '' 
 		end +
 	'<li><strong>However</strong>, if they also have hypertension please add code G2... [G2...].</li>'+
@@ -797,14 +875,15 @@ from #eligiblePopulationAllData
 where denominator = 1 and numerator = 0
 and 
 	(
-		(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate)))
-	or	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate)))
-	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate)))
-	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate)))))
-	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate)))))
+		(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_THI') and ((latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate)))))
+	or	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_POT') and ((latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate)))))
+	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'DIUR_LOOP') and ((latestOedemaDate is not null and (latestOedemaPermExDate is null or (latestOedemaPermExDate < latestOedemaDate))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate)))))
+	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ACEI') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate)))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))))
+	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ARB') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate)))) or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))))
 	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'CCB') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate)))))
 	or	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'BB') and (latestChd is not null or (latestHf is not null and (latestHfPermEx is null or (latestHfPermExDate < latestHfDate))) or (latestAf is not null and (latestAfPermEx is null or (latestAfPermExDate < latestAfDate))) or latestAcr >= 30))
 	or 	(PatID in (select PatID from #currentHTNmeds where currentMedFamily = 'ALPHA') and (latestAcr >= 30 or (latestDmCode is not null and (latestDmPermExCodeDate is null or (latestDmPermExCodeDate < latestDmCodeDate)))))
+	or	(PatID in (select PatID from #currentHTNmeds where currentMedIngredient = 'Propranolol') and ((latestAnxietyDate is not null and (latestAnxietyPermExDate is null or (latestAnxietyPermExDate < latestAnxietyDate))) or (latestHyperthyroid is not null and (latestHyperthyroidPermEx is null or (latestHyperthyroidPermExDate < latestHyperthyroidDate)))))
 	)		
 
 							---------------------------------------------------------------

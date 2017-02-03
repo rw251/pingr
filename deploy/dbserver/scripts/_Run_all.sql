@@ -163,6 +163,13 @@ BEGIN
 	RETURN;
 END
 
+EXEC	@return_value = [dbo].[pingr.htn.undiagnosed.measures]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
 
 							---------------------------------------------------------------
 							---------CREATE AND POPULATE PATIENT-LEVEL DATA TABLES---------
@@ -320,7 +327,7 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[outpu
 CREATE TABLE [output.pingr.diagnoses] (PatID int, date date, diagnosis varchar(100), subcategory varchar(100))
 insert into [output.pingr.diagnoses](PatID, date, diagnosis, subcategory)
 select PatID, EntryDate as date,
-	case
+	case --MUST INCLUDE THE SUBCAT CODES
 		when ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx')) then 'CKD'
 		when ReadCode in (select code from codeGroups where [group] in ('dm','dmPermEx')) then 'Diabetes'
 		when ReadCode in (select code from codeGroups where [group] = 'phaeo') then 'Phaeochromocytoma'
@@ -331,15 +338,17 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'gout') then 'Gout'
 		when ReadCode in (select code from codeGroups where [group] = 'addisons') then 'Addisons'
 		when ReadCode in (select code from codeGroups where [group] = 'whiteCoat') then 'White coat hypertension'
-		when ReadCode in (select code from codeGroups where [group] = 'copdQof') then 'COPD'
+		when ReadCode in (select code from codeGroups where [group] in ('copdQof', 'copdPermEx')) then 'COPD'
 		when ReadCode in (select code from codeGroups where [group] = 'unstableAngina') then 'Unstable angina'
-		when ReadCode in (select code from codeGroups where [group] = 'htnQof') then 'Hypertension'
-		when ReadCode in (select code from codeGroups where [group] = 'oedema') then 'Oedema'
-		when ReadCode in (select code from codeGroups where [group] = 'af') then 'Atrial Fibrillation'
+		when ReadCode in (select code from codeGroups where [group] in ('htnQof','htnPermEx')) then 'Hypertension'
+		when ReadCode in (select code from codeGroups where [group] in ('oedema','oedemaPermEx')) then 'Oedema'
+		when ReadCode in (select code from codeGroups where [group] in ('af','afPermEx')) then 'Atrial Fibrillation'
 		when ReadCode in (select code from codeGroups where [group] = 'chdQof') then 'Ischaemic Heart Disease'
-		when ReadCode in (select code from codeGroups where [group] = 'hfQof') then 'Heart Failure'
+		when ReadCode in (select code from codeGroups where [group] in ('hfQof','hfPermEx')) then 'Heart Failure'
+		when ReadCode in (select code from codeGroups where [group] in ('anxiety','anxietyPermEx')) then 'Anxiety'
+		when ReadCode in (select code from codeGroups where [group] in ('hyperthyroid','hyperthyroidPermEx')) then 'Hyperthyroidism'
 	end as diagnosis,
-	case
+	case --MUST APPEAR IN DIAGNOSIS CASE WHENS ABOVE
 		when ReadCode in ('1Z12.','K053.') then 'Stage 3'
 		when ReadCode in ('1Z13.','K054.') then 'Stage 4'
 		when ReadCode in ('1Z14.','K055.') then 'Stage 5'
@@ -376,19 +385,21 @@ select PatID, EntryDate as date,
 		when ReadCode in ('1Z1S.') then 'Stage 2 A3'
 		when ReadCode in ('K051.') then 'Stage 1'
 		when ReadCode in ('K052.') then 'Stage 2'
-		when ReadCode in (select code from codeGroups where [group] in ('dmPermEx')) then 'Diabetes resolved'
-		when ReadCode in (select code from codeGroups where [group] in ('asthmaPermEx')) then 'Asthma resolved'
-		when ReadCode in (select code from codeGroups where [group] in ('copdPermEx')) then 'COPD resolved'
-		when ReadCode in (select code from codeGroups where [group] = 'htnPermEx') then 'Hypertension resolved'
-		when ReadCode in (select code from codeGroups where [group] = 'oedemaPermEx') then 'Oedema resolved'
-		when ReadCode in (select code from codeGroups where [group] = 'afPermEx') then 'Atrial Fibrillation resolved'
-		when ReadCode in (select code from codeGroups where [group] = 'hfPermEx') then 'Heart Failure resolved'
+		when ReadCode in (select code from codeGroups where [group] in ('dmPermEx')) then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] in ('asthmaPermEx')) then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] in ('copdPermEx')) then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] = 'htnPermEx') then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] = 'oedemaPermEx') then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] = 'afPermEx') then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] = 'hfPermEx') then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] = 'anxietyPermEx') then 'Resolved'
+		when ReadCode in (select code from codeGroups where [group] = 'hyperthyroidPermEx') then 'Resolved'
 	end as subcategory from SIR_ALL_Records
 where 
 	(
 		ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx', 'dm','dmPermEx','phaeo','asthmaQof',
 		'asthmaPermEx','porphyria','MInow','AS','gout','addisons','whiteCoat','dmPermEx','asthmaPermEx', 'copdQof', 'copdPermEx', 'htnQof',
-		'htnPermEx', 'oedema', 'oedemaPermEx', 'af','afPermEx', 'chdQof', 'hfQof','hfPermEx'))
+		'htnPermEx', 'oedema', 'oedemaPermEx', 'af','afPermEx', 'chdQof', 'hfQof','hfPermEx','anxiety','anxietyPermEx','hyperthyroid','hyperthyroidPermEx'))
 		or ReadCode in ('1Z12.','K053.','1Z13.','K054.','1Z14.','K055.','1Z15.','1Z16.','1Z1B.','1Z1C.','1Z1D.','1Z1E.', '1Z1T.',
 		'1Z1F.','1Z1G.','1Z1X.','1Z1H.','1Z1J.', '1Z1a.','1Z1K.','1Z1L.', '1Z1d.','1Z1V.','1Z1W.','1Z1Y.','1Z1Z.','1Z1b.','1Z1c.',
 		'1Z1e.','1Z1f.','2126E','1Z10.','1Z11.','1Z17.','1Z18.', '1Z1M.','1Z19.','1Z1A.', '1Z1Q.','1Z1N.','1Z1P.','1Z1R.','1Z1S.','K051.','K052.')
