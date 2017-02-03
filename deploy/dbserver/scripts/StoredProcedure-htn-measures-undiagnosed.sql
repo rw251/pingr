@@ -24,7 +24,7 @@ declare @achieveDate datetime;
 set @achieveDate = (select case
 	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
 	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' end); --31st March
-	
+
 --#latestSbp
 IF OBJECT_ID('tempdb..#latestSbp') IS NOT NULL DROP TABLE #latestSbp
 CREATE TABLE #latestSbp (PatID int, latestSbpDate date, latestSbp int, latestSbpSource varchar(12));
@@ -101,8 +101,8 @@ group by a.PatID, secondLatestDbpDate
 
 --#raisedBP
 IF OBJECT_ID('tempdb..#raisedBP') IS NOT NULL DROP TABLE #raisedBP
-CREATE TABLE #raisedBP 
-	(PatID int, 
+CREATE TABLE #raisedBP
+	(PatID int,
 	latestSbpDate date, latestSbp int, latestDbpDate date, latestDbp int,
 	secondLatestSbpDate date, secondLatestSbp int, secondLatestDbpDate date, secondLatestDbp int);
 insert into #raisedBP
@@ -293,14 +293,14 @@ from #raisedBP as a
 	left outer join (select PatID, latestHtnCodeDate from #latestHtnCode) i on i.PatID = a.PatID
 	left outer join (select PatID, latestAsbpValue, latestAsbpValueDate from #latestAsbpValue) l on l.PatID = a.PatID
 	left outer join (select PatID, latestAdbpValue, latestAdbpValueDate from #latestAdbpValue) k on k.PatID = a.PatID
-	
+
 --#denominator
 IF OBJECT_ID('tempdb..#denominator') IS NOT NULL DROP TABLE #denominator
 CREATE TABLE #denominator (PatID int, denominator int);
 insert into #denominator
 select a.PatID,
 	case when ambulatoryExclude = 0 and ageExclude = 0 and regCodeExclude  = 0
-		and deRegCodeExclude  = 0 and deadCodeExclude = 0 
+		and deRegCodeExclude  = 0 and deadCodeExclude = 0
 		and deadTableExclude  = 0 and permExclude = 0
 		then 1 else 0 end as denominator
 from #raisedBP as a
@@ -312,10 +312,10 @@ IF OBJECT_ID('tempdb..#numerator') IS NOT NULL DROP TABLE #numerator
 CREATE TABLE #numerator (PatID int, numerator int);
 insert into #numerator
 select a.PatID,
-	case 
-		when denominator = 1 
-		and latestHtnCode is not null and (latestHtnPermExCode is null or (latestHtnPermExCodeDate < latestHtnCodeDate))then 1 
-	else 0 
+	case
+		when denominator = 1
+		and latestHtnCode is not null and (latestHtnPermExCode is null or (latestHtnPermExCodeDate < latestHtnCodeDate))then 1
+	else 0
 	end as numerator
 from #raisedBP as a
 	left outer join (select PatID, denominator from #denominator) b on b.PatID = a.PatID
@@ -345,7 +345,7 @@ CREATE TABLE #eligiblePopulationAllData (
 	denominator int,
 	numerator int);
 insert into #eligiblePopulationAllData
-select 
+select
 	a.PatID,
 	latestHtnCodeDate, latestHtnCode,
 	age,
@@ -416,9 +416,9 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
-select 'htn.undiagnosed.measures', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
-	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
-	sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc 
+select 'htn.undiagnosed.measures', b.pracID, CONVERT(char(10), @refdate, 126) as date,
+	sum(case when numerator = 1 then 1 else 0 end) as numerator,
+	sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc
 from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
@@ -443,7 +443,7 @@ case
 		case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 		'<li>Second latest blood pressure was ' + rtrim(Str(secondLatestSbp)) + '/' + ltrim(Str(secondLatestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '.</li>' +
 		case when secondLatestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end
-	when numerator = 0 then 
+	when numerator = 0 then
 		'<li>Patient is <strong>not</strong> on the hypertension register.</li>'+
 		'<li>Latest blood pressure was ' + rtrim(Str(latestSbp)) + '/' + ltrim(Str(latestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
 		case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
@@ -453,8 +453,8 @@ case
 		case when latestSbp < 180 and latestDbp < 110 and (latestAsbpValue >= 135 or latestAdbpValue >= 85) then '<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title="NICE Hypertension Diagnosis">NICE suggests that patients should be diagnosed with hypertension if they have ambulatory / home BP &ge; 135/85 mmHg</a>.' else '' end +
 		case when latestSbp < 180 and latestDbp < 110 and (latestAdbpValue is null and latestAsbpValue is null) then '<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title="NICE Hypertension Diagnosis">NICE suggests that patients with 2 blood pressure readings &ge; 140/90 should be offered ambulatory (or home) blood pressure monitoring to diagnose hypertension</a>.' else '' end
 	else ''
-end	
-from #eligiblePopulationAllData 
+end
+from #eligiblePopulationAllData
 where denominator = 1;
 
 									----------------------------------------------
@@ -462,8 +462,8 @@ where denominator = 1;
 									----------------------------------------------
 
 declare @ptPercPoints float;
-set @ptPercPoints = 
-(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end) 
+set @ptPercPoints =
+(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end)
 from #eligiblePopulationAllData);
 
 								---------------------------------------------------------
@@ -496,7 +496,7 @@ select PatID,
 	'<ul>'+
 	'<li>Patient is <strong>not</strong> on the hypertension register.</li>'+
 	'<li>Latest blood pressure was ' + rtrim(Str(latestSbp)) + '/' + ltrim(Str(latestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title="NICE Hypertension Diagnosis">NICE suggests that patients should be diagnosed with hypertension if they have BP &ge; 180/110 mmHg</a>.</li>'+
 	'<li>If you believe they <strong>do not</strong> have hypertension please add code 21261 ''Hypertension resolved'' [21261].</li>'+
 	'</ul>'
@@ -518,11 +518,11 @@ select PatID,
 	'<ul>'+
 	'<li>Patient is <strong>not</strong> on the hypertension register.</li>'+
 	'<li>Latest blood pressure was ' + rtrim(Str(latestSbp)) + '/' + ltrim(Str(latestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li>Second latest blood pressure was ' + rtrim(Str(secondLatestSbp)) + '/' + ltrim(Str(secondLatestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '.</li>' +
-	case when secondLatestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when secondLatestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li>Latest ambulatory / home blood pressure was ' + rtrim(Str(latestAsbpValue)) + '/' + ltrim(Str(latestAdbpValue)) + ' mmHg on ' + CONVERT(VARCHAR, latestAdbpValueDate, 3) + '.</li>' +
-	case when latestAsbpValueSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when latestAsbpValueSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title="NICE Hypertension Diagnosis">NICE suggests that patients should be diagnosed with hypertension if they have ambulatory / home BP &ge; 135/85 mmHg</a>.</li>'+
 	'<li>If you believe they <strong>do not</strong> have hypertension please add code 21261 ''Hypertension resolved'' [21261].</li>'+
 	'</ul>'
@@ -543,9 +543,9 @@ select PatID,
 	'Offer ambulatory (or home) blood pressure monitoring using code 8HRH. [8HRH.]' as actionText,
 	'Reasoning' +
 	'<li>Latest blood pressure was ' + rtrim(Str(latestSbp)) + '/' + ltrim(Str(latestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li>Second latest blood pressure was ' + rtrim(Str(secondLatestSbp)) + '/' + ltrim(Str(secondLatestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '.</li>' +
-	case when secondLatestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when secondLatestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title="NICE Hypertension Diagnosis">NICE suggests that patients with 2 blood pressure readings &ge; 140/90 should be offered ambulatory (or home) blood pressure monitoring to diagnose hypertension</a></li>.'+
 	'<li>If you believe they <strong>do not</strong> have hypertension please add code 21261 ''Hypertension resolved'' [21261].</li>'+
 	'</ul>' +
@@ -575,9 +575,9 @@ select PatID,
 	'Reasoning' +
 	'<li>Patient has ''white coat'' hypertension in their record on ' + CONVERT(VARCHAR, latestWhiteCoatCodeDate, 3) + '.</li>' +
 	'<li>Latest blood pressure was ' + rtrim(Str(latestSbp)) + '/' + ltrim(Str(latestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, latestSbpDate, 3) + '.</li>' +
-	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when latestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li>Second latest blood pressure was ' + rtrim(Str(secondLatestSbp)) + '/' + ltrim(Str(secondLatestDbp)) + ' mmHg on ' + CONVERT(VARCHAR, secondLatestSbpDate, 3) + '.</li>' +
-	case when secondLatestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +		
+	case when secondLatestSbpSource = 'salfordt' then '<li>This reading was taken in <strong>hospital</strong> so may not appear in your record.</li>' else '' end +
 	'<li>There is no record of them having ambulatory (or home) blood pressure monitoring before.'+
 	'<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title="NICE Hypertension Diagnosis">The diagnosis of whitecoat hypertension should be confirmed with ambulatory (or home) blood pressure monitoring</a>.'+
 	'<li>However If you believe they <strong>do not</strong> have hypertension please add code 21261 ''Hypertension resolved'' [21261].</li>'+
@@ -604,7 +604,7 @@ CREATE TABLE #reasonProportions
 insert into #reasonProportions
 
 --'diagnose' actions
-select c.pracID, 'diagnose', 
+select c.pracID, 'diagnose',
 	SUM(case when indicatorId = 'htn.undiagnosed.measures' and actionCat = 'diagnose' then 1.0 else 0.0 end)
 	/
 	SUM(case when denominator = 1 then 1.0 else 0.0 end),
@@ -618,7 +618,7 @@ having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0 --where denom is
 
 union
 --'abpm' actions
-select c.pracID, 'abpm', 
+select c.pracID, 'abpm',
 	SUM(case when indicatorId = 'htn.undiagnosed.measures' and actionCat = 'abpm' then 1.0 else 0.0 end)
 	/
 	SUM(case when denominator = 1 then 1.0 else 0.0 end),
@@ -651,13 +651,13 @@ select
 	numberPatients as numberPatients,
 	pointsPerAction as pointsPerAction,
 	3 as priority,
-	'Remind staff of <a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title="NICE Hypertension Diagnosis">NICE guidance on hypertension diagnosis</a>' as actionText,
+	'Remind staff of <a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title=''NICE Hypertension Diagnosis''>NICE guidance on hypertension diagnosis</a>' as actionText,
 	'Reasoning' +
-		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
+		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100)
 		+ '%) of patients with raised blood pressure at your practice meet criteria for a hypertension diagnosis, but <strong>are not</strong> on the hyptertension register.</li>' +
 		'<li>This is important because currently the recorded prevalence of hypertension in Salford is lower than expected. Finding undiagnosed patients can help provide better care and increase your QOF scores.</li></ul>'
 from #reasonProportions
-where proportionId = 'diagnose' 
+where proportionId = 'diagnose'
 
 							---------------------------------------------------------------
 							----------------------TEXT FILE OUTPUTS------------------------
@@ -669,13 +669,13 @@ values
 ('htn.undiagnosed.measures','name','Undiagnosed hypertension - BP measures'), --overview table name
 ('htn.undiagnosed.measures','tabText','HTN Diagnosis - Measures'), --indicator tab text
 ('htn.undiagnosed.measures','description', --'show more' on overview tab
-	'<strong>Definition:</strong> Patients with persistently raised blood pressure that are on the hypertension register.<br>' + 
+	'<strong>Definition:</strong> Patients with persistently raised blood pressure that are on the hypertension register.<br>' +
 	'<strong>Why this is important:</strong> The recorded prevalence of hypertension in Salford is lower than expected. Finding undiagnosed patients can help provide better care and increase your QOF scores.<br>'),
 --indicator tab
 --summary text
 ('htn.undiagnosed.measures','tagline','of patients with persistently raised blood pressure are on the hypertension register.'),
 ('htn.undiagnosed.measures','positiveMessage', --tailored text
-	case 
+	case
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
 		when @indicatorScore >= @target and @indicatorScore < @abc then 'Well done! You’ve achieved the Target! To improve even further, look through the recommended actions on this page and for the patients below.'
 		else 'You''ve not yet achieved the Target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'
