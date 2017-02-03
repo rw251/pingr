@@ -83,10 +83,10 @@ var ind = {
       //RW - added the nothingChanged variable so that this state management
       // is only invoked if the pathway/stage/standard are the same
       // Was leading to a bug where the wrong indicator data was displayed
-      if(nothingChanged && $('#stateM-indicator').children().length > 0)
+      var indicatorCachedState = $('#stateM-indicator').children();
+      base.savePanelState();
+      if(nothingChanged && indicatorCachedState.length > 0)
       {
-        var indicatorCachedState = $('#stateM-indicator').children();
-        base.savePanelState();
         farRightPanel.html(indicatorCachedState);
       }
 
@@ -201,6 +201,7 @@ var ind = {
 
       //add state indicator
       farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
+
     }, 0);
   }
 

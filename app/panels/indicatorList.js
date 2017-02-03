@@ -26,7 +26,7 @@ var indicatorList = {
         //*b* maintain state
         // - state maintainance causes a bug in this place
         //TODO build a version of state maintainance that doesnt reload if tab is pressed
-        //base.savePanelState();
+        base.savePanelState();
         panel.html(html);
       }
 

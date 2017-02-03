@@ -14,7 +14,7 @@ var bd = {
 
 
     var dataObj = indicators.opportunities.map(function(opp) {
-      return [opp.name, opp.description, Math.max(opp.patients.length, opp.patientCount)];
+      return [opp.name, opp.description, Math.max(opp.patients.length, opp.patientCount ? opp.patientCount : 0)];
     });
 
     var elem = $("<div id='breakdown-chart'></div>");
