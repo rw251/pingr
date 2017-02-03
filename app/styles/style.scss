@@ -1787,12 +1787,20 @@ header {
     border-bottom: 0;
 }
 .table.table-body-hidden tbody tr td button,
+.table.table-body-hidden tbody tr td i,
 .table.table-head-hidden thead tr th i {
     height: 0;
     padding-top: 0;
     padding-bottom: 0;
     border-width: 0;
 }
+
+.table.table-body-hidden tbody tr td i:before {
+    content: '?';
+    display: inline-block;
+    height: 0;
+}
+
 .table.table-body-hidden {
     margin-bottom: 0;
 }
@@ -2026,6 +2034,9 @@ th {
 }
 .all-patients > .table-scroll {
     max-height: 700px;
+}
+.overview-table > .table-scroll {
+  max-height: 400px;
 }
 /*.soon {
 	font-size: 64px;

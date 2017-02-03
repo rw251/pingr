@@ -51,6 +51,14 @@ var overview = {
       $('#overview-pane').show();
 
       base.wireUpTooltips();
+
+      //farRightPanel.find('div.table-scroll').getNiceScroll().remove();
+      farRightPanel.find('div.table-scroll').niceScroll({
+        cursoropacitymin: 0.3,
+        cursorwidth: "7px",
+        horizrailenabled: false
+      });
+
       base.hideLoading();
 
       //add state indicator

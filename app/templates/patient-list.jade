@@ -10,7 +10,7 @@ table.table.patient-list.table-body-hidden
     tr.list-item(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
       td(style='min-width:130px')
         button.btn.btn-xs.btn-default.btn-copy(type='button', data-content='Copied', data-toggle='tooltip', data-placement='right')
-          span.fa.fa-clipboard
+          span A
         |         1234567890
       td
         | 56
@@ -23,7 +23,7 @@ table.table.patient-list.table-body-hidden
     thead
       tr
         each item in locals['header-items']
-          +header(item)
+          +hiddenheader(item)
     tbody
       each patient in patients
         tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')

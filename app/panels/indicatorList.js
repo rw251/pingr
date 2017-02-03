@@ -37,6 +37,13 @@ var indicatorList = {
         },
         width: "100px"
       });
+      
+      panel.find('div.table-scroll').getNiceScroll().remove();
+      panel.find('div.table-scroll').niceScroll({
+        cursoropacitymin: 0.3,
+        cursorwidth: "7px",
+        horizrailenabled: false
+      });
 
       indicatorList.wireUp(panel, loadContentFn);
 

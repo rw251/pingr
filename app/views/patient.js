@@ -97,7 +97,8 @@ var pv = {
         });
       } else {
         base.updateTitle("No patient currently selected");
-        patientSearch.show(farRightPanel, true, loadContentFn);
+        base.savePanelState();
+        patientSearch.show(farRightPanel, false, loadContentFn);
 
         lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
 
