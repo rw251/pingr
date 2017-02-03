@@ -15,7 +15,7 @@ else
           tr
             td
               a.show-more-than-3
-                | Show more than 3 actions 
+                | Show more than top 3 actions 
                 i.fa.fa-caret-down
         tr.suggestion(data-id=suggestion.id, data-indx=index, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
           td
@@ -46,4 +46,10 @@ else
                 | Show less 
                 i.fa.fa-caret-up
         - alt = !alt
+      if visible
+        tr
+          td
+            a.show-less-than-3
+              | Show top 3 actions only 
+              i.fa.fa-caret-up     
 include mixins/personal-action-plan

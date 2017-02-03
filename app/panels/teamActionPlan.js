@@ -202,6 +202,11 @@ var tap = {
       tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, true);
     });
 
+    $('#advice-list').off('click', '.show-less-than-3');
+    $('#advice-list').on('click', '.show-less-than-3', function(e) {
+      tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, false);
+    });
+
     $('#advice-list').off('click', '.show-more');
     $('#advice-list').on('click', '.show-more', function(e) {
       var id = $(this).data("id");
