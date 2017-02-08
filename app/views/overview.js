@@ -35,8 +35,8 @@ var overview = {
         $('#mainTitle').show();
         base.updateTitle("Overview of " + practiceName + "'s performance");
 
-        base.removeFullPage(farRightPanel);
-        base.hidePanels(farRightPanel);
+        base.removeFullPage(farLeftPanel);
+        base.hidePanels(farLeftPanel);
 
         layout.view = ID;
       }
@@ -45,15 +45,15 @@ var overview = {
 
       //The two panels we need to show
       //Panels decide whether they need to redraw themselves
-      teamActionPlan.show(farLeftPanel, "Top 3 suggested actions for " + practiceName);
-      indicatorList.show(farRightPanel, false, loadContentFn);
+      teamActionPlan.show(farRightPanel, "Top 3 suggested actions for " + practiceName);
+      indicatorList.show(farLeftPanel, false, loadContentFn);
 
       $('#overview-pane').show();
 
       base.wireUpTooltips();
 
       //farRightPanel.find('div.table-scroll').getNiceScroll().remove();
-      farRightPanel.find('div.table-scroll').niceScroll({
+      farLeftPanel.find('div.table-scroll').niceScroll({
         cursoropacitymin: 0.3,
         cursorwidth: "7px",
         horizrailenabled: false
@@ -62,7 +62,7 @@ var overview = {
       base.hideLoading();
 
       //add state indicator
-      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
+      farLeftPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
 
     }, 0);
 

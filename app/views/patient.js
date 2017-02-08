@@ -25,7 +25,7 @@ var pv = {
 
     if(layout.view === ID && patientId === layout.patientId) {
       //the view is the same just need to update the actions
-      individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+      individualActionPlan.show(farRightPanel, pathwayId, pathwayStage, standard, patientId);
       qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
       return;
     }
@@ -43,13 +43,13 @@ var pv = {
         //base.switchTo21Layout();
         layout.showMainView();
 
-        base.removeFullPage(farRightPanel);
-        base.hidePanels(farRightPanel);
+        base.removeFullPage(farLeftPanel);
+        base.hidePanels(farLeftPanel);
 
         layout.view = ID;
       }
 
-      base.hidePanels(farLeftPanel);
+      base.hidePanels(farRightPanel);
 
       if (patientId) {
         lookup.suggestionModalText = "Screen: Patient\nPatient ID: " + patientId + "  - NB this helps us identify the patient but is NOT their NHS number.\n===========\n";
@@ -80,10 +80,10 @@ var pv = {
           data.pathwayId = pathwayId;
 
           patientSearch.show($('#title-right'), false, loadContentFn);
-          qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
+          qualityStandards.show(farLeftPanel, false, patientId, pathwayId, pathwayStage, standard);
 
-          lifeline.show(farRightPanel, true, patientId, patientData);
-          individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+          lifeline.show(farLeftPanel, true, patientId, patientData);
+          individualActionPlan.show(farRightPanel, pathwayId, pathwayStage, standard, patientId);
 
           patientSearch.wireUp();
           $('#patient-pane').show();
@@ -92,13 +92,13 @@ var pv = {
           base.hideLoading();
 
           //add state indicator
-          farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+          farLeftPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
         });
       } else {
         base.updateTitle("No patient currently selected");
         base.savePanelState();
-        patientSearch.show(farRightPanel, false, loadContentFn);
+        patientSearch.show(farLeftPanel, false, loadContentFn);
 
         lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
 
@@ -106,7 +106,7 @@ var pv = {
         base.hideLoading();
 
         //add state indicator
-        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+        farLeftPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
       }
 
     }, 0);

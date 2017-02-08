@@ -37,8 +37,8 @@ var ind_be = {
         //base.switchTo21Layout();
         layout.showMainView();
 
-        base.removeFullPage(farRightPanel);
-        base.hidePanels(farRightPanel);
+        base.removeFullPage(farLeftPanel);
+        base.hidePanels(farLeftPanel);
 
         layout.view = ID;
       }
@@ -81,12 +81,12 @@ var ind_be = {
 
       //The three panels we need to show
       //Panels decide whether they need to redraw themselves
-      teamActionPlan.show(farLeftPanel);
+      teamActionPlan.show(farRightPanel);
 
       base.updateTab("indicatorsBe", data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 
 	  // *B* 1st section in right panel
-      wrapper.show(farRightPanel, false, [
+      wrapper.show(farLeftPanel, false, [
         {
           show: indicatorHeadlines.show,
           args: [pathwayId, pathwayStage, standard]
@@ -101,7 +101,7 @@ var ind_be = {
       ], "Performance over time", false);
 
 	  // *B* 2nd section in right panel
-      wrapper.show(farRightPanel, true, [
+      wrapper.show(farLeftPanel, true, [
         {
           show: indicatorTrend.show,
           args: [pathwayId, pathwayStage, standard]
@@ -109,7 +109,7 @@ var ind_be = {
       ], "Benchmarking", "Patients at risk");
 
 	  // *B* 3rd section in right panel
-      wrapper.show(farRightPanel, true, [
+      wrapper.show(farLeftPanel, true, [
         {
           show: indicatorBenchmark.show,
           args: [pathwayId, pathwayStage, standard]
@@ -120,7 +120,7 @@ var ind_be = {
         $('head').append('<style id="addedCSS" type="text/css">.table-scroll {max-height:170px;}');
       }
 
-      base.addFullPage(farRightPanel);
+      base.addFullPage(farLeftPanel);
       /*console.log("WINDOW HEIGHT: " + $(window).height());
       console.log("TABLE TOP: " + $('.table-scroll').position().top);
       console.log("CSS: " + Math.floor($(window).height()-$('.table-scroll').position().top-200)+"px");*/
