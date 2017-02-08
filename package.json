@@ -75,6 +75,6 @@
     "zeroclipboard": "^2.2.0"
   },
   "engines": {
-    "node": "4.2.4"
+    "node": "6.9.5"
   }
 }
