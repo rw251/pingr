@@ -5,7 +5,7 @@
   "main": "script.js",
   "scripts": {
     "start": "brunch watch --server",
-    "prebuild": "cp node_modules/zeroclipboard/dist/ZeroClipboard.swf ./app/assets/",
+    "prebuild": "ncp node_modules/zeroclipboard/dist/ZeroClipboard.swf ./app/assets/",
     "build": "brunch build --production",
     "postinstall": "npm run build",
     "watch": "brunch watch",
@@ -43,6 +43,7 @@
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
     "mv": "^2.0.3",
+    "ncp": "^2.0.0",
     "nodemon": "^1.9.1",
     "pug": "^2.0.0-beta2",
     "rimraf": "^2.3.4",
