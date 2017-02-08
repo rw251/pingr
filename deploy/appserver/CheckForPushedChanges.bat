@@ -19,9 +19,8 @@ IF NOT "%LOCAL%"=="%REMOTE%" (
 	ECHO SAME
 	git pull origin dev
 	
+	npm install
+	
 	npm run build
-	
-	REM Find process id and restart
-	
 	
 )
