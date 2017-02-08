@@ -8,7 +8,7 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`git rev-parse @{u}`) DO (
 SET REMOTE=%%F
 )
 
-IF %LOCAL%==%REMOTE% THEN (
+IF "%LOCAL%"=="%REMOTE%" (
 	ECHO SAME
 )
 
