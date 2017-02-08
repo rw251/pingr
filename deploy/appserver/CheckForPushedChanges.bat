@@ -21,6 +21,6 @@ IF NOT "%LOCAL%"=="%REMOTE%" (
 	
 	npm install
 	
-	npm run build
-	
 )
+
+cd deploy/appserver
