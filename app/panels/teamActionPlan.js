@@ -124,9 +124,11 @@ var tap = {
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      log.recordPlan(data.GARBAGE, $(this).parent().parent().find('textarea').val(), pathwayId);
+      log.recordTeamPlan($(this).parent().parent().find('textarea').val(), pathwayId, function(err, a){
+        console.log(a);
+      });
 
-      tap.displayPersonalisedTeamActionPlan(data.GARBAGE, $('#personalPlanTeam'));
+      tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {

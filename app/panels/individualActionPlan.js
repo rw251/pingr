@@ -130,7 +130,9 @@ var iap = {
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      log.recordPlan(data.patientId, $(this).parent().parent().find('textarea').val(), pathwayId);
+      log.recordIndividualPlan($(this).parent().parent().find('textarea').val(), data.patientId, function(err,a){
+        console.log(a);
+      });
 
       iap.displayPersonalisedIndividualActionPlan(data.patientId, $('#personalPlanIndividual'));
     }).on('change', '.btn-toggle input[type=checkbox]', function() {

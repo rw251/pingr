@@ -9,6 +9,7 @@ var practices = require('../controllers/practices.js');
 var patients = require('../controllers/patients.js');
 var indicators = require('../controllers/indicators.js');
 var events = require('../controllers/events.js');
+var actions = require('../controllers/actions.js');
 var text = require('../controllers/text.js');
 
 var isAuthenticated = function(req, res, next) {
@@ -200,6 +201,30 @@ module.exports = function(passport) {
   });
 
   /* api */
+
+
+  /* ACTIONS */
+  router.post('/api/action/addTeam', isAuthenticated, function(req,res){
+    if (!req.body.actionText) {
+      res.send("No action posted");
+    } else {
+      actions.addTeamAction(req.user.practiceId, req.body.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
+        if (err) res.send(err);
+        else res.send(action);
+      });
+    }
+  });
+  router.post('/api/action/addIndividual/:patientId', isAuthenticated, function(req,res){
+    if (!req.body.actionText) {
+      res.send("No action posted");
+    } else {
+      actions.addIndividualAction(req.user.practiceId, req.params.patientId, req.user.fullname, req.body.actionText, function(err, action) {
+        if (err) res.send(err);
+        else res.send(action);
+      });
+    }
+  });
+
   //store Event
   router.post('/api/event', function(req, res) {
     if (!req.body.event) {

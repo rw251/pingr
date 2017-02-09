@@ -193,38 +193,44 @@ var log = {
     log.setObj(obj);
   },
 
-  recordPlan: function(id, text, pathwayId) {
-    if (!id) alert("PLAN");
-    var obj = log.getObj([{
-      name: "actions",
-      value: {}
-    }]);
-
+  recordTeamPlan: function(text, indicatorId, done) {
     var dataToSend = [
-      { key: "text", value: text }
+      { key: "text", value: text },
+      { key: "pathwayId", value: indicatorId }
     ];
-    var accction = "recordIndividualPlan";
-    if (id === "team") {
-      accction = "recordTeamPlan";
-      dataToSend.push({ key: "pathwayId", value: pathwayId });
-    } else {
-      dataToSend.push({ key: "patientId", value: id });
-    }
 
-    log.event(accction, window.location.hash, dataToSend);
+    log.event("recordTeamPlan", window.location.hash, dataToSend);
 
-    if (!obj.actions[id]) obj.actions[id] = {};
-    var planId = Date.now() + "";
-    obj.actions[id][planId] = {
-      "text": text,
-      "agree": null,
-      "done": false,
-      "pathwayId": pathwayId,
-      "history": ["You added this on " + (new Date()).toDateString()]
-    };
+    $.ajax({
+      type: "POST",
+      url: "/api/action/addTeam",
+      data: JSON.stringify({actionText: text, indicatorId: indicatorId}),
+      success: function(d) {
+        return done(null,d);
+       },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
 
-    log.setObj(obj);
-    return planId;
+  recordIndividualPlan: function(text, patientId, done) {
+    var dataToSend = [
+      { key: "text", value: text },
+      { key: "patientId", value: patientId }
+    ];
+
+    log.event("recordIndividualPlan", window.location.hash, dataToSend);
+
+    $.ajax({
+      type: "POST",
+      url: "/api/action/addIndividual/"+patientId,
+      data: JSON.stringify({actionText: text}),
+      success: function(d) {
+        return done(null,d);
+       },
+      dataType: "json",
+      contentType: "application/json"
+    });
   },
 
   findPlan: function(obj, planId) {
