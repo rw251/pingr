@@ -11,10 +11,8 @@ var ActionSchema = new Schema({
   done: Boolean,
   history: [String],
   userDefined: Boolean,
-  rejected: {
-    reason: String,
-    reasonText: String
-  }
+  rejectedReason: String,
+  rejectedReasonText: String
 });
 
 module.exports = mongoose.model('Action', ActionSchema);

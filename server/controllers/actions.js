@@ -18,6 +18,89 @@ module.exports = {
     });
   },
 
+  updateTeam: function(practiceId, indicatorId, updatedAction, done) {
+    Action.findOne({ practiceId: practiceId, indicatorId: indicatorId, actionTextId: updatedAction.actionTextId }, function(err, action) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding team action for practice: " + practiceId + " and indicator " + indicatorId + " and actionTextId " + updatedAction.actionTextId));
+      }
+      if (!action) {
+        action = new Action({
+          practiceId: practiceId,
+          indicatorId: indicatorId
+        });
+      }
+
+      Object.keys(updatedAction).forEach(function(v){
+        action[v] = updatedAction[v];
+      });
+      action.save(function(err, act) {
+        if (err) {
+          console.log("error updating team action");
+          return done(err);
+        } else {
+          return done(null, act);
+        }
+      });
+    });
+  },
+
+  updateIndividual: function(practiceId, patientId, updatedAction, done) {
+    Action.findOne({ practiceId: practiceId, patientId: patientId, actionTextId: updatedAction.actionTextId }, function(err, action) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding individual action for practice: " + practiceId + " and patient " + patientId + " and actionTextId " + updatedAction.actionTextId));
+      }
+      if (!action) {
+        action = new Action({
+          practiceId: practiceId,
+          patientId: patientId
+        });
+      }
+      Object.keys(updatedAction).forEach(function(v){
+        action[v] = updatedAction[v];
+      });
+      action.save(function(err, act) {
+        if (err) {
+          console.log("error updating individual action");
+          return done(err);
+        } else {
+          return done(null, act);
+        }
+      });
+    });
+  },
+
+  getTeam: function(practiceId, indicatorId, done) {
+    Action.find({ practiceId: practiceId, indicatorId: indicatorId }, function(err, actions) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding team action list for practice: " + practiceId + " and indicator " + indicatorId));
+      }
+      if (!actions) {
+        console.log('Error finding team action list for practice:  ' + practiceId + " and indicator " + indicatorId);
+        return done(null, false);
+      } else {
+        done(null, actions);
+      }
+    });
+  },
+
+  getIndividual: function(practiceId, patientId, done) {
+    Action.find({ practiceId: practiceId, patientId: patientId }, function(err, actions) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding individual action list for practice: " + practiceId+ " and patient " + patientId));
+      }
+      if (!actions) {
+        console.log('Error finding individual action list for practice:  ' + practiceId+ " and patient " + patientId);
+        return done(null, false);
+      } else {
+        done(null, actions);
+      }
+    });
+  },
+
   addTeamAction: function(practiceId, indicatorId, username, actionText, done) {
     var action = new Action({
       practiceId: practiceId,

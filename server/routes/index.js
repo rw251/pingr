@@ -224,6 +224,30 @@ module.exports = function(passport) {
       });
     }
   });
+  router.post('/api/action/update/team/:indicatorId', isAuthenticated, function(req, res){
+    actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.post('/api/action/update/individual/:patientId', isAuthenticated, function(req, res){
+    actions.updateIndividual(req.user.practiceId, req.params.patientId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.get('/api/action/team/:indicatorId', isAuthenticated, function(req, res){
+    actions.getTeam(req.user.practiceId, req.params.indicatorId, function(err, actions){
+      if (err) res.send(err);
+      else res.send(actions);
+    });
+  });
+  router.get('/api/action/individual/:patientId', isAuthenticated, function(req, res){
+    patients.getActions(req.user.practiceId, req.params.patientId, function(err,actions){
+      if (err) res.send(err);
+      res.send(actions);
+    });
+  });
 
   //store Event
   router.post('/api/event', function(req, res) {

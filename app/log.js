@@ -134,6 +134,44 @@ var log = {
     }]).actions;
   },
 
+  getIndividualActions: function(patientId, done) {
+    $.ajax({
+      type: "GET",
+      url: "/api/action/individual/" + patientId,
+      success: function(d) {
+        return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
+  updateIndivdualAction: function(patientId, data, done) {
+    $.ajax({
+      type: "POST",
+      url: "/api/action/update/individual/" + patientId,
+      data: JSON.stringify({ action: data }),
+      success: function(d) {
+        if (done) return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
+  updateTeamAction: function(indicatorId, data, done) {
+    $.ajax({
+      type: "POST",
+      url: "/api/action/update/team/" + indicatorId,
+      data: JSON.stringify({ action: data }),
+      success: function(d) {
+        if (done) return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
   listActions: function(id, pathwayId) {
     var obj = log.getObj([{
       name: "actions",
@@ -204,10 +242,10 @@ var log = {
     $.ajax({
       type: "POST",
       url: "/api/action/addTeam",
-      data: JSON.stringify({actionText: text, indicatorId: indicatorId}),
+      data: JSON.stringify({ actionText: text, indicatorId: indicatorId }),
       success: function(d) {
-        return done(null,d);
-       },
+        return done(null, d);
+      },
       dataType: "json",
       contentType: "application/json"
     });
@@ -223,11 +261,11 @@ var log = {
 
     $.ajax({
       type: "POST",
-      url: "/api/action/addIndividual/"+patientId,
-      data: JSON.stringify({actionText: text}),
+      url: "/api/action/addIndividual/" + patientId,
+      data: JSON.stringify({ actionText: text }),
       success: function(d) {
-        return done(null,d);
-       },
+        return done(null, d);
+      },
       dataType: "json",
       contentType: "application/json"
     });

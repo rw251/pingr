@@ -808,6 +808,18 @@ var dt = {
 
   getPatientData: function(patientId, callback) {
     return _getPatientData(patientId, callback);
+  },
+
+  getPatientActionData: function(patientId, callback) {
+    $.ajax({
+      url: "api/action/individual/" + patientId,
+      success: function(file) {
+        return callback(null, file);
+      },
+      error: function(err) {
+        return callback(err);
+      }
+    });
   }
 
 };

@@ -349,20 +349,31 @@ var base = {
     });
   },
 
-  mergeIndividualStuff: function(suggestions, patientId) {
-    var localActions = log.listActions();
-    if (!localActions[patientId]) return suggestions;
+  mergeIndividualStuff: function(suggestions, patientId, done) {
+    log.getIndividualActions(patientId, function(err, actions){
 
-    for (var i = 0; i < suggestions.length; i++) {
-      if (localActions[patientId][suggestions[i].id]) {
-        if (localActions[patientId][suggestions[i].id].agree) {
-          suggestions[i].agree = true;
-        } else if (localActions[patientId][suggestions[i].id].agree === false) {
-          suggestions[i].disagree = true;
+      if(err) return done(err);
+
+      if(!actions || actions.length ===0) return done(null, suggestions);
+
+      var actionObject={};
+      actions.forEach(function(v){
+        actionObject[v.actionTextId] = v;
+      });
+
+      for (var i = 0; i < suggestions.length; i++) {
+        if (actionObject[suggestions[i].id]) {
+          if (actionObject[suggestions[i].id].agree) {
+            suggestions[i].agree = true;
+          } else if (actionObject[suggestions[i].id].agree === false) {
+            suggestions[i].disagree = true;
+          }
+          if (actionObject[suggestions[i].id].done) suggestions[i].done = actionObject[suggestions[i].id].done;
         }
-        if (localActions[patientId][suggestions[i].id].done) suggestions[i].done = localActions[patientId][suggestions[i].id].done;
       }
-    }
+      return suggestions;
+
+    });
     return suggestions;
   },
 
