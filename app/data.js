@@ -820,6 +820,18 @@ var dt = {
         return callback(err);
       }
     });
+  },
+
+  getTeamActionData: function(indicatorId, callback) {
+    $.ajax({
+      url: "api/action/team/" + indicatorId,
+      success: function(file) {
+        return callback(null, file);
+      },
+      error: function(err) {
+        return callback(err);
+      }
+    });
   }
 
 };

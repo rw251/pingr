@@ -17,7 +17,7 @@ else
               a.show-more-than-3
                 | Show more than top 3 actions 
                 i.fa.fa-caret-down
-        tr.suggestion(data-id=suggestion.actionTextId, data-agree=suggestion.agree, data-indx=index, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
+        tr.suggestion(data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
           td
             span(data-subsection=suggestion.subsection)
               strong.black.f20

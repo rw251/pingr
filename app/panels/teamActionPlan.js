@@ -1,7 +1,7 @@
 var base = require('../base.js'),
-  confirm = require('./confirm.js'),
   data = require('../data.js'),
-  log = require('../log.js');
+  log = require('../log.js'),
+  actionPlan = require('./actionPlan.js');
 
 var tap = {
 
@@ -22,8 +22,38 @@ var tap = {
     });
   },
 
+  updateAction: function(action) {
+    //Use actionTextId to find the right row
+    var yesbox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    //checked action inactive
+    if (action.agree === true) {
+      yesbox.each(function() { this.checked = true; });
+      yesbox.parent().removeClass("inactive").addClass("active");
+      nobox.each(function() { this.checked = false; });
+      nobox.parent().removeClass("active").addClass("inactive");
+    } else if (action.agree === false) {
+      nobox.each(function() { this.checked = true; });
+      nobox.parent().removeClass("inactive").addClass("active");
+      yesbox.each(function() { this.checked = false; });
+      yesbox.parent().removeClass("active").addClass("inactive");
+    } else {
+      yesbox.each(function() { this.checked = false; });
+      yesbox.parent().removeClass("active inactive");
+      nobox.each(function() { this.checked = false; });
+      nobox.parent().removeClass("active inactive");
+    }
+
+    yesbox.closest('tr').data('agree', action.agree);
+
+    tap.updateTeamSapRows();
+  },
+
   wireUp: function(pathwayId, pathwayStage, standard) {
     teamTab = $('#tab-plan-team');
+
+    var indicatorId="";
+    if(pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
     //find [] and replace with copy button
 
@@ -138,7 +168,23 @@ var tap = {
         "done": false
       }));
       tap.updateTeamSapRows();
-    }).on('click', '.btn-yes,.btn-no', function(e) {
+    }).on('click', '.btn-yes', function(e) {
+      var AGREE_STATUS = $(this).closest('tr').data('agree');
+      var action = teamActionsObject[$(this).closest('tr').data('id')];
+
+      if (AGREE_STATUS === false) {
+        //do nothing - shouldn't be able to get here
+        console.log("nothing doing");
+      } else {
+        action.agree = AGREE_STATUS ? null : true;
+        if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
+        log.updateTeamAction(indicatorId, action);
+        tap.updateAction(action);
+      }
+
+      e.stopPropagation();
+      e.preventDefault();
+    }).on('click', '.btn-no', function(e) {
       var checkbox = $(this).find("input[type=checkbox]");
       var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
       var ACTIONID = $(this).closest('tr').data('id');
@@ -203,12 +249,12 @@ var tap = {
 
     $('#advice-list').off('click', '.show-more-than-3');
     $('#advice-list').on('click', '.show-more-than-3', function(e) {
-      tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, true);
+      tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard, true);
     });
 
     $('#advice-list').off('click', '.show-less-than-3');
     $('#advice-list').on('click', '.show-less-than-3', function(e) {
-      tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, false);
+      tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard, false);
     });
 
     $('#advice-list').off('click', '.show-more');
@@ -234,7 +280,7 @@ var tap = {
       e.stopPropagation();
     });
 
-    tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, false);
+    tap.loadAndPopulateIndividualSuggestedActions(pathwayId, pathwayStage, standard, false);
   },
 
   updateTeamSapRows: function() {
@@ -327,22 +373,21 @@ var tap = {
     tap.updateTeamSapRows();
   },
 
-  getAndPopulateTeamSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
-    if(!pathwayId || !pathwayStage || !standard) {
-      data.getAllIndicatorData(null, function(indicators){
-        var actions = [];
-        indicators.forEach(function(v){
-          actions = actions.concat(v.actions);
+  loadAndPopulateIndividualSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
+    data.getTeamActionData([pathwayId, pathwayStage, standard].join("."), function(err, actions) {
+      teamActionsObject = {};
+      teamActions = actions.map(function(v) {
+        v.indicatorListText = v.indicatorList.map(function(vv) {
+          return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
-        tap.populateTeamSuggestedActions(actions, pathwayId, pathwayStage, standard, visible);
+        teamActionsObject[v.actionTextId] = v;
+        return v;
       });
-    } else {
-      indicatorData = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
-      tap.populateTeamSuggestedActions(indicatorData.actions, pathwayId, pathwayStage, standard, visible);
-    }
+      tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard, visible);
+    });
   },
 
-  populateTeamSuggestedActions: function(actions, pathwayId, pathwayStage, standard, visible) {
+  populateTeamSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
     var localData = {
       visible: visible
     };
@@ -353,17 +398,10 @@ var tap = {
       };
     };
 
-    if (actions.length === 0) {
+    if (teamActions.length === 0) {
       localData.noSuggestions = true;
     } else {
-      localData.suggestions = base.dedupeAndSortActions(base.mergeTeamStuff(actions));
-
-      localData.suggestions = localData.suggestions.map(function(v) {
-        v.indicatorList = v.indicatorList.map(function(vv){
-          return {id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText};
-        });
-        return v;
-      });
+      localData.suggestions = teamActions;
     }
 
     $('#advice-placeholder').hide();

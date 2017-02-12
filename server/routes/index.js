@@ -237,7 +237,7 @@ module.exports = function(passport) {
     });
   });
   router.get('/api/action/team/:indicatorId', isAuthenticated, function(req, res){
-    actions.getTeam(req.user.practiceId, req.params.indicatorId, function(err, actions){
+    indicators.getActions(req.user.practiceId, req.params.indicatorId, function(err, actions){
       if (err) res.send(err);
       else res.send(actions);
     });

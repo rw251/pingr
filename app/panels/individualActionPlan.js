@@ -1,7 +1,7 @@
 var base = require('../base.js'),
-  confirm = require('./confirm.js'),
   data = require('../data.js'),
-  log = require('../log.js');
+  log = require('../log.js'),
+  actionPlan = require('./actionPlan.js');
 
 var patientActions = [];
 
@@ -34,19 +34,19 @@ var iap = {
     var nobox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
     //checked action inactive
     if (action.agree === true) {
-      yesbox.each(function(){ this.checked = true; });
+      yesbox.each(function() { this.checked = true; });
       yesbox.parent().removeClass("inactive").addClass("active");
-      nobox.each(function(){ this.checked = false; });
+      nobox.each(function() { this.checked = false; });
       nobox.parent().removeClass("active").addClass("inactive");
     } else if (action.agree === false) {
-      nobox.each(function(){ this.checked = true; });
+      nobox.each(function() { this.checked = true; });
       nobox.parent().removeClass("inactive").addClass("active");
-      yesbox.each(function(){ this.checked = false; });
+      yesbox.each(function() { this.checked = false; });
       yesbox.parent().removeClass("active").addClass("inactive");
     } else {
-      yesbox.each(function(){ this.checked = false; });
+      yesbox.each(function() { this.checked = false; });
       yesbox.parent().removeClass("active inactive");
-      nobox.each(function(){ this.checked = false; });
+      nobox.each(function() { this.checked = false; });
       nobox.parent().removeClass("active inactive");
     }
 
@@ -174,62 +174,57 @@ var iap = {
     }).on('click', '.btn-yes', function(e) {
       var AGREE_STATUS = $(this).closest('tr').data('agree');
       var action = patientActionsObject[$(this).closest('tr').data('id')];
-      action.agree= AGREE_STATUS ? null : true;
-      if(action.agree) action.history.push("You agreed with this on " + (new Date()).toDateString());
 
-      log.updateIndivdualAction(patientId, action);
-      iap.updateAction(action);
+      if (AGREE_STATUS === false) {
+        //do nothing - shouldn't be able to get here
+        console.log("nothing doing");
+      } else {
+        action.agree = AGREE_STATUS ? null : true;
+        if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
+        log.updateIndivdualAction(patientId, action);
+        iap.updateAction(action);
+      }
 
       e.stopPropagation();
       e.preventDefault();
     }).on('click', '.btn-no', function(e) {
-      var checkbox = $(this).find("input[type=checkbox]");
-      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
       var AGREE_STATUS = $(this).closest('tr').data('agree');
-
-      var action = {
-        actionTextId: $(this).closest('tr').data('id')
-      };
+      var action = patientActionsObject[$(this).closest('tr').data('id')];
 
       if (AGREE_STATUS === true) {
         //do nothing - shouldn't be able to get here
         console.log("nothing doing");
+        e.stopPropagation();
+        e.preventDefault();
       } else if (AGREE_STATUS === false) {
         //editing reason
-        iap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason(data.patientId, ACTIONID), true, function() {
-          log.editAction(data.patientId, ACTIONID, false, null, log.reason);
-          iap.updateIndividualSapRows();
-          base.wireUpTooltips();
+        iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
+          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
+          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          action.agree = false;
+          action.rejectedReason = actionPlan.rejectedReason;
+          action.rejectedReasonText = actionPlan.rejectedReasonText;
+          log.updateIndivdualAction(patientId, action);
+          iap.updateAction(action);
         }, null, function() {
-          log.ignoreAction(data.patientId, ACTIONID);
-          other.removeClass("inactive");
-          checkbox.removeAttr("checked");
-          checkbox.parent().removeClass("active");
-          iap.updateIndividualSapRows();
-          base.wireUpTooltips();
+          action.agree = null;
+          delete action.rejectedReason;
+          delete action.rejectedReasonText;
+          log.updateIndivdualAction(patientId, action);
+          iap.updateAction(action);
         });
         e.stopPropagation();
         e.preventDefault();
       } else {
         //disagreeing
-        iap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason(data.patientId, ACTIONID), false, function() {
-          //action.reason
-
-
+        iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
+          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
+          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          action.agree = false;
+          action.rejectedReason = actionPlan.rejectedReason;
+          action.rejectedReasonText = actionPlan.rejectedReasonText;
           log.updateIndivdualAction(patientId, action);
           iap.updateAction(action);
-
-
-          log.editAction(data.patientId, ACTIONID, false, null, log.reason);
-          $(self).removeClass("inactive");
-
-          checkbox.attr("checked", "checked");
-          checkbox.parent().addClass("active");
-          //unselect other
-          other.removeClass("active").addClass("inactive");
-          other.find("input[type=checkbox]").prop("checked", false);
-          iap.updateIndividualSapRows();
-          base.wireUpTooltips();
         });
         e.stopPropagation();
         e.preventDefault();
@@ -312,7 +307,7 @@ var iap = {
           all.addClass('active');
           //self.find('td').last().children().show();
           if (patientActionsObject[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -322,7 +317,7 @@ var iap = {
           all.addClass('danger');
           all.removeClass('success');
           if (patientActionsObject[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + patientActionsObject[self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -373,7 +368,7 @@ var iap = {
         v.indicatorListText = v.indicatorList.map(function(vv) {
           return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
-        patientActionsObject[v.actionTextId]=v;
+        patientActionsObject[v.actionTextId] = v;
         return v;
       });
       iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard, visible);
@@ -465,7 +460,7 @@ var iap = {
 
   },
 
-  launchModal: function(label, value, reason, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {
+  launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {
     var reasons = [{
       "reason": "Already done this",
       "value": "done"
@@ -476,21 +471,21 @@ var iap = {
       "reason": "Something else",
       "value": "else"
     }];
-    if (reason && reason.reason) {
+    if (rejectedReason) {
       for (var i = 0; i < reasons.length; i++) {
-        if (reasons[i].reason === reason.reason) {
+        if (reasons[i].reason === rejectedReason) {
           reasons[i].checked = true;
           break;
         }
       }
     }
-    base.launchModal({
+    actionPlan.launchModal({
       "header": "Disagree with a suggested action",
       "isUndo": isUndo,
       "item": value,
       "placeholder": "Provide more information here...",
       "reasons": reasons
-    }, label, value, reason ? reason.reasonText : null, callbackOnSave, callbackOnCancel, callbackOnUndo);
+    }, label, value, rejectedReasonText || null, callbackOnSave, callbackOnCancel, callbackOnUndo);
   }
 
 };

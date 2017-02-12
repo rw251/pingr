@@ -1,4 +1,5 @@
-var Indicator = require('../models/indicator');
+var Indicator = require('../models/indicator'),
+  actions = require('./actions');
 
 module.exports = {
 
@@ -31,6 +32,61 @@ module.exports = {
       } else {
         done(null, indicator);
       }
+    });
+  },
+
+  //Get team actions for a single indicator or all indicators
+  getActions: function(practiceId, indicatorId, done) {
+    actions.getTeam(practiceId, indicatorId, function(err, actions) {
+      var actionObject = {};
+      actions.forEach(function(v) {
+        actionObject[v.actionTextId] = v.toObject();
+      });
+      if (err) return done(err);
+      Indicator.findOne({ practiceId: practiceId, id: indicatorId }, { _id: 0, actions: 1 }, function(err, indicator) {
+        if (err) {
+          console.log(err);
+          return done(new Error("Error finding indicator"));
+        }
+        if (!indicator) {
+          console.log('Invalid request for indicatorId: ' + indicatorId);
+          return done(null, false);
+        } else {
+          var uniqueActions = {};
+
+          //de dupe and sum the pointsPerAction
+          indicator.actions.forEach(function(v){
+            v = v.toObject();
+            var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+            v.pointsPerAction = +v.pointsPerAction;
+            v.indicatorList = [v.indicatorId];
+            v.actionTextId = actionIdFromText;
+            if(!uniqueActions[actionIdFromText]) {
+              uniqueActions[actionIdFromText] = v;
+            } else {
+              uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
+              uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
+              // how about numberPatients and priority
+            }
+          });
+
+          //convert back to array and sort
+          var rtn = Object.keys(uniqueActions).map(function(v){
+            return uniqueActions[v];
+          }).sort(function(a,b){
+            return b.pointsPerAction - a.pointsPerAction;
+          });
+
+          return done(null, rtn.map(function(v) {
+            if(actionObject[v.actionTextId]){
+              Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
+                v[vv] = actionObject[v.actionTextId][vv];
+              });
+            }
+            return v;
+          }));
+        }
+      });
     });
   },
 
