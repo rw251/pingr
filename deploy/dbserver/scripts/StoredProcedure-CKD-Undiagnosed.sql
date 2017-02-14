@@ -253,7 +253,8 @@ from #latestEgfrACR;
 insert into #indicator (PatID, code, correct, indicator)
 select PatID, code, correct,
 	case
-		when code is not null and correct is not null then 'right'
+		when code is not null and correct is not null then 'right' --diagnosed patients = numerator
+		--denominator = patients with CKD 3-5 based on egfr / acr readings = CORRECT is not null
 		else 'wrong'
 	end as indicator
 from #classify;
@@ -264,10 +265,10 @@ from #classify;
 ----------------------------
 declare @val float;
 set @val = (select round(avg(perc),2) from (
-select top 5 sum(case when indicator='right' then 1.0 else 0.0 end) / SUM(case when code is not null then 1.0 else 0.0 end) as perc from #indicator as a
+select top 5 sum(case when indicator='right' then 1.0 else 0.0 end) / SUM(case when correct is not null then 1.0 else 0.0 end) as perc from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
-	having SUM(case when code is not null then 1.0 else 0.0 end) > 0
+	having SUM(case when correct is not null then 1.0 else 0.0 end) > 0
 	order by perc desc) sub);
 	
 									----------------------------------------------
@@ -276,7 +277,7 @@ select top 5 sum(case when indicator='right' then 1.0 else 0.0 end) / SUM(case w
 
 declare @ptPercPoints float;
 set @ptPercPoints = 
-(select 100 / SUM(case when code is not null then 1.0 else 0.0 end) 
+(select 100 / SUM(case when correct is not null then 1.0 else 0.0 end) 
 from #indicator);
 
 
@@ -289,9 +290,7 @@ from #indicator);
 --set @denominator = (select COUNT(*) from #indicator where correct is not null); --only select pts for denominator where they have CKD based on eGFR readings; excludes overdiagnosed from the denominator
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 --select CONVERT(char(10), @refdate, 126) as date, @numerator as numerator, @denominator as denominator, 0.75 as target;
-select 'ckd.diagnosis.undiagnosed', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
-union
-select 'ckd.diagnosis.undiagnosed',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when code is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
+select 'ckd.diagnosis.undiagnosed',b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when indicator='right' then 1 else 0 end) as numerator, SUM(case when correct is not null then 1 else 0 end) as denominator, 0.75 as target, @val from #indicator as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID
 --0s full SIR
@@ -313,12 +312,12 @@ select d.PatID, 'ckd.diagnosis.undiagnosed',
 from #indicator d
 		inner join #classify c on c.PatID = d.PatID
 		inner join #latestEgfrACR e on e.PatID = d.PatID
-where d.code is not null
+where d.correct is not null
 
 ---------------------------------------------------------
 -- Exit if we're just getting the indicator numbers -----
 ---------------------------------------------------------
-IF @JustTheIndicatorNumbersPlease = 1 RETURN;
+--IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 
 --set @refdate = dateadd(month, 2, @refdate)
 --end --finish loop for indicator table
@@ -491,7 +490,7 @@ select d.PatID, 'ckd.diagnosis.undiagnosed', 'suggestExclude' as actionCat,
 	'Reasoning<ul><li><strong>Palliative care</strong> code on <strong>' + CONVERT(VARCHAR, l.palDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
-	where (l.palliative = 1) and d.indicator = 'wrong'
+	where (l.palliative = 1) and d.indicator = 'wrong' and d.correct is not null
 
 union
 ---suggestExclude - frail
@@ -504,7 +503,7 @@ select d.PatID, 'ckd.diagnosis.undiagnosed', 'suggestExclude' as actionCat,
 	'Reasoning<ul><li><strong>Frailty</strong> code on <strong>' + CONVERT(VARCHAR, l.frailDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
-	where (l.frail = 1) and d.indicator = 'wrong'
+	where (l.frail = 1) and d.indicator = 'wrong' and d.correct is not null
 
 union
 ---suggestExclude - housebound
@@ -517,7 +516,7 @@ select d.PatID, 'ckd.diagnosis.undiagnosed', 'suggestExclude' as actionCat,
 	'Reasoning<ul><li><strong>Housebound</strong> code on <strong>' + CONVERT(VARCHAR, l.houseboundDate, 3) + '</strong> (and no ''not housebound'' code afterwards)</li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
-	where (l.housebound = 1) and d.indicator = 'wrong'
+	where (l.housebound = 1) and d.indicator = 'wrong' and d.correct is not null
 
 union
 ---suggestExclude - three invites
@@ -530,7 +529,7 @@ select d.PatID, 'ckd.diagnosis.undiagnosed', 'suggestExclude' as actionCat,
 	'Reasoning<ul><li><strong>Three invites for CKD monitoring</strong> code on <strong>' + CONVERT(VARCHAR, l.threeInvitesDate, 3) + '</strong></li></ul>' as supportingText
 	from #indicator as d
 	left outer join #suggestExclude as l on d.PatID = l.PatID
-	where (l.threeInvites = 1) and d.indicator = 'wrong'
+	where (l.threeInvites = 1) and d.indicator = 'wrong' and d.correct is not null
 
 --0s full SIR
 
@@ -541,7 +540,7 @@ insert into [pingr.text](indicatorId, textId, text)
 values
 ('ckd.diagnosis.undiagnosed','name','CKD diagnosis'),
 ('ckd.diagnosis.undiagnosed','tabText','CKD diagnose'),
-('ckd.diagnosis.undiagnosed','description','<strong>Description:</strong> Patients with a diagnosis of CKD (Stage 3 or above) based on their <a target=''_blank'' href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2''>eGFR and ACR readings</a>. <br> <strong>Eligible patients:</strong> Patients with recent eGFR readings persistently less than 60 mL/min/1.73 m2 who do not have an exclusion code. <br> <strong>Correct patients:</strong> Patients who have a diagnostic code of CKD stage 3 or above.'),
+('ckd.diagnosis.undiagnosed','description','<strong>Definition:</strong> Patients with evidence of CKD (stage 3 or above) based on their <a target=''_blank'' href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2''>eGFR and ACR readings</a> with a diagnosis in their records.'),
 ('ckd.diagnosis.undiagnosed','tagline','of your patients with CKD <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!diagnosissub:2'' target=''_blank''>according to their latest eGFR and/or ACR readings</a> have a CKD code in their records.'),
 ('ckd.diagnosis.undiagnosed','positiveMessage','Well done! For tips on how to improve further, look through the recommended improvement actions on this page and for each patient.'),
 ('ckd.diagnosis.undiagnosed','valueId','eGFR'),

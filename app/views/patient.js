@@ -23,6 +23,13 @@ var pv = {
 
   create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
 
+    if(layout.view === ID && patientId === layout.patientId) {
+      //the view is the same just need to update the actions
+      individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+      qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+      return;
+    }
+
     base.selectTab("patient");
     base.showLoading();
 
@@ -72,7 +79,7 @@ var pv = {
           data.patientId = patientId;
           data.pathwayId = pathwayId;
 
-          patientSearch.show($('#title-right'), true, loadContentFn);
+          patientSearch.show($('#title-right'), false, loadContentFn);
           qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
 
           lifeline.show(farRightPanel, true, patientId, patientData);
@@ -90,7 +97,8 @@ var pv = {
         });
       } else {
         base.updateTitle("No patient currently selected");
-        patientSearch.show(farRightPanel, true, loadContentFn);
+        base.savePanelState();
+        patientSearch.show(farRightPanel, false, loadContentFn);
 
         lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
 

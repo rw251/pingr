@@ -42,7 +42,9 @@ var textFile = {
       "name": "BP",
       "unit": "mmHg",
       "type": "errorbar"
-    }
+    },
+    "SBP":{},
+    "DBP":{}
   }
 };
 
@@ -83,7 +85,10 @@ var readCsvAsync = function(input, callback) {
     .on('end', function() { callback(null); });
 };
 
-var indicators = dataFile.indicators;
+dataFile.indicators = dataFile.indicators.filter(function(v){
+  return v.practiceId !== "ALL";
+});
+
 var patients = dataFile.patients;
 
 var assign = function(obj, prop, value) {
@@ -123,15 +128,31 @@ fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function(li
 
 var tempDates = [];
 
-var checkTextFile = function(pathway, stage, standard, file) {
+var isInTextFile = function(pathway, stage, standard) {
   if (!textFile.pathways[pathway] || !textFile.pathways[pathway][stage] || !textFile.pathways[pathway][stage].standards[standard]) {
+    return false;
+  }
+  return true;
+};
+
+var checkTextFile = function(pathway, stage, standard, file) {
+  if (!isInTextFile(pathway, stage, standard)) {
     console.log("#######################");
     console.log("##    ERROR         ###");
-    console.error([pathway, stage, standard].join(".") + " occurs in the " + file +" file - but you don't have anything in the text file ");
+    console.error([pathway, stage, standard].join(".") + " occurs in the " + file + " file - but you don't have anything in the text file ");
     console.log("#######################");
     process.exit(1);
   }
 };
+
+dataFile.indicators = dataFile.indicators.filter(function(v){
+  var pathway = v.id.split('.')[0];
+  var stage = v.id.split('.')[1];
+  var standard = v.id.split('.')[2];
+  return isInTextFile(pathway, stage, standard);
+});
+
+var indicators = dataFile.indicators;
 
 async.series([
     function(callback) {
@@ -485,7 +506,7 @@ async.series([
                       })
                     )
                     .on('data', function(data) {
-
+                      if(!textFile.measurements[data.thing]) return;
                       if (+data.patientId !== lastPatId) {
                         processMeasurements(lastPatId);
                         temp = {};
@@ -514,9 +535,7 @@ async.series([
                       console.log('measurements done');
 
                       indicators.forEach(function(v) {
-                        v.opportunities.forEach(function(vv, ix) {
-                          v.opportunities[ix].patients = [];
-                        });
+                        v.opportunities=[];
                         v.actions = [];
                       });
 
@@ -543,7 +562,7 @@ async.series([
 
                           if (!patients[+data.patientId].actions) patients[+data.patientId].actions = [];
                           if (patients[+data.patientId].actions.filter(function(v) {
-                              return v.actionText === data.actionText;
+                              return v.actionText === data.actionText && v.indicatorId === data.indicatorId;
                             }).length === 0) {
                             patients[+data.patientId].actions.push({
                               indicatorId: data.indicatorId,
@@ -591,6 +610,64 @@ async.series([
                           if (opp.patients.indexOf(+data.patientId) === -1) opp.patients.push(+data.patientId);
                         })
                         .on('end', function() {
+
+                          var all_practice_hack = {};
+
+                          indicators.forEach(function(v) {
+                            if (!all_practice_hack[v.id]) {
+                              all_practice_hack[v.id] = JSON.parse(JSON.stringify(v));
+                              all_practice_hack[v.id].practiceId = "ALL";
+                              all_practice_hack[v.id].opportunities = all_practice_hack[v.id].opportunities.map(function(vv) {
+                                vv.patients = [];
+                                vv.patientCount = 0;
+                                return vv;
+                              });
+                              all_practice_hack[v.id].values = [];
+                              all_practice_hack[v.id].data = {};
+                            }
+                            v.opportunities.forEach(function(vv){
+                              var opp = all_practice_hack[v.id].opportunities.filter(function(vvv){
+                                return vvv.id===vv.id;
+                              });
+                              if(opp.length===0) {
+                                opp = JSON.parse(JSON.stringify(vv));
+                                opp.patients=[];
+                                opp.patientCount=0;
+                                all_practice_hack[v.id].opportunities.push(opp);
+                              } else {
+                                opp = opp[0];
+                              }
+                              opp.patientCount += vv.patients.length;
+                            });
+                            if (v.values && v.values[0].length > 0) {
+                              v.values[0].slice(1).forEach(function(vv, i) {
+                                if (!all_practice_hack[v.id].data[vv]) {
+                                  all_practice_hack[v.id].data[vv] = {
+                                    n: +v.values[1][i + 1],
+                                    d: +v.values[2][i + 1],
+                                    t: +v.values[3][i + 1]
+                                  };
+                                } else {
+                                  all_practice_hack[v.id].data[vv].n += +v.values[1][i + 1];
+                                  all_practice_hack[v.id].data[vv].d += +v.values[2][i + 1];
+                                }
+                              });
+                            }
+                          });
+
+                          Object.keys(all_practice_hack).forEach(function(v) {
+                            var x = all_practice_hack[v];
+                            x.values = [["x"], ["numerator"], ["denominator"], ["target"]];
+                            Object.keys(x.data).forEach(function(vv) {
+                              x.values[0].push(vv);
+                              x.values[1].push(x.data[vv].n);
+                              x.values[2].push(x.data[vv].d);
+                              x.values[3].push(x.data[vv].t);
+                            });
+                            delete x._id;
+                            delete x.data;
+                            indicators.push(x);
+                          });
 
                           console.log("opps done");
 

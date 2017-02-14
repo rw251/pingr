@@ -63,6 +63,8 @@ var ind = {
       base.updateTitle(data.text.pathways[pathwayId][pathwayStage].standards[standard].name);
       lookup.suggestionModalText="Screen: Indicator\nIndicator: " + data.text.pathways[pathwayId][pathwayStage].standards[standard].name + "\n===========\n";
 
+      var nothingChanged = layout.pathwayId === pathwayId && layout.pathwayStage === pathwayStage && layout.standard === standard;
+
       layout.pathwayId = pathwayId;
       layout.pathwayStage = pathwayStage;
       layout.standard = standard;
@@ -78,15 +80,19 @@ var ind = {
       base.updateTab("indicators", data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 
       //check state cache (stateMaintainance)
-      if($('#stateM-indicator').children().length > 0)
+      //RW - added the nothingChanged variable so that this state management
+      // is only invoked if the pathway/stage/standard are the same
+      // Was leading to a bug where the wrong indicator data was displayed
+      var indicatorCachedState = $('#stateM-indicator').children();
+      base.savePanelState();
+      if(nothingChanged && indicatorCachedState.length > 0)
       {
-        var indicatorCachedState = $('#stateM-indicator').children();
-        base.savePanelState();
         farRightPanel.html(indicatorCachedState);
       }
 
       //if not presently loaded
-      if($('#mainPage-tabs').length < 1)
+      //RW - added the not selector to prevent a blank page appearing in some edge cases
+      if($('#mainPage-tabs').not('#stateM-indicator #mainPage-tabs').length < 1)
       {
 
         var tabList = $('<ul id="mainPage-tabs" class="nav nav-tabs"></ul>');
@@ -195,6 +201,7 @@ var ind = {
 
       //add state indicator
       farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
+
     }, 0);
   }
 

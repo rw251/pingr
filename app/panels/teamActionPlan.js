@@ -1,7 +1,7 @@
 var base = require('../base.js'),
-  confirm = require('./confirm.js'),
   data = require('../data.js'),
-  log = require('../log.js');
+  log = require('../log.js'),
+  actionPlan = require('./actionPlan.js');
 
 var tap = {
 
@@ -14,14 +14,46 @@ var tap = {
     tap.wireUp(pathwayId, pathwayStage, standard);
 
     panel.find('div.fit-to-screen-height').niceScroll({
-      cursoropacitymin: 0.3,
-      cursorwidth: "7px",
-      horizrailenabled: false
+      cursoropacitymin: 0.4,
+      cursorwidth: "15px",
+      horizrailenabled: false,
+      hidecursordelay: 50,
+      cursorborderradius : "12px"
     });
+  },
+
+  updateAction: function(action) {
+    //Use actionTextId to find the right row
+    var yesbox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    //checked action inactive
+    if (action.agree === true) {
+      yesbox.each(function() { this.checked = true; });
+      yesbox.parent().removeClass("inactive").addClass("active");
+      nobox.each(function() { this.checked = false; });
+      nobox.parent().removeClass("active").addClass("inactive");
+    } else if (action.agree === false) {
+      nobox.each(function() { this.checked = true; });
+      nobox.parent().removeClass("inactive").addClass("active");
+      yesbox.each(function() { this.checked = false; });
+      yesbox.parent().removeClass("active").addClass("inactive");
+    } else {
+      yesbox.each(function() { this.checked = false; });
+      yesbox.parent().removeClass("active inactive");
+      nobox.each(function() { this.checked = false; });
+      nobox.parent().removeClass("active inactive");
+    }
+
+    yesbox.closest('tr').data('agree', action.agree);
+
+    tap.updateTeamSapRows();
   },
 
   wireUp: function(pathwayId, pathwayStage, standard) {
     teamTab = $('#tab-plan-team');
+
+    var indicatorId="";
+    if(pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
     //find [] and replace with copy button
 
@@ -122,9 +154,11 @@ var tap = {
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      log.recordPlan(data.GARBAGE, $(this).parent().parent().find('textarea').val(), pathwayId);
+      log.recordTeamPlan($(this).parent().parent().find('textarea').val(), pathwayId, function(err, a){
+        console.log(a);
+      });
 
-      tap.displayPersonalisedTeamActionPlan(data.GARBAGE, $('#personalPlanTeam'));
+      tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
@@ -134,7 +168,23 @@ var tap = {
         "done": false
       }));
       tap.updateTeamSapRows();
-    }).on('click', '.btn-yes,.btn-no', function(e) {
+    }).on('click', '.btn-yes', function(e) {
+      var AGREE_STATUS = $(this).closest('tr').data('agree');
+      var action = teamActionsObject[$(this).closest('tr').data('id')];
+
+      if (AGREE_STATUS === false) {
+        //do nothing - shouldn't be able to get here
+        console.log("nothing doing");
+      } else {
+        action.agree = AGREE_STATUS ? null : true;
+        if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
+        log.updateTeamAction(indicatorId, action);
+        tap.updateAction(action);
+      }
+
+      e.stopPropagation();
+      e.preventDefault();
+    }).on('click', '.btn-no', function(e) {
       var checkbox = $(this).find("input[type=checkbox]");
       var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
       var ACTIONID = $(this).closest('tr').data('id');
@@ -199,7 +249,12 @@ var tap = {
 
     $('#advice-list').off('click', '.show-more-than-3');
     $('#advice-list').on('click', '.show-more-than-3', function(e) {
-      tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, true);
+      tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard, true);
+    });
+
+    $('#advice-list').off('click', '.show-less-than-3');
+    $('#advice-list').on('click', '.show-less-than-3', function(e) {
+      tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard, false);
     });
 
     $('#advice-list').off('click', '.show-more');
@@ -225,7 +280,7 @@ var tap = {
       e.stopPropagation();
     });
 
-    tap.getAndPopulateTeamSuggestedActions(pathwayId, pathwayStage, standard, false);
+    tap.loadAndPopulateIndividualSuggestedActions(pathwayId, pathwayStage, standard, false);
   },
 
   updateTeamSapRows: function() {
@@ -318,22 +373,21 @@ var tap = {
     tap.updateTeamSapRows();
   },
 
-  getAndPopulateTeamSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
-    if(!pathwayId || !pathwayStage || !standard) {
-      data.getAllIndicatorData(null, function(indicators){
-        var actions = [];
-        indicators.forEach(function(v){
-          actions = actions.concat(v.actions);
+  loadAndPopulateIndividualSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
+    data.getTeamActionData([pathwayId, pathwayStage, standard].join("."), function(err, actions) {
+      teamActionsObject = {};
+      teamActions = actions.map(function(v) {
+        v.indicatorListText = v.indicatorList.map(function(vv) {
+          return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
-        tap.populateTeamSuggestedActions(actions, pathwayId, pathwayStage, standard, visible);
+        teamActionsObject[v.actionTextId] = v;
+        return v;
       });
-    } else {
-      indicatorData = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
-      tap.populateTeamSuggestedActions(indicatorData.actions, pathwayId, pathwayStage, standard, visible);
-    }
+      tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard, visible);
+    });
   },
 
-  populateTeamSuggestedActions: function(actions, pathwayId, pathwayStage, standard, visible) {
+  populateTeamSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
     var localData = {
       visible: visible
     };
@@ -344,10 +398,10 @@ var tap = {
       };
     };
 
-    if (actions.length === 0) {
+    if (teamActions.length === 0) {
       localData.noSuggestions = true;
     } else {
-      localData.suggestions = base.dedupeAndSortActions(base.mergeTeamStuff(actions));
+      localData.suggestions = teamActions;
     }
 
     $('#advice-placeholder').hide();
@@ -358,13 +412,14 @@ var tap = {
     $('#advice-list').html(tmpl(localData));
 
     //Wire up any clipboard stuff in the suggestions
+    var isVision = $('#practice_system').text()==="Vision";
     $('#advice-list').find('span:contains("[COPY")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[COPY:([^\]]*)\]/g, '$1 <button type="button" data-clipboard-text="$1" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1' ) + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy '+(isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
     $('#advice-list').find('span:contains("[")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[([^\]]*)\]/g, ' <button type="button" data-clipboard-text="$1" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy $1 to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
 
     $('#advice-list').find('span:contains("[INFO")').each(function() {

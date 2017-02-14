@@ -28,6 +28,11 @@ include ../partials/head.jade
         input(name='isAdmin', type='checkbox')
         i.fa
       |               Is Admin
+    .form-group
+      label.cr-styled
+        input(name='optout', type='checkbox', checked='checked')
+        i.fa
+      |               Receives reminder emails
     button.btn.btn-purple.btn-block.history(type='submit')
       | Create
       span.fa.fa-arrow-circle-right

@@ -327,14 +327,16 @@ group by s.PatID, latestDbpDate
 IF OBJECT_ID('tempdb..#latestAcr') IS NOT NULL DROP TABLE #latestAcr
 CREATE TABLE #latestAcr (PatID int, latestAcrDate date, latestAcr int, sourceAcr varchar(12));
 insert into #latestAcr
-select s.PatID, latestAcrDate, MIN(CodeValue) as latestAcr, max(Source) as sourceAcr from SIR_ALL_Records as s
+select s.PatID, latestAcrDate, max(CodeValue) as latestAcr, max(Source) as sourceAcr from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestAcrDate from SIR_ALL_Records
 		where ReadCode in (select code from codeGroups where [group] = 'acr')
 		and EntryDate < @refdate
+--		and CodeValue > 0
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestAcrDate = s.EntryDate
 where ReadCode in (select code from codeGroups where [group] = 'acr')
+--and CodeValue > 0
 and s.PatID in (select PatID from #latestCkd35code)
 group by s.PatID, latestAcrDate
 
@@ -352,7 +354,7 @@ select a.PatID,
 					(
 						(firstDmCodeDate > DATEADD(month, -9, @achievedate)) or (firstDmCodeAfterDate > DATEADD(month, -9, @achievedate)) --first DM code is within 9/12 of achievement date, or have been perm ex but then re-diagnosed within 9/12
 					) then 0 else 1 end as dmPatient, --DM patient
-	case when (latestAcr is null) or (latestAcr < 70) then 0 else 1 end as protPatient
+	case when latestAcr >= 70 then 1 else 0 end as protPatient
 from #firstCkd35code as a
 		left outer join (select PatID, latestDmCodeDate, latestDmCode from #latestDmCode) b on b.PatID = a.PatID
 		left outer join (select PatID, latestDmPermExCodeDate from #latestDmPermExCode) c on c.PatID = a.PatID
@@ -380,7 +382,7 @@ CREATE TABLE #exclusions
 	deadCodeExclude int, deadTableExclude int, diagExclude int, permExExclude int);
 insert into #exclusions
 select a.PatID,
-	case when protPatient = 0 then 1 else 0 end as noDmExclude, -- Demographic exclusions: Under 18 at achievement date (from QOF v34 business rules)
+	case when protPatient = 0 then 1 else 0 end as noProtExclude, 
 	case when age < 17 then 1 else 0 end as ageExclude, -- Demographic exclusions: Under 18 at achievement date (from QOF v34 business rules)
 	case when latestRegisteredCodeDate > DATEADD(month, -9, @achievedate) then 1 else 0 end as regCodeExclude, -- Registration date: > achievement date - 9/12 (from CKD ruleset_INLIQ_v32.0)
 	case when latestDeregCodeDate > latestCkd35codeDate then 1 else 0 end as deRegCodeExclude, -- Exclude patients with deregistered codes AFTER their latest CKD 35 code
@@ -524,9 +526,6 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
---CCG view
-select 'ckdAndProt.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
-union
 --Practice view
 select 'ckdAndProt.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
@@ -2319,9 +2318,9 @@ select a.PatID,
 		(case
 		--No BP
 			when a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0) then 
-			'<ul><li>Patient is on CKD register.</li>
-			<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>
-			<li>Salford Standards recommend BP should be measured every 6 months since ' +
+			'<ul><li>Patient is on CKD register.</li>' +
+			'<li>Latest BP was measured on '+ CONVERT(VARCHAR, latestSbpDate, 3) + ' .</li>' +
+			'<li>Salford Standards recommend BP should be measured every 6 months since ' +
 				case
 					when MONTH(@refdate) <4 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1)) --when today's date is before April, it's 1st October LAST year
 					when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
@@ -2394,7 +2393,7 @@ select a.PatID,
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate, sourceSbp from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0)
 	or
@@ -2458,7 +2457,7 @@ select a.PatID,
 		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>' as supportingText
 from #medSuggestion as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate, sourceSbp from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 	left outer join (select PatID, currentMedIngredient from #htnMeds) as c on c.PatID = a.PatID
 	left outer join (select Ingredient, BNF from drugIngredients) as d on d.Ingredient = c.currentMedIngredient
 
@@ -2943,7 +2942,7 @@ values
 			when MONTH(@refdate) >3 and MONTH(@refdate) <10 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after March BUT before October, it's 1st April THIS year
 			when MONTH(@refdate) >9 then '1st October ' + CONVERT(VARCHAR,(YEAR(@refdate))) --when today's date is after September, it's 1st October THIS year
 		end +
-	') where the latest BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">&lt;140/90 mmHg</a>.'),
+	') where the latest BP is <a href=''http://cks.nice.org.uk/chronic-kidney-disease-not-diabetic#!scenariorecommendation:5'' target=''_blank'' title="NICE BP targets in CKD">&lt;130/80 mmHg</a>.'),
 ('ckdAndProt.treatment.bp','positiveMessage', --tailored text
 	case 
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Salford Standard target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'

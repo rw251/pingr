@@ -524,9 +524,6 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
---CCG view
-select 'ckd.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
-union
 --Individual practice view
 select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
@@ -2383,7 +2380,7 @@ select a.PatID,
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate, sourceSbp from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0)
 	or

@@ -1,5 +1,6 @@
 var Event = require('../models/event'),
-  json2csv = require('json2csv');
+  json2csv = require('json2csv'),
+  User = require('../models/user');
 
 var processEvent = function(event){
   event = event.toObject();
@@ -84,6 +85,34 @@ var e = {
     else {
       return done("oops");
     }
+  },
+
+  emailReminder: function(email, date, done) {
+    var newEvent = new Event({date:date, user: email, type: "emailReminder"});
+
+    // save the event
+    newEvent.save(function(err) {
+      if (err) {
+        console.log("Error writing login event: " + err);
+        return done(err);
+      }
+      return done(null);
+    });
+  },
+
+  emailReminderTokenCheck: function(token, url) {
+    User.findOne({email_url_tracking_code: token},function(err,user){
+      if (user) {
+        var newEvent = new Event({user: user.email, type: "emailReminderLinkClicked", url:url});
+
+        // save the event
+        newEvent.save(function(err) {
+          if (err) {
+            console.log("Error writing login event: " + err);
+          }
+        });
+      }
+    });
   },
 
   login: function(email, session) {

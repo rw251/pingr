@@ -5,9 +5,11 @@
   "main": "script.js",
   "scripts": {
     "start": "brunch watch --server",
+    "prebuild": "ncp node_modules/zeroclipboard/dist/ZeroClipboard.swf ./app/assets/ZeroClipboard.swf",
 	"testing": "brunch watch --server --debug",
     "build": "brunch build --production",
-    "postinstall": "brunch build --production",
+    "postbuild": "ncp deploy/appserver/.foreverignore dist/.foreverignore",
+    "postinstall": "npm run build",
     "watch": "brunch watch",
     "predebug": "echo In one window launch brunch without server: npm run watch",
     "debug": "echo Then in second window launch server with debug: node-debug app.js",
@@ -43,6 +45,7 @@
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
     "mv": "^2.0.3",
+    "ncp": "^2.0.0",
     "nodemon": "^1.9.1",
     "pug": "^2.0.0-beta2",
     "rimraf": "^2.3.4",
@@ -59,7 +62,7 @@
     "debug": "^2.2.0",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
-    "forever-win": "^0.10.11",
+    "forever": "^0.15.3",
     "highcharts": "^4.2.4",
     "jade": "^1.11.0",
     "jquery-sparkline": "^2.3.2",
@@ -75,6 +78,6 @@
     "zeroclipboard": "^2.2.0"
   },
   "engines": {
-    "node": "4.2.4"
+    "node": "6.9.5"
   }
 }

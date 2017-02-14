@@ -10,6 +10,9 @@ include ../partials/head.jade
         th Email
         th Practice
         th User roles
+        th Reminder emails
+        th Last login
+        th Last email sent
         th Actions
     tbody
       each user in users
@@ -21,6 +24,9 @@ include ../partials/head.jade
           - else
             td= user.practiceName + (user.practiceId ? " (" + user.practiceId + ")" : "")
           td= user.roles.indexOf("admin") > -1 ? "Admin" : ""
+          td= user.email_opt_out ? "Opted out" : "Receiving"
+          td= user.last_login ? user.last_login.toISOString().split("T").map(function(v){if(v.indexOf('-')>-1){return v.split('-')[2] + '/' + v.split('-')[1] + '/' +v.split('-')[0];}else{return v.substr(0,8);}}).join(", ") : 'Never'
+          td= user.last_email_reminder ? user.last_email_reminder.toISOString().split("T").map(function(v){if(v.indexOf('-')>-1){return v.split('-')[2] + '/' + v.split('-')[1] + '/' +v.split('-')[0];}else{return v.substr(0,8);}}).join(", ") : 'Never'
           td
             .btn-toolbar
               - if(user.practiceNameNotAuthorised)  

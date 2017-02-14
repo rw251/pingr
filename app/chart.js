@@ -357,7 +357,9 @@ var cht = {
             return a.x - b.x;
           });
 
-          var title = "An illustration of your current performance amongst other practices in Salford";
+          var isCCG = $('#practice_id').text() === "ALL";
+
+          var title = isCCG ? "An illustration of the current performance of practices in Salford" : "An illustration of your current performance amongst other practices in Salford";
           //find max in order to set the ceiling of the chart
           var maxHeight = Math.round(_data[_data.length-1].x);
           var maxAdd = Math.round(maxHeight * 0.1);
@@ -377,47 +379,49 @@ var cht = {
               events: {
                 load: function() {
                   var thisChart = this;
-                  thisChart.renderer.button('Toggle neighbourhood - ccg', thisChart.plotWidth - 160, 0, function() {
-                    local = !local;
-                    thisChart.xAxis[0].categories = _data.filter(function(v) {
-                      if (local) return v.local;
-                      else return true;
-                    }).map(function(v) {
-                      return v.pFull;
-                    });
-                    thisChart.series[0].setData(_data.filter(function(v) {
-                      if (local) {
-                        return  v.local;
-                      }
-                      else {
-                        return true;
-                      }
-                    }).map(function(v) {
-                      //this is for the (?local/global) chart...
-                      if (v.p === "You")
-                      {
-                        //apple
-                        return { y: v.x, color: "#0EDE61" };
-                      }
-                      else if(v.local)
-                      {
-                        //dark
-                        return { y: v.x, color: "#444444" };
-                      }
-                      else
-                      {
-                        //blue
-                        return { y: v.x, color: "#5187E8" };
-                      }
-                    }));
-                  }).add();
+                  if(!isCCG) {
+                    thisChart.renderer.button('Toggle neighbourhood - ccg', thisChart.plotWidth - 160, 0, function() {
+                      local = !local;
+                      thisChart.xAxis[0].categories = _data.filter(function(v) {
+                        if (local) return v.local;
+                        else return true;
+                      }).map(function(v) {
+                        return v.pFull;
+                      });
+                      thisChart.series[0].setData(_data.filter(function(v) {
+                        if (local) {
+                          return  v.local;
+                        }
+                        else {
+                          return true;
+                        }
+                      }).map(function(v) {
+                        //this is for the (?local/global) chart...
+                        if (v.p === "You")
+                        {
+                          //apple
+                          return { y: v.x, color: "#0EDE61" };
+                        }
+                        else if(v.local)
+                        {
+                          //dark
+                          return { y: v.x, color: "#444444" };
+                        }
+                        else
+                        {
+                          //blue
+                          return { y: v.x, color: "#5187E8" };
+                        }
+                      }));
+                    }).add();
+                  }
                 }
               }
             },
             title: { text: title },
             xAxis: {
               categories: _data.filter(function(v) {
-                return v.local === local;
+                return isCCG || v.local === local;
               }).map(function(v) {
                 return v.pFull;
               }),
@@ -449,7 +453,7 @@ var cht = {
             series: [{
               name: 'Performance',
               data: _data.filter(function(v) {
-                return v.local === local;
+                return isCCG || v.local === local;
               }).map(function(v) {
                 if(v.p === "You")
                 {
@@ -459,7 +463,7 @@ var cht = {
                 else
                 {
                   //standrd colour - dark
-                  return { y: v.x, color: "#444444" };;
+                  return { y: v.x, color: "#444444" };
                 }
               })
           }]

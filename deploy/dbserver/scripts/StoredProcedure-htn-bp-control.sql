@@ -349,7 +349,7 @@ select a.PatID,
 						(firstDmCodeDate > DATEADD(month, -9, @achievedate)) or (firstDmCodeAfterDate > DATEADD(month, -9, @achievedate)) --first DM code is within 9/12 of achievement date, or have been perm ex but then re-diagnosed within 9/12
 					) then 0 else 1 end as dmPatient, --DM patient
 	case when (latestAcr is null) or (latestAcr < 70) then 0 else 1 end as protPatient
-from #firstHtnCode as a
+from #latestHtnCode as a
 		left outer join (select PatID, latestDmCodeDate, latestDmCode from #latestDmCode) b on b.PatID = a.PatID
 		left outer join (select PatID, latestDmPermExCodeDate from #latestDmPermExCode) c on c.PatID = a.PatID
 		left outer join (select PatID, firstDmCodeDate from #firstDmCode) d on d.PatID = a.PatID
@@ -372,7 +372,7 @@ select a.PatID,
 		when age >=80 and latestSbp < 150 and latestDbp < 90 then 1
 		else 0 
 	end as bpControlledOk
-from #firstHtnCode as a
+from #latestHtnCode as a
 		left outer join (select PatID, latestSbp, latestSbpDate from #latestSbp) b on b.PatID = a.PatID
 		left outer join (select PatID, latestDbp, latestDbpDate from #latestDbp) c on c.PatID = a.PatID
 		left outer join (select PatID, dmPatient, protPatient from #dmProtPatient) e on e.PatID = a.PatID
@@ -527,11 +527,10 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
---CCG view
-select 'htn.treatment.bp', 'ALL', CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target, @abc from #eligiblePopulationAllData as a
-union
---Individual practice views
-select 'htn.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, sum(case when numerator = 1 then 1 else 0 end) as numerator, sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc from #eligiblePopulationAllData as a
+select 'htn.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
+	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
+	sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc 
+from #eligiblePopulationAllData as a
 	inner join ptPractice as b on a.PatID = b.PatID
 	group by b.pracID;
 
@@ -592,7 +591,8 @@ select PatID, 'htn.treatment.bp',
 			end	
 		else ''
 		end 
-from #eligiblePopulationAllData where denominator = 1;
+from #eligiblePopulationAllData 
+where denominator = 1;
 
 									----------------------------------------------
 									-------DEFINE % POINTS PER PATIENT------------
@@ -1616,11 +1616,12 @@ insert into #medSuggestion
 		--OR on htn meds including a CCB but not ace/arb
 	--AND no allergies/CIs to ACE-I
 select distinct a.PatID,
-	'ACE inhibitor (e.g. ' +
-		--<a href="http://dx.doi.org/10.18578/BNF.437242180" title="BNF" target="_blank">
-	+ 'lisinopril 5mg or 10mg' +
+	'ACE inhibitor (e.g.'+
+	--<a href="http://dx.doi.org/10.18578/BNF.437242180" title="BNF" target="_blank">
+	' lisinopril 5mg or 10mg'+
 	--</a>
-	')' as family,
+	')' 
+	as family,
 	'Start' as start_or_inc,
 	case 
 		when a.PatID not in (select PatID from #htnMeds where currentMedFamily = 'CCB')
@@ -2380,7 +2381,7 @@ select a.PatID,
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>'
 	as supportingText
 from #impOppsData as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget,  dmPatient, protPatient, latestAcrDate, sourceSbp from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 where
 	a.PatID in (select PatID from #eligiblePopulationAllData where bpMeasuredOK = 0)
 	or
@@ -2444,7 +2445,7 @@ select a.PatID,
 		'<li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 		'<li>'  + (select text from regularText where [textId] = 'linkPilCkdBp') + '</li></ul>' as supportingText
 from #medSuggestion as a
-	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate from #eligiblePopulationAllData) as b on b.PatID = a.PatID
+	left outer join (select PatID, latestSbp, latestDbp, latestSbpDate, bpTarget, dmPatient, protPatient, latestAcrDate, sourceSbp from #eligiblePopulationAllData) as b on b.PatID = a.PatID
 	left outer join (select PatID, currentMedIngredient from #htnMeds) as c on c.PatID = a.PatID
 	left outer join (select Ingredient, BNF from drugIngredients) as d on d.Ingredient = c.currentMedIngredient
 
@@ -2904,8 +2905,8 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --overview tab
-('htn.treatment.bp','name','Hypternsion blood pressure control'), --overview table name
-('htn.treatment.bp','tabText','Hypertension BP Control'), --indicator tab text
+('htn.treatment.bp','name','Hypertension blood pressure control'), --overview table name
+('htn.treatment.bp','tabText','HTN BP Control'), --indicator tab text
 ('htn.treatment.bp','description', --'show more' on overview tab
 	'<strong>Definition:</strong>Patients on the hypertension register with a BP recorded in the last 12 months (since ' +
 	case

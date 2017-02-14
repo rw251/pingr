@@ -1,5 +1,6 @@
 var Patient = require('../models/patient'),
-  indicators = require('./indicators');
+  indicators = require('./indicators'),
+  actions = require('./actions');
 
 module.exports = {
 
@@ -31,17 +32,74 @@ module.exports = {
     });
   },
 
+  //Get a single patient's actions - for use on the patient screen
+  getActions: function(practiceId, patientId, done) {
+    actions.getIndividual(practiceId, patientId, function(err, actions) {
+      var actionObject = {};
+      actions.forEach(function(v) {
+        actionObject[v.actionTextId] = v.toObject();
+      });
+      if (err) return done(err);
+      Patient.findOne({ patientId: patientId }, { _id: 0, actions: 1 }, function(err, patient) {
+        if (err) {
+          console.log(err);
+          return done(new Error("Error finding patient"));
+        }
+        if (!patient) {
+          console.log('Invalid request for patientId: ' + patientId);
+          return done(null, false);
+        } else {
+
+
+          var uniqueActions = {};
+
+          //de dupe and sum the pointsPerAction
+          patient.actions.forEach(function(v){
+            v = v.toObject();
+            var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+            v.pointsPerAction = +v.pointsPerAction;
+            v.indicatorList = [v.indicatorId];
+            v.actionTextId = actionIdFromText;
+            if(!uniqueActions[actionIdFromText]) {
+              uniqueActions[actionIdFromText] = v;
+            } else {
+              uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
+              uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
+              // how about numberPatients and priority
+            }
+          });
+
+          //convert back to array and sort
+          var rtn = Object.keys(uniqueActions).map(function(v){
+            return uniqueActions[v];
+          }).sort(function(a,b){
+            return b.pointsPerAction - a.pointsPerAction;
+          });
+
+          return done(null, rtn.map(function(v) {
+            if(actionObject[v.actionTextId]){
+              Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
+                v[vv] = actionObject[v.actionTextId][vv];
+              });
+            }
+            return v;
+          }));
+        }
+      });
+    });
+  },
+
   //Get nhs lookup
-  nhsLookup: function(gp, done){
-    Patient.find({"characteristics.practiceId":gp}, {_id:0, "characteristics.nhs":1, patientId:1}, function(err, patients){
-      if(!patients) {
+  nhsLookup: function(gp, done) {
+    Patient.find({ "characteristics.practiceId": gp }, { _id: 0, "characteristics.nhs": 1, patientId: 1 }, function(err, patients) {
+      if (!patients) {
         console.log('oops with nhs lookup');
         return done(null, false);
       } else {
         var rtn = {};
-        patients.forEach(function(v){
+        patients.forEach(function(v) {
           v = v.toObject();
-          rtn[""+v.patientId] = v.characteristics.nhs;
+          rtn["" + v.patientId] = v.characteristics.nhs;
         });
         return done(null, rtn);
       }
@@ -62,15 +120,15 @@ module.exports = {
       }, []);
 
       var indicatorValue = indicator.measurementId;
-      if(indicatorValue==="SBP") indicatorValue="BP";
+      if (indicatorValue === "SBP") indicatorValue = "BP";
 
       Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, measurements: { $elemMatch: { id: indicatorValue } }, "measurements.data": { $slice: -1 } },
         function(err, patients) {
           var p = patients.map(function(patient) {
             patient = patient.toObject();
             var meas = "?";
-            if (patient.measurements && patient.measurements.length>0 && patient.measurements[0].data && patient.measurements[0].data.length>0 && patient.measurements[0].data[0].length>2) {
-              if(indicator.measurementId === "SBP"){
+            if (patient.measurements && patient.measurements.length > 0 && patient.measurements[0].data && patient.measurements[0].data.length > 0 && patient.measurements[0].data[0].length > 2) {
+              if (indicator.measurementId === "SBP") {
                 meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
                 // for dbp use:
                 //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
@@ -79,7 +137,7 @@ module.exports = {
               }
             }
             var opps = indicator.opportunities.filter(function(v) {
-              return v.patients.indexOf(""+patient.patientId) > -1;
+              return v.patients.indexOf("" + patient.patientId) > -1;
             }).map(function(v) {
               return v.id;
             });

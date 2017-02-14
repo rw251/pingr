@@ -201,52 +201,6 @@ var base = {
    * Modals
    ********************************/
 
-  launchModal: function(data, label, value, reasonText, callbackOnSave, callbackOnCancel, callbackOnUndo) {
-    var tmpl = require("templates/modal-why");
-
-    if (data.reasons && data.reasons.length > 0) data.hasReasons = true;
-
-    $('#modal').html(tmpl(data));
-
-    if (reasonText) {
-      $('#modal textarea').val(reasonText);
-    }
-    lookup.modalSaved = false;
-    lookup.modalUndo = false;
-
-    $('#modal .modal').off('click', '.undo-plan').on('click', '.undo-plan', function(e) {
-      lookup.modalUndo = true;
-    }).off('submit', 'form').on('submit', 'form', {
-      "label": label
-    }, function(e) {
-      if (!e.data.label) e.data.label = "team";
-      var reason = $('input:radio[name=reason]:checked').val();
-      var reasonText = $('#modal textarea').val();
-
-      log.recordFeedback(data.pathwayId, e.data.label, value, reason, reasonText);
-
-      lookup.modalSaved = true;
-
-      e.preventDefault();
-      $('#modal .modal').modal('hide');
-    }).modal();
-
-    $('#modal').off('hidden.bs.modal').on('hidden.bs.modal', {
-      "label": label
-    }, function(e) {
-      if (lookup.modalSaved) {
-        lookup.modalSaved = false;
-        if (callbackOnSave) callbackOnSave();
-      } else if (lookup.modalUndo) {
-        lookup.modalUndo = false;
-        if (callbackOnUndo) callbackOnUndo();
-      } else {
-        //uncheck as cancelled. - but not if value is empty as this unchecks everything - or if already checked
-        if (callbackOnCancel) callbackOnCancel();
-      }
-    });
-  },
-
   launchSuggestionModal: function() {
     var tmpl = require("templates/modal-suggestion");
 
@@ -349,20 +303,31 @@ var base = {
     });
   },
 
-  mergeIndividualStuff: function(suggestions, patientId) {
-    var localActions = log.listActions();
-    if (!localActions[patientId]) return suggestions;
+  mergeIndividualStuff: function(suggestions, patientId, done) {
+    log.getIndividualActions(patientId, function(err, actions){
 
-    for (var i = 0; i < suggestions.length; i++) {
-      if (localActions[patientId][suggestions[i].id]) {
-        if (localActions[patientId][suggestions[i].id].agree) {
-          suggestions[i].agree = true;
-        } else if (localActions[patientId][suggestions[i].id].agree === false) {
-          suggestions[i].disagree = true;
+      if(err) return done(err);
+
+      if(!actions || actions.length ===0) return done(null, suggestions);
+
+      var actionObject={};
+      actions.forEach(function(v){
+        actionObject[v.actionTextId] = v;
+      });
+
+      for (var i = 0; i < suggestions.length; i++) {
+        if (actionObject[suggestions[i].id]) {
+          if (actionObject[suggestions[i].id].agree) {
+            suggestions[i].agree = true;
+          } else if (actionObject[suggestions[i].id].agree === false) {
+            suggestions[i].disagree = true;
+          }
+          if (actionObject[suggestions[i].id].done) suggestions[i].done = actionObject[suggestions[i].id].done;
         }
-        if (localActions[patientId][suggestions[i].id].done) suggestions[i].done = localActions[patientId][suggestions[i].id].done;
       }
-    }
+      return suggestions;
+
+    });
     return suggestions;
   },
 
@@ -551,8 +516,8 @@ var base = {
   },
 
   hideLoading: function() {
-    $('.loading-container').fadeOut(1000);
-    $('#title-row').fadeIn(1000);
+    $('.loading-container').fadeOut(0);
+    $('#title-row').fadeIn(0);
   },
 
 };

@@ -10,6 +10,9 @@ var indicatorList = {
     //data.getAllIndicatorData("P87024", function(indicators) {
     data.getAllIndicatorData(null, function(indicators) {
       indicators.sort(function(a,b){
+        if(a.performance.percentage == b.performance.percentage) return 0;
+        if(isNaN(a.performance.percentage)) return 1;
+        if(isNaN(b.performance.percentage)) return -1;
         return a.performance.percentage - b.performance.percentage;
       });
       var tempMust = $('#overview-panel-table').html();
@@ -23,7 +26,7 @@ var indicatorList = {
         //*b* maintain state
         // - state maintainance causes a bug in this place
         //TODO build a version of state maintainance that doesnt reload if tab is pressed
-        //base.savePanelState();
+        base.savePanelState();
         panel.html(html);
       }
 
@@ -33,6 +36,13 @@ var indicatorList = {
           return dts[fields.x] + ": " + fields.y + "%";
         },
         width: "100px"
+      });
+      
+      panel.find('div.table-scroll').getNiceScroll().remove();
+      panel.find('div.table-scroll').niceScroll({
+        cursoropacitymin: 0.3,
+        cursorwidth: "7px",
+        horizrailenabled: false
       });
 
       indicatorList.wireUp(panel, loadContentFn);

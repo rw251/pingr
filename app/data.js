@@ -415,12 +415,18 @@ var dt = {
       //indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
       indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
+      var today = new Date();
+      var lastyear = today.setYear(today.getFullYear()-1);
       var trend = indicator.values[1].map(function(val, idx) {
-        return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
-      }).slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
+        return (new Date(indicator.values[0][idx]) > lastyear) ? Math.round(100 * val * 100 / indicator.values[2][idx]) / 100 : "old";
+      }).filter(function(v){
+        return v !== "old";
+      });
       //trend.reverse();
       indicator.trend = trend.join(",");
-      var dates = indicator.values[0].slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
+      var dates = indicator.values[0].filter(function(v){
+        return new Date(v) > lastyear;
+      });
       //dates.reverse();
       indicator.dates = dates;
       if (dt.text.pathways[pathwayId] && dt.text.pathways[pathwayId][pathwayStage] && dt.text.pathways[pathwayId][pathwayStage].standards[standard]) {
@@ -582,9 +588,9 @@ var dt = {
     }
 
     //we never want to cache this anymore.
-    //  if (dt.indicators) {
-    //  return callback(dt.indicators);
-    //} else {
+    if (dt.indicators) {
+      return callback(dt.indicators);
+    } else {
 
         $.ajax({
           url: routeURL,
@@ -600,7 +606,7 @@ var dt = {
 
           }
         });
-      //}
+      }
 
     },
 
@@ -802,6 +808,30 @@ var dt = {
 
   getPatientData: function(patientId, callback) {
     return _getPatientData(patientId, callback);
+  },
+
+  getPatientActionData: function(patientId, callback) {
+    $.ajax({
+      url: "api/action/individual/" + patientId,
+      success: function(file) {
+        return callback(null, file);
+      },
+      error: function(err) {
+        return callback(err);
+      }
+    });
+  },
+
+  getTeamActionData: function(indicatorId, callback) {
+    $.ajax({
+      url: "api/action/team/" + indicatorId,
+      success: function(file) {
+        return callback(null, file);
+      },
+      error: function(err) {
+        return callback(err);
+      }
+    });
   }
 
 };

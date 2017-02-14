@@ -134,6 +134,94 @@ values
 ----------------------------------------------
 ---OTHER CODES--------------------------------
 ----------------------------------------------
+--anxiety
+--from code list cretor 3/2/17 Read v2 April 2016   "synonyms":     "anxiety",   "anxious",   "panic",   "nerves",   "nervous",   "neurotic",   "hysteria",   "phobia",   "fear",   "phobic",   "stress",   "adjustment"
+('TG11.', 'anxiety'), --
+('TG110', 'anxiety'), --
+('TG111', 'anxiety'), --
+('TG112', 'anxiety'), --
+('TG11z', 'anxiety'), --
+('TG1..', 'anxiety'), --
+('Eu930', 'anxiety'), --
+('Eu931', 'anxiety'), --
+('Eu932', 'anxiety'), --
+('Eu606', 'anxiety'), --
+('Eu40.', 'anxiety'), --
+('Eu400', 'anxiety'), --
+('Eu401', 'anxiety'), --
+('Eu402', 'anxiety'), --
+('Eu403', 'anxiety'), --
+('Eu40y', 'anxiety'), --
+('Eu40z', 'anxiety'), --
+('Eu4..', 'anxiety'), --
+('Eu41.', 'anxiety'), --
+('Eu410', 'anxiety'), --
+('Eu411', 'anxiety'), --
+('Eu412', 'anxiety'), --
+('Eu413', 'anxiety'), --
+('Eu41y', 'anxiety'), --
+('Eu41z', 'anxiety'), --
+('Eu43.', 'anxiety'), --
+('Eu054', 'anxiety'), --
+('E2D0.', 'anxiety'), --
+('E2D00', 'anxiety'), --
+('E2D01', 'anxiety'), --
+('E2D0z', 'anxiety'), --
+('E2920', 'anxiety'), --
+('E292.', 'anxiety'), --
+('E2924', 'anxiety'), --
+('E292y', 'anxiety'), --
+('E292z', 'anxiety'), --
+('E280.', 'anxiety'), --
+('E28..', 'anxiety'), --
+('E281.', 'anxiety'), --
+('E282.', 'anxiety'), --
+('E283.', 'anxiety'), --
+('E284.', 'anxiety'), --
+('E28z.', 'anxiety'), --
+('E2021', 'anxiety'), --
+('E202.', 'anxiety'), --
+('E2022', 'anxiety'), --
+('E2020', 'anxiety'), --
+('E2023', 'anxiety'), --
+('E2024', 'anxiety'), --
+('E2025', 'anxiety'), --
+('E2026', 'anxiety'), --
+('E2027', 'anxiety'), --
+('E2028', 'anxiety'), --
+('E2029', 'anxiety'), --
+('E202A', 'anxiety'), --
+('E202B', 'anxiety'), --
+('E202C', 'anxiety'), --
+('E202D', 'anxiety'), --
+('E202E', 'anxiety'), --
+('E202z', 'anxiety'), --
+('E200.', 'anxiety'), --
+('E2000', 'anxiety'), --
+('E2001', 'anxiety'), --
+('E2002', 'anxiety'), --
+('E2003', 'anxiety'), --
+('E2004', 'anxiety'), --
+('E2005', 'anxiety'), --
+('E200z', 'anxiety'), --
+('E20..', 'anxiety'), --
+('E201.', 'anxiety'), --
+('E204.', 'anxiety'), --
+('8T23.', 'anxiety'), --
+('8HHp.', 'anxiety'), --
+('8G94.', 'anxiety'), --
+('38Du1', 'anxiety'), --
+('2258.', 'anxiety'), --
+('225J.', 'anxiety'), --
+('2259.', 'anxiety'), --
+('1B1V.', 'anxiety'), --
+('1B12.', 'anxiety'), --
+('1B13.', 'anxiety'), --
+('173f.', 'anxiety'), --
+
+--anxiety resolved
+('2126J', 'anxietyPermEx'),--	00	Anxiety resolved
+
 --ACR
 --from SS
 ('46TC.', 'acr'),
@@ -144,6 +232,165 @@ values
 ('F3950', 'addisons'),
 ('C1541', 'addisons'),
 ('A176.', 'addisons'),
+
+--AF atrial fibrillation
+--from: Atrial fibrillation ruleset_v34.0
+('G573.', 'af'), --	00	Atrial fibrillation and flutter
+('G5730', 'af'), --	00	Atrial fibrillation
+('G5732', 'af'), --	00	Paroxysmal atrial fibrillation
+('G5733', 'af'), --	00	Non-rheumatic atrial fibrillation
+('G5734', 'af'), --	00	Permanent atrial fibrillation
+('G5735', 'af'), --	00	Persistent atrial fibrillation
+('G5737', 'af'), --	00	Chronic atrial fibrillation
+('G5738', 'af'), --	00	Typical atrial flutter
+('G5739', 'af'), --	00	Atypical atrial flutter
+('G573z', 'af'), --	00	Atrial fibrillation and flutter NOS
+
+--AF resolved atrial fibrillation
+--from: Atrial fibrillation ruleset_v34.0
+('212R.', 'afPermEx'), --	00	Atrial fibrillation resolved
+
+--chd
+--from: Secondary Prevention of Coronary Heart Disease ruleset_v32.0
+--http://content.digital.nhs.uk/media/17368/Secondary-Prevention-of-Coronary-Heart-Disease-rulesetv320/pdf/Secondary_Prevention_of_Coronary_Heart_Disease_ruleset_v32.0.pdf
+('G3...', 'chdQof'), --	00	Ischaemic heart disease
+('G30..', 'chdQof'), --	00	Acute myocardial infarction
+('G300.', 'chdQof'), --	00	Acute anterolateral infarction
+('G301.', 'chdQof'), --	00	Other specified anterior myocardial infarction
+('G3010', 'chdQof'), --	00	Acute anteroapical infarction
+('G3011', 'chdQof'), --	00	Acute anteroseptal infarction
+('G301z', 'chdQof'), --	00	Anterior myocardial infarction NOS
+('G302.', 'chdQof'), --	00	Acute inferolateral infarction
+('G303.', 'chdQof'), --	00	Acute inferoposterior infarction
+('G304.', 'chdQof'), --	00	Posterior myocardial infarction NOS
+('G305.', 'chdQof'), --	00	Lateral myocardial infarction NOS
+('G306.', 'chdQof'), --	00	True posterior myocardial infarction
+('G307.', 'chdQof'), --	00	Acute subendocardial infarction
+('G3070', 'chdQof'), --	00	Acute non-Q wave infarction
+('G3071', 'chdQof'), --	00	Acute non-ST segment elevation myocardial infarction
+('G308.', 'chdQof'), --	00	Inferior myocardial infarction NOS
+('G309.', 'chdQof'), --	00	Acute Q-wave infarct
+('G30B.', 'chdQof'), --	00	Acute posterolateral myocardial infarction
+('G30X.', 'chdQof'), --	00	Acute transmural myocardial infarction of unspecified site
+('G30X0', 'chdQof'), --	00	Acute ST segment elevation myocardial infarction
+('G30y.', 'chdQof'), --	00	Other acute myocardial infarction
+('G30y0', 'chdQof'), --	00	Acute atrial infarction
+('G30y1', 'chdQof'), --	00	Acute papillary muscle infarction
+('G30y2', 'chdQof'), --	00	Acute septal infarction
+('G30yz', 'chdQof'), --	00	Other acute myocardial infarction NOS
+('G30z.', 'chdQof'), --	00	Acute myocardial infarction NOS
+('G31..', 'chdQof'), --	00	Other acute and subacute ischaemic heart disease
+--G310.	00	Postmyocardial infarction syndrome
+('G311.', 'chdQof'), --	00	Preinfarction syndrome
+('G3110', 'chdQof'), --	00	Myocardial infarction aborted
+('G3111', 'chdQof'), --	00	Unstable angina
+('G3112', 'chdQof'), --	00	Angina at rest
+('G3113', 'chdQof'), --	00	Refractory angina
+('G3114', 'chdQof'), --	00	Worsening angina
+('G3115', 'chdQof'), --	00	Acute coronary syndrome
+('G311z', 'chdQof'), --	00	Preinfarction syndrome NOS
+('G312.', 'chdQof'), --	00	Coronary thrombosis not resulting in myocardial infarction
+('G31y.', 'chdQof'), --	00	Other acute and subacute ischaemic heart disease
+('G31y0', 'chdQof'), --	00	Acute coronary insufficiency
+('G31y1', 'chdQof'), --	00	Microinfarction of heart
+('G31y2', 'chdQof'), --	00	Subendocardial ischaemia
+('G31y3', 'chdQof'), --	00	Transient myocardial ischaemia
+('G31yz', 'chdQof'), --	00	Other acute and subacute ischaemic heart disease NOS
+('G32..', 'chdQof'), --	00	Old myocardial infarction
+('G33..', 'chdQof'), --	00	Angina pectoris
+('G330.', 'chdQof'), --	00	Angina decubitus
+('G3300', 'chdQof'), --	00	Nocturnal angina
+('G330z', 'chdQof'), --	00	Angina decubitus NOS
+--G331.	00	Prinzmetal's angina
+--G332.	00	Coronary artery spasm
+('G33z.', 'chdQof'), --	00	Angina pectoris NOS
+('G33z0', 'chdQof'), --	00	Status anginosus
+('G33z1', 'chdQof'), --	00	Stenocardia
+('G33z2', 'chdQof'), --	00	Syncope anginosa
+('G33z3', 'chdQof'), --	00	Angina on effort
+('G33z4', 'chdQof'), --	00	Ischaemic chest pain
+('G33z5', 'chdQof'), --	00	Post infarct angina
+('G33z6', 'chdQof'), --	00	New onset angina
+('G33z7', 'chdQof'), --	00	Stable angina
+('G33zz', 'chdQof'), --	00	Angina pectoris NOS
+('G34..', 'chdQof'), --	00	Other chronic ischaemic heart disease
+('G340.', 'chdQof'), --	00	Coronary atherosclerosis
+('G3400', 'chdQof'), --	00	Single coronary vessel disease
+('G3401', 'chdQof'), --	00	Double coronary vessel disease
+('G342.', 'chdQof'), --	00	Atherosclerotic cardiovascular disease
+('G343.', 'chdQof'), --	00	Ischaemic cardiomyopathy
+('G344.', 'chdQof'), --	00	Silent myocardial ischaemia
+('G34y.', 'chdQof'), --	00	Other specified chronic ischaemic heart disease
+('G34y0', 'chdQof'), --	00	Chronic coronary insufficiency
+('G34y1', 'chdQof'), --	00	Chronic myocardial ischaemia
+('G34yz', 'chdQof'), --	00	Other specified chronic ischaemic heart disease NOS
+('G34z.', 'chdQof'), --	00	Other chronic ischaemic heart disease NOS
+('G34z0', 'chdQof'), --	00	Asymptomatic coronary heart disease
+('G35..', 'chdQof'), --	00	Subsequent myocardial infarction
+('G350.', 'chdQof'), --	00	Subsequent myocardial infarction of anterior wall
+('G351.', 'chdQof'), --	00	Subsequent myocardial infarction of inferior wall
+('G353.', 'chdQof'), --	00	Subsequent myocardial infarction of other sites
+('G35X.', 'chdQof'), --	00	Subsequent myocardial infarction of unspecified site
+('G38..', 'chdQof'), --	00	Postoperative myocardial infarction
+('G380.', 'chdQof'), --	00	Postoperative transmural myocardial infarction of anterior wall
+('G381.', 'chdQof'), --	00	Postoperative transmural myocardial infarction of inferior wall
+('G382.', 'chdQof'), --	00	Postoperative transmural myocardial infarction of other sites
+('G383.', 'chdQof'), --	00	Postoperative transmural myocardial infarction of unspecified site
+('G384.', 'chdQof'), --	00	Postoperative subendocardial myocardial infarction
+('G38z.', 'chdQof'), --	00	Postoperative myocardial infarction, unspecified
+('G39..', 'chdQof'), --	00	Coronary microvascular disease
+('G3y..', 'chdQof'), --	00	Other specified ischaemic heart disease
+('G3z..', 'chdQof'), --	00	Ischaemic heart disease NOS
+('Gyu3.', 'chdQof'), --	00	[X]Ischaemic heart diseases
+('Gyu30', 'chdQof'), --	00	[X]Other forms of angina pectoris
+--Gyu31	00	[X]Other current complications following acute myocardial infarction
+('Gyu32', 'chdQof'), --	00	[X]Other forms of acute ischaemic heart disease
+('Gyu33', 'chdQof'), --	00	[X]Other forms of chronic ischaemic heart disease
+('Gyu34', 'chdQof'), --	00	[X]Acute transmural myocardial infarction of unspecified site
+('Gyu35', 'chdQof'), --	00	[X]Subsequent myocardial infarction of other sites
+('Gyu36', 'chdQof'), --	00	[X]Subsequent myocardial infarction of unspecified site
+
+--hf
+--from: HF ruleset_v32.0 
+--http://content.digital.nhs.uk/media/17359/HF-rulesetv320/pdf/HF_ruleset_v32.0.pdf
+('G58..', 'hfQof'), --	00	Heart failure
+('G580.', 'hfQof'), --	00	Congestive heart failure
+('G5800', 'hfQof'), --	00	Acute congestive heart failure
+('G5801', 'hfQof'), --	00	Chronic congestive heart failure
+('G5802', 'hfQof'), --	00	Decompensated cardiac failure
+('G5803', 'hfQof'), --	00	Compensated cardiac failure
+('G5804', 'hfQof'), --	00	Congestive heart failure due to valvular disease
+('G581.', 'hfQof'), --	00	Left ventricular failure
+('G5810', 'hfQof'), --	00	Acute left ventricular failure
+('G582.', 'hfQof'), --	00	Acute heart failure
+('G583.', 'hfQof'), --	00	Heart failure with normal ejection fraction
+('G584.', 'hfQof'), --	00	Right ventricular failure
+('G58z.', 'hfQof'), --	00	Heart failure NOS
+('G1yz1', 'hfQof'), --	00	Rheumatic left ventricular failure
+('662f.', 'hfQof'), --	00	New York Heart Association classification - class I
+('662g.', 'hfQof'), --	00	New York Heart Association classification - class II
+('662h.', 'hfQof'), --	00	New York Heart Association classification - class III
+('662i.', 'hfQof'), --	00	New York Heart Association classification - class IV
+
+--hf resolved
+--from: browser search
+('21264', 'hfPermEx'), --	00	Heart failure resolved
+
+--asbp
+--from: browser search
+('246e.', 'asbp'), --	00	Ambulatory systolic blood pressure
+('246d.', 'asbp'), --	00	Average home systolic blood pressure
+('246W.', 'asbp'), --	00	Average 24 hour systolic blood pressure
+('246Y.', 'asbp'), --	00	Average day interval systolic blood pressure
+('246b.', 'asbp'), --	00	Average night interval systolic blood pressure
+
+--adbp
+--from: browser search
+('246f.', 'adbp'), --	00	Ambulatory diastolic blood pressure
+('246c.', 'adbp'), --	00	Average home diastolic blood pressure
+('246V.', 'adbp'), --	00	Average 24 hour diastolic blood pressure
+('246X.', 'adbp'), --	00	Average day interval diastolic blood pressure
+('246a.', 'adbp'), --	00	Average night interval diastolic blood pressure
 
 --aortic stenosis
 --from codelist creator 26/10/16 Read v2 April 2016   "synonyms": "aortic stenosis", "stenosis of aorta"
@@ -753,7 +1000,7 @@ values
 --3398.	00	FEV1/FVC ratio normal
 --3399.	00	FEV1/FVC ratio abnormal
 --339M.	00	FEV1/FVC ratio
---339O.	00	Forced expired volume in 1 second
+('339O.', 'fev1'), --	00	Forced expired volume in 1 second
 --339O0	00	Forced expired volume in 1 second reversibility
 --339O1	00	Forced expired volume in one second/vital capacity ratio
 --339R.	00	FEV1/FVC percent
@@ -761,10 +1008,10 @@ values
 ('339S0', 'fev1pred'), --	00	Percentage predicted forced expiratory volume in 1 second after bronchodilation
 ('339T.', 'fev1pred'), --	00	FEV1/FVC > 70% of predicted
 ('339U.', 'fev1pred'), --	00	FEV1/FVC < 70% of predicted
---339a.	00	FEV1 before bronchodilation
---339b.	00	FEV1 after bronchodilation
---339e.	00	FEV1 pre steroids
---339f.	00	FEV1 post steroids
+('339a.', 'fev1'), --	00	FEV1 before bronchodilation
+('339b.', 'fev1'), --	00	FEV1 after bronchodilation
+('339e.', 'fev1'), --	00	FEV1 pre steroids
+('339f.', 'fev1'), --	00	FEV1 post steroids
 --339j.	00	FEV1/FVC ratio pre steroids
 --339k.	00	FEV1/FVC ratio post steroids
 --339l.	00	FEV1/FVC ratio before bronchodilator
@@ -778,7 +1025,7 @@ values
 
 --copdexac
 --from SS
-('H3122', 'copdExacSs'),
+('H3122', 'copdExacSs'), --H3122	00	Acute exacerbation of chronic obstructive airways disease
 
 --copdexac - non SS codes
 --from codelist creator 2/12/16 (synonyms: "copd acute", "copd cough","coad acute", "coad cough","chronic obstructive pulmonary acute", "chronic obstructive pulmonary cough","chronic obstructive airways acute", "chronic obstructive airways cough", "bronchitis acute",  "bronchitis cough", "emphysema acute", "emphysema acute", "bronchitis", "acute", "resp tract infection", "chest infection", "chest cold", "bonchiolitis",  "bronchiolitis")
@@ -1570,10 +1817,28 @@ values
 --manual search
 ('13CW.', 'houseboundPermEx');
 
---lrti
---from codelist creator on 7/12/16 (synonyms:  "lrti",  "respiratory tract infection",  "chest infection",  "respiratory infection",  "lung infection",  "pneumonia",  "pleurisy",  "pleuritic",  "pleural effusion",  "pulmonary infection",  "pulmonary abscess",  "tuberculosis",  "tuberculous",  "bronchitis",  "bronchiolitis",  "resp tract infection",  "chest cold",  "lung consolidation",  "empyema",  "pleural abscess",  "pyopneumothorax",  "pyothorax",  "pulmonary aspergillus",  "pulmonary aspergillosis",  "pulmonary histoplas*")
+--hyperthyroidism
+--browser search
+insert into codeGroups
+select readcode, 'hyperthyroid' from SIR_ReadCode_Rubric
+where readcode like 'C020%'
+or readcode like 'C021%'
+or readcode like 'C022%'
+or readcode like 'C023%'
+or readcode like 'C024%'
+or readcode like 'C02y%'
+or readcode like 'C02z%'
+or readcode in ('C02..','1431.')
+group by readcode
+
+--hyperthyroidism resolved
+--browser search
 insert into codeGroups
 values
+('212P.', 'hyperthyroidPermEx'), --	00	Hyperthyroidism resolved
+
+--lrti
+--from codelist creator on 7/12/16 (synonyms:  "lrti",  "respiratory tract infection",  "chest infection",  "respiratory infection",  "lung infection",  "pneumonia",  "pleurisy",  "pleuritic",  "pleural effusion",  "pulmonary infection",  "pulmonary abscess",  "tuberculosis",  "tuberculous",  "bronchitis",  "bronchiolitis",  "resp tract infection",  "chest cold",  "lung consolidation",  "empyema",  "pleural abscess",  "pyopneumothorax",  "pyothorax",  "pulmonary aspergillus",  "pulmonary aspergillosis",  "pulmonary histoplas*")
 ('SP131', 'lrti'), --
 ('SP132', 'lrti'), --
 ('Hyu10', 'lrti'), --
@@ -1958,9 +2223,76 @@ values
 ('3234.', 'MInow'),
 ('3235.', 'MInow'),
 ('3236.', 'MInow'),
-('323Z.', 'MInow')
+('323Z.', 'MInow'),
 
---myocardial infarction - code from anytime
+--myocardial infarction - code from anytime --TBA
+
+--unstable angina
+----from codelist creator on 26/01/17 Read v2 April 2016 (synonyms: "angina"
+('G331.', 'unstableAngina'), --
+('G3111', 'unstableAngina'), --
+('G3112', 'unstableAngina'), --
+('G3113', 'unstableAngina'), --
+('G3114', 'unstableAngina'), --
+('662K1', 'unstableAngina'), --
+('662K3', 'unstableAngina'), --
+
+--oedemea
+----from codelist creator on 29/01/17 Read v2 April 2016 (synonyms: "oedema", "edema"
+('R023.', 'oedema'), --
+('R0230', 'oedema'), --
+('R0231', 'oedema'), --
+('R0232', 'oedema'), --
+('R0233', 'oedema'), --
+('R0234', 'oedema'), --
+('R023z', 'oedema'), --
+('PH0..', 'oedema'), --
+('PH00.', 'oedema'), --
+('PH01.', 'oedema'), --
+('PH02.', 'oedema'), --
+('PH03.', 'oedema'), --
+('PH0z.', 'oedema'), --
+('K57y1', 'oedema'), --
+('K289.', 'oedema'), --
+('K27y0', 'oedema'), --
+('H584.', 'oedema'), --
+('H5840', 'oedema'), --
+('H584z', 'oedema'), --
+('H5410', 'oedema'), --
+('H541z', 'oedema'), --
+('C366.', 'oedema'), --
+('C3661', 'oedema'), --
+('C3662', 'oedema'), --
+('C366z', 'oedema'), --
+('8E95.', 'oedema'), --
+('23E1.', 'oedema'), --
+('22C..', 'oedema'), --
+('22C2.', 'oedema'), --
+('22C3.', 'oedema'), --
+('22C4.', 'oedema'), --
+('22C5.', 'oedema'), --
+('22C6.', 'oedema'), --
+('22C7.', 'oedema'), --
+('22C8.', 'oedema'), --
+('22C9.', 'oedema'), --
+('22CA.', 'oedema'), --
+('22CZ.', 'oedema'), --
+('22C40', 'oedema'), --
+('183..', 'oedema'), --
+('1832.', 'oedema'), --
+('1833.', 'oedema'), --
+('1837.', 'oedema'), --
+('1838.', 'oedema'), --
+('1839.', 'oedema'), --
+('183A.', 'oedema'), --
+('183B.', 'oedema'), --
+('183C.', 'oedema'), --
+('183Z.', 'oedema'), --
+
+--oedema resolved
+----from browser search
+('22C1.', 'oedemaPermEx'), --	00	O/E - oedema not present
+('1831.', 'oedemaPermEx') --	00	No oedema present
 
 insert into codeGroups
 values
@@ -2213,11 +2545,16 @@ values
 
 --registration: patient registration at a practice
 --from codelist creator 13/7/16 (synonyms: "registration", "register", "new patient", "enroll", "new reg") 
-('9hE..', 'registered'),
-('9hE1.', 'registered'),
-('9hE0.', 'registered'),
-('8I3Y.', 'registered'),
-('8BL0.', 'registered'),
+('9OW..', 'registered'), --
+('9OW1.', 'registered'), --
+('9OW3.', 'registered'), --
+('9OWZ.', 'registered'), --
+('9N79.', 'registered'), --
+('988..', 'registered'), --
+('9881.', 'registered'), --
+('9882.', 'registered'), --
+('9883.', 'registered'), --
+('988Z.', 'registered'), --
 
 --sick sinus
 --from codelist creator on 26/10/16 Read v2 April 2016 (synonyms: "block", "mobitz", "av block", "atrioventricular block", "wenckebach"

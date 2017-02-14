@@ -9,6 +9,7 @@ var practices = require('../controllers/practices.js');
 var patients = require('../controllers/patients.js');
 var indicators = require('../controllers/indicators.js');
 var events = require('../controllers/events.js');
+var actions = require('../controllers/actions.js');
 var text = require('../controllers/text.js');
 
 var isAuthenticated = function(req, res, next) {
@@ -53,6 +54,20 @@ module.exports = function(passport) {
   /* Handle Change password POST */
   router.post('/changepassword', isAuthenticated, cp, function(req, res) {
     res.render('pages/changepassword.jade', { message: req.flash() });
+  });
+
+  router.get('/emailpreference', isAuthenticated, isAdmin, function(req, res) {
+    res.render('pages/optOut.jade', { user: req.user });
+  });
+
+  router.post('/emailpreference', isAuthenticated, isAdmin, function(req, res) {
+    users.updateEmailPreference(req.user.email, req.body.optout, function(err, user, msg) {
+      if (err || msg) {
+        res.render('pages/optOut.jade', { user: req.user });
+      } else {
+        res.render('pages/optOut.jade', { user: user , message: {success: "Email preference updated. " + (req.body.optout ? "You wil not longer receive our reminder emails.":"You are currently set to receive reminder emails.")}});
+      }
+    });
   });
 
   //User forgets password
@@ -186,6 +201,54 @@ module.exports = function(passport) {
   });
 
   /* api */
+
+
+  /* ACTIONS */
+  router.post('/api/action/addTeam', isAuthenticated, function(req,res){
+    if (!req.body.actionText) {
+      res.send("No action posted");
+    } else {
+      actions.addTeamAction(req.user.practiceId, req.body.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
+        if (err) res.send(err);
+        else res.send(action);
+      });
+    }
+  });
+  router.post('/api/action/addIndividual/:patientId', isAuthenticated, function(req,res){
+    if (!req.body.actionText) {
+      res.send("No action posted");
+    } else {
+      actions.addIndividualAction(req.user.practiceId, req.params.patientId, req.user.fullname, req.body.actionText, function(err, action) {
+        if (err) res.send(err);
+        else res.send(action);
+      });
+    }
+  });
+  router.post('/api/action/update/team/:indicatorId', isAuthenticated, function(req, res){
+    actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.post('/api/action/update/individual/:patientId', isAuthenticated, function(req, res){
+    actions.updateIndividual(req.user.practiceId, req.params.patientId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.get('/api/action/team/:indicatorId', isAuthenticated, function(req, res){
+    indicators.getActions(req.user.practiceId, req.params.indicatorId, function(err, actions){
+      if (err) res.send(err);
+      else res.send(actions);
+    });
+  });
+  router.get('/api/action/individual/:patientId', isAuthenticated, function(req, res){
+    patients.getActions(req.user.practiceId, req.params.patientId, function(err,actions){
+      if (err) res.send(err);
+      res.send(actions);
+    });
+  });
+
   //store Event
   router.post('/api/event', function(req, res) {
     if (!req.body.event) {
@@ -276,8 +339,20 @@ module.exports = function(passport) {
     });
   });
 
+  router.get('/t/:token/*', function(req, res) {
+    events.emailReminderTokenCheck(req.params.token, req.url);
+    res.redirect('/login');
+  });
+
+  router.get('/t/:token', function(req, res) {
+    events.emailReminderTokenCheck(req.params.token, req.url);
+    res.redirect('/login');
+  });
+
   router.get('/', isAuthenticated, function(req, res, next) {
-    res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_name: req.user.practiceName });
+    practices.get(req.user.practiceId, function(err, practice){
+      res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_id: req.user.practiceId, practice_name: req.user.practiceName, practice_system: practice ? practice.ehr : "" });
+    });
   });
 
   /* Ensure all html/js resources are only accessible if authenticated */
