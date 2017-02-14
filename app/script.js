@@ -31,7 +31,9 @@ var App = {
     /******************************************
      *** This happens when the page is ready ***
      ******************************************/
-    $(document).on('ready', function() {
+     //jquery migration - on(ready, fn()) deprecated
+     //replaced with new pattern below - BG
+    $(document).ready(function() {
       //Wire up global click/hover listener
       events.listen();
       //Grab the hash if exists - IE seems to forget it
