@@ -9,8 +9,8 @@ body
             div.col-md-4.col-sm-6.col-md-offset-4.col-sm-offset-3
               form(action='/login', method='post', id='login')
                 div.card.card-login.card-hidden
-                  div.card-header.text-center(data-background-color="blue")
-                    img(alt='...', src='images/icons/pingr_clip_512.png', style='display: block; width: 50%; margin-left: auto; margin-right: auto')
+                  div.card-header.text-center(data-background-color="green")
+                    img(alt='...', src='images/icons/pingr_clip_drk_512.png', style='display: block; width: 50%; margin-left: auto; margin-right: auto')
                     h3.card-title 
                       strong
                         | The Performance 
@@ -26,12 +26,6 @@ body
                         //i.fa.fa-google-plus
                       h5.category.text-center PINGR is here to help you spot hidden patterns amongst your patients
                   div.card-content
-                    //div.input-group
-                    //  span.input-group-addon
-                    //    i.material-icons face
-                    //  div.form-group.label-floating
-                    //    label.control-label First Name
-                    //    input.form-control(type"text")
                     div#inpEmail.input-group
                       span.input-group-addon
                         i.material-icons email
@@ -50,17 +44,17 @@ body
                         a.btn.btn-rose.btn-simple.btn-sl.pull-right(href='/register') Register
                   div.footer.text-center
                     script document.write('<input type="hidden" name="hash" value="'+(document.location.href.split("#")[1] || '')+'"/>');
-                    button#signin.btn.btn-rose.btn-simple.btn-wd.btn-lg Let's go!(type='submit')
+                    button#signin.btn.btn-rose.btn-simple.btn-wd.btn-lg(type='submit') Let's go!
       footer.footer
         div.container
           nav.pull-left
             ul
               li
-                a(href="#") Home
+                a(href="https://www.herc.ac.uk/") HeRC
               li
-                a(href="#") Company
+                a(href="http://www.farrinstitute.org/") FARR
               li
-                a(href="#") Portfolio
+                a(href="https://wellcome.ac.uk/") Wellcome
           p.copyright.pull-right &copy
             script.
               document.write(new Date().getFullYear() + " HeRC // University of Manchester: #dataSavesLives")
