@@ -100,6 +100,21 @@ var e = {
     });
   },
 
+  emailReminderOpenedTokenCheck: function(emailToken) {
+    User.findOne({email: emailToken},function(err,user){
+      if (user) {
+        var newEvent = new Event({user: user.email, type: "emailReminderOpened"});
+
+        // save the event
+        newEvent.save(function(err) {
+          if (err) {
+            console.log("Error writing login event: " + err);
+          }
+        });
+      }
+    });
+  },
+
   emailReminderTokenCheck: function(token, url) {
     User.findOne({email_url_tracking_code: token},function(err,user){
       if (user) {
