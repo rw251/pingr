@@ -290,8 +290,8 @@ module.exports = function(passport) {
     });
   });
 
-  router.get('/img/:token', function(req, res) {
-    events.emailReminderOpenedTokenCheck(req.params.token);
+  router.get('/img/:email/:token', function(req, res) {
+    events.emailReminderOpenedTokenCheck(req.params.email, req.params.token);
     var buf = new Buffer(35);
     buf.write("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", "base64");
     res.send(buf, { 'Content-Type': 'image/gif' }, 200);
