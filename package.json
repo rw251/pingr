@@ -73,6 +73,7 @@
     "nodemailer-smtp-transport": "^2.7.2",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "sendgrid": "^4.7.1",
     "serve-favicon": "^2.3.0",
     "zeroclipboard": "^2.2.0"
   },

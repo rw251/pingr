@@ -1,18 +1,15 @@
 var nodemailer = require('nodemailer'),
   smtpTransport = require('nodemailer-smtp-transport');
 
-exports.sendEmailViaHttp = function(mailConfig, subject, text, html, attachment, callback) {
-  var toEmails = mailConfig.options.to.split(";");
+exports.sendEmailViaHttp = function(from, toEmails, subject, text, html, attachment, callback) {
   var helper = require('sendgrid').mail;
-  var from_email = new helper.Email(mailConfig.options.from);
-  var to_email = new helper.Email(toEmails[0]);
+  var to_email = toEmails[0];
   var content = new helper.Content('text/html', html);
-  var mail = new helper.Mail(from_email, subject, to_email, content);
+  var mail = new helper.Mail(from, subject, to_email, content);
 
   toEmails.forEach(function(v,i){
     if(i===0) return;
-    var email = new helper.Email(v);
-    mail.personalizations[0].addTo(email);
+    mail.personalizations[0].addTo(v);
   });
 
   var sg = require('sendgrid')(process.env.PINGR_SENDGRID_API_KEY);
