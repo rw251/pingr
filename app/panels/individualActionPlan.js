@@ -368,6 +368,7 @@ var iap = {
         v.indicatorListText = v.indicatorList.map(function(vv) {
           return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
+        if(v.agree!==true && v.agree!==false) v.agree = null;
         patientActionsObject[v.actionTextId] = v;
         return v;
       });
@@ -453,11 +454,9 @@ var iap = {
       $(this).html(html.replace(/\[MED\-SUGGESTION\]/g, suggestion));
     });
 
-
     base.setupClipboard($('.btn-copy'), true);
 
     iap.displayPersonalisedIndividualActionPlan(patientId, $('#personalPlanIndividual'));
-
   },
 
   launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {

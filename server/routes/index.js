@@ -224,7 +224,7 @@ module.exports = function(passport) {
       });
     }
   });
-  router.post('/api/action/update/team/:indicatorId', isAuthenticated, function(req, res){
+  router.post('/api/action/update/team/:indicatorId?', isAuthenticated, function(req, res){
     actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action){
       if (err) res.send(err);
       else res.send(action);
@@ -236,7 +236,7 @@ module.exports = function(passport) {
       else res.send(action);
     });
   });
-  router.get('/api/action/team/:indicatorId', isAuthenticated, function(req, res){
+  router.get('/api/action/team/:indicatorId?', isAuthenticated, function(req, res){
     indicators.getActions(req.user.practiceId, req.params.indicatorId, function(err, actions){
       if (err) res.send(err);
       else res.send(actions);
