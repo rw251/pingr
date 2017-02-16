@@ -65,11 +65,13 @@
                 span= ' (' + indicator.performance.fraction + ')'
               td= indicator.target
               td= (indicator.benchmark*100).toFixed(0)+"%"
-              td
-                if indicator.up
-                  i.fa.fa-2x.fa-caret-up
+              td(style="text-align:center")
+                if indicator.change==="up"
+                  i.fa.fa-2x.fa-fw.fa-caret-up
+                else if indicator.change==="down"
+                  i.fa.fa-2x.fa-fw.fa-caret-down
                 else
-                  i.fa.fa-2x.fa-caret-down
+                  i.fa.fa-fw.fa-minus
               td
                 span.inlinesparkline= indicator.trend
             tr.show-more-row(data-id=indicator.id,class=alt ? 'alternate-row': '')

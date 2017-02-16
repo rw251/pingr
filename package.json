@@ -4,6 +4,7 @@
   "description": "The performance improvement plan generator",
   "main": "script.js",
   "scripts": {
+    "prestart": "rimraf dist/*",
     "start": "brunch watch --server",
     "prebuild": "ncp node_modules/zeroclipboard/dist/ZeroClipboard.swf ./app/assets/ZeroClipboard.swf",
     "build": "brunch build --production",
@@ -11,18 +12,9 @@
     "postinstall": "npm run build",
     "watch": "brunch watch",
     "predebug": "echo In one window launch brunch without server: npm run watch",
-    "debug": "echo Then in second window launch server with debug: node-debug app.js",
+    "debug": "echo Then in second window launch server with debug: node --inspect --debug-brk server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "jshint --show-non-errors script.js data.json",
-    "predeploy": "cd dist && git pull origin gh-pages",
-    "deploy": "npm run build",
-    "postdeploy": "cd dist && git add -A && git commit -m \"Latest test version\" && git push origin gh-pages",
-    "prepackage": "npm run build",
-    "package": "npm prune --production && bestzip pingr.zip dist/ deploy/appserver/ node_modules/ server/ brunch-server.js package.json README.md start.bat server.js",
-    "postpackage": "npm install",
-    "prepackage:small": "npm run build",
-    "package:small": "npm prune --production && bestzip pingr.zip dist/ deploy/appserver/ server/ brunch-server.js package.json README.md start.bat server.js",
-    "postpackage:small": "npm install"
+    "lint": "jshint --show-non-errors app"
   },
   "repository": {
     "type": "git",
@@ -33,20 +25,15 @@
   "bugs": {
     "url": "https://github.com/rw251/rw251.github.io/issues"
   },
-  "homepage": "https://github.com/rw251/rw251.github.io",
+  "homepage": "https://pingr-demo.herokuapp.com",
   "devDependencies": {
     "auto-reload-brunch": "^2.7.1",
-    "browserify": "^13.0.0",
     "brunch": "^2.8.2",
     "cp": "^0.2.0",
-    "http-server": "^0.8.0",
     "jade-brunch": "^2.8.0",
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
-    "mv": "^2.0.3",
     "ncp": "^2.0.0",
-    "nodemon": "^1.9.1",
-    "pug": "^2.0.0-beta2",
     "rimraf": "^2.3.4",
     "sass-brunch": "^2.6.3",
     "uglify-js": "^2.6.2"
@@ -54,7 +41,6 @@
   "dependencies": {
     "async": "^2.0.0-rc.3",
     "bcrypt-nodejs": "0.0.3",
-    "bestzip": "^1.1.3",
     "body-parser": "^1.15.2",
     "connect-flash": "^0.1.1",
     "csv-parser": "^1.9.3",
@@ -68,11 +54,11 @@
     "json2csv": "^3.7.1",
     "mongoose": "^4.6.4",
     "morgan": "^1.7.0",
-    "mustache": "^2.2.1",
     "nodemailer": "^2.6.4",
     "nodemailer-smtp-transport": "^2.7.2",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "sendgrid": "^4.7.1",
     "serve-favicon": "^2.3.0",
     "zeroclipboard": "^2.2.0"
   },

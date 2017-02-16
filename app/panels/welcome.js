@@ -2,8 +2,7 @@ var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
   individualActionPlan = require('./individualActionPlan.js'),
-  teamActionPlan = require('./teamActionPlan.js'),
-  Mustache = require('mustache');
+  teamActionPlan = require('./teamActionPlan.js');
 
 //AKA Actions
 var welcome = {
@@ -406,9 +405,6 @@ var welcome = {
       }
     }
 
-    /*var listTemplate = $('#welcome-task-list').html();
-    Mustache.parse(listTemplate);
-    $('#welcome-tab-content').html(Mustache.render(listTemplate));*/
     var tmpl = require("templates/action-plan-task-list");
     $('#welcome-tab-content').html(tmpl({
       team:{
@@ -422,20 +418,10 @@ var welcome = {
       }
     }));
 
-    /*var addTemplate = $('#action-plan').html();
-    Mustache.parse(addTemplate);
-    var rendered = Mustache.render(addTemplate);
-    $('#team-add-plan').html(rendered);*/
-
-    /*var tempMust = $('#welcome-task-items').html();
-    var itemTemplate = $('#welcome-task-item').html();
-    Mustache.parse(tempMust);
-    Mustache.parse(itemTemplate);*/
-
     $('#team-add-plan').off('click').on('click', '.add-plan', function() {
       var plan = $(this).parent().parent().find('textarea').val();
       var planId = recordPlan("team", plan, "custom");
-      $('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {
+      /*$('#team-task-panel').find('table tbody').append(Mustache.render(itemTemplate, {
         "pathway": "",
         "pathwayId": "custom",
         "canEdit": true,
@@ -445,7 +431,7 @@ var welcome = {
         "done": null
       }, {
         "chk": $('#checkbox-template').html()
-      }));
+      }));*/
     });
 
 /*

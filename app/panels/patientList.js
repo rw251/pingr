@@ -1,8 +1,7 @@
 var Highcharts = require('highcharts/highstock'),
   base = require('../base.js'),
   data = require('../data.js'),
-  lookup = require('../lookup.js'),
-  Mustache = require('mustache');
+  lookup = require('../lookup.js');
 
 var ID = "PATIENT_LIST";
 
