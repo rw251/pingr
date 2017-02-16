@@ -1,4 +1,9 @@
 form(onsubmit='return false;')
-  .form-group
-    textarea.form-control(rows='3', style='resize:none', placeholder="Enter your own improvement action then click 'add' below...")
-  button.btn.btn-info.add-plan Add
+  .form-group.label-floating.shade
+    .row
+      .col-md-11
+        textarea.form-control(placeholder="Enter your own improvement action here!")
+      //.col-md-offset-11.col-md-1
+      .col-md-1
+        button.btn.btn-just-icon.btn-info.add-plan
+          i.fa.fa-plus

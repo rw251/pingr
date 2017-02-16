@@ -1,94 +1,109 @@
 include ../partials/head.jade
 include ../partials/header.jade
-#welcome.starter-template.page.welcome-page
-  .container
-    .row
-      h1 Agreed actions
-    .row
-      h4
-        | To see more suggested improvement actions, select a clinical area from the menu on the left 
-        i.fa.fa-hand-o-left
-        // or review actions you have previously agreed with <i class="fa fa-hand-o-down"></i>
-        | or search for a patient above 
-        i.fa.fa-hand-o-up
-        | .
-      br
-    .hide-if-logged-out.pull-right.btn-group(data-toggle='tooltip', data-placement='top', title='Download your planned actions as a PDF document')
-      // <button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="hidden-xs hidden-sm hidden-md">Download agreed actions </span></button>
-      button.btn.btn-danger.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-        span.hidden-xs.hidden-sm.hidden-md Download saved actions   
-        span.caret
-        span.sr-only Toggle Dropdown
-      ul.dropdown-menu
-        li
-          a.download-outstanding.clickable
-            | Download 
-            strong  agreed actions awaiting implementation
-        li
-          a.download-completed.clickable
-            | Download 
-            strong agreed actions that have been implemented 
-        li
-          hr(style='margin-top:2px; margin-bottom:2px; border-bottom: 1px solid grey')
-        li
-          a.download-completed.clickable
-            | Download 
-            strong all actions 
-            | (both awaiting implementation and implemented)
-    ul#welcome-tabs.nav.nav-tabs
-      li.active(data-toggle='tooltip', title='Recommended actions with which you have previously already in PINGR that have not yet been implemented in practice')
-        a#outstandingTasks(href='#outstandingTasks') Agreed actions awaiting implementation
-      li(data-toggle='tooltip', title='Recommended actions with which you have previously already in PINGR and then implemented in practice')
-        a#completedTasks(href='#completedTasks') Agreed actions that have been implemented
-    .top-tab-pane
-      .panel.panel-default
-        .panel-body
-          #welcome-tab-content
-#help-page.starter-template.page
-  .container-fluid
-    h2 Coming Soon!
-#contact-page.starter-template.page
-  .container-fluid
-    h2 Contact us
-    p For all queries please contact Ben Brown:
-    ul.fa-ul
-      li
-        i.fa-li.fa.fa-phone
-        |  07751 092038
-      li
-        i.fa-li.fa.fa-envelope
-        |  benjamin.brown@manchester.ac.uk
-// INDICATOR PAGE
-#main-dashboard.starter-template.page
-  .tab-content
-    #title-row.title-row
-      span#title-left(data-intro="Ay up?! *bTut*" data-step="3")
-      span#title-right.pull-right(style='width:280px')
-      //div this is where the summary will sit.
-    .panel.panel-default.tab-pane.tabs-up.active
-      .container-fluid(style='padding-left: 30px;')
-        .row(style='padding-top: 10px')
-          #left-panel.col-xl-4.col-lg-4
-          #right-panel.col-xl-8.col-lg-8
-  #stateMaintainence(style='display: None;')
-    #stateM-overview
-    #stateM-indicator
-    #stateM-patient
-  #saved-message.flyover.tooltip-inner-saved
-    h1 Saved! 
-#modal
-footer.container-fluid.footer.pull-right
-  nav.navbar.navbar-default.navbar-fixed-bottom
-    .container
-      ul.nav.navbar-nav
-        li
-          img.img-responsive(alt='...', width='160', height='42', src='images/icons/wellcome-160px.png')
-        li
-          img.img-responsive(alt='...', width='160', height='46', src='images/icons/farr-logo-160px.png')
-        li
-          img.img-responsive(alt='...', width='160', height='68', src='images/icons/uom-logo-160px.png')
-        li
-          img.img-responsive(alt='...', width='160', height='43', src='images/icons/herc-logo-160px.png')
-#temp-hidden(style='display:none')
+//action plans
+.wrapper
+  .sidebar(data-active-color="green" data-background-color="black" data-image="assets/img/sidebar-1.jpg")
+  .main-panel.ps-container.ps-theme-default.ps-active-y
+    .content
+      #welcome.starter-template.page.welcome-page
+        //    ^-- 
+        //*review* add grid 
+        .container-fluid
+          .row
+            .col-md-12
+              .card
+                .card-header(data-background-color="rose")
+                  .card-header-text
+                    h4.card-title Agreed actions
+                    p.category
+                      //*review* do something about this text
+                      | To see more suggested improvement actions, select a clinical area from the menu on the left 
+                      i.fa.fa-hand-o-left
+                      // or review actions you have previously agreed with <i class="fa fa-hand-o-down"></i>
+                      |  or search for a patient above 
+                      i.fa.fa-hand-o-up
+                      | .
+                    br
+                //.hide-if-logged-out.pull-right.btn-group(data-toggle='tooltip', data-placement='top', title='Download your planned actions as a PDF document')
+                .card-content      
+                  nav#welcome-tabs.navbar.navbar-default(role="navigation")
+                    .container-fluid
+                      ul.nav.navbar-nav
+                        li.active(data-toggle='tooltip', title='Recommended actions with which you have previously already in PINGR that have not yet been implemented in practice')
+                          a#outstandingTasks(href='#outstandingTasks') Agreed actions awaiting implementation
+                        li(data-toggle='tooltip', title='Recommended actions with which you have previously already in PINGR and then implemented in practice')
+                          a#completedTasks(href='#completedTasks') Agreed actions that have been implemented
+                      ul.nav.navbar-nav.navbar-right
+                        li.dropdown
+                          a.dropdown-toggle(href="#" type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') Download saved actions   
+                            b.caret
+                            span.sr-only Toggle Dropdown
+                          ul.dropdown-menu
+                            li
+                              a.download-outstanding.clickable
+                                | Download 
+                                strong  agreed actions awaiting implementation
+                            li
+                              a.download-completed.clickable
+                                | Download 
+                                strong agreed actions that have been implemented 
+                            li
+                              hr(style='margin-top:2px; margin-bottom:2px; border-bottom: 1px solid grey')
+                            li
+                              a.download-completed.clickable
+                                | Download 
+                                strong all actions 
+                                | (both awaiting implementation and implemented)
+                  .col-md-12
+                    .top-tab-pane
+                      .panel.panel-default
+                        .panel-body
+                          #welcome-tab-content
+      #help-page.starter-template.page
+        .container-fluid
+          h2 Coming Soon!
+      #contact-page.starter-template.page
+        .container-fluid
+          h2 Contact us
+          p For all queries please contact Ben Brown:
+          ul.fa-ul
+            li
+              i.fa-li.fa.fa-phone
+              |  07751 092038
+            li
+              i.fa-li.fa.fa-envelope
+              |  benjamin.brown@manchester.ac.uk
+      // INDICATOR PAGE
+      #main-dashboard.starter-template.page
+        .tab-content
+          #title-row.title-row
+            span#title-left(data-intro="Ay up?! *bTut*" data-step="3")
+            span#title-right.pull-right(style='width:280px')
+            //div this is where the summary will sit.
+          .panel.panel-default.tab-pane.tabs-up.active
+            .container-fluid(style='padding-left: 30px;')
+              .row(style='padding-top: 10px')
+                #left-panel.col-xl-4.col-lg-4
+                #right-panel.col-xl-8.col-lg-8
+        #stateMaintainence(style='display: None;')
+          #stateM-overview
+          #stateM-indicator
+          #stateM-patient
+        #saved-message.flyover.tooltip-inner-saved
+          h1 Saved! 
+      #modal
+      footer.container-fluid.footer.pull-right
+        nav.navbar.navbar-default.navbar-fixed-bottom
+          .container
+            ul.nav.navbar-nav
+              li
+                img.img-responsive(alt='...', width='160', height='42', src='images/icons/wellcome-160px.png')
+              li
+                img.img-responsive(alt='...', width='160', height='46', src='images/icons/farr-logo-160px.png')
+              li
+                img.img-responsive(alt='...', width='160', height='68', src='images/icons/uom-logo-160px.png')
+              li
+                img.img-responsive(alt='...', width='160', height='43', src='images/icons/herc-logo-160px.png')
+      #temp-hidden(style='display:none')
+include ../partials/ct_dashScripts.jade 
 include ../partials/footer.jade
-//include ../partials/ct_dashScripts.jade 

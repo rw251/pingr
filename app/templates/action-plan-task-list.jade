@@ -2,16 +2,16 @@ include mixins/action-plan-task-list
 
 .container-fluid
   .row
-    #team-task-panel.panel.panel-info
-      .panel-heading Practice-level      
-      +actionPlanTaskList(team)
-  .row 
-    #team-add-plan(style='padding-bottom: 15px;margin-top: -10px;')
-      include mixins/personal-action-plan
-      //-this is the gap between top and bottom
-  .row
-    #individual-task-panel.panel.panel-warning
-      .panel-heading Individual patient
-      +actionPlanTaskList(individual)
+    .col-md-6
+      #team-task-panel.panel.panel-info
+        .label.label-info Practice-level      
+        +actionPlanTaskList(team)
+      #team-add-plan(style='padding-bottom: 15px;margin-top: -10px;')
+        include mixins/personal-action-plan
+        //-this is the gap between top and bottom
+    .col-md-6
+      #individual-task-panel.panel.panel-warning
+        .label.label-primary Individual patient
+        +actionPlanTaskList(individual)
 include mixins/edit-plan-modal
 include mixins/delete-plan-modal
