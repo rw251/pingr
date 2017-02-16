@@ -23,8 +23,7 @@
               i.fa.fa-caret-down       
           td(style="text-align:right")
             if (standard.indicatorId === indicatorId && standards.filter(function(v){return !v.targetMet;}).length > 1)
-              div Currently showing actions for this indicator 
-              a.btn.btn-warning.btn-sm(href='/#patient/'+patientId) Show actions for all indicators
+              a.btn.btn-warning.btn-sm(href='/#patient/'+patientId) Showing actions for this indicator - click to show all
             else if (!standard.targetMet && standards.filter(function(v){return !v.targetMet;}).length === 1)
               span Currently showing actions for this indicator 
             else 
