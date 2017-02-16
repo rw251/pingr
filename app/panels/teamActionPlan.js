@@ -15,13 +15,13 @@ var tap = {
     panel.html(tap.create(title));
     tap.wireUp(pathwayId, pathwayStage, standard);
 
-    panel.find('div.fit-to-screen-height').niceScroll({
+    /*panel.find('div.fit-to-screen-height').niceScroll({
       cursoropacitymin: 0.4,
       cursorwidth: "15px",
       horizrailenabled: false,
       hidecursordelay: 50,
       cursorborderradius : "12px"
-    });
+    });*/
   },
 
   updateAction: function(action) {

@@ -39,7 +39,7 @@ var pl = {
     pl.state = [pathwayId, pathwayStage, standard, subsection, sortField, sortAsc];
     patientsPanel = $('#patients');
     //Remove scroll if exists
-    patientsPanel.find('div.table-scroll').getNiceScroll().remove();
+    /*patientsPanel.find('div.table-scroll').getNiceScroll().remove();*/
 
     var i, k, prop, header, pList = [];
 
@@ -104,13 +104,30 @@ var pl = {
 
       base.wireUpTooltips();
 
-      patientsPanel.find('div.table-scroll').niceScroll({
+      /*patientsPanel.find('div.table-scroll').niceScroll({
         cursoropacitymin: 0.3,
         cursorwidth: "7px",
         horizrailenabled: false
-      });
+      });*/
 
       base.hideLoading();
+
+      var updateSizeOnLoad = function() {
+        console.log("shall we update?");
+        if ($('.table-scroll').length === 0) {
+          console.log("no - wait a bit.");
+          setTimeout(updateSizeOnLoad, 10);
+        } else {
+          console.log("yes");
+          if ($('#addedCSS').length === 0) {
+            console.log("done");
+            $('head').append('<style id="addedCSS" type="text/css">.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
+          } else {
+            $('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
+          }
+        }
+      };
+      updateSizeOnLoad();
 
     });
 

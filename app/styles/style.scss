@@ -2024,7 +2024,8 @@ th {
     margin: 0 0 5px;
 }
 .table-scroll {
-    max-height: 170px;
+  overflow-y: auto;
+  max-height: 170px;
 }
 .table-scroll .table {
     margin-bottom: 0;
@@ -2033,10 +2034,10 @@ th {
     max-height: 500px;
 }
 .all-patients > .table-scroll {
-    max-height: 700px;
+    //max-height: 700px;
 }
 .overview-table > .table-scroll {
-  max-height: 400px;
+  //max-height: 400px;
 }
 /*.soon {
 	font-size: 64px;
@@ -2325,15 +2326,15 @@ body > svg {
     margin-bottom: 0;
 }
 .fit-to-screen-height {
-    height: 270px;
-    overflow-y: scroll;
+    /*height: 270px;*/
+    overflow-y: auto;
 }
 .fit-to-scrolling-section-height {
     height: 250px;
 }
 @media (min-height: 500px) and (max-height: 599px) {
     .fit-to-screen-height {
-        height: 300px;
+    /*    height: 300px;*/
     }
     .fit-to-scrolling-section-height {
         height: 300px;
@@ -2344,7 +2345,7 @@ body > svg {
 }
 @media (min-height: 600px) and (max-height: 699px) {
     .fit-to-screen-height {
-        height: 400px;
+      /*  height: 400px;*/
     }
     .fit-to-scrolling-section-height {
         height: 400px;
@@ -2355,7 +2356,7 @@ body > svg {
 }
 @media (min-height: 700px) and (max-height: 799px) {
     .fit-to-screen-height {
-        height: 500px;
+      /*  height: 500px;*/
     }
     .fit-to-scrolling-section-height {
         height: 500px;
@@ -2366,7 +2367,7 @@ body > svg {
 }
 @media (min-height: 800px) and (max-height: 899px) {
     .fit-to-screen-height {
-        height: 600px;
+      /*  height: 600px;*/
     }
     .fit-to-scrolling-section-height {
         height: 600px;
@@ -2377,7 +2378,7 @@ body > svg {
 }
 @media (min-height: 900px) and (max-height: 999px) {
     .fit-to-screen-height {
-        height: 700px;
+      /*  height: 700px;*/
     }
     .fit-to-scrolling-section-height {
         height: 700px;
@@ -2388,7 +2389,7 @@ body > svg {
 }
 @media (min-height: 1000px) and (max-height: 1099px) {
     .fit-to-screen-height {
-        height: 800px;
+        /*height: 800px;*/
     }
     .fit-to-scrolling-section-height {
         height: 800px;
@@ -2399,7 +2400,7 @@ body > svg {
 }
 @media (min-height: 1100px) and (max-height: 1199px) {
     .fit-to-screen-height {
-        height: 900px;
+      /*  height: 900px;*/
     }
     .fit-to-scrolling-section-height {
         height: 900px;
@@ -2410,7 +2411,7 @@ body > svg {
 }
 @media (min-height: 1200px) {
     .fit-to-screen-height {
-        height: 1000px;
+      /*  height: 1000px;*/
     }
     .fit-to-scrolling-section-height {
         height: 1000px;

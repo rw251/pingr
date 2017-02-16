@@ -28,7 +28,8 @@ var base = {
   {
     if($("div[class*='state-']")[0] !== undefined)
     {
-      if($("div[class*='state-']").attr('class').includes('overview'))
+      //RW replaced includes with indexOf - includes only supported in IE from v 12
+      if($("div[class*='state-']").attr('class').indexOf('overview')>-1)
       {
         //save as overview
         var stateData = $("div[class*='state-']").children();
@@ -36,7 +37,7 @@ var base = {
         return;
       }
 
-      if($("div[class*='state-']").attr('class').includes('indicator'))
+      if($("div[class*='state-']").attr('class').indexOf('indicator')>-1)
       {
         //save as indicator
         var stateData = $("div[class*='state-']").children();
@@ -44,7 +45,7 @@ var base = {
         return;
       }
 
-      if($("div[class*='state-']").attr('class').includes('patient'))
+      if($("div[class*='state-']").attr('class').indexOf('patient')>-1)
       {
         //save as patient
         var stateData = $("div[class*='state-']").children();
@@ -510,6 +511,37 @@ var base = {
     $('.loading-container').fadeOut(0);
     $('#title-row').fadeIn(0);
   },
+
+  getCssText: function(){
+    var cssText = base.elementSelectors.map(function(v){
+      return v + " {max-height:" + Math.floor($(window).height() - $(v).position().top - 200) + 'px;}';
+    }).join(" ");
+    return cssText;
+  },
+
+  updateFixedHeightElements: function(elementSelectors){
+    if(!elementSelectors) elementSelectors = base.elementSelectors;
+    base.elementSelectors = elementSelectors;
+    console.log("shall we update?");
+    if ($(elementSelectors.map(function(v){return v+":visible";}).join(",")).length !== elementSelectors.length) {
+      console.log("no - wait a bit.");
+      setTimeout(function(){
+        base.updateFixedHeightElements(elementSelectors);
+      }, 10);
+    } else {
+      console.log("yes");
+      if ($('#addedCSS').length === 0) {
+        $('head').append('<style id="addedCSS" type="text/css"></style>');
+      }
+
+      $('#addedCSS').text(base.getCssText());
+
+      $(window).off('resize').on('resize', function() {
+        $('#addedCSS').text(base.getCssText());
+      });
+      console.log("done");
+    }
+  }
 
 };
 

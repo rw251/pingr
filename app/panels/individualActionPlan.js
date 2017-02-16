@@ -21,11 +21,11 @@ var iap = {
     panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId, pathwayId, pathwayStage, standard));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
 
-    panel.find('div.fit-to-screen-height').niceScroll({
+    /*panel.find('div.fit-to-screen-height').niceScroll({
       cursoropacitymin: 0.3,
       cursorwidth: "7px",
       horizrailenabled: false
-    });
+    });*/
   },
 
   updateAction: function(action) {
