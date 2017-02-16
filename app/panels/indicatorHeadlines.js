@@ -1,8 +1,7 @@
 var base = require('../base.js'),
   data = require('../data.js'),
-  chart = require('../chart.js');/*,
-  Mustache = require('mustache');
-*/
+  chart = require('../chart.js');
+  
 var hl = {
 
   wireUp: function() {

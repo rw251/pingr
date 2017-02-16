@@ -155,8 +155,6 @@ var main = {
 
       $('#welcome-tabs li').removeClass('active');
       $(this).closest('li').addClass('active');
-      /*var tempMust = $('#welcome-task-list').html();
-      var rendered = Mustache.render(tempMust);*/
       //var tmpl = require("templates/action-plan-task-list");
       $('#welcome-tab-content').fadeOut(250, function() {
         //$(this).html(tmpl());
@@ -170,8 +168,6 @@ var main = {
 
       $('#welcome-tabs li').removeClass('active');
       $(this).closest('li').addClass('active');
-      /*var tempMust = $('#welcome-task-list').html();
-      var rendered = Mustache.render(tempMust);*/
       //var tmpl = require("templates/action-plan-task-list");
       $('#welcome-tab-content').fadeOut(250, function() {
         //$(this).html(tmpl());
