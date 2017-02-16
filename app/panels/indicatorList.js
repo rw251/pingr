@@ -1,8 +1,7 @@
 var base = require('../base.js'),
   log = require('../log.js'),
   data = require('../data.js'),
-  sparkline = require('jquery-sparkline'),
-  Mustache = require('mustache');
+  sparkline = require('jquery-sparkline');
 
 var indicatorList = {
 
@@ -37,7 +36,7 @@ var indicatorList = {
         },
         width: "100px"
       });
-      
+
       panel.find('div.table-scroll').getNiceScroll().remove();
       panel.find('div.table-scroll').niceScroll({
         cursoropacitymin: 0.3,

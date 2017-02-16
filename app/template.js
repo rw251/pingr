@@ -9,8 +9,7 @@ var data = require('./data'),
   overview = require('./views/overview'),
   indicatorView = require('./views/indicator'),
   patientView = require('./views/patient'),
-  actionPlan = require('./views/actions'),
-  Mustache = require('mustache');
+  actionPlan = require('./views/actions');
 
 var template = {
 

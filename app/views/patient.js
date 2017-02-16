@@ -5,7 +5,6 @@ var lifeline = require('../panels/lifeline'),
   lookup = require('../lookup'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
-  patientCharacteristics = require('../panels/patientCharacteristics'),
   patientSearch = require('../panels/patientSearch');
 
 var ID = "PATIENT_VIEW";

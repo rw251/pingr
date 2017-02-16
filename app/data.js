@@ -208,7 +208,9 @@ var dt = {
       };
       //indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
-      indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
+      var lastPercentage = Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
+      indicator.up = percentage > lastPercentage;
+      indicator.change= percentage > lastPercentage ? "up" : (percentage < lastPercentage ? "down" : "none");
       var trend = indicator.values[1].map(function(val, idx) {
         return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
       }).slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
@@ -414,7 +416,9 @@ var dt = {
       };
       //indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
-      indicator.up = percentage > Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
+      var lastPercentage = Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
+      indicator.up = percentage > lastPercentage;
+      indicator.change= percentage > lastPercentage ? "up" : (percentage < lastPercentage ? "down" : "none");
       var today = new Date();
       var lastyear = today.setYear(today.getFullYear()-1);
       var trend = indicator.values[1].map(function(val, idx) {
