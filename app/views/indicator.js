@@ -37,8 +37,8 @@ var ind = {
         //base.switchTo21Layout();
         layout.showMainView();
 
-        base.removeFullPage(farLeftPanel);
-        base.hidePanels(farLeftPanel);
+        base.removeFullPage(farRightPanel);
+        base.hidePanels(farRightPanel);
 
         layout.view = ID;
       }
@@ -75,7 +75,7 @@ var ind = {
       //The three panels we need to show
       //Panels decide whether they need to redraw themselves
       // *B* insect this and make sure its not redundant
-      teamActionPlan.show(farRightPanel, "Top 3 suggested actions for " + data.text.pathways[pathwayId][pathwayStage].standards[standard].name, pathwayId, pathwayStage, standard);
+      teamActionPlan.show(farLeftPanel, "Top 3 suggested actions for " + data.text.pathways[pathwayId][pathwayStage].standards[standard].name, pathwayId, pathwayStage, standard);
 
       base.updateTab("indicators", data.text.pathways[pathwayId][pathwayStage].standards[standard].tabText, [pathwayId, pathwayStage, standard].join("/"));
 
@@ -87,7 +87,7 @@ var ind = {
       base.savePanelState();
       if(nothingChanged && indicatorCachedState.length > 0)
       {
-        farLeftPanel.html(indicatorCachedState);
+        farRightPanel.html(indicatorCachedState);
       }
 
       //if not presently loaded
@@ -97,8 +97,8 @@ var ind = {
 
         var tabList = $('<ul id="mainPage-tabs" class="nav nav-tabs"></ul>');
         var tabContent = $('<div id="mainPage-tab-content"></div>');
-        farLeftPanel.append(tabList);
-        farLeftPanel.append(tabContent);
+        farRightPanel.append(tabList);
+        farRightPanel.append(tabContent);
 
         // *B* 1st tabbed panel
         wrapper.showTab(tabContent, tabList, "Improvement opportunities", "A summary of all the relevant information",  "Overview", [
@@ -200,7 +200,7 @@ var ind = {
       base.hideLoading();
 
       //add state indicator
-      farLeftPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
+      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
 
     }, 0);
   }
