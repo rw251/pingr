@@ -26,6 +26,11 @@ var pv = {
       //the view is the same just need to update the actions
       individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
       qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+
+      var tabUrl = patientId;
+      if(pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+      base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
+      
       return;
     }
 
@@ -72,7 +77,9 @@ var pv = {
             }));
           }
 
-          base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
+          var tabUrl = patientId;
+          if(pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+          base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
 
           layout.patientId = patientId;
           data.patientId = patientId;
