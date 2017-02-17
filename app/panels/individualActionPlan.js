@@ -128,40 +128,49 @@ var iap = {
     });*/
 
     individualTab.on('click', '.edit-plan', function() {
-      /*var PLANID = $(this).closest('tr').data("id");
+      var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
-      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[0]).find('span').text());
+      $('#editActionPlanItem').val(action.actionText);
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        iap.displayPersonalisedIndividualActionPlan(data.patientId, $('#personalPlanIndividual'));
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
       }).off('shown.bs.modal').on('shown.bs.modal', function() {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
-
-        log.editPlan(PLANID, $('#editActionPlanItem').val());
-
+        var oldActionId = action.actionTextId;
+        action.actionText = $('#editActionPlanItem').val();
+        action.actionTextId = action.actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (action.actionTextId !== oldActionId) {
+          log.updateUserDefinedPatientAction(patientId, oldActionId, action);
+          delete userDefinedPatientActionsObject[oldActionId];
+          if (!userDefinedPatientActionsObject[action.actionTextId]) userDefinedPatientActionsObject[action.actionTextId] = action;
+          iap.updateAction(action);
+        }
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
         if (e.which === 13) $('#editPlan .save-plan').click();
-      }).modal();*/
+      }).modal();
     }).on('click', '.delete-plan', function() {
-      /*  var PLANID = $(this).closest('tr').data("id");
+      var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
-        $('#modal-delete-item').html($($(this).closest('tr').children('td')[0]).find('span').text());
+      $('#modal-delete-item').html(action.actionText);
 
-        $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-          iap.displayPersonalisedIndividualActionPlan(data.patientId, $('#personalPlanIndividual'));
-        }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-          log.deletePlan(PLANID);
+      $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+      }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
+        log.deleteUserDefinedPatientAction(patientId, action.actionTextId);
+        delete userDefinedPatientActionsObject[action.actionTextId];
 
-          $('#deletePlan').modal('hide');
-        }).modal();
-      }).on('click', '.add-plan', function() {
-        log.recordIndividualPlan($(this).parent().parent().find('textarea').val(), data.patientId, function(err,a){
-          console.log(a);
-        });
+        $('#deletePlan').modal('hide');
+      }).modal();
+    }).on('click', '.add-plan', function() {
+      var actionText = $(this).parent().parent().find('textarea').val();
+      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+      log.recordIndividualPlan(actionText, patientId, function(err, a){
+        if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+      });
 
-        iap.displayPersonalisedIndividualActionPlan(data.patientId, $('#personalPlanIndividual'));*/
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       /*iap.updateIndividualSapRows();*/
     }).on('click', '.btn-undo', function(e) {
@@ -340,31 +349,25 @@ var iap = {
     base.wireUpTooltips();
   },
 
-  displayPersonalisedIndividualActionPlan: function(id, parentElem) {
-    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans(id)));
-
-    /*base.createPanelShow(actionPlanList, parentElem, {
-      "hasSuggestions": plans && plans.length > 0,
-      "suggestions": plans
-    }, {
-      "action-plan": $('#action-plan').html(),
-      "action-plan-item": $('#action-plan-item').html(),
-      "chk": $('#checkbox-template').html()
-    });*/
-
+  displayPersonalisedIndividualActionPlan: function(parentElem) {
     var tmpl = require('templates/action-plan-list');
+    var userDefinedActions = Object.keys(userDefinedPatientActionsObject).map(function(v){return userDefinedPatientActionsObject[v];});
     parentElem.html(tmpl({
-      "hasSuggestions": plans && plans.length > 0,
-      "suggestions": plans
+      "hasSuggestions": userDefinedActions && userDefinedActions.length > 0,
+      "suggestions": userDefinedActions
     }));
 
     iap.updateIndividualSapRows();
   },
 
   loadAndPopulateIndividualSuggestedActions: function(patientId, pathwayId, pathwayStage, standard, visible) {
-    data.getPatientActionData(patientId, function(err, actions) {
+    data.getPatientActionData(patientId, function(err, a) {
       patientActionsObject = {};
-      patientActions = actions.map(function(v) {
+      userDefinedPatientActionsObject = {};
+      a.userDefinedActions.forEach(function(v){
+        userDefinedPatientActionsObject[v.actionTextId] = v;
+      });
+      patientActions = a.actions.map(function(v) {
         v.indicatorListText = v.indicatorList.map(function(vv) {
           return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
@@ -467,19 +470,18 @@ var iap = {
           .replace(/<li>/g, "  - ")
           .replace(/<\/li>/g, "\r\n")
           .replace(/<\/?strong>/g, "")
-          .replace(/&gte;/g,"≥")
-          .replace(/&lte;/g,"≤")
-          .replace(/&gt;/g,">")
-          .replace(/&lt;/g,"<")
-          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g,"$2 - $1");
-        console.log(content);
+          .replace(/&gte;/g, "≥")
+          .replace(/&lte;/g, "≤")
+          .replace(/&gt;/g, ">")
+          .replace(/&lt;/g, "<")
+          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g, "$2 - $1");
         reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>');
       }
     });
 
     base.setupClipboard($('.btn-copy'), true);
 
-    iap.displayPersonalisedIndividualActionPlan(patientId, $('#personalPlanIndividual'));
+    iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
   },
 
   launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {

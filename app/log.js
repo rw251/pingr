@@ -172,6 +172,56 @@ var log = {
     });
   },
 
+  deleteUserDefinedPatientAction: function(patientId, actionTextId, done){
+    $.ajax({
+      type: "DELETE",
+      url: "/api/action/userdefinedpatient/" + patientId + "/" + actionTextId,
+      success: function(d) {
+        if (done) return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
+  updateUserDefinedPatientAction: function(patientId, actionTextId, data, done) {
+    $.ajax({
+      type: "POST",
+      url: "/api/action/update/userdefinedpatient/" + patientId + "/" + actionTextId,
+      data: JSON.stringify({ action: data }),
+      success: function(d) {
+        if (done) return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
+  deleteUserDefinedTeamAction: function(actionTextId, done){
+    $.ajax({
+      type: "DELETE",
+      url: "/api/action/userdefinedteam/" + actionTextId,
+      success: function(d) {
+        if (done) return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
+  updateUserDefinedTeamAction: function(actionTextId, data, done) {
+    $.ajax({
+      type: "POST",
+      url: "/api/action/update/userdefinedteam/" + actionTextId,
+      data: JSON.stringify({ action: data }),
+      success: function(d) {
+        if (done) return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
   listActions: function(id, pathwayId) {
     var obj = log.getObj([{
       name: "actions",
@@ -238,11 +288,11 @@ var log = {
     ];
 
     log.event("recordTeamPlan", window.location.hash, dataToSend);
-
+    var url = "/api/action/addTeam/" + (indicatorId || "");
     $.ajax({
       type: "POST",
-      url: "/api/action/addTeam",
-      data: JSON.stringify({ actionText: text, indicatorId: indicatorId }),
+      url: url,
+      data: JSON.stringify({ actionText: text }),
       success: function(d) {
         return done(null, d);
       },

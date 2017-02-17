@@ -36,7 +36,9 @@ module.exports = {
   getActions: function(practiceId, patientId, done) {
     actions.getIndividual(practiceId, patientId, function(err, actions) {
       var actionObject = {};
+      var userDefinedActions=[];
       actions.forEach(function(v) {
+        if(v.userDefined) userDefinedActions.push(v);
         actionObject[v.actionTextId] = v.toObject();
       });
       if (err) return done(err);
@@ -76,14 +78,17 @@ module.exports = {
             return b.pointsPerAction - a.pointsPerAction;
           });
 
-          return done(null, rtn.map(function(v) {
+          //do the merging
+          rtn = rtn.map(function(v) {
             if(actionObject[v.actionTextId]){
               Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
                 v[vv] = actionObject[v.actionTextId][vv];
               });
             }
             return v;
-          }));
+          });
+
+          return done(null, {actions: rtn, userDefinedActions: userDefinedActions});
         }
       });
     });

@@ -32,57 +32,96 @@ module.exports = {
     });
   },
 
-  updateTeam: function(practiceId, indicatorId, updatedAction, done) {
+  updatePatientUserDefined: function(patientId, actionTextId, updatedAction, done) {
+    Action.findOne({ actionTextId: actionTextId, patientId:patientId, userDefined: true }, function(err, action) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding patient user defined actions for  " + actionTextId));
+      }
+      if (!action) {
+        return done(null, false);
+      }
 
-    /*if (indicatorId) {
-      Action.findOne({ practiceId: practiceId, indicatorId: indicatorId, actionTextId: updatedAction.actionTextId }, function(err, action) {
+      _updateAction(action, updatedAction, function(err, act) {
         if (err) {
           console.log(err);
-          return done(new Error("Error finding team action for practice: " + practiceId + " and indicator " + indicatorId + " and actionTextId " + updatedAction.actionTextId));
+          return done(err);
         }
-        if (!action) {
-          action = new Action({
-            practiceId: practiceId,
-            indicatorId: indicatorId
-          });
-        }
-        _updateAction(action, updatedAction, done);
+        return done(null, act);
       });
-    } else {*/
-      Action.find({ practiceId: practiceId, actionTextId: updatedAction.actionTextId }, function(err, actions) {
+
+    });
+  },
+
+  updateTeamUserDefined: function(actionTextId, updatedAction, done) {
+    Action.findOne({ actionTextId: actionTextId, userDefined: true }, function(err, action) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding team user defined actions for  " + actionTextId));
+      }
+      if (!action) {
+        return done(null, false);
+      }
+
+      _updateAction(action, updatedAction, function(err, act) {
         if (err) {
           console.log(err);
-          return done(new Error("Error finding team actions for practice: " + practiceId + " and actionTextId " + updatedAction.actionTextId));
+          return done(err);
         }
-        if (!actions || actions.length===0) {
-          actions = [
+        return done(null, act);
+      });
+
+    });
+  },
+
+  deleteUserDefinedTeamAction: function(actionTextId, done){
+    Action.remove({actionTextId: actionTextId, userDefined: true}, function(err){
+      if(err) return done(err);
+      return done(null);
+    });
+  },
+
+  deleteUserDefinedPatientAction: function(patientId, actionTextId, done){
+    Action.remove({actionTextId: actionTextId, patientId:patientId, userDefined: true}, function(err){
+      if(err) return done(err);
+      return done(null);
+    });
+  },
+
+  updateTeam: function(practiceId, indicatorId, updatedAction, done) {
+    Action.find({ practiceId: practiceId, actionTextId: updatedAction.actionTextId }, function(err, actions) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding team actions for practice: " + practiceId + " and actionTextId " + updatedAction.actionTextId));
+      }
+      if (!actions || actions.length === 0) {
+        actions = [
             new Action({
-              practiceId: practiceId
-            })
+            practiceId: practiceId
+          })
           ];
-        }
+      }
 
-        var doneActions = [];
-        var errorIfError = null;
+      var doneActions = [];
+      var errorIfError = null;
 
-        actions.forEach(function(v){
-          delete updatedAction.indicatorId;
-          _updateAction(v, updatedAction, function(err, act){
-            if (err) {
-              console.log(err);
-              errorIfError = err;
-              doneActions.push(act);
-            } else {
-              doneActions.push(act);
-            }
-            if(doneActions.length === actions.length){
-              if(errorIfError) return done(errorIfError);
-              else return done(null, doneActions);
-            }
-          });
+      actions.forEach(function(v) {
+        delete updatedAction.indicatorId;
+        _updateAction(v, updatedAction, function(err, act) {
+          if (err) {
+            console.log(err);
+            errorIfError = err;
+            doneActions.push(act);
+          } else {
+            doneActions.push(act);
+          }
+          if (doneActions.length === actions.length) {
+            if (errorIfError) return done(errorIfError);
+            else return done(null, doneActions);
+          }
         });
       });
-    /*}*/
+    });
   },
 
   updateIndividual: function(practiceId, patientId, updatedAction, done) {
@@ -142,15 +181,16 @@ module.exports = {
   },
 
   addTeamAction: function(practiceId, indicatorId, username, actionText, done) {
-    var action = new Action({
+    var actionObject = {
       practiceId: practiceId,
-      indicatorId: indicatorId,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
       history: [username + " added this action on " + new Date()],
       userDefined: true,
       done: false
-    });
+    };
+    if (indicatorId) actionObject.indicatorId = indicatorId;
+    var action = new Action(actionObject);
 
     // save the event
     action.save(function(err, act) {

@@ -204,11 +204,11 @@ module.exports = function(passport) {
 
 
   /* ACTIONS */
-  router.post('/api/action/addTeam', isAuthenticated, function(req,res){
+  router.post('/api/action/addTeam/:indicatorId?', isAuthenticated, function(req,res){
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
-      actions.addTeamAction(req.user.practiceId, req.body.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
+      actions.addTeamAction(req.user.practiceId, req.params.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
         if (err) res.send(err);
         else res.send(action);
       });
@@ -230,10 +230,34 @@ module.exports = function(passport) {
       else res.send(action);
     });
   });
+  router.post('/api/action/update/userdefinedteam/:actionTextId', isAuthenticated, function(req, res){
+    actions.updateTeamUserDefined(req.params.actionTextId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.delete('/api/action/userdefinedteam/:actionTextId', isAuthenticated, function(req, res){
+    actions.deleteUserDefinedTeamAction(req.params.actionTextId, function(err){
+      if (err) res.send(err);
+      else res.send({status:"ok"});
+    });
+  });
   router.post('/api/action/update/individual/:patientId', isAuthenticated, function(req, res){
     actions.updateIndividual(req.user.practiceId, req.params.patientId, req.body.action, function(err, action){
       if (err) res.send(err);
       else res.send(action);
+    });
+  });
+  router.post('/api/action/update/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res){
+    actions.updatePatientUserDefined(req.params.patientId, req.params.actionTextId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.delete('/api/action/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res){
+    actions.deleteUserDefinedPatientAction(req.params.patientId, req.params.actionTextId, function(err){
+      if (err) res.send(err);
+      else res.send({status:"ok"});
     });
   });
   router.get('/api/action/team/:indicatorId?', isAuthenticated, function(req, res){

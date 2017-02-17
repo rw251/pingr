@@ -40,7 +40,9 @@ module.exports = {
     var searchObject = { practiceId: practiceId };
     actions.getTeam(searchObject, function(err, actions) {
       var actionObject = {};
+      var userDefinedActions=[];
       actions.forEach(function(v) {
+        if(v.userDefined && (!indicatorId || indicatorId===v.indicatorId)) userDefinedActions.push(v);
         actionObject[v.actionTextId] = v.toObject();
       });
       if (err) return done(err);
@@ -83,14 +85,17 @@ module.exports = {
             return b.pointsPerAction - a.pointsPerAction;
           });
 
-          return done(null, rtn.map(function(v) {
+          //do the merging
+          rtn = rtn.map(function(v) {
             if(actionObject[v.actionTextId]){
               Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
                 v[vv] = actionObject[v.actionTextId][vv];
               });
             }
             return v;
-          }));
+          });
+
+          return done(null, {actions: rtn, userDefinedActions: userDefinedActions});
         }
       });
     });
