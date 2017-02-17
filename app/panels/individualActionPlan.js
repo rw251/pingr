@@ -471,7 +471,7 @@ var iap = {
           .replace(/&lte;/g,"≤")
           .replace(/&gt;/g,">")
           .replace(/&lt;/g,"<")
-          .replace(/<a.+href=["']([^"']+)["'].+>([^<]+)<\/a>/g,"$2 - $1");
+          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g,"$2 - $1");
         console.log(content);
         reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied<br>Use Ctrl-v to paste" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>');
       }
