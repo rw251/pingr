@@ -24,29 +24,24 @@ var base = {
   //    presently this is involved in chaching the state of indicator tab
   //    however it is ready to use to maintain overview and patient tabs if
   //    required in the future.
-  savePanelState: function()
-  {
-    if($("div[class*='state-']")[0] !== undefined)
-    {
+  savePanelState: function() {
+    if ($("div[class*='state-']")[0] !== undefined) {
       //RW replaced includes with indexOf - includes only supported in IE from v 12
-      if($("div[class*='state-']").attr('class').indexOf('overview')>-1)
-      {
+      if ($("div[class*='state-']").attr('class').indexOf('overview') > -1) {
         //save as overview
         var stateData = $("div[class*='state-']").children();
         $("#stateM-overview").html(stateData);
         return;
       }
 
-      if($("div[class*='state-']").attr('class').indexOf('indicator')>-1)
-      {
+      if ($("div[class*='state-']").attr('class').indexOf('indicator') > -1) {
         //save as indicator
         var stateData = $("div[class*='state-']").children();
         $("#stateM-indicator").html(stateData);
         return;
       }
 
-      if($("div[class*='state-']").attr('class').indexOf('patient')>-1)
-      {
+      if ($("div[class*='state-']").attr('class').indexOf('patient') > -1) {
         //save as patient
         var stateData = $("div[class*='state-']").children();
         $("#stateM-patient").html(stateData);
@@ -154,17 +149,17 @@ var base = {
       client.on('aftercopy', function(event) {
         var dataText = event.data['text/plain'];
         var ispatid = dataText.match(/[0-9]{10}/);
-        if(ispatid && ispatid.length>0) {
-          var poss = Object.keys(data.patLookup).filter(function(v){
+        if (ispatid && ispatid.length > 0) {
+          var poss = Object.keys(data.patLookup).filter(function(v) {
             return data.patLookup[v] === ispatid[0];
           });
-          if(poss & poss.length>0){
+          if (poss & poss.length > 0) {
             dataText = poss[0];
           } else {
             dataText = "XXX XXX XXXX";
           }
         }
-        log.event("copy-button", window.location.hash, [{key:"data",value:dataText}]);
+        log.event("copy-button", window.location.hash, [{ key: "data", value: dataText }]);
         console.log('Copied text to clipboard: ' + dataText);
         $(event.target).tooltip('hide');
         $(event.target).popover({
@@ -176,11 +171,16 @@ var base = {
           },
           html: true
         });
-        clearTimeout(lookup.tmp);
+        if (lookup.tmp) {
+          clearTimeout(lookup.tmp.timeout);
+          $(lookup.tmp.target).popover('hide');
+        }
         $(event.target).popover('show');
-        lookup.tmp = setTimeout(function() {
+        lookup.tmp = { target: event.target };
+        lookup.tmp.timeout = setTimeout(function() {
+          delete lookup.tmp;
           $(event.target).popover('hide');
-        }, 1600);
+        }, 5000);
         $(event.target).blur();
         //event.stopPropagation();
         //event.preventDefault();
@@ -200,7 +200,7 @@ var base = {
   launchSuggestionModal: function() {
     var tmpl = require("templates/modal-suggestion");
 
-    $('#modal').html(tmpl({text: lookup.suggestionModalText}));
+    $('#modal').html(tmpl({ text: lookup.suggestionModalText }));
 
 
     $('#modal .modal').off('submit', 'form').on('submit', 'form', function(e) {
@@ -216,23 +216,23 @@ var base = {
 
   getShortTextForIndicator: function(indicator) {
     var bits = indicator.split(".");
-    if(data.text.pathways[bits[0]] &&data.text.pathways[bits[0]][bits[1]] && data.text.pathways[bits[0]][bits[1]].standards[bits[2]]) {
+    if (data.text.pathways[bits[0]] && data.text.pathways[bits[0]][bits[1]] && data.text.pathways[bits[0]][bits[1]].standards[bits[2]]) {
       return data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText;
     } else {
       return "";
     }
   },
 
-  dedupeAndSortActions: function(actions){
+  dedupeAndSortActions: function(actions) {
     var uniqueActions = {};
 
     //de dupe and sum the pointsPerAction
-    actions.forEach(function(v){
-      var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+    actions.forEach(function(v) {
+      var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
       v.pointsPerAction = +v.pointsPerAction;
       v.indicatorList = [v.indicatorId];
       v.actionId = actionIdFromText;
-      if(!uniqueActions[actionIdFromText]) {
+      if (!uniqueActions[actionIdFromText]) {
         uniqueActions[actionIdFromText] = v;
       } else {
         uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
@@ -242,9 +242,9 @@ var base = {
     });
 
     //convert back to array and sort
-    var rtn = Object.keys(uniqueActions).map(function(v){
+    var rtn = Object.keys(uniqueActions).map(function(v) {
       return uniqueActions[v];
-    }).sort(function(a,b){
+    }).sort(function(a, b) {
       return b.pointsPerAction - a.pointsPerAction;
     });
 
@@ -252,7 +252,7 @@ var base = {
   },
 
   sortSuggestions: function(suggestions) {
-    suggestions.sort(function(a,b){
+    suggestions.sort(function(a, b) {
       return a.priority - b.priority;
     });
     /*suggestions.sort(function(a, b) {
@@ -300,14 +300,14 @@ var base = {
   },
 
   mergeIndividualStuff: function(suggestions, patientId, done) {
-    log.getIndividualActions(patientId, function(err, actions){
+    log.getIndividualActions(patientId, function(err, actions) {
 
-      if(err) return done(err);
+      if (err) return done(err);
 
-      if(!actions || actions.length ===0) return done(null, suggestions);
+      if (!actions || actions.length === 0) return done(null, suggestions);
 
-      var actionObject={};
-      actions.forEach(function(v){
+      var actionObject = {};
+      actions.forEach(function(v) {
         actionObject[v.actionTextId] = v;
       });
 
@@ -516,20 +516,20 @@ var base = {
     $('#title-row').fadeIn(0);
   },
 
-  getCssText: function(){
-    var cssText = base.elements.map(function(v){
+  getCssText: function() {
+    var cssText = base.elements.map(function(v) {
       return v.selector + " {max-height:" + Math.floor($(window).height() - $(v.selector).position().top - v.padding) + 'px;}';
     }).join(" ");
     return cssText;
   },
 
-  updateFixedHeightElements: function(elements){
-    if(!elements) elements = base.elements;
+  updateFixedHeightElements: function(elements) {
+    if (!elements) elements = base.elements;
     base.elements = elements;
     console.log("shall we update?");
-    if ($(elements.map(function(v){return v.selector+":visible";}).join(",")).length !== elements.length) {
+    if ($(elements.map(function(v) { return v.selector + ":visible"; }).join(",")).length !== elements.length) {
       console.log("no - wait a bit.");
-      setTimeout(function(){
+      setTimeout(function() {
         base.updateFixedHeightElements(elements);
       }, 10);
     } else {
