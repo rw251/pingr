@@ -1,12 +1,13 @@
 include ../partials/head.jade
-include ../partials/header.jade
+//include ../partials/header.jade
+
 //action plans
 .wrapper
-  .sidebar(data-active-color="green" data-background-color="black" data-image="assets/img/sidebar-1.jpg")
+  include ../partials/sidebar.jade
+  //.sidebar(data-active-color="green" data-background-color="black" data-image="assets/img/sidebar-1.jpg")
   .main-panel.ps-container.ps-theme-default.ps-active-y
     .content
       #welcome.starter-template.page.welcome-page
-        //    ^-- 
         //*review* add grid 
         .container-fluid
           .row

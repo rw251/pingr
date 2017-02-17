@@ -1,0 +1,79 @@
+.loading-container
+  .loading
+    .l1
+      div
+    .l2
+      div
+    .l3
+      div
+    .l4
+      div
+section#main
+  .sidebar(data-active-color="blue" data-background-color="black" data-image="img/sidebar-1.jpg")
+    .logo
+      .simple-text
+        img(src="images/icons/pingr_clip_96.png")
+      .simple-text - PINGR -
+    .sidebar-wrapper
+      ul.nav
+        li
+          ul#mainTab.nav(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
+            li.active(role='presentation', data-id='overview')
+              a(href='#overview', data-href='#overview', role='tab') OVERVIEW
+              .nav-arrow
+            li(role='presentation', data-id='indicator')
+              .nav-wedge
+              a(href='#indicators', data-href='#indicators', role='tab') INDICATOR
+              .nav-arrow
+            li(role='presentation', data-id='patient')
+              .nav-wedge
+              a(href='#patients', data-href='#patients', role='tab') PATIENT
+              .nav-arrow
+            li(role='presentation', data-id='actions')
+              .nav-wedge
+              a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
+      ul.nav
+        li
+          a.collapsed(data-toggle='collapse', href='#userAdmin')
+            //i.fa.fa-user.fa-fw
+            b.caret
+            span#user_fullname.hide-if-bit-small= fullname + " "
+            span#practice_name(style="display:block")= practice_name
+            span#practice_name(style="display:none")= practice_name
+            span#practice_id(style="display:none")= practice_id
+            span#practice_system(style="display:none")= practice_system
+            
+          //a.simple-text 
+            
+          div#userAdmin.collapse
+            ul.nav
+              - if(admin) 
+                li
+                  a(href='admin')
+                    i.fa.fa-user.fa-fw
+                    |  User management
+                li
+                  a(href='events')
+                    i.fa.fa-list.fa-fw
+                    |  Event logs
+                li.divider
+              li
+                a(href='changepassword')
+                  i.fa.fa-key.fa-fw
+                  |  Change password
+              li
+                a(href='emailpreference')
+                  i.fa.fa-envelope.fa-fw
+                  |  Manage email preferences
+              li.divider
+              li
+                a(href='signout')
+                  i.fa.fa-sign-out.fa-fw
+                  |  Logout
+      ul.nav  
+        li
+          a.btn.btn-primary(href='#contact') Contact us
+        li
+          a#suggestionsModalLauncher.btn.btn-warning(data-intro="hello world! *bTut*" data-step="2") Send a comment
+          
+      
