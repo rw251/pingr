@@ -2025,7 +2025,7 @@ th {
 }
 .table-scroll {
   overflow-y: auto;
-  max-height: 170px;
+  min-height: 170px;
 }
 .table-scroll .table {
     margin-bottom: 0;
@@ -2318,6 +2318,10 @@ body > svg {
   border-color: #fff #fff #fff transparent;
 }
 */
+#right-panel {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 .panel.affix {
     width: 31%;
 }

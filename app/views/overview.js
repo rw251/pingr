@@ -64,7 +64,7 @@ var overview = {
       //add state indicator
       farRightPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
 
-      base.updateFixedHeightElements(['.table-scroll','.fit-to-screen-height']);
+      base.updateFixedHeightElements([{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
     }, 0);
 
   }

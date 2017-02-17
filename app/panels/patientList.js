@@ -112,22 +112,7 @@ var pl = {
 
       base.hideLoading();
 
-      var updateSizeOnLoad = function() {
-        console.log("shall we update?");
-        if ($('.table-scroll').length === 0) {
-          console.log("no - wait a bit.");
-          setTimeout(updateSizeOnLoad, 10);
-        } else {
-          console.log("yes");
-          if ($('#addedCSS').length === 0) {
-            console.log("done");
-            $('head').append('<style id="addedCSS" type="text/css">.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
-          } else {
-            $('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
-          }
-        }
-      };
-      updateSizeOnLoad();
+      base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
 
     });
 

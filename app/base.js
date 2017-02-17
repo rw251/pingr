@@ -119,7 +119,7 @@ var base = {
     $('[data-toggle="tooltip"]').tooltip('hide');
     $('.tooltip').remove();
 
-    $('[data-toggle="tooltip"]').tooltip({
+    $('[data-toggle="tooltip"]:visible').tooltip({
       container: 'body',
       delay: {
         "show": 500,
@@ -127,7 +127,7 @@ var base = {
       },
       html: true
     });
-    $('[data-toggle="lone-tooltip"]').tooltip({
+    $('[data-toggle="lone-tooltip"]:visible').tooltip({
       container: 'body',
       delay: {
         "show": 300,
@@ -173,13 +173,17 @@ var base = {
           delay: {
             show: 500,
             hide: 500
-          }
+          },
+          html: true
         });
         clearTimeout(lookup.tmp);
         $(event.target).popover('show');
         lookup.tmp = setTimeout(function() {
           $(event.target).popover('hide');
-        }, 600);
+        }, 1600);
+        $(event.target).blur();
+        //event.stopPropagation();
+        //event.preventDefault();
       });
     });
   },
@@ -513,20 +517,20 @@ var base = {
   },
 
   getCssText: function(){
-    var cssText = base.elementSelectors.map(function(v){
-      return v + " {max-height:" + Math.floor($(window).height() - $(v).position().top - 200) + 'px;}';
+    var cssText = base.elements.map(function(v){
+      return v.selector + " {max-height:" + Math.floor($(window).height() - $(v.selector).position().top - v.padding) + 'px;}';
     }).join(" ");
     return cssText;
   },
 
-  updateFixedHeightElements: function(elementSelectors){
-    if(!elementSelectors) elementSelectors = base.elementSelectors;
-    base.elementSelectors = elementSelectors;
+  updateFixedHeightElements: function(elements){
+    if(!elements) elements = base.elements;
+    base.elements = elements;
     console.log("shall we update?");
-    if ($(elementSelectors.map(function(v){return v+":visible";}).join(",")).length !== elementSelectors.length) {
+    if ($(elements.map(function(v){return v.selector+":visible";}).join(",")).length !== elements.length) {
       console.log("no - wait a bit.");
       setTimeout(function(){
-        base.updateFixedHeightElements(elementSelectors);
+        base.updateFixedHeightElements(elements);
       }, 10);
     } else {
       console.log("yes");
