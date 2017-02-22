@@ -2,6 +2,66 @@ var Patient = require('../models/patient'),
   indicators = require('./indicators'),
   actions = require('./actions');
 
+var mergeActions = function(actions, patients, patientId) {
+  var actionObject = {};
+  var userDefinedActions = {};
+  actions.forEach(function(v) {
+    if (v.patientId) {
+      if (v.userDefined) {
+        if (!userDefinedActions[v.patientId]) userDefinedActions[v.patientId] = [];
+        userDefinedActions[v.patientId].push(v);
+      }
+      if (!actionObject[v.patientId]) actionObject[v.patientId] = {};
+      actionObject[v.patientId][v.actionTextId] = v.toObject();
+    }
+  });
+
+  var uniqueActions = {};
+  var finalRtn = {};
+
+  patients.forEach(function(patient) {
+    uniqueActions[patient.patientId] = {};
+    //de dupe and sum the pointsPerAction
+    patient.actions.forEach(function(v) {
+      v = v.toObject ? v.toObject() : v;
+      var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
+      v.pointsPerAction = +v.pointsPerAction;
+      v.indicatorList = [v.indicatorId];
+      v.actionTextId = actionIdFromText;
+      if (!uniqueActions[patient.patientId][actionIdFromText]) {
+        uniqueActions[patient.patientId][actionIdFromText] = v;
+      } else {
+        uniqueActions[patient.patientId][actionIdFromText].indicatorList.push(v.indicatorId);
+        uniqueActions[patient.patientId][actionIdFromText].pointsPerAction += v.pointsPerAction;
+        // how about numberPatients and priority
+      }
+    });
+
+    //convert back to array and sort
+    var rtn = Object.keys(uniqueActions[patient.patientId]).map(function(v) {
+      return uniqueActions[patient.patientId][v];
+    }).sort(function(a, b) {
+      return b.pointsPerAction - a.pointsPerAction;
+    });
+
+    //do the merging
+    rtn = rtn.map(function(v) {
+      if (actionObject[patient.patientId] && actionObject[patient.patientId][v.actionTextId]) {
+        Object.keys(actionObject[patient.patientId][v.actionTextId]).forEach(function(vv) {
+          v[vv] = actionObject[patient.patientId][v.actionTextId][vv];
+        });
+      }
+      return v;
+    });
+
+    userDefinedActions[patient.patientId] = userDefinedActions[patient.patientId] || [];
+    if (patientId || (userDefinedActions[patient.patientId].length + rtn.length > 0)) {
+      finalRtn[patient.patientId] = { actions: rtn, userDefinedActions: userDefinedActions[patient.patientId]};
+    }
+  });
+  return finalRtn;
+};
+
 module.exports = {
 
   //Return a list of patients - not sure this is needed
@@ -32,63 +92,49 @@ module.exports = {
     });
   },
 
+  getSpecificActions: function(actions, done) {
+    if(!actions || actions.length === 0) return done(null, {});
+    var aggQuery = [
+      {$match: {patientId: {$in: actions.map(function(v){return v.patientId;}) }}}, //filter to just patients of interest
+      {$project: {_id: 0, patientId: 1, actions: 1}}, //get rid of all fields except patient id and action list
+      {$unwind: {path: "$actions"}}, //so we have one object per patient/action combination
+      {$match: {$or: actions.map(function(v){return {patientId: v.patientId, "actions.actionTextId": v.actionTextId};})}}, //only match where patient id and action id are both matches
+      {$group: {_id: "$patientId", actions: {$push: "$actions"}}}, //regroup the actions into a list
+      {$project: {_id:0, patientId: "$_id", actions: 1}} //rename to original format
+    ];
+    Patient.aggregate(aggQuery, function(err, patients) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding patient"));
+      }
+      if (!patients) {
+        console.log('Invalid request for patientId: ' + patientId);
+        return done(null, false);
+      } else {
+        var rtn = mergeActions(actions, patients)          ;
+        return done(null, rtn);
+      }
+    });
+  },
+
   //Get a single patient's actions - for use on the patient screen
   getActions: function(practiceId, patientId, done) {
-    actions.getIndividual(practiceId, patientId, function(err, actions) {
-      var actionObject = {};
-      var userDefinedActions=[];
-      actions.forEach(function(v) {
-        if(v.userDefined) userDefinedActions.push(v);
-        actionObject[v.actionTextId] = v.toObject();
-      });
+    var searchObject = {};
+    if (patientId) searchObject.patientId = patientId;
+    actions.getIndividual(searchObject, function(err, actions) {
       if (err) return done(err);
-      Patient.findOne({ patientId: patientId }, { _id: 0, actions: 1 }, function(err, patient) {
+      searchObject["characteristics.practiceId"] = practiceId;
+      Patient.find(searchObject, { _id: 0, actions: 1, patientId: 1 }, function(err, patients) {
         if (err) {
           console.log(err);
           return done(new Error("Error finding patient"));
         }
-        if (!patient) {
+        if (!patients) {
           console.log('Invalid request for patientId: ' + patientId);
           return done(null, false);
         } else {
-
-
-          var uniqueActions = {};
-
-          //de dupe and sum the pointsPerAction
-          patient.actions.forEach(function(v){
-            v = v.toObject();
-            var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-            v.pointsPerAction = +v.pointsPerAction;
-            v.indicatorList = [v.indicatorId];
-            v.actionTextId = actionIdFromText;
-            if(!uniqueActions[actionIdFromText]) {
-              uniqueActions[actionIdFromText] = v;
-            } else {
-              uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
-              uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
-              // how about numberPatients and priority
-            }
-          });
-
-          //convert back to array and sort
-          var rtn = Object.keys(uniqueActions).map(function(v){
-            return uniqueActions[v];
-          }).sort(function(a,b){
-            return b.pointsPerAction - a.pointsPerAction;
-          });
-
-          //do the merging
-          rtn = rtn.map(function(v) {
-            if(actionObject[v.actionTextId]){
-              Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
-                v[vv] = actionObject[v.actionTextId][vv];
-              });
-            }
-            return v;
-          });
-
-          return done(null, {actions: rtn, userDefinedActions: userDefinedActions});
+          var rtn = mergeActions(actions, patients, patientId)          ;
+          return done(null, rtn);
         }
       });
     });

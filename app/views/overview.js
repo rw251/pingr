@@ -29,7 +29,7 @@ var overview = {
       if (layout.view !== ID) {
         //Not already in this view so we need to rejig a few things
         base.clearBox();
-        //base.switchTo101Layout();
+        base.switchTo2Column1Narrow1Wide();
         layout.showMainView();
 
         $('#mainTitle').show();

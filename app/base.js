@@ -352,6 +352,22 @@ var base = {
     return suggestions;
   },
 
+  switchTo2Column1Narrow1Wide: function() {
+    if (base.layout === "12") return;
+    base.layout = "12";
+    farLeftPanel.show();
+    farRightPanel.show();
+    centrePanel.hide();
+  },
+
+  switchToSingleColumn: function () {
+    if (base.layout === "1") return;
+    base.layout = "1";
+    farLeftPanel.hide();
+    farRightPanel.hide();
+    centrePanel.show();
+  },
+
   switchTo110Layout: function() {
     if (base.layout === "110") return;
     base.layout = "110";

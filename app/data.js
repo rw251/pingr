@@ -68,6 +68,18 @@ var dt = {
     });
   },
 
+  getAllAgreedWithActions: function(done) {
+    $.ajax({
+      type: "GET",
+      url: "/api/action/all/",
+      success: function(d) {
+        return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
   getPatietListForStandard: function(pathwayId, pathwayStage, standard) {
     var patients = dt.removeDuplicates(dt[pathwayId][pathwayStage].standards[standard].opportunities.reduce(function(a, b) {
       return a.patients ? a.patients.concat(b.patients) : a.concat(b.patients);

@@ -217,6 +217,7 @@ var main = {
       midPanel = $('#mid-panel');
       farLeftPanel = $('#left-panel');
       farRightPanel = $('#right-panel');
+      centrePanel = $('#centre-panel');
     }
     /*,
       "_local": local*/

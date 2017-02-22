@@ -7,7 +7,9 @@ var PatientSchema = new Schema({
   },
   characteristics: {
     age: Number,
-    sex: String
+    sex: String,
+    nhs: Number,
+    practiceId: String
   },
   conditions: [
     {

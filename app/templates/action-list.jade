@@ -1,0 +1,18 @@
+include mixins/thumbs
+
+if noSuggestions
+  p There are no improvement action suggestions from PINGR. Well Done!!
+else 
+  thead
+    tr
+      th Team action or patient id
+      th Created by
+      th Agreed by
+      th Action
+  tbody
+    - each action in actions
+      tr
+        td= action.patientId ? action.patientId : "Team action"
+        td= action.userDefined ? action.who : "PINGR"
+        td= action.who
+        td= action.actionText

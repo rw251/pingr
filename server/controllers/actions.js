@@ -32,6 +32,21 @@ module.exports = {
     });
   },
 
+  listAgreedWith: function(practiceId, done){
+    Action.find({ practiceId: practiceId, $or: [{agree: true},{userDefined:true}] }, function(err, actions) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding action list for practice: " + practiceId));
+      }
+      if (!actions) {
+        console.log('Error finding action list for practice:  ' + practiceId);
+        return done(null, false);
+      } else {
+        done(null, actions);
+      }
+    });
+  },
+
   updatePatientUserDefined: function(patientId, actionTextId, updatedAction, done) {
     Action.findOne({ actionTextId: actionTextId, patientId:patientId, userDefined: true }, function(err, action) {
       if (err) {
@@ -165,8 +180,8 @@ module.exports = {
     });
   },
 
-  getIndividual: function(practiceId, patientId, done) {
-    Action.find({ practiceId: practiceId, patientId: patientId }, function(err, actions) {
+  getIndividual: function(searchObject, done) {
+    Action.find(searchObject, function(err, actions) {
       if (err) {
         console.log(err);
         return done(new Error("Error finding individual action list for practice: " + practiceId + " and patient " + patientId));
