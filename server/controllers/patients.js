@@ -108,7 +108,7 @@ module.exports = {
     var aggQuery = [
       {$match: {patientId: {$in: actions.map(function(v){return v.patientId;}) }}}, //filter to just patients of interest
       {$project: {_id: 0, patientId: 1, actions: 1}}, //get rid of all fields except patient id and action list
-      {$unwind: {path: "$actions"}}, //so we have one object per patient/action combination
+      {$unwind: "$actions"}, //so we have one object per patient/action combination
       {$match: {$or: actions.map(function(v){return {patientId: v.patientId, "actions.actionTextId": v.actionTextId};})}}, //only match where patient id and action id are both matches
       {$group: {_id: "$patientId", actions: {$push: "$actions"}}}, //regroup the actions into a list
       {$project: {_id:0, patientId: "$_id", actions: 1}} //rename to original format
