@@ -32,8 +32,6 @@ var mergeActions = function(actions, indicators, indicatorId) {
   //convert back to array and sort
   var rtn = Object.keys(uniqueActions).map(function(v){
     return uniqueActions[v];
-  }).sort(function(a,b){
-    return b.pointsPerAction - a.pointsPerAction;
   });
 
   //do the merging
@@ -44,6 +42,17 @@ var mergeActions = function(actions, indicators, indicatorId) {
       });
     }
     return v;
+  });
+
+  //do the sorting
+  rtn.sort(function(a,b){
+    if(a.agree===false){
+      if(b.agree===false) return 0;
+      else return 1;
+    } else if (b.agree === false){
+      return -1;
+    }
+    return b.pointsPerAction - a.pointsPerAction;
   });
 
   return {actions: rtn, userDefinedActions: userDefinedActions};

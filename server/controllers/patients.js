@@ -40,8 +40,6 @@ var mergeActions = function(actions, patients, patientId) {
     //convert back to array and sort
     var rtn = Object.keys(uniqueActions[patient.patientId]).map(function(v) {
       return uniqueActions[patient.patientId][v];
-    }).sort(function(a, b) {
-      return b.pointsPerAction - a.pointsPerAction;
     });
 
     //do the merging
@@ -53,6 +51,19 @@ var mergeActions = function(actions, patients, patientId) {
       }
       return v;
     });
+
+    //do the sorting
+    rtn.sort(function(a, b) {
+      if(a.agree===false){
+        if(b.agree===false) return 0;
+        else return 1;
+      } else if (b.agree === false){
+        return -1;
+      }
+      return b.pointsPerAction - a.pointsPerAction;
+    });
+
+
 
     userDefinedActions[patient.patientId] = userDefinedActions[patient.patientId] || [];
     if (patientId || (userDefinedActions[patient.patientId].length + rtn.length > 0)) {

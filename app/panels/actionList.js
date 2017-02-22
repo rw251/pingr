@@ -53,7 +53,7 @@ var al = {
       if (actions.patient) {
         Object.keys(actions.patient).forEach(function(v) {
           actions.patient[v].actions.forEach(function(vv) {
-            var actionItem = { patientId: v, actionText: vv.actionText, supportingText: vv.supportingText };
+            var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, supportingText: vv.supportingText };
             if (vv.history && vv.history.length > 0) {
               var who = vv.history[0].split(" agreed")[0];
               actionItem.who = who;
@@ -61,7 +61,7 @@ var al = {
             actionArray.push(actionItem);
           });
           actions.patient[v].userDefinedActions.forEach(function(vv) {
-            var actionItem = { patientId: v, actionText: vv.actionText, userDefined: true };
+            var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, userDefined: true };
             if (vv.history && vv.history.length > 0) {
               var who = vv.history[0].split(" added")[0];
               actionItem.who = who;
@@ -102,7 +102,7 @@ var al = {
     if (actionArray.length === 0) dataObject.noSuggestions = true;
     $('#suggested-actions-table').html(tmpl(dataObject));
 
-    base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 300 }]);
+    base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250 }]);
   }
 
 };
