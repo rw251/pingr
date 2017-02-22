@@ -4,6 +4,6 @@ cd /d %~dp0
 
 rem find patients with last login > 2wks && last_email > 2wks && !optout
 
-node emailReminder.js
+node emailReminders.js
 
 :end
