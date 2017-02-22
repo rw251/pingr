@@ -37,37 +37,45 @@ module.exports = {
 
   //Get team actions for a single indicator or all indicators
   getActions: function(practiceId, indicatorId, done) {
-    actions.getTeam(practiceId, indicatorId, function(err, actions) {
+    var searchObject = { practiceId: practiceId };
+    actions.getTeam(searchObject, function(err, actions) {
       var actionObject = {};
+      var userDefinedActions=[];
       actions.forEach(function(v) {
+        if(v.userDefined && (!indicatorId || indicatorId===v.indicatorId)) userDefinedActions.push(v);
         actionObject[v.actionTextId] = v.toObject();
       });
       if (err) return done(err);
-      Indicator.findOne({ practiceId: practiceId, id: indicatorId }, { _id: 0, actions: 1 }, function(err, indicator) {
+      if (indicatorId) {
+        searchObject.id = indicatorId;
+      }
+      Indicator.find(searchObject, { _id: 0, actions: 1 }, function(err, indicators) {
         if (err) {
           console.log(err);
           return done(new Error("Error finding indicator"));
         }
-        if (!indicator) {
+        if (!indicators) {
           console.log('Invalid request for indicatorId: ' + indicatorId);
           return done(null, false);
         } else {
           var uniqueActions = {};
 
-          //de dupe and sum the pointsPerAction
-          indicator.actions.forEach(function(v){
-            v = v.toObject();
-            var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-            v.pointsPerAction = +v.pointsPerAction;
-            v.indicatorList = [v.indicatorId];
-            v.actionTextId = actionIdFromText;
-            if(!uniqueActions[actionIdFromText]) {
-              uniqueActions[actionIdFromText] = v;
-            } else {
-              uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
-              uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
-              // how about numberPatients and priority
-            }
+          indicators.forEach(function(indicator){
+            //de dupe and sum the pointsPerAction
+            indicator.actions.forEach(function(v){
+              v = v.toObject();
+              var actionIdFromText = v.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+              v.pointsPerAction = +v.pointsPerAction;
+              v.indicatorList = [v.indicatorId];
+              v.actionTextId = actionIdFromText;
+              if(!uniqueActions[actionIdFromText]) {
+                uniqueActions[actionIdFromText] = v;
+              } else {
+                uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
+                uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
+                // how about numberPatients and priority
+              }
+            });
           });
 
           //convert back to array and sort
@@ -77,14 +85,17 @@ module.exports = {
             return b.pointsPerAction - a.pointsPerAction;
           });
 
-          return done(null, rtn.map(function(v) {
+          //do the merging
+          rtn = rtn.map(function(v) {
             if(actionObject[v.actionTextId]){
               Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
                 v[vv] = actionObject[v.actionTextId][vv];
               });
             }
             return v;
-          }));
+          });
+
+          return done(null, {actions: rtn, userDefinedActions: userDefinedActions});
         }
       });
     });

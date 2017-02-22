@@ -1,8 +1,7 @@
 var Highcharts = require('highcharts/highstock'),
   data = require('./data'),
   lookup = require('./lookup'),
-  log = require('./log'),
-  Mustache = require('mustache');
+  log = require('./log');
 
 console.log("chart.js: data.lastloader= " + data.lastloader);
 data.lastloader = "chart.js";
@@ -162,11 +161,11 @@ var cht = {
       else return a.date < b.date ? 1 : -1;
     });
     //draw Table
-    $('#table-demo-trend').html(Mustache.render($('#value-trend-panel-table').html(), {
+  /*  $('#table-demo-trend').html(Mustache.render($('#value-trend-panel-table').html(), {
       "items": tableData
     }, {
       "item-row": $('#value-trend-panel-table-row').html()
-    }));
+    }));*/
 
     //draw charts in separate thread and with delay to stop sluggish appearance
     setTimeout(function() {
@@ -183,7 +182,6 @@ var cht = {
 
     farRightPanel.fadeOut(200, function() {
       var template = $('#patient-panel-placeholder').html();
-      farRightPanel.html(Mustache.render(template)).show();
     });
   },
 

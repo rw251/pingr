@@ -204,11 +204,11 @@ module.exports = function(passport) {
 
 
   /* ACTIONS */
-  router.post('/api/action/addTeam', isAuthenticated, function(req,res){
+  router.post('/api/action/addTeam/:indicatorId?', isAuthenticated, function(req,res){
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
-      actions.addTeamAction(req.user.practiceId, req.body.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
+      actions.addTeamAction(req.user.practiceId, req.params.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
         if (err) res.send(err);
         else res.send(action);
       });
@@ -224,10 +224,22 @@ module.exports = function(passport) {
       });
     }
   });
-  router.post('/api/action/update/team/:indicatorId', isAuthenticated, function(req, res){
+  router.post('/api/action/update/team/:indicatorId?', isAuthenticated, function(req, res){
     actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action){
       if (err) res.send(err);
       else res.send(action);
+    });
+  });
+  router.post('/api/action/update/userdefinedteam/:actionTextId', isAuthenticated, function(req, res){
+    actions.updateTeamUserDefined(req.params.actionTextId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.delete('/api/action/userdefinedteam/:actionTextId', isAuthenticated, function(req, res){
+    actions.deleteUserDefinedTeamAction(req.params.actionTextId, function(err){
+      if (err) res.send(err);
+      else res.send({status:"ok"});
     });
   });
   router.post('/api/action/update/individual/:patientId', isAuthenticated, function(req, res){
@@ -236,7 +248,19 @@ module.exports = function(passport) {
       else res.send(action);
     });
   });
-  router.get('/api/action/team/:indicatorId', isAuthenticated, function(req, res){
+  router.post('/api/action/update/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res){
+    actions.updatePatientUserDefined(req.params.patientId, req.params.actionTextId, req.body.action, function(err, action){
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.delete('/api/action/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res){
+    actions.deleteUserDefinedPatientAction(req.params.patientId, req.params.actionTextId, function(err){
+      if (err) res.send(err);
+      else res.send({status:"ok"});
+    });
+  });
+  router.get('/api/action/team/:indicatorId?', isAuthenticated, function(req, res){
     indicators.getActions(req.user.practiceId, req.params.indicatorId, function(err, actions){
       if (err) res.send(err);
       else res.send(actions);
@@ -337,6 +361,13 @@ module.exports = function(passport) {
     text.get(function(err, textObj) {
       res.send(textObj);
     });
+  });
+
+  router.get('/img/:email/:token', function(req, res) {
+    events.emailReminderOpenedTokenCheck(req.params.email, req.params.token);
+    var buf = new Buffer(35);
+    buf.write("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", "base64");
+    res.send(buf, { 'Content-Type': 'image/gif' }, 200);
   });
 
   router.get('/t/:token/*', function(req, res) {

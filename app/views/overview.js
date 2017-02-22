@@ -15,7 +15,7 @@ var overview = {
 
   create: function(loadContentFn) {
 
-    lookup.suggestionModalText="Screen: Overview\n===========\n";
+    lookup.suggestionModalText = "Screen: Overview\n===========\n";
 
     base.selectTab("overview");
     base.showLoading();
@@ -53,17 +53,18 @@ var overview = {
       base.wireUpTooltips();
 
       //farRightPanel.find('div.table-scroll').getNiceScroll().remove();
-      farRightPanel.find('div.table-scroll').niceScroll({
+      /*farRightPanel.find('div.table-scroll').niceScroll({
         cursoropacitymin: 0.3,
         cursorwidth: "7px",
         horizrailenabled: false
-      });
+      });*/
 
       base.hideLoading();
 
       //add state indicator
       farRightPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
 
+      base.updateFixedHeightElements([{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
     }, 0);
 
   }

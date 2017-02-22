@@ -23,7 +23,14 @@ var qs = {
         });
         if(iid) v.indicatorId = iid;
       }
+      if(v.indicatorId) {
+        v.indicatorDescription = data.text.pathways[v.indicatorId.split(".")[0]][v.indicatorId.split(".")[1]].standards[v.indicatorId.split(".")[2]].description;
+      }
       return v;
+    }).sort(function(a,b){
+      if(a.targetMet === b.targetMet) return 0;
+      else if(a.targetMet) return 1;
+      return -1;
     });
     //
     var html = tmpl({
@@ -45,6 +52,18 @@ var qs = {
       base.savePanelState();
       panel.html(html);
     }
+
+    panel.off('click','.reason-link').on('click','.reason-link',function(e){
+      var action = $(this).html();
+      panel.find('.qs-show-more-row').hide();
+      panel.find('.reason-link').html('Show more <i class="fa fa-caret-down"></i>');
+      if(action.indexOf('Show more')>-1){
+        panel.find('.qs-show-more-row[data-id="' + $(this).data('id') + '"]').show("fast");
+        $(this).html('Show less <i class="fa fa-caret-up"></i>');
+      }
+
+      e.preventDefault();
+    });
   },
 
   update: function(patientId, pathwayId, pathwayStage, standard) {

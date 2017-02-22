@@ -20,7 +20,8 @@ else
         tr.suggestion(data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
           td
             span(data-subsection=suggestion.subsection)
-              strong.black.f20!= suggestion.actionText
+              strong.black.f20
+                != suggestion.actionText
               if suggestion.supportingText
                 br
                 a.show-more(data-id=suggestion.actionTextId)

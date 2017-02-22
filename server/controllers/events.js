@@ -87,8 +87,8 @@ var e = {
     }
   },
 
-  emailReminder: function(email, date, done) {
-    var newEvent = new Event({date:date, user: email, type: "emailReminder"});
+  emailReminder: function(email, token, date, done) {
+    var newEvent = new Event({date:date, user: email, type: "emailReminderSent", data:[{key:"token", value: token}]});
 
     // save the event
     newEvent.save(function(err) {
@@ -100,10 +100,25 @@ var e = {
     });
   },
 
+  emailReminderOpenedTokenCheck: function(email, token) {
+    User.findOne({email: email},function(err,user){
+      if (user) {
+        var newEvent = new Event({user: user.email, type: "emailReminderOpened", data:[{key:"token", value: token}]});
+
+        // save the event
+        newEvent.save(function(err) {
+          if (err) {
+            console.log("Error writing login event: " + err);
+          }
+        });
+      }
+    });
+  },
+
   emailReminderTokenCheck: function(token, url) {
     User.findOne({email_url_tracking_code: token},function(err,user){
       if (user) {
-        var newEvent = new Event({user: user.email, type: "emailReminderLinkClicked", url:url});
+        var newEvent = new Event({user: user.email, type: "emailReminderLinkClicked", url:url, data:[{key:"token", value: token}]});
 
         // save the event
         newEvent.save(function(err) {

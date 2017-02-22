@@ -169,10 +169,6 @@ var ind = {
         $('#mainPage-tabs li.active a').click();
       }
 
-      if ($('#addedCSS').length === 0) {
-        $('head').append('<style id="addedCSS" type="text/css">.table-scroll {max-height:170px;}');
-      }
-
       //base.addFullPage(farRightPanel);
       /*console.log("WINDOW HEIGHT: " + $(window).height());
       console.log("TABLE TOP: " + $('.table-scroll').position().top);
@@ -180,11 +176,6 @@ var ind = {
       //var win = $(this);
       //$('#addedCSS').text('.table-scroll {max-height:' + Math.floor(win.height() - $('.table-scroll').position().top - 200) + 'px;}');
       //$('#addedCSS').text('.table-scroll {max-height:' + Math.floor($(window).height() - $('.table-scroll').position().top - 200) + 'px;}');
-
-      $(window).off('resize').on('resize', function() {
-        var win = $(this); //this = window
-        $('#addedCSS').text('.table-scroll {max-height:' + Math.floor(win.height() - $('.table-scroll').position().top - 200) + 'px;}');
-      });
 
       //$('#indicator-pane').show();
 
@@ -201,6 +192,8 @@ var ind = {
 
       //add state indicator
       farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
+
+      base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
 
     }, 0);
   }

@@ -406,8 +406,7 @@ var ll = {
           },
           series: [{
             data: dataset.data.map(function(v){
-              v.splice(1,1);
-              return v;
+              return [v[0]].concat(v.slice(2));
             }),
             name: dataset.name,
             type: dataset.type,
@@ -552,13 +551,13 @@ var ll = {
 
         var latestIntervalEndDate;
 
-        $.each(task.intervals, function(j, interval) {
+        $.each(task.intervals.filter(function(v){return v.label!=="0.0mg";}), function(j, interval) {
           if(!latestIntervalEndDate) latestIntervalEndDate = interval.to;
           else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
           item.data.push([i + 0.49, interval.from, interval.to]);
         });
 
-        if(latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
+        //if(latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
 
         series.push(item);
       });

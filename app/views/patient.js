@@ -5,7 +5,6 @@ var lifeline = require('../panels/lifeline'),
   lookup = require('../lookup'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
-  patientCharacteristics = require('../panels/patientCharacteristics'),
   patientSearch = require('../panels/patientSearch');
 
 var ID = "PATIENT_VIEW";
@@ -27,6 +26,11 @@ var pv = {
       //the view is the same just need to update the actions
       individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
       qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+
+      var tabUrl = patientId;
+      if(pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+      base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
+
       return;
     }
 
@@ -56,24 +60,23 @@ var pv = {
 
         data.getPatientData(patientId, function(patientData) {
 
-          if (layout.pathwayId !== pathwayId || layout.pathwayStage !== pathwayStage ||
-            layout.standard !== standard || layout.patientId !== patientId) {
-            //different pathway or stage or patientId so title needs updating
-            $('#mainTitle').show();
+          //title needs updating
+          $('#mainTitle').show();
 
-            var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
-            var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
-              "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
-            var titleTmpl = require("templates/patient-title");
-            base.updateTitle(titleTmpl({
-              patid: patid,
-              nhs: patid.toString().replace(/ /g, ""),
-              age: patientData.characteristics.age,
-              sex: sex
-            }));
-          }
+          var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
+          var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
+            "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
+          var titleTmpl = require("templates/patient-title");
+          base.updateTitle(titleTmpl({
+            patid: patid,
+            nhs: patid.toString().replace(/ /g, ""),
+            age: patientData.characteristics.age,
+            sex: sex
+          }));
 
-          base.updateTab("patients", data.patLookup[patientId] || patientId, patientId);
+          var tabUrl = patientId;
+          if(pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+          base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
 
           layout.patientId = patientId;
           data.patientId = patientId;
@@ -94,6 +97,10 @@ var pv = {
           //add state indicator
           farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
+          $('#right-panel').css("overflow-y","auto");
+          $('#right-panel').css("overflow-x","hidden");
+          base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.fit-to-screen-height',padding:200}]);
+
         });
       } else {
         base.updateTitle("No patient currently selected");
@@ -107,6 +114,8 @@ var pv = {
 
         //add state indicator
         farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+
+        $('#right-panel').css("overflow","visible");
       }
 
     }, 0);

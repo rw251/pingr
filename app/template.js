@@ -9,8 +9,7 @@ var data = require('./data'),
   overview = require('./views/overview'),
   indicatorView = require('./views/indicator'),
   patientView = require('./views/patient'),
-  actionPlan = require('./views/actions'),
-  Mustache = require('mustache');
+  actionPlan = require('./views/actions');
 
 var template = {
 
@@ -31,7 +30,7 @@ var template = {
       $('html').removeClass('scroll-bar');
     } else {
       base.hideFooter();
-      $('html').addClass('scroll-bar');
+      //$('html').addClass('scroll-bar');
       var params = {};
       var urlBits = hash.split('/');
 
@@ -174,9 +173,9 @@ var template = {
     $('.list-item:has(button[data-clipboard-text=' + nhs + '])').addClass('highlighted');
 
     //scroll to patients
-    $('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
+    /*$('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
       return $(this).text().trim() === nhs;
-    }).position().top - 140);
+    }).position().top - 140);*/
   },
 
   shouldWeFade: function(oldHash, newHash) {

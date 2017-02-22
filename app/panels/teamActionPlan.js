@@ -3,6 +3,8 @@ var base = require('../base.js'),
   log = require('../log.js'),
   actionPlan = require('./actionPlan.js');
 
+var teamActions = [];
+
 var tap = {
 
   create: function(title) {
@@ -13,13 +15,13 @@ var tap = {
     panel.html(tap.create(title));
     tap.wireUp(pathwayId, pathwayStage, standard);
 
-    panel.find('div.fit-to-screen-height').niceScroll({
+    /*panel.find('div.fit-to-screen-height').niceScroll({
       cursoropacitymin: 0.4,
       cursorwidth: "15px",
       horizrailenabled: false,
       hidecursordelay: 50,
       cursorborderradius : "12px"
-    });
+    });*/
   },
 
   updateAction: function(action) {
@@ -57,7 +59,7 @@ var tap = {
 
     //find [] and replace with copy button
 
-    $('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
+    /*$('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
       var ACTIONID = $(this).closest('tr').data('id');
       log.editAction(data.GARBAGE, ACTIONID, null, this.checked);
 
@@ -85,9 +87,9 @@ var tap = {
       }
 
       tap.updateTeamSapRows();
-    });
+    });*/
 
-    $('#personalPlanTeam').on('click', 'input[type=checkbox]', function() {
+    /*$('#personalPlanTeam').on('click', 'input[type=checkbox]', function() {
       var PLANID = $(this).closest('tr').data("id");
       log.editPlan(PLANID, null, this.checked);
 
@@ -122,52 +124,60 @@ var tap = {
       }));
       tap.updateTeamSapRows();
       e.stopPropagation();
-    });
+    });*/
 
     teamTab.on('click', '.edit-plan', function() {
-      var PLANID = $(this).closest('tr').data("id");
+      var action = userDefinedTeamActionsObject[$(this).closest('tr').data("id")];
 
-      $('#editActionPlanItem').val($($(this).closest('tr').children('td')[0]).find('span').text());
+      $('#editActionPlanItem').val(action.actionText);
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        tap.displayPersonalisedTeamActionPlan(data.GARBAGE, $('#personalPlanTeam'));
+        tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       }).off('shown.bs.modal').on('shown.bs.modal', function() {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
-
-        log.editPlan(PLANID, $('#editActionPlanItem').val());
-
+        var oldActionId = action.actionTextId;
+        action.actionText = $('#editActionPlanItem').val();
+        action.actionTextId = action.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+        if(action.actionTextId!==oldActionId){
+          log.updateUserDefinedTeamAction(oldActionId, action);
+          delete userDefinedTeamActionsObject[oldActionId];
+          if(!userDefinedTeamActionsObject[action.actionTextId]) userDefinedTeamActionsObject[action.actionTextId]=action;
+          tap.updateAction(action);
+        }
         $('#editPlan').modal('hide');
       }).off('keyup', '#editActionPlanItem').on('keyup', '#editActionPlanItem', function(e) {
         if (e.which === 13) $('#editPlan .save-plan').click();
       }).modal();
     }).on('click', '.delete-plan', function() {
-      var PLANID = $(this).closest('tr').data("id");
+      var action = userDefinedTeamActionsObject[$(this).closest('tr').data("id")];
 
-      $('#modal-delete-item').html($($(this).closest('tr').children('td')[0]).find('span').text());
+      $('#modal-delete-item').html(action.actionText);
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        tap.displayPersonalisedTeamActionPlan(data.GARBAGE, $('#personalPlanTeam'));
+        tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        log.deletePlan(PLANID);
+        log.deleteUserDefinedTeamAction(action.actionTextId);
+        delete userDefinedTeamActionsObject[action.actionTextId];
 
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      log.recordTeamPlan($(this).parent().parent().find('textarea').val(), pathwayId, function(err, a){
-        console.log(a);
+      var actionText = $(this).parent().parent().find('textarea').val();
+      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+      log.recordTeamPlan(actionText, indicatorId, function(err, a){
+        if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
+        tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       });
-
-      tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
-      tap.updateTeamSapRows();
+      //tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
-      var ACTIONID = $(this).closest('tr').data('id');
+      /*var ACTIONID = $(this).closest('tr').data('id');
       log.editAction(data.GARBAGE, ACTIONID, null, false);
       $(this).replaceWith(base.createPanel($('#checkbox-template'), {
         "done": false
       }));
-      tap.updateTeamSapRows();
+      tap.updateTeamSapRows();*/
     }).on('click', '.btn-yes', function(e) {
       var AGREE_STATUS = $(this).closest('tr').data('agree');
       var action = teamActionsObject[$(this).closest('tr').data('id')];
@@ -185,61 +195,46 @@ var tap = {
       e.stopPropagation();
       e.preventDefault();
     }).on('click', '.btn-no', function(e) {
-      var checkbox = $(this).find("input[type=checkbox]");
-      var other = $(this).parent().find($(this).hasClass("btn-yes") ? ".btn-no" : ".btn-yes");
-      var ACTIONID = $(this).closest('tr').data('id');
-      if ($(this).hasClass("active") && other.hasClass("inactive") && !$(this).closest('tr').hasClass('success')) {
-        //unselecting
-        if (checkbox.val() === "no") {
-          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason(data.GARBAGE, ACTIONID), true, function() {
-            log.editAction(data.GARBAGE, ACTIONID, false, null, log.reason);
-            tap.updateTeamSapRows();
-            base.wireUpTooltips();
-          }, null, function() {
-            log.ignoreAction(data.GARBAGE, ACTIONID);
-            other.removeClass("inactive");
-            checkbox.removeAttr("checked");
-            checkbox.parent().removeClass("active");
-            tap.updateTeamSapRows();
-            base.wireUpTooltips();
-          });
-          e.stopPropagation();
-          e.preventDefault();
-        } else {
-          log.ignoreAction(data.GARBAGE, ACTIONID);
-          other.removeClass("inactive");
-        }
-      } else if ((!$(this).hasClass("active") && other.hasClass("active")) || $(this).closest('tr').hasClass('success')) {
-        //prevent clicking on unselected option or if the row is complete
+      var AGREE_STATUS = $(this).closest('tr').data('agree');
+      var action = teamActionsObject[$(this).closest('tr').data('id')];
+
+      if (AGREE_STATUS === true) {
+        //do nothing - shouldn't be able to get here
+        console.log("nothing doing");
         e.stopPropagation();
         e.preventDefault();
-        return;
+      } else if (AGREE_STATUS === false) {
+        //editing reason
+        tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
+          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
+          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          action.agree = false;
+          action.rejectedReason = actionPlan.rejectedReason;
+          action.rejectedReasonText = actionPlan.rejectedReasonText;
+          log.updateTeamAction(indicatorId, action);
+          tap.updateAction(action);
+        }, null, function() {
+          action.agree = null;
+          delete action.rejectedReason;
+          delete action.rejectedReasonText;
+          log.updateTeamAction(indicatorId, action);
+          tap.updateAction(action);
+        });
+        e.stopPropagation();
+        e.preventDefault();
       } else {
-        //selecting
-        var self = this;
-        if (checkbox.val() === "no") {
-          tap.launchModal(data.selected, checkbox.closest('tr').children().first().children().first().text(), log.getReason(data.GARBAGE, ACTIONID), false, function() {
-            log.editAction(data.GARBAGE, ACTIONID, false, null, log.reason);
-            $(self).removeClass("inactive");
-
-            checkbox.attr("checked", "checked");
-            checkbox.parent().addClass("active");
-            //unselect other
-            other.removeClass("active").addClass("inactive");
-            other.find("input[type=checkbox]").prop("checked", false);
-            tap.updateTeamSapRows();
-            base.wireUpTooltips();
-          });
-          e.stopPropagation();
-          e.preventDefault();
-        } else {
-          log.editAction(data.GARBAGE, ACTIONID, true);
-          $(this).removeClass("inactive");
-
-          //unselect other
-          other.removeClass("active").addClass("inactive");
-          other.find("input[type=checkbox]").prop("checked", false);
-        }
+        //disagreeing
+        tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
+          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
+          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          action.agree = false;
+          action.rejectedReason = actionPlan.rejectedReason;
+          action.rejectedReasonText = actionPlan.rejectedReasonText;
+          log.updateTeamAction(indicatorId, action);
+          tap.updateAction(action);
+        });
+        e.stopPropagation();
+        e.preventDefault();
       }
     }).on('keyup', 'input[type=text]', function(e) {
       if (e.which === 13) {
@@ -318,8 +313,8 @@ var tap = {
           all.removeClass('danger');
           all.addClass('active');
           //self.find('td').last().children().show();
-          if (log.getActions()[data.GARBAGE][self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + log.getActions()[data.GARBAGE][self.data("id")].history[0] + "</p><p>Click again to cancel</p>";
+          if (teamActionsObject[self.data("id")].history) {
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -328,8 +323,8 @@ var tap = {
           all.removeClass('active');
           all.addClass('danger');
           all.removeClass('success');
-          if (log.getActions()[data.GARBAGE][self.data("id")] && log.getActions()[data.GARBAGE][self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + log.getActions()[data.GARBAGE][self.data("id")].history[0] + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+          if (teamActionsObject[self.data("id")].history) {
+            $(this).parent().attr("title", "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
@@ -347,13 +342,13 @@ var tap = {
         self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
       }
 
-      base.wireUpTooltips();
+      //base.wireUpTooltips();
     });
     base.wireUpTooltips();
   },
 
   displayPersonalisedTeamActionPlan: function(parentElem) {
-    var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans("team", data.pathwayId)));
+    //var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans("team", data.pathwayId)));
 
     /*base.createPanelShow(actionPlanList, parentElem, {
       "hasSuggestions": plans && plans.length > 0,
@@ -365,21 +360,27 @@ var tap = {
     });*/
 
     var tmpl = require('templates/action-plan-list');
+    var userDefinedTeamActions = Object.keys(userDefinedTeamActionsObject).map(function(v){return userDefinedTeamActionsObject[v];});
     parentElem.html(tmpl({
-      "hasSuggestions": plans && plans.length > 0,
-      "suggestions": plans
+      "hasSuggestions": userDefinedTeamActions && userDefinedTeamActions.length > 0,
+      "suggestions": userDefinedTeamActions
     }));
 
     tap.updateTeamSapRows();
   },
 
   loadAndPopulateIndividualSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
-    data.getTeamActionData([pathwayId, pathwayStage, standard].join("."), function(err, actions) {
+    data.getTeamActionData(pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : "", function(err, a) {
       teamActionsObject = {};
-      teamActions = actions.map(function(v) {
+      userDefinedTeamActionsObject = {};
+      a.userDefinedActions.forEach(function(v){
+        userDefinedTeamActionsObject[v.actionTextId] = v;
+      });
+      teamActions = a.actions.map(function(v) {
         v.indicatorListText = v.indicatorList.map(function(vv) {
           return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
+        if(v.agree!==true && v.agree!==false) v.agree = null;
         teamActionsObject[v.actionTextId] = v;
         return v;
       });
@@ -415,11 +416,11 @@ var tap = {
     var isVision = $('#practice_system').text()==="Vision";
     $('#advice-list').find('span:contains("[COPY")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1' ) + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy '+(isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1' ) + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy '+(isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
     $('#advice-list').find('span:contains("[")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
 
     $('#advice-list').find('span:contains("[INFO")').each(function() {
@@ -442,12 +443,34 @@ var tap = {
       $(this).html(html.replace(/\[MED\-SUGGESTION\]/g, suggestion));
     });
 
+    $('#advice-list').find('td:contains("Reasoning")').each(function() {
+      var contents = $(this).contents();
+      var i = 0;
+      while ($(contents[i]).text() !== "Reasoning" && i < contents.length) {
+        i++;
+      }
+      if (i < contents.length - 1) {
+        var reasoning = $(contents[i]);
+        var content = "Reasoning\r\n" + $(contents[i + 1]).html()
+          .replace(/ +/g, " ")
+          .replace(/<li>/g, "  - ")
+          .replace(/<\/li>/g, "\r\n")
+          .replace(/<\/?strong>/g, "")
+          .replace(/&gte;/g,"≥")
+          .replace(/&lte;/g,"≤")
+          .replace(/&gt;/g,">")
+          .replace(/&lt;/g,"<")
+          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g,"$2 - $1");
+        reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>');
+      }
+    });
+
     base.setupClipboard($('.btn-copy'), true);
 
     tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
   },
 
-  launchModal: function(label, value, reason, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {
+  launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {
     var reasons = [{
       "reason": "We've already done this",
       "value": "done"
@@ -458,21 +481,21 @@ var tap = {
       "reason": "Other",
       "value": "else"
     }];
-    if (reason && reason.reason) {
+    if (rejectedReason) {
       for (var i = 0; i < reasons.length; i++) {
-        if (reasons[i].reason === reason.reason) {
+        if (reasons[i].reason === rejectedReason) {
           reasons[i].checked = true;
           break;
         }
       }
     }
-    base.launchModal({
+    actionPlan.launchModal({
       "header": "Disagree with a suggested action",
       "isUndo": isUndo,
       "item": value,
       "placeholder": "Enter free-text here...",
       "reasons": reasons
-    }, label, value, reason ? reason.reasonText : null, callbackOnSave, callbackOnCancel, callbackOnUndo);
+    }, label, value, rejectedReasonText || null, callbackOnSave, callbackOnCancel, callbackOnUndo);
   }
 
 };

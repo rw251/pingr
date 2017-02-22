@@ -3,23 +3,36 @@
     thead
       tr
         th Quality indicator
-        th Target met? (Hover for reason)
-        th 
+        th(style="max-width:100px") Target met?
+        th(style="max-width:100px")
+        th(style="width:400px")
     tbody
       each standard in standards
         tr(class=standard.targetMet ? 'success' : 'danger')
-          td= standard.display
+          td
+            strong
+              = standard.display       
           td
             if standard.targetMet
-              i.fa.fa-check.text-success(data-toggle='tooltip', data-placement='right', title=standard.why)
+              i.fa.fa-fw.fa-check.text-success
             else
-              i.fa.fa-times.text-danger(data-toggle='tooltip', data-placement='right', title=standard.why)
+              i.fa.fa-fw.fa-times.text-danger
           td
-            if standard.indicatorId === indicatorId
-              span Currently showing actions for this indicator 
-              a.btn.btn-warning(href='/#patient/'+patientId) Show actions for all indicators
+            a.reason-link(href='#',data-id=standard.indicatorId) 
+              | Show more
+              i.fa.fa-caret-down       
+          td(style="text-align:right")
+            if (standard.indicatorId === indicatorId && standards.filter(function(v){return !v.targetMet;}).length > 1)
+              a.btn.btn-warning.btn-sm(href='/#patient/'+patientId) Showing actions for this indicator - click to show all
             else if (!standard.targetMet && standards.filter(function(v){return !v.targetMet;}).length === 1)
               span Currently showing actions for this indicator 
             else 
               if !standard.targetMet
-                a.btn.btn-info(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only
+                a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only
+        tr(data-id=standard.indicatorId,class='qs-show-more-row')
+          td(colspan=3)
+            !=standard.indicatorDescription
+            br
+            strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
+            br
+            !=standard.why

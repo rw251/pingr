@@ -1,8 +1,7 @@
 var Highcharts = require('highcharts/highstock'),
   base = require('../base.js'),
   data = require('../data.js'),
-  lookup = require('../lookup.js'),
-  Mustache = require('mustache');
+  lookup = require('../lookup.js');
 
 var ID = "PATIENT_LIST";
 
@@ -40,7 +39,7 @@ var pl = {
     pl.state = [pathwayId, pathwayStage, standard, subsection, sortField, sortAsc];
     patientsPanel = $('#patients');
     //Remove scroll if exists
-    patientsPanel.find('div.table-scroll').getNiceScroll().remove();
+    /*patientsPanel.find('div.table-scroll').getNiceScroll().remove();*/
 
     var i, k, prop, header, pList = [];
 
@@ -105,13 +104,15 @@ var pl = {
 
       base.wireUpTooltips();
 
-      patientsPanel.find('div.table-scroll').niceScroll({
+      /*patientsPanel.find('div.table-scroll').niceScroll({
         cursoropacitymin: 0.3,
         cursorwidth: "7px",
         horizrailenabled: false
-      });
+      });*/
 
       base.hideLoading();
+
+      base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
 
     });
 
