@@ -9,6 +9,10 @@ Misc
   display: none;
 }
 
+.logo-adjustment{
+  height: calc(100vh - 176px) !important;
+}
+
 .shade{
   background: rgba(0,0,0,0.05);
 }
