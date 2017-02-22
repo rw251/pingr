@@ -1,2 +1,6 @@
 form#search-box.app-search.hidden-xs.ng-pristine.ng-valid(role='search')
-  input.typeahead.form-control.form-control-circle(type='text', placeholder='Search by patients NHS number...')
+  //input.typeahead.form-control.form-control-circle(type='text', placeholder='Search by patients NHS number...')
+  .col-sm-6
+    .form-group.label-floating.is-empty
+      label.control-label Enter an NHS number
+      input.typeahead.form-control(type='text')

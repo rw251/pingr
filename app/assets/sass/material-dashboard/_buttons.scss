@@ -42,6 +42,24 @@
     &.btn-rose{
       @include btn-styles($brand-rose);
     }
+    &.btn-pingr-mint{
+      @include btn-styles($brand-mint);
+    }
+    &.btn-pingr-moss{
+      @include btn-styles($brand-moss);
+    }
+    &.btn-pingr-pea{
+      @include btn-styles($brand-pea);
+    }
+    &.btn-pingr-pod{
+      @include btn-styles($brand-pod);
+    }
+    &.btn-pingr-grass{
+      @include btn-styles($brand-grass);
+    }
+    &.btn-pingr-redCross{
+      @include btn-styles($brand-redCross);
+    }
     &.btn-white{
         &,
         &:focus,

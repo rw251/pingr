@@ -389,6 +389,33 @@
         @include alert-icon-color($brand-rose);
     }
 
+    [data-background-color="mint"]{
+        background: linear-gradient(60deg, $mint-400, $mint-600);
+        @include shadow-big-color($brand-mint);
+    }
+
+    [data-icon-bg-color="mint"]{
+        @include alert-icon-color($brand-mint);
+    }
+
+    [data-background-color="pod"]{
+        background: linear-gradient(60deg, $pod-400, $pod-600);
+        @include shadow-big-color($brand-pod);
+    }
+
+    [data-icon-bg-color="pod"]{
+        @include alert-icon-color($brand-pod);
+    }
+
+    [data-background-color="redCross"]{
+        background: linear-gradient(60deg, $redCross-400, $redCross-600);
+        @include shadow-big-color($brand-redCross);
+    }
+
+    [data-icon-bg-color="redCross"]{
+        @include alert-icon-color($brand-redCross);
+    }
+
     [data-header-animation="true"]{
         @include transform-translate-y(0);
         @include transition(300ms, $transition-bezier);

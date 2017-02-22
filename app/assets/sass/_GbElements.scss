@@ -45,8 +45,8 @@ $legacy_background: #f2f2f4;
 }
 
 .loading div {
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     position: absolute;
 }
 .l1 div,
@@ -57,28 +57,28 @@ $legacy_background: #f2f2f4;
     height: 100%;
 }
 .l1 div {
-    background-color: #2ecc71;
+    background-color: #31FFC3;
 }
 .l2 div {
-    background-color: #9b59b6;
+    background-color: #3DFF59;
 }
 .l3 div {
-    background-color: #3498db;
+    background-color: #9DFF31;
 }
 .l4 div {
-    background-color: #f1c30f;
+    background-color: #FF3D6E;
 }
 .l1 {
     transform: translate(0, 0);
 }
 .l2 {
-    transform: translate(0, 16px);
+    transform: translate(0, 32px);
 }
 .l3 {
-    transform: translate(16px, 0px);
+    transform: translate(32px, 0px);
 }
 .l4 {
-    transform: translate(16px, 16px);
+    transform: translate(32px, 32px);
 }
 @keyframes rot1 {
     0% {
@@ -133,10 +133,10 @@ $legacy_background: #f2f2f4;
         transform: translate(0px, 0px);
     }
     30% {
-        transform: translate(-4px, -4px);
+        transform: translate(-8px, -8px);
     }
     70% {
-        transform: translate(-4px, -4px);
+        transform: translate(-8px, -8px);
     }
     100% {
         transform: translate(0px, 0px);
@@ -144,44 +144,44 @@ $legacy_background: #f2f2f4;
 }
 @keyframes l2-rise {
     0% {
-        transform: translate(0, 16px);
+        transform: translate(0, 32px);
     }
     30% {
-        transform: translate(-4px, 20px);
+        transform: translate(-8px, 40px);
     }
     70% {
-        transform: translate(-4px, 20px);
+        transform: translate(-8px, 40px);
     }
     100% {
-        transform: translate(0, 16px);
+        transform: translate(0, 32px);
     }
 }
 @keyframes l3-rise {
     0% {
-        transform: translate(16px, 0px);
+        transform: translate(32px, 0px);
     }
     30% {
-        transform: translate(20px, -4px);
+        transform: translate(40px, -8px);
     }
     70% {
-        transform: translate(20px, -4px);
+        transform: translate(40px, -8px);
     }
     100% {
-        transform: translate(16px, 0px);
+        transform: translate(32px, 0px);
     }
 }
 @keyframes l4-rise {
     0% {
-        transform: translate(16px, 16px);
+        transform: translate(32px, 32px);
     }
     30% {
-        transform: translate(20px, 20px);
+        transform: translate(40px, 40px);
     }
     70% {
-        transform: translate(20px, 20px);
+        transform: translate(40px, 40px);
     }
     100% {
-        transform: translate(16px, 16px);
+        transform: translate(32px, 32px);
     }
 }
 .l1 {
