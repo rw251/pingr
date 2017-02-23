@@ -582,7 +582,7 @@ var ll = {
 
         var latestIntervalEndDate;
 
-        $.each(task.intervals.filter(function(v) { return v.label !== "0.0mg"; }), function(j, interval) {
+        $.each(task.intervals.filter(function(v) { return v.label !== "0mg"; }), function(j, interval) {
           if (!latestIntervalEndDate) latestIntervalEndDate = interval.to;
           else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
           item.data.push([i + 0.49, interval.from, interval.to]);
