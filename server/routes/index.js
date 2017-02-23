@@ -65,7 +65,7 @@ module.exports = function(passport) {
       if (err || msg) {
         res.render('pages/optOut.jade', { user: req.user });
       } else {
-        res.render('pages/optOut.jade', { user: user , message: {success: "Email preference updated. " + (req.body.optout ? "You wil not longer receive our reminder emails.":"You are currently set to receive reminder emails.")}});
+        res.render('pages/optOut.jade', { user: user, message: { success: "Email preference updated. " + (req.body.optout ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
       }
     });
   });
@@ -106,8 +106,13 @@ module.exports = function(passport) {
   /* Handle Logout */
   router.get('/signout', function(req, res) {
     events.logout(req.user.email, req.sessionID);
-    req.logout();
-    res.redirect('/login');
+    req.session.destroy(function (err) {
+      res.redirect('/login'); //Inside a callback… bulletproof!
+    });
+    //RW The below sometimes means the redirect occurs before the logout has finished
+    //and the user remains logged in
+    //req.logout();
+    //res.redirect('/login');
   });
 
   /* EVENT VIEWER */
@@ -120,7 +125,7 @@ module.exports = function(passport) {
 
   router.get('/eventsdownload', isAuthenticated, isAdmin, function(req, res) {
     events.download(req.query, function(err, fileExtension, events) {
-      if(err) {
+      if (err) {
         console.log(err);
         res.send();
       }
@@ -204,89 +209,152 @@ module.exports = function(passport) {
 
 
   /* ACTIONS */
-  router.post('/api/action/addTeam/:indicatorId?', isAuthenticated, function(req,res){
+  router.post('/api/action/addTeam/:indicatorId?', isAuthenticated, function(req, res) {
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
       actions.addTeamAction(req.user.practiceId, req.params.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
         if (err) res.send(err);
-        else res.send(action);
+        else {
+          var evt = {
+            type: "recordTeamPlan",
+            data: [{ key: "text", value: req.body.actionText }],
+            sessionId: req.sessionID,
+            user: req.user.email
+          };
+          if (req.params.indicatorId) {
+            evt.data.push({ key: "indicatorId", value: req.params.indicatorId });
+          }
+          events.add(evt, function(err) {
+            res.send(action);
+          });
+        }
       });
     }
   });
-  router.post('/api/action/addIndividual/:patientId', isAuthenticated, function(req,res){
+  router.post('/api/action/addIndividual/:patientId', isAuthenticated, function(req, res) {
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
       actions.addIndividualAction(req.user.practiceId, req.params.patientId, req.user.fullname, req.body.actionText, function(err, action) {
-        if (err) res.send(err);
-        else res.send(action);
+        var evt = {
+          type: "recordIndividualPlan",
+          data: [
+            { key: "text", value: req.body.actionText },
+            { key: "patientId", value: req.params.patientId }
+          ],
+          sessionId: req.sessionID,
+          user: req.user.email
+        };
+        events.add(evt, function(err) {
+          res.send(action);
+        });
       });
     }
   });
-  router.post('/api/action/update/team/:indicatorId?', isAuthenticated, function(req, res){
-    actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action){
+  router.post('/api/action/update/team/:indicatorId?', isAuthenticated, function(req, res) {
+    actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action) {
+      if (err) res.send(err);
+      else {
+        var evt = {
+          type: "undo",
+          data: [{ key: "action", value: req.body.action.actionTextId }],
+          sessionId: req.sessionID,
+          user: req.user.email
+        };
+        if (req.params.indicatorId) {
+          evt.data.push({ key: "indicatorId", value: req.params.indicatorId });
+        }
+        if (req.body.action.agree === true) {
+          evt.type = "agree";
+        } else if (req.body.action.agree === false) {
+          evt.type = "disagree";
+          if(req.body.action.rejectedReasonText)
+            evt.data.push({ key: "reasonText", value: req.body.action.rejectedReasonText });
+        }
+        events.add(evt, function(err) {
+          res.send(action);
+        });
+      }
+    });
+  });
+  router.post('/api/action/update/userdefinedteam/:actionTextId', isAuthenticated, function(req, res) {
+    actions.updateTeamUserDefined(req.params.actionTextId, req.body.action, function(err, action) {
       if (err) res.send(err);
       else res.send(action);
     });
   });
-  router.post('/api/action/update/userdefinedteam/:actionTextId', isAuthenticated, function(req, res){
-    actions.updateTeamUserDefined(req.params.actionTextId, req.body.action, function(err, action){
+  router.delete('/api/action/userdefinedteam/:actionTextId', isAuthenticated, function(req, res) {
+    actions.deleteUserDefinedTeamAction(req.params.actionTextId, function(err) {
+      if (err) res.send(err);
+      else res.send({ status: "ok" });
+    });
+  });
+  router.post('/api/action/update/individual/:patientId', isAuthenticated, function(req, res) {
+    actions.updateIndividual(req.user.practiceId, req.params.patientId, req.body.action, function(err, action) {
+      if (err) res.send(err);
+      else {
+        var evt = {
+          type: "undo",
+          data: [
+            { key: "action", value: req.body.action.actionTextId },
+            { key: "patientId", value: req.params.patientId }
+          ],
+          sessionId: req.sessionID,
+          user: req.user.email
+        };
+        if (req.body.action.agree === true) {
+          evt.type = "agree";
+        } else if (req.body.action.agree === false) {
+          evt.type = "disagree";
+          if(req.body.action.rejectedReasonText)
+            evt.data.push({ key: "reasonText", value: req.body.action.rejectedReasonText });
+        }
+        events.add(evt, function(err) {
+          res.send(action);
+        });
+      }
+    });
+  });
+  router.post('/api/action/update/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res) {
+    actions.updatePatientUserDefined(req.params.patientId, req.params.actionTextId, req.body.action, function(err, action) {
       if (err) res.send(err);
       else res.send(action);
     });
   });
-  router.delete('/api/action/userdefinedteam/:actionTextId', isAuthenticated, function(req, res){
-    actions.deleteUserDefinedTeamAction(req.params.actionTextId, function(err){
+  router.delete('/api/action/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res) {
+    actions.deleteUserDefinedPatientAction(req.params.patientId, req.params.actionTextId, function(err) {
       if (err) res.send(err);
-      else res.send({status:"ok"});
+      else res.send({ status: "ok" });
     });
   });
-  router.post('/api/action/update/individual/:patientId', isAuthenticated, function(req, res){
-    actions.updateIndividual(req.user.practiceId, req.params.patientId, req.body.action, function(err, action){
-      if (err) res.send(err);
-      else res.send(action);
-    });
-  });
-  router.post('/api/action/update/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res){
-    actions.updatePatientUserDefined(req.params.patientId, req.params.actionTextId, req.body.action, function(err, action){
-      if (err) res.send(err);
-      else res.send(action);
-    });
-  });
-  router.delete('/api/action/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res){
-    actions.deleteUserDefinedPatientAction(req.params.patientId, req.params.actionTextId, function(err){
-      if (err) res.send(err);
-      else res.send({status:"ok"});
-    });
-  });
-  router.get('/api/action/team/:indicatorId?', isAuthenticated, function(req, res){
-    indicators.getActions(req.user.practiceId, req.params.indicatorId, function(err, actions){
+  router.get('/api/action/team/:indicatorId?', isAuthenticated, function(req, res) {
+    indicators.getActions(req.user.practiceId, req.params.indicatorId, function(err, actions) {
       if (err) res.send(err);
       else res.send(actions);
     });
   });
-  router.get('/api/action/individual/:patientId?', isAuthenticated, function(req, res){
-    patients.getActions(req.user.practiceId, req.params.patientId, function(err,actions){
+  router.get('/api/action/individual/:patientId?', isAuthenticated, function(req, res) {
+    patients.getActions(req.user.practiceId, req.params.patientId, function(err, actions) {
       if (err) res.send(err);
-      if(req.params.patientId) res.send(actions[req.params.patientId]);
+      if (req.params.patientId) res.send(actions[req.params.patientId]);
       else res.send(actions);
     });
   });
-  router.get('/api/action/all', isAuthenticated, function(req, res){
-    actions.listAgreedWith(req.user.practiceId, function(err, actions){
+  router.get('/api/action/all', isAuthenticated, function(req, res) {
+    actions.listAgreedWith(req.user.practiceId, function(err, actions) {
       if (err) res.send(err);
-      var patientActions = actions.filter(function(v){
+      var patientActions = actions.filter(function(v) {
         return v.patientId;
       });
-      var teamActions = actions.filter(function(v){
+      var teamActions = actions.filter(function(v) {
         return !v.patientId;
       });
-      patients.getSpecificActions(patientActions, function(err, patientActionsReady){
+      patients.getSpecificActions(patientActions, function(err, patientActionsReady) {
         if (err) res.send(err);
-        indicators.getSpecificActions(req.user.practiceId, teamActions, function(err, teamActionsReady){
+        indicators.getSpecificActions(req.user.practiceId, teamActions, function(err, teamActionsReady) {
           if (err) res.send(err);
-          res.send({patient: patientActionsReady, team: teamActionsReady});
+          res.send({ patient: patientActionsReady, team: teamActionsReady });
         });
       });
     });
@@ -400,7 +468,7 @@ module.exports = function(passport) {
   });
 
   router.get('/', isAuthenticated, function(req, res, next) {
-    practices.get(req.user.practiceId, function(err, practice){
+    practices.get(req.user.practiceId, function(err, practice) {
       res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_id: req.user.practiceId, practice_name: req.user.practiceName, practice_system: practice ? practice.ehr : "" });
     });
   });

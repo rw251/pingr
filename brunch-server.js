@@ -6,10 +6,11 @@ var bodyParser = require('body-parser');
 
 var config = require('./server/config.js');
 var mongoose = require('mongoose');
+var DEBUG = false;
 
 module.exports = function(PORT, PATH, CALLBACK) {
 
-  mongoose.set('debug', true);
+  mongoose.set('debug', DEBUG);
   mongoose.connect(config.db.url);
 
   var app = express();

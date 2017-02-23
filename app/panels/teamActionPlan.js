@@ -164,6 +164,7 @@ var tap = {
       }).modal();
     }).on('click', '.add-plan', function() {
       var actionText = $(this).parent().parent().find('textarea').val();
+      $(this).parent().parent().find('textarea').val("");
       var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
       log.recordTeamPlan(actionText, indicatorId, function(err, a){
         if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
@@ -182,15 +183,10 @@ var tap = {
       var AGREE_STATUS = $(this).closest('tr').data('agree');
       var action = teamActionsObject[$(this).closest('tr').data('id')];
 
-      if (AGREE_STATUS === false) {
-        //do nothing - shouldn't be able to get here
-        console.log("nothing doing");
-      } else {
-        action.agree = AGREE_STATUS ? null : true;
-        if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
-        log.updateTeamAction(indicatorId, action);
-        tap.updateAction(action);
-      }
+      action.agree = AGREE_STATUS ? null : true;
+      if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
+      log.updateTeamAction(indicatorId, action);
+      tap.updateAction(action);
 
       e.stopPropagation();
       e.preventDefault();
@@ -198,12 +194,7 @@ var tap = {
       var AGREE_STATUS = $(this).closest('tr').data('agree');
       var action = teamActionsObject[$(this).closest('tr').data('id')];
 
-      if (AGREE_STATUS === true) {
-        //do nothing - shouldn't be able to get here
-        console.log("nothing doing");
-        e.stopPropagation();
-        e.preventDefault();
-      } else if (AGREE_STATUS === false) {
+      if (AGREE_STATUS === false) {
         //editing reason
         tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
           var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";

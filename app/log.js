@@ -282,12 +282,6 @@ var log = {
   },
 
   recordTeamPlan: function(text, indicatorId, done) {
-    var dataToSend = [
-      { key: "text", value: text },
-      { key: "pathwayId", value: indicatorId }
-    ];
-
-    log.event("recordTeamPlan", window.location.hash, dataToSend);
     var url = "/api/action/addTeam/" + (indicatorId || "");
     $.ajax({
       type: "POST",
@@ -302,13 +296,6 @@ var log = {
   },
 
   recordIndividualPlan: function(text, patientId, done) {
-    var dataToSend = [
-      { key: "text", value: text },
-      { key: "patientId", value: patientId }
-    ];
-
-    log.event("recordIndividualPlan", window.location.hash, dataToSend);
-
     $.ajax({
       type: "POST",
       url: "/api/action/addIndividual/" + patientId,

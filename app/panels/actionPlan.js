@@ -8,7 +8,7 @@ var ap = {
     $('#modal').html(tmpl(data));
 
     if (reasonText) {
-      $('#modal textarea').val(reasonText);
+      $('#modal textarea').val(reasonText.trim());
     }
     ap.modalSaved = false;
     ap.modalUndo = false;
