@@ -1,6 +1,19 @@
 include mixins/patient-list-header-item
 
-h4!= header + '(n=' + n + ')'
+.row
+  .col-xs-9
+    h4!= header + '(n=' + n + ')'
+  .col-xs-3
+    .btn-group
+      button#downloadPatientList.btn.btn-danger Download patient list
+      button.btn.btn-danger.dropdown-toggle(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+        span.caret
+        span.sr-only Toggle Dropdown
+      ul.dropdown-menu
+        li
+          a#downloadAsPdf(href="#") Full list (pdf)
+        li
+          a#downloadAsText(href="#") Nhs numbers (text file)
 table.table.patient-list.table-body-hidden
   thead
     tr

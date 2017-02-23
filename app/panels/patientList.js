@@ -1,9 +1,73 @@
 var Highcharts = require('highcharts/highstock'),
   base = require('../base.js'),
   data = require('../data.js'),
-  lookup = require('../lookup.js');
+  lookup = require('../lookup.js'),
+  FileSaver = require('file-saver'),
+  jsPDF = require('jspdf'),
+  jspdfAutoTable = require('jspdf-autotable');
 
 var ID = "PATIENT_LIST";
+var currentPatients;
+
+var writeToFile = function(list) {
+  var blob = new Blob([list.join("\r\n")], { type: "text/plain;charset=utf-8" });
+  FileSaver.saveAs(blob, "nhsNumbers.txt");
+};
+
+var parseHtml = function(html) {
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace("&gt;",">")
+    .replace("&gte;","≥")
+    .replace("&lt;","<")
+    .replace("&lte;","≤");
+};
+
+var writePdf = function() {
+  var columns = currentPatients["header-items"].map(function(v) { return v.title; });
+  var rows = currentPatients.patients.map(function(v) {
+    return [
+      v.nhs,
+      v.age,
+      v.value,
+      v.opportunities.join("\n")
+    ];
+  });
+
+  var extraInfo = data.getIndicatorDataSync(null, currentPatients.indicatorId);
+
+  var doc = new jsPDF('l');
+  doc.setFontSize(18);
+  var y = 22;
+  var mainHeader = doc.splitTextToSize(parseHtml(extraInfo.name), doc.internal.pageSize.width - 35, {});
+  doc.text(mainHeader, 14, y);
+  doc.setFontSize(11);
+  doc.setTextColor(100);
+  y += mainHeader.length * 8;
+  var tagline = doc.splitTextToSize(extraInfo.performance.percentage + "% (" + extraInfo.performance.fraction + ") " + parseHtml(extraInfo.tagline), doc.internal.pageSize.width - 35, {});
+  doc.text(tagline, 14, y);
+  y += tagline.length * 7;
+  doc.setFontSize(14);
+  doc.setTextColor(0);
+  var subHeader = doc.splitTextToSize(parseHtml(currentPatients.header) + " (n=" + currentPatients.patients.length + ")", doc.internal.pageSize.width - 35, {});
+  doc.text(subHeader, 14, y);
+  doc.setFontSize(11);
+  doc.setTextColor(100);
+  y += subHeader.length * 8;
+  console.log(extraInfo);
+  doc.autoTable(columns, rows, {
+    startY: y,
+    showHeader: 'firstPage',
+    styles: {
+      overflow: "linebreak",
+      columWidth: "wrap"
+    }
+  });
+
+  //doc.text(text, 14, doc.autoTable.previous.finalY + 10);
+
+  doc.save('patient-list.pdf');
+};
 
 var pl = {
 
@@ -28,6 +92,16 @@ var pl = {
       //don't want row selected if just button pressed?
       e.preventDefault();
       e.stopPropagation();
+    }).on('click', '#downloadPatientList', function() {
+      writePdf();
+    }).on('click', '#downloadAsPdf', function(e) {
+      writePdf();
+      e.preventDefault();
+    }).on('click', '#downloadAsText', function(e) {
+      writeToFile(currentPatients.patients.map(function(v) {
+        return v.nhs;
+      }));
+      e.preventDefault();
     });
   },
 
@@ -92,6 +166,8 @@ var pl = {
         }
       }
 
+      list.indicatorId = [pathwayId, pathwayStage, standard].join(".");
+      currentPatients = list;
       base.createPanelShow(require('templates/patient-list'), patientsPanel, list);
       /*, {
               "header-item": require('src/templates/partials/_patient-list-header-item')(),
@@ -112,7 +188,7 @@ var pl = {
 
       base.hideLoading();
 
-      base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
+      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15 }, { selector: '.table-scroll', padding: 200 }, { selector: '.fit-to-screen-height', padding: 200 }]);
 
     });
 
