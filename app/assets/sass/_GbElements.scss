@@ -205,6 +205,114 @@ $legacy_background: #f2f2f4;
     animation: rot2 3s ease 0s infinite;
 }
 
+/**********************************/
+/* Typeahead for patient searching
+************************************/
+//original #0097cf
+$gb-dropdown-color: #3BEAB4;
+$gb-dropdown-bgcolor: #fff;
+
+.gist,
+.tt-dropdown-menu {
+    text-align: left;
+}
+.tt-hint,
+.tt-query,
+.typeahead {
+    width: 396px;
+    height: 30px;
+    padding: 0 12px;
+    font-size: 13px;
+    line-height: 30px;
+    border: 2px solid #ccc;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    outline: none;
+}
+.typeahead {
+    background-color: $gb-dropdown-bgcolor;
+}
+.typeahead:focus {
+    border: 2px solid $gb-dropdown-color;
+}
+.tt-query {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.tt-hint {
+    color: #999;
+    //color: #fff;
+}
+.tt-dropdown-menu {
+    width: 422px;
+    margin-top: 12px;
+    padding: 8px 0;
+    background-color: $gb-dropdown-bgcolor;
+    //border: 1px solid #ccc;
+    //border: 1px solid rgba(0, 0, 0, 0.2);
+
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(44, 232, 124, 0.4);
+    -moz-box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(44, 232, 124, 0.4);
+    box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(44, 232, 124, 0.4);
+
+    // -webkit-border-radius: 8px;
+    // -moz-border-radius: 8px;
+    // border-radius: 8px;
+    // -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    // -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    // box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+}
+.tt-suggestion {
+    padding: 3px 20px;
+    font-size: 18px;
+    line-height: 24px;
+}
+.tt-suggestion.tt-cursor {
+    color: #fff;
+    //color: #999;
+    background-color: $gb-dropdown-color;
+}
+.tt-suggestion p {
+    margin: 0;
+}
+.gist {
+    font-size: 14px;
+}
+.tt-hint,
+.tt-input,
+.twitter-typeahead {
+    height: 36px;
+}
+.tt-dropdown-menu,
+.tt-hint,
+.tt-input,
+.twitter-typeahead {
+    width: 100%;
+    max-width: 500px;
+    /*  height: 36px;*/
+}
+.twitter-typeahead {
+    /*position: relative;
+  margin-top: 7px;
+  margin-bottom: 7px;
+  margin-right: 15px;*/
+}
+// .twitter-typeahead:before {
+//     content: "\f002";
+//     position: absolute;
+//     left: 12px;
+//     font-family: FontAwesome;
+//     cursor: pointer;
+//     top: 7px;
+//     color: #c4c4cd;
+//     display: inline-block;
+//}
+
 /*****************************
 Debug
 *****************************/
