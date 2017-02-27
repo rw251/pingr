@@ -95,7 +95,7 @@ var pv = {
           base.hideLoading();
 
           //add state indicator
-          farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+          farRightPanel.attr("class", "col-xl-8 col-lg-8 ps-child state-patient-rightPanel");
 
           $('#right-panel').css("overflow-y","auto");
           $('#right-panel').css("overflow-x","hidden");
@@ -113,7 +113,7 @@ var pv = {
         base.hideLoading();
 
         //add state indicator
-        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+        farRightPanel.attr("class", "col-xl-4 col-lg-4 state-patient-rightPanel");
 
         $('#right-panel').css("overflow","visible");
       }

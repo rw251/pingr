@@ -1,8 +1,9 @@
-
-div
-  div.col-sm-10
+.card
+  .card-header.card-header-icon(data-background-color="blue")
+    i.material-icons face
+  .card-content
+    h4.card-title Selected Patient 
+      button.btn.btn-xs.btn-default.btn-copy(type='button', data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+        i.material-icons content_copy
     h4
-      = 'Patient ' + patid + ' (' + age + ' years old ' + sex + ')'
-  div.col-sm-offset-2
-    button.btn.btn-sm.btn-default.btn-copy(type='button', data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
-      span.fa.fa-clipboard
+      = 'Patient ' + patid + ' (' + sex + ' - ' + age + ' yrs)'

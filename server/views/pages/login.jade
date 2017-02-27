@@ -27,17 +27,31 @@ body
                       h5.category.text-center PINGR is here to help you spot hidden patterns amongst your patients
                   div.card-content
                     div#inpEmail.input-group
-                      span.input-group-addon
-                        i.material-icons email
-                      div.form-group.label-floating
-                        label.control-label Email address
-                        input.form-control(type='text', name='username', required='', autofocus='')
+                      if message && message.error == "User Not found."
+                        span.input-group-addon
+                          i.material-icons email
+                        div.form-group.label-floating.has-error
+                          label.control-label Email address
+                          input.form-control(type='text', name='username', required='', autofocus='')
+                      else
+                        span.input-group-addon
+                          i.material-icons email
+                        div.form-group.label-floating
+                          label.control-label Email address
+                          input.form-control(type='text', name='username', required='', autofocus='')
                     div.input-group
-                      span.input-group-addon
-                        i.material-icons lock_outline
-                      div.form-group.label-floating
-                        label.control-label Password
-                        input.form-control(type='password', name='password', required='')
+                      unless message && message.error == "Invalid Password"
+                        span.input-group-addon
+                          i.material-icons lock_outline
+                        div.form-group.label-floating
+                          label.control-label Password
+                          input.form-control(type='password', name='password', required='')
+                      else
+                        span.input-group-addon
+                          i.material-icons lock_outline
+                        div.form-group.label-floating.has-error
+                          label.control-label Password
+                          input.form-control(type='password', name='password', required='')
                     div.input-group
                       span.input-group-addon
                         a.btn.btn-rose.btn-simple.btn-sl.pull-left(href='/forgot') Forgot password 
