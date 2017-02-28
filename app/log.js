@@ -1,4 +1,5 @@
-var notify = require('./notify');
+var notify = require('./notify'),
+  data = require('./data');
 
 var log = {
   reason: {},
@@ -38,17 +39,16 @@ var log = {
     localStorage.bb = JSON.stringify(obj);
   },
 
-  loadActions: function(callback) {
+  /*loadActions: function(callback) {
     var r = Math.random();
-    log.plan = [];
     log.text = [];
-    callback();
+    callback();*/
     /*$.getJSON("action-plan.json?v=" + r, function(file) {
       log.plan = file.diseases;
       log.text = file.plans;
       callback();
     });*/
-  },
+  /*},*/
 
   editAction: function(id, actionId, agree, done, reason) {
     var logText, obj = log.getObj([{
@@ -146,13 +146,50 @@ var log = {
     });
   },
 
-  updateIndivdualAction: function(patientId, data, done) {
+  //rwhere
+  recordIndividualPlan: function(text, patientId, done) {
+    $.ajax({
+      type: "POST",
+      url: "/api/action/addIndividual/" + patientId,
+      data: JSON.stringify({ actionText: text }),
+      success: function(action) {
+        data.addOrUpdatePatientAction(patientId, action);
+        return done(null, action);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
+//rwhere
+  deleteUserDefinedPatientAction: function(patientId, actionTextId, done){
+    $.ajax({
+      type: "DELETE",
+      url: "/api/action/userdefinedpatient/" + patientId + "/" + actionTextId,
+      success: function(d) {
+        data.removePatientAction(patientId, actionTextId);
+        if (done) return done(null, d);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  },
+
+//rwhere
+  updateIndivdualAction: function(patientId, updatedAction, done) {
     $.ajax({
       type: "POST",
       url: "/api/action/update/individual/" + patientId,
-      data: JSON.stringify({ action: data }),
-      success: function(d) {
-        if (done) return done(null, d);
+      data: JSON.stringify({ action: updatedAction }),
+      success: function(action) {
+        if(action.agree===true) {
+          data.addOrUpdatePatientAction(patientId, action);
+        } else if(action.agree===false){
+          data.addOrUpdatePatientAction(patientId, action);
+        } else {
+          data.removePatientAction(patientId, action.actionTextId);
+        }
+        if (done) return done(null, action);
       },
       dataType: "json",
       contentType: "application/json"
@@ -164,18 +201,6 @@ var log = {
       type: "POST",
       url: "/api/action/update/team/" + indicatorId,
       data: JSON.stringify({ action: data }),
-      success: function(d) {
-        if (done) return done(null, d);
-      },
-      dataType: "json",
-      contentType: "application/json"
-    });
-  },
-
-  deleteUserDefinedPatientAction: function(patientId, actionTextId, done){
-    $.ajax({
-      type: "DELETE",
-      url: "/api/action/userdefinedpatient/" + patientId + "/" + actionTextId,
       success: function(d) {
         if (done) return done(null, d);
       },
@@ -286,19 +311,6 @@ var log = {
     $.ajax({
       type: "POST",
       url: url,
-      data: JSON.stringify({ actionText: text }),
-      success: function(d) {
-        return done(null, d);
-      },
-      dataType: "json",
-      contentType: "application/json"
-    });
-  },
-
-  recordIndividualPlan: function(text, patientId, done) {
-    $.ajax({
-      type: "POST",
-      url: "/api/action/addIndividual/" + patientId,
       data: JSON.stringify({ actionText: text }),
       success: function(d) {
         return done(null, d);

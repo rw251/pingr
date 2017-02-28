@@ -55,7 +55,7 @@ var al = {
           actions.patient[v].actions.forEach(function(vv) {
             var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, supportingText: vv.supportingText };
             if (vv.history && vv.history.length > 0) {
-              var who = vv.history[0].split(" agreed")[0];
+              var who = vv.history[0].who;
               actionItem.who = who;
             }
             actionArray.push(actionItem);
@@ -63,7 +63,7 @@ var al = {
           actions.patient[v].userDefinedActions.forEach(function(vv) {
             var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, userDefined: true };
             if (vv.history && vv.history.length > 0) {
-              var who = vv.history[0].split(" added")[0];
+              var who = vv.history[0].who;
               actionItem.who = who;
             }
             actionArray.push(actionItem);
@@ -75,7 +75,7 @@ var al = {
           actions.team.actions.forEach(function(v) {
             var actionItem = v;
             if (v.history && v.history.length > 0) {
-              var who = v.history[0].split(" agreed")[0];
+              var who = v.history[0].who;
               actionItem.who = who;
             }
             actionArray.push(actionItem);
@@ -85,7 +85,7 @@ var al = {
           actions.team.userDefinedActions.forEach(function(v) {
             var actionItem = v;
             if (v.history && v.history.length > 0) {
-              var who = v.history[0].split(" added")[0];
+              var who = v.history[0].who;
               actionItem.who = who;
             }
             actionArray.push(actionItem);

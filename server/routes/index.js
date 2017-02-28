@@ -232,6 +232,7 @@ module.exports = function(passport) {
       });
     }
   });
+
   router.post('/api/action/addIndividual/:patientId', isAuthenticated, function(req, res) {
     if (!req.body.actionText) {
       res.send("No action posted");
@@ -252,40 +253,8 @@ module.exports = function(passport) {
       });
     }
   });
-  router.post('/api/action/update/team/:indicatorId?', isAuthenticated, function(req, res) {
-    actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action) {
-      if (err) res.send(err);
-      else {
-        var evt = {
-          type: "undo",
-          data: [{ key: "action", value: req.body.action.actionTextId }],
-          sessionId: req.sessionID,
-          user: req.user.email
-        };
-        if (req.params.indicatorId) {
-          evt.data.push({ key: "indicatorId", value: req.params.indicatorId });
-        }
-        if (req.body.action.agree === true) {
-          evt.type = "agree";
-        } else if (req.body.action.agree === false) {
-          evt.type = "disagree";
-          if(req.body.action.rejectedReasonText)
-            evt.data.push({ key: "reasonText", value: req.body.action.rejectedReasonText });
-        }
-        events.add(evt, function(err) {
-          res.send(action);
-        });
-      }
-    });
-  });
-  router.post('/api/action/update/userdefinedteam/:actionTextId', isAuthenticated, function(req, res) {
-    actions.updateTeamUserDefined(req.params.actionTextId, req.body.action, function(err, action) {
-      if (err) res.send(err);
-      else res.send(action);
-    });
-  });
-  router.delete('/api/action/userdefinedteam/:actionTextId', isAuthenticated, function(req, res) {
-    actions.deleteUserDefinedTeamAction(req.params.actionTextId, function(err) {
+  router.delete('/api/action/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res) {
+    actions.deleteUserDefinedPatientAction(req.params.patientId, req.params.actionTextId, function(err) {
       if (err) res.send(err);
       else res.send({ status: "ok" });
     });
@@ -322,8 +291,40 @@ module.exports = function(passport) {
       else res.send(action);
     });
   });
-  router.delete('/api/action/userdefinedpatient/:patientId/:actionTextId', isAuthenticated, function(req, res) {
-    actions.deleteUserDefinedPatientAction(req.params.patientId, req.params.actionTextId, function(err) {
+  router.post('/api/action/update/team/:indicatorId?', isAuthenticated, function(req, res) {
+    actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action) {
+      if (err) res.send(err);
+      else {
+        var evt = {
+          type: "undo",
+          data: [{ key: "action", value: req.body.action.actionTextId }],
+          sessionId: req.sessionID,
+          user: req.user.email
+        };
+        if (req.params.indicatorId) {
+          evt.data.push({ key: "indicatorId", value: req.params.indicatorId });
+        }
+        if (req.body.action.agree === true) {
+          evt.type = "agree";
+        } else if (req.body.action.agree === false) {
+          evt.type = "disagree";
+          if(req.body.action.rejectedReasonText)
+            evt.data.push({ key: "reasonText", value: req.body.action.rejectedReasonText });
+        }
+        events.add(evt, function(err) {
+          res.send(action);
+        });
+      }
+    });
+  });
+  router.post('/api/action/update/userdefinedteam/:actionTextId', isAuthenticated, function(req, res) {
+    actions.updateTeamUserDefined(req.params.actionTextId, req.body.action, function(err, action) {
+      if (err) res.send(err);
+      else res.send(action);
+    });
+  });
+  router.delete('/api/action/userdefinedteam/:actionTextId', isAuthenticated, function(req, res) {
+    actions.deleteUserDefinedTeamAction(req.params.actionTextId, function(err) {
       if (err) res.send(err);
       else res.send({ status: "ok" });
     });

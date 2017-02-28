@@ -88,6 +88,7 @@ var ind = {
       if(nothingChanged && indicatorCachedState.length > 0)
       {
         farRightPanel.html(indicatorCachedState);
+        patientList.restoreFromState();
       }
 
       //if not presently loaded

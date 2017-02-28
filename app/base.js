@@ -9,6 +9,12 @@ var base = {
   //object for keeping track what is in each panel to prevent unnecessary redraws
   panels: {},
 
+  textFromHistory: function(history) {
+    if(!history.who) return history;
+    return (history.who.trim() === $('#user_fullname').text().trim() ? "You " : history.who.trim() + " ") +
+      history.what + " this action on " + new Date(history.when).toDateString() + (history.why ? " You disagreed because you said: '" + history.why + "'" : "");
+  },
+
   selectTab: function(id) {
     var href = $('#mainTab li.active a').data("href");
     $('#mainTab li.active').removeClass('active').find('a').attr("href", href);

@@ -2,7 +2,6 @@ var template = require('./template'),
   data = require('./data'),
   base = require('./base'),
   layout = require('./layout'),
-  welcome = require('./panels/welcome'),
   log = require('./log'),
   wrapper = require('./panels/wrapper'), // *B*
   indicatorTrend = require('./panels/indicatorTrend'), // *B*
@@ -20,9 +19,9 @@ var main = {
   init: function(callback) {
     main.preWireUpPages();
 
-    log.loadActions(function() {
+    //log.loadActions(function() {
       data.get(main.wireUpPages);
-    });
+    //});
   },
 
   onSelected: function($e, nhsNumberObject) {
@@ -148,32 +147,6 @@ var main = {
       })(file);
 
       reader.readAsText(file);
-    });
-
-    $('#outstandingTasks').on('click', function(e) {
-      e.preventDefault();
-
-      $('#welcome-tabs li').removeClass('active');
-      $(this).closest('li').addClass('active');
-      //var tmpl = require("templates/action-plan-task-list");
-      $('#welcome-tab-content').fadeOut(250, function() {
-        //$(this).html(tmpl());
-        welcome.populate();
-        $(this).fadeIn(250);
-      });
-    });
-
-    $('#completedTasks').on('click', function(e) {
-      e.preventDefault();
-
-      $('#welcome-tabs li').removeClass('active');
-      $(this).closest('li').addClass('active');
-      //var tmpl = require("templates/action-plan-task-list");
-      $('#welcome-tab-content').fadeOut(250, function() {
-        //$(this).html(tmpl());
-        welcome.populate(true);
-        $(this).fadeIn(250);
-      });
     });
 
     if (main.hash !== location.hash) location.hash = main.hash;

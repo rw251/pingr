@@ -5,7 +5,7 @@ var mergeActions = function(actions, indicators, indicatorId) {
   var actionObject = {};
   var userDefinedActions=[];
   actions.forEach(function(v) {
-    if(v.userDefined && (!indicatorId || indicatorId===v.indicatorId)) userDefinedActions.push(v);
+    if(v.userDefined && (!indicatorId || v.indicatorList.indexOf(indicatorId))) userDefinedActions.push(v);
     actionObject[v.actionTextId] = v.toObject();
   });
 

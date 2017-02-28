@@ -13,9 +13,11 @@ var PatientSchema = new Schema({
   },
   conditions: [
     {
+      _id:false,
       name: String,
       intervals: [
         {
+          _id:false,
           from: Number,
           to: Number,
           label: String
@@ -25,6 +27,7 @@ var PatientSchema = new Schema({
   ],
   events: [
     {
+      _id:false,
       name: String,
       time: Number,
       task: Number
@@ -32,6 +35,7 @@ var PatientSchema = new Schema({
   ],
   contacts:[
     {
+      _id:false,
       name: String,
       time: Number,
       task: Number
@@ -39,6 +43,7 @@ var PatientSchema = new Schema({
   ],
   measurements: [
     {
+      _id:false,
       id: String,
       name: String,
       data: Schema.Types.Mixed
@@ -46,6 +51,7 @@ var PatientSchema = new Schema({
   ],
   standards: [
     {
+      _id:false,
       display: String,
       targetMet: Boolean
     }
@@ -55,18 +61,17 @@ var PatientSchema = new Schema({
   ],
   actions: [
     {
-      id: String,
+      _id:false,
+      id: String, //needed anymore??
+      link: String, //needed anymore??
+      indicatorId: String,
+      actionCat: String,
+      reasonNumber: String,
+      pointsPerAction: String,
+      priority: String,
       actionText: String,
-      supportingText: String,
-      link: String,
-      agree: Boolean,
-      done: Boolean,
-      history: [String],
-      userDefined: Boolean,
-      rejected: {
-        reason: String,
-        reasonText: String
-      }
+      actionTextId: String,
+      supportingText: String
     }
   ]
 });

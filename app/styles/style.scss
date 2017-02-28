@@ -1803,6 +1803,7 @@ header {
 
 .table.table-body-hidden {
     margin-bottom: 0;
+    width: 95%; //rw because table-head-hidden will invariably have a scrollbar
 }
 .btn-toggle.inactive {
     opacity: 0.5;

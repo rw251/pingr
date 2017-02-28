@@ -1,5 +1,5 @@
 var Highcharts = require('highcharts/highstock'),
-  log = require('./log'),
+  //  log = require('./log'),
   lookup = require('./lookup');
 
 var _getFakePatientData = function(patient, callback) {
@@ -60,9 +60,9 @@ var dt = {
   diseases: [],
   options: [],
 
-  populateNhsLookup: function(done){
-    if(dt.patLookup) return done();
-    $.getJSON("/api/nhs", function(lookup){
+  populateNhsLookup: function(done) {
+    if (dt.patLookup) return done();
+    $.getJSON("/api/nhs", function(lookup) {
       dt.patLookup = lookup;
       return done();
     });
@@ -176,8 +176,8 @@ var dt = {
   get: function(callback, json) {
     //get text
     //$.getJSON("data/text.json?v=" + Math.random(), function(textfile) {
-    $.getJSON("/api/userDetails", function(userDetails){
-        dt.userDetails = userDetails;
+    $.getJSON("/api/userDetails", function(userDetails) {
+      dt.userDetails = userDetails;
 
       $.getJSON("/api/Text", function(textfile) {
         dt.text = textfile;
@@ -186,12 +186,12 @@ var dt = {
           dt.newload(json);
           if (typeof callback === 'function') callback();
         } else {
-        /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
-            dt.newload(file);
-            if (typeof callback === 'function') callback();
-          }).fail(function(err) {
-            alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
-          });*/
+          /*  $.getJSON("data/data.json?v=" + Math.random(), function(file) {
+              dt.newload(file);
+              if (typeof callback === 'function') callback();
+            }).fail(function(err) {
+              alert("data/data.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
+            });*/
           if (typeof callback === 'function') callback();
         }
 
@@ -222,7 +222,7 @@ var dt = {
       indicator.target = indicator.values[3][last] * 100 + "%";
       var lastPercentage = Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
       indicator.up = percentage > lastPercentage;
-      indicator.change= percentage > lastPercentage ? "up" : (percentage < lastPercentage ? "down" : "none");
+      indicator.change = percentage > lastPercentage ? "up" : (percentage < lastPercentage ? "down" : "none");
       var trend = indicator.values[1].map(function(val, idx) {
         return Math.round(100 * val * 100 / indicator.values[2][idx]) / 100;
       }).slice(Math.max(1, last - 10), Math.max(1, last - 10) + 11);
@@ -304,7 +304,7 @@ var dt = {
         diseaseObject.text.exclusions = data[d].exclusions.text.sidePanel;
       }
       this.diseases.push(diseaseObject);
-      dt[d].suggestions = log.plan[d].team;
+      //dt[d].suggestions = log.plan[d].team;
       $.extend(dt[d].monitoring, {
         "breakdown": [],
         "bdown": {}
@@ -333,7 +333,7 @@ var dt = {
         });
         for (j = 0; j < dt[d].monitoring.standards[key].opportunities.length; j++) {
           dt[d].monitoring.bdown[dt[d].monitoring.standards[key].opportunities[j].name] = dt[d].monitoring.standards[key].opportunities[j];
-          dt[d].monitoring.bdown[dt[d].monitoring.standards[key].opportunities[j].name].suggestions = log.plan[d].monitoring.individual[dt[d].monitoring.standards[key].opportunities[j].name];
+          //dt[d].monitoring.bdown[dt[d].monitoring.standards[key].opportunities[j].name].suggestions = log.plan[d].monitoring.individual[dt[d].monitoring.standards[key].opportunities[j].name];
           for (k = 0; k < dt[d].monitoring.standards[key].opportunities[j].patients.length; k++) {
             if (!dt.patients[dt[d].monitoring.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].monitoring.standards[key].opportunities[j].patients[k]].breach = [];
             dt.patients[dt[d].monitoring.standards[key].opportunities[j].patients[k]].breach.push({
@@ -355,7 +355,7 @@ var dt = {
         });
         for (j = 0; j < dt[d].diagnosis.standards[key].opportunities.length; j++) {
           dt[d].diagnosis.bdown[dt[d].diagnosis.standards[key].opportunities[j].name] = dt[d].diagnosis.standards[key].opportunities[j];
-          dt[d].diagnosis.bdown[dt[d].diagnosis.standards[key].opportunities[j].name].suggestions = log.plan[d].diagnosis.individual[dt[d].diagnosis.standards[key].opportunities[j].name];
+          //dt[d].diagnosis.bdown[dt[d].diagnosis.standards[key].opportunities[j].name].suggestions = log.plan[d].diagnosis.individual[dt[d].diagnosis.standards[key].opportunities[j].name];
           for (k = 0; k < dt[d].diagnosis.standards[key].opportunities[j].patients.length; k++) {
             if (!dt.patients[dt[d].diagnosis.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].diagnosis.standards[key].opportunities[j].patients[k]].breach = [];
             dt.patients[dt[d].diagnosis.standards[key].opportunities[j].patients[k]].breach.push({
@@ -377,7 +377,7 @@ var dt = {
         });
         for (j = 0; j < dt[d].treatment.standards[key].opportunities.length; j++) {
           dt[d].treatment.bdown[dt[d].treatment.standards[key].opportunities[j].name] = dt[d].treatment.standards[key].opportunities[j];
-          dt[d].treatment.bdown[dt[d].treatment.standards[key].opportunities[j].name].suggestions = log.plan[d].treatment.individual[dt[d].treatment.standards[key].opportunities[j].name];
+          //dt[d].treatment.bdown[dt[d].treatment.standards[key].opportunities[j].name].suggestions = log.plan[d].treatment.individual[dt[d].treatment.standards[key].opportunities[j].name];
           for (k = 0; k < dt[d].treatment.standards[key].opportunities[j].patients.length; k++) {
             if (!dt.patients[dt[d].treatment.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].treatment.standards[key].opportunities[j].patients[k]].breach = [];
             dt.patients[dt[d].treatment.standards[key].opportunities[j].patients[k]].breach.push({
@@ -399,7 +399,7 @@ var dt = {
         });
         for (j = 0; j < dt[d].exclusions.standards[key].opportunities.length; j++) {
           dt[d].exclusions.bdown[dt[d].exclusions.standards[key].opportunities[j].name] = dt[d].exclusions.standards[key].opportunities[j];
-          dt[d].exclusions.bdown[dt[d].exclusions.standards[key].opportunities[j].name].suggestions = log.plan[d].exclusions.individual[dt[d].exclusions.standards[key].opportunities[j].name];
+          //dt[d].exclusions.bdown[dt[d].exclusions.standards[key].opportunities[j].name].suggestions = log.plan[d].exclusions.individual[dt[d].exclusions.standards[key].opportunities[j].name];
           for (k = 0; k < dt[d].exclusions.standards[key].opportunities[j].patients.length; k++) {
             if (!dt.patients[dt[d].exclusions.standards[key].opportunities[j].patients[k]].breach) dt.patients[dt[d].exclusions.standards[key].opportunities[j].patients[k]].breach = [];
             dt.patients[dt[d].exclusions.standards[key].opportunities[j].patients[k]].breach.push({
@@ -430,17 +430,17 @@ var dt = {
       indicator.target = indicator.values[3][last] * 100 + "%";
       var lastPercentage = Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;
       indicator.up = percentage > lastPercentage;
-      indicator.change= percentage > lastPercentage ? "up" : (percentage < lastPercentage ? "down" : "none");
+      indicator.change = percentage > lastPercentage ? "up" : (percentage < lastPercentage ? "down" : "none");
       var today = new Date();
-      var lastyear = today.setYear(today.getFullYear()-1);
+      var lastyear = today.setYear(today.getFullYear() - 1);
       var trend = indicator.values[1].map(function(val, idx) {
         return (new Date(indicator.values[0][idx]) > lastyear) ? Math.round(100 * val * 100 / indicator.values[2][idx]) / 100 : "old";
-      }).filter(function(v){
+      }).filter(function(v) {
         return v !== "old";
       });
       //trend.reverse();
       indicator.trend = trend.join(",");
-      var dates = indicator.values[0].filter(function(v){
+      var dates = indicator.values[0].filter(function(v) {
         return new Date(v) > lastyear;
       });
       //dates.reverse();
@@ -457,7 +457,7 @@ var dt = {
       }
       indicator.aboveTarget = indicator.performance.percentage > +indicator.values[3][last] * 100;
 
-      if(!dt.patientArray) dt.patientArray=[];
+      if (!dt.patientArray) dt.patientArray = [];
       dt.patientArray = indicator.opportunities.reduce(function(prev, curr) {
         var union = prev.concat(curr.patients);
         return union.filter(function(item, pos) {
@@ -465,7 +465,7 @@ var dt = {
         });
       }, dt.patientArray);
 
-      indicator.opportunities = indicator.opportunities.map(function(v){
+      indicator.opportunities = indicator.opportunities.map(function(v) {
         v.name = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[v.id].name;
         v.description = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[v.id].description;
         return v;
@@ -485,15 +485,14 @@ var dt = {
       $.ajax({
         url: "/api/ListOfPractices",
         success: function(file) {
-          if (!dt.practices)
-          {
+          if (!dt.practices) {
             dt.practices = file;
           }
 
           return callback(dt.practices);
         },
         error: function() {
-            //throw some ungracious issue eventually...
+          //throw some ungracious issue eventually...
         }
       });
     }
@@ -506,100 +505,98 @@ var dt = {
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
     $.ajax({
-      url: "/api/BenchmarkDataFor/" +indicatorId,
+      url: "/api/BenchmarkDataFor/" + indicatorId,
       success: function(benchmarkData) {
         return callback(benchmarkData);
       },
       error: function() {
-          //throw some ungracious issue eventually...
+        //throw some ungracious issue eventually...
       }
     });
 
-/*
-    //get all practice data
-    dt.getPractices(function(_data){
-      //got the practice data!
-      practiceObj = _data;
-      var userPractice = dt.userDetails.practiceId;
-      //generate the pathwayName
-      ////////var indicatorId = [pathwayId, pathwayStage, standard].join(".");
+    /*
+        //get all practice data
+        dt.getPractices(function(_data){
+          //got the practice data!
+          practiceObj = _data;
+          var userPractice = dt.userDetails.practiceId;
+          //generate the pathwayName
+          ////////var indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
-      var rawData = [];
-      var productObj = [];
-      //dynamically identify all calls necessary and create deferred objects
-      var asyncPracticeCalls = [];
-      //generate and push a call for each practice found
-      for(var i = 0; i < practiceObj.length; ++i)
-      {
-        asyncPracticeCalls.push($.ajax({
-              url: "/api/ListOfIndicatorsForPractice/" + practiceObj[i]._id,
-              success: function(file, i) {
-                dt.indicators = dt.processIndicators(file);
-                return dt.indicators;
-              }
-            }));
-      }
+          var rawData = [];
+          var productObj = [];
+          //dynamically identify all calls necessary and create deferred objects
+          var asyncPracticeCalls = [];
+          //generate and push a call for each practice found
+          for(var i = 0; i < practiceObj.length; ++i)
+          {
+            asyncPracticeCalls.push($.ajax({
+                  url: "/api/ListOfIndicatorsForPractice/" + practiceObj[i]._id,
+                  success: function(file, i) {
+                    dt.indicators = dt.processIndicators(file);
+                    return dt.indicators;
+                  }
+                }));
+          }
 
-      //once all async calls are complete move on to done
-      $.when.apply($, asyncPracticeCalls).done(function() {
-          rawData = arguments;
-          //pass the practice object so that full names are available
-          sculptData(rawData, practiceObj);
-          });
+          //once all async calls are complete move on to done
+          $.when.apply($, asyncPracticeCalls).done(function() {
+              rawData = arguments;
+              //pass the practice object so that full names are available
+              sculptData(rawData, practiceObj);
+              });
 
-      //form raw data into an final product and return
-      function sculptData(rawData, practiceObj){
-        var returnObjs = rawData;
-        for(var i = 0; i < rawData.length; ++i)
-        {
-            //find the object that corresponds to indicatorId
-            var tempData = jQuery.grep(rawData[i][0], function (n, i){
-              return ( n.id == indicatorId);
-            });
-
-            //last is the index of most recent observation from array
-            var last = tempData[0].values[0].length - 1;
-            //identify the practice as either the user or not
-            var _name = "";
-            var _fullName = tempData[0].practiceId;
-            if(userPractice == tempData[0].practiceId)
+          //form raw data into an final product and return
+          function sculptData(rawData, practiceObj){
+            var returnObjs = rawData;
+            for(var i = 0; i < rawData.length; ++i)
             {
+                //find the object that corresponds to indicatorId
+                var tempData = jQuery.grep(rawData[i][0], function (n, i){
+                  return ( n.id == indicatorId);
+                });
 
-              _name = "You";
-              _fullName = "You";
+                //last is the index of most recent observation from array
+                var last = tempData[0].values[0].length - 1;
+                //identify the practice as either the user or not
+                var _name = "";
+                var _fullName = tempData[0].practiceId;
+                if(userPractice == tempData[0].practiceId)
+                {
+
+                  _name = "You";
+                  _fullName = "You";
+                }
+                else {
+                  _name = "P" + i;
+                  if(practiceObj[i].name)
+                  {
+                    _fullName = practiceObj[i].name;
+                  }
+                }
+                //generate the refined product value
+                var valueOfX = (tempData[0].values[1][last]/tempData[0].values[2][last])*100;
+                //x = value, p = practiceId, local = is this practice local to user practice
+                if(i < 10 || _name === "You")
+                {
+                  productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName, local: true };
+                }
+                else {
+                  productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName };
+                }
             }
-            else {
-              _name = "P" + i;
-              if(practiceObj[i].name)
-              {
-                _fullName = practiceObj[i].name;
-              }
-            }
-            //generate the refined product value
-            var valueOfX = (tempData[0].values[1][last]/tempData[0].values[2][last])*100;
-            //x = value, p = practiceId, local = is this practice local to user practice
-            if(i < 10 || _name === "You")
-            {
-              productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName, local: true };
-            }
-            else {
-              productObj[i] = {"x": valueOfX, "p": _name, "pFull": _fullName };
-            }
-        }
-        //use the callback to handle the return
-        return callback(productObj);
-      };
-    });*/
+            //use the callback to handle the return
+            return callback(productObj);
+          };
+        });*/
   },
   getAllIndicatorData: function(practiceId, callback) {
     //var addId = '/'+practiceId;
     var routeURL;
-    if(practiceId)
-    {
+    if (practiceId) {
       routeURL = "/api/ListOfIndicatorsForPractice/" + practiceId;
 
-    }
-    else {
+    } else {
       routeURL = "/api/ListOfIndicatorsForPractice";
     }
 
@@ -608,23 +605,23 @@ var dt = {
       return callback(dt.indicators);
     } else {
 
-        $.ajax({
-          url: routeURL,
-          success: function(file) {
-            //if (!dt.indicators) dt.indicators = dt.processIndicators(file);
+      $.ajax({
+        url: routeURL,
+        success: function(file) {
+          //if (!dt.indicators) dt.indicators = dt.processIndicators(file);
 
-            //don't retian the object, refresh of object
-            dt.indicators = dt.processIndicators(file);
+          //don't retian the object, refresh of object
+          dt.indicators = dt.processIndicators(file);
 
-            return callback(dt.indicators);
-          },
-          error: function() {
+          return callback(dt.indicators);
+        },
+        error: function() {
 
-          }
-        });
-      }
+        }
+      });
+    }
 
-    },
+  },
 
   // *b* practice id not used?
   getAllIndicatorDataSync: function(practiceId) {
@@ -672,10 +669,10 @@ var dt = {
   getIndicatorDataSync: function(practiceId, indicatorId) {
     //practiceId not used in getAllIndicatorDataSync
     dt.getAllIndicatorDataSync(practiceId);
-    var indicator = dt.indicators.filter(function(v){
+    var indicator = dt.indicators.filter(function(v) {
       return v.id === indicatorId;
     });
-    if (indicator.length>0) {
+    if (indicator.length > 0) {
       return indicator[0];
     }
   },
@@ -701,7 +698,7 @@ var dt = {
     var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
 
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
-    var opps = dt.indicators.filter(function(v){
+    var opps = dt.indicators.filter(function(v) {
       return v.id === indicatorId;
     })[0].opportunities.map(function(v) {
       return v.id;
@@ -716,30 +713,39 @@ var dt = {
           return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
         }).join("")
       ]; //The fields in the patient list table
-      return patient;
-      /*var ret = dt.indicators[indicatorId].patients[patientId];
-      ret.nhsNumber = dt.patLookup[patientId] || patientId;
-      ret.patientId = patientId;
-      ret.items = [dt.patients[patientId].characteristics.age]; //The fields in the patient list table
+      if (patient.actionStatus) {
+        var releventActions = patient.actionStatus.filter(function(v) {
+          return !v.indicatorList || v.indicatorList.indexOf(indicatorId) > -1;
+        });
+        if (releventActions.length > 0) {
+          //This patient has had some interaction - agree / disagree / user added
+          var info = {};
+          var mostRecent;
+          releventActions.forEach(function(v) {
+            var name = $('#user_fullname').text().trim() === v.history[0].who ? "You have" : v.history[0].who + " has";
+            if(!info[name]) info[name]={agree:0, added:0};
 
-      var measures = dt.patients[patientId].measurements.filter(function(v) {
-        return v.id === vId;
-      });
+            if(!mostRecent) mostRecent = v.history[0].when;
+            else mostRecent = Math.max(mostRecent, v.history[0].when);
 
-      if (measures[0] && measures[0].data) {
-        if (dOv === "date") {
-          ret.items.push(new Date(measures[0].data[measures[0].data.length - 1][0]));
+            if(v.history[0].what==="agreed with") info[name].agree++;
+            if(v.history[0].what==="added") info[name].added++;
+          });
+          var tooltip = Object.keys(info).map(function(v){
+            return v + " " +
+              (info[v].agree > 0 ? " agreed with " + info[v].agree + " action" +(info[v].agree>1 ? "s":""):"") +
+              (info[v].agree > 0 && info[v].added > 0 ? " and " : "") +
+              (info[v].added > 0 ? " added " + info[v].added + " action" +(info[v].added>1 ? "s.":"."):".");
+          }).join("<br>");
+          patient.items.push('<i class="fa fa-fw fa-check text-success" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + tooltip + '"></i>');
         } else {
-          ret.items.push(measures[0].data[measures[0].data.length - 1][1]);
+          patient.items.push("");
         }
       } else {
-        ret.items.push("?");
+        patient.items.push("");
       }
-      ret.items.push(dt.indicators[indicatorId].patients[patientId].opportunities.map(function(v) {
-        return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[v] + '"></span>';
-      }).join(""));
-      //ret.items.push(data.numberOfStandardsMissed(patientId));
-      return ret;*/
+      return patient;
+
     });
 
     var rtn = {
@@ -788,9 +794,15 @@ var dt = {
     //add qual standard column
     rtn["header-items"].push({
       "title": "Improvement opportunities",
-      "titleHTML": 'Improvement opportunities',
       "isSorted": true,
       "tooltip": "Improvement opportunities from the bar chart above"
+    });
+
+    //add does patient have a plan column
+    rtn["header-items"].push({
+      "title": "Action plan?",
+      "isSorted": false,
+      "tooltip": "Whether this patient has had any actions added, agreed or disagreed"
     });
 
     return rtn;
@@ -820,6 +832,85 @@ var dt = {
       });
 
     }
+  },
+
+  addOrUpdatePatientAction: function(patientId, action) {
+    if(!dt.patientList) return;
+    Object.keys(dt.patientList).forEach(function(a) {
+      Object.keys(dt.patientList[a]).forEach(function(b) {
+        Object.keys(dt.patientList[a][b]).forEach(function(c) {
+          dt.patientList[a][b][c].patients.forEach(function(patient) {
+            if (patient.patientId === +patientId) {
+              if (!patient.actionStatus) patient.actionStatus = [];
+              if (patient.actionStatus.filter(function(v) {
+                  return v.actionTextId === action.actionTextId;
+                }).length === 0) {
+                if (action.agree === true || action.agree === false || action.userDefined === true) {
+                  patient.actionStatus.push({ actionTextId: action.actionTextId, agree: action.agree, history: action.history });
+                }
+              } else {
+                patient.actionStatus = patient.actionStatus.map(function(v) {
+                  if (v.actionTextId === action.actionTextId) {
+                    v.agree = action.agree;
+                    v.history = action.history;
+                  }
+                  return v;
+                }).filter(function(v) {
+                  return v.agree === true || v.agree === false;
+                });
+              }
+              var releventActions = patient.actionStatus.filter(function(v) {
+                return !v.indicatorList || v.indicatorList.indexOf(b) > -1;
+              });
+              if (releventActions.length > 0) {
+                //This patient has had some interaction - agree / disagree / user added
+                var info = {};
+                var mostRecent;
+                releventActions.forEach(function(v) {
+                  var name = $('#user_fullname').text().trim() === v.history[0].who ? "You have" : v.history[0].who + " has";
+                  if(!info[name]) info[name]={agree:0, added:0};
+
+                  if(!mostRecent) mostRecent = v.history[0].when;
+                  else mostRecent = Math.max(mostRecent, v.history[0].when);
+
+                  if(v.history[0].what==="agreed with") info[name].agree++;
+                  if(v.history[0].what==="added") info[name].added++;
+                });
+                var tooltip = Object.keys(info).map(function(v){
+                  return v + " " +
+                    (info[v].agree > 0 ? " agreed with " + info[v].agree + " action" +(info[v].agree>1 ? "s":""):"") +
+                    (info[v].agree > 0 && info[v].added > 0 ? " and " : "") +
+                    (info[v].added > 0 ? " added " + info[v].added + " action" +(info[v].added>1 ? "s.":"."):".");
+                }).join("<br>");
+                patient.items[patient.items.length - 1] = '<i class="fa fa-fw fa-check text-success" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + tooltip + '"></i>';
+              } else {
+                patient.items[patient.items.length - 1] = "";
+              }
+            }
+          });
+        });
+      });
+    });
+  },
+
+  removePatientAction: function(patientId, actionTextId) {
+    if(!dt.patientList) return;
+    Object.keys(dt.patientList).forEach(function(a) {
+      Object.keys(dt.patientList[a]).forEach(function(b) {
+        Object.keys(dt.patientList[a][b]).forEach(function(c) {
+          dt.patientList[a][b][c].patients.forEach(function(patient) {
+            if (patient.patientId === +patientId) {
+              patient.actionStatus = patient.actionStatus.filter(function(v) {
+                return v.actionTextId !== actionTextId;
+              });
+              if (patient.actionStatus.length === 0) {
+                patient.items[patient.items.length - 1] = "";
+              }
+            }
+          });
+        });
+      });
+    });
   },
 
   getPatientData: function(patientId, callback) {

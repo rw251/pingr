@@ -186,7 +186,10 @@ var iap = {
       var action = patientActionsObject[$(this).closest('tr').data('id')];
 
       action.agree = AGREE_STATUS ? null : true;
-      if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
+      if (action.agree) {
+        if(!action.history) action.history=[];
+        action.history.unshift({who:$('#user_fullname').text().trim(),what:"agreed with",when:new Date()});
+      }
       log.updateIndivdualAction(patientId, action);
       iap.updateAction(action);
 
@@ -199,8 +202,8 @@ var iap = {
       if (AGREE_STATUS === false) {
         //editing reason
         iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason || "") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if(!action.history) action.history=[];
+          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -218,8 +221,8 @@ var iap = {
       } else {
         //disagreeing
         iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason || "") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if(!action.history) action.history=[];
+          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -307,7 +310,7 @@ var iap = {
           all.addClass('active');
           //self.find('td').last().children().show();
           if (patientActionsObject[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + base.textFromHistory(patientActionsObject[self.data("id")].history[0]) + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -317,7 +320,7 @@ var iap = {
           all.addClass('danger');
           all.removeClass('success');
           if (patientActionsObject[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + base.textFromHistory(patientActionsObject[self.data("id")].history[0]) + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }

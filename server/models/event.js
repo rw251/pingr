@@ -6,7 +6,7 @@ var EventSchema = new Schema({
   date: { type: Date, default: Date.now },
   user : String,
   type : String,
-  data : [{ key : String, value : String }],
+  data : [{ _id:false, key : String, value : String }],
   url: String,
   xpath: String
 });

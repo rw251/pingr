@@ -54,7 +54,6 @@ var writePdf = function() {
   doc.setFontSize(11);
   doc.setTextColor(100);
   y += subHeader.length * 8;
-  console.log(extraInfo);
   doc.autoTable(columns, rows, {
     startY: y,
     showHeader: 'firstPage',
@@ -63,8 +62,6 @@ var writePdf = function() {
       columWidth: "wrap"
     }
   });
-
-  //doc.text(text, 14, doc.autoTable.previous.finalY + 10);
 
   doc.save('patient-list.pdf');
 };
@@ -107,6 +104,10 @@ var pl = {
 
   selectSubsection: function(section) {
     pl.populate(pl.state[0], pl.state[1], pl.state[2], section, pl.state[4], pl.state[5]);
+  },
+
+  restoreFromState: function() {
+    pl.populate.apply(this, pl.state);
   },
 
   populate: function(pathwayId, pathwayStage, standard, subsection, sortField, sortAsc) {

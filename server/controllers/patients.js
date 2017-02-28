@@ -184,35 +184,46 @@ module.exports = {
       var indicatorValue = indicator.measurementId;
       if (indicatorValue === "SBP") indicatorValue = "BP";
 
-      Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, measurements: { $elemMatch: { id: indicatorValue } }, "measurements.data": { $slice: -1 } },
-        function(err, patients) {
-          var p = patients.map(function(patient) {
-            patient = patient.toObject();
-            var meas = "?";
-            if (patient.measurements && patient.measurements.length > 0 && patient.measurements[0].data && patient.measurements[0].data.length > 0 && patient.measurements[0].data[0].length > 2) {
-              if (indicator.measurementId === "SBP") {
-                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
-                // for dbp use:
-                //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
-              } else {
-                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
-              }
-            }
-            var opps = indicator.opportunities.filter(function(v) {
-              return v.patients.indexOf("" + patient.patientId) > -1;
-            }).map(function(v) {
-              return v.id;
-            });
-            return {
-              patientId: patient.patientId,
-              nhs: patient.characteristics.nhs,
-              age: patient.characteristics.age,
-              value: meas,
-              opportunities: opps
-            };
-          });
-          return done(null, p);
+      actions.patientsWithPlan(patientList, function(err, patientsWithActions){
+        var patientsWithActionsObject = {};
+        patientsWithActions.forEach(function(v){
+          patientsWithActionsObject[v._id] = v.actions;
         });
+        if(err) return done(err);
+        Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, actions:1, measurements: { $elemMatch: { id: indicatorValue } }, "measurements.data": { $slice: -1 } },
+          function(err, patients) {
+            var p = patients.map(function(patient) {
+              patient = patient.toObject();
+              var meas = "?";
+              if (patient.measurements && patient.measurements.length > 0 && patient.measurements[0].data && patient.measurements[0].data.length > 0 && patient.measurements[0].data[0].length > 2) {
+                if (indicator.measurementId === "SBP") {
+                  meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                  // for dbp use:
+                  //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
+                } else {
+                  meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                }
+              }
+              var opps = indicator.opportunities.filter(function(v) {
+                return v.patients.indexOf("" + patient.patientId) > -1;
+              }).map(function(v) {
+                return v.id;
+              });
+              var rtn = {
+                patientId: patient.patientId,
+                nhs: patient.characteristics.nhs,
+                age: patient.characteristics.age,
+                value: meas,
+                opportunities: opps
+              };
+              if(patientsWithActionsObject[patient.patientId]) {
+                rtn.actionStatus = patientsWithActionsObject[patient.patientId];
+              }
+              return rtn;
+            });
+            return done(null, p);
+          });
+      });
     });
   }
 };

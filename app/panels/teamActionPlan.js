@@ -184,7 +184,10 @@ var tap = {
       var action = teamActionsObject[$(this).closest('tr').data('id')];
 
       action.agree = AGREE_STATUS ? null : true;
-      if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
+      if (action.agree) {
+        if(!action.history) action.history=[];
+        action.history.unshift({who:$('#user_fullname').text().trim(),what:"agreed with",when:new Date()});
+      }
       log.updateTeamAction(indicatorId, action);
       tap.updateAction(action);
 
@@ -197,8 +200,8 @@ var tap = {
       if (AGREE_STATUS === false) {
         //editing reason
         tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if(!action.history) action.history=[];
+          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -216,8 +219,8 @@ var tap = {
       } else {
         //disagreeing
         tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if(!action.history) action.history=[];
+          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -305,7 +308,7 @@ var tap = {
           all.addClass('active');
           //self.find('td').last().children().show();
           if (teamActionsObject[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to cancel</p>";
+            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + base.textFromHistory(teamActionsObject[self.data("id")].history[0]) + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
@@ -315,7 +318,7 @@ var tap = {
           all.addClass('danger');
           all.removeClass('success');
           if (teamActionsObject[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "<p>" + base.textFromHistory(teamActionsObject[self.data("id")].history[0]) + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }

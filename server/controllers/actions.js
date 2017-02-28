@@ -2,6 +2,7 @@ var Action = require('../models/action');
 
 var _updateAction = function(action, updatedAction, callback) {
   Object.keys(updatedAction).forEach(function(v) {
+    if(v==="_id") return;
     action[v] = updatedAction[v];
   });
   action.save(function(err, act) {
@@ -19,6 +20,16 @@ module.exports = {
   //Get list of actions for a single practice
   list: function(practiceId, done) {
     Action.find({ practiceId: practiceId }, function(err, actions) {
+      //TEMP fix
+      actions = actions.map(function(v){
+        if(v.history) {
+          v.history = v.history.filter(function(v){
+            return v.who;
+          });
+          if(v.history.length===0) v.history=null;
+        }
+        return v;
+      });
       if (err) {
         console.log(err);
         return done(new Error("Error finding action list for practice: " + practiceId));
@@ -34,6 +45,16 @@ module.exports = {
 
   listAgreedWith: function(practiceId, done){
     Action.find({ practiceId: practiceId, $or: [{agree: true},{userDefined:true}] }, function(err, actions) {
+      //TEMP fix
+      actions = actions.map(function(v){
+        if(v.history) {
+          v.history = v.history.filter(function(v){
+            return v.who;
+          });
+          if(v.history.length===0) v.history=null;
+        }
+        return v;
+      });
       if (err) {
         console.log(err);
         return done(new Error("Error finding action list for practice: " + practiceId));
@@ -121,7 +142,7 @@ module.exports = {
       var errorIfError = null;
 
       actions.forEach(function(v) {
-        delete updatedAction.indicatorId;
+        delete updatedAction.indicatorList;
         _updateAction(v, updatedAction, function(err, act) {
           if (err) {
             console.log(err);
@@ -167,6 +188,16 @@ module.exports = {
 
   getTeam: function(searchObject, done) {
     Action.find(searchObject, function(err, actions) {
+      //TEMP fix
+      actions = actions.map(function(v){
+        if(v.history) {
+          v.history = v.history.filter(function(v){
+            return v.who;
+          });
+          if(v.history.length===0) v.history=null;
+        }
+        return v;
+      });
       if (err) {
         console.log(err);
         return done(new Error("Error finding team action list for practice: " + searchObject.practiceId + " and indicator " + searchObject.indicatorId));
@@ -182,6 +213,16 @@ module.exports = {
 
   getIndividual: function(searchObject, done) {
     Action.find(searchObject, function(err, actions) {
+      //TEMP fix
+      actions = actions.map(function(v){
+        if(v.history) {
+          v.history = v.history.filter(function(v){
+            return v.who;
+          });
+          if(v.history.length===0) v.history=null;
+        }
+        return v;
+      });
       if (err) {
         console.log(err);
         return done(new Error("Error finding individual action list for practice: " + practiceId + " and patient " + patientId));
@@ -200,11 +241,11 @@ module.exports = {
       practiceId: practiceId,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [username + " added this action on " + new Date()],
+      history: [{who: username, what: "added this", when: new Date()}],
       userDefined: true,
       done: false
     };
-    if (indicatorId) actionObject.indicatorId = indicatorId;
+    if (indicatorId) actionObject.indicatorList = [indicatorId];
     var action = new Action(actionObject);
 
     // save the event
@@ -223,7 +264,7 @@ module.exports = {
       patientId: patientId,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [username + " added this action on " + new Date()],
+      history: [{who: username, what: "added this", when: new Date()}],
       userDefined: true,
       done: false
     });
@@ -237,5 +278,33 @@ module.exports = {
       }
     });
   },
+
+  patientsWithPlan: function(patientList, done){
+    Action.aggregate([
+      {$match: {patientId: {$in: patientList }, $or:[{agree:true},{userDefined:true}]}},
+      {$group: {_id:"$patientId",actions:{$push:{actionTextId:"$actionTextId",agree:"$agree", history:"$history", indicatorList:"$indicatorList"}}}}
+    ], function(err, actions) {
+      //TEMP fix
+      actions = actions.map(function(v){
+        if(v.history) {
+          v.history = v.history.filter(function(v){
+            return v.who;
+          });
+          if(v.history.length===0) v.history=null;
+        }
+        return v;
+      });
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding individual action list for practice: " + practiceId + " and patient " + patientId));
+      }
+      if (!actions) {
+        console.log('Error finding individual action list for practice:  ' + practiceId + " and patient " + patientId);
+        return done(null, false);
+      } else {
+        done(null, actions);
+      }
+    });
+  }
 
 };

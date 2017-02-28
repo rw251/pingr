@@ -1,49 +1,5 @@
 include ../partials/head.jade
 include ../partials/header.jade
-#welcome.starter-template.page.welcome-page
-  .container
-    .row
-      h1 Agreed actions
-    .row
-      h4
-        | To see more suggested improvement actions, select a clinical area from the menu on the left 
-        i.fa.fa-hand-o-left
-        // or review actions you have previously agreed with <i class="fa fa-hand-o-down"></i>
-        | or search for a patient above 
-        i.fa.fa-hand-o-up
-        | .
-      br
-    .hide-if-logged-out.pull-right.btn-group(data-toggle='tooltip', data-placement='top', title='Download your planned actions as a PDF document')
-      // <button type="button" class="btn btn-danger btn-padding download-outstanding" data-toggle="tooltip" data-placement="bottom" title="Download your planned actions as a PDF document"><span class="hidden-xs hidden-sm hidden-md">Download agreed actions </span></button>
-      button.btn.btn-danger.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-        span.hidden-xs.hidden-sm.hidden-md Download saved actions   
-        span.caret
-        span.sr-only Toggle Dropdown
-      ul.dropdown-menu
-        li
-          a.download-outstanding.clickable
-            | Download 
-            strong  agreed actions awaiting implementation
-        li
-          a.download-completed.clickable
-            | Download 
-            strong agreed actions that have been implemented 
-        li
-          hr(style='margin-top:2px; margin-bottom:2px; border-bottom: 1px solid grey')
-        li
-          a.download-completed.clickable
-            | Download 
-            strong all actions 
-            | (both awaiting implementation and implemented)
-    ul#welcome-tabs.nav.nav-tabs
-      li.active(data-toggle='tooltip', title='Recommended actions with which you have previously already in PINGR that have not yet been implemented in practice')
-        a#outstandingTasks(href='#outstandingTasks') Agreed actions awaiting implementation
-      li(data-toggle='tooltip', title='Recommended actions with which you have previously already in PINGR and then implemented in practice')
-        a#completedTasks(href='#completedTasks') Agreed actions that have been implemented
-    .top-tab-pane
-      .panel.panel-default
-        .panel-body
-          #welcome-tab-content
 #help-page.starter-template.page
   .container-fluid
     h2 Coming Soon!
