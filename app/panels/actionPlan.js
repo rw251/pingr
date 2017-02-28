@@ -22,7 +22,6 @@ var ap = {
       var reason = $('input:radio[name=reason]:checked').val();
       var reasonText = $('#modal textarea').val();
 
-      //log.recordFeedback(data.pathwayId, e.data.label, value, reason, reasonText);
       ap.rejectedReason = reason;
       ap.rejectedReasonText = reasonText;
 

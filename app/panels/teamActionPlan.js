@@ -57,75 +57,6 @@ var tap = {
     var indicatorId="";
     if(pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
-    //find [] and replace with copy button
-
-    /*$('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
-      var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.GARBAGE, ACTIONID, null, this.checked);
-
-      if (this.checked) {
-        log.recordEvent(pathwayId, data.GARBAGE, "Item completed");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              ACTIONID = $(this).closest('tr').data('id');
-              log.editAction(data.GARBAGE, ACTIONID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              tap.updateTeamSapRows();
-            });
-          });
-        }, 1000);
-      }
-
-      tap.updateTeamSapRows();
-    });*/
-
-    /*$('#personalPlanTeam').on('click', 'input[type=checkbox]', function() {
-      var PLANID = $(this).closest('tr').data("id");
-      log.editPlan(PLANID, null, this.checked);
-
-      if (this.checked) {
-        $(this).parent().parent().parent().addClass('success');
-        log.recordEvent(pathwayId, data.GARBAGE, "Team plan item");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              PLANID = $(this).closest('tr').data('id');
-              log.editPlan(data.GARBAGE, PLANID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              tap.updateTeamSapRows();
-            });
-          });
-        }, 1000);
-      }
-    }).on('click', '.btn-undo', function(e) {
-      var PLANID = $(this).closest('tr').data('id');
-      log.editPlan(PLANID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      tap.updateTeamSapRows();
-      e.stopPropagation();
-    });*/
-
     teamTab.on('click', '.edit-plan', function() {
       var action = userDefinedTeamActionsObject[$(this).closest('tr').data("id")];
 
@@ -173,12 +104,7 @@ var tap = {
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       //tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
-      /*var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.GARBAGE, ACTIONID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      tap.updateTeamSapRows();*/
+
     }).on('click', '.btn-yes', function(e) {
       var AGREE_STATUS = $(this).closest('tr').data('agree');
       var action = teamActionsObject[$(this).closest('tr').data('id')];
@@ -342,17 +268,6 @@ var tap = {
   },
 
   displayPersonalisedTeamActionPlan: function(parentElem) {
-    //var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans("team", data.pathwayId)));
-
-    /*base.createPanelShow(actionPlanList, parentElem, {
-      "hasSuggestions": plans && plans.length > 0,
-      "suggestions": plans
-    }, {
-      "action-plan": $('#action-plan').html(),
-      "action-plan-item": $('#action-plan-item').html(),
-      "chk": $('#checkbox-template').html()
-    });*/
-
     var tmpl = require('templates/action-plan-list');
     var userDefinedTeamActions = Object.keys(userDefinedTeamActionsObject).map(function(v){return userDefinedTeamActionsObject[v];});
     parentElem.html(tmpl({

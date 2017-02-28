@@ -58,75 +58,6 @@ var iap = {
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {
     individualTab = $('#tab-plan-individual');
 
-    //find [] and replace with copy button
-
-    /*$('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
-      var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.patientId, ACTIONID, null, this.checked);
-
-      if (this.checked) {
-        log.recordEvent(pathwayId, data.patientId, "Item completed");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              ACTIONID = $(this).closest('tr').data('id');
-              log.editAction(data.patientId, ACTIONID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              iap.updateIndividualSapRows();
-            });
-          });
-        }, 1000);
-      }
-
-      iap.updateIndividualSapRows();
-    });*/
-
-    /*$('#personalPlanIndividual').on('click', 'input[type=checkbox]', function() {
-      var PLANID = $(this).closest('tr').data("id");
-      log.editPlan(PLANID, null, this.checked);
-
-      if (this.checked) {
-        $(this).parent().parent().parent().addClass('success');
-        log.recordEvent(pathwayId, data.patientId, "Personal plan item");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              PLANID = $(this).closest('tr').data('id');
-              log.editPlan(data.patientId, PLANID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              iap.updateIndividualSapRows();
-            });
-          });
-        }, 1000);
-      }
-    }).on('click', '.btn-undo', function(e) {
-      var PLANID = $(this).closest('tr').data('id');
-      log.editPlan(PLANID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      iap.updateIndividualSapRows();
-      e.stopPropagation();
-    });*/
-
     individualTab.on('click', '.edit-plan', function() {
       var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
@@ -175,12 +106,7 @@ var iap = {
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       /*iap.updateIndividualSapRows();*/
     }).on('click', '.btn-undo', function(e) {
-      /*var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.patientId, ACTIONID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      iap.updateIndividualSapRows();*/
+
     }).on('click', '.btn-yes', function(e) {
       var AGREE_STATUS = $(this).closest('tr').data('agree');
       var action = patientActionsObject[$(this).closest('tr').data('id')];
@@ -190,7 +116,7 @@ var iap = {
         if(!action.history) action.history=[];
         action.history.unshift({who:$('#user_fullname').text().trim(),what:"agreed with",when:new Date()});
       }
-      log.updateIndivdualAction(patientId, action);
+      log.updateIndividualAction(patientId, action);
       iap.updateAction(action);
 
       e.stopPropagation();
@@ -207,13 +133,13 @@ var iap = {
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndivdualAction(patientId, action);
+          log.updateIndividualAction(patientId, action);
           iap.updateAction(action);
         }, null, function() {
           action.agree = null;
           delete action.rejectedReason;
           delete action.rejectedReasonText;
-          log.updateIndivdualAction(patientId, action);
+          log.updateIndividualAction(patientId, action);
           iap.updateAction(action);
         });
         e.stopPropagation();
@@ -226,7 +152,7 @@ var iap = {
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndivdualAction(patientId, action);
+          log.updateIndividualAction(patientId, action);
           iap.updateAction(action);
         });
         e.stopPropagation();

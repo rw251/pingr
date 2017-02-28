@@ -35,7 +35,6 @@ var overview = {
         $('#mainTitle').show();
         base.updateTitle("Overview of " + practiceName + "'s performance");
 
-        base.removeFullPage(farRightPanel);
         base.hidePanels(farRightPanel);
 
         layout.view = ID;

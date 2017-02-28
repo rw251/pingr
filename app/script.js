@@ -41,15 +41,6 @@ var App = {
       //Load the data then wire up the events on the page
       main.init();
 
-      //Sorts out the data held locally in the user's browser
-      if (!localStorage.bb) localStorage.bb = JSON.stringify({});
-      var obj = JSON.parse(localStorage.bb);
-      if (!obj.version || obj.version !== main.version) {
-        localStorage.bb = JSON.stringify({
-          "version": main.version
-        });
-      }
-
       $('[data-toggle="tooltip"]').tooltip({
         container: 'body',
         delay: {

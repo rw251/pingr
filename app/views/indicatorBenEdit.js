@@ -37,7 +37,6 @@ var ind_be = {
         base.switchTo2Column1Narrow1Wide();
         layout.showMainView();
 
-        base.removeFullPage(farRightPanel);
         base.hidePanels(farRightPanel);
 
         layout.view = ID;
@@ -120,7 +119,7 @@ var ind_be = {
         $('head').append('<style id="addedCSS" type="text/css">.table-scroll {max-height:170px;}');
       }
 
-      base.addFullPage(farRightPanel);
+      //base.addFullPage(farRightPanel);
       /*console.log("WINDOW HEIGHT: " + $(window).height());
       console.log("TABLE TOP: " + $('.table-scroll').position().top);
       console.log("CSS: " + Math.floor($(window).height()-$('.table-scroll').position().top-200)+"px");*/

@@ -47,7 +47,6 @@ var pv = {
         base.switchTo2Column1Narrow1Wide();
         layout.showMainView();
 
-        base.removeFullPage(farRightPanel);
         base.hidePanels(farRightPanel);
 
         layout.view = ID;

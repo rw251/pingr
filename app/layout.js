@@ -13,11 +13,6 @@ var layout = {
     layout.showPage('main-dashboard');
   },
 
-  clearNavigation: function() {
-    $("aside.left-panel nav.navigation > ul > li > ul").slideUp(300);
-    $("aside.left-panel nav.navigation > ul > li").removeClass('active');
-  },
-
   showPage: function(page) {
     if (layout.page === page) return;
     layout.page = page;
@@ -29,24 +24,6 @@ var layout = {
       $('#bottomnavbar').show();
       layout.hideHeaderBarItems();
     }
-  },
-
-  showSidePanel: function() {
-    if (layout.elements.navigtion) return;
-    layout.elements.navigtion = true;
-    $('#main').addClass('content');
-    $('#topnavbar').addClass('full');
-    $('#aside-toggle').show();
-    $('#bottomnavbar').hide();
-  },
-
-  hideSidePanel: function() {
-    if (layout.elements.navigtion === false) return;
-    layout.elements.navigtion = false;
-    $('#main').removeClass('content');
-    $('#topnavbar').removeClass('full');
-    $('#aside-toggle').hide();
-    $('#bottomnavbar').show();
   },
 
   showHeaderBarItems: function() {

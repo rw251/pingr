@@ -1,9 +1,6 @@
-var data = require('./data'),
-  log = require('./log'),
+var log = require('./log'),
   lookup = require('./lookup'),
   base = require('./base'),
-  patientList = require('./panels/patientList'),
-  teamActionPlan = require('./panels/teamActionPlan'),
   layout = require('./layout'),
   overview = require('./views/overview'),
   indicatorView = require('./views/indicator'),
@@ -95,88 +92,6 @@ var template = {
     }
 
     lookup.currentUrl = hash;
-  },
-
-  //Show the overview page for a disease
-  showOverview: function(disease) {
-    data.pathwayId = disease;
-
-    layout.showMainView(data.diseases.map(function(v) {
-      return v.id;
-    }).indexOf(disease));
-
-    $('aside li ul li').removeClass('active');
-    $('aside a[href="#main/' + disease + '"]:contains("Overview")').parent().addClass('active');
-
-    $('#mainTitle').show();
-    base.updateTitle(data.text.pathways[data.pathwayId]["display-name"] + ": Overview (practice-level data)");
-
-    //Show overview panels
-    template.showOverviewPanels();
-    teamActionPlan.show(farRightPanel);
-  },
-
-  showOverviewPanels: function() {
-    base.switchTo221Layout();
-
-    template.showPanel(lookup.categories.diagnosis.name, topLeftPanel, true);
-    template.showPanel(lookup.categories.monitoring.name, topRightPanel, true);
-    template.showPanel(lookup.categories.treatment.name, bottomLeftPanel, true);
-    template.showPanel(lookup.categories.exclusions.name, bottomRightPanel, true);
-
-    base.wireUpTooltips();
-  },
-
-  showPanel: function(pathwayStage, location, enableHover) {
-    base.showPathwayStageOverviewPanel(location, enableHover, data.pathwayId, pathwayStage);
-
-    if (enableHover) template.highlightOnHoverAndEnableSelectByClick(location);
-    else location.children('div').addClass('unclickable');
-  },
-
-  highlightOnHoverAndEnableSelectByClick: function(panelSelector) {
-    panelSelector.children('div').removeClass('unclickable').on('mouseover', function() {
-      $(this).removeClass('panel-default');
-    }).on('mouseout', function(e) {
-      $(this).addClass('panel-default');
-    }).on('click', 'tr.standard-row', function(e) {
-      history.pushState(null, null, '#main/' + data.pathwayId + '/' + $(this).closest('.panel').data('stage') + '/no/' + $(this).data('standard'));
-      template.loadContent('#main/' + data.pathwayId + '/' + $(this).closest('.panel').data('stage') + '/no/' + $(this).data('standard'), true);
-      // do not give a default action
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    }).on('click', function(e) {
-      // keep the link in the browser history
-      history.pushState(null, null, '#main/' + data.pathwayId + '/' + $(this).data('stage') + '/no');
-      template.loadContent('#main/' + data.pathwayId + '/' + $(this).data('stage') + '/no', true);
-      // do not give a default action
-      return false;
-    });
-
-  },
-
-  displaySelectedPatient: function(id) {
-    var nhs = data.patLookup ? data.patLookup[id] : id;
-
-    history.pushState(null, null, '#patients/' + id);
-    template.loadContent('#patients/' + id, true);
-
-    $('.list-item').removeClass('highlighted');
-    $('.list-item:has(button[data-clipboard-text=' + nhs + '])').addClass('highlighted');
-
-    //scroll to patients
-    /*$('#patients').find('div.table-scroll').getNiceScroll().doScrollPos(0, $('#patients td').filter(function() {
-      return $(this).text().trim() === nhs;
-    }).position().top - 140);*/
-  },
-
-  shouldWeFade: function(oldHash, newHash) {
-    oldHash = oldHash.split('/');
-    newHash = newHash.split('/');
-
-    if (oldHash[0] === newHash[0] && oldHash[1] === newHash[1] && oldHash[2] === newHash[2] && oldHash[0] && newHash[0]) return false;
-    return true;
   }
 
 };
