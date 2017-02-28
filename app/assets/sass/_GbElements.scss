@@ -1,5 +1,5 @@
 /*****************************
-Overried CT-dashboard
+Overrided CT-dashboard
 *****************************/
 .main-panel > .content{
   margin-top: 0px !important;
@@ -22,6 +22,21 @@ Misc
 
 .shade{
   background: rgba(0,0,0,0.05);
+}
+
+/* thanks fly in message */
+.flyover {
+    position: fixed;
+    left: 150%;
+    bottom: 20px;
+    padding: 5px 15px;
+    z-index: 999;
+    opacity: 0.8;
+}
+
+.flyover.in {
+    left: auto;
+    right: 20px;
 }
 
 /*****************************

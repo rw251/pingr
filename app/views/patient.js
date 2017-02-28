@@ -65,7 +65,7 @@ var pv = {
 
           var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
           var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
-            "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
+            "♂" : (patientData.characteristics.sex.toLowerCase() === "f" ? "♀" : patientData.characteristics.sex.toLowerCase());
           var titleTmpl = require("templates/patient-title");
           base.updateTitle(titleTmpl({
             patid: patid,
@@ -95,15 +95,19 @@ var pv = {
           base.hideLoading();
 
           //add state indicator
-          farRightPanel.attr("class", "col-xl-8 col-lg-8 ps-child state-patient-rightPanel");
+          farRightPanel.attr("class", "col-xl-6 col-lg-6 ps-child state-patient-rightPanel"); //ps-child col-xl-4 col-lg-4
+          farLeftPanel.attr("class", "col-xl-6 col-lg-6 ps-child");
 
           $('#right-panel').css("overflow-y","auto");
           $('#right-panel').css("overflow-x","hidden");
+          $('#left-panel').css("overflow-y","auto");
+          $('#left-panel').css("overflow-x","hidden");
           base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.fit-to-screen-height',padding:200}]);
 
         });
       } else {
-        base.updateTitle("No patient currently selected");
+        //base.updateTitle("No patient currently selected");
+        base.updateTitle("");
         base.savePanelState();
         patientSearch.show(farRightPanel, false, loadContentFn);
 
