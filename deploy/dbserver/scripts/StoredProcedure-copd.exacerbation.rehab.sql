@@ -1398,7 +1398,7 @@ select a.PatID,
 				or
 				(latestAnyExceptionCodeDate > DATEADD(year, -1, @achievedate))
 			then
-				'<li>Patient has' +
+				'<li>Patient has ' +
 					case when (latestPalCodeDate > DATEADD(year, -1, @refdate)) and (latestPalPermExCodeDate is null or latestPalPermExCodeDate < latestPalCodeDate)
 					then '<strong>' + latestPalCode + '</strong> code on ' + CONVERT(VARCHAR, latestPalCodeDate, 3) COLLATE Latin1_General_CI_AS + '; ' else '' end +
 					case when latestFrailCode is not null
@@ -1674,3 +1674,7 @@ values
 		end +
 	' but may be unsuitable for pulmonary rehab and should therefore be excluded from this quality indicator.'),
 ('copd.exacerbation.rehab','opportunities.Suggest exclude.positionInBarChart','5');
+
+--populate copd patient table for run all 
+insert into [pingr.copdPatients](PatID)
+select PatID from #latestCopdCode
