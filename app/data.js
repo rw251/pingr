@@ -2,27 +2,6 @@ var Highcharts = require('highcharts/highstock'),
   //  log = require('./log'),
   lookup = require('./lookup');
 
-var _getFakePatientData = function(patient, callback) {
-  var r = Math.random(),
-    isAsync = typeof(callback) === "function";
-  if (dt.patients && dt.patients.patient) {
-    if (isAsync) return callback(dt.patients.patient);
-    else return dt.patients.patient;
-  }
-  $.ajax({
-    url: "data/patient.json?v=" + r,
-    async: isAsync,
-    success: function(file) {
-      if (!dt.patients) dt.patients = {};
-      dt.patients.patient = file;
-      dt.patients[patient] = file;
-
-      if (isAsync) callback(dt.patients.patient);
-    }
-  });
-  if (!isAsync) return dt.patients.patient;
-};
-
 var _getPatientData = function(patient, callback) {
   //if callback provided do async - else do sync
   var isAsync = typeof(callback) === "function";
@@ -46,7 +25,7 @@ var _getPatientData = function(patient, callback) {
         dt.patients[patient] = dt.patients.patient;
         return callback(dt.patients.patient);
       } else if (!dt.patients.patient) {
-        _getFakePatientData(patient, callback);
+        return callback(null);
       }
     }
   });
@@ -63,7 +42,7 @@ var dt = {
   options: [],
 
   populateNhsLookup: function(done) {
-    if(isFetchingNhsLookup) return;
+    if (isFetchingNhsLookup) return;
     if (dt.patLookup) return done();
     isFetchingNhsLookup = true;
     $.getJSON("/api/nhs", function(lookup) {
@@ -394,7 +373,7 @@ var dt = {
     rtn["header-items"].push({
       "title": "Action plan?",
       "isSorted": false,
-      "tooltip": "Whether this patient has had any actions added, agreed or disagreed"
+      "tooltip": "Whether this patient has had any actions added or agreed"
     });
 
     return rtn;
@@ -427,82 +406,124 @@ var dt = {
   },
 
   addOrUpdatePatientAction: function(patientId, action) {
-    if (!dt.patientList) return;
-    Object.keys(dt.patientList).forEach(function(a) {
-      Object.keys(dt.patientList[a]).forEach(function(b) {
-        Object.keys(dt.patientList[a][b]).forEach(function(c) {
-          dt.patientList[a][b][c].patients.forEach(function(patient) {
-            if (patient.patientId === +patientId) {
-              if (!patient.actionStatus) patient.actionStatus = [];
-              if (patient.actionStatus.filter(function(v) {
-                  return v.actionTextId === action.actionTextId;
-                }).length === 0) {
-                if (action.agree === true || action.agree === false || action.userDefined === true) {
-                  patient.actionStatus.push({ actionTextId: action.actionTextId, agree: action.agree, history: action.history });
-                }
-              } else {
-                patient.actionStatus = patient.actionStatus.map(function(v) {
-                  if (v.actionTextId === action.actionTextId) {
-                    v.agree = action.agree;
-                    v.history = action.history;
-                  }
-                  return v;
-                }).filter(function(v) {
-                  return v.agree === true || v.agree === false;
-                });
-              }
-              var releventActions = patient.actionStatus.filter(function(v) {
-                return !v.indicatorList || v.indicatorList.indexOf(b) > -1;
-              });
-              if (releventActions.length > 0) {
-                //This patient has had some interaction - agree / disagree / user added
-                var info = {};
-                var mostRecent;
-                releventActions.forEach(function(v) {
-                  var name = $('#user_fullname').text().trim() === v.history[0].who ? "You have" : v.history[0].who + " has";
-                  if (!info[name]) info[name] = { agree: 0, added: 0 };
-
-                  if (!mostRecent) mostRecent = v.history[0].when;
-                  else mostRecent = Math.max(mostRecent, v.history[0].when);
-
-                  if (v.history[0].what === "agreed with") info[name].agree++;
-                  if (v.history[0].what === "added") info[name].added++;
-                });
-                var tooltip = Object.keys(info).map(function(v) {
-                  return v + " " +
-                    (info[v].agree > 0 ? " agreed with " + info[v].agree + " action" + (info[v].agree > 1 ? "s" : "") : "") +
-                    (info[v].agree > 0 && info[v].added > 0 ? " and " : "") +
-                    (info[v].added > 0 ? " added " + info[v].added + " action" + (info[v].added > 1 ? "s." : ".") : ".");
-                }).join("<br>");
-                patient.items[patient.items.length - 1] = '<i class="fa fa-fw fa-check text-success" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + tooltip + '"></i>';
-              } else {
-                patient.items[patient.items.length - 1] = "";
-              }
+    if (dt.patients && dt.patients[patientId] && dt.patients[patientId].standards) {
+      dt.patients[patientId].standards = dt.patients[patientId].standards.map(function(v) {
+        if (!v.actionPlans) v.actionPlans = [];
+        if (v.actionPlans.filter(function(vv) {
+            return vv.actionTextId === action.actionTextId;
+          }).length === 0) {
+          if (action.indicatorList.indexOf(v.indicatorId)>-1 &&  (action.agree || action.userDefined)) {
+            v.actionPlans.push({ actionTextId: action.actionTextId, agree: action.agree, history: action.history, indicatorList: action.indicatorList });
+          }
+        } else {
+          v.actionPlans = v.actionPlans.map(function(vv) {
+            if (vv.actionTextId === action.actionTextId) {
+              vv.agree = action.agree;
+              vv.history = action.history;
+              vv.indicatorList = action.indicatorList;
             }
+            return vv;
+          }).filter(function(vv) {
+            return vv.agree || vv.userDefined;
+          });
+        }
+        if(v.actionPlans.length>0) v.actionPlan = true;
+        else v.actionPlan = false;
+        return v;
+      });
+    }
+    if (dt.patientList) {
+      Object.keys(dt.patientList).forEach(function(practiceId) {
+        Object.keys(dt.patientList[practiceId]).forEach(function(indicatorId) {
+          Object.keys(dt.patientList[practiceId][indicatorId]).forEach(function(standard) {
+            dt.patientList[practiceId][indicatorId][standard].patients.forEach(function(patient) {
+              if (patient.patientId === +patientId) {
+                if (!patient.actionStatus) patient.actionStatus = [];
+                if (patient.actionStatus.filter(function(v) {
+                    return v.actionTextId === action.actionTextId;
+                  }).length === 0) {
+                  if (action.agree || action.userDefined) {
+                    patient.actionStatus.push({ actionTextId: action.actionTextId, agree: action.agree, history: action.history, indicatorList: action.indicatorList });
+                  }
+                } else {
+                  patient.actionStatus = patient.actionStatus.map(function(v) {
+                    if (v.actionTextId === action.actionTextId) {
+                      v.agree = action.agree;
+                      v.history = action.history;
+                      v.indicatorList = action.indicatorList;
+                    }
+                    return v;
+                  }).filter(function(v) {
+                    return v.agree || v.userDefined;
+                  });
+                }
+                var releventActions = patient.actionStatus.filter(function(v) {
+                  return !v.indicatorList || v.indicatorList.indexOf(indicatorId) > -1;
+                });
+                if (releventActions.length > 0) {
+                  //This patient has had some interaction - agree / disagree / user added
+                  var info = {};
+                  var mostRecent;
+                  releventActions.forEach(function(v) {
+                    var name = $('#user_fullname').text().trim() === v.history[0].who ? "You have" : v.history[0].who + " has";
+                    if (!info[name]) info[name] = { agree: 0, added: 0 };
+
+                    if (!mostRecent) mostRecent = v.history[0].when;
+                    else mostRecent = Math.max(mostRecent, v.history[0].when);
+
+                    if (v.history[0].what === "agreed with") info[name].agree++;
+                    if (v.history[0].what === "added") info[name].added++;
+                  });
+                  var tooltip = Object.keys(info).map(function(v) {
+                    return v + " " +
+                      (info[v].agree > 0 ? " agreed with " + info[v].agree + " action" + (info[v].agree > 1 ? "s" : "") : "") +
+                      (info[v].agree > 0 && info[v].added > 0 ? " and " : "") +
+                      (info[v].added > 0 ? " added " + info[v].added + " action" + (info[v].added > 1 ? "s." : ".") : ".");
+                  }).join("<br>");
+                  patient.items[patient.items.length - 1] = '<i class="fa fa-fw fa-check text-success" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + tooltip + '"></i>';
+                } else {
+                  patient.items[patient.items.length - 1] = "";
+                }
+              }
+            });
           });
         });
       });
-    });
+    }
   },
 
   removePatientAction: function(patientId, actionTextId) {
-    if (!dt.patientList) return;
-    Object.keys(dt.patientList).forEach(function(a) {
-      Object.keys(dt.patientList[a]).forEach(function(b) {
-        Object.keys(dt.patientList[a][b]).forEach(function(c) {
-          dt.patientList[a][b][c].patients.forEach(function(patient) {
-            if (patient.patientId === +patientId) {
-              patient.actionStatus = patient.actionStatus.filter(function(v) {
-                return v.actionTextId !== actionTextId;
-              });
-              if (patient.actionStatus.length === 0) {
-                patient.items[patient.items.length - 1] = "";
+    if (dt.patients && dt.patients[patientId] && dt.patients[patientId].standards) {
+      dt.patients[patientId].standards = dt.patients[patientId].standards.map(function(v) {
+        if (v.actionPlans) {
+          v.actionPlans = v.actionPlans.filter(function(vv) {
+            return vv.actionTextId !== actionTextId;
+          });
+          if (v.actionPlans.length === 0) v.actionPlan = false;
+        }
+        return v;
+      });
+    }
+    if (dt.patientList) {
+      Object.keys(dt.patientList).forEach(function(practiceId) {
+        Object.keys(dt.patientList[practiceId]).forEach(function(indicatorId) {
+          Object.keys(dt.patientList[practiceId][indicatorId]).forEach(function(standard) {
+            dt.patientList[practiceId][indicatorId][standard].patients.forEach(function(patient) {
+              if (patient.patientId === +patientId) {
+                patient.actionStatus = patient.actionStatus.filter(function(v) {
+                  return v.actionTextId !== actionTextId;
+                });
+                if (patient.actionStatus.filter(function(v) {
+                    return v.indicatorList && v.indicatorList.indexOf(indicatorId) > -1;
+                  }).length === 0) {
+                  patient.items[patient.items.length - 1] = "";
+                }
               }
-            }
+            });
           });
         });
       });
-    });
+    }
   },
 
   getPatientData: function(patientId, callback) {

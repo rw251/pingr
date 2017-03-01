@@ -1,7 +1,8 @@
 var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
-  actionPlan = require('./actionPlan.js');
+  actionPlan = require('./actionPlan.js'),
+  qualityStandards = require('./qualityStandards');
 
 var patientActions = [];
 
@@ -64,7 +65,7 @@ var iap = {
       $('#editActionPlanItem').val(action.actionText);
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
       }).off('shown.bs.modal').on('shown.bs.modal', function() {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
@@ -87,9 +88,11 @@ var iap = {
       $('#modal-delete-item').html(action.actionText);
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        log.deleteUserDefinedPatientAction(patientId, action.actionTextId);
+        log.deleteUserDefinedPatientAction(patientId, action.actionTextId, function(err){
+          qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+        });
         delete userDefinedPatientActionsObject[action.actionTextId];
 
         $('#deletePlan').modal('hide');
@@ -111,7 +114,8 @@ var iap = {
       }
       log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
         if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
-        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
+        qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
       });
 
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
@@ -127,7 +131,9 @@ var iap = {
         if(!action.history) action.history=[];
         action.history.unshift({who:$('#user_fullname').text().trim(),what:"agreed with",when:new Date()});
       }
-      log.updateIndividualAction(patientId, action);
+      log.updateIndividualAction(patientId, action, function(err){
+        qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+      });
       iap.updateAction(action);
 
       e.stopPropagation();
@@ -144,13 +150,17 @@ var iap = {
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndividualAction(patientId, action);
+          log.updateIndividualAction(patientId, action, function(err){
+            qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+          });
           iap.updateAction(action);
         }, null, function() {
           action.agree = null;
           delete action.rejectedReason;
           delete action.rejectedReasonText;
-          log.updateIndividualAction(patientId, action);
+          log.updateIndividualAction(patientId, action, function(err){
+            qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+          });
           iap.updateAction(action);
         });
         e.stopPropagation();
@@ -163,7 +173,9 @@ var iap = {
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndividualAction(patientId, action);
+          log.updateIndividualAction(patientId, action, function(err){
+            qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+          });
           iap.updateAction(action);
         });
         e.stopPropagation();
@@ -264,9 +276,11 @@ var iap = {
     base.wireUpTooltips();
   },
 
-  displayPersonalisedIndividualActionPlan: function(parentElem) {
+  displayPersonalisedIndividualActionPlan: function(parentElem, pathwayId, pathwayStage, standard) {
+    var indicatorId=null;
+    if(pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
     var tmpl = require('templates/action-plan-list');
-    var userDefinedActions = Object.keys(userDefinedPatientActionsObject).map(function(v){return userDefinedPatientActionsObject[v];});
+    var userDefinedActions = Object.keys(userDefinedPatientActionsObject).map(function(v){return userDefinedPatientActionsObject[v];}).filter(function(v){return !v.indicatorList || !indicatorId || v.indicatorList.indexOf(indicatorId)>-1;});
     parentElem.html(tmpl({
       "hasSuggestions": userDefinedActions && userDefinedActions.length > 0,
       "suggestions": userDefinedActions
@@ -377,7 +391,7 @@ var iap = {
 
     base.setupClipboard($('.btn-copy'), true);
 
-    iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+    iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
   },
 
   launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {

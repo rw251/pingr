@@ -1,12 +1,13 @@
 .panel.panel-default#qs
   if noStandards
-    .alert.alert-success We don't think any of the quality indicators in PINGR are relevant to this patient - if you think this is incorrect, please tell us in the comment box!
+    .alert.alert-success We don't think any of the quality indicators in PINGR are relevant to this patient - if you think this is incorrect, please tell us by clicking the "Send a comment" button in the top right corner of the screen.
   else
     table.table.table-condensed
       thead
         tr
           th Quality indicator
           th(style="max-width:100px") Target met?
+          th(style="max-width:100px") Action plan?
           th(style="max-width:100px")
           th(style="width:400px")
       tbody
@@ -19,7 +20,10 @@
               if standard.targetMet
                 i.fa.fa-fw.fa-check.text-success
               else
-                i.fa.fa-fw.fa-times.text-danger
+                i.fa.fa-fw.fa-times.text-danger      
+            td
+              if standard.actionPlan
+                i.fa.fa-fw.fa-check.text-success
             td
               a.reason-link(href='#',data-id=standard.indicatorId) 
                 | Show more
@@ -33,7 +37,7 @@
                 if !standard.targetMet
                   a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only
           tr(data-id=standard.indicatorId,class='qs-show-more-row')
-            td(colspan=3)
+            td(colspan=4)
               !=standard.indicatorDescription
               br
               strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
