@@ -34,7 +34,7 @@ var ind = {
       if (layout.view !== ID) {
         //Not already in this view so we need to rejig a few things
         base.clearBox();
-        //base.switchTo21Layout();
+        base.switchTo2Column1Narrow1Wide();
         layout.showMainView();
 
         base.removeFullPage(farRightPanel);

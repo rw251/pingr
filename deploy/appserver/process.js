@@ -571,6 +571,7 @@ async.series([
                               pointsPerAction: data.pointsPerAction,
                               priority: data.priority,
                               actionText: data.actionText,
+                              actionTextId: data.actionText.toLowerCase().replace(/[^a-z0-9]/g,""),
                               supportingText: data.supportingText
                             });
                           }
@@ -698,6 +699,7 @@ async.series([
                                 id: data.actionId,
                                 indicatorId: data.indicatorId,
                                 actionText: data.actionText,
+                                actionTextId: data.actionText.toLowerCase().replace(/[^a-z0-9]/g,""),
                                 supportingText: data.supportingText,
                                 numberPatients: data.numberPatients,
                                 pointsPerAction: data.pointsPerAction,

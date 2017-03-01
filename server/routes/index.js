@@ -266,10 +266,29 @@ module.exports = function(passport) {
       else res.send(actions);
     });
   });
-  router.get('/api/action/individual/:patientId', isAuthenticated, function(req, res){
+  router.get('/api/action/individual/:patientId?', isAuthenticated, function(req, res){
     patients.getActions(req.user.practiceId, req.params.patientId, function(err,actions){
       if (err) res.send(err);
-      res.send(actions);
+      if(req.params.patientId) res.send(actions[req.params.patientId]);
+      else res.send(actions);
+    });
+  });
+  router.get('/api/action/all', isAuthenticated, function(req, res){
+    actions.listAgreedWith(req.user.practiceId, function(err, actions){
+      if (err) res.send(err);
+      var patientActions = actions.filter(function(v){
+        return v.patientId;
+      });
+      var teamActions = actions.filter(function(v){
+        return !v.patientId;
+      });
+      patients.getSpecificActions(patientActions, function(err, patientActionsReady){
+        if (err) res.send(err);
+        indicators.getSpecificActions(req.user.practiceId, teamActions, function(err, teamActionsReady){
+          if (err) res.send(err);
+          res.send({patient: patientActionsReady, team: teamActionsReady});
+        });
+      });
     });
   });
 
