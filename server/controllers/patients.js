@@ -46,7 +46,7 @@ var mergeActions = function(actions, patients, patientId) {
     rtn = rtn.map(function(v) {
       if (actionObject[patient.patientId] && actionObject[patient.patientId][v.actionTextId]) {
         Object.keys(actionObject[patient.patientId][v.actionTextId]).forEach(function(vv) {
-          if(vv[0]==="_") return; //ignore hidden properties like _id and __v;
+          if(vv[0]==="_" || vv === "indicatorList") return; //ignore hidden properties like _id and __v;
           v[vv] = actionObject[patient.patientId][v.actionTextId][vv];
         });
       }

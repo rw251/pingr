@@ -38,7 +38,7 @@ var mergeActions = function(actions, indicators, indicatorId) {
   rtn = rtn.map(function(v) {
     if(actionObject[v.actionTextId]){
       Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
-        if(vv[0]==="_") return; //ignore hidden properties like _id and __v;
+        if(vv[0]==="_" || vv === "indicatorList") return; //ignore hidden properties like _id and __v;
         v[vv] = actionObject[v.actionTextId][vv];
       });
     }
