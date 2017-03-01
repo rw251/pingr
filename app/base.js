@@ -4,6 +4,8 @@ var data = require('./data'),
   log = require('./log'),
   ZeroClipboard = require('zeroclipboard');
 
+require('../helpers/jquery-smartresize');
+
 var base = {
 
   //object for keeping track what is in each panel to prevent unnecessary redraws
@@ -242,8 +244,9 @@ var base = {
 
       $('#addedCSS').text(base.getCssText());
 
-      $(window).off('resize').on('resize', function() {
+      $(window).off('smartresize').on('smartresize', function() {
         $('#addedCSS').text(base.getCssText());
+        base.updateFixedHeightElements();
       });
       console.log("done");
     }

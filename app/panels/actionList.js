@@ -3,6 +3,7 @@ var data = require('../data.js'),
   jsPDF = require('jspdf'),
   jspdfAutoTable = require('jspdf-autotable');
 
+var actionObject={};
 var al = {
 
   create: function() {
@@ -43,57 +44,76 @@ var al = {
       doc.save('action-plan.pdf');
 
     });
-    al.loadAndPopulate();
+    al.load(function(){
+      al.process(al.populate);
+    });
   },
 
-  loadAndPopulate: function() {
+  load: function(done) {
     data.getAllAgreedWithActions(function(err, actions) {
       actionObject = actions;
-      actionArray = [];
-      if (actions.patient) {
-        Object.keys(actions.patient).forEach(function(v) {
-          actions.patient[v].actions.forEach(function(vv) {
-            var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, supportingText: vv.supportingText };
-            if (vv.history && vv.history.length > 0) {
-              var who = vv.history[0].who;
-              actionItem.who = who;
-            }
-            actionArray.push(actionItem);
-          });
-          actions.patient[v].userDefinedActions.forEach(function(vv) {
-            var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, userDefined: true };
-            if (vv.history && vv.history.length > 0) {
-              var who = vv.history[0].who;
-              actionItem.who = who;
-            }
-            actionArray.push(actionItem);
-          });
+
+      if(done && typeof done === "function") {
+        return done();
+      }
+    });
+  },
+
+  process: function(done) {
+    actionArray = [];
+
+    if(actionObject.patient && !data.patLookup){
+      //pat lookup not loaded so let's wait
+      setTimeout(function(){
+        al.process(done);
+      },1000);
+      return;
+    }
+    if (actionObject.patient) {
+      Object.keys(actionObject.patient).forEach(function(v) {
+        actionObject.patient[v].actions.forEach(function(vv) {
+          var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, supportingText: vv.supportingText };
+          if (vv.history && vv.history.length > 0) {
+            var who = vv.history[0].who;
+            actionItem.who = who;
+          }
+          actionArray.push(actionItem);
+        });
+        actionObject.patient[v].userDefinedActions.forEach(function(vv) {
+          var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, userDefined: true };
+          if (vv.history && vv.history.length > 0) {
+            var who = vv.history[0].who;
+            actionItem.who = who;
+          }
+          actionArray.push(actionItem);
+        });
+      });
+    }
+    if (actionObject.team) {
+      if (actionObject.team.actions) {
+        actionObject.team.actions.forEach(function(v) {
+          var actionItem = v;
+          if (v.history && v.history.length > 0) {
+            var who = v.history[0].who;
+            actionItem.who = who;
+          }
+          actionArray.push(actionItem);
         });
       }
-      if (actions.team) {
-        if (actions.team.actions) {
-          actions.team.actions.forEach(function(v) {
-            var actionItem = v;
-            if (v.history && v.history.length > 0) {
-              var who = v.history[0].who;
-              actionItem.who = who;
-            }
-            actionArray.push(actionItem);
-          });
-        }
-        if (actions.team.userDefinedActions) {
-          actions.team.userDefinedActions.forEach(function(v) {
-            var actionItem = v;
-            if (v.history && v.history.length > 0) {
-              var who = v.history[0].who;
-              actionItem.who = who;
-            }
-            actionArray.push(actionItem);
-          });
-        }
+      if (actionObject.team.userDefinedActions) {
+        actionObject.team.userDefinedActions.forEach(function(v) {
+          var actionItem = v;
+          if (v.history && v.history.length > 0) {
+            var who = v.history[0].who;
+            actionItem.who = who;
+          }
+          actionArray.push(actionItem);
+        });
       }
-      al.populate();
-    });
+    }
+    if(done && typeof done === "function") {
+      return done();
+    }
   },
 
   populate: function() {
