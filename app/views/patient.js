@@ -125,7 +125,7 @@ var pv = {
 
           $('#right-panel').css("overflow-y", "auto");
           $('#right-panel').css("overflow-x", "hidden");
-          base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15 }, { selector: '.fit-to-screen-height', padding: 200 }]);
+          base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 }, { selector: '.fit-to-screen-height', padding: 200, minHeight:300 }]);
 
         });
       } else {

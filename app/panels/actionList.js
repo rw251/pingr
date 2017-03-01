@@ -122,7 +122,7 @@ var al = {
     if (actionArray.length === 0) dataObject.noSuggestions = true;
     $('#suggested-actions-table').html(tmpl(dataObject));
 
-    base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250 }]);
+    base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250, minHeight: 300 }]);
   }
 
 };

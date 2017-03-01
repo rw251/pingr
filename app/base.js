@@ -4,7 +4,12 @@ var data = require('./data'),
   log = require('./log'),
   ZeroClipboard = require('zeroclipboard');
 
-require('../helpers/jquery-smartresize');
+require('./helpers/jquery-smartresize');
+
+$(window).smartresize(function() {
+  $('#addedCSS').text(base.getCssText());
+  base.updateFixedHeightElements();
+});
 
 var base = {
 
@@ -222,12 +227,13 @@ var base = {
 
   getCssText: function() {
     var cssText = base.elements.map(function(v) {
-      return v.selector + " {max-height:" + Math.floor($(window).height() - $(v.selector).position().top - v.padding) + 'px;}';
+      return v.selector + " {max-height:" + Math.max(v.minHeight,Math.floor($(window).height() - $(v.selector).position().top - v.padding)) + 'px;}';
     }).join(" ");
     return cssText;
   },
 
   updateFixedHeightElements: function(elements) {
+    console.log("update called");
     if (!elements) elements = base.elements;
     base.elements = elements;
     console.log("shall we update?");
@@ -235,7 +241,7 @@ var base = {
       console.log("no - wait a bit.");
       setTimeout(function() {
         base.updateFixedHeightElements(elements);
-      }, 10);
+      }, 100);
     } else {
       console.log("yes");
       if ($('#addedCSS').length === 0) {
@@ -244,10 +250,6 @@ var base = {
 
       $('#addedCSS').text(base.getCssText());
 
-      $(window).off('smartresize').on('smartresize', function() {
-        $('#addedCSS').text(base.getCssText());
-        base.updateFixedHeightElements();
-      });
       console.log("done");
     }
   }

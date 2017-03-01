@@ -189,7 +189,7 @@ var pl = {
 
       base.hideLoading();
 
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15 }, { selector: '.table-scroll', padding: 200 }, { selector: '.fit-to-screen-height', padding: 200 }]);
+      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 200, minHeight:170 }, { selector: '.fit-to-screen-height', padding: 200, minHeight:300 }]);
 
     });
 
