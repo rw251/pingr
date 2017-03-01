@@ -13,7 +13,7 @@ var ps = {
       states.clearPrefetchCache();
     }
 
-    data.populateNhsLookup(function(){
+    data.populateNhsLookup(function() {
 
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -21,7 +21,7 @@ var ps = {
         local: $.map(Object.keys(data.patLookup), function(state) {
           return {
             id: state,
-            value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
+            value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g, "") : state
           };
         })
       });
@@ -46,7 +46,19 @@ var ps = {
               ].join('\n')
           }
         }).on('typeahead:selected', ps.onSelected)
-        .on('typeahead:autocompleted', ps.onSelected);
+        .on('typeahead:autocompleted', ps.onSelected)
+        .on('paste', function(e) {
+          e.preventDefault();
+          var pastedText = '';
+          if (window.clipboardData && window.clipboardData.getData) { // IE
+            pastedText = window.clipboardData.getData('Text');
+          } else if (e.originalEvent && e.originalEvent.clipboardData && e.originalEvent.clipboardData.getData) {
+            pastedText = e.originalEvent.clipboardData.getData('text/plain');
+          }
+          $(this).typeahead('val', pastedText.replace(/\D/g, ''));
+          //$(this).trigger("keyup");
+        });
+
 
       $('#searchbtn').on('mousedown', function() {
         var val = $('.typeahead').eq(0).val();
@@ -63,7 +75,7 @@ var ps = {
   onSelected: function($e, nhsNumberObject) {
     //Hide the suggestions panel
     $('#search-box').find('.tt-dropdown-menu').css('display', 'none');
-    log.event("patient-search", window.location.hash, [{key:"patid",value:nhsNumberObject.id}]);
+    log.event("patient-search", window.location.hash, [{ key: "patid", value: nhsNumberObject.id }]);
     history.pushState(null, null, '#patients/' + nhsNumberObject.id);
     loadContFn('#patients/' + nhsNumberObject.id, true);
 
@@ -71,24 +83,24 @@ var ps = {
 
   show: function(panel, isAppend, loadContentFn) {
 
-    var isDataLoaded = data.patLookup ? true: false;
+    var isDataLoaded = data.patLookup ? true : false;
 
     loadContFn = loadContentFn;
     var tmpl = require("templates/patient-search");
-    var html = tmpl({dataLoaded: isDataLoaded});
+    var html = tmpl({ dataLoaded: isDataLoaded });
 
-    if(isAppend) panel.append(html);
+    if (isAppend) panel.append(html);
     else panel.html(html);
 
-    if(!isDataLoaded) {
-      setTimeout(function(){
+    if (!isDataLoaded) {
+      setTimeout(function() {
         ps.show(panel, isAppend, loadContentFn);
       }, 500);
     }
 
-    setTimeout(function(){
+    setTimeout(function() {
       ps.wireUp();
-    },0);
+    }, 0);
   }
 
 };

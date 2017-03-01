@@ -22,7 +22,7 @@ var main = {
     main.wireUpPages();
   },
 
-  getInitialData: function(callback){
+  getInitialData: function(callback) {
     data.get(callback);
   },
 
@@ -72,7 +72,18 @@ var main = {
               ].join('\n')
           }
         }).on('typeahead:selected', main.onSelected)
-        .on('typeahead:autocompleted', main.onSelected);
+        .on('typeahead:autocompleted', main.onSelected)
+        .on('paste', function(e) {
+          e.preventDefault();
+          var pastedText = '';
+          if (window.clipboardData && window.clipboardData.getData) { // IE
+            pastedText = window.clipboardData.getData('Text');
+          } else if (e.originalEvent && e.originalEvent.clipboardData && e.originalEvent.clipboardData.getData) {
+            pastedText = e.originalEvent.clipboardData.getData('text/plain');
+          }
+          $(this).typeahead('val', pastedText.replace(/\D/g, ''));
+          //$(this).trigger("keyup");
+        });
 
       $('#searchbtn').on('mousedown', function() {
         var val = $('.typeahead').eq(0).val();
