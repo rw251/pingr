@@ -237,7 +237,7 @@ module.exports = function(passport) {
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
-      actions.addIndividualAction(req.user.practiceId, req.params.patientId, req.user.fullname, req.body.actionText, function(err, action) {
+      actions.addIndividualAction(req.user.practiceId, req.params.patientId, req.body.indicatorList, req.user.fullname, req.body.actionText, function(err, action) {
         var evt = {
           type: "recordIndividualPlan",
           data: [

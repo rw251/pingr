@@ -307,6 +307,7 @@ select PatID, EntryDate as date,
 				or(ReadCode = 'fe6t.' and ((CodeUnits like '%3%') or(CodeUnits like '%three%'))))
 				or(ReadCode in ('e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
 					'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.')))
+		and PatID in (select code from codeGroups where [group] in ('copdQof')) 		
 				then 'COPD exacerbation - uncoded'
 		when ReadCode in (select code from codeGroups where [group] = 'pulRehabOfferedSs') then 'Pulmonary rehab offered'
 		when ReadCode in (select code from codeGroups where [group] in ('asbp','adbp')) then 'Ambulatory BP reading'

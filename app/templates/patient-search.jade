@@ -1,2 +1,5 @@
 form#search-box.app-search.hidden-xs.ng-pristine.ng-valid(role='search')
-  input.typeahead.form-control.form-control-circle(type='text', placeholder='Search by patients NHS number...')
+  if dataLoaded
+    input.typeahead.form-control.form-control-circle(type='text', placeholder='Search by patients NHS number...')
+  else
+    input.typeahead.form-control.form-control-circle(type='text', disabled=true, placeholder='Loading... please wait')

@@ -18,7 +18,12 @@ var main = {
   hash: hash,
   init: function(callback) {
     main.preWireUpPages();
-    data.get(main.wireUpPages);
+    //data.get(main.wireUpPages);
+    main.wireUpPages();
+  },
+
+  getInitialData: function(callback){
+    data.get(callback);
   },
 
   onSelected: function($e, nhsNumberObject) {
@@ -39,7 +44,7 @@ var main = {
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(data.patientArray, function(state) {
+        local: $.map(Object.keys(data.patLookup), function(state) {
           return {
             id: state,
             value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g, "") : state
@@ -90,8 +95,6 @@ var main = {
   },
 
   preWireUpPages: function() {
-    layout.showPage('login');
-
     //Every link element stores href in history
     $(document).on('click', 'a.history', function() {
       // keep the link in the browser history

@@ -54,6 +54,8 @@ var _getPatientData = function(patient, callback) {
   if (!isAsync) return dt.patients[patient];
 };
 
+var isFetchingNhsLookup = false;
+
 var dt = {
 
   pathwayNames: {},
@@ -61,9 +63,12 @@ var dt = {
   options: [],
 
   populateNhsLookup: function(done) {
+    if(isFetchingNhsLookup) return;
     if (dt.patLookup) return done();
+    isFetchingNhsLookup = true;
     $.getJSON("/api/nhs", function(lookup) {
       dt.patLookup = lookup;
+      isFetchingNhsLookup = false;
       return done();
     });
   },
@@ -86,9 +91,11 @@ var dt = {
 
       $.getJSON("/api/Text", function(textfile) {
         dt.text = textfile;
-        if (typeof callback === 'function') {
-          callback();
-        }
+        dt.getAllIndicatorData(null, function() {
+          if (typeof callback === 'function') {
+            callback();
+          }
+        });
       }).fail(function(err) {
         //alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
       });
@@ -107,6 +114,7 @@ var dt = {
         fraction: indicator.values[1][last] + "/" + indicator.values[2][last],
         percentage: percentage
       };
+      indicator.patientsWithOpportunity = indicator.values[2][last] - indicator.values[1][last];
       //indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
       var lastPercentage = Math.round(100 * indicator.values[1][last - 1] * 100 / indicator.values[2][last - 1]) / 100;

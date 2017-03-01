@@ -241,7 +241,7 @@ module.exports = {
       practiceId: practiceId,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [{who: username, what: "added this", when: new Date()}],
+      history: [{who: username, what: "added", when: new Date()}],
       userDefined: true,
       done: false
     };
@@ -258,13 +258,14 @@ module.exports = {
     });
   },
 
-  addIndividualAction: function(practiceId, patientId, username, actionText, done) {
+  addIndividualAction: function(practiceId, patientId, indicatorList, username, actionText, done) {
     var action = new Action({
       practiceId: practiceId,
       patientId: patientId,
+      indicatorList: indicatorList,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [{who: username, what: "added this", when: new Date()}],
+      history: [{who: username, what: "added", when: new Date()}],
       userDefined: true,
       done: false
     });

@@ -5,6 +5,7 @@
         tr
           th Indicator
           th Current Performance
+          th Reviewed Patients
           th Salford Target
           th Top 10% Benchmark
           th Change from Yesterday
@@ -25,6 +26,7 @@
               else
                 strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
               span= ' (' + indicator.performance.fraction + ')'
+            td= indicator.reviewed + "/" + indicator.patientsWithOpportunity
             td 75%
             td 10%
             td(style='font-size:2em') A
@@ -35,6 +37,7 @@
           tr
             th Indicator
             th Current Performance
+            th Reviewed Patients
             th Salford Target
             th Top 10% Benchmark
             th Change from Yesterday
@@ -63,6 +66,7 @@
                   
                 //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
                 span= ' (' + indicator.performance.fraction + ')'
+              td= indicator.reviewed + "/" + indicator.patientsWithOpportunity
               td= indicator.target
               td= (indicator.benchmark*100).toFixed(0)+"%"
               td(style="text-align:center")

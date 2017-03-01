@@ -98,7 +98,18 @@ var iap = {
       var actionText = $(this).parent().parent().find('textarea').val();
       $(this).parent().parent().find('textarea').val("");
       var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-      log.recordIndividualPlan(actionText, patientId, function(err, a){
+      var indicatorList=[];
+      if(pathwayId && pathwayStage && standard) {
+        indicatorList.push([pathwayId, pathwayStage, standard].join("."));
+      } else {
+        indicatorList = patientActions.reduce(function(prev, curr){
+          var union = prev.concat(curr.indicatorList);
+          return union.filter(function(item, pos) {
+            return union.indexOf(item) == pos;
+          });
+        }, []);
+      }
+      log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
         if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
         iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
       });
@@ -201,22 +212,6 @@ var iap = {
   },
 
   updateIndividualSapRows: function() {
-    /*$('#advice-list').add('#personalPlanIndividual').find('.suggestion').each(function() {
-      $(this).find('td').last().children().hide();
-    });*/
-
-    /*$('#advice-list').add('#personalPlanIndividual').find('.cr-styled input[type=checkbox]').each(function() {
-      if (this.checked) {
-        $(this).parent().parent().parent().addClass('success');
-      } else {
-        $(this).parent().parent().parent().removeClass('success');
-      }
-    });*/
-
-    /*$('#advice-list').add('#personalPlanIndividual').find('.btn-undo').each(function() {
-      $(this).parent().parent().addClass('success');
-    });*/
-
     //no class - user not yet agreed/disagreed - no background / muted text
     //active - user agrees - green background / normal text
     //success - user completed - green background / strikethrough text
@@ -319,25 +314,6 @@ var iap = {
         return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join(".")) > -1;
       });
     }
-    /*if (patientActions.length === 0 || (pathwayId && pathwayStage && standard && patientActions.filter(function(v) {
-        return v.indicatorId === [pathwayId, pathwayStage, standard].join(".");
-      }).length === 0)) {
-      localData.noSuggestions = true;
-    } else {
-
-      localData.suggestions = base.dedupeAndSortActions(base.mergeIndividualStuff(patientActions, patientId));
-
-      localData.suggestions = localData.suggestions.filter(function(v) {
-        if (!pathwayId || !pathwayStage || !standard) return true;
-        return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join(".")) > -1;
-      }).map(function(v) {
-        v.indicatorList = v.indicatorList.map(function(vv) {
-          return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
-        });
-        v.id = v.actionText.replace(/[^A-Za-z0-9]/g, "");
-        return v;
-      });
-    }*/
 
     $('#advice-placeholder').hide();
     $('#advice').show();

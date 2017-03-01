@@ -21,11 +21,11 @@ var log = {
   },
 
   //rwhere
-  recordIndividualPlan: function(text, patientId, done) {
+  recordIndividualPlan: function(text, patientId, indicatorList, done) {
     $.ajax({
       type: "POST",
       url: "/api/action/addIndividual/" + patientId,
-      data: JSON.stringify({ actionText: text }),
+      data: JSON.stringify({ actionText: text, indicatorList: indicatorList }),
       success: function(action) {
         data.addOrUpdatePatientAction(patientId, action);
         return done(null, action);

@@ -24,9 +24,8 @@ SET NOCOUNT ON
 
 declare @achieveDate datetime;
 set @achieveDate = (select case
-	when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-03-31' --31st March
-	when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' end); --31st March
-
+	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
+	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-03-31' end); --31st March
 
 --ELIGIBLE POPULATION
 --#latestCopdCode
@@ -347,7 +346,6 @@ from SIR_ALL_Records s
 			)
 		or ReadCode in (select code from codeGroups where [group] in ('CopdHosp','copdExacNonSs','copdExacSs')) 
 		)
-
 		and EntryDate < @refdate
 		and EntryDate > DATEADD(year, -1, @achievedate)
 		group by PatID
@@ -1513,7 +1511,7 @@ select
 		'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
 		+ '%) of eligible patients did not meet the <a href="#indicators/copd/exacerbation/rehab">COPD exacerbation pulmonary rehab referral standard</a> because they were not referred to pulmonary rehab within 2 months of an exacerbation.</li>' +
 		'<li><a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend COPD patients with MRC 2 stage breathlessness are offered pulmonary rehabilitation < 2 months after an exacerbation because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.</li>'+
-		'/ul>'
+		'</ul>'
 from #reasonProportions
 where proportionId = 'missedRehab' 
 

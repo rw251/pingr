@@ -4,9 +4,11 @@ var base = require('../base.js'),
   log = require('../log.js');
 var states, loadContFn, ID = "PATIENT_SEARCH";
 
+var isFetching = false;
 var ps = {
 
   wireUp: function() {
+
     if (states) {
       states.clearPrefetchCache();
     }
@@ -16,7 +18,7 @@ var ps = {
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(data.patientArray, function(state) {
+        local: $.map(Object.keys(data.patLookup), function(state) {
           return {
             id: state,
             value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g,"") : state
@@ -69,13 +71,24 @@ var ps = {
 
   show: function(panel, isAppend, loadContentFn) {
 
+    var isDataLoaded = data.patLookup ? true: false;
+
     loadContFn = loadContentFn;
     var tmpl = require("templates/patient-search");
+    var html = tmpl({dataLoaded: isDataLoaded});
 
-    if(isAppend) panel.append(tmpl());
-    else panel.html(tmpl());
+    if(isAppend) panel.append(html);
+    else panel.html(html);
 
-    ps.wireUp();
+    if(!isDataLoaded) {
+      setTimeout(function(){
+        ps.show(panel, isAppend, loadContentFn);
+      }, 500);
+    }
+
+    setTimeout(function(){
+      ps.wireUp();
+    },0);
   }
 
 };

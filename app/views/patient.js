@@ -14,6 +14,23 @@ var ID = "PATIENT_VIEW";
  *   Individual action plan
  */
 
+var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, patientData) {
+  var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
+  var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
+    "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
+  var titleTmpl = require("templates/patient-title");
+  base.updateTitle(titleTmpl({
+    patid: patid,
+    nhs: patid.toString().replace(/ /g, ""),
+    age: patientData.characteristics.age,
+    sex: sex
+  }));
+
+  var tabUrl = patientId;
+  if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+  base.updateTab("patients", patid, tabUrl);
+};
+
 var pv = {
 
   wireUp: function() {
@@ -22,13 +39,13 @@ var pv = {
 
   create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
 
-    if(layout.view === ID && patientId === layout.patientId) {
+    if (layout.view === ID && patientId === layout.patientId) {
       //the view is the same just need to update the actions
       individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
       qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
 
       var tabUrl = patientId;
-      if(pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+      if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
       base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
 
       return;
@@ -59,23 +76,27 @@ var pv = {
 
         data.getPatientData(patientId, function(patientData) {
 
+          if (!data.patLookup) {
+            //we're too early to get nhs number so let's repeat until it's there
+            var updatePatientIds = function() {
+              if (!data.patLookup) {
+                setTimeout(function() {
+                  updatePatientIds();
+                }, 500);
+              } else {
+                updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);
+              }
+            };
+
+            setTimeout(function() {
+              updatePatientIds();
+            }, 500);
+          }
+
           //title needs updating
           $('#mainTitle').show();
 
-          var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
-          var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
-            "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
-          var titleTmpl = require("templates/patient-title");
-          base.updateTitle(titleTmpl({
-            patid: patid,
-            nhs: patid.toString().replace(/ /g, ""),
-            age: patientData.characteristics.age,
-            sex: sex
-          }));
-
-          var tabUrl = patientId;
-          if(pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
-          base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
+          updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);
 
           layout.patientId = patientId;
           data.patientId = patientId;
@@ -84,7 +105,13 @@ var pv = {
           patientSearch.show($('#title-right'), false, loadContentFn);
           qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
 
-          lifeline.show(farRightPanel, true, patientId, patientData);
+          if (patientData.conditions.length +
+            patientData.contacts.length +
+            patientData.events.length +
+            patientData.medications.length +
+            patientData.measurements.length !== 0) {
+            lifeline.show(farRightPanel, true, patientId, patientData);
+          }
           individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
 
           patientSearch.wireUp();
@@ -96,9 +123,9 @@ var pv = {
           //add state indicator
           farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
-          $('#right-panel').css("overflow-y","auto");
-          $('#right-panel').css("overflow-x","hidden");
-          base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.fit-to-screen-height',padding:200}]);
+          $('#right-panel').css("overflow-y", "auto");
+          $('#right-panel').css("overflow-x", "hidden");
+          base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15 }, { selector: '.fit-to-screen-height', padding: 200 }]);
 
         });
       } else {
@@ -114,7 +141,7 @@ var pv = {
         //add state indicator
         farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
-        $('#right-panel').css("overflow","visible");
+        $('#right-panel').css("overflow", "visible");
       }
 
     }, 0);
