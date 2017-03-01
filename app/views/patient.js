@@ -123,8 +123,8 @@ var pv = {
           //add state indicator
           farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
-          $('#right-panel').css("overflow-y", "auto");
-          $('#right-panel').css("overflow-x", "hidden");
+          //$('#right-panel').css("overflow-y", "auto");
+          //$('#right-panel').css("overflow-x", "hidden");
           base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 }, { selector: '.fit-to-screen-height', padding: 200, minHeight:300 }]);
 
         });
@@ -141,7 +141,10 @@ var pv = {
         //add state indicator
         farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
-        $('#right-panel').css("overflow", "visible");
+        base.updateTab("patients", "", "");
+
+        base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 }]);
+        //$('#right-panel').css("overflow", "visible");
       }
 
     }, 0);

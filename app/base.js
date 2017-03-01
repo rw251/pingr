@@ -227,12 +227,13 @@ var base = {
 
   getCssText: function() {
     var cssText = base.elements.map(function(v) {
-      return v.selector + " {max-height:" + Math.max(v.minHeight,Math.floor($(window).height() - $(v.selector).position().top - v.padding)) + 'px;}';
+      return v.selector + " {max-height:" + Math.max(v.minHeight,Math.floor($(window).height() - $(v.selector).position().top - v.padding)) + "px;min-height:" + v.minHeight + "px;}";
     }).join(" ");
     return cssText;
   },
 
   updateFixedHeightElements: function(elements) {
+    console.log(elements);
     console.log("update called");
     if (!elements) elements = base.elements;
     base.elements = elements;
