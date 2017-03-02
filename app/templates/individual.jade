@@ -40,7 +40,7 @@ else
                     a(href='/#indicators/'+indicator.id.replace(/\./g,"/"))= indicator.text
               span
                 = "Number of points this is worth: " + suggestion.pointsPerAction.toFixed(1) + " "
-                a(data-toggle='tooltip', data-placement='right', title='A patient is worth a number of percentage points for each indicator they are in. If a patient is in more than one indicator, these points are added together') What does this mean?
+                a.tooltip-on-click(data-toggle='tooltip', data-placement='right', title='A patient is worth a number of percentage points for each indicator they are in. If a patient is in more than one indicator, these points are added together') What does this mean?
               br
               a.show-more(data-id=suggestion.actionTextId)
                 | Show less 

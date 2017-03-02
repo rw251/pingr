@@ -84,6 +84,9 @@ var base = {
     $('[data-toggle="tooltip"]').tooltip('hide');
     $('.tooltip').remove();
 
+    $('.tooltip-on-click').tooltip({
+      container: 'body'
+    });
     $('[data-toggle="tooltip"]:visible').tooltip({
       container: 'body',
       delay: {
