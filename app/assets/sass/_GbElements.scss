@@ -8,6 +8,13 @@ Overrided CT-dashboard
 /*****************************
 Misc
 *****************************/
+.icon-text{
+    display: inline-flex;
+    vertical-align: middle;
+    padding-bottom: 3px;
+    padding-left: 5px;
+}
+
 #lock-hook{
   display: none;
 }

@@ -465,7 +465,6 @@ var base = {
     var $standard = $(standardHtml);
     return $standard;
   },
-
   updateTitle: function(title) {
     $('#title-left').html(title);
     $('#title-right').html("");

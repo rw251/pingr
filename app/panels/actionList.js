@@ -23,6 +23,7 @@ var al = {
     $('#downloadActionPlan').on('click', function() {
 
       var columns = ["Team action or patient id","Created by","Agreed by","Action"];
+      //var columns = ["Subject","Created by","Agreed by","Action"];
       var rows = actionArray.map(function(v){
         return [
           v.patientId ? v.patientId : "Team action",

@@ -2,10 +2,9 @@
   .card-header
     h4.card-title Quality Indicators
   .card-content
-    #accordion.panel-group(role="tablist", aria-multiselectable="true")
+    #accordion.panel-group(role="tablist", aria-multiselectable="false")
       .panel.panel-default
         each standard in standards
-          div.test
           .panel-heading(id="heading-" + standard.indicatorId.replace(/\./g,'-'), role="tab")
             a(role="button", data-toggle="collapse", data-parent="#accordion", href="#" + standard.indicatorId.replace(/\./g,'-'), aria-expanded="false", aria-controls= standard.indicatorId.replace(/\./g,"/"))
               h2.panel-title(class=standard.targetMet ? 'text-success' : 'text-danger')

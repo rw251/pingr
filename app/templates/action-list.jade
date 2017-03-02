@@ -3,16 +3,24 @@ include mixins/thumbs
 if noSuggestions
   p There are no improvement action suggestions from PINGR. Well Done!!
 else 
-  thead
+  thead.text-primary
     tr
-      th Team action or patient id
+      //th Team action or patient id
+      th Subject
       th Created by
       th Agreed by
       th Action
   tbody
     - each action in actions
       tr
-        td= action.patientId ? action.patientId : "Team action"
-        td= action.userDefined ? action.who : "PINGR"
-        td= action.who
-        td= action.actionText
+        if(action.patientId)
+          td.col-sm-4.col-md-2
+            i.text-info.material-icons face
+            p.icon-text= action.patientId 
+        else
+          td.col-sm-4.col-md-2
+            i.text-success.material-icons assignment_ind
+            p.icon-text Team action  
+        td.col-sm-2.col-md-2= action.userDefined ? action.who : "PINGR"
+        td.col-sm-2.col-md-2= action.who
+        td.col-sm-4.col-md-6= action.actionText

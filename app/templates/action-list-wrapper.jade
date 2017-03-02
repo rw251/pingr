@@ -1,4 +1,13 @@
-#suggested-actions-table-wrapper(style="border:1px black solid; margin-bottom: 4px")
-  table#suggested-actions-table.table 
-button.btn.btn-warning#downloadActionPlan Download action plan   
+#suggested-actions-table-wrapper.col-md-12
+  //(style="border:1px black solid; margin-bottom: 4px")
+  .card
+    .card-header.card-header-icon(data-background-color="green")
+      i.material-icons lightbulb_outline
+    .card-content.table-responsive.table-full-width
+      .nav.navbar-nav
+        h4.card-title#Action-title Action Plans
+      .nav.navbar-nav.navbar-right
+        button.btn.btn-warning#downloadActionPlan Download action plan   
+      table#suggested-actions-table.table 
+
 //include mixins/personal-action-plan

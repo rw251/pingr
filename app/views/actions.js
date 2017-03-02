@@ -29,7 +29,8 @@ var ap = {
         layout.view = ID;
       }
 
-      base.updateTitle("Action plans");
+      //base.updateTitle("Action plans");
+      base.updateTitle("");
 
       lookup.suggestionModalText = "Screen: Action plan\n===========\n";
       //actionFilter.show(centrePanel);
@@ -40,8 +41,8 @@ var ap = {
       base.wireUpTooltips();
       base.hideLoading();
 
-      $('#suggested-actions-table-wrapper').css("overflow-y","auto");
-      $('#suggested-actions-table-wrapper').css("overflow-x","hidden");
+      //$('#suggested-actions-table-wrapper').css("overflow-y","auto");
+      //$('#suggested-actions-table-wrapper').css("overflow-x","hidden");
 
       base.updateFixedHeightElements([{selector:'#suggested-actions-table-wrapper',padding:250}]);
 
