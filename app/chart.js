@@ -209,7 +209,7 @@ var cht = {
         sumXX += time * time;
         sumYY += y * y;
       }
-      series[0].data.push([time, y]);
+      series[0].data.push({x: time, y: y, label: data.values[1][i] + "/" + data.values[2][i]});
       maxValue = Math.max(maxValue, y);
       maxXvalue = Math.max(maxXvalue, time);
       minXvalue = Math.min(minXvalue, time);
@@ -261,7 +261,7 @@ var cht = {
       },
       legend: { enabled: true },
       tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:.2f}%</b><br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:.2f}%</b> ({point.label})<br/>'
       },
 
       navigator: {
