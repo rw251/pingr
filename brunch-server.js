@@ -11,6 +11,7 @@ var DEBUG = false;
 module.exports = function(PORT, PATH, CALLBACK) {
 
   mongoose.set('debug', DEBUG);
+  mongoose.Promise = global.Promise;
   mongoose.connect(config.db.url);
 
   var app = express();
@@ -23,7 +24,7 @@ module.exports = function(PORT, PATH, CALLBACK) {
 
   // uncomment after placing your favicon in /public
   //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-  app.use(logger('dev'));
+  //app.use(logger('dev'));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({
     extended: false
@@ -32,9 +33,11 @@ module.exports = function(PORT, PATH, CALLBACK) {
   // Configuring Passport
   var passport = require('passport');
   var expressSession = require('express-session');
+  var SESSION_TIMEOUT = 4 * 3600 * 1000; //4 hours to be sure - but client side
+                                         //2 hours redirects to signout
   app.use(expressSession({
     secret: config.passport.secret,
-    cookie: { maxAge: 4 * 3600 * 1000 }, //4 hours to be sure - but client side 2 hours redirects to signout
+    cookie: { maxAge: SESSION_TIMEOUT },
     rolling: true,
     resave: true,
     saveUninitialized: false
