@@ -2,17 +2,23 @@
 //    next: include subwrappers for accordion 
 .card
   .card-header
-    h4.card-title= "Top 3 Suggested Actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " For this Patient"
-    //Suggested Actions
+    h4.card-title Suggested Actions
+    small.category= "Top 3 Suggested Actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " For this Patient"
   .card-content
-    #accordion.panel-group(role="tablist", aria-multiselectable="true")
-      #tab-plan-individual.panel.panel-default
-        //.affix.panel.panel-default
-        //.clearfix.panel-heading= "Top 3 suggested actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " for patient with NHS number " + nhs
-        //#tab-plan-individual.panel-body.fit-to-screen-height
-        #advice-placeholder
-          | Select an individual patient from the patient panel to view advice
-        #advice-list
-        #personalPlanIndividual
+    .row
+            //- .col-md-4
+            //-   ul.nav.nav-pills.nav-pils-icons.nav-pills-info.nav-stacked(role="tablist")
+          #tab-plan-individual.panel.panel-default
+            //.affix.panel.panel-default
+            //.clearfix.panel-heading= "Top 3 suggested actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " for patient with NHS number " + nhs
+            //#tab-plan-individual.panel-body.fit-to-screen-height
+            #advice-placeholder
+              | Select an individual patient from the patient panel to view advice
+            #advice-list
+            #personalPlanIndividual
+      
+        
+        
+//the modals have moved to the modal container
 //include mixins/edit-plan-modal
 //include mixins/delete-plan-modal

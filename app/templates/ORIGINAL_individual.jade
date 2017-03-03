@@ -3,60 +3,30 @@ include mixins/thumbs
 if noSuggestions
   p There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
 else 
-  .col-md-4
-    ul.nav.nav-pills.nav-pills-icons.nav-pills-default.nav-stacked(role="tablist")
-      //#tab-plan-individual.panel.panel-default
-      each suggestion, index in suggestions
-        if index == 0
-          li.active
-            a(href="#" + suggestion.actionTextId role="tab" data-toggle="tab")
-              p= suggestion.actionText
-        else
-          li
-            a(href="#" + suggestion.actionTextId role="tab" data-toggle="tab")
-              p= suggestion.actionText
-  .col-md-8
-    .tab-content
-      each suggestion, index in suggestions
-        if index == 0
-          li.active.tab-pane(id=suggestion.actionTextId, data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index)
-            .col-md-12
-              +thumbs(suggestion)
-            .col-md-12
-              p= suggestion.actionText
-        else
-          li.tab-pane(id=suggestion.actionTextId, data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index)
-            .col-md-12
-              +thumbs(suggestion)
-            .col-md-12
-              p= suggestion.actionText
-      
-  
-  
   table#individual-suggested-actions-table.table
     thead
       tr
         th
         th(style='width: 105px')
     tbody
-       - var alt = false
-      //- each suggestion, index in suggestions
-      //-   if index === 3 && !visible
-      //-     tr
-      //-       td
-      //-         a.show-more-than-3
-      //-           | Show more than top 3 actions 
-      //-           i.fa.fa-caret-down
+      - var alt = false
+      each suggestion, index in suggestions
+        if index === 3 && !visible
+          tr
+            td
+              a.show-more-than-3
+                | Show more than top 3 actions 
+                i.fa.fa-caret-down
         tr.suggestion(data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index, class=alt ? 'alternate-row': '', style=(index<3 || visible) ? '' : 'display:none' )
           td
             span(data-subsection=suggestion.subsection)
               strong.black.f20
                 != suggestion.actionText
-              //- if suggestion.supportingText
-              //-   br
-              //-   a.show-more(data-id=suggestion.actionTextId)
-              //-     | Show more 
-              //-     i.fa.fa-caret-down
+              if suggestion.supportingText
+                br
+                a.show-more(data-id=suggestion.actionTextId)
+                  | Show more 
+                  i.fa.fa-caret-down
           td
             +thumbs(suggestion)
         if suggestion.supportingText
@@ -82,4 +52,4 @@ else
             a.show-less-than-3
               | Show top 3 actions only 
               i.fa.fa-caret-up     
-include mixins/personal-action-plan
+//include mixins/personal-action-plan

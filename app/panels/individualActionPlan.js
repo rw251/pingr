@@ -128,7 +128,9 @@ var iap = {
     });*/
 
     individualTab.on('click', '.edit-plan', function() {
-      var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
+      //var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
+
+      var action = userDefinedPatientActionsObject[$(this).closest('li').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
 
@@ -151,7 +153,9 @@ var iap = {
         if (e.which === 13) $('#editPlan .save-plan').click();
       }).modal();
     }).on('click', '.delete-plan', function() {
-      var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
+      //var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
+      var action = userDefinedPatientActionsObject[$(this).closest('li').data("id")];
+
 
       $('#modal-delete-item').html(action.actionText);
 
@@ -181,8 +185,10 @@ var iap = {
       }));
       iap.updateIndividualSapRows();*/
     }).on('click', '.btn-yes', function(e) {
-      var AGREE_STATUS = $(this).closest('tr').data('agree');
-      var action = patientActionsObject[$(this).closest('tr').data('id')];
+      // var AGREE_STATUS = $(this).closest('tr').data('agree');
+      // var action = patientActionsObject[$(this).closest('tr').data('id')];
+      var AGREE_STATUS = $(this).closest('li').data('agree');
+      var action = patientActionsObject[$(this).closest('li').data('id')];
 
       if (AGREE_STATUS === false) {
         //do nothing - shouldn't be able to get here
@@ -197,8 +203,10 @@ var iap = {
       e.stopPropagation();
       e.preventDefault();
     }).on('click', '.btn-no', function(e) {
-      var AGREE_STATUS = $(this).closest('tr').data('agree');
-      var action = patientActionsObject[$(this).closest('tr').data('id')];
+      //var AGREE_STATUS = $(this).closest('tr').data('agree');
+      //var action = patientActionsObject[$(this).closest('tr').data('id')];
+      var AGREE_STATUS = $(this).closest('li').data('agree');
+      var action = patientActionsObject[$(this).closest('li').data('id')];
 
       if (AGREE_STATUS === true) {
         //do nothing - shouldn't be able to get here
@@ -316,7 +324,9 @@ var iap = {
           all.addClass('active');
           //self.find('td').last().children().show();
           if (patientActionsObject[self.data("id")].history) {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+            //var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+            var tool = $(this).closest('li').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');

@@ -541,14 +541,14 @@ var base = {
   updateFixedHeightElements: function(elements) {
     if (!elements) elements = base.elements;
     base.elements = elements;
-    console.log("shall we update?");
+//    console.log("shall we update?");
     if ($(elements.map(function(v) { return v.selector + ":visible"; }).join(",")).length !== elements.length) {
-      console.log("no - wait a bit.");
+//      console.log("no - wait a bit.");
       setTimeout(function() {
         base.updateFixedHeightElements(elements);
       }, 10);
     } else {
-      console.log("yes");
+//      console.log("yes");
       if ($('#addedCSS').length === 0) {
         $('head').append('<style id="addedCSS" type="text/css"></style>');
       }
