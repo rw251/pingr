@@ -89,6 +89,8 @@ var indicatorList = {
         $('.show-more[data-id="' + id + '"]:first').show();
         elem.hide();
       } else {
+        $('.show-more-row').hide();
+        $('.show-more').show();
         $(this).hide();
         elem.show('fast');
         log.event("show-more", window.location.hash, [{key:"indicator",value:id}]);

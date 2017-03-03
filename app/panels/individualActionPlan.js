@@ -90,7 +90,7 @@ var iap = {
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        log.deleteUserDefinedPatientAction(patientId, action.actionTextId, function(err){
+        log.deleteUserDefinedPatientAction(patientId, action.actionTextId, function(err) {
           qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
         });
         delete userDefinedPatientActionsObject[action.actionTextId];
@@ -100,20 +100,20 @@ var iap = {
     }).on('click', '.add-plan', function() {
       var actionText = $(this).parent().parent().find('textarea').val();
       $(this).parent().parent().find('textarea').val("");
-      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-      var indicatorList=[];
-      if(pathwayId && pathwayStage && standard) {
+      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
+      var indicatorList = [];
+      if (pathwayId && pathwayStage && standard) {
         indicatorList.push([pathwayId, pathwayStage, standard].join("."));
       } else {
-        indicatorList = patientActions.reduce(function(prev, curr){
+        indicatorList = patientActions.reduce(function(prev, curr) {
           var union = prev.concat(curr.indicatorList);
           return union.filter(function(item, pos) {
             return union.indexOf(item) == pos;
           });
         }, []);
       }
-      log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
-        if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
+      log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a) {
+        if (!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId] = a;
         iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
         qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
       });
@@ -128,10 +128,10 @@ var iap = {
 
       action.agree = AGREE_STATUS ? null : true;
       if (action.agree) {
-        if(!action.history) action.history=[];
-        action.history.unshift({who:$('#user_fullname').text().trim(),what:"agreed with",when:new Date()});
+        if (!action.history) action.history = [];
+        action.history.unshift({ who: $('#user_fullname').text().trim(), what: "agreed with", when: new Date() });
       }
-      log.updateIndividualAction(patientId, action, function(err){
+      log.updateIndividualAction(patientId, action, function(err) {
         qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
       });
       iap.updateAction(action);
@@ -145,12 +145,12 @@ var iap = {
       if (AGREE_STATUS === false) {
         //editing reason
         iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
-          if(!action.history) action.history=[];
-          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndividualAction(patientId, action, function(err){
+          log.updateIndividualAction(patientId, action, function(err) {
             qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
           });
           iap.updateAction(action);
@@ -158,7 +158,7 @@ var iap = {
           action.agree = null;
           delete action.rejectedReason;
           delete action.rejectedReasonText;
-          log.updateIndividualAction(patientId, action, function(err){
+          log.updateIndividualAction(patientId, action, function(err) {
             qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
           });
           iap.updateAction(action);
@@ -168,12 +168,12 @@ var iap = {
       } else {
         //disagreeing
         iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
-          if(!action.history) action.history=[];
-          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndividualAction(patientId, action, function(err){
+          log.updateIndividualAction(patientId, action, function(err) {
             qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
           });
           iap.updateAction(action);
@@ -205,6 +205,8 @@ var iap = {
         $('.show-more[data-id="' + id + '"]:first').show();
         elem.hide();
       } else {
+        $('.show-more-row').hide();
+        $('.show-more').show();
         $(this).hide();
         elem.show('fast');
       }
@@ -277,10 +279,10 @@ var iap = {
   },
 
   displayPersonalisedIndividualActionPlan: function(parentElem, pathwayId, pathwayStage, standard) {
-    var indicatorId=null;
-    if(pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
+    var indicatorId = null;
+    if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
     var tmpl = require('templates/action-plan-list');
-    var userDefinedActions = Object.keys(userDefinedPatientActionsObject).map(function(v){return userDefinedPatientActionsObject[v];}).filter(function(v){return !v.indicatorList || !indicatorId || v.indicatorList.indexOf(indicatorId)>-1;});
+    var userDefinedActions = Object.keys(userDefinedPatientActionsObject).map(function(v) { return userDefinedPatientActionsObject[v]; }).filter(function(v) { return !v.indicatorList || !indicatorId || v.indicatorList.indexOf(indicatorId) > -1; });
     parentElem.html(tmpl({
       "hasSuggestions": userDefinedActions && userDefinedActions.length > 0,
       "suggestions": userDefinedActions
@@ -293,7 +295,7 @@ var iap = {
     data.getPatientActionData(patientId, function(err, a) {
       patientActionsObject = {};
       userDefinedPatientActionsObject = {};
-      a.userDefinedActions.forEach(function(v){
+      a.userDefinedActions.forEach(function(v) {
         userDefinedPatientActionsObject[v.actionTextId] = v;
       });
       patientActions = a.actions.map(function(v) {

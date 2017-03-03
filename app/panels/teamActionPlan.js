@@ -8,7 +8,7 @@ var teamActions = [];
 var tap = {
 
   create: function(title) {
-    return require("templates/team-action-plan")({title: title});
+    return require("templates/team-action-plan")({ title: title });
   },
 
   show: function(panel, title, pathwayId, pathwayStage, standard) {
@@ -54,8 +54,8 @@ var tap = {
   wireUp: function(pathwayId, pathwayStage, standard) {
     teamTab = $('#tab-plan-team');
 
-    var indicatorId="";
-    if(pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
+    var indicatorId = "";
+    if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
     teamTab.on('click', '.edit-plan', function() {
       var action = userDefinedTeamActionsObject[$(this).closest('tr').data("id")];
@@ -69,11 +69,11 @@ var tap = {
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
         var oldActionId = action.actionTextId;
         action.actionText = $('#editActionPlanItem').val();
-        action.actionTextId = action.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-        if(action.actionTextId!==oldActionId){
+        action.actionTextId = action.actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (action.actionTextId !== oldActionId) {
           log.updateUserDefinedTeamAction(oldActionId, action);
           delete userDefinedTeamActionsObject[oldActionId];
-          if(!userDefinedTeamActionsObject[action.actionTextId]) userDefinedTeamActionsObject[action.actionTextId]=action;
+          if (!userDefinedTeamActionsObject[action.actionTextId]) userDefinedTeamActionsObject[action.actionTextId] = action;
           tap.updateAction(action);
         }
         $('#editPlan').modal('hide');
@@ -96,9 +96,9 @@ var tap = {
     }).on('click', '.add-plan', function() {
       var actionText = $(this).parent().parent().find('textarea').val();
       $(this).parent().parent().find('textarea').val("");
-      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-      log.recordTeamPlan(actionText, indicatorId, function(err, a){
-        if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
+      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
+      log.recordTeamPlan(actionText, indicatorId, function(err, a) {
+        if (!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId] = a;
         tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       });
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
@@ -111,8 +111,8 @@ var tap = {
 
       action.agree = AGREE_STATUS ? null : true;
       if (action.agree) {
-        if(!action.history) action.history=[];
-        action.history.unshift({who:$('#user_fullname').text().trim(),what:"agreed with",when:new Date()});
+        if (!action.history) action.history = [];
+        action.history.unshift({ who: $('#user_fullname').text().trim(), what: "agreed with", when: new Date() });
       }
       log.updateTeamAction(indicatorId, action);
       tap.updateAction(action);
@@ -126,8 +126,8 @@ var tap = {
       if (AGREE_STATUS === false) {
         //editing reason
         tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
-          if(!action.history) action.history=[];
-          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -145,8 +145,8 @@ var tap = {
       } else {
         //disagreeing
         tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
-          if(!action.history) action.history=[];
-          action.history.unshift({who:$('#user_fullname').text().trim(),what:"disagreed with",when:new Date(),why:actionPlan.rejectedReasonText});
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -176,10 +176,12 @@ var tap = {
     $('#advice-list').on('click', '.show-more', function(e) {
       var id = $(this).data("id");
       var elem = $('.show-more-row[data-id="' + id + '"]');
-      if(elem.is(':visible')){
+      if (elem.is(':visible')) {
         $('.show-more[data-id="' + id + '"]:first').show();
         elem.hide();
       } else {
+        $('.show-more-row').hide();
+        $('.show-more').show();
         $(this).hide();
         elem.show('fast');
       }
@@ -190,8 +192,8 @@ var tap = {
     });
 
     $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
-    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e){
-      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
+    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e) {
+      log.event("nice-link-clicked", window.location.hash, [{ key: "link", value: e.currentTarget.href }]);
       e.stopPropagation();
     });
 
@@ -269,7 +271,7 @@ var tap = {
 
   displayPersonalisedTeamActionPlan: function(parentElem) {
     var tmpl = require('templates/action-plan-list');
-    var userDefinedTeamActions = Object.keys(userDefinedTeamActionsObject).map(function(v){return userDefinedTeamActionsObject[v];});
+    var userDefinedTeamActions = Object.keys(userDefinedTeamActionsObject).map(function(v) { return userDefinedTeamActionsObject[v]; });
     parentElem.html(tmpl({
       "hasSuggestions": userDefinedTeamActions && userDefinedTeamActions.length > 0,
       "suggestions": userDefinedTeamActions
@@ -282,14 +284,14 @@ var tap = {
     data.getTeamActionData(pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : "", function(err, a) {
       teamActionsObject = {};
       userDefinedTeamActionsObject = {};
-      a.userDefinedActions.forEach(function(v){
+      a.userDefinedActions.forEach(function(v) {
         userDefinedTeamActionsObject[v.actionTextId] = v;
       });
       teamActions = a.actions.map(function(v) {
         v.indicatorListText = v.indicatorList.map(function(vv) {
           return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
-        if(v.agree!==true && v.agree!==false) v.agree = null;
+        if (v.agree !== true && v.agree !== false) v.agree = null;
         teamActionsObject[v.actionTextId] = v;
         return v;
       });
@@ -322,14 +324,14 @@ var tap = {
     $('#advice-list').html(tmpl(localData));
 
     //Wire up any clipboard stuff in the suggestions
-    var isVision = $('#practice_system').text()==="Vision";
+    var isVision = $('#practice_system').text() === "Vision";
     $('#advice-list').find('span:contains("[COPY")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1' ) + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy '+(isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1') + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
     $('#advice-list').find('span:contains("[")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
 
     $('#advice-list').find('span:contains("[INFO")').each(function() {
@@ -365,11 +367,11 @@ var tap = {
           .replace(/<li>/g, "  - ")
           .replace(/<\/li>/g, "\r\n")
           .replace(/<\/?strong>/g, "")
-          .replace(/&gte;/g,"≥")
-          .replace(/&lte;/g,"≤")
-          .replace(/&gt;/g,">")
-          .replace(/&lt;/g,"<")
-          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g,"$2 - $1");
+          .replace(/&gte;/g, "≥")
+          .replace(/&lte;/g, "≤")
+          .replace(/&gt;/g, ">")
+          .replace(/&lt;/g, "<")
+          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g, "$2 - $1");
         reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>');
       }
     });
