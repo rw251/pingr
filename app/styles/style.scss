@@ -2323,106 +2323,51 @@ body > svg {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.panel.affix {
-    width: 31%;
-}
 .page > .tab-content > .panel {
-    min-height: 370px;
     margin-bottom: 0;
 }
-.fit-to-screen-height {
-    /*height: 270px;*/
-    overflow-y: auto;
-}
+
 .fit-to-scrolling-section-height {
     height: 250px;
 }
 @media (min-height: 500px) and (max-height: 599px) {
-    .fit-to-screen-height {
-    /*    height: 300px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 300px;
     }
-    .page > .tab-content > .panel {
-        min-height: 370px;
-    }
 }
 @media (min-height: 600px) and (max-height: 699px) {
-    .fit-to-screen-height {
-      /*  height: 400px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 400px;
     }
-    .page > .tab-content > .panel {
-        min-height: 470px;
-    }
 }
 @media (min-height: 700px) and (max-height: 799px) {
-    .fit-to-screen-height {
-      /*  height: 500px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 500px;
     }
-    .page > .tab-content > .panel {
-        min-height: 570px;
-    }
 }
 @media (min-height: 800px) and (max-height: 899px) {
-    .fit-to-screen-height {
-      /*  height: 600px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 600px;
     }
-    .page > .tab-content > .panel {
-        min-height: 670px;
-    }
 }
 @media (min-height: 900px) and (max-height: 999px) {
-    .fit-to-screen-height {
-      /*  height: 700px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 700px;
     }
-    .page > .tab-content > .panel {
-        min-height: 770px;
-    }
 }
 @media (min-height: 1000px) and (max-height: 1099px) {
-    .fit-to-screen-height {
-        /*height: 800px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 800px;
     }
-    .page > .tab-content > .panel {
-        min-height: 870px;
-    }
 }
 @media (min-height: 1100px) and (max-height: 1199px) {
-    .fit-to-screen-height {
-      /*  height: 900px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 900px;
     }
-    .page > .tab-content > .panel {
-        min-height: 970px;
-    }
 }
 @media (min-height: 1200px) {
-    .fit-to-screen-height {
-      /*  height: 1000px;*/
-    }
     .fit-to-scrolling-section-height {
         height: 1000px;
-    }
-    .page > .tab-content > .panel {
-        min-height: 1070px;
     }
 }
 .fp-controlArrow.fp-prev {

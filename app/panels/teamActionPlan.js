@@ -14,20 +14,12 @@ var tap = {
   show: function(panel, title, pathwayId, pathwayStage, standard) {
     panel.html(tap.create(title));
     tap.wireUp(pathwayId, pathwayStage, standard);
-
-    /*panel.find('div.fit-to-screen-height').niceScroll({
-      cursoropacitymin: 0.4,
-      cursorwidth: "15px",
-      horizrailenabled: false,
-      hidecursordelay: 50,
-      cursorborderradius : "12px"
-    });*/
   },
 
   updateAction: function(action) {
     //Use actionTextId to find the right row
-    var yesbox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
-    var nobox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    var yesbox = actionPanel.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = actionPanel.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
     //checked action inactive
     if (action.agree === true) {
       yesbox.each(function() { this.checked = true; });
@@ -52,12 +44,13 @@ var tap = {
   },
 
   wireUp: function(pathwayId, pathwayStage, standard) {
-    teamTab = $('#tab-plan-team');
+    actionPanel = $('#team-action-panel');
+    userActionPanel = $('#user-action-panel');
 
     var indicatorId = "";
     if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
-    teamTab.on('click', '.edit-plan', function() {
+    userActionPanel.on('click', '.edit-plan', function() {
       var action = userDefinedTeamActionsObject[$(this).closest('tr').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
@@ -101,7 +94,13 @@ var tap = {
         if (!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId] = a;
         tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       });
-    }).on('change', '.btn-toggle input[type=checkbox]', function() {
+    }).on('keyup', 'input[type=text]', function(e) {
+      if (e.which === 13) {
+        actionPanel.find('.add-plan').click();
+      }
+    });
+
+    actionPanel.on('change', '.btn-toggle input[type=checkbox]', function() {
       //tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
 
@@ -155,10 +154,6 @@ var tap = {
         });
         e.stopPropagation();
         e.preventDefault();
-      }
-    }).on('keyup', 'input[type=text]', function(e) {
-      if (e.which === 13) {
-        teamTab.find('.add-plan').click();
       }
     });
 
@@ -316,7 +311,6 @@ var tap = {
       localData.suggestions = teamActions;
     }
 
-    $('#advice-placeholder').hide();
     $('#advice').show();
 
     //base.createPanelShow(teamPanel, $('#advice-list'), localData);

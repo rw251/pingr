@@ -21,18 +21,12 @@ var iap = {
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
     panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId, pathwayId, pathwayStage, standard));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
-
-    /*panel.find('div.fit-to-screen-height').niceScroll({
-      cursoropacitymin: 0.3,
-      cursorwidth: "7px",
-      horizrailenabled: false
-    });*/
   },
 
   updateAction: function(action) {
     //Use actionTextId to find the right row
-    var yesbox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
-    var nobox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    var yesbox = actionPanel.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = actionPanel.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
     //checked action inactive
     if (action.agree === true) {
       yesbox.each(function() { this.checked = true; });
@@ -57,9 +51,10 @@ var iap = {
   },
 
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {
-    individualTab = $('#tab-plan-individual');
+    actionPanel = $('#individual-action-panel');
+    userActionPanel = $('#user-action-panel');
 
-    individualTab.on('click', '.edit-plan', function() {
+    userActionPanel.on('click', '.edit-plan', function() {
       var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
@@ -118,7 +113,12 @@ var iap = {
         qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
       });
 
-    }).on('change', '.btn-toggle input[type=checkbox]', function() {
+    }).on('keyup', 'input[type=text]', function(e) {
+      if (e.which === 13) {
+        actionPanel.find('.add-plan').click();
+      }
+    });
+    actionPanel.on('change', '.btn-toggle input[type=checkbox]', function() {
       /*iap.updateIndividualSapRows();*/
     }).on('click', '.btn-undo', function(e) {
 
@@ -180,10 +180,6 @@ var iap = {
         });
         e.stopPropagation();
         e.preventDefault();
-      }
-    }).on('keyup', 'input[type=text]', function(e) {
-      if (e.which === 13) {
-        individualTab.find('.add-plan').click();
       }
     });
 
@@ -331,7 +327,6 @@ var iap = {
       });
     }
 
-    $('#advice-placeholder').hide();
     $('#advice').show();
 
     //base.createPanelShow(individualPanel, $('#advice-list'), localData);
