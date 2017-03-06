@@ -401,6 +401,12 @@ module.exports = function(passport) {
       res.send(patients);
     });
   });
+  //Return a page of the low hanging fruit patients
+  router.get('/api/WorstPatients/:skip/:limit', isAuthenticated, function(req, res){
+    patients.getAllPatientsPaginated(req.user.practiceId, +req.params.skip, +req.params.limit, function(err, patients){
+      res.send(patients);
+    });
+  });
   //Get a single patient's details - for use on the patient screen
   router.get('/api/PatientDetails/:patientId', isAuthenticated, function(req, res) {
     patients.get(req.params.patientId, function(err, patient) {

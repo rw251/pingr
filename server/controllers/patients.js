@@ -46,7 +46,7 @@ var mergeActions = function(actions, patients, patientId) {
     rtn = rtn.map(function(v) {
       if (actionObject[patient.patientId] && actionObject[patient.patientId][v.actionTextId]) {
         Object.keys(actionObject[patient.patientId][v.actionTextId]).forEach(function(vv) {
-          if(vv[0]==="_" || vv === "indicatorList") return; //ignore hidden properties like _id and __v;
+          if (vv[0] === "_" || vv === "indicatorList") return; //ignore hidden properties like _id and __v;
           v[vv] = actionObject[patient.patientId][v.actionTextId][vv];
         });
       }
@@ -124,7 +124,7 @@ module.exports = {
               return v;
             });
           }
-          done(null, patient );
+          done(null, patient);
         });
       }
     });
@@ -192,6 +192,23 @@ module.exports = {
         });
         return done(null, rtn);
       }
+    });
+  },
+
+  getAllPatientsPaginated: function(practiceId, skip, limit, done) {
+    var aggregateQuery = [
+      { $match: { "characteristics.practiceId": practiceId, "actions": { $exists: true } } },
+      { $project: { _id: 0, patientId: 1, actions: 1, characteristics: 1 } },
+      { $unwind: "$actions" },
+      { $group: { _id: "$patientId", age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" }, tot: { $sum: "$actions.pointsPerAction" }, indicators: { $addToSet: "$actions.indicatorId" } } },
+      { $sort: { tot: -1 } },
+      { $skip: skip},
+      { $limit: limit }
+    ];
+
+    Patient.aggregate(aggregateQuery, function(err, results){
+      if(err) return done(err);
+      return done(null, results);
     });
   },
 
