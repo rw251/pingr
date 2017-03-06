@@ -5,7 +5,8 @@ var lifeline = require('../panels/lifeline'),
   lookup = require('../lookup'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
-  patientSearch = require('../panels/patientSearch');
+  patientSearch = require('../panels/patientSearch'),
+  allPatientList = require('../panels/allPatientList');
 
 var ID = "PATIENT_VIEW";
 /*
@@ -131,7 +132,8 @@ var pv = {
       } else {
         base.updateTitle("No patient currently selected");
         base.savePanelState();
-        patientSearch.show(farRightPanel, false, loadContentFn);
+        patientSearch.show(farRightPanel, true, loadContentFn);
+        allPatientList.show(farRightPanel, true);
 
         lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
 
@@ -144,7 +146,6 @@ var pv = {
         base.updateTab("patients", "", "");
 
         base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 }]);
-        //$('#right-panel').css("overflow", "visible");
       }
 
     }, 0);

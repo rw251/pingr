@@ -200,7 +200,7 @@ module.exports = {
       { $match: { "characteristics.practiceId": practiceId, "actions": { $exists: true } } },
       { $project: { _id: 0, patientId: 1, actions: 1, characteristics: 1 } },
       { $unwind: "$actions" },
-      { $group: { _id: "$patientId", age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" }, tot: { $sum: "$actions.pointsPerAction" }, indicators: { $addToSet: "$actions.indicatorId" } } },
+      { $group: { _id: "$patientId", nhsNumber: {$max: "$characteristics.nhs"}, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" }, tot: { $sum: "$actions.pointsPerAction" }, indicators: { $addToSet: "$actions.indicatorId" } } },
       { $sort: { tot: -1 } },
       { $skip: skip},
       { $limit: limit }

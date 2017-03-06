@@ -1,0 +1,50 @@
+table.table.patient-list.table-body-hidden
+  thead
+    tr
+      th NHS number
+      th Indicators violated
+      th Number of points
+      th Age
+      th Sex
+  tbody
+    tr.list-item(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+      td(style='min-width:130px')
+        button.btn.btn-xs.btn-default.btn-copy(type='button', data-content='Copied', data-toggle='tooltip', data-placement='right')
+          span A
+        |         1234567890
+      td
+        table
+          tr
+            td 3
+            td This and that
+      td
+        | 3.45
+      td
+        | 87
+      td
+        | M
+.table-scroll
+  table.table.patient-list.table-head-hidden
+    thead
+      tr
+        th NHS number
+        th Indicators violated
+        th Number of points
+        th Age
+        th Sex
+    tbody
+      each patient in patients
+        tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+          td(style='min-width:130px')
+            - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+            button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+              span.fa.fa-clipboard
+            = ' ' + patient.nhsNumber
+          td
+            table
+              tr
+                td= patient.indicators.length
+                td!= patient.indicators.join("<br>")
+          td= patient.tot.toFixed(2)
+          td= patient.age
+          td= patient.sex

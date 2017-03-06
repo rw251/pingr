@@ -379,6 +379,18 @@ var dt = {
     return rtn;
   },
 
+  getAllPatientList: function(skip, limit, callback) {
+    $.ajax({
+      url: "api/WorstPatients/" + skip + "/" + limit,
+      success: function(file) {
+        return callback(null, file);
+      },
+      error: function(err) {
+        return callback(err);
+      }
+    });
+  },
+
   getPatientList: function(practiceId, pathwayId, pathwayStage, standard, subsection, callback) {
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
     if (!subsection) subsection = "all";
