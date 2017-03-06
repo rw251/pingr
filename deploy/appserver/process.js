@@ -572,7 +572,7 @@ async.series([
                               indicatorId: data.indicatorId,
                               actionCat: data.actionCat,
                               reasonNumber: data.reasonNumber,
-                              pointsPerAction: data.pointsPerAction,
+                              pointsPerAction: +data.pointsPerAction,
                               priority: data.priority,
                               actionText: data.actionText,
                               actionTextId: data.actionText.toLowerCase().replace(/[^a-z0-9]/g,""),
@@ -706,7 +706,7 @@ async.series([
                                 actionTextId: data.actionText.toLowerCase().replace(/[^a-z0-9]/g,""),
                                 supportingText: data.supportingText,
                                 numberPatients: data.numberPatients,
-                                pointsPerAction: data.pointsPerAction,
+                                pointsPerAction: +data.pointsPerAction,
                                 priority: data.priority
                               });
                             })

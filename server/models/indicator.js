@@ -18,7 +18,7 @@ var IndicatorSchema = new Schema({
       indicatorId: String,
       numberPatients: String,
       reasonNumber: String,
-      pointsPerAction: String,
+      pointsPerAction: Number,
       priority: String,
       actionText: String,
       actionTextId: String,

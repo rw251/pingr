@@ -67,7 +67,7 @@ var PatientSchema = new Schema({
       indicatorId: String,
       actionCat: String,
       reasonNumber: String,
-      pointsPerAction: String,
+      pointsPerAction: Number,
       priority: String,
       actionText: String,
       actionTextId: String,
