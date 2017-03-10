@@ -25,6 +25,7 @@ body
                       //a.btn.btn-just-icon.btn-simple(href="#eugen")
                         //i.fa.fa-google-plus
                       h5.category.text-center PINGR is here to help you spot hidden patterns amongst your patients
+                      small This tool is best viewed with Google Chrome
                   div.card-content
                     div#inpEmail.input-group
                       if message && message.error == "User Not found."
@@ -52,10 +53,13 @@ body
                         div.form-group.label-floating.has-error
                           label.control-label Password
                           input.form-control(type='password', name='password', required='')
-                    div.input-group
-                      span.input-group-addon
-                        a.btn.btn-rose.btn-simple.btn-sl.pull-left(href='/forgot') Forgot password 
-                        a.btn.btn-rose.btn-simple.btn-sl.pull-right(href='/register') Register
+                    .fluid-container
+                      .row
+                        .col-xs-12
+                          .col-xs-6
+                            a.btn.btn-rose.btn-simple.btn-sl.pull-left(href='/forgot') Forgot password 
+                          .col-xs-6
+                            a.btn.btn-rose.btn-simple.btn-sl.pull-right(href='/register') Register
                   div.footer.text-center
                     script document.write('<input type="hidden" name="hash" value="'+(document.location.href.split("#")[1] || '')+'"/>');
                     button#signin.btn.btn-rose.btn-simple.btn-wd.btn-lg(type='submit') Let's go!
