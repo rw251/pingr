@@ -313,11 +313,14 @@ var tap = {
           all.removeClass('danger');
           all.addClass('active');
           //self.find('td').last().children().show();
-          if (teamActionsObject[self.data("id")].history) {
+
+          //*b*original didn't appear to appropriately discriminate
+          //if (teamActionsObject[self.data("id")].history) {
+          if (teamActionsObject[self.data("id")].history != "") {
             var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to cancel</p>";
             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "You agreed with this - click again to cancel").tooltip('fixTitle').tooltip('hide');
           }
         } else {
           all.removeClass('active');
@@ -326,7 +329,7 @@ var tap = {
           if (teamActionsObject[self.data("id")].history) {
             $(this).parent().attr("title", "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
           } else {
-            $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+            $(this).parent().attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
           }
         }
       });

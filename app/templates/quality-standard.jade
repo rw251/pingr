@@ -1,7 +1,12 @@
 .card
-  .card-header
-    h4.card-title Quality Indicators
+  .card-header.card-header-icon(data-background-color="rose")
+    i.material-icons perm_scan_wifi
   .card-content
+    .row
+      .col-md-9
+        h4.card-title Quality Indicators
+      .col-md-1  
+        i.material-icons.text-rose(data-toggle='tooltip' data-placement='left' data-html='true' title='<h2>Indicators</h2><i class="material-icons">lightbulb_outline</i><p>Is there an action plan?</p><hr/><i class="material-icons">stars</i><p>Is there an action plan?</p><hr/><p><strong class="text-success">YES </strong> or <strong class="text-danger"> NO</strong></p>') help
     #accordion.panel-group(role="tablist", aria-multiselectable="false")
       .panel.panel-default
         each standard in standards
@@ -12,17 +17,23 @@
                   i.material-icons keyboard_arrow_down
           .panel-collapse.collapse(role="tabpanel", aria-labelledby="heading-" + standard.indicatorId.replace(/\./g,'-'), id= standard.indicatorId.replace(/\./g,'-'))
             .panel-body
-              div
-                !=standard.indicatorDescription
-                br
-                strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
-                br
-                !=standard.why
-              div
-              if (standard.indicatorId === indicatorId && standards.filter(function(v){return !v.targetMet;}).length > 1)
-                a.btn.btn-primary.btn-sm(href='/#patient/'+patientId) Showing actions for this indicator - click to show all
-              else if (!standard.targetMet && standards.filter(function(v){return !v.targetMet;}).length === 1)
-                span Currently showing actions for this indicator 
-              else 
-                if !standard.targetMet
-                  a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only       
+              .row 
+                .col-md-12
+                  !=standard.indicatorDescription
+                  br
+                  strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
+                  br
+                  !=standard.why
+              .row
+                .col-md-6
+                  if (standard.indicatorId === indicatorId && standards.filter(function(v){return !v.targetMet;}).length > 1)
+                    a.btn.btn-primary.btn-sm(href='/#patient/'+patientId data-toggle='tooltip' data-placement='top' data-html='true' title='<p>Has the target been met?</p><p>Green when there is</p><p>Red when there is not</p>') Showing actions for this indicator - click to show all
+                  else if (!standard.targetMet && standards.filter(function(v){return !v.targetMet;}).length === 1)
+                    span Currently showing actions for this indicator
+                  else 
+                    if !standard.targetMet
+                      a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only      
+                .col-md-offset-4.col-md-1                  
+                  i.material-icons stars
+                .col-md-1
+                  i.material-icons lightbulb_outline

@@ -17,11 +17,11 @@ else
         if(action.patientId)
           td.col-sm-4.col-md-2
             i.text-info.material-icons face
-            p.icon-text= action.patientId 
+            p.post-icon-text= action.patientId 
         else
           td.col-sm-4.col-md-2
             i.text-success.material-icons assignment_ind
-            p.icon-text Team action  
+            p.post-icon-text Team action  
         td.col-sm-4.col-md-6= action.actionText
         td.col-sm-2.col-md-2= action.userDefined ? action.who : "PINGR"
         td.col-sm-2.col-md-2= action.who

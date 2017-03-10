@@ -38,7 +38,7 @@ var ll = {
 
     ll.destroy(elementId);
 
-    var htmlElement = $('<div class="panel panel-default"><div class="panel-body"><div id="' + element + '"></div></div></div>');
+    var htmlElement = $('<div class="card"><div class="card-header card-header-icon" data-background-color="orange"><i class="material-icons">multiline_chart</i></div><div class="card-content"><h4 class="card-title">Data Charts</h4><div class="panel panel-default"><div class="panel-body"><div id="' + element + '"></div></div></div></div></div>');
 
     if (isAppend) panel.append(htmlElement);
     else panel.html(htmlElement);
@@ -174,7 +174,7 @@ var ll = {
         return eventSeries[key];
       }));
 
-      $(elementId).append($('<div class="chart-title">Patient conditions and contacts</div>'));
+      $(elementId).append($('<div class="lifeline-chart-title">Patient conditions and contacts</div>'));
       // create the chart
       $('<div class="h-chart h-condition-chart">')
         .appendTo(elementId)
@@ -306,7 +306,7 @@ var ll = {
     };
 
     var plotMeasurements = function(measurements) {
-      $(elementId).append($('<div class="chart-title">Patient measurements</div>'));
+      $(elementId).append($('<div class="lifeline-chart-title">Patient measurements</div>'));
       //Make measurements alphabetical so they are always in the same order
       measurements.sort(function(a,b){
         if(a.name<b.name) return -1;
@@ -572,7 +572,7 @@ var ll = {
       }
 
       //$(elementId).append($('<div class="chart-title"' + (noData ? 'style="display:none"' : '') + '>Patient medications</div>'));
-      $(elementId).append($('<div class="chart-title">Patient medications</div>'));
+      $(elementId).append($('<div class="lifeline-chart-title">Patient medications</div>'));
       // create the chart
       //return $('<div class="h-chart h-medication-chart"' + (noData ? 'style="display:none"' : '') + '>')
       return $('<div class="h-chart h-medication-chart">')

@@ -8,11 +8,30 @@ Overrided CT-dashboard
 /*****************************
 Misc
 *****************************/
-.icon-text{
+.pre-icon-text{
+    display: inline-flex;
+    vertical-align: middle;
+    padding-bottom: 3px;
+    padding-right: 5px;
+}
+.post-icon-text{
     display: inline-flex;
     vertical-align: middle;
     padding-bottom: 3px;
     padding-left: 5px;
+}
+
+.indifferent-select{
+  opacity: 0.75;
+}
+.tooltip-inner{
+  max-width: 850px;
+}
+.success{
+  background: green;
+}
+.danger{
+  background: red;
 }
 
 #lock-hook{

@@ -1,10 +1,9 @@
-//*b* currently: added accordion list head 
-//    next: include subwrappers for accordion 
 .card
-  .card-header
-    h4.card-title Suggested Actions
-    small.category= "Top 3 Suggested Actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " For this Patient"
+  .card-header.card-header-icon(data-background-color="purple")
+    i.material-icons assistant
   .card-content
+    h4.card-title Suggested Actions
+    small.category= "Total Suggested Actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " For this Patient"
     .row
             //- .col-md-4
             //-   ul.nav.nav-pills.nav-pils-icons.nav-pills-info.nav-stacked(role="tablist")

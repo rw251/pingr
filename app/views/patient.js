@@ -106,6 +106,8 @@ var pv = {
 
         });
       } else {
+        //scroll to top
+        $("div").scrollTop(0);
         //base.updateTitle("No patient currently selected");
         base.updateTitle("");
         base.savePanelState();

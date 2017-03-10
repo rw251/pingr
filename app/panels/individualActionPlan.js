@@ -30,8 +30,10 @@ var iap = {
 
   updateAction: function(action) {
     //Use actionTextId to find the right row
-    var yesbox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
-    var nobox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    //var yesbox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    //var nobox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    var yesbox = individualTab.find('li[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = individualTab.find('li[data-id="' + action.actionTextId + '"] label.btn-no input');
     //checked action inactive
     if (action.agree === true) {
       yesbox.each(function() { this.checked = true; });
@@ -50,7 +52,8 @@ var iap = {
       nobox.parent().removeClass("active inactive");
     }
 
-    yesbox.closest('tr').data('agree', action.agree);
+    //yesbox.closest('tr').data('agree', action.agree);
+    yesbox.closest('li').data('agree', action.agree);
 
     iap.updateIndividualSapRows();
   },
@@ -130,7 +133,7 @@ var iap = {
     individualTab.on('click', '.edit-plan', function() {
       //var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
-      var action = userDefinedPatientActionsObject[$(this).closest('li').data("id")];
+      var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
 
@@ -154,7 +157,7 @@ var iap = {
       }).modal();
     }).on('click', '.delete-plan', function() {
       //var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
-      var action = userDefinedPatientActionsObject[$(this).closest('li').data("id")];
+      var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
 
       $('#modal-delete-item').html(action.actionText);
@@ -168,7 +171,8 @@ var iap = {
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      var actionText = $(this).parent().parent().find('textarea').val();
+      //var actionText = $(this).parent().parent().find('textarea').val();
+      var actionText = $('textarea.form-control').val();
       var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
       log.recordIndividualPlan(actionText, patientId, function(err, a){
         if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
@@ -187,6 +191,7 @@ var iap = {
     }).on('click', '.btn-yes', function(e) {
       // var AGREE_STATUS = $(this).closest('tr').data('agree');
       // var action = patientActionsObject[$(this).closest('tr').data('id')];
+      //var AGREE_STATUS = true;
       var AGREE_STATUS = $(this).closest('li').data('agree');
       var action = patientActionsObject[$(this).closest('li').data('id')];
 
@@ -205,7 +210,9 @@ var iap = {
     }).on('click', '.btn-no', function(e) {
       //var AGREE_STATUS = $(this).closest('tr').data('agree');
       //var action = patientActionsObject[$(this).closest('tr').data('id')];
+
       var AGREE_STATUS = $(this).closest('li').data('agree');
+      //var AGREE_STATUS = false;
       var action = patientActionsObject[$(this).closest('li').data('id')];
 
       if (AGREE_STATUS === true) {
@@ -289,69 +296,55 @@ var iap = {
   },
 
   updateIndividualSapRows: function() {
-    /*$('#advice-list').add('#personalPlanIndividual').find('.suggestion').each(function() {
-      $(this).find('td').last().children().hide();
-    });*/
+    //FUNCTION OBJECTIVE
+    //indicate the confirmation, indifference or declination of the user towards this action
+    //
+    //user agrees - agree button highlights, disagree button lowlight
+    //user indifferent - both buttons visible but faded
+    //user disagree - agree button highlights, disagree button lowlight
 
-    /*$('#advice-list').add('#personalPlanIndividual').find('.cr-styled input[type=checkbox]').each(function() {
-      if (this.checked) {
-        $(this).parent().parent().parent().addClass('success');
-      } else {
-        $(this).parent().parent().parent().removeClass('success');
-      }
-    });*/
-
-    /*$('#advice-list').add('#personalPlanIndividual').find('.btn-undo').each(function() {
-      $(this).parent().parent().addClass('success');
-    });*/
-
-    //no class - user not yet agreed/disagreed - no background / muted text
-    //active - user agrees - green background / normal text
-    //success - user completed - green background / strikethrough text
-    //danger - user disagrees - red background / strikethrough text
-
-    //TODO *b* inspect and amend danger and success to have more appropriate colours
-
-    $('#advice-list').add('#personalPlanIndividual').find('tr.suggestion').each(function() {
+    $('#advice-list').add('#personalPlanIndividual').find('li.suggestion').each(function() {
       var self = $(this);
       var id = self.data("id");
-      var all = $('.show-more-row[data-id="' + id + '"],.suggestion[data-id="' + id + '"]');
-      var any = false;
+      var all = $('.show-more-row[data-id="' + id + '"],.suggestion[data-id="' + id + '"]'); //get every suggestion
+      var any = false; // dont know what this does
+      //if any button is selected...
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
+        //set the tool tip
         any = true;
-        if (this.value === "yes") {
-          all.removeClass('danger');
-          all.addClass('active');
-          //self.find('td').last().children().show();
-          if (patientActionsObject[self.data("id")].history) {
-            //var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
-            var tool = $(this).closest('li').hasClass('success') ? "" : "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
-
-            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
-          } else {
-            $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
-          }
-        } else {
-          all.removeClass('active');
-          all.addClass('danger');
-          all.removeClass('success');
-          if (patientActionsObject[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
-          } else {
-            $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
-          }
+        //if there is a history - display appropriate title
+        if (patientActionsObject[self.data("id")].history != "") {
+          var tooltipInfo = "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+          $(this).closest('label').attr("title", tooltipInfo).attr("data-original-title", tooltipInfo).attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
+        }
+        //if no history but selected is affirmative
+        else if (this.value === "yes") {
+          $(this).closest('label').attr("title", "You agreed with this - click again to cancel").tooltip('fixTitle').tooltip('hide');
+        }
+        //if no history but selected is negative
+        else {
+          $(this).closest('label').attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
         }
       });
+      //if only one button is selected
       if (self.find('.btn-toggle input[type=checkbox]:not(:checked)').length == 1) {
-        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+        //demote the non-selected button
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive btn-simple indifferent-select").attr("title", "").attr("data-original-title", "").attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
+        //promote the selected button
+        self.find('.btn-toggle input[type=checkbox]:checked').parent().removeClass("btn-simple indifferent-select");
       }
-      if (!any) {
-        all.removeClass('danger');
-        all.removeClass('active');
-        all.removeClass('success');
+      else {
+        //if both buttons are not selected make sure they are set to appropriate presentation
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().removeClass("btn-simple inactive").addClass("indifferent-select");
+      }
 
-        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list  ").tooltip('fixTitle').tooltip('hide');
-        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
+      if (!any) {
+        //all.removeClass('danger');
+        //all.removeClass('active');
+        //all.removeClass('success');
+
+        self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list").attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
+        self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list").attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
       }
 
       //base.wireUpTooltips();
