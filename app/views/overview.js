@@ -62,7 +62,7 @@ var overview = {
       base.hideLoading();
 
       //add state indicator
-      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
+      farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
 
       base.updateFixedHeightElements([{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
     }, 0);

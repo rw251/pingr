@@ -129,10 +129,7 @@ var iap = {
       iap.updateIndividualSapRows();
       e.stopPropagation();
     });*/
-
     individualTab.on('click', '.edit-plan', function() {
-      //var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
-
       var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
@@ -156,9 +153,7 @@ var iap = {
         if (e.which === 13) $('#editPlan .save-plan').click();
       }).modal();
     }).on('click', '.delete-plan', function() {
-      //var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
       var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
-
 
       $('#modal-delete-item').html(action.actionText);
 
@@ -178,7 +173,6 @@ var iap = {
         if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
         iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
       });
-
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       /*iap.updateIndividualSapRows();*/
     }).on('click', '.btn-undo', function(e) {
@@ -191,7 +185,6 @@ var iap = {
     }).on('click', '.btn-yes', function(e) {
       // var AGREE_STATUS = $(this).closest('tr').data('agree');
       // var action = patientActionsObject[$(this).closest('tr').data('id')];
-      //var AGREE_STATUS = true;
       var AGREE_STATUS = $(this).closest('li').data('agree');
       var action = patientActionsObject[$(this).closest('li').data('id')];
 
@@ -212,7 +205,6 @@ var iap = {
       //var action = patientActionsObject[$(this).closest('tr').data('id')];
 
       var AGREE_STATUS = $(this).closest('li').data('agree');
-      //var AGREE_STATUS = false;
       var action = patientActionsObject[$(this).closest('li').data('id')];
 
       if (AGREE_STATUS === true) {
@@ -285,7 +277,7 @@ var iap = {
       e.stopPropagation();
       return false;
     });
-
+    //*B* ??edit this to handle the show more or less actions
     $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
     $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e) {
       log.event("nice-link-clicked", window.location.hash, [{ key: "link", value: e.currentTarget.href }]);
@@ -439,6 +431,10 @@ var iap = {
       var html = $(this).html();
       $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
+    $('#advice-list').find('li:contains("[")').each(function() {
+      var html = $(this).html();
+      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-round btn-default btn-copy"><span class="material-icons">content_copy</span></button>'));
+    });
 
     $('#advice-list').find('span:contains("[INFO")').each(function() {
       var html = $(this).html();
@@ -453,7 +449,7 @@ var iap = {
       var newHtml = ' <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="' + tooltip + '"></i>';
       $(this).html(html.replace(/\[INFO\]/g, newHtml));
     });
-
+    //*b* I presume this can go?? - same as in team action
     $('#advice-list').find('span:contains("[MED-SUGGESTION")').each(function() {
       var html = $(this).html();
       var suggestion = Math.random() < 0.33 ? "Increase Ramipril to 10mg per day" : (Math.random() < 0.5 ? "Consider adding an ACE inhibior" : "Consider adding a thiazide-like diuretic");
@@ -478,7 +474,7 @@ var iap = {
           .replace(/&gt;/g, ">")
           .replace(/&lt;/g, "<")
           .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g, "$2 - $1");
-        reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>');
+        reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="material-icons">content_copy</span></button>');
       }
     });
 

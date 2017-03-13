@@ -85,6 +85,7 @@ var pv = {
           patientSearch.show($('#title-right'), false, loadContentFn);
           qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
 
+          //this shows the charts
           lifeline.show(farRightPanel, true, patientId, patientData);
           individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
 
@@ -98,18 +99,21 @@ var pv = {
           farRightPanel.attr("class", "col-xl-6 col-lg-6 ps-child state-patient-rightPanel"); //ps-child col-xl-4 col-lg-4
           farLeftPanel.attr("class", "col-xl-6 col-lg-6 ps-child");
 
+          //update the search container to ask...
+          $('#patient-Search .card-title').html("Find another patient")
+
           $('#right-panel').css("overflow-y","auto");
           $('#right-panel').css("overflow-x","hidden");
           $('#left-panel').css("overflow-y","auto");
           $('#left-panel').css("overflow-x","hidden");
           base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.fit-to-screen-height',padding:200}]);
-
         });
       } else {
         //scroll to top
         $("div").scrollTop(0);
         //base.updateTitle("No patient currently selected");
         base.updateTitle("");
+
         base.savePanelState();
         patientSearch.show(farRightPanel, false, loadContentFn);
 
@@ -119,8 +123,10 @@ var pv = {
         base.hideLoading();
 
         //add state indicator
+        farLeftPanel.attr("class", "col-xl-4 col-lg-4 state-patient-leftPanel");
         farRightPanel.attr("class", "col-xl-4 col-lg-4 state-patient-rightPanel");
-
+        //update the search container to ask...
+        $('#patient-Search .card-title').html("Find a patient")
         $('#right-panel').css("overflow","visible");
       }
 

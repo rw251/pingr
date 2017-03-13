@@ -26,8 +26,11 @@ var tap = {
 
   updateAction: function(action) {
     //Use actionTextId to find the right row
-    var yesbox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
-    var nobox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    //var yesbox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    //var nobox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
+    var yesbox = teamTab.find('li[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = teamTab.find('li[data-id="' + action.actionTextId + '"] label.btn-no input');
+
     //checked action inactive
     if (action.agree === true) {
       yesbox.each(function() { this.checked = true; });
@@ -46,7 +49,7 @@ var tap = {
       nobox.parent().removeClass("active inactive");
     }
 
-    yesbox.closest('tr').data('agree', action.agree);
+    yesbox.closest('li').data('agree', action.agree);
 
     tap.updateTeamSapRows();
   },
@@ -163,7 +166,8 @@ var tap = {
         $('#deletePlan').modal('hide');
       }).modal();
     }).on('click', '.add-plan', function() {
-      var actionText = $(this).parent().parent().find('textarea').val();
+      //var actionText = $(this).parent().parent().find('textarea').val();
+      var actionText = $('textarea.form-control').val();
       var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
       log.recordTeamPlan(actionText, indicatorId, function(err, a){
         if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
@@ -179,8 +183,10 @@ var tap = {
       }));
       tap.updateTeamSapRows();*/
     }).on('click', '.btn-yes', function(e) {
-      var AGREE_STATUS = $(this).closest('tr').data('agree');
-      var action = teamActionsObject[$(this).closest('tr').data('id')];
+      //var AGREE_STATUS = $(this).closest('tr').data('agree');
+      //var action = teamActionsObject[$(this).closest('tr').data('id')];
+      var AGREE_STATUS = $(this).closest('li').data('agree');
+      var action = teamActionsObject[$(this).closest('li').data('id')];
 
       if (AGREE_STATUS === false) {
         //do nothing - shouldn't be able to get here
@@ -195,8 +201,11 @@ var tap = {
       e.stopPropagation();
       e.preventDefault();
     }).on('click', '.btn-no', function(e) {
-      var AGREE_STATUS = $(this).closest('tr').data('agree');
-      var action = teamActionsObject[$(this).closest('tr').data('id')];
+      //var AGREE_STATUS = $(this).closest('tr').data('agree');
+      //var action = teamActionsObject[$(this).closest('tr').data('id')];
+
+      var AGREE_STATUS = $(this).closest('li').data('agree');
+      var action = teamActionsObject[$(this).closest('li').data('id')];
 
       if (AGREE_STATUS === true) {
         //do nothing - shouldn't be able to get here
@@ -268,7 +277,7 @@ var tap = {
       e.stopPropagation();
       return false;
     });
-
+    //*B* ??edit this to handle the show more or less actions
     $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
     $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e){
       log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
@@ -279,67 +288,80 @@ var tap = {
   },
 
   updateTeamSapRows: function() {
-    /*$('#advice-list').add('#personalPlanTeam').find('.suggestion').each(function() {
-      $(this).find('td').last().children().hide();
-    });*/
+    //FUNCTION OBJECTIVE
+    //indicate the confirmation, indifference or declination of the user towards this action
+    //
+    //user agrees - agree button highlights, disagree button lowlight
+    //user indifferent - both buttons visible but faded
+    //user disagree - agree button highlights, disagree button lowlight
 
-    /*$('#advice-list').add('#personalPlanTeam').find('.cr-styled input[type=checkbox]').each(function() {
-      if (this.checked) {
-        $(this).parent().parent().parent().addClass('success');
-      } else {
-        $(this).parent().parent().parent().removeClass('success');
-      }
-    });*/
-
-    /*$('#advice-list').add('#personalPlanTeam').find('.btn-undo').each(function() {
-      $(this).parent().parent().addClass('success');
-    });*/
-
-    //no class - user not yet agreed/disagreed - no background / muted text
-    //active - user agrees - green background / normal text
-    //success - user completed - green background / strikethrough text
-    //danger - user disagrees - red background / strikethrough text
-
-    //TODO *b* inspect and amend danger and success to have more appropriate colours
-
-    $('#advice-list').add('#personalPlanTeam').find('tr.suggestion').each(function() {
+    $('#advice-list').add('#personalPlanTeam').find('li.suggestion').each(function() {
       var self = $(this);
       var id = self.data("id");
       var all = $('.show-more-row[data-id="' + id + '"],.suggestion[data-id="' + id + '"]');
       var any = false;
+      //if any button is selected...
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
+        //set the tooltip
         any = true;
-        if (this.value === "yes") {
-          all.removeClass('danger');
-          all.addClass('active');
-          //self.find('td').last().children().show();
 
-          //*b*original didn't appear to appropriately discriminate
-          //if (teamActionsObject[self.data("id")].history) {
-          if (teamActionsObject[self.data("id")].history != "") {
-            var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to cancel</p>";
-            $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
-          } else {
-            $(this).parent().attr("title", "You agreed with this - click again to cancel").tooltip('fixTitle').tooltip('hide');
-          }
-        } else {
-          all.removeClass('active');
-          all.addClass('danger');
-          all.removeClass('success');
-          if (teamActionsObject[self.data("id")].history) {
-            $(this).parent().attr("title", "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
-          } else {
-            $(this).parent().attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
-          }
+        //if there is a history - display appropriate title
+        if (teamActionsObject[self.data("id")].history != "") {
+          var tooltipInfo = "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+          $(this).closest('label').attr("title", tooltipInfo).attr("data-original-title", tooltipInfo).attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
+        }
+        //if no history but selected is affirmative
+        else if (this.value === "yes") {
+          $(this).closest('label').attr("title", "You agreed with this - click again to cancel").tooltip('fixTitle').tooltip('hide');
+        }
+        //if no history but selected is negative
+        else {
+          $(this).closest('label').attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
         }
       });
+      //if only one button is selected
       if (self.find('.btn-toggle input[type=checkbox]:not(:checked)').length == 1) {
-        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+        //demote the non-selected button
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive btn-simple indifferent-select").attr("title", "").attr("data-original-title", "").attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
+        //promote the selected button
+        self.find('.btn-toggle input[type=checkbox]:checked').parent().removeClass("btn-simple indifferent-select");
       }
+      else {
+        //if both buttons are not selected make sure they are set to appropriate presentation
+        self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().removeClass("btn-simple inactive").addClass("indifferent-select");
+      }
+      //   //if there is a history - display appropriate title
+      //   if (this.value === "yes") {
+      //     all.removeClass('danger');
+      //     all.addClass('active');
+      //     //self.find('td').last().children().show();
+      //
+      //     //*b*original didn't appear to appropriately discriminate
+      //     //if (teamActionsObject[self.data("id")].history) {
+      //     if (teamActionsObject[self.data("id")].history != "") {
+      //       var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to cancel</p>";
+      //       $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
+      //     } else {
+      //       $(this).parent().attr("title", "You agreed with this - click again to cancel").tooltip('fixTitle').tooltip('hide');
+      //     }
+      //   } else {
+      //     all.removeClass('active');
+      //     all.addClass('danger');
+      //     all.removeClass('success');
+      //     if (teamActionsObject[self.data("id")].history != "") {
+      //       $(this).parent().attr("title", "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(),"You") + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+      //     } else {
+      //       $(this).parent().attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+      //     }
+      //   }
+      // });
+      // if (self.find('.btn-toggle input[type=checkbox]:not(:checked)').length == 1) {
+      //   self.find('.btn-toggle input[type=checkbox]:not(:checked)').parent().addClass("inactive").attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
+      // }
       if (!any) {
-        all.removeClass('danger');
-        all.removeClass('active');
-        all.removeClass('success');
+        // all.removeClass('danger');
+        // all.removeClass('active');
+        // all.removeClass('success');
 
         self.find('.btn-toggle.btn-yes').attr("title", "Click to agree with this action and save it in your agreed actions list  ").tooltip('fixTitle').tooltip('hide');
         self.find('.btn-toggle.btn-no').attr("title", "Click to disagree with this action and remove it from your suggested actions list ").tooltip('fixTitle').tooltip('hide');
@@ -425,6 +447,10 @@ var tap = {
       var html = $(this).html();
       $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
+    $('#advice-list').find('li:contains("[")').each(function() {
+      var html = $(this).html();
+      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-round btn-default btn-copy"><span class="material-icons">content_copy</span></button>'));
+    });
 
     $('#advice-list').find('span:contains("[INFO")').each(function() {
       var html = $(this).html();
@@ -439,14 +465,14 @@ var tap = {
       var newHtml = ' <i class="fa fa-info-circle fa-lg info-button clickable" data-toggle="tooltip" data-placement="right" title="' + tooltip + '"></i>';
       $(this).html(html.replace(/\[INFO\]/g, newHtml));
     });
-
+    //*b* I presume this can go?? - seemingly suggsting random cardiac medication?!
     $('#advice-list').find('span:contains("[MED-SUGGESTION")').each(function() {
       var html = $(this).html();
       var suggestion = Math.random() < 0.33 ? "Increase Ramipril to 10mg per day" : (Math.random() < 0.5 ? "Consider adding an ACE inhibior" : "Consider adding a thiazide-like diuretic");
       $(this).html(html.replace(/\[MED\-SUGGESTION\]/g, suggestion));
     });
 
-    $('#advice-list').find('td:contains("Reasoning")').each(function() {
+    $('#advice-list').find('li:contains("Reasoning")').each(function() {
       var contents = $(this).contents();
       var i = 0;
       while ($(contents[i]).text() !== "Reasoning" && i < contents.length) {
@@ -464,7 +490,7 @@ var tap = {
           .replace(/&gt;/g,">")
           .replace(/&lt;/g,"<")
           .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g,"$2 - $1");
-        reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>');
+        reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-round btn-default btn-copy"><span class="material-icons">content_copy</span></button>');
       }
     });
 

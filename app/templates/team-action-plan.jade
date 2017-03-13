@@ -1,9 +1,14 @@
-.affix.panel.panel-default
-  .clearfix.panel-heading!=title
-  #tab-plan-team.panel-body.fit-to-screen-height
-    #advice-placeholder
-      | Select an indicator from the indicator panel to view advice
-    #advice-list
-    #personalPlanTeam
-include mixins/edit-plan-modal
-include mixins/delete-plan-modal
+.card
+  .card-header.card-header-icon(data-background-color="orange")
+    i.material-icons assistant
+  .card-content
+    h4.card-title Suggested Actions
+    small.category= title
+    .row
+      #tab-plan-team.panel.panel-default.panel-body
+        #advice-placeholder
+          | Select an indicator from the indicator panel to view advice
+        #advice-list
+        #personalPlanTeam
+//include mixins/edit-plan-modal
+//include mixins/delete-plan-modal

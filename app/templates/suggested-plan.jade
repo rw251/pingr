@@ -8,6 +8,8 @@ table.table
       th(style='width: 105px') Add to action plan???
   tbody
     each suggestion in suggestions
+      - console.log("F1" + suggestion.id)
+      - console.log("F2" + suggestion.tpId)
       tr.suggestion(data-id=suggestion.id, data-team-or-patient-id=suggestion.tpid ? suggestion.tpId : undefined)
         td
           span!= suggestion.text

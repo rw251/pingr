@@ -100,7 +100,7 @@ var ind = {
         farRightPanel.append(tabList);
         farRightPanel.append(tabContent);
 
-        // *B* 1st tabbed panel
+        // *B* 1st tabbed panel *tinman*
         wrapper.showTab(tabContent, tabList, "Improvement opportunities", "A summary of all the relevant information",  "Overview", [
           {
             show: indicatorHeadlines.show,
@@ -191,8 +191,9 @@ var ind = {
       base.hideLoading();
 
       //add state indicator
-      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
-
+      //farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
+      farRightPanel.attr("class", "col-xl-6 col-lg-6 state-indicator-rightPanel");
+      farLeftPanel.attr("class", "col-xl-6 col-lg-6 state-indicator-leftPanel");
       base.updateFixedHeightElements([{selector:'#right-panel',padding:15},{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
 
     }, 0);
