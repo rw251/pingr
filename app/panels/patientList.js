@@ -181,15 +181,17 @@ var pl = {
 
       base.wireUpTooltips();
 
-      /*patientsPanel.find('div.table-scroll').niceScroll({
-        cursoropacitymin: 0.3,
-        cursorwidth: "7px",
-        horizrailenabled: false
-      });*/
+      $('#patient-list').floatThead({
+        position: 'absolute',
+        scrollContainer: true,
+        zIndex:50
+      });
+
+      $('#patient-list').floatThead('reflow');
 
       base.hideLoading();
 
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 200, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
+      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
 
     });
 

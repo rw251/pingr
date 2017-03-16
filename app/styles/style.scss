@@ -1772,39 +1772,7 @@ header {
 .tr-hovered {
     background-color: rgb(244, 244, 255);
 }
-/*.btn-toggle {
-	opacity:0.5;
-}*/
-.table.table-body-hidden tbody tr,
-.table.table-body-hidden tbody tr td,
-.table.table-head-hidden thead tr,
-.table.table-head-hidden thead tr th {
-    visibility: collapse;
-    line-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    border-top: 0;
-    border-bottom: 0;
-}
-.table.table-body-hidden tbody tr td button,
-.table.table-body-hidden tbody tr td i,
-.table.table-head-hidden thead tr th i {
-    height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    border-width: 0;
-}
 
-.table.table-body-hidden tbody tr td i:before {
-    content: '?';
-    display: inline-block;
-    height: 0;
-}
-
-.table.table-body-hidden {
-    margin-bottom: 0;
-    width: calc(100% - 1em); //rw because table-head-hidden will invariably have a scrollbar
-}
 .btn-toggle.inactive {
     opacity: 0.5;
 }

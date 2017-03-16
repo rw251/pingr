@@ -1,40 +1,9 @@
 .panel.panel-default
   .panel-body.pastel-pink.overview-table
-    table.table.table-body-hidden
-      thead
-        tr
-          th Indicator
-          th Current Performance
-          th Actioned Patients
-          th Salford Target
-          th Top 10% Benchmark
-          th Change from Yesterday
-          th 1 Year Trend
-      tbody
-        each indicator in indicators
-          tr.standard-row
-            td
-              strong!= indicator.name
-            td
-              if isNaN(indicator.performance.percentage)
-                strong(class = 'text-underPerform') N/A
-              else if indicator.aboveTarget
-                if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
-                  strong(class = 'text-topTen')= indicator.performance.percentage + '%'
-                else
-                  strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
-              else
-                strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
-              span= ' (' + indicator.performance.fraction + ')'
-            td= indicator.reviewed + "/" + indicator.patientsWithOpportunity
-            td 75%
-            td 10%
-            td(style='font-size:2em') A
-            td(style='width:116px')
-    .table-scroll
-      table.table.table-head-hidden
+    .table-scroll(style='overflow-x:hidden')
+      table#overview-table.table
         thead
-          tr
+          tr(style='background-color:#fff9ff')
             th Indicator
             th Current Performance
             th Actioned Patients
