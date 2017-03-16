@@ -203,9 +203,9 @@ var base = {
     centrePanel.show();
   },
 
-  updateTitle: function(title) {
+  updateTitle: function(title, dontClearRight) {
     $('#title-left').html(title);
-    $('#title-right').html("");
+    if(!dontClearRight) $('#title-right').html("");
   },
 
   hidePanels: function(panel) {

@@ -163,6 +163,15 @@ var dt = {
     });
   },
 
+  getDisplayTextFromIndicatorId: function(indicatorId) {
+    var parts = indicatorId.split(".");
+    if(dt.text.pathways[parts[0]] && dt.text.pathways[parts[0]][parts[1]] && dt.text.pathways[parts[0]][parts[1]].standards[parts[2]]){
+      return dt.text.pathways[parts[0]][parts[1]].standards[parts[2]].tabText;
+    } else {
+      return "???";
+    }
+  },
+
   getAllIndicatorData: function(practiceId, callback) {
     //var addId = '/'+practiceId;
     var routeURL;

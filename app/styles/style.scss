@@ -389,7 +389,7 @@ header {
     background: none;
     box-shadow: none;
 }
-.app-search:before {
+/*.app-search:before {
     content: "\f002";
     position: absolute;
     left: 12px;
@@ -398,7 +398,7 @@ header {
     top: 7px;
     color: #c4c4cd;
     display: inline-block;
-}
+}*/
 .app-search .form-control::-moz-placeholder {
     color: #c4c4cd;
 }
@@ -1803,7 +1803,7 @@ header {
 
 .table.table-body-hidden {
     margin-bottom: 0;
-    width: 95%; //rw because table-head-hidden will invariably have a scrollbar
+    width: calc(100% - 1em); //rw because table-head-hidden will invariably have a scrollbar
 }
 .btn-toggle.inactive {
     opacity: 0.5;
@@ -2156,6 +2156,11 @@ th {
 .gist {
     font-size: 14px;
 }
+.form-inline .twitter-typeahead {
+    width: auto;
+    float: none;
+    vertical-align: middle;
+}
 .tt-hint,
 .tt-input,
 .twitter-typeahead {
@@ -2184,6 +2189,7 @@ th {
     top: 7px;
     color: #c4c4cd;
     display: inline-block;
+    z-index: 10;
 }
 /* Fix for c3 flicker whereby
    extra svg elements at the bottom

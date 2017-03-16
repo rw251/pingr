@@ -15,7 +15,7 @@ var ID = "PATIENT_VIEW";
  *   Individual action plan
  */
 
-var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, patientData) {
+var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, patientData, dontClearRight) {
   var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
   var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
     "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
@@ -25,7 +25,7 @@ var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, p
     nhs: patid.toString().replace(/ /g, ""),
     age: patientData.characteristics.age,
     sex: sex
-  }));
+  }), dontClearRight);
 
   var tabUrl = patientId;
   if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
@@ -39,6 +39,31 @@ var pv = {
   },
 
   create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
+
+    var skip=0, limit=10;
+
+    if(pathwayId && patientId && !isNaN(pathwayId) && !isNaN(patientId)){
+      //we're actually in the all patient view so capture the skip/limit values
+      skip = +patientId;
+      limit = +pathwayId;
+      pathwayId=null;
+      patientId=null;
+    }
+
+    if(layout.view === ID && !patientId && layout.allPatientView) {
+      //just changed the pagination
+      if(layout.allPatientView.skip === skip && layout.allPatientView.limit === limit) return; //no change
+      layout.allPatientView = {skip: skip, limit: limit};
+      layout.patientId = "";
+      allPatientList.populate(skip, limit);
+
+      base.wireUpTooltips();
+      base.hideLoading();
+
+      return;
+    } else {
+        layout.allPatientView = null;
+    }
 
     if (layout.view === ID && patientId === layout.patientId) {
       //the view is the same just need to update the actions
@@ -73,6 +98,7 @@ var pv = {
       base.hidePanels(farLeftPanel);
 
       if (patientId) {
+        base.switchTo2Column1Narrow1Wide();
         lookup.suggestionModalText = "Screen: Patient\nPatient ID: " + patientId + "  - NB this helps us identify the patient but is NOT their NHS number.\n===========\n";
 
         data.getPatientData(patientId, function(patientData) {
@@ -85,7 +111,7 @@ var pv = {
                   updatePatientIds();
                 }, 500);
               } else {
-                updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);
+                updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData, true);
               }
             };
 
@@ -103,7 +129,7 @@ var pv = {
           data.patientId = patientId;
           data.pathwayId = pathwayId;
 
-          patientSearch.show($('#title-right'), false, loadContentFn);
+          patientSearch.show($('#title-right'), true, true, loadContentFn);
           qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
 
           if (patientData.conditions.length +
@@ -131,9 +157,14 @@ var pv = {
         });
       } else {
         base.updateTitle("No patient currently selected");
+        base.switchToSingleColumn();
         base.savePanelState();
-        patientSearch.show(farRightPanel, true, loadContentFn);
-        allPatientList.show(farRightPanel, true);
+        patientSearch.show(centrePanel, false, false, loadContentFn);
+        allPatientList.show(centrePanel, true, skip, limit, loadContentFn);
+
+        layout.allPatientView = {skip: skip, limit: limit};
+
+        layout.patientId = "";
 
         lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
 
@@ -141,11 +172,11 @@ var pv = {
         base.hideLoading();
 
         //add state indicator
-        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+        //farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
         base.updateTab("patients", "", "");
 
-        base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 }]);
+        base.updateFixedHeightElements([{ selector: '#centre-panel', padding: 15,minHeight:300 }, { selector: '.table-scroll', padding: 220,minHeight:300 }]);
       }
 
     }, 0);

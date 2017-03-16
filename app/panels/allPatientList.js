@@ -3,13 +3,15 @@ var Highcharts = require('highcharts/highstock'),
   data = require('../data.js'),
   lookup = require('../lookup.js');
 
+require('floatthead');
+
 var ID = "ALL_PATIENT_LIST";
 var currentPatients;
 
 var pl = {
 
   wireUp: function(onPatientSelected) {
-    patientsPanel = $('#patients');
+    patientsPanel = $('#all-patient-list');
 
     patientsPanel.on('click', 'thead tr th.sortable', function() { //Sort columns when column header clicked
       var sortAsc = !$(this).hasClass('sort-asc');
@@ -19,7 +21,7 @@ var pl = {
         $(this).removeClass('sort-asc').addClass('sort-desc');
       }
       pl.populate(pl.state[0], pl.state[1], pl.state[2], pl.state[3], $(this).index(), sortAsc);
-    }).on('click', 'tbody tr', function(e) { //Select individual patient when row clicked#
+    }).on('click', 'tbody tr.list-item', function(e) { //Select individual patient when row clicked#
       var callback = onPatientSelected.bind(this);
       var patientId = $(this).find('td button').attr('data-patient-id');
       callback(patientId);
@@ -42,34 +44,48 @@ var pl = {
     });
   },
 
-  populate: function(panel, sortField, sortAsc) {
-    pl.state = [sortField, sortAsc];
+  populate: function(skip, limit, sortField, sortAsc) {
+    pl.state = [skip, limit, sortField, sortAsc];
 
     var i, k, prop, header, pList = [];
 
-    data.getAllPatientList(0, 10, function(err, list) {
+    data.getAllPatientList(skip, limit, function(err, list) {
+
+      list = list.map(function(v) {
+        v.indicatorNames = v.indicators.map(function(vv) {
+          return data.getDisplayTextFromIndicatorId(vv);
+        });
+        return v;
+      });
+
       var tmpl = require('templates/all-patient-list');
-      var html = tmpl({patients: list});
-      panel.append(html);
+      var html = tmpl({ patients: list, skip: skip, limit: limit });
+      $('#all-patient-list').html(html);
 
       base.setupClipboard($('.btn-copy'), true);
       base.wireUpTooltips();
 
       base.hideLoading();
-
+      $('#allPatientTable').floatThead({
+        position: 'absolute',
+        scrollContainer: true,
+        zIndex:50
+      });
     });
 
   },
 
-  show: function(panel, isAppend, pathwayId, pathwayStage, standard, loadContentFn) {
+  show: function(panel, isAppend, skip, limit, loadContentFn) {
+    var html = require('templates/all-patient-list-wrapper')();
+    if (isAppend) panel.append(html);
+    else panel.html(html);
 
     pl.wireUp(function(patientId) {
       var url = '#patient/' + patientId;
-      if (pathwayId && pathwayStage && standard) url += '/' + [pathwayId, pathwayStage, standard].join("/");
       history.pushState(null, null, url);
       loadContentFn(url);
     });
-    pl.populate(panel);
+    pl.populate(skip, limit);
   }
 
 };

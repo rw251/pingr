@@ -59,13 +59,16 @@ var ps = {
           //$(this).trigger("keyup");
         });
 
-
-      $('#searchbtn').on('mousedown', function() {
-        var val = $('.typeahead').eq(0).val();
-        if (!val || val === "") val = $('.typeahead').eq(1).val();
-        ps.onSelected(null, {
-          "id": val
-        });
+      $('#search-box').on('click', '.twitter-typeahead', function(e){
+        if(e.offsetX < 30) {
+          // looks like the search icon is clicked
+          //logic should be like below
+          /*var val = $('.typeahead').eq(0).val();
+          if (!val || val === "") val = $('.typeahead').eq(1).val();
+          ps.onSelected(null, {
+            "id": val
+          });*/
+        }
       });
 
     });
@@ -81,26 +84,42 @@ var ps = {
 
   },
 
-  show: function(panel, isAppend, loadContentFn) {
+  show: function(panel, isAppend, isPatientSelected, loadContentFn) {
 
     var isDataLoaded = data.patLookup ? true : false;
 
     loadContFn = loadContentFn;
     var tmpl = require("templates/patient-search");
-    var html = tmpl({ dataLoaded: isDataLoaded });
+    var html = tmpl({ dataLoaded: isDataLoaded, patientSelected: isPatientSelected });
 
     if (isAppend) panel.append(html);
     else panel.html(html);
 
-    if (!isDataLoaded) {
-      setTimeout(function() {
-        ps.show(panel, isAppend, loadContentFn);
-      }, 500);
-    }
+    //$('#search-box').find('.typeahead').typeahead(); //so it looks ok even while data loading
 
-    setTimeout(function() {
-      ps.wireUp();
-    }, 0);
+    var waitUntilDataLoaded = function() {
+      setTimeout(function() {
+        if (!data.patLookup) {
+          waitUntilDataLoaded();
+        } else {
+          tmpl = require("templates/patient-search");
+          html = tmpl({ dataLoaded: true, patientSelected: isPatientSelected });
+          $('#search-box').replaceWith(html);
+
+          setTimeout(function() {
+            ps.wireUp();
+          }, 0);
+        }
+      }, 500);
+    };
+
+    if (!isDataLoaded) {
+      waitUntilDataLoaded();
+    } else {
+      setTimeout(function() {
+        ps.wireUp();
+      }, 0);
+    }
   }
 
 };

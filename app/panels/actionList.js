@@ -3,7 +3,7 @@ var data = require('../data.js'),
   jsPDF = require('jspdf'),
   jspdfAutoTable = require('jspdf-autotable');
 
-var actionObject={};
+var actionObject = {};
 var al = {
 
   create: function() {
@@ -23,8 +23,8 @@ var al = {
   wireup: function() {
     $('#downloadActionPlan').on('click', function() {
 
-      var columns = ["Team action or patient id","Created by","Agreed by","Action"];
-      var rows = actionArray.map(function(v){
+      var columns = ["Team action or patient id", "Created by", "Agreed by", "Action"];
+      var rows = actionArray.map(function(v) {
         return [
           v.patientId ? v.patientId : "Team action",
           v.userDefined ? v.who : "PINGR",
@@ -44,7 +44,7 @@ var al = {
       doc.save('action-plan.pdf');
 
     });
-    al.load(function(){
+    al.load(function() {
       al.process(al.populate);
     });
   },
@@ -53,7 +53,7 @@ var al = {
     data.getAllAgreedWithActions(function(err, actions) {
       actionObject = actions;
 
-      if(done && typeof done === "function") {
+      if (done && typeof done === "function") {
         return done();
       }
     });
@@ -62,11 +62,11 @@ var al = {
   process: function(done) {
     actionArray = [];
 
-    if(actionObject.patient && !data.patLookup){
+    if (actionObject.patient && !data.patLookup) {
       //pat lookup not loaded so let's wait
-      setTimeout(function(){
+      setTimeout(function() {
         al.process(done);
-      },1000);
+      }, 1000);
       return;
     }
     if (actionObject.patient) {
@@ -111,7 +111,7 @@ var al = {
         });
       }
     }
-    if(done && typeof done === "function") {
+    if (done && typeof done === "function") {
       return done();
     }
   },
@@ -120,7 +120,13 @@ var al = {
     var tmpl = require("templates/action-list");
     var dataObject = { "actions": actionArray };
     if (actionArray.length === 0) dataObject.noSuggestions = true;
-    $('#suggested-actions-table').html(tmpl(dataObject));
+    $('#suggested-actions-table')
+      .html(tmpl(dataObject))
+      .floatThead({
+        position: 'absolute',
+        scrollContainer: true,
+        zIndex: 50
+      });
 
     base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250, minHeight: 300 }]);
   }

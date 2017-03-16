@@ -201,7 +201,8 @@ module.exports = {
       { $project: { _id: 0, patientId: 1, actions: 1, characteristics: 1 } },
       { $unwind: "$actions" },
       { $group: { _id: "$patientId", nhsNumber: {$max: "$characteristics.nhs"}, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" }, tot: { $sum: "$actions.pointsPerAction" }, indicators: { $addToSet: "$actions.indicatorId" } } },
-      { $sort: { tot: -1 } },
+      { $project: {_id:1, nhsNumber:1, age:1, sex:1, tot:1, indicators:1, numberOfIndicators: { $size: "$indicators" }}},
+      { $sort: { numberOfIndicators:-1, tot: -1 } },
       { $skip: skip},
       { $limit: limit }
     ];
