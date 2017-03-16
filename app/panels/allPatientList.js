@@ -31,6 +31,24 @@ var pl = {
       //don't want row selected if just button pressed?
       e.preventDefault();
       e.stopPropagation();
+    }).on('click', 'tbody tr a', function(e) {
+      //don't want row selected if just hyperlink pressed?
+
+      $('.indicatorList').hide();
+
+      if($(this).hasClass('hideIndicators')){
+        $(this).hide();
+        $('.showIndicators').show();
+      } else {
+        $('.showIndicators').show();
+        $(this).hide();
+        $('.hideIndicators').hide();
+        $('.indicatorList[data-id="' + $(this).data("id") + '"]').show();
+        $('.hideIndicators[data-id="' + $(this).data("id") + '"]').show();
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
     }).on('click', '#downloadPatientList', function() {
       writePdf();
     }).on('click', '#downloadAsPdf', function(e) {
