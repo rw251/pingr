@@ -1,0 +1,34 @@
+include ../partials/headMinimalCss.jade
+.container.starter-template-high.c-text
+  .btn-toolbar
+    a.pure-button(href='/') Back to interface
+    a.pure-button(href='/emailadd') New email template
+  if message && message.error
+    .alert.alert-danger.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.error
+  if message && message.success
+    .alert.alert-success.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.success
+  table.pure-table.pure-table-bordered
+    thead
+      tr
+        th Label
+        th Subject
+        th Body
+        th Actions
+    tbody
+      each emailTemplate in emailList
+        tr
+          td= emailTemplate.label
+          td= emailTemplate.subject
+          td
+            div.jadeToHtml!= emailTemplate.body
+          td
+            .btn-toolbar
+                a.pure-button.pure-button-primary(href='/emailedit/'+emailTemplate.label) Edit
+                a.pure-button.pure-button-primary(href='/emaildelete/'+emailTemplate.label) Delete
+include ../partials/htmlEdit.js.jade

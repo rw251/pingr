@@ -10,17 +10,23 @@ var User = require('../../server/models/user'),
 var mailConfig = config.mail;
 
 var now = new Date();
+var day = now.getDay();
+var oneWeekAgo = new Date();
 var twoWeeksAgo = new Date();
-twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+var fourWeeksAgo = new Date();
+oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
+twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13);
+fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 47);
 
 User.find({
-  "$and": [
-    { "$or": [{ "last_login": { "$exists": false } }, { "last_login": { "$lte": twoWeeksAgo } }] },
-    { "$or": [{ "last_email_reminder": { "$exists": false } }, { "last_email_reminder": { "$lte": twoWeeksAgo } }] },
-    { "practiceId" : {$exists: true}}
+  /*"$and": [
+    { "$or": [{ "last_email_reminder": { "$exists": false } }, { "last_email_reminder": { "$lte": oneWeekAgo } }] },
+    { "$or": [{ "emailFrequency": { "$exists": false } }, { "emailFrequency": { $ne: 0 } }] },
+    { "$or": [{ "emailDay": { "$exists": false } }, { "emailDay": day }] },
+    { "practiceId": { $exists: true } }
   ],
   "practiceId": { $not: /ALL/ },
-  "email_opt_out": { $ne: true }
+  "email_opt_out": { $ne: true }*/
 }, function(err, users) {
   // In case of any error, return using the done method
   if (err) {
@@ -41,6 +47,30 @@ User.find({
       if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
       return;
     }*/
+    if(v.emailDay === undefined && day !== 2){
+      console.log(v.email + " no emailDay and not tuesday");
+      usersUpdated++;
+      emailsSent++;
+      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+      return;
+    }
+    if(!v.emailFrequency) {
+      v.emailFrequency=1;
+    }
+    if(v.emailFrequency===2 && twoWeeksAgo < v.last_email_reminder){
+      console.log("freq 2 but email since");
+      usersUpdated++;
+      emailsSent++;
+      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+      return;
+    }
+    if(v.emailFrequency===4 && fourWeeksAgo < v.last_email_reminder){
+      console.log("freq 4 but email since");
+      usersUpdated++;
+      emailsSent++;
+      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+      return;
+    }
     console.log("Doing: " + v.email);
     indicators.list(v.practiceId, function(err, list) {
 
@@ -66,9 +96,9 @@ User.find({
           var lastidA = a.values[0].length - 1;
           var lastidB = b.values[0].length - 1;
 
-          if(+a.values[2][lastidA] === 0 && +b.values[2][lastidB] === 0) return 0;
-          if(+a.values[2][lastidA] === 0) return 1;
-          if(+b.values[2][lastidB] === 0) return -1;
+          if (+a.values[2][lastidA] === 0 && +b.values[2][lastidB] === 0) return 0;
+          if (+a.values[2][lastidA] === 0) return 1;
+          if (+b.values[2][lastidB] === 0) return -1;
 
           return (a.values[1][lastidA] * 100 / a.values[2][lastidA]) - (b.values[1][lastidB] * 100 / b.values[2][lastidB]);
         }).map(function(vv) {
@@ -106,9 +136,9 @@ User.find({
           performanceHTML +
           "<p>We only send you emails if you haven't visited PINGR for two weeks. If you wish to stop receiving them" +
           " please visit <a href='" + urlBaseWithToken + "'>PINGR</a> and update your email preferences.</p><p>The PINGR team.</p>" +
-          "<p><strong>Tip: </strong>If you’re having trouble accessing PINGR: open Google Chrome, copy PINGR's address ( "+ urlBaseWithToken +
+          "<p><strong>Tip: </strong>If you’re having trouble accessing PINGR: open Google Chrome, copy PINGR's address ( " + urlBaseWithToken +
           " ) and paste it into the address bar at the top. If you're still having problems accessing PINGR, please email benjamin.brown@manchester.ac.uk for help.</p><a href='" + config.server.url + "/img/" + v.email + "'>" + config.server.url + "/img/" + v.email + "</a><img src='" + config.server.url + "/img/" + v.email + "/" + token + "'></img></body></html>";
-          //
+        //
 
         //send email
         var localMailConfig = {

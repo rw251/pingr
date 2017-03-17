@@ -29,10 +29,29 @@ include ../partials/head.jade
         i.fa
       |               Is Admin
     .form-group
-      label.cr-styled
-        input(name='optout', type='checkbox', checked='checked')
-        i.fa
-      |               Receives reminder emails
+      label.radio.inline.control-label Emails..
+      label.radio-inline
+        input(type="radio" name="freq", value="1", checked=true)
+        | every week 
+      label.radio-inline
+        input(type="radio" name="freq", value="2")
+        | every 2 weeks
+      label.radio-inline
+        input(type="radio" name="freq", value="4")
+        | every 4 weeks
+      label.radio-inline
+        input(type="radio" name="freq", value="0")
+        | never
+    .form-group
+      label(for="day") Send it on a..
+      select.form-control(name="day")
+        option(value="1") Monday
+        option(value="2",selected=true) Tuesday
+        option(value="3") Wednesday
+        option(value="4") Thursday
+        option(value="5") Friday
+        option(value="6") Saturday
+        option(value="0") Sunday
     button.btn.btn-purple.btn-block.history(type='submit')
       | Create
       span.fa.fa-arrow-circle-right

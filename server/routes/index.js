@@ -10,6 +10,8 @@ var patients = require('../controllers/patients.js');
 var indicators = require('../controllers/indicators.js');
 var events = require('../controllers/events.js');
 var actions = require('../controllers/actions.js');
+var emails = require('../controllers/emails.js');
+var emailSender = require('../email-sender.js');
 var text = require('../controllers/text.js');
 
 var isAuthenticated = function(req, res, next) {
@@ -56,17 +58,104 @@ module.exports = function(passport) {
     res.render('pages/changepassword.jade', { message: req.flash() });
   });
 
-  router.get('/emailpreference', isAuthenticated, isAdmin, function(req, res) {
+  router.get('/emailpreference', isAuthenticated, function(req, res) {
     res.render('pages/optOut.jade', { user: req.user });
   });
 
-  router.post('/emailpreference', isAuthenticated, isAdmin, function(req, res) {
-    users.updateEmailPreference(req.user.email, req.body.optout, function(err, user, msg) {
+  router.post('/emailpreference', isAuthenticated, function(req, res) {
+    users.updateEmailPreference(req.user.email, req.body.freq, req.body.day, function(err, user, msg) {
       if (err || msg) {
         res.render('pages/optOut.jade', { user: req.user });
       } else {
-        res.render('pages/optOut.jade', { user: user, message: { success: "Email preference updated. " + (req.body.optout ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
+        res.render('pages/optOut.jade', { user: user, message: { success: "Email preference updated. " + (req.body.freq==="0" ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
       }
+    });
+  });
+
+  router.post('/emailsendtest', isAuthenticated, isAdmin, function(req, res) {
+    var helper = require('sendgrid').mail;
+    var fromEmail = new helper.Email("benjamin.brown@nhs.uk", "Benjamin Brown");
+    var toEmails = req.body.to.split(";").map(function(v){return new helper.Email(v, "");});
+    emailSender.sendEmailViaHttp(fromEmail, toEmails, req.body.subject, req.body.text, req.body.html, null, function(err){
+      if(err) {
+        console.log(err);
+        res.send(err);
+      } else {
+        res.send(true);
+      }
+    });
+  });
+
+  router.get('/emailadd', isAuthenticated, isAdmin, function(req, res) {
+    patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
+      indicators.list(req.user.practiceId, function(err, indicators){
+        res.render('pages/emailadd.jade', {user: req.user, patients: patients, indicators: indicators, message: req.flash()});
+      });
+    });
+  });
+
+  router.post('/emailadd', isAuthenticated, isAdmin, function(req, res) {
+    emails.create(req, function(err, email, msg) {
+      if (err || msg) {
+        patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
+          indicators.list(req.user.practiceId, function(err, indicators){
+            res.render('pages/emailadd.jade', {user: req.user, patients: patients, indicators: indicators, message: { error: msg }});
+          });
+        });
+      } else {
+        res.redirect('/emailadmin');
+      }
+    });
+  });
+
+  router.get('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
+    patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
+      indicators.list(req.user.practiceId, function(err, indicators){
+        emails.get(req.params.label, function(err, email) {
+          res.render('pages/emailedit.jade', { user: req.user, patients: patients, indicators: indicators, email: email });
+        });
+      });
+    });
+  });
+
+  router.post('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
+    emails.edit(req.params.label, req, function(err, user, msg) {
+      if (err || msg) {
+        patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
+          indicators.list(req.user.practiceId, function(err, indicators){
+            emails.get(req.params.label, function(err, email) {
+              res.render('pages/emailedit.jade', { user: req.user, patients: patients, indicators: indicators, email: email, message: { error: msg } });
+            });
+          });
+        });
+      } else {
+        res.redirect('/emailadmin');
+      }
+    });
+  });
+
+  router.get('/emaildelete/:label', isAuthenticated, isAdmin, function(req, res) {
+    res.render('pages/emaildelete.jade', { label: req.params.label });
+  });
+
+  router.post('/emaildelete/:label', isAuthenticated, isAdmin, function(req, res) {
+    emails.delete(req.params.label, function(err, user, flash) {
+      res.redirect('/emailadmin');
+    });
+  });
+
+  router.get('/emailadmin', isAuthenticated, isAdmin, function(req, res) {
+    patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
+      indicators.list(req.user.practiceId, function(err, indicators){
+        emails.list(function(err, emailList){
+          if(err) {
+            console.log(err);
+            res.send();
+          } else {
+            res.render('pages/emailadmin.jade', { user: req.user, patients: patients, indicators: indicators, emailList: emailList });
+          }
+        });
+      });
     });
   });
 

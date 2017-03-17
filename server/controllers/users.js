@@ -31,7 +31,7 @@ module.exports = {
     User.find({ email: email }).remove(done);
   },
 
-  updateEmailPreference: function(email, userOptsOut, done){
+  updateEmailPreference: function(email, freq, day, done){
     User.findOne({
       'email': email
     }, function(err, user) {
@@ -45,7 +45,8 @@ module.exports = {
         console.log('User doesnt exist with email: ' + email);
         return done(null, false, 'Trying to edit a user with an email not found in the system');
       } else {
-        user.email_opt_out = userOptsOut;
+        user.emailFrequency = freq;
+        user.emailDay = day;
         user.save(function(err) {
           if (err) {
             console.log('Error in Saving user: ' + err);
@@ -80,7 +81,8 @@ module.exports = {
         if(email === req.body.email){
           //email not changing so update is fine
           user.fullname = req.body.fullname;
-          user.email_opt_out = !req.body.optout;
+          user.emailFrequency = req.body.freq;
+          user.emailDay = req.body.day;
           var els = req.body.practice.split("|");
           user.practiceId = els[0] !== "" ? els[0] : "";
           user.practiceName = els[0] !== "" ? els[1] : "None";
@@ -105,8 +107,9 @@ module.exports = {
               return done(null, false, 'Trying to change the email to one that already appears in the system.');
             } else {
               originalUser.email = req.body.email;
-              originalUser.email_opt_out = !req.body.optout;
               originalUser.fullname = req.body.fullname;
+              originalUser.emailFrequency = req.body.freq;
+              originalUser.emailDay = req.body.day;
               var els = req.body.practice.split("|");
               originalUser.practiceId = els[0] !== "" ? els[0] : "";
               originalUser.practiceName = els[0] !== "" ? els[1] : "None";
@@ -149,7 +152,8 @@ module.exports = {
         var els = req.body.practice.split("|");
         var newUser = new User({
           email: req.body.email,
-          email_opt_out: !req.body.optout,
+          emailFrequency: req.body.freq,
+          emailDay: req.body.day,
           password: req.body.password,
           fullname: req.body.fullname,
           practiceId: els[0] !== "" ? els[0] : "",

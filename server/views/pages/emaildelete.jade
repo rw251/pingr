@@ -1,0 +1,8 @@
+include ../partials/head.jade
+.container-narrow.starter-template-high
+  a.btn.btn-info(href='/emailadmin') Back to email template list
+  form(action='/emaildelete/'+label, method='post')
+    = 'Are you sure you want to delete the email with label: ' + label
+    .btn-toolbar
+      button.btn.btn-danger(type='submit') Delete
+      a.btn.btn-default(href='/emailadmin') Cancel
