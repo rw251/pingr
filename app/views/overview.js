@@ -63,7 +63,7 @@ var overview = {
 
       //add state indicator
       farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
-
+      $('.ps-child').perfectScrollbar();
       base.updateFixedHeightElements([{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
     }, 0);
 

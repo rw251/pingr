@@ -38,6 +38,7 @@
      if (isWindows && !$('body').hasClass('sidebar-mini')){
         // if we are on windows OS we activate the perfectScrollbar function
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+        $('.ps-child').perfectScrollbar();
 
         $('html').addClass('perfect-scrollbar-on');
     } else {
@@ -222,6 +223,7 @@ md = {
 
                 if(isWindows){
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+                    $('.ps-child').perfectScrollbar();
                 }
 
             }else{
@@ -232,6 +234,7 @@ md = {
 
                 if(isWindows){
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+                    $('.ps-child').perfectScrollbar('destroy');
                 }
 
                 setTimeout(function(){

@@ -66,6 +66,19 @@ Misc
 }
 
 /*****************************
+Overview panel
+*****************************/
+#overview-table{
+  display: inherit;
+}
+
+.ps-boilerplate{
+  max-height: 600px;
+  position: relative;
+  display: inherit;
+}
+
+/*****************************
 Loader
 *****************************/
 $legacy_background: #f2f2f4;

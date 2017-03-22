@@ -1,58 +1,33 @@
 //.panel.panel-default(data-intro="whats going on?! *bTut*" data-step="4")
 //  .panel-body.pastel-pink
 //    table.table
-.panel.panel-default
-  .panel-body.pastel-pink.overview-table
-    table.table.table-body-hidden
-      thead
-        tr
-          th Indicator
-          th Current Performance
-          th Salford Target
-          th Top 10% Benchmark
-          th Change from Yesterday
-          th Trend
-      tbody
-        each indicator in indicators
-          tr.standard-row
-            td
-              strong!= indicator.name
-            td
-              if isNaN(indicator.performance.percentage)
-                strong(class = 'text-underPerform') N/A
-              else if indicator.aboveTarget
-                if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
-                  strong(class = 'text-topTen')= indicator.performance.percentage + '%'
-                else
-                  strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
-              else
-                strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
-              span= ' (' + indicator.performance.fraction + ')'
-            td 75%
-            td 10%
-            td(style='font-size:2em') A
-            td(style='width:116px')
-    .table-scroll
-      table.table.table-head-hidden
-        thead
+.card
+  .card-header.card-header-icon(data-background-color="rose")
+    i.material-icons assessment
+  .card-content
+    h4.card-title Overview Tables
+    small.category An overview list of ***********
+    .panel-body.overview-table
+      table.table#overview-table
+        thead.col-md-12
           tr
-            th Indicator
-            th Current Performance
-            th Salford Target
-            th Top 10% Benchmark
-            th Change from Yesterday
-            th Trend
-        tbody
+            th.col-md-3 Indicator
+            th.col-md-1 Current Performance
+            th.col-md-2 Salford Target
+            th.col-md-2 Top 10% Benchmark
+            th.col-md-2 Daily Trajectory
+            th.col-md-2 Trend
+        tbody.ps-child.ps-boilerplate.col-md-12
           - var alt=false
           each indicator in indicators
-            tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
-              td
+            tr(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
+              td.col-md-3
                 strong!= indicator.name
                 br
                 a.show-more(data-id=indicator.id)
                   | Show more 
                   i.fa.fa-caret-down
-              td
+              td.col-md-1
                 //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
                 if isNaN(indicator.performance.percentage)
                   strong(class = 'text-underPerform') N/A
@@ -66,16 +41,16 @@
                   
                 //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
                 span= ' (' + indicator.performance.fraction + ')'
-              td= indicator.target
-              td= (indicator.benchmark*100).toFixed(0)+"%"
-              td(style="text-align:center")
+              td.col-md-2= indicator.target
+              td.col-md-2= (indicator.benchmark*100).toFixed(0)+"%"
+              td.col-md-2(style="text-align:center")
                 if indicator.change==="up"
-                  i.fa.fa-2x.fa-fw.fa-caret-up
+                  i.material-icons trending_up
                 else if indicator.change==="down"
-                  i.fa.fa-2x.fa-fw.fa-caret-down
+                  i.material-icons trending_down
                 else
-                  i.fa.fa-fw.fa-minus
-              td
+                  i.material-icons trending_flat
+              td.col-md-2
                 span.inlinesparkline= indicator.trend
             tr.show-more-row(data-id=indicator.id,class=alt ? 'alternate-row': '')
               td(colspan='6')!= indicator.description
@@ -84,3 +59,34 @@
                     | Show less 
                     i.fa.fa-caret-up
             - alt = !alt
+
+//- table
+//- thead(style="display: block;")
+//-   tr
+//-     th Indicator
+//-     th Current Performance
+//-     th Salford Target
+//-     th Top 10% Benchmark
+//-     th Change from Yesterday
+//-     th Trend
+//- tbody.ps-child(style="max-height: 400px; display: block;")
+//-   each indicator in indicators
+//-     tr.standard-row
+//-       td
+//-         strong!= indicator.name
+//-       td
+//-         if isNaN(indicator.performance.percentage)
+//-           strong(class = 'text-underPerform') N/A
+//-         else if indicator.aboveTarget
+//-           if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
+//-             strong(class = 'text-topTen')= indicator.performance.percentage + '%'
+//-           else
+//-             strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
+//-         else
+//-           strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
+//-         span= ' (' + indicator.performance.fraction + ')'
+//-       td 75%
+//-       td 10%
+//-       td(style='font-size:2em') A
+//-       td(style='width:116px')
+//- .table-scroll

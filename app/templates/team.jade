@@ -4,7 +4,7 @@ if noSuggestions
   p There are no improvement action suggestions from PINGR for this indicator.
   include mixins/personal-action-plan
 else 
-  .col-md-4
+  .col-md-4.ps-child
     ul.nav.nav-pills.nav-pills-icons.nav-pills-default.nav-stacked(role="tablist")
       each suggestion, index in suggestions
         -var actionSelectorClass = ""

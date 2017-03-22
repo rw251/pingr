@@ -1,0 +1,86 @@
+//.panel.panel-default(data-intro="whats going on?! *bTut*" data-step="4")
+//  .panel-body.pastel-pink
+//    table.table
+.panel.panel-default
+  .panel-body.pastel-pink.overview-table
+    table.table.table-body-hidden
+      thead(style="display: block;")
+        tr
+          th Indicator
+          th Current Performance
+          th Salford Target
+          th Top 10% Benchmark
+          th Change from Yesterday
+          th Trend
+      tbody.ps-child(style="max-height: 400px; display: block;")
+        each indicator in indicators
+          tr.standard-row
+            td
+              strong!= indicator.name
+            td
+              if isNaN(indicator.performance.percentage)
+                strong(class = 'text-underPerform') N/A
+              else if indicator.aboveTarget
+                if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
+                  strong(class = 'text-topTen')= indicator.performance.percentage + '%'
+                else
+                  strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
+              else
+                strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
+              span= ' (' + indicator.performance.fraction + ')'
+            td 75%
+            td 10%
+            td(style='font-size:2em') A
+            td(style='width:116px')
+    .table-scroll
+      table.table.table-head-hidden
+        thead
+          tr
+            th Indicator
+            th Current Performance
+            th Salford Target
+            th Top 10% Benchmark
+            th Change from Yesterday
+            th Trend
+        tbody
+          - var alt=false
+          each indicator in indicators
+            tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
+              td
+                strong!= indicator.name
+                br
+                a.show-more(data-id=indicator.id)
+                  | Show more 
+                  i.fa.fa-caret-down
+              td
+                //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                if isNaN(indicator.performance.percentage)
+                  strong(class = 'text-underPerform') N/A
+                else if indicator.aboveTarget
+                  if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
+                    strong(class = 'text-topTen')= indicator.performance.percentage + '%'
+                  else
+                    strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
+                else
+                  strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
+                  
+                //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                span= ' (' + indicator.performance.fraction + ')'
+              td= indicator.target
+              td= (indicator.benchmark*100).toFixed(0)+"%"
+              td(style="text-align:center")
+                if indicator.change==="up"
+                  i.fa.fa-2x.fa-fw.fa-caret-up
+                else if indicator.change==="down"
+                  i.fa.fa-2x.fa-fw.fa-caret-down
+                else
+                  i.fa.fa-fw.fa-minus
+              td
+                span.inlinesparkline= indicator.trend
+            tr.show-more-row(data-id=indicator.id,class=alt ? 'alternate-row': '')
+              td(colspan='6')!= indicator.description
+                  br
+                  a.show-more(data-id=indicator.id)
+                    | Show less 
+                    i.fa.fa-caret-up
+            - alt = !alt
