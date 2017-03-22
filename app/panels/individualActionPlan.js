@@ -1,7 +1,8 @@
 var base = require('../base.js'),
   data = require('../data.js'),
   log = require('../log.js'),
-  actionPlan = require('./actionPlan.js');
+  actionPlan = require('./actionPlan.js'),
+  qualityStandards = require('./qualityStandards');
 
 var patientActions = [];
 
@@ -20,12 +21,6 @@ var iap = {
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
     panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId, pathwayId, pathwayStage, standard));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
-
-    /*panel.find('div.fit-to-screen-height').niceScroll({
-      cursoropacitymin: 0.3,
-      cursorwidth: "7px",
-      horizrailenabled: false
-    });*/
   },
 
   updateAction: function(action) {
@@ -135,7 +130,7 @@ var iap = {
       $('#editActionPlanItem').val(action.actionText);
 
       $('#editPlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
       }).off('shown.bs.modal').on('shown.bs.modal', function() {
         $('#editActionPlanItem').focus();
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
@@ -158,9 +153,11 @@ var iap = {
       $('#modal-delete-item').html(action.actionText);
 
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
-        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
-        log.deleteUserDefinedPatientAction(patientId, action.actionTextId);
+        log.deleteUserDefinedPatientAction(patientId, action.actionTextId, function(err) {
+          qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+        });
         delete userDefinedPatientActionsObject[action.actionTextId];
 
         $('#deletePlan').modal('hide');
@@ -168,35 +165,43 @@ var iap = {
     }).on('click', '.add-plan', function() {
       //var actionText = $(this).parent().parent().find('textarea').val();
       var actionText = $('textarea.form-control').val();
+      $('textarea.form-control').val("");
       var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-      log.recordIndividualPlan(actionText, patientId, function(err, a){
+      var indicatorList = [];
+      if (pathwayId && pathwayStage && standard) {
+        indicatorList.push([pathwayId, pathwayStage, standard].join("."));
+      } else {
+        indicatorList = patientActions.reduce(function(prev, curr) {
+          var union = prev.concat(curr.indicatorList);
+          return union.filter(function(item, pos) {
+            return union.indexOf(item) == pos;
+          });
+        }, []);
+      }
+      log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
         if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
-        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
+        qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
       });
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
       /*iap.updateIndividualSapRows();*/
     }).on('click', '.btn-undo', function(e) {
-      /*var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.patientId, ACTIONID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      iap.updateIndividualSapRows();*/
+
     }).on('click', '.btn-yes', function(e) {
       // var AGREE_STATUS = $(this).closest('tr').data('agree');
       // var action = patientActionsObject[$(this).closest('tr').data('id')];
       var AGREE_STATUS = $(this).closest('li').data('agree');
       var action = patientActionsObject[$(this).closest('li').data('id')];
 
-      if (AGREE_STATUS === false) {
-        //do nothing - shouldn't be able to get here
-        console.log("nothing doing");
-      } else {
-        action.agree = AGREE_STATUS ? null : true;
-        if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
-        log.updateIndivdualAction(patientId, action);
-        iap.updateAction(action);
+      action.agree = AGREE_STATUS ? null : true;
+      if (action.agree) {
+        if (!action.history) action.history = [];
+        action.history.unshift({ who: $('#user_fullname').text().trim(), what: "agreed with", when: new Date() });
       }
+      log.updateIndividualAction(patientId, action, function(err) {
+        qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+      });
+      iap.updateAction(action);
 
       e.stopPropagation();
       e.preventDefault();
@@ -207,26 +212,25 @@ var iap = {
       var AGREE_STATUS = $(this).closest('li').data('agree');
       var action = patientActionsObject[$(this).closest('li').data('id')];
 
-      if (AGREE_STATUS === true) {
-        //do nothing - shouldn't be able to get here
-        console.log("nothing doing");
-        e.stopPropagation();
-        e.preventDefault();
-      } else if (AGREE_STATUS === false) {
+      if (AGREE_STATUS === false) {
         //editing reason
         iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason || "") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndivdualAction(patientId, action);
+          log.updateIndividualAction(patientId, action, function(err) {
+            qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+          });
           iap.updateAction(action);
         }, null, function() {
           action.agree = null;
           delete action.rejectedReason;
           delete action.rejectedReasonText;
-          log.updateIndivdualAction(patientId, action);
+          log.updateIndividualAction(patientId, action, function(err) {
+            qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+          });
           iap.updateAction(action);
         });
         e.stopPropagation();
@@ -234,20 +238,18 @@ var iap = {
       } else {
         //disagreeing
         iap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason || "") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateIndivdualAction(patientId, action);
+          log.updateIndividualAction(patientId, action, function(err) {
+            qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+          });
           iap.updateAction(action);
         });
         e.stopPropagation();
         e.preventDefault();
-      }
-    }).on('keyup', 'input[type=text]', function(e) {
-      if (e.which === 13) {
-        individualTab.find('.add-plan').click();
       }
     });
 
@@ -269,6 +271,8 @@ var iap = {
         $('.show-more[data-id="' + id + '"]:first').show();
         elem.hide();
       } else {
+        $('.show-more-row').hide();
+        $('.show-more').show();
         $(this).hide();
         elem.show('fast');
       }
@@ -304,6 +308,7 @@ var iap = {
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
         //set the tool tip
         any = true;
+<<<<<<< HEAD
         //if there is a history - display appropriate title
         if (patientActionsObject[self.data("id")].history != "") {
           var tooltipInfo = "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
@@ -316,6 +321,28 @@ var iap = {
         //if no history but selected is negative
         else {
           $(this).closest('label').attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+//BG-TODO incorporate the base.textFromHistory to populate tooltip
+// =======
+//         if (this.value === "yes") {
+//           all.removeClass('danger');
+//           all.addClass('active');
+//           //self.find('td').last().children().show();
+//           if (patientActionsObject[self.data("id")].history) {
+//             var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + base.textFromHistory(patientActionsObject[self.data("id")].history[0]) + "</p><p>Click again to cancel</p>";
+//             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
+//           } else {
+//             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
+//           }
+//         } else {
+//           all.removeClass('active');
+//           all.addClass('danger');
+//           all.removeClass('success');
+//           if (patientActionsObject[self.data("id")].history) {
+//             $(this).parent().attr("title", "<p>" + base.textFromHistory(patientActionsObject[self.data("id")].history[0]) + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+//           } else {
+//             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+//           }
+// >>>>>>> dev
         }
       });
       //if only one button is selected
@@ -344,9 +371,11 @@ var iap = {
     base.wireUpTooltips();
   },
 
-  displayPersonalisedIndividualActionPlan: function(parentElem) {
+  displayPersonalisedIndividualActionPlan: function(parentElem, pathwayId, pathwayStage, standard) {
+    var indicatorId = null;
+    if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
     var tmpl = require('templates/action-plan-list');
-    var userDefinedActions = Object.keys(userDefinedPatientActionsObject).map(function(v){return userDefinedPatientActionsObject[v];});
+    var userDefinedActions = Object.keys(userDefinedPatientActionsObject).map(function(v) { return userDefinedPatientActionsObject[v]; }).filter(function(v) { return !v.indicatorList || !indicatorId || v.indicatorList.indexOf(indicatorId) > -1; });
     parentElem.html(tmpl({
       "hasSuggestions": userDefinedActions && userDefinedActions.length > 0,
       "suggestions": userDefinedActions
@@ -359,7 +388,7 @@ var iap = {
     data.getPatientActionData(patientId, function(err, a) {
       patientActionsObject = {};
       userDefinedPatientActionsObject = {};
-      a.userDefinedActions.forEach(function(v){
+      a.userDefinedActions.forEach(function(v) {
         userDefinedPatientActionsObject[v.actionTextId] = v;
       });
       patientActions = a.actions.map(function(v) {
@@ -394,27 +423,7 @@ var iap = {
         return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join(".")) > -1;
       });
     }
-    /*if (patientActions.length === 0 || (pathwayId && pathwayStage && standard && patientActions.filter(function(v) {
-        return v.indicatorId === [pathwayId, pathwayStage, standard].join(".");
-      }).length === 0)) {
-      localData.noSuggestions = true;
-    } else {
 
-      localData.suggestions = base.dedupeAndSortActions(base.mergeIndividualStuff(patientActions, patientId));
-
-      localData.suggestions = localData.suggestions.filter(function(v) {
-        if (!pathwayId || !pathwayStage || !standard) return true;
-        return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join(".")) > -1;
-      }).map(function(v) {
-        v.indicatorList = v.indicatorList.map(function(vv) {
-          return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
-        });
-        v.id = v.actionText.replace(/[^A-Za-z0-9]/g, "");
-        return v;
-      });
-    }*/
-
-    $('#advice-placeholder').hide();
     $('#advice').show();
 
     //base.createPanelShow(individualPanel, $('#advice-list'), localData);
@@ -480,7 +489,7 @@ var iap = {
 
     base.setupClipboard($('.btn-copy'), true);
 
-    iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'));
+    iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
   },
 
   launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {

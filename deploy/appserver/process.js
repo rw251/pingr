@@ -17,6 +17,10 @@ var FILENAMES = {
   text: 'text.dat'
 };
 
+var dp = function(number, decimalPlaces) {
+  return Math.round(number * Math.pow(10,decimalPlaces)) / Math.pow(10,decimalPlaces);
+};
+
 var IN_DIR = process.argv[2] || 'E:\\ImporterPINGR\\';
 var OUT_DIR = process.argv[3] || 'data/';
 
@@ -386,7 +390,7 @@ async.series([
                         intervals.push({
                           from: prev.date,
                           to: end.getTime(),
-                          label: prev.mg + "mg" || ""
+                          label: dp(prev.mg,3) + "mg" || ""
                         });
                       }
                       return d.event === "STOPPED" ? null : cur;
@@ -395,7 +399,7 @@ async.series([
                       intervals.push({
                         from: last.date,
                         to: new Date().getTime(),
-                        label: last.mg + "mg" || ""
+                        label: dp(last.mg,3) + "mg" || ""
                       });
                     }
                     patients[patientId].medications.push({
@@ -568,7 +572,7 @@ async.series([
                               indicatorId: data.indicatorId,
                               actionCat: data.actionCat,
                               reasonNumber: data.reasonNumber,
-                              pointsPerAction: data.pointsPerAction,
+                              pointsPerAction: +data.pointsPerAction,
                               priority: data.priority,
                               actionText: data.actionText,
                               actionTextId: data.actionText.toLowerCase().replace(/[^a-z0-9]/g,""),
@@ -702,7 +706,7 @@ async.series([
                                 actionTextId: data.actionText.toLowerCase().replace(/[^a-z0-9]/g,""),
                                 supportingText: data.supportingText,
                                 numberPatients: data.numberPatients,
-                                pointsPerAction: data.pointsPerAction,
+                                pointsPerAction: +data.pointsPerAction,
                                 priority: data.priority
                               });
                             })

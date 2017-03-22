@@ -41,7 +41,9 @@ var UserSchema = new Schema({
   last_login: Date,
   last_email_reminder: Date,
   email_opt_out: Boolean,
-  email_url_tracking_code: String
+  email_url_tracking_code: String,
+  emailFrequency: Number,
+  emailDay: Number
 });
 
 UserSchema.pre('save', function(next) {

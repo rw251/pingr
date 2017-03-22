@@ -1,0 +1,64 @@
+script.
+  var data = !{JSON.stringify(user)};
+  if(data.last_login) data.last_login = (new Date(data.last_login)).toDateString();
+  data.pingrUrl = "https://pingr-dev.herokuapp.com/";
+  data.indicators = !{JSON.stringify(indicators)};
+  data.patients = !{JSON.stringify(patients)};
+  jade2html = function(input, data) {
+    return jade.compile(input, {
+      pretty: true,
+      doctype: "5"
+    })(data);
+  };
+  update = function($jade) {
+    var $html, html, input;
+    $html = $("#html");    
+    //$jade.closest(".row").find("textarea").removeClass("error");
+    input = $jade.val();
+    try {
+      html = jade2html(input, data);
+    } catch (error) {
+      $jade.addClass("error");
+      $html.val("[jade] " + error.message).addClass("error");
+      return;
+    }
+    html = html.trim();
+    return $html.html(html);
+  };
+  $(document).on('ready', function(){
+    $textarea = $('textarea');
+    $textarea.on('keyup', function(){
+      return update($(this));
+    })
+    update($textarea);
+    $('.jadeToHtml').each(function(i, el){
+      $(el).html(jade2html($(el).text(),data));
+    })
+    
+    $.fn.tabOverride.autoIndent = true;
+    $.fn.tabOverride.tabSize(2);
+    $textarea.tabOverride();
+    
+    $('#testEmail').on('click', function(e){
+      var dataToSend = {
+        to: $('#emailAddress').val(),
+        subject: $('input[name="subject"]').val(),
+        html: $('#html').html(),
+        text: $('#html').text()
+      };
+      $.ajax({
+        type: "POST",
+        url: "/emailsendtest",
+        data: JSON.stringify(dataToSend),
+        success: function(d) { 
+          alert('Message sent');
+        },
+        error: function(){
+          alert('Failed to send');
+        },
+        dataType: "json",
+        contentType: "application/json"
+      });
+      e.preventDefault();
+    });
+  })

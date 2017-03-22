@@ -8,3 +8,19 @@
       .form-group.label-floating.is-empty
         label.control-label Enter an NHS number
         input.typeahead.form-control(type='text')
+
+// BG-TODO notes on merged dev below
+// 1. dataloaded is true when the nhs lookup is ready - show a "loading patient data" otherwise
+// 2. if there is a patient selected need a link/button back to the all patient screen
+
+//- form#search-box.app-search.hidden-xs.ng-pristine.ng-valid.form-inline(role='search', style='margin: 0 auto;width:450px;')
+//-   label(for='pSearch', style="padding-right:5px")
+//-     if patientSelected
+//-       a(href='/#patients') View all patients 
+//-     else
+//-       | Showing all patients 
+//-   if dataLoaded
+//-     input.typeahead.form-control.form-control-circle(id='pSearch', name='pSearch', type='text', placeholder='Search by patients NHS number...')
+//-   else
+//-     input.typeahead.form-control.form-control-circle(id='pSearch', name='pSearch', type='text', disabled=true, placeholder='Loading... please wait')
+//- >>>>>>> dev

@@ -19,11 +19,9 @@ var ap = {
       if (layout.view !== ID) {
         //Not already in this view so we need to rejig a few things - boilerplate
         base.clearBox();
-        //base.switchTo21Layout();
         base.switchToSingleColumn();
         layout.showMainView();
 
-        base.removeFullPage(farRightPanel);
         base.hidePanels(farRightPanel);
 
         layout.view = ID;
@@ -44,7 +42,7 @@ var ap = {
       //$('#suggested-actions-table-wrapper').css("overflow-y","auto");
       //$('#suggested-actions-table-wrapper').css("overflow-x","hidden");
 
-      base.updateFixedHeightElements([{selector:'#suggested-actions-table-wrapper',padding:250}]);
+      base.updateFixedHeightElements([{selector:'#suggested-actions-table-wrapper',padding:250,minHeight:300}]);
 
     }, 0);
 

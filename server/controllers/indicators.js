@@ -5,7 +5,7 @@ var mergeActions = function(actions, indicators, indicatorId) {
   var actionObject = {};
   var userDefinedActions=[];
   actions.forEach(function(v) {
-    if(v.userDefined && (!indicatorId || indicatorId===v.indicatorId)) userDefinedActions.push(v);
+    if(v.userDefined && (!indicatorId || v.indicatorList.indexOf(indicatorId))) userDefinedActions.push(v);
     actionObject[v.actionTextId] = v.toObject();
   });
 
@@ -38,6 +38,7 @@ var mergeActions = function(actions, indicators, indicatorId) {
   rtn = rtn.map(function(v) {
     if(actionObject[v.actionTextId]){
       Object.keys(actionObject[v.actionTextId]).forEach(function(vv){
+        if(vv[0]==="_" || vv === "indicatorList") return; //ignore hidden properties like _id and __v;
         v[vv] = actionObject[v.actionTextId][vv];
       });
     }
@@ -71,7 +72,50 @@ module.exports = {
         console.log('Error finding indicator list for practice:  ' + practiceId);
         return done(null, false);
       } else {
-        done(null, indicators);
+        var opps = [];
+        indicators.forEach(function(v){
+          opps = opps.concat(v.opportunities);
+        });
+        var patientList = opps.reduce(function(prev, curr) {
+          var union = prev.concat(curr.patients);
+          return union.filter(function(item, pos) {
+            return union.indexOf(item) == pos;
+          });
+        }, []);
+
+        actions.patientsWithPlan(patientList, function(err, patientsWithActions){
+          var indicatorCountOfReviewedPatients = {};
+          patientsWithActions.forEach(function(v){
+            var localReviewedPatients = {};
+            v.actions.forEach(function(vv){
+              if(vv.indicatorList) {
+                vv.indicatorList.forEach(function(vvv){
+                  if(!localReviewedPatients[vvv]) {
+                    localReviewedPatients[vvv] = 1;
+                  }
+                });
+              }
+            });
+            Object.keys(localReviewedPatients).forEach(function(v){
+              if(!indicatorCountOfReviewedPatients[v]) {
+                indicatorCountOfReviewedPatients[v] = 1;
+              } else {
+                indicatorCountOfReviewedPatients[v]++;
+              }
+            });
+          });
+          indicators = indicators.map(function(v){
+            v = v.toObject();
+            if(indicatorCountOfReviewedPatients[v.id]) {
+              v.reviewed = indicatorCountOfReviewedPatients[v.id];
+            } else {
+              v.reviewed = 0;
+            }
+            return v;
+          });
+
+          done(null, indicators);
+        });
       }
     });
   },

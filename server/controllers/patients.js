@@ -46,6 +46,7 @@ var mergeActions = function(actions, patients, patientId) {
     rtn = rtn.map(function(v) {
       if (actionObject[patient.patientId] && actionObject[patient.patientId][v.actionTextId]) {
         Object.keys(actionObject[patient.patientId][v.actionTextId]).forEach(function(vv) {
+          if (vv[0] === "_" || vv === "indicatorList") return; //ignore hidden properties like _id and __v;
           v[vv] = actionObject[patient.patientId][v.actionTextId][vv];
         });
       }
@@ -54,10 +55,10 @@ var mergeActions = function(actions, patients, patientId) {
 
     //do the sorting
     rtn.sort(function(a, b) {
-      if(a.agree===false){
-        if(b.agree===false) return 0;
+      if (a.agree === false) {
+        if (b.agree === false) return 0;
         else return 1;
-      } else if (b.agree === false){
+      } else if (b.agree === false) {
         return -1;
       }
       return b.pointsPerAction - a.pointsPerAction;
@@ -67,7 +68,7 @@ var mergeActions = function(actions, patients, patientId) {
 
     userDefinedActions[patient.patientId] = userDefinedActions[patient.patientId] || [];
     if (patientId || (userDefinedActions[patient.patientId].length + rtn.length > 0)) {
-      finalRtn[patient.patientId] = { actions: rtn, userDefinedActions: userDefinedActions[patient.patientId]};
+      finalRtn[patient.patientId] = { actions: rtn, userDefinedActions: userDefinedActions[patient.patientId] };
     }
   });
   return finalRtn;
@@ -98,20 +99,46 @@ module.exports = {
         console.log('Invalid request for patientId: ' + patientId);
         return done(null, false);
       } else {
-        done(null, patient /*.toObject()*/ );
+        actions.patientsWithPlan([+patientId], function(err, actions) {
+          var actionObject = {};
+          if (actions && actions.length > 0) {
+            actions[0].actions.forEach(function(v) {
+              if (v.indicatorList) {
+                v.indicatorList.forEach(function(vv) {
+                  if (!actionObject[vv]) {
+                    actionObject[vv] = [v];
+                  } else {
+                    actionObject[vv].push(v);
+                  }
+                });
+              }
+            });
+          }
+          patient = patient.toObject();
+          if (patient.standards) {
+            patient.standards = patient.standards.map(function(v) {
+              if (actionObject[v.indicatorId]) {
+                v.actionPlan = true;
+                v.actionPlans = actionObject[v.indicatorId];
+              }
+              return v;
+            });
+          }
+          done(null, patient);
+        });
       }
     });
   },
 
   getSpecificActions: function(actions, done) {
-    if(!actions || actions.length === 0) return done(null, {});
+    if (!actions || actions.length === 0) return done(null, {});
     var aggQuery = [
-      {$match: {patientId: {$in: actions.map(function(v){return v.patientId;}) }}}, //filter to just patients of interest
-      {$project: {_id: 0, patientId: 1, actions: 1}}, //get rid of all fields except patient id and action list
-      {$unwind: "$actions"}, //so we have one object per patient/action combination
-      {$match: {$or: actions.map(function(v){return {patientId: v.patientId, "actions.actionTextId": v.actionTextId};})}}, //only match where patient id and action id are both matches
-      {$group: {_id: "$patientId", actions: {$push: "$actions"}}}, //regroup the actions into a list
-      {$project: {_id:0, patientId: "$_id", actions: 1}} //rename to original format
+      { $match: { patientId: { $in: actions.map(function(v) { return v.patientId; }) } } }, //filter to just patients of interest
+      { $project: { _id: 0, patientId: 1, actions: 1 } }, //get rid of all fields except patient id and action list
+      { $unwind: "$actions" }, //so we have one object per patient/action combination
+      { $match: { $or: actions.map(function(v) { return { patientId: v.patientId, "actions.actionTextId": v.actionTextId }; }) } }, //only match where patient id and action id are both matches
+      { $group: { _id: "$patientId", actions: { $push: "$actions" } } }, //regroup the actions into a list
+      { $project: { _id: 0, patientId: "$_id", actions: 1 } } //rename to original format
     ];
     Patient.aggregate(aggQuery, function(err, patients) {
       if (err) {
@@ -122,7 +149,7 @@ module.exports = {
         console.log('Invalid request for patientId: ' + patientId);
         return done(null, false);
       } else {
-        var rtn = mergeActions(actions, patients)          ;
+        var rtn = mergeActions(actions, patients);
         return done(null, rtn);
       }
     });
@@ -144,7 +171,7 @@ module.exports = {
           console.log('Invalid request for patientId: ' + patientId);
           return done(null, false);
         } else {
-          var rtn = mergeActions(actions, patients, patientId)          ;
+          var rtn = mergeActions(actions, patients, patientId);
           return done(null, rtn);
         }
       });
@@ -168,12 +195,32 @@ module.exports = {
     });
   },
 
+  getAllPatientsPaginated: function(practiceId, skip, limit, done) {
+    var aggregateQuery = [
+      { $match: { "characteristics.practiceId": practiceId, "actions": { $exists: true } } },
+      { $project: { _id: 0, patientId: 1, actions: 1, characteristics: 1 } },
+      { $unwind: "$actions" },
+      { $group: { _id: "$patientId", nhsNumber: {$max: "$characteristics.nhs"}, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" }, tot: { $sum: "$actions.pointsPerAction" }, indicators: { $addToSet: "$actions.indicatorId" } } },
+      { $project: {_id:1, nhsNumber:1, age:1, sex:1, tot:1, indicators:1, numberOfIndicators: { $size: "$indicators" }}},
+      { $sort: { numberOfIndicators:-1, tot: -1 } },
+      { $skip: skip},
+      { $limit: limit }
+    ];
+
+    Patient.aggregate(aggregateQuery, function(err, results){
+      if(err) return done(err);
+      return done(null, results);
+    });
+  },
+
   //Get list of patients for a practice and indicator - for use on indicator screen
   getListForIndicator: function(practiceId, indicatorId, done) {
     //need to get
     // [{patientId, age, value, [impOpps]}]
+    console.time(["getListForIndicator", "indicators", "get"].join("--"));
     indicators.get(practiceId, indicatorId, function(err, indicator) {
-
+      console.timeEnd(["getListForIndicator", "indicators", "get"].join("--"));
+      console.time(["getListForIndicator", "indicators", "process"].join("--"));
       var patientList = indicator.opportunities.reduce(function(prev, curr) {
         var union = prev.concat(curr.patients);
         return union.filter(function(item, pos) {
@@ -184,35 +231,55 @@ module.exports = {
       var indicatorValue = indicator.measurementId;
       if (indicatorValue === "SBP") indicatorValue = "BP";
 
-      Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, measurements: { $elemMatch: { id: indicatorValue } }, "measurements.data": { $slice: -1 } },
-        function(err, patients) {
-          var p = patients.map(function(patient) {
-            patient = patient.toObject();
-            var meas = "?";
-            if (patient.measurements && patient.measurements.length > 0 && patient.measurements[0].data && patient.measurements[0].data.length > 0 && patient.measurements[0].data[0].length > 2) {
-              if (indicator.measurementId === "SBP") {
-                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
-                // for dbp use:
-                //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
-              } else {
-                meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
-              }
-            }
-            var opps = indicator.opportunities.filter(function(v) {
-              return v.patients.indexOf("" + patient.patientId) > -1;
-            }).map(function(v) {
-              return v.id;
-            });
-            return {
-              patientId: patient.patientId,
-              nhs: patient.characteristics.nhs,
-              age: patient.characteristics.age,
-              value: meas,
-              opportunities: opps
-            };
-          });
-          return done(null, p);
+      console.timeEnd(["getListForIndicator", "indicators", "process"].join("--"));
+      console.time(["getListForIndicator", "actions", "get"].join("--"));
+      actions.patientsWithPlan(patientList, function(err, patientsWithActions) {
+        console.timeEnd(["getListForIndicator", "actions", "get"].join("--"));
+        console.time(["getListForIndicator", "actions", "process"].join("--"));
+        var patientsWithActionsObject = {};
+        patientsWithActions.forEach(function(v) {
+          patientsWithActionsObject[v._id] = v.actions;
         });
+        if (err) return done(err);
+        console.timeEnd(["getListForIndicator", "actions", "process"].join("--"));
+        console.time(["getListForIndicator", "patients", "get"].join("--"));
+        Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, actions: 1, measurements: { $elemMatch: { id: indicatorValue } }, "measurements.data": { $slice: -1 } },
+          function(err, patients) {
+            console.timeEnd(["getListForIndicator", "patients", "get"].join("--"));
+            console.time(["getListForIndicator", "patients", "process"].join("--"));
+            var p = patients.map(function(patient) {
+              patient = patient.toObject();
+              var meas = "?";
+              if (patient.measurements && patient.measurements.length > 0 && patient.measurements[0].data && patient.measurements[0].data.length > 0 && patient.measurements[0].data[0].length > 2) {
+                if (indicator.measurementId === "SBP") {
+                  meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                  // for dbp use:
+                  //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
+                } else {
+                  meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                }
+              }
+              var opps = indicator.opportunities.filter(function(v) {
+                return v.patients.indexOf("" + patient.patientId) > -1;
+              }).map(function(v) {
+                return v.id;
+              });
+              var rtn = {
+                patientId: patient.patientId,
+                nhs: patient.characteristics.nhs,
+                age: patient.characteristics.age,
+                value: meas,
+                opportunities: opps
+              };
+              if (patientsWithActionsObject[patient.patientId]) {
+                rtn.actionStatus = patientsWithActionsObject[patient.patientId];
+              }
+              return rtn;
+            });
+            console.timeEnd(["getListForIndicator", "patients", "process"].join("--"));
+            return done(null, p);
+          });
+      });
     });
   }
 };

@@ -8,20 +8,12 @@ var teamActions = [];
 var tap = {
 
   create: function(title) {
-    return require("templates/team-action-plan")({title: title});
+    return require("templates/team-action-plan")({ title: title });
   },
 
   show: function(panel, title, pathwayId, pathwayStage, standard) {
     panel.html(tap.create(title));
     tap.wireUp(pathwayId, pathwayStage, standard);
-
-    /*panel.find('div.fit-to-screen-height').niceScroll({
-      cursoropacitymin: 0.4,
-      cursorwidth: "15px",
-      horizrailenabled: false,
-      hidecursordelay: 50,
-      cursorborderradius : "12px"
-    });*/
   },
 
   updateAction: function(action) {
@@ -55,81 +47,13 @@ var tap = {
   },
 
   wireUp: function(pathwayId, pathwayStage, standard) {
-    teamTab = $('#tab-plan-team');
+    actionPanel = $('#team-action-panel');
+    userActionPanel = $('#user-action-panel');
 
-    var indicatorId="";
-    if(pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
+    var indicatorId = "";
+    if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
-    //find [] and replace with copy button
-
-    /*$('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
-      var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.GARBAGE, ACTIONID, null, this.checked);
-
-      if (this.checked) {
-        log.recordEvent(pathwayId, data.GARBAGE, "Item completed");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              ACTIONID = $(this).closest('tr').data('id');
-              log.editAction(data.GARBAGE, ACTIONID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              tap.updateTeamSapRows();
-            });
-          });
-        }, 1000);
-      }
-
-      tap.updateTeamSapRows();
-    });*/
-
-    /*$('#personalPlanTeam').on('click', 'input[type=checkbox]', function() {
-      var PLANID = $(this).closest('tr').data("id");
-      log.editPlan(PLANID, null, this.checked);
-
-      if (this.checked) {
-        $(this).parent().parent().parent().addClass('success');
-        log.recordEvent(pathwayId, data.GARBAGE, "Team plan item");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              PLANID = $(this).closest('tr').data('id');
-              log.editPlan(data.GARBAGE, PLANID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              tap.updateTeamSapRows();
-            });
-          });
-        }, 1000);
-      }
-    }).on('click', '.btn-undo', function(e) {
-      var PLANID = $(this).closest('tr').data('id');
-      log.editPlan(PLANID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      tap.updateTeamSapRows();
-      e.stopPropagation();
-    });*/
-
-    teamTab.on('click', '.edit-plan', function() {
+    userActionPanel.on('click', '.edit-plan', function() {
       var action = userDefinedTeamActionsObject[$(this).closest('tr').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
@@ -141,11 +65,11 @@ var tap = {
       }).off('click', '.save-plan').on('click', '.save-plan', function() {
         var oldActionId = action.actionTextId;
         action.actionText = $('#editActionPlanItem').val();
-        action.actionTextId = action.actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-        if(action.actionTextId!==oldActionId){
+        action.actionTextId = action.actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (action.actionTextId !== oldActionId) {
           log.updateUserDefinedTeamAction(oldActionId, action);
           delete userDefinedTeamActionsObject[oldActionId];
-          if(!userDefinedTeamActionsObject[action.actionTextId]) userDefinedTeamActionsObject[action.actionTextId]=action;
+          if (!userDefinedTeamActionsObject[action.actionTextId]) userDefinedTeamActionsObject[action.actionTextId] = action;
           tap.updateAction(action);
         }
         $('#editPlan').modal('hide');
@@ -168,35 +92,37 @@ var tap = {
     }).on('click', '.add-plan', function() {
       //var actionText = $(this).parent().parent().find('textarea').val();
       var actionText = $('textarea.form-control').val();
+      $('textarea.form-control').val("");
       var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
       log.recordTeamPlan(actionText, indicatorId, function(err, a){
         if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
+        //BG-TODO below line left in after dev merge
+        //we now redraw the panel instead of manually inserting
         tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       });
-    }).on('change', '.btn-toggle input[type=checkbox]', function() {
+    }).on('keyup', 'input[type=text]', function(e) {
+      if (e.which === 13) {
+        actionPanel.find('.add-plan').click();
+      }
+    });
+
+    actionPanel.on('change', '.btn-toggle input[type=checkbox]', function() {
       //tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
-      /*var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.GARBAGE, ACTIONID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      tap.updateTeamSapRows();*/
+
     }).on('click', '.btn-yes', function(e) {
       //var AGREE_STATUS = $(this).closest('tr').data('agree');
       //var action = teamActionsObject[$(this).closest('tr').data('id')];
       var AGREE_STATUS = $(this).closest('li').data('agree');
       var action = teamActionsObject[$(this).closest('li').data('id')];
 
-      if (AGREE_STATUS === false) {
-        //do nothing - shouldn't be able to get here
-        console.log("nothing doing");
-      } else {
-        action.agree = AGREE_STATUS ? null : true;
-        if (action.agree) action.history.unshift($('#user_fullname').text().trim() + " agreed with this on " + (new Date()).toDateString());
-        log.updateTeamAction(indicatorId, action);
-        tap.updateAction(action);
+      action.agree = AGREE_STATUS ? null : true;
+      if (action.agree) {
+        if (!action.history) action.history = [];
+        action.history.unshift({ who: $('#user_fullname').text().trim(), what: "agreed with", when: new Date() });
       }
+      log.updateTeamAction(indicatorId, action);
+      tap.updateAction(action);
 
       e.stopPropagation();
       e.preventDefault();
@@ -207,16 +133,11 @@ var tap = {
       var AGREE_STATUS = $(this).closest('li').data('agree');
       var action = teamActionsObject[$(this).closest('li').data('id')];
 
-      if (AGREE_STATUS === true) {
-        //do nothing - shouldn't be able to get here
-        console.log("nothing doing");
-        e.stopPropagation();
-        e.preventDefault();
-      } else if (AGREE_STATUS === false) {
+      if (AGREE_STATUS === false) {
         //editing reason
         tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, true, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -234,8 +155,8 @@ var tap = {
       } else {
         //disagreeing
         tap.launchModal(data.selected, action.actionText, action.rejectedReason, action.rejectedReasonText, false, function() {
-          var reasonText = actionPlan.rejectedReason === "" && actionPlan.rejectedReasonText === "" ? " - no reason given" : ". You disagreed because you said: '" + (actionPlan.rejectedReason||"") + "; " + actionPlan.rejectedReasonText + ".'";
-          action.history.unshift($('#user_fullname').text().trim() + " disagreed with this on " + (new Date()).toDateString() + reasonText);
+          if (!action.history) action.history = [];
+          action.history.unshift({ who: $('#user_fullname').text().trim(), what: "disagreed with", when: new Date(), why: actionPlan.rejectedReasonText });
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
@@ -244,10 +165,6 @@ var tap = {
         });
         e.stopPropagation();
         e.preventDefault();
-      }
-    }).on('keyup', 'input[type=text]', function(e) {
-      if (e.which === 13) {
-        teamTab.find('.add-plan').click();
       }
     });
 
@@ -265,10 +182,12 @@ var tap = {
     $('#advice-list').on('click', '.show-more', function(e) {
       var id = $(this).data("id");
       var elem = $('.show-more-row[data-id="' + id + '"]');
-      if(elem.is(':visible')){
+      if (elem.is(':visible')) {
         $('.show-more[data-id="' + id + '"]:first').show();
         elem.hide();
       } else {
+        $('.show-more-row').hide();
+        $('.show-more').show();
         $(this).hide();
         elem.show('fast');
       }
@@ -279,8 +198,8 @@ var tap = {
     });
     //*B* ??edit this to handle the show more or less actions
     $('#advice-list').off('click', 'tr.show-more-row a:not(.show-more)');
-    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e){
-      log.event("nice-link-clicked", window.location.hash, [{key:"link",value:e.currentTarget.href}]);
+    $('#advice-list').on('click', 'tr.show-more-row a:not(.show-more)', function(e) {
+      log.event("nice-link-clicked", window.location.hash, [{ key: "link", value: e.currentTarget.href }]);
       e.stopPropagation();
     });
 
@@ -317,6 +236,29 @@ var tap = {
         //if no history but selected is negative
         else {
           $(this).closest('label').attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+//BG-TODO incorporate the base.textFromHistory to populate tooltip
+
+// =======
+//         if (this.value === "yes") {
+//           all.removeClass('danger');
+//           all.addClass('active');
+//           //self.find('td').last().children().show();
+//           if (teamActionsObject[self.data("id")].history) {
+//             var tool = $(this).closest('tr').hasClass('success') ? "" : "<p>" + base.textFromHistory(teamActionsObject[self.data("id")].history[0]) + "</p><p>Click again to cancel</p>";
+//             $(this).parent().attr("title", tool).attr("data-original-title", tool).tooltip('fixTitle').tooltip('hide');
+//           } else {
+//             $(this).parent().attr("title", "You agreed - click again to cancel").tooltip('fixTitle').tooltip('hide');
+//           }
+//         } else {
+//           all.removeClass('active');
+//           all.addClass('danger');
+//           all.removeClass('success');
+//           if (teamActionsObject[self.data("id")].history) {
+//             $(this).parent().attr("title", "<p>" + base.textFromHistory(teamActionsObject[self.data("id")].history[0]) + "</p><p>Click again to edit/cancel</p>").tooltip('fixTitle').tooltip('hide');
+//           } else {
+//             $(this).parent().attr("title", "You disagreed - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
+//           }
+// >>>>>>> dev
         }
       });
       //if only one button is selected
@@ -373,19 +315,8 @@ var tap = {
   },
 
   displayPersonalisedTeamActionPlan: function(parentElem) {
-    //var plans = base.sortSuggestions(base.addDisagreePersonalTeam(log.listPlans("team", data.pathwayId)));
-
-    /*base.createPanelShow(actionPlanList, parentElem, {
-      "hasSuggestions": plans && plans.length > 0,
-      "suggestions": plans
-    }, {
-      "action-plan": $('#action-plan').html(),
-      "action-plan-item": $('#action-plan-item').html(),
-      "chk": $('#checkbox-template').html()
-    });*/
-
     var tmpl = require('templates/action-plan-list');
-    var userDefinedTeamActions = Object.keys(userDefinedTeamActionsObject).map(function(v){return userDefinedTeamActionsObject[v];});
+    var userDefinedTeamActions = Object.keys(userDefinedTeamActionsObject).map(function(v) { return userDefinedTeamActionsObject[v]; });
     parentElem.html(tmpl({
       "hasSuggestions": userDefinedTeamActions && userDefinedTeamActions.length > 0,
       "suggestions": userDefinedTeamActions
@@ -398,14 +329,14 @@ var tap = {
     data.getTeamActionData(pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : "", function(err, a) {
       teamActionsObject = {};
       userDefinedTeamActionsObject = {};
-      a.userDefinedActions.forEach(function(v){
+      a.userDefinedActions.forEach(function(v) {
         userDefinedTeamActionsObject[v.actionTextId] = v;
       });
       teamActions = a.actions.map(function(v) {
         v.indicatorListText = v.indicatorList.map(function(vv) {
           return { id: vv, text: data.text.pathways[vv.split(".")[0]][vv.split(".")[1]].standards[vv.split(".")[2]].tabText };
         });
-        if(v.agree!==true && v.agree!==false) v.agree = null;
+        if (v.agree !== true && v.agree !== false) v.agree = null;
         teamActionsObject[v.actionTextId] = v;
         return v;
       });
@@ -430,7 +361,6 @@ var tap = {
       localData.suggestions = teamActions;
     }
 
-    $('#advice-placeholder').hide();
     $('#advice').show();
 
     //base.createPanelShow(teamPanel, $('#advice-list'), localData);
@@ -438,14 +368,14 @@ var tap = {
     $('#advice-list').html(tmpl(localData));
 
     //Wire up any clipboard stuff in the suggestions
-    var isVision = $('#practice_system').text()==="Vision";
+    var isVision = $('#practice_system').text() === "Vision";
     $('#advice-list').find('span:contains("[COPY")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1' ) + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy '+(isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1') + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
     $('#advice-list').find('span:contains("[")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1' ) + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1' ) + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
     $('#advice-list').find('li:contains("[")').each(function() {
       var html = $(this).html();
@@ -485,11 +415,11 @@ var tap = {
           .replace(/<li>/g, "  - ")
           .replace(/<\/li>/g, "\r\n")
           .replace(/<\/?strong>/g, "")
-          .replace(/&gte;/g,"≥")
-          .replace(/&lte;/g,"≤")
-          .replace(/&gt;/g,">")
-          .replace(/&lt;/g,"<")
-          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g,"$2 - $1");
+          .replace(/&gte;/g, "≥")
+          .replace(/&lte;/g, "≤")
+          .replace(/&gt;/g, ">")
+          .replace(/&lt;/g, "<")
+          .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g, "$2 - $1");
         reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-round btn-default btn-copy"><span class="material-icons">content_copy</span></button>');
       }
     });

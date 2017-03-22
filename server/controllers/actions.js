@@ -2,6 +2,7 @@ var Action = require('../models/action');
 
 var _updateAction = function(action, updatedAction, callback) {
   Object.keys(updatedAction).forEach(function(v) {
+    if(v[0]==="_") return; //ignore hidden properties like _id and __v;
     action[v] = updatedAction[v];
   });
   action.save(function(err, act) {
@@ -121,7 +122,7 @@ module.exports = {
       var errorIfError = null;
 
       actions.forEach(function(v) {
-        delete updatedAction.indicatorId;
+        delete updatedAction.indicatorList;
         _updateAction(v, updatedAction, function(err, act) {
           if (err) {
             console.log(err);
@@ -152,6 +153,7 @@ module.exports = {
         });
       }
       Object.keys(updatedAction).forEach(function(v) {
+        if(v[0]==="_") return; //ignore hidden properties like _id and __v;
         action[v] = updatedAction[v];
       });
       action.save(function(err, act) {
@@ -200,11 +202,11 @@ module.exports = {
       practiceId: practiceId,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [username + " added this action on " + new Date()],
+      history: [{who: username, what: "added", when: new Date()}],
       userDefined: true,
       done: false
     };
-    if (indicatorId) actionObject.indicatorId = indicatorId;
+    if (indicatorId) actionObject.indicatorList = [indicatorId];
     var action = new Action(actionObject);
 
     // save the event
@@ -217,13 +219,14 @@ module.exports = {
     });
   },
 
-  addIndividualAction: function(practiceId, patientId, username, actionText, done) {
+  addIndividualAction: function(practiceId, patientId, indicatorList, username, actionText, done) {
     var action = new Action({
       practiceId: practiceId,
       patientId: patientId,
+      indicatorList: indicatorList,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [username + " added this action on " + new Date()],
+      history: [{who: username, what: "added", when: new Date()}],
       userDefined: true,
       done: false
     });
@@ -237,5 +240,23 @@ module.exports = {
       }
     });
   },
+
+  patientsWithPlan: function(patientList, done){
+    Action.aggregate([
+      {$match: {patientId: {$in: patientList }, $or:[{agree:true},{userDefined:true}]}},
+      {$group: {_id:"$patientId",actions:{$push:{actionTextId:"$actionTextId",agree:"$agree", history:"$history", indicatorList:"$indicatorList"}}}}
+    ], function(err, actions) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding individual action list for practice: " + practiceId + " and patient " + patientId));
+      }
+      if (!actions) {
+        console.log('Error finding individual action list for practice:  ' + practiceId + " and patient " + patientId);
+        return done(null, false);
+      } else {
+        done(null, actions);
+      }
+    });
+  }
 
 };

@@ -2,15 +2,18 @@
  * Gets an XPath for an element which describes its hierarchical location.
  * Copied from firebug with a BSD licence - https://code.google.com/p/fbug/source/browse/branches/firebug1.6/content/firebug/lib.js?spec=svn12950&r=8828#1332
  */
+var SESSION_TIMEOUT = 2 * 3600 * 1000;
+
 var timer = setTimeout(function(){
   window.location.href='/signout';
-}, 2 * 3600 * 1000); //set session logout to 2 hours
+}, SESSION_TIMEOUT); //set session logout to 2 hours
 
 var refreshSession = function(){
+  console.log("Session refreshed...");
     clearTimeout(timer);
     timer = setTimeout(function(){
       window.location.href='/signout';
-    }, 2 * 3600 * 1000); //set session logout to 2 hours
+    }, SESSION_TIMEOUT); //set session logout to 2 hours
 };
 
 var getElementXPath = function(el) {

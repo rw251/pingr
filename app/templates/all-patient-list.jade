@@ -1,0 +1,35 @@
+.pagination-bar
+  if skip && skip != 0
+    a.btn(href='/#patients/' + (Math.max(0,skip-limit)) +'/'+limit)= "Previous " + limit
+  label= "Patients " + (skip+1) + " to " + (skip+limit) 
+  a.btn(href='/#patients/' + (limit+skip) +'/'+limit)= "Next " + limit
+.table-scroll
+  table#allPatientTable.table.patient-list
+    thead
+      tr(style='background:#fff')
+        th NHS number
+        th Age
+        th Sex
+        th(data-toggle='tooltip', data-placement='top', title="The number of indicators that each patient is flagging against. Click on 'show which indicators' to see more details. ") Indicators violated
+        th(data-toggle='tooltip', data-placement='top', title='A patient is worth a number of percentage points for each indicator they are in. If a patient is in more than one indicator, these points are added together') Number of points this patient is worth
+    tbody
+      each patient in patients
+        tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='top', title='Click for more information about this patient')
+          td(style='min-width:130px')
+            - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+            button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient._id, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+              span.fa.fa-clipboard
+            = ' ' + patient.nhsNumber
+          td= patient.age
+          td= patient.sex
+          td
+            strong(style='vertical-align:top;padding-right:15px')= patient.numberOfIndicators
+            span(style='display:inline-block')
+              a.showIndicators(href='#',data-id=patient._id) 
+                | show which indicators
+                i.fa.fa-caret-down
+              a.hideIndicators(href='#',data-id=patient._id, style='display:none') 
+                | hide indicators
+                i.fa.fa-caret-up
+              .indicatorList(data-id=patient._id, style='display:none')!= patient.indicatorNames.join("<br>")
+          td= patient.tot.toFixed(2)

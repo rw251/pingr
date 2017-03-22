@@ -1,29 +1,25 @@
 include mixins/patient-list-header-item
 
-h4!= header + '(n=' + n + ')'
-table.table.patient-list.table-body-hidden
-  thead
-    tr
-      each item in locals['header-items']
-        +header(item)
-  tbody
-    tr.list-item(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
-      td(style='min-width:130px')
-        button.btn.btn-xs.btn-default.btn-copy(type='button', data-content='Copied', data-toggle='tooltip', data-placement='right')
-          span A
-        |         1234567890
-      td
-        | 56
-      td
-        | 12/06/2016
-      td
-        | .
+.row
+  .col-xs-9
+    h4!= header + '(n=' + n + ')'
+  .col-xs-3
+    .btn-group
+      button#downloadPatientList.btn.btn-danger Download patient list
+      button.btn.btn-danger.dropdown-toggle(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+        span.caret
+        span.sr-only Toggle Dropdown
+      ul.dropdown-menu
+        li
+          a#downloadAsPdf(href="#") Full list (pdf)
+        li
+          a#downloadAsText(href="#") Nhs numbers (text file)
 .table-scroll
-  table.table.patient-list.table-head-hidden
+  table#patient-list.table.patient-list
     thead
-      tr
+      tr(style='background-color:#fff')
         each item in locals['header-items']
-          +hiddenheader(item)
+          +header(item)
     tbody
       each patient in patients
         tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')

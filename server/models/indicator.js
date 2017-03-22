@@ -7,23 +7,22 @@ var IndicatorSchema = new Schema({
   name: String,
   values: [[String]],
   benchmark: Number,
-  opportunities: [{ id: String, patients: [Number] }],
+  opportunities: [{ _id:false, id: String, patients: [Number] }],
   measurementId: String, // the id of the measurement to display
   displayDate: Boolean, // whether to display the value or the date of the measurement
   actions: [
     {
+      _id:false,
       id: String,
+      link: String, //needed anymore??
+      indicatorId: String,
+      numberPatients: String,
+      reasonNumber: String,
+      pointsPerAction: Number,
+      priority: String,
       actionText: String,
-      supportingText: String,
-      link: String,
-      agree: Boolean,
-      done: Boolean,
-      history: [String],
-      userDefined: Boolean,
-      rejected: {
-        reason: String,
-        reasonText: String
-      }
+      actionTextId: String,
+      supportingText: String
     }
   ]
 });

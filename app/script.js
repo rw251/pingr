@@ -11,7 +11,8 @@
 
 var template = require('./template'),
   main = require('./main'),
-  events = require('./events');
+  events = require('./events'),
+  layout = require('./layout');
 
 //TODO not sure why i did this - was in local variable
 //maybe a separate module
@@ -19,38 +20,22 @@ var template = require('./template'),
 /********************************************************
  *** Shows the pre-load image and slowly fades it out. ***
  ********************************************************/
+var gotInitialData = false;
+var pageIsReady = false;
 
 var App = {
   init: function init() {
-    $(window).on("load", function() {
-      $('.loading-container').fadeOut(1000, function() {
-        //$(this).remove();
-      });
-    });
+    layout.showPage('main-dashboard');
 
-    /******************************************
-     *** This happens when the page is ready ***
-     ******************************************/
-     //jquery migration - on(ready, fn()) deprecated
-     //replaced with new pattern below - BG
-    $(document).ready(function() {
+    var initialize = function(){
       //Wire up global click/hover listener
       events.listen();
       //Grab the hash if exists - IE seems to forget it
-      main.hash = location.hash;
-      main.hash="#overview";
+      main.hash = location.hash || "#overview";
+      //main.hash="#overview";
 
       //Load the data then wire up the events on the page
       main.init();
-
-      //Sorts out the data held locally in the user's browser
-      if (!localStorage.bb) localStorage.bb = JSON.stringify({});
-      var obj = JSON.parse(localStorage.bb);
-      if (!obj.version || obj.version !== main.version) {
-        localStorage.bb = JSON.stringify({
-          "version": main.version
-        });
-      }
 
       $('[data-toggle="tooltip"]').tooltip({
         container: 'body',
@@ -70,7 +55,23 @@ var App = {
       $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip', function(e) {
         $('[data-toggle="tooltip"]').not(this).tooltip('hide');
       });
+    };
 
+    main.getInitialData(function(){
+      gotInitialData = true;
+      if(gotInitialData && pageIsReady) {
+        initialize();
+      }
+    });
+
+    /******************************************
+     *** This happens when the page is ready ***
+     ******************************************/
+    $(document).ready(function() {
+      pageIsReady = true;
+      if(gotInitialData && pageIsReady) {
+        initialize();
+      }
     });
   }
 };

@@ -35,7 +35,6 @@ var overview = {
         $('#mainTitle').show();
         base.updateTitle("Overview of " + practiceName + "'s performance");
 
-        base.removeFullPage(farRightPanel);
         base.hidePanels(farRightPanel);
 
         layout.view = ID;
@@ -63,8 +62,9 @@ var overview = {
 
       //add state indicator
       farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
+      //BG-TODO probably not needed - users preferred standard browser scroll
       $('.ps-child').perfectScrollbar();
-      base.updateFixedHeightElements([{selector:'.table-scroll',padding:200},{selector:'.fit-to-screen-height',padding:200}]);
+      base.updateFixedHeightElements([{selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250},{selector:'.table-scroll',padding:220, minHeight:300}]);
     }, 0);
 
   }

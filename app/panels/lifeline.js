@@ -33,8 +33,8 @@ var ll = {
     var elementId = '#' + element;
 
     //Most recent max date of series minus one month or 1 year whichever is most
-    var minMaxDate=new Date();
-    minMaxDate.setMonth(minMaxDate.getMonth()-11);
+    var minMaxDate = new Date();
+    minMaxDate.setMonth(minMaxDate.getMonth() - 11);
 
     ll.destroy(elementId);
 
@@ -108,12 +108,12 @@ var ll = {
         var latestIntervalEndDate;
 
         $.each(task.intervals, function(j, interval) {
-          if(!latestIntervalEndDate) latestIntervalEndDate = interval.to;
+          if (!latestIntervalEndDate) latestIntervalEndDate = interval.to;
           else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
           item.data.push([i + 0.49, interval.from, interval.to]);
         });
 
-        if(latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
+        if (latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
 
         series.push(item);
       });
@@ -129,7 +129,7 @@ var ll = {
       var eventSeries = {};
       var latestContact;
       $.each(contacts, function(i, contact) {
-        if(!latestContact) latestContact = contact.time;
+        if (!latestContact) latestContact = contact.time;
         else latestContact = Math.max(latestContact, contact.time);
         if (!contactSeries[contact.name]) {
           contactSeries[contact.name] = Highcharts.extend(contact, {
@@ -144,11 +144,11 @@ var ll = {
               contact.time
           ]);
       });
-      if(latestContact) minMaxDate = Math.min(latestContact, minMaxDate);
+      if (latestContact) minMaxDate = Math.min(latestContact, minMaxDate);
 
       var latestImportantCode;
       $.each(importantCodes, function(i, event) {
-        if(!latestImportantCode) latestImportantCode = event.time;
+        if (!latestImportantCode) latestImportantCode = event.time;
         else latestImportantCode = Math.max(latestImportantCode, event.time);
         if (!eventSeries[event.name]) {
           eventSeries[event.name] = Highcharts.extend(event, {
@@ -164,7 +164,7 @@ var ll = {
           ]);
       });
 
-      if(latestImportantCode) minMaxDate = Math.min(latestImportantCode, minMaxDate);
+      if (latestImportantCode) minMaxDate = Math.min(latestImportantCode, minMaxDate);
 
       series = series.concat(Object.keys(contactSeries).map(function(key) {
         return contactSeries[key];
@@ -308,16 +308,25 @@ var ll = {
     var plotMeasurements = function(measurements) {
       $(elementId).append($('<div class="lifeline-chart-title">Patient measurements</div>'));
       //Make measurements alphabetical so they are always in the same order
-      measurements.sort(function(a,b){
-        if(a.name<b.name) return -1;
-        if(a.name>b.name) return 1;
+      measurements.sort(function(a, b) {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
         return 0;
       });
       $.each(measurements, function(i, dataset) {
         ll.charts++;
-        var maxMeasurementDate=0;
-        dataset.data.forEach(function(v){
+        var maxMeasurementDate = 0;
+        var dataDates = {};
+        dataset.data.forEach(function(v) {
+          if(!dataDates[v[0]]) {
+            dataDates[v[0]] = v;
+          } else if(dataDates[v[0]][1]==="salfordt") {
+            dataDates[v[0]]=v;
+          }
           maxMeasurementDate = Math.max(maxMeasurementDate, v[0]);
+        });
+        var dataFromDataDates = Object.keys(dataDates).map(function(v){
+          return dataDates[v];
         });
         minMaxDate = Math.min(minMaxDate, maxMeasurementDate);
         var chartOptions = {
@@ -334,9 +343,6 @@ var ll = {
             align: 'left',
             margin: 0,
             x: 30
-          },
-          marker: {
-            enabled: true
           },
           credits: {
             enabled: false
@@ -388,7 +394,7 @@ var ll = {
               };
             },
             useHTML: true,
-            pointFormat: '<b>' + dataset.name + ':</b> {point.y} ' + dataset.unit.replace(/\^([0-9]+)/, "<sup>$1</sup>"),
+            pointFormat: '<b>' + dataset.name + ':</b> {point.y} ' + dataset.unit.replace(/\^([0-9]+)/, "<sup>$1</sup>") + '<br><small>Recorded at: {point.loc}</small>',
             valueDecimals: dataset.valueDecimals
           },
           plotOptions: {
@@ -405,21 +411,46 @@ var ll = {
             }
           },
           series: [{
-            data: dataset.data.map(function(v){
-              return [v[0]].concat(v.slice(2));
+            data: dataFromDataDates.map(function(v) {
+              var dataObj = { x: v[0], loc: v[1] };
+              if(v[1] === "salfordt"){
+                dataObj.loc = "Salford Royal";
+                dataObj.color = "#E9573F";
+              }
+              if (v.length === 3) {
+                dataObj.y = v[2];
+              } else {
+                dataObj.low = v[2];
+                dataObj.high = v[3];
+              }
+              return dataObj;
             }),
             name: dataset.name,
             type: dataset.type,
             color: colour.next(),
-            fillOpacity: 0.3
+            fillOpacity: 0.3,
+            marker: {
+              enabled: true
+            },
             }]
         };
 
         if (dataset.name === "BP") {
-          chartOptions.tooltip.pointFormat = "<b>BP:</b> {point.low}/{point.high} mmHg<br/>";
+          chartOptions.tooltip.pointFormat = "<b>BP:</b> {point.low}/{point.high} mmHg<br><small>Recorded at: {point.loc}</small>";
           //chartOptions.series[0].tooltip = {};
           chartOptions.series[0].stemWidth = 3;
-          chartOptions.series[0].whiskerWidth = 5;
+          chartOptions.series[0].whiskerLength = 10;
+          chartOptions.series[0].states = {
+            hover: {
+              halo: {
+                size: 9,
+                attributes: {
+                  'stroke-width': 1,
+                  stroke: Highcharts.getOptions().colors[1]
+                }
+              }
+            }
+          };
         }
 
         /*if (i === 0) {
@@ -551,8 +582,8 @@ var ll = {
 
         var latestIntervalEndDate;
 
-        $.each(task.intervals.filter(function(v){return v.label!=="0.0mg";}), function(j, interval) {
-          if(!latestIntervalEndDate) latestIntervalEndDate = interval.to;
+        $.each(task.intervals.filter(function(v) { return v.label !== "0mg"; }), function(j, interval) {
+          if (!latestIntervalEndDate) latestIntervalEndDate = interval.to;
           else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
           item.data.push([i + 0.49, interval.from, interval.to]);
         });
@@ -671,7 +702,7 @@ var ll = {
 
           plotOptions: {
             columnrange: {
-              pointWidth:20,
+              pointWidth: 20,
               grouping: false,
               dataLabels: {
                 allowOverlap: true,
@@ -701,7 +732,7 @@ var ll = {
         });
     };
 
-    minMaxDate.setMonth(minMaxDate.getMonth()-1); //gives 1 month padding
+    minMaxDate.setMonth(minMaxDate.getMonth() - 1); //gives 1 month padding
 
     plotConditions(data.conditions, data.events, data.contacts);
     plotMeasurements(data.measurements);

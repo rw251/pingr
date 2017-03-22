@@ -24,7 +24,7 @@ include ../partials/head.jade
           - else
             td= user.practiceName + (user.practiceId ? " (" + user.practiceId + ")" : "")
           td= user.roles.indexOf("admin") > -1 ? "Admin" : ""
-          td= user.email_opt_out ? "Opted out" : "Receiving"
+          td= (user.email_opt_out || user.emailFrequency===0) ? "Opted out" : "Every " + (user.emailFrequency||"1") + " weeks - " + (user.emailDay ? ["sun","mon","tue","wed","thur","fri","sat"][user.emailDay] : "tue")
           td= user.last_login ? user.last_login.toISOString().split("T").map(function(v){if(v.indexOf('-')>-1){return v.split('-')[2] + '/' + v.split('-')[1] + '/' +v.split('-')[0];}else{return v.substr(0,8);}}).join(", ") : 'Never'
           td= user.last_email_reminder ? user.last_email_reminder.toISOString().split("T").map(function(v){if(v.indexOf('-')>-1){return v.split('-')[2] + '/' + v.split('-')[1] + '/' +v.split('-')[0];}else{return v.substr(0,8);}}).join(", ") : 'Never'
           td

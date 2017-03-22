@@ -34,6 +34,7 @@ var qs = {
     });
     //
     var html = tmpl({
+      "noStandards" : patientData.standards.length===0,
       "standards": patientData.standards,
       indicatorId: pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : null,
       patientId: patientId

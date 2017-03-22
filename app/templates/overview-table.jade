@@ -13,10 +13,13 @@
           tr
             th.col-md-3 Indicator
             th.col-md-1 Current Performance
+            // BG-TODO the below column is new
+            th.col-md-1 Actioned Patients
             th.col-md-2 Salford Target
             th.col-md-2 Top 10% Benchmark
+            // BB-TODO in dev merge this is "Change from Yesterday"
             th.col-md-2 Daily Trajectory
-            th.col-md-2 Trend
+            th.col-md-2 1 Year Trend
         tbody.ps-child.ps-boilerplate.col-md-12
           - var alt=false
           each indicator in indicators
@@ -41,6 +44,7 @@
                   
                 //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
                 span= ' (' + indicator.performance.fraction + ')'
+              td.col-md-1= indicator.reviewed + "/" + indicator.patientsWithOpportunity
               td.col-md-2= indicator.target
               td.col-md-2= (indicator.benchmark*100).toFixed(0)+"%"
               td.col-md-2(style="text-align:center")

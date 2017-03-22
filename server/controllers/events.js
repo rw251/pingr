@@ -74,7 +74,6 @@ var e = {
           if (err) {
             return done(err);
           } else {
-            console.log(evt);
             return done(null);
           }
         });
