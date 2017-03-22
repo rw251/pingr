@@ -36,12 +36,12 @@ var pl = {
 
       $('.indicatorList').hide();
 
-      if($(this).hasClass('hideIndicators')){
-        $(this).hide();
+      if ($(this).hasClass('hideIndicators')) {
+        $('.hideIndicators[data-id=' + $(this).data("id") + ']').hide();
         $('.showIndicators').show();
       } else {
         $('.showIndicators').show();
-        $(this).hide();
+        $('.showIndicators[data-id=' + $(this).data("id") + ']').hide();
         $('.hideIndicators').hide();
         $('.indicatorList[data-id="' + $(this).data("id") + '"]').show();
         $('.hideIndicators[data-id="' + $(this).data("id") + '"]').show();
@@ -73,6 +73,11 @@ var pl = {
         v.indicatorNames = v.indicators.map(function(vv) {
           return data.getDisplayTextFromIndicatorId(vv);
         });
+        if (v.indicatorsWithAction) {
+          v.indicatorsWithActionsNames = v.indicatorsWithAction.map(function(vv) {
+            return data.getDisplayTextFromIndicatorId(vv);
+          });
+        }
         return v;
       });
 
@@ -87,7 +92,7 @@ var pl = {
       $('#allPatientTable').floatThead({
         position: 'absolute',
         scrollContainer: true,
-        zIndex:50
+        zIndex: 50
       });
     });
 

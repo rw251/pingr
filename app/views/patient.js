@@ -158,7 +158,7 @@ var pv = {
       } else {
         base.updateTitle("No patient currently selected");
         base.switchToSingleColumn();
-        base.savePanelState();
+        //base.savePanelState();
         patientSearch.show(centrePanel, false, false, loadContentFn);
         allPatientList.show(centrePanel, true, skip, limit, loadContentFn);
 

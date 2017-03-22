@@ -200,16 +200,33 @@ module.exports = {
       { $match: { "characteristics.practiceId": practiceId, "actions": { $exists: true } } },
       { $project: { _id: 0, patientId: 1, actions: 1, characteristics: 1 } },
       { $unwind: "$actions" },
-      { $group: { _id: "$patientId", nhsNumber: {$max: "$characteristics.nhs"}, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" }, tot: { $sum: "$actions.pointsPerAction" }, indicators: { $addToSet: "$actions.indicatorId" } } },
-      { $project: {_id:1, nhsNumber:1, age:1, sex:1, tot:1, indicators:1, numberOfIndicators: { $size: "$indicators" }}},
-      { $sort: { numberOfIndicators:-1, tot: -1 } },
-      { $skip: skip},
+      { $group: { _id: "$patientId", nhsNumber: { $max: "$characteristics.nhs" }, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" }, tot: { $sum: "$actions.pointsPerAction" }, indicators: { $addToSet: "$actions.indicatorId" } } },
+      { $project: { _id: 1, nhsNumber: 1, age: 1, sex: 1, tot: 1, indicators: 1, numberOfIndicators: { $size: "$indicators" } } },
+      { $sort: { numberOfIndicators: -1, tot: -1 } },
+      { $skip: skip },
       { $limit: limit }
     ];
 
-    Patient.aggregate(aggregateQuery, function(err, results){
-      if(err) return done(err);
-      return done(null, results);
+    Patient.aggregate(aggregateQuery, function(err, results) {
+      if (err) return done(err);
+      var patientIds = results.map(function(v) {
+        return v._id;
+      });
+      var resultsObject = {};
+      results.forEach(function(v,i) {
+        resultsObject[v._id] = v;
+        resultsObject[v._id].pos = i;
+      });
+      actions.patientsWithPlansPerIndicator(patientIds, function(err, patientsWithActions) {
+        patientsWithActions.forEach(function(v) {
+          resultsObject[v._id].indicatorsWithAction = v.indicatorList;
+          resultsObject[v._id].numberOfIndicatorsWithAction = v.indicatorList.length;
+        });
+        Object.keys(resultsObject).map(function(v) {
+          results[v.pos] = resultsObject[v];
+        });
+        return done(null, results);
+      });
     });
   },
 
