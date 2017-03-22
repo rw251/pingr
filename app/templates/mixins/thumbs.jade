@@ -1,10 +1,10 @@
 mixin thumbs(suggestion)
   .col-md-6.col-md-offset-3
     .btn-group(data-toggle='buttons')  
-      label.btn.btn-lg.btn-just-icon.btn-yes.btn-toggle.btn-info(class= suggestion.agree ? 'active' : '', data-container='body', data-html='true', data-toggle='tooltip', data-placement='top', data-container="body", title='Click to agree with this action and save it in your agreed actions list ')
+      label.btn.btn-lg.btn-just-icon.btn-yes.btn-toggle.btn-info(class= suggestion.agree ? 'active' : '', data-container='body', data-html='true', data-toggle='tooltip', data-placement='top', title='Click to agree with this action and save it in your agreed actions list ')
         input(type='checkbox', value='yes', autocomplete='off', checked= suggestion.agree ? 'checked' : undefined)
         i.material-icons thumb_up
-      label.btn.btn-lg.btn-just-icon.btn-no.btn-toggle.btn-warning(class= suggestion.agree===false ? 'active' : '', data-container='body', data-html='true', data-toggle='tooltip', data-placement='top', data-container="body", title='Click to disagree with this action and remove it from your suggested actions list ')
+      label.btn.btn-lg.btn-just-icon.btn-no.btn-toggle.btn-warning(class= suggestion.agree===false ? 'active' : '', data-container='body', data-html='true', data-toggle='tooltip', data-placement='top', title='Click to disagree with this action and remove it from your suggested actions list ')
         input(type='checkbox', value='no', autocomplete='off', checked= suggestion.agree===false ? 'checked' : undefined)
         i.material-icons thumb_down
 // BG-TODO the following added at merge:

@@ -308,7 +308,6 @@ var iap = {
       self.find('.btn-toggle input[type=checkbox]:checked').each(function() {
         //set the tool tip
         any = true;
-<<<<<<< HEAD
         //if there is a history - display appropriate title
         if (patientActionsObject[self.data("id")].history != "") {
           var tooltipInfo = "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
