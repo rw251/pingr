@@ -44,4 +44,6 @@
                   | hide indicators
                   i.fa.fa-caret-up
                 .indicatorList(data-id=patient._id, style='display:none')!= patient.indicatorsWithActionsNames.join("<br>")
+            else
+              strong(style='vertical-align:top;padding-right:15px') 0
           td= patient.tot.toFixed(2)

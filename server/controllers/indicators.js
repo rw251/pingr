@@ -48,9 +48,13 @@ var mergeActions = function(actions, indicators, indicatorId) {
   //do the sorting
   rtn.sort(function(a,b){
     if(a.agree===false){
-      if(b.agree===false) return 0;
+      if(b.agree===false) return b.pointsPerAction - a.pointsPerAction;
       else return 1;
     } else if (b.agree === false){
+      return -1;
+    } else if(a.agree){
+      if(!b.agree) return 1;
+    } else if(b.agree){
       return -1;
     }
     return b.pointsPerAction - a.pointsPerAction;
