@@ -303,10 +303,10 @@ insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumbe
 --STROKE - CODED
 select a.PatID,
 	'cvd.stroke.outcome' as indicatorId,
-	'stroke.coded' as actionCat,
-	1 as reasonNumber,
-	@ptPercPoints as pointsPerAction,
-	5 as priority,
+	'strokeCoded' as actionCat,
+	null as reasonNumber,
+	null as pointsPerAction,
+	null as priority,
 	null as actionText,
 	null as supportingText
 from #numberOfStrokesPerPatient as a
@@ -317,7 +317,7 @@ union
 --STROKE - UNCODED
 select a.PatID,
 	'cvd.stroke.outcome' as indicatorId,
-	'stroke.uncoded' as actionCat,
+	'strokeUncoded' as actionCat,
 	1 as reasonNumber,
 	@ptPercPoints as pointsPerAction,
 	5 as priority,
@@ -351,11 +351,11 @@ CREATE TABLE #reasonProportions
 insert into #reasonProportions
 
 --STROKE - UNCODED
-select pracID, 'stroke.uncoded', 
-	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'stroke.uncoded' then 1.0 else 0.0 end) --no of uncoded strokes
+select pracID, 'strokeUncoded', 
+	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'strokeUncoded' then 1.0 else 0.0 end) --no of uncoded strokes
 	/SUM(case when indicatorId = 'cvd.stroke.outcome' then 1.0 else 0.0 end), --out of total no of strokes
-	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'stroke.uncoded' then 1.0 else 0.0 end),
-	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'stroke.uncoded' then 1.0 else 0.0 end)*@ptPercPoints
+	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'strokeUncoded' then 1.0 else 0.0 end),
+	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'strokeUncoded' then 1.0 else 0.0 end)*@ptPercPoints
 from [output.pingr.patActions] as a
 left outer join ptPractice as b on b.PatID = a.PatID
 group by pracID
@@ -377,7 +377,7 @@ insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion
 select
 	pracID as pracID,
 	'cvd.stroke.outcome' as indicatorId,
-	'Remind.to.code.strokes' as actionCat,
+	'RemindToCodeStrokes' as actionCat,
 	proportion as proportion,
 	numberPatients as numberPatients,
 	pointsPerAction as pointsPerAction,
@@ -387,7 +387,7 @@ select
 	+ '%) of who have had a stroke recorded in hospital in the last 12 months have not had this recorded in the GP record.</li>' +
 	'<li>You may wish to bring this up in your next practice meeting, or send a group message to all staff.</li></ul>'
 from #reasonProportions
-where proportionId = 'stroke.uncoded' 
+where proportionId = 'strokeUncoded' 
 
 							---------------------------------------------------------------
 							----------------------TEXT FILE OUTPUTS------------------------
@@ -420,11 +420,11 @@ values
 --based on actionCat
 
 --STROKE - CODED
-('cvd.stroke.outcome','opportunities.strokeCoded.name','Stroke - coded'),
+('cvd.stroke.outcome','opportunities.strokeCoded.name','Stroke - Coded'),
 ('cvd.stroke.outcome','opportunities.strokeCoded.description','Patients with a stroke recorded in hospital in the last 12 months that has been recorded in the GP record.'),
 ('cvd.stroke.outcome','opportunities.strokeCoded.positionInBarChart','2'),
 
 --STROKE UNCODED
-('cvd.stroke.outcome','opportunities.strokeUncoded.name','Stroke - uncoded'),
+('cvd.stroke.outcome','opportunities.strokeUncoded.name','Stroke - Uncoded'),
 ('cvd.stroke.outcome','opportunities.strokeUncoded.description','Patients with a stroke recorded in hospital in the last 12 months that has <strong>NOT</strong> been recorded in the GP record.'),
 ('cvd.stroke.outcome','opportunities.strokeUncoded.positionInBarChart','1');
