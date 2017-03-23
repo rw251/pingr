@@ -120,13 +120,23 @@ var al = {
     var tmpl = require("templates/action-list");
     var dataObject = { "actions": actionArray };
     if (actionArray.length === 0) dataObject.noSuggestions = true;
-    $('#suggested-actions-table')
-      .html(tmpl(dataObject))
-      .floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex: 50
+    var $scrollTable = $('table#suggested-actions-table');
+
+      $scrollTable.html(tmpl(dataObject));
+      $scrollTable.floatThead({
+        scrollContainer: function($scrollTable){
+          return $scrollTable.closest('.wrapper');
+        }
       });
+      $('.ps-child').perfectScrollbar();
+      // .floatThead({
+      //    position: 'absolute',
+      //   // scrollContainer: true,
+      //    scrollContainer: function($scrollTable){
+      //      return $scrollTable.closest('.wrapper');
+      //    }
+      //    //zIndex: 50
+      //});
 
     base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250, minHeight: 300 }]);
   }

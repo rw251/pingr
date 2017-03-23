@@ -8,6 +8,12 @@ Overrided CT-dashboard
 /*****************************
 Misc
 *****************************/
+#suggested-actions-table-wrapper{
+  overflow-y: auto;
+}
+.floatingTHead-opaque{
+  background: white;
+}
 .pre-icon-text{
     display: inline-flex;
     vertical-align: middle;

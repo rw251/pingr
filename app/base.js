@@ -236,8 +236,8 @@ var base = {
   },
 
   updateFixedHeightElements: function(elements) {
-    console.log(elements);
-    console.log("update called");
+    //console.log(elements);
+    //console.log("update called");
     if (!elements) elements = base.elements;
     base.elements = elements;
 //    console.log("shall we update?");
