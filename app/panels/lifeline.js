@@ -278,7 +278,7 @@ var ll = {
               grouping: false,
               /*groupPadding: 0.3,*/
               dataLabels: {
-                allowOverlap: true,
+                allowOverlap: false,
                 enabled: true,
                 formatter: function() {
                   var yCoord = this.y;
@@ -638,14 +638,13 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: {
-              snap: false
-            },
+            crosshair: true,
             events: {
               setExtremes: syncExtremes
             },
-
-
+            labels: {
+              enabled: false
+            },
 
             //things that are normally xAxis defaults
             endOnTick: false,
@@ -654,7 +653,7 @@ var ll = {
             maxPadding: 0.01,
             minPadding: 0.01,
             startOnTick: false,
-            tickWidth: 1,
+            tickWidth: 0,
             title: {
               text: ''
             },
@@ -705,7 +704,7 @@ var ll = {
               pointWidth: 20,
               grouping: false,
               dataLabels: {
-                allowOverlap: true,
+                allowOverlap: false,
                 enabled: true,
                 formatter: function() {
                   var yCoord = this.y;
