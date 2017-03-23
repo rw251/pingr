@@ -30,6 +30,7 @@ sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-ckd-bp-control.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-copd.exacerbation.rehab.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-measures-undiagnosed.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-med-undiagnosed.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-StrokeOutcomes.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_Run_all.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_generate_trend_data.sql
 
