@@ -47,6 +47,11 @@ var textFile = {
       "unit": "mmHg",
       "type": "errorbar"
     },
+    "strokeHosp": {
+      "name": "Stroke",
+      "unit": "Stroke",
+      "type": "line"
+    },
     "SBP":{},
     "DBP":{}
   }
