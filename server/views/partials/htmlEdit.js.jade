@@ -39,6 +39,22 @@ script.
     $.fn.tabOverride.tabSize(2);
     $textarea.tabOverride();
     
+    $('.set-default').on('click', function(e){
+      $.ajax({
+        type: "POST",
+        url: "/emaildefault/" + $(this).data("id"),
+        success: function(d) { 
+          window.location.reload();
+        },
+        error: function(){
+          alert('Failed to set default - maybe refresh the page');
+        },
+        dataType: "json",
+        contentType: "application/json"
+      });
+      e.preventDefault();
+    });
+    
     $('#testEmail').on('click', function(e){
       var dataToSend = {
         to: $('#emailAddress').val(),

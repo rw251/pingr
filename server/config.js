@@ -20,8 +20,7 @@ module.exports = {
           password: process.env.PINGR_SMTP_PASS || ''
       },
       options: {
-          from: 'PINGR <noreply@smash.srft.nhs.uk>',
-          to: process.env.PINGR_EMAIL_LIST || ''
+          from: 'PINGR <noreply@smash.srft.nhs.uk>'
       }
   }
 };

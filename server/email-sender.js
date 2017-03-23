@@ -1,38 +1,48 @@
+/*jshint esversion: 6 */
+
 var nodemailer = require('nodemailer'),
   smtpTransport = require('nodemailer-smtp-transport'),
-  sendgrid = require('sendgrid');
+  sendgrid = require('sendgrid'),
+  mailConfig = require('./config').mail;
 
-/**
- * Send an email via the sendgrid service. Requires a env setting called
- * $PINGR_SENDGRID_API_KEY set to your api key
- * @param  {Object.<string, string>}   from object with keys of email and name
- * @param  {Object.<string, string>[]}   toEmails Array of objects with keys of
- *                                       email and name
- * @param  {string}   subject    The subject of the email
- * @param  {string}   text       The fallback text of the email
- * @param  {string}   html       The HTML of the email body
- * @param  {Object.<string, string>}   attachment Object with a name and a
- *                                     content property each being a string
- * @param  {Function} callback   Executed on completion
- */
-var sendEmailViaSendgridHttp = function(from, toEmails, subject, text, html, attachment, callback) {
-  var helper = sendgrid.mail;
-  fromEmail = new helper.Email(from.email, from.name);
-  toEmails = toEmails.map(function(v) {
-    return new helper.Email(v.email, v.name);
-  });
-  var content = new helper.Content('text/html', html);
-  var mail = new helper.Mail(from, subject, toEmails.shift(), content);
+var sendEmailViaSendgridHttp = function(config, callback) {
+  var content, helper = sendgrid.mail;
+
+  var mail = new helper.Mail(); //, , , content);
+
+  var from = new helper.Email(config.from.email, config.from.name);
+  mail.setFrom(from);
+
+  mail.setSubject(config.subject);
+
+  var personalization = new helper.Personalization();
 
   // Add extra emails if they exist
-  toEmails.forEach(function(v, i) {
-    mail.personalizations[0].addTo(v);
+  config.to.forEach(function(v, i) {
+    var email = new helper.Email(v.email, v.name);
+    personalization.addTo(email);
   });
 
-  // Add text content if it exists
-  if (text) {
-    content = new helper.Content("text/plain", text);
+  mail.addPersonalization(personalization);
+
+  //plain text MUST come first for some reason
+  if (config.text) {
+    content = new helper.Content("text/plain", config.text);
     mail.addContent(content);
+  }
+  if (config.html) {
+    content = new helper.Content("text/html", config.html);
+    mail.addContent(content);
+  }
+
+  // attachment
+  if (config.attachment) {
+    // attachment = new helper.Attachment();
+    // attachment.setContent("TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gQ3JhcyBwdW12");
+    // attachment.setType("application/pdf");
+    // attachment.setFilename("balance_001.pdf");
+    // attachment.setDisposition("attachment");
+    // mail.addAttachment(attachment);
   }
 
   var sg = sendgrid(process.env.PINGR_SENDGRID_API_KEY);
@@ -49,11 +59,108 @@ var sendEmailViaSendgridHttp = function(from, toEmails, subject, text, html, att
   });
 };
 
+var formatEmail = function(emailObject) {
+  return emailObject.name + "<" + emailObject.email + ">";
+};
+
+var parseEmail = function(email) {
+  if (email.name && email.email) return email;
+  var bits = email.split("<");
+  if (bits.length !== 2) return callback(new Error("Email should be of form: Name <name@email.com>. Instead it is: " + email));
+  var fromName = bits[0].trim();
+  var fromEmail = bits[1].replace(">", "").trim();
+  return { name: fromName, email: fromEmail };
+};
+
+var sendEmailViaSmtp = function(config, callback) {
+  var smtpProperties = {};
+  smtpProperties.host = mailConfig.smtp.host;
+  smtpProperties.port = mailConfig.smtp.port;
+  if (mailConfig.smtp.useAuth) {
+    smtpProperties.auth = {
+      user: mailConfig.smtp.username,
+      pass: mailConfig.smtp.password
+    };
+  } else {
+    smtpProperties.tls = { rejectUnauthorized: false };
+  }
+
+  var transport = nodemailer.createTransport(smtpTransport(smtpProperties));
+
+  var mailOptions = {
+    from: formatEmail(config.from), // sender address
+    to: config.to.map(function(v) { return formatEmail(v); }).join(","), // list of receivers (comma separated)
+    subject: config.subject
+  };
+
+  if (config.text) {
+    mailOptions.text = config.text;
+  }
+
+  if (config.html) {
+    mailOptions.html = config.html;
+  }
+
+  if (config.attachment && config.attachment.name && config.attachment.content) {
+    mailOptions.attachments = [{ 'filename': config.attachment.name, 'content': config.attachment.content }];
+  }
+
+  // send mail with defined transport object
+  transport.sendMail(mailOptions, function(error, info) {
+    return callback(error, info);
+  });
+};
+
+//attachment if not null should be of the form:
+//{"name":"<filename>","content","<content as string>"}
+var sendEmailViaSendgridSmtp = function(config, callback) {
+  var smtpProperties = {};
+  smtpProperties.host = mailConfig.smtp.host;
+  smtpProperties.port = mailConfig.smtp.port;
+  if (mailConfig.smtp.useAuth) {
+    smtpProperties.auth = {
+      user: mailConfig.smtp.username,
+      pass: mailConfig.smtp.password
+    };
+    smtpProperties.service = 'SendGrid';
+  } else {
+    smtpProperties.tls = { rejectUnauthorized: false };
+  }
+
+  var transport = nodemailer.createTransport(smtpTransport(smtpProperties));
+
+  var mailOptions = {
+    from: formatEmail(config.from), // sender address
+    to: config.to.map(function(v) { return formatEmail(v); }).join(","), // list of receivers (comma separated)
+    subject: config.subject
+  };
+
+  if (config.text) {
+    mailOptions.text = config.text;
+  }
+
+  if (config.html) {
+    mailOptions.html = config.html;
+  }
+
+  if (config.attachment && config.attachment.name && config.attachment.content) {
+    mailOptions.attachments = [{ 'filename': config.attachment.name, 'content': config.attachment.content }];
+  }
+
+
+  // send mail with defined transport object
+  transport.sendMail(mailOptions, function(error, info) {
+    return callback(error, info);
+  });
+};
+
 const EMAILTYPE = {
   SENDGRIDHTTP: "SENDGRIDHTTP",
   SENDGRIDSMTP: "SENDGRIDSMTP",
   SMTP: "SMTP"
 };
+
+exports.EMAILTYPES = Object.keys(EMAILTYPE);
 
 /**
  * Send an email. NB the type property of the config should be left blank and
@@ -79,86 +186,42 @@ const EMAILTYPE = {
  * @return Boolean          Whether message sending started
  */
 exports.send = function(config, callback) {
+  console.log(config);
   //Validate config.type
-  if (!config.type) config.type = process.env.PINGR_EMAIL_METHOD;
-  if (Object.keys(EMAILTYPE).indexOf(config.type) < 0) config.type = EMAILTYPE.SENDGRIDHTTP;
+  if (!config.type) {
+    config.type = process.env.PINGR_SENDGRID_API_KEY ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+  }
+  if (Object.keys(EMAILTYPE).indexOf(config.type) < 0) config.type = EMAILTYPE.SMTP;
 
   switch (config.type) {
     case EMAILTYPE.SENDGRIDHTTP:
       return sendEmailViaSendgridHttp(config, callback);
     case EMAILTYPE.SENDGRIDSMTP:
-      //return sendEmailViaSendgridSmtp(config, callback);
-      return false;
+      return sendEmailViaSendgridSmtp(config, callback);
     case EMAILTYPE.SMTP:
-      //return sendEmailViaSmtp(config, callback);
-      return false;
+      return sendEmailViaSmtp(config, callback);
   }
 
   return false;
 };
 
-exports.sendEmailViaHttp = function(from, toEmails, subject, text, html, attachment, callback) {
-  var helper = require('sendgrid').mail;
-  var to_email = toEmails[0];
-  var content = new helper.Content('text/html', html);
-  var mail = new helper.Mail(from, subject, to_email, content);
+exports.config = function(type, from, to, subject, text, html, attachment) {
+  if (!type) {
+    type = process.env.PINGR_SENDGRID_API_KEY ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+  }
+  if (Object.keys(EMAILTYPE).indexOf(type) < 0) type = EMAILTYPE.SMTP;
 
-  toEmails.forEach(function(v, i) {
-    if (i === 0) return;
-    mail.personalizations[0].addTo(v);
-  });
+  from = from ? parseEmail(from) : {};
 
-  var sg = require('sendgrid')(process.env.PINGR_SENDGRID_API_KEY);
-  var request = sg.emptyRequest({
-    method: 'POST',
-    path: '/v3/mail/send',
-    body: mail.toJSON(),
-  });
-
-  sg.API(request, function(error, response) {
-    console.log(response.statusCode);
-    //console.log(response.body);
-    //console.log(response.headers);
-    if (error) return callback(error);
-    return callback(null);
-  });
-};
-//attachment if not null should be of the form:
-//{"name":"<filename>","content","<content as string>"}
-exports.sendEmail = function(mailConfig, subject, text, html, attachment, callback) {
-
-  var smtpProperties = {};
-  smtpProperties.host = mailConfig.smtp.host;
-  smtpProperties.port = mailConfig.smtp.port;
-  if (mailConfig.smtp.useAuth) {
-    smtpProperties.auth = {
-      user: mailConfig.smtp.username,
-      pass: mailConfig.smtp.password
-    };
-    smtpProperties.service = 'SendGrid';
+  if(to && to.map) {
+    //an array
+    to = to.map(function(v) {
+      return parseEmail(v);
+    });
   } else {
-    smtpProperties.tls = { rejectUnauthorized: false };
-  }
-
-  var transport = nodemailer.createTransport(smtpTransport(smtpProperties));
-
-  var mailOptions = {
-    from: mailConfig.options.from, // sender address
-    to: mailConfig.options.to, // list of receivers (comma separated)
-    subject: subject, // Subject line
-    text: text // plaintext body
-  };
-  if (html) mailOptions.html = html;
-
-  if (attachment && attachment.name && attachment.content) {
-    mailOptions.attachments = [{ 'filename': attachment.name, 'content': attachment.content }];
+    to = to ? [parseEmail(to)] : [];
   }
 
 
-  // send mail with defined transport object
-  transport.sendMail(mailOptions, function(error, info) {
-    if (callback) {
-      callback(error, info);
-    }
-  });
+  return { type, from, to, subject, text, html, attachment };
 };

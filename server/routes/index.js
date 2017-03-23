@@ -13,6 +13,7 @@ var actions = require('../controllers/actions.js');
 var emails = require('../controllers/emails.js');
 var emailSender = require('../email-sender.js');
 var text = require('../controllers/text.js');
+var utils = require('../controllers/utils.js');
 
 var isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
@@ -67,40 +68,41 @@ module.exports = function(passport) {
       if (err || msg) {
         res.render('pages/optOut.jade', { user: req.user });
       } else {
-        res.render('pages/optOut.jade', { user: user, message: { success: "Email preference updated. " + (req.body.freq==="0" ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
+        res.render('pages/optOut.jade', { user: user, message: { success: "Email preference updated. " + (req.body.freq === "0" ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
       }
     });
   });
 
-  router.post('/emailsendtest', isAuthenticated, isAdmin, function(req, res) {
-    var helper = require('sendgrid').mail;
-    var fromEmail = new helper.Email("benjamin.brown@nhs.uk", "Benjamin Brown");
-    var toEmails = req.body.to.split(";").map(function(v){return new helper.Email(v, "");});
-    emailSender.sendEmailViaHttp(fromEmail, toEmails, req.body.subject, req.body.text, req.body.html, null, function(err){
-      if(err) {
-        console.log(err);
-        res.send(err);
-      } else {
-        res.send(true);
-      }
-    });
+  router.post('/emailsendtest', isAuthenticated, isAdmin, function(req, res, next) {
+    if (!process.env.PINGR_REMINDER_EMAILS_FROM) {
+      next(new Error("No PINGR_REMINDER_EMAILS_FROM env var set."));
+    } else {
+      var emailConfig = emailSender.config(null, process.env.PINGR_REMINDER_EMAILS_FROM, req.body.to.replace(",", ";").split(";").map(function(v) { return { name: v.split("@")[0], email: v }; }), req.body.subject, req.body.text, req.body.html, null);
+
+      emailSender.send(emailConfig, function(err) {
+        if (err) {
+          console.log(err);
+          next(err);
+        } else {
+          res.send(true);
+        }
+      });
+    }
   });
 
   router.get('/emailadd', isAuthenticated, isAdmin, function(req, res) {
-    patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
-      indicators.list(req.user.practiceId, function(err, indicators){
-        res.render('pages/emailadd.jade', {user: req.user, patients: patients, indicators: indicators, message: req.flash()});
-      });
+    utils.getDataForEmails(req.user, function(err, data) {
+      data.message = req.flash();
+      res.render('pages/emailadd.jade', data);
     });
   });
 
   router.post('/emailadd', isAuthenticated, isAdmin, function(req, res) {
     emails.create(req, function(err, email, msg) {
       if (err || msg) {
-        patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
-          indicators.list(req.user.practiceId, function(err, indicators){
-            res.render('pages/emailadd.jade', {user: req.user, patients: patients, indicators: indicators, message: { error: msg }});
-          });
+        utils.getDataForEmails(req.user, function(err, data) {
+          data.message = { error: msg };
+          res.render('pages/emailadd.jade', data);
         });
       } else {
         res.redirect('/emailadmin');
@@ -108,12 +110,18 @@ module.exports = function(passport) {
     });
   });
 
+  router.post('/emaildefault/:label', isAuthenticated, isAdmin, function(req, res, next) {
+    emails.setDefault(req.params.label, function(err){
+      if(err) next(err);
+      else res.send(true);
+    });
+  });
+
   router.get('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
-    patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
-      indicators.list(req.user.practiceId, function(err, indicators){
-        emails.get(req.params.label, function(err, email) {
-          res.render('pages/emailedit.jade', { user: req.user, patients: patients, indicators: indicators, email: email });
-        });
+    utils.getDataForEmails(req.user, function(err, data) {
+      emails.get(req.params.label, function(err, email) {
+        data.email = email;
+        res.render('pages/emailedit.jade', data);
       });
     });
   });
@@ -121,11 +129,11 @@ module.exports = function(passport) {
   router.post('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
     emails.edit(req.params.label, req, function(err, user, msg) {
       if (err || msg) {
-        patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
-          indicators.list(req.user.practiceId, function(err, indicators){
-            emails.get(req.params.label, function(err, email) {
-              res.render('pages/emailedit.jade', { user: req.user, patients: patients, indicators: indicators, email: email, message: { error: msg } });
-            });
+        utils.getDataForEmails(req.user, function(err, data) {
+          emails.get(req.params.label, function(err, email) {
+            data.email = email;
+            data.message = { error: msg };
+            res.render('pages/emailedit.jade', data);
           });
         });
       } else {
@@ -145,16 +153,15 @@ module.exports = function(passport) {
   });
 
   router.get('/emailadmin', isAuthenticated, isAdmin, function(req, res) {
-    patients.getAllPatientsPaginated(req.user.practiceId, 0, 10, function(err, patients) {
-      indicators.list(req.user.practiceId, function(err, indicators){
-        emails.list(function(err, emailList){
-          if(err) {
-            console.log(err);
-            res.send();
-          } else {
-            res.render('pages/emailadmin.jade', { user: req.user, patients: patients, indicators: indicators, emailList: emailList });
-          }
-        });
+    utils.getDataForEmails(req.user, function(err, data) {
+      emails.list(function(err, emailList) {
+        if (err) {
+          console.log(err);
+          res.send();
+        } else {
+          data.emailList = emailList;
+          res.render('pages/emailadmin.jade', data);
+        }
       });
     });
   });
@@ -194,9 +201,9 @@ module.exports = function(passport) {
 
   /* Handle Logout */
   router.get('/signout', function(req, res) {
-    if(req.user)
+    if (req.user)
       events.logout(req.user.email, req.sessionID);
-    req.session.destroy(function (err) {
+    req.session.destroy(function(err) {
       res.redirect('/login'); //Inside a callback… bulletproof!
     });
     //RW The below sometimes means the redirect occurs before the logout has finished
@@ -366,7 +373,7 @@ module.exports = function(passport) {
           evt.type = "agree";
         } else if (req.body.action.agree === false) {
           evt.type = "disagree";
-          if(req.body.action.rejectedReasonText)
+          if (req.body.action.rejectedReasonText)
             evt.data.push({ key: "reasonText", value: req.body.action.rejectedReasonText });
         }
         events.add(evt, function(err) {
@@ -398,7 +405,7 @@ module.exports = function(passport) {
           evt.type = "agree";
         } else if (req.body.action.agree === false) {
           evt.type = "disagree";
-          if(req.body.action.rejectedReasonText)
+          if (req.body.action.rejectedReasonText)
             evt.data.push({ key: "reasonText", value: req.body.action.rejectedReasonText });
         }
         events.add(evt, function(err) {
@@ -491,8 +498,8 @@ module.exports = function(passport) {
     });
   });
   //Return a page of the low hanging fruit patients
-  router.get('/api/WorstPatients/:skip/:limit', isAuthenticated, function(req, res){
-    patients.getAllPatientsPaginated(req.user.practiceId, +req.params.skip, +req.params.limit, function(err, patients){
+  router.get('/api/WorstPatients/:skip/:limit', isAuthenticated, function(req, res) {
+    patients.getAllPatientsPaginated(req.user.practiceId, +req.params.skip, +req.params.limit, function(err, patients) {
       res.send(patients);
     });
   });

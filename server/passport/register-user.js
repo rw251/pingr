@@ -2,7 +2,6 @@ var User = require('../models/user'),
   emailSender = require('../email-sender');
 
 var config = require('../config');
-var mailConfig = config.mail;
 
 module.exports = {
   register: function(req, res, next) {
@@ -38,23 +37,22 @@ module.exports = {
             req.flash('error', 'An error occurred please try again.');
             return next();
           }
-          var localMailConfig = {
-            sendEmailOnError: mailConfig.sendEmailOnError,
-            smtp: mailConfig.smtp,
-            options: {}
-          };
-console.log(JSON.stringify(config));
-console.log(JSON.stringify(mailConfig));
-	  localMailConfig.options.to = mailConfig.options.to;
-          localMailConfig.options.from = mailConfig.options.from;
-console.log(JSON.stringify(localMailConfig));
+
+          if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
+          if (!process.env.PINGR_NEW_USERS_NOTIFICATION_EMAIL) return callback(new Error("No PINGR_NEW_USERS_NOTIFICATION_EMAIL env var set."));
+          var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, process.env.PINGR_NEW_USERS_NOTIFICATION_EMAIL.split(","), "PINGR: Request for access",
+            "A user has requested to access pingr at " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1],
+            null, null);
+
           //to is now in config file
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, null, function(error, info) {
+          emailSender.send(emailConfig, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
             }
-            localMailConfig.options.to = newUser.email;
-            emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'We have received your request to access ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1] + '\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR', null, null, function(error, info) {
+            emailConfig.to = [{name: newUser.fullname, email: newUser.email}];
+            emailConfig.subject = "PINGR: Request for access";
+            emailConfig.text = "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR";
+            emailSender.send(emailConfig, function(error, info) {
               if (error) {
                 console.log("email not sent: " + error);
               }
@@ -95,15 +93,11 @@ console.log(JSON.stringify(localMailConfig));
             return next();
           }
           //send email
-          var config = require('../config');
-          var localMailConfig = {
-            sendEmailOnError: mailConfig.sendEmailOnError,
-            smtp: mailConfig.smtp,
-            options: {}
-          };
-          localMailConfig.options.to = user.email;
-          localMailConfig.options.from = mailConfig.options.from;
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been authorised to view PINGR for practice ' + user.practiceName + '\n\nYou can access the site at ' + config.server.url + '.\n\nRegards\n\nPINGR', null, null, function(error, info) {
+          if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
+          var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, {name: user.fullname, email: user.email}, "PINGR: Request for access",
+            "You have been authorised to view PINGR for practice " + user.practiceName + "\n\nYou can access the site at " + config.server.url + ".\n\nRegards\n\nPINGR",
+            null, null);
+          emailSender.send(emailConfig, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User authorised but confirmation email failed to send.');
@@ -135,15 +129,11 @@ console.log(JSON.stringify(localMailConfig));
             return next();
           }
           //send email
-          var config = require('../config');
-          var localMailConfig = {
-            sendEmailOnError: mailConfig.sendEmailOnError,
-            smtp: mailConfig.smtp,
-            options: {}
-          };
-          localMailConfig.options.to = user.email;
-          localMailConfig.options.from = mailConfig.options.from;
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been denied access to view PINGR for practice ' + user.practiceNameNotAuthorised + '\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR', null, null, function(error, info) {
+          if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
+          var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, {name: user.fullname, email: user.email}, "PINGR: Request for access",
+            "You have been denied access to view PINGR for practice " + user.practiceNameNotAuthorised + "\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR",
+            null, null);
+          emailSender.send(emailConfig, function(error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User rejected but confirmation email failed to send.');
