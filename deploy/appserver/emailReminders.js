@@ -18,6 +18,11 @@ oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
 twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13);
 fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 47);
 
+var DEV = false;
+if(process.argv.length>2 && process.argv[2] === "dev") {
+  DEV = true;
+}
+
 User.find({
   /*"$and": [
     { "$or": [{ "last_email_reminder": { "$exists": false } }, { "last_email_reminder": { "$lte": oneWeekAgo } }] },
@@ -40,6 +45,7 @@ User.find({
     process.exit(0);
   }
   users.forEach(function(v) {
+    if(DEV && v.email)
     /*if (v.email.toLowerCase().indexOf('green') > -1) {
       console.log("Not doing: " + v.email);
       usersUpdated++;
