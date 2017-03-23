@@ -175,6 +175,14 @@ BEGIN
 	RETURN;
 END
 
+EXEC	@return_value = [dbo].[pingr.cvd.stroke.outcome]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
 							---------------------------------------------------------------
 							---------CREATE AND POPULATE PATIENT-LEVEL DATA TABLES---------
 							---------------------------------------------------------------
@@ -192,9 +200,10 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'sbp') then 'SBP'
 		when ReadCode in (select code from codeGroups where [group] = 'dbp') then 'DBP'
 		when ReadCode in (select code from codeGroups where [group] = 'fev1') then 'FEV1'
+		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source = 'salfordt' then 'strokeHosp'
 	end as measure,
 CodeValue as value, Source from SIR_ALL_Records
-where ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp','fev1'))
+where ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp','fev1', 'strokeQof'))
 	and CodeValue is not NULL
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
@@ -218,7 +227,9 @@ select PatID, date,
 	case
 		when eventcode = 5 then 'Telephone contact'
 		when eventcode = 4 then 'Face-to-face contact'
-		when eventcode <=3 then 'Other code'
+		when eventcode = 3 then 'Other contact'
+		when eventcode = 2 then 'Medication prescribed'
+		when eventcode <= 1 then 'Record opened'
 		end as event from
 			(
 				select PatID,
@@ -352,6 +363,8 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] in ('hfQof','hfPermEx')) then 'Heart Failure'
 		when ReadCode in (select code from codeGroups where [group] in ('anxiety','anxietyPermEx')) then 'Anxiety'
 		when ReadCode in (select code from codeGroups where [group] in ('hyperthyroid','hyperthyroidPermEx')) then 'Hyperthyroidism'
+		when ReadCode in (select code from codeGroups where [group] in ('strokeQof')) then 'Stroke'
+		when ReadCode in (select code from codeGroups where [group] in ('tiaQof')) then 'TIA'
 	end as diagnosis,
 	case --MUST APPEAR IN DIAGNOSIS CASE WHENS ABOVE
 		when ReadCode in ('1Z12.','K053.') then 'Stage 3'
@@ -404,7 +417,8 @@ where
 	(
 		ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx', 'dm','dmPermEx','phaeo','asthmaQof',
 		'asthmaPermEx','porphyria','MInow','AS','gout','addisons','whiteCoat','dmPermEx','asthmaPermEx', 'copdQof', 'copdPermEx', 'htnQof',
-		'htnPermEx', 'oedema', 'oedemaPermEx', 'af','afPermEx', 'chdQof', 'hfQof','hfPermEx','anxiety','anxietyPermEx','hyperthyroid','hyperthyroidPermEx'))
+		'htnPermEx', 'oedema', 'oedemaPermEx', 'af','afPermEx', 'chdQof', 'hfQof','hfPermEx','anxiety','anxietyPermEx','hyperthyroid','hyperthyroidPermEx',
+		'strokeQof','tiaQof'))
 		or ReadCode in ('1Z12.','K053.','1Z13.','K054.','1Z14.','K055.','1Z15.','1Z16.','1Z1B.','1Z1C.','1Z1D.','1Z1E.', '1Z1T.',
 		'1Z1F.','1Z1G.','1Z1X.','1Z1H.','1Z1J.', '1Z1a.','1Z1K.','1Z1L.', '1Z1d.','1Z1V.','1Z1W.','1Z1Y.','1Z1Z.','1Z1b.','1Z1c.',
 		'1Z1e.','1Z1f.','2126E','1Z10.','1Z11.','1Z17.','1Z18.', '1Z1M.','1Z19.','1Z1A.', '1Z1Q.','1Z1N.','1Z1P.','1Z1R.','1Z1S.','K051.','K052.')
