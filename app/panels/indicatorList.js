@@ -10,8 +10,8 @@ var indicatorList = {
     data.getAllIndicatorData(null, function(indicators) {
       indicators.sort(function(a,b){
         if(a.performance.percentage == b.performance.percentage) return 0;
-        if(isNaN(a.performance.percentage)) return 1;
-        if(isNaN(b.performance.percentage)) return -1;
+        if(isNaN(a.performance.percentage) || a.name.toLowerCase().indexOf("beta test")>-1) return 1;
+        if(isNaN(b.performance.percentage) || b.name.toLowerCase().indexOf("beta test")>-1) return -1;
         return a.performance.percentage - b.performance.percentage;
       });
       var tempMust = $('#overview-panel-table').html();
