@@ -26,6 +26,8 @@ module.exports = {
           password: req.body.password,
           fullname: req.body.fullname,
           last_login: new Date(),
+          emailFrequency: req.body.freq,
+          emailDay: req.body.day,
           practiceIdNotAuthorised: els[0] !== "" ? els[0] : "",
           practiceNameNotAuthorised: els[0] !== "" ? els[1] : "None"
         });

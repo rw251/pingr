@@ -86,8 +86,10 @@ var e = {
     }
   },
 
-  emailReminder: function(email, token, date, done) {
-    var newEvent = new Event({date:date, user: email, type: "emailReminderSent", data:[{key:"token", value: token}]});
+  emailReminder: function(email, token, body, date, done) {
+    //remove nhs numbers
+    body = body.replace(/[0-9]{9}/g,"?????????");
+    var newEvent = new Event({date:date, user: email, type: "emailReminderSent", data:[{key:"token", value: token}, {key:"body", value: body}]});
 
     // save the event
     newEvent.save(function(err) {

@@ -30,8 +30,8 @@ include ../partials/head.jade
     .form-group
       label(for="day") Send it on a..
       select.form-control(name="day")
-        option(value="1",selected=user.emailDay==="1") Monday
-        option(value="2",selected=!user.emailDay || user.emailDay==="2") Tuesday
+        option(value="1",selected=!user.emailDay || user.emailDay==="1") Monday
+        option(value="2",selected=user.emailDay==="2") Tuesday
         option(value="3",selected=user.emailDay==="3") Wednesday
         option(value="4",selected=user.emailDay==="4") Thursday
         option(value="5",selected=user.emailDay==="5") Friday

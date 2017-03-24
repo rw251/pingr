@@ -70,8 +70,8 @@ User.find(searchObject, function(err, users) {
       if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
       return;
     }
-    if (v.emailDay === undefined && day !== 2) {
-      console.log(v.email + " no emailDay and not tuesday");
+    if (v.emailDay === undefined && day !== 1) {
+      console.log(v.email + " no emailDay and not Monday");
       if (!DEV) {
         usersUpdated++;
         emailsSent++;
@@ -123,7 +123,7 @@ User.find(searchObject, function(err, users) {
               console.log("email not sent: " + error);
               usersUpdated++;
             } else {
-              events.emailReminder(v.email, token, now, function(err) {
+              events.emailReminder(v.email, token, emailHTMLBody, now, function(err) {
                 if (err) {
                   console.log("email event not recorded: " + err);
                 }
