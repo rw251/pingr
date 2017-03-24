@@ -14,6 +14,7 @@ var emails = require('../controllers/emails.js');
 var emailSender = require('../email-sender.js');
 var text = require('../controllers/text.js');
 var utils = require('../controllers/utils.js');
+var config = require('../config');
 
 var isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
@@ -74,20 +75,16 @@ module.exports = function(passport) {
   });
 
   router.post('/emailsendtest', isAuthenticated, isAdmin, function(req, res, next) {
-    if (!process.env.PINGR_REMINDER_EMAILS_FROM) {
-      next(new Error("No PINGR_REMINDER_EMAILS_FROM env var set."));
-    } else {
-      var emailConfig = emailSender.config(null, process.env.PINGR_REMINDER_EMAILS_FROM, req.body.to.replace(",", ";").split(";").map(function(v) { return { name: v.split("@")[0], email: v }; }), req.body.subject, req.body.text, req.body.html, null);
+    var emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, req.body.to.replace(",", ";").split(";").map(function(v) { return { name: v.split("@")[0], email: v }; }), req.body.subject, req.body.text, req.body.html, null);
 
-      emailSender.send(emailConfig, function(err) {
-        if (err) {
-          console.log(err);
-          next(err);
-        } else {
-          res.send(true);
-        }
-      });
-    }
+    emailSender.send(emailConfig, function(err) {
+      if (err) {
+        console.log(err);
+        next(err);
+      } else {
+        res.send(true);
+      }
+    });
   });
 
   router.get('/emailadd', isAuthenticated, isAdmin, function(req, res) {
@@ -111,8 +108,8 @@ module.exports = function(passport) {
   });
 
   router.post('/emaildefault/:label', isAuthenticated, isAdmin, function(req, res, next) {
-    emails.setDefault(req.params.label, function(err){
-      if(err) next(err);
+    emails.setDefault(req.params.label, function(err) {
+      if (err) next(err);
       else res.send(true);
     });
   });
@@ -160,6 +157,10 @@ module.exports = function(passport) {
           res.send();
         } else {
           data.emailList = emailList;
+          data.reminderEmailsFrom = config.mail.reminderEmailsFrom;
+          data.adminEmailsFrom = config.mail.adminEmailsFrom;
+          data.newUsersNotificationEmail = config.mail.newUsersNotificationEmail;
+          data.serverUrl = config.server.url;
           res.render('pages/emailadmin.jade', data);
         }
       });

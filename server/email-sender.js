@@ -45,7 +45,7 @@ var sendEmailViaSendgridHttp = function(config, callback) {
     // mail.addAttachment(attachment);
   }
 
-  var sg = sendgrid(process.env.PINGR_SENDGRID_API_KEY);
+  var sg = sendgrid(mailConfig.mail.sendGridAPIKey);
   var request = sg.emptyRequest({
     method: 'POST',
     path: '/v3/mail/send',
@@ -164,7 +164,8 @@ exports.EMAILTYPES = Object.keys(EMAILTYPE);
 
 /**
  * Send an email. NB the type property of the config should be left blank and
- * is retrieved from the environment setting of $PINGR_EMAIL_METHOD
+ * is determined as either sendgrid if the sendgrid api key is set or SMTP
+ * if not
  * @param  {Object} config Properties:
  *                         type: ["SENDGRIDHTTP", "SENDGRIDSMTP", "SMTP"]
  *                         from: {
@@ -189,7 +190,7 @@ exports.send = function(config, callback) {
   console.log(config);
   //Validate config.type
   if (!config.type) {
-    config.type = process.env.PINGR_SENDGRID_API_KEY ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+    config.type = mailConfig.mail.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
   }
   if (Object.keys(EMAILTYPE).indexOf(config.type) < 0) config.type = EMAILTYPE.SMTP;
 
@@ -207,7 +208,7 @@ exports.send = function(config, callback) {
 
 exports.config = function(type, from, to, subject, text, html, attachment) {
   if (!type) {
-    type = process.env.PINGR_SENDGRID_API_KEY ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+    type = mailConfig.mail.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
   }
   if (Object.keys(EMAILTYPE).indexOf(type) < 0) type = EMAILTYPE.SMTP;
 

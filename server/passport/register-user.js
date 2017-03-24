@@ -38,9 +38,7 @@ module.exports = {
             return next();
           }
 
-          if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
-          if (!process.env.PINGR_NEW_USERS_NOTIFICATION_EMAIL) return callback(new Error("No PINGR_NEW_USERS_NOTIFICATION_EMAIL env var set."));
-          var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, process.env.PINGR_NEW_USERS_NOTIFICATION_EMAIL.split(","), "PINGR: Request for access",
+          var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, config.mail.newUsersNotificationEmail.split(","), "PINGR: Request for access",
             "A user has requested to access pingr at " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1],
             null, null);
 
@@ -93,8 +91,7 @@ module.exports = {
             return next();
           }
           //send email
-          if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
-          var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, {name: user.fullname, email: user.email}, "PINGR: Request for access",
+          var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, {name: user.fullname, email: user.email}, "PINGR: Request for access",
             "You have been authorised to view PINGR for practice " + user.practiceName + "\n\nYou can access the site at " + config.server.url + ".\n\nRegards\n\nPINGR",
             null, null);
           emailSender.send(emailConfig, function(error, info) {
@@ -129,8 +126,7 @@ module.exports = {
             return next();
           }
           //send email
-          if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
-          var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, {name: user.fullname, email: user.email}, "PINGR: Request for access",
+          var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, {name: user.fullname, email: user.email}, "PINGR: Request for access",
             "You have been denied access to view PINGR for practice " + user.practiceNameNotAuthorised + "\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR",
             null, null);
           emailSender.send(emailConfig, function(error, info) {

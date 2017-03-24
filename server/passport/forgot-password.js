@@ -2,6 +2,8 @@ var User = require('../models/user'),
   crypto = require('crypto'),
   emailSender = require('../email-sender');
 
+var config = require('../config');
+
 module.exports = {
 
   forgot: function(req, res, next) {
@@ -34,8 +36,7 @@ module.exports = {
             }
             console.log('Password token issued succesful');
 
-            if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
-            var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, { name: user.fullname, email: user.email }, "PINGR: Password reset",
+            var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password reset",
               "Your password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://" + req.headers.host + "/forgot/" + token + "\n\n",
               null, null);
 
@@ -85,9 +86,7 @@ module.exports = {
                 req.flash('error', 'An error has occurred. Please try again.');
                 return next();
               } else {
-
-                if (!process.env.PINGR_ADMIN_EMAILS_FROM) return callback(new Error("No PINGR_ADMIN_EMAILS_FROM env var set."));
-                var emailConfig = emailSender.config(null, process.env.PINGR_ADMIN_EMAILS_FROM, { name: user.fullname, email: user.email }, "PINGR: Password changed",
+                var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password changed",
                   "Your password has been changed.\n\nIf you did not initiate this please contact the support team.",
                   null, null);
 

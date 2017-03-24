@@ -13,6 +13,19 @@ include ../partials/headMinimalCss.jade
       button.close(type="button" data-dismiss="alert" aria-label="Close")
         span(aria-hidden="true") ×
       p= message.success
+  p 
+    | Email details for 
+    strong= serverUrl
+  ul
+    li
+      | Reminder emails come from: 
+      strong= reminderEmailsFrom
+    li
+      | Admin emails (new user / password reset etc.) come from: 
+      strong= adminEmailsFrom
+    li
+      | New user notifications are sent to: 
+      strong= newUsersNotificationEmail
   table.pure-table.pure-table-bordered
     thead
       tr

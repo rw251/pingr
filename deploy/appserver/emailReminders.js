@@ -113,8 +113,9 @@ User.find(searchObject, function(err, users) {
 
         emailTemplates.getDefault(function(err, emailTemplate) {
           //send email
-          if (!process.env.PINGR_REMINDER_EMAILS_FROM) return callback(new Error("No PINGR_REMINDER_EMAILS_FROM env var set."));
-          var emailConfig = emailSender.config(null, process.env.PINGR_REMINDER_EMAILS_FROM, { name: v.fullname, email: v.email }, emailTemplate.subject, null, jade2html(emailTemplate.body, data), null);
+          var emailHTMLBody = jade2html(emailTemplate.body, data);
+          emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
+          var emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, null, emailHTMLBody, null);
 
           emailSender.send(emailConfig, function(error, info) {
             emailsSent++;
