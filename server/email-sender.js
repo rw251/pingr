@@ -45,7 +45,7 @@ var sendEmailViaSendgridHttp = function(config, callback) {
     // mail.addAttachment(attachment);
   }
 
-  var sg = sendgrid(mailConfig.mail.sendGridAPIKey);
+  var sg = sendgrid(mailConfig.sendGridAPIKey);
   var request = sg.emptyRequest({
     method: 'POST',
     path: '/v3/mail/send',
@@ -190,7 +190,7 @@ exports.send = function(config, callback) {
   console.log(config);
   //Validate config.type
   if (!config.type) {
-    config.type = mailConfig.mail.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+    config.type = mailConfig.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
   }
   if (Object.keys(EMAILTYPE).indexOf(config.type) < 0) config.type = EMAILTYPE.SMTP;
 
@@ -208,7 +208,7 @@ exports.send = function(config, callback) {
 
 exports.config = function(type, from, to, subject, text, html, attachment) {
   if (!type) {
-    type = mailConfig.mail.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+    type = mailConfig.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
   }
   if (Object.keys(EMAILTYPE).indexOf(type) < 0) type = EMAILTYPE.SMTP;
 
