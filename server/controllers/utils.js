@@ -54,7 +54,11 @@ module.exports = {
         if (err) return callback(err);
         indicators = processIndicators(indicators);
         patients = processPatients(patients);
-        return callback(null, { user, patients, indicators });
+        user = user.toObject();
+        if(user.last_login) user.last_login = (new Date(user.last_login)).toDateString();
+        user.indicators = indicators;
+        user.patients = patients;
+        return callback(null, { data: user });
       });
     });
   }

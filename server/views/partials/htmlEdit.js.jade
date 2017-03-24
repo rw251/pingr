@@ -1,9 +1,6 @@
 script.
-  var data = !{JSON.stringify(user)};
-  if(data.last_login) data.last_login = (new Date(data.last_login)).toDateString();
+  var data = !{JSON.stringify(data)};
   data.pingrUrl = "https://pingr-dev.herokuapp.com/";
-  data.indicators = !{JSON.stringify(indicators)};
-  data.patients = !{JSON.stringify(patients)};
   jade2html = function(input, data) {
     return jade.compile(input, {
       pretty: true,

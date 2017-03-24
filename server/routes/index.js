@@ -563,12 +563,12 @@ module.exports = function(passport) {
 
   router.get('/t/:token/*', function(req, res) {
     events.emailReminderTokenCheck(req.params.token, req.url);
-    res.redirect('/login');
+    res.redirect('/');
   });
 
   router.get('/t/:token', function(req, res) {
     events.emailReminderTokenCheck(req.params.token, req.url);
-    res.redirect('/login');
+    res.redirect('/');
   });
 
   router.get('/', isAuthenticated, function(req, res, next) {

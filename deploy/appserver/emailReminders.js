@@ -8,7 +8,15 @@ var User = require('../../server/models/user'),
   utils = require('../../server/controllers/utils'),
   events = require('../../server/controllers/events'),
   emailTemplates = require('../../server/controllers/emails'),
-  indicators = require('../../server/controllers/indicators');
+  indicators = require('../../server/controllers/indicators'),
+  jade = require('jade');
+
+var jade2html = function(input, data) {
+  return jade.compile(input, {
+    pretty: true,
+    doctype: "5"
+  })(data);
+};
 
 var now = new Date();
 var day = now.getDay();
@@ -26,19 +34,22 @@ if (process.argv.length > 2 && process.argv[2] === "dev") {
   DEV = true;
 }
 
-User.find({
-  $and: [
-    {
-      $or: [
-        { last_email_reminder: { $exists: false } }, //never had one
-        { last_email_reminder: { $lte: yesterday } } //wasn't today
-      ]
-    },
-    { practiceId: { $exists: true } }, // to ensure it's only authorised people
-    { practiceId: { $not: /ALL/ } }, // to ensure CCG users don't get one
-    { emailFrequency: { $ne: 0 } } // never receives emails
-  ]
-}, function(err, users) {
+var andComponent = [];
+if (!DEV) {
+  //only check last_email_reminder stuff if not dev
+  andComponent.push({
+    $or: [
+      { last_email_reminder: { $exists: false } }, //never had one
+      { last_email_reminder: { $lte: yesterday } } //wasn't today
+    ]
+  });
+}
+andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only authorised people
+andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
+andComponent.push({ emailFrequency: { $ne: 0 } }); // never receives emails
+var searchObject = { $and: andComponent };
+
+User.find(searchObject, function(err, users) {
   // In case of any error, return using the done method
   if (err) {
     console.log('Error in finding users to pester: ' + err);
@@ -50,6 +61,7 @@ User.find({
     console.log("No users to remind");
     process.exit(0);
   }
+  console.log(users.map(function(v) { return v.fullname; }).join("\n"));
   users.forEach(function(v) {
     if (DEV && [ /*"benjamin.brown@manchester.ac.uk", */ "richard.williams2@manchester.ac.uk"].indexOf(v.email) < 0) {
       console.log("Not doing: " + v);
@@ -60,47 +72,49 @@ User.find({
     }
     if (v.emailDay === undefined && day !== 2) {
       console.log(v.email + " no emailDay and not tuesday");
-      usersUpdated++;
-      emailsSent++;
-      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
-      return;
+      if (!DEV) {
+        usersUpdated++;
+        emailsSent++;
+        if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+        return;
+      } //let's fall through if not dev to see what happens
     }
     if (!v.emailFrequency) {
       v.emailFrequency = 1;
     }
     if (v.emailFrequency === 2 && twoWeeksAgo < v.last_email_reminder) {
       console.log("freq 2 but email since");
-      usersUpdated++;
-      emailsSent++;
-      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
-      return;
+      if (!DEV) {
+        usersUpdated++;
+        emailsSent++;
+        if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+        return;
+      } //let's fall through if not dev to see what happens
     }
     if (v.emailFrequency === 4 && fourWeeksAgo < v.last_email_reminder) {
       console.log("freq 4 but email since");
-      usersUpdated++;
-      emailsSent++;
-      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
-      return;
+      if (!DEV) {
+        usersUpdated++;
+        emailsSent++;
+        if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+        return;
+      } //let's fall through if not dev to see what happens
     }
     console.log("Doing: " + v.email);
 
     utils.getDataForEmails(v, function(err, data) {
-
-      data.pingrUrl =
-
+      data = data.data;//!!
       crypto.randomBytes(6, function(err, buf) {
         var token = buf.toString('hex');
 
         var urlBaseWithToken = config.server.url + "/t/" + token + "/";
+        console.log(urlBaseWithToken);
+        data.pingrUrl = urlBaseWithToken;
 
         emailTemplates.getDefault(function(err, emailTemplate) {
-          var x = require(emailTemplate);
-          console.log(emailTemplate);
-          console.log(x);
-          console.log(x(data));
           //send email
           if (!process.env.PINGR_REMINDER_EMAILS_FROM) return callback(new Error("No PINGR_REMINDER_EMAILS_FROM env var set."));
-          var emailConfig = emailSender.config(null, process.env.PINGR_REMINDER_EMAILS_FROM, { name: v.fullname, email: v.email }, "PINGR: " + v.practiceName + "'s Report", body, htmlBody, null);
+          var emailConfig = emailSender.config(null, process.env.PINGR_REMINDER_EMAILS_FROM, { name: v.fullname, email: v.email }, emailTemplate.subject, null, jade2html(emailTemplate.body, data), null);
 
           emailSender.send(emailConfig, function(error, info) {
             emailsSent++;
