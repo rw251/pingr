@@ -33,6 +33,47 @@ module.exports = {
     });
   },
 
+  getDefault: function(done) {
+    Email.findOne({ isDefault: true }, function(err, email) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding default email"));
+      }
+      if (!email) {
+        console.log('No default email');
+        return done(null, false);
+      } else {
+        done(null, email);
+      }
+    });
+  },
+
+  setDefault: function(label, done) {
+    Email.findOne({
+      'label': label
+    }, function(err, email) {
+      // In case of any error, return using the done method
+      if (err) {
+        console.log('Error in email setDefault: ' + err);
+        return done(err);
+      }
+      // doesn't exist
+      if (!email) {
+        console.log('Email doesnt exist with label: ' + label);
+        return done(null, false, 'Trying to edit an email with a label not found in the system');
+      } else {
+        //unset current default
+        Email.update({}, { $set: { isDefault: false } }, {multi: true}, function(err) {
+          email.isDefault = true;
+          email.save(function(err) {
+            if (err) return done(err);
+            else return done();
+          });
+        });
+      }
+    });
+  },
+
   delete: function(label, done) {
     Email.find({ label: label }).remove(done);
   },

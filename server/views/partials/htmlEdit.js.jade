@@ -1,9 +1,6 @@
 script.
-  var data = !{JSON.stringify(user)};
-  if(data.last_login) data.last_login = (new Date(data.last_login)).toDateString();
+  var data = !{JSON.stringify(data)};
   data.pingrUrl = "https://pingr-dev.herokuapp.com/";
-  data.indicators = !{JSON.stringify(indicators)};
-  data.patients = !{JSON.stringify(patients)};
   jade2html = function(input, data) {
     return jade.compile(input, {
       pretty: true,
@@ -38,6 +35,22 @@ script.
     $.fn.tabOverride.autoIndent = true;
     $.fn.tabOverride.tabSize(2);
     $textarea.tabOverride();
+    
+    $('.set-default').on('click', function(e){
+      $.ajax({
+        type: "POST",
+        url: "/emaildefault/" + $(this).data("id"),
+        success: function(d) { 
+          window.location.reload();
+        },
+        error: function(){
+          alert('Failed to set default - maybe refresh the page');
+        },
+        dataType: "json",
+        contentType: "application/json"
+      });
+      e.preventDefault();
+    });
     
     $('#testEmail').on('click', function(e){
       var dataToSend = {

@@ -11,8 +11,7 @@
     "postbuild": "ncp deploy/appserver/.foreverignore dist/.foreverignore",
     "postinstall": "npm run build",
     "watch": "brunch watch",
-    "predebug": "echo In one window launch brunch without server: npm run watch",
-    "debug": "echo Then in second window launch server with debug: node --inspect --debug-brk server.js",
+    "debug": "node --inspect --debug-brk server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors app"
   },
@@ -34,6 +33,7 @@
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
     "ncp": "^2.0.0",
+    "prompt": "^1.0.0",
     "rimraf": "^2.3.4",
     "sass-brunch": "^2.6.3",
     "uglify-js": "^2.6.2"
