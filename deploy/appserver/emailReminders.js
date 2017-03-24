@@ -63,7 +63,7 @@ User.find(searchObject, function(err, users) {
   }
   console.log(users.map(function(v) { return v.fullname; }).join("\n"));
   users.forEach(function(v) {
-    if (DEV && [ /*"benjamin.brown@manchester.ac.uk", */ "richard.williams2@manchester.ac.uk"].indexOf(v.email) < 0) {
+    if (DEV && [ "benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"].indexOf(v.email) < 0) {
       console.log("Not doing: " + v);
       usersUpdated++;
       emailsSent++;
