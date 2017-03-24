@@ -202,8 +202,9 @@ module.exports = function(passport) {
 
   /* Handle Logout */
   router.get('/signout', function(req, res) {
-    if (req.user)
+    if (req.user) {
       events.logout(req.user.email, req.sessionID);
+    }
     req.session.destroy(function(err) {
       res.redirect('/login'); //Inside a callback… bulletproof!
     });
