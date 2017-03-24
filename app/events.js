@@ -109,7 +109,7 @@ var logInfo = function(event, type, href) {
         if(eventFailCount>2) {
           // We've had too many errors from the back end - could be the server
           // is down, or has restarted and the session has ended. Either way
-          // a page refresh might help
+          // a page refresh might help 
           window.location.reload();
         }
       },
