@@ -460,15 +460,15 @@ module.exports = function(passport) {
   });
 
   //store Event
-  router.post('/api/event', function(req, res) {
+  router.post('/api/event', function(req, res, next) {
     if (!req.body.event) {
-      res.send("No event posted");
+      next(new Error("No event posted"));
     } else {
       req.body.event.sessionId = req.sessionID;
       req.body.event.user = req.user.email;
       events.add(req.body.event, function(err) {
-        if (err) res.send(err);
-        else res.send("");
+        if (err) next(err);
+        else res.send(true);
       });
     }
   });

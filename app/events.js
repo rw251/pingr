@@ -4,16 +4,18 @@
  */
 var SESSION_TIMEOUT = 2 * 3600 * 1000;
 
-var timer = setTimeout(function(){
-  window.location.href='/signout';
+var eventFailCount = 0;
+
+var timer = setTimeout(function() {
+  window.location.href = '/signout';
 }, SESSION_TIMEOUT); //set session logout to 2 hours
 
-var refreshSession = function(){
+var refreshSession = function() {
   console.log("Session refreshed...");
-    clearTimeout(timer);
-    timer = setTimeout(function(){
-      window.location.href='/signout';
-    }, SESSION_TIMEOUT); //set session logout to 2 hours
+  clearTimeout(timer);
+  timer = setTimeout(function() {
+    window.location.href = '/signout';
+  }, SESSION_TIMEOUT); //set session logout to 2 hours
 };
 
 var getElementXPath = function(el) {
@@ -99,7 +101,18 @@ var logInfo = function(event, type, href) {
       type: "POST",
       url: "/api/event",
       data: JSON.stringify(dataToSend),
-      success: function(d) { console.log(d); },
+      success: function(d) {
+        eventFailCount = 0;
+      },
+      error: function(a, b, c) {
+        eventFailCount++;
+        if(eventFailCount>2) {
+          // We've had too many errors from the back end - could be the server
+          // is down, or has restarted and the session has ended. Either way
+          // a page refresh might help
+          window.location.reload();
+        }
+      },
       dataType: "json",
       contentType: "application/json"
     });
@@ -108,13 +121,13 @@ var logInfo = function(event, type, href) {
 
 var delay = 500,
   setTimeoutConst = {},
-  isListening=false;
+  isListening = false;
 
 module.exports = {
 
   listen: function() {
 
-    if(isListening) {
+    if (isListening) {
       console.log("Hmm - trying to do the global listening more than once..");
       return;
     }
