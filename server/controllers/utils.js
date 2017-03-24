@@ -1,6 +1,7 @@
 /* jshint esversion:6 */
 var patients = require('./patients');
 var indicators = require('./indicators');
+var config = require('../config');
 
 var indicatorLookup={};
 var processIndicators = function(indicators) {
@@ -58,6 +59,7 @@ module.exports = {
         if(user.last_login) user.last_login = (new Date(user.last_login)).toDateString();
         user.indicators = indicators;
         user.patients = patients;
+        user.reminderEmailsFrom = config.mail.reminderEmailsFrom;
         return callback(null, { data: user });
       });
     });

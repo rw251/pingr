@@ -7,8 +7,9 @@ a.pure-button(href='/emailadmin') Back to email template list
       You can make use of the following dynamic properties when constructing 
       the email: User's full name = \#{fullname} (or email \#{email}), their practice = \#{practiceName} (or \#{practiceId}),
       last login date = \#{last_login} (or last email \#{last_email_reminder}), the url of pingr = \#{pingrUrl} (which
-      includes a tracking token when they click it), the day they receive emails \#{emailDay} and the frequency of the emails \#{emailFrequency}.
-  .pure-u-1-8
+      includes a tracking token when they click it - use \#{pingrUrlWithoutTracking} for just the url), the day they receive emails \#{emailDay} 
+      and the frequency of the emails \#{emailFrequency}. Also the email address to contact \#{reminderEmailsFrom}.
+.pure-u-1-8
 .pure-g
   .pure-u-1-8
   .pure-u-3-4
