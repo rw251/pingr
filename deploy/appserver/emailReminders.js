@@ -29,14 +29,24 @@ oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
 twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13);
 fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 47);
 
-var DEV = false;
-if (process.argv.length > 2 && process.argv[2] === "dev") {
-  DEV = true;
+// Mode:
+// PROD: production
+// DEV: do same as production but only email RW and BB
+// TEST: Ensures that RW and BB receive an email
+//        regardless of whether it is the right day or not
+var MODES = { PROD: "production", DEV: "development", TEST: "test" };
+var MODE = MODES.PROD;
+if (process.argv.length > 2){
+  if(process.argv[2].toLowerCase() === "dev") {
+    MODE = MODES.DEV;
+  } else if(process.argv[2].toLowerCase() === "test") {
+    MODE = MODES.TEST;
+  }
 }
 
 var andComponent = [];
-if (!DEV) {
-  //only check last_email_reminder stuff if not dev
+if (MODE !== MODES.TEST) {
+  //only check last_email_reminder stuff if not test mode
   andComponent.push({
     $or: [
       { last_email_reminder: { $exists: false } }, //never had one
@@ -63,7 +73,7 @@ User.find(searchObject, function(err, users) {
   }
   console.log(users.map(function(v) { return v.fullname; }).join("\n"));
   users.forEach(function(v) {
-    if (DEV && [ "benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"].indexOf(v.email) < 0) {
+    if (MODE !== MODES.PROD && ["benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"].indexOf(v.email) < 0) {
       console.log("Not doing: " + v);
       usersUpdated++;
       emailsSent++;
@@ -72,38 +82,38 @@ User.find(searchObject, function(err, users) {
     }
     if (v.emailDay === undefined && day !== 1) {
       console.log(v.email + " no emailDay and not Monday");
-      if (!DEV) {
+      if (MODE !== MODES.TEST) {
         usersUpdated++;
         emailsSent++;
         if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
         return;
-      } //let's fall through if not dev to see what happens
+      } //let's fall through if in test mode to see what happens
     }
     if (!v.emailFrequency) {
       v.emailFrequency = 1;
     }
     if (v.emailFrequency === 2 && twoWeeksAgo < v.last_email_reminder) {
       console.log("freq 2 but email since");
-      if (!DEV) {
+      if (MODE !== MODES.TEST) {
         usersUpdated++;
         emailsSent++;
         if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
         return;
-      } //let's fall through if not dev to see what happens
+      } //let's fall through if in test mode to see what happens
     }
     if (v.emailFrequency === 4 && fourWeeksAgo < v.last_email_reminder) {
       console.log("freq 4 but email since");
-      if (!DEV) {
+      if (MODE !== MODES.TEST) {
         usersUpdated++;
         emailsSent++;
         if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
         return;
-      } //let's fall through if not dev to see what happens
+      } //let's fall through if in test mode to see what happens
     }
     console.log("Doing: " + v.email);
 
     utils.getDataForEmails(v, function(err, data) {
-      data = data.data;//!!
+      data = data.data; //!!
       crypto.randomBytes(6, function(err, buf) {
         var token = buf.toString('hex');
 
