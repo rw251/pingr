@@ -54,6 +54,9 @@ if (MODE !== MODES.TEST) {
     ]
   });
 }
+if (MODE === MODES.PROD) {
+  andComponent.push({ {email: {$regex : "nhs.net$"} }); //don't send nhs numbers to none nhs.net accounts
+}
 andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only authorised people
 andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
 andComponent.push({ emailFrequency: { $ne: 0 } }); // never receives emails
