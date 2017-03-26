@@ -4,6 +4,14 @@ require('highcharts/highcharts-more')(Highcharts);
 
 var ID = "LIFELINE";
 
+// Define a custom symbol path
+Highcharts.SVGRenderer.prototype.symbols.bar = function (x, y, w, h) {
+    return ['M', x +w/2, y, 'L', x + w/2, y + h];
+};
+if (Highcharts.VMLRenderer) {
+    Highcharts.VMLRenderer.prototype.symbols.bar = Highcharts.SVGRenderer.prototype.symbols.bar;
+}
+
 var colour = {
   index: 0,
   next: function() {
@@ -94,8 +102,7 @@ var ll = {
       }
     }
 
-
-    var plotConditions = function(conditions, importantCodes, contacts) {
+    var plotConditions = function(conditions) {
       ll.charts = 1;
       var series = [];
       $.each(conditions.reverse(), function(i, task) {
@@ -118,63 +125,7 @@ var ll = {
         series.push(item);
       });
 
-      var markerTemplate = { "lineWidth": 1, "lineColor": "black", "radius": 8 };
-      var markers = {
-        "default": $.extend({ "symbol": "triangle" }, markerTemplate),
-        "Face to face": $.extend({ "symbol": "square" }, markerTemplate),
-        "Telephone": $.extend({ "symbol": "circle" }, markerTemplate),
-        "Hospital admission": $.extend({ "symbol": "triangle" }, markerTemplate)
-      };
-      var contactSeries = {};
-      var eventSeries = {};
-      var latestContact;
-      $.each(contacts, function(i, contact) {
-        if (!latestContact) latestContact = contact.time;
-        else latestContact = Math.max(latestContact, contact.time);
-        if (!contactSeries[contact.name]) {
-          contactSeries[contact.name] = Highcharts.extend(contact, {
-            data: [],
-            type: 'scatter',
-            marker: markers[contact.name] || markers.default,
-            color: colour.next()
-          });
-        }
-        contactSeries[contact.name].data.push([
-              contact.task,
-              contact.time
-          ]);
-      });
-      if (latestContact) minMaxDate = Math.min(latestContact, minMaxDate);
-
-      var latestImportantCode;
-      $.each(importantCodes, function(i, event) {
-        if (!latestImportantCode) latestImportantCode = event.time;
-        else latestImportantCode = Math.max(latestImportantCode, event.time);
-        if (!eventSeries[event.name]) {
-          eventSeries[event.name] = Highcharts.extend(event, {
-            data: [],
-            type: 'scatter',
-            marker: markers[event.name] || markers.default,
-            color: colour.next()
-          });
-        }
-        eventSeries[event.name].data.push([
-              event.task,
-              event.time
-          ]);
-      });
-
-      if (latestImportantCode) minMaxDate = Math.min(latestImportantCode, minMaxDate);
-
-      series = series.concat(Object.keys(contactSeries).map(function(key) {
-        return contactSeries[key];
-      }));
-
-      series = series.concat(Object.keys(eventSeries).map(function(key) {
-        return eventSeries[key];
-      }));
-
-      $(elementId).append($('<div class="chart-title">Patient conditions and contacts</div>'));
+      //$(elementId).append($('<div class="chart-title">Patient conditions and contacts</div>'));
       // create the chart
       $('<div class="h-chart h-condition-chart">')
         .appendTo(elementId)
@@ -227,7 +178,9 @@ var ll = {
             startOnTick: false,
             endOnTick: false,
             title: {
-              text: ''
+              text: 'Conditions',
+              margin: 60,
+              rotation: 0
             },
             tickWidth: 0,
             minPadding: 0.2,
@@ -248,27 +201,14 @@ var ll = {
 
           tooltip: {
             formatter: function() {
-              if (this.series.data[0].x !== 1 && this.series.data[0].x !== 2) {
-                //Range ergo condition
-                var yCoord = this.y;
-                var labelTmp = conditions[Math.floor(this.x)].intervals.filter(function(v) {
-                  return yCoord >= v.from && yCoord <= v.to;
-                });
-                var label = labelTmp.length > 0 ? labelTmp[0].label : "No label A";
-                return '<b>' + conditions[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
-                  Highcharts.dateFormat('%d/%m/%Y', this.point.options.low) +
-                  ' - ' + Highcharts.dateFormat('%d/%m/%Y', this.point.options.high);
-              } else {
-                //Single value hence contact
-                var time = this.y;
-                return (this.series.data[0].x === 1 ? importantCodes : contacts).filter(function(val) {
-                  return val.data && val.data.filter(function(v) {
-                    return v[1] === time;
-                  }).length > 0;
-                }).map(function(val) {
-                  return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%d/%m/%Y', time);
-                }).join('<br/>');
-              }
+              var yCoord = this.y;
+              var labelTmp = conditions[Math.floor(this.x)].intervals.filter(function(v) {
+                return yCoord >= v.from && yCoord <= v.to;
+              });
+              var label = labelTmp.length > 0 ? labelTmp[0].label : "No label A";
+              return '<b>' + conditions[Math.floor(this.x)].name + (label ? ': ' + label : '') + '</b><br/>' +
+                Highcharts.dateFormat('%d/%m/%Y', this.point.options.low) +
+                ' - ' + Highcharts.dateFormat('%d/%m/%Y', this.point.options.high);
             },
             followPointer: true
           },
@@ -305,8 +245,232 @@ var ll = {
         });
     };
 
+    var plotContacts = function(contacts) {
+      ll.charts++;
+      var markerTemplate = { "lineWidth": 1, "lineColor": "black", "radius": 8 };
+      var markers = {
+        "default": $.extend({ "symbol": "triangle" }, markerTemplate),
+        "Face to face": $.extend({ "symbol": "square" }, markerTemplate),
+        "Telephone": $.extend({ "symbol": "bar" }, markerTemplate),
+        "Hospital admission": $.extend({ "symbol": "triangle" }, markerTemplate)
+      };
+
+      var latestContact;
+      var contactSeries = contacts.map(function(v) {
+        if (!latestContact) latestContact = v.time;
+        else latestContact = Math.max(latestContact, v.time);
+        return { x: v.time, y: v.task, name: v.name, marker: markers.Telephone };
+      });
+
+      if (latestContact) minMaxDate = Math.min(latestContact, minMaxDate);
+
+      // create the chart
+      $('<div class="h-chart h-contact-chart">')
+        .appendTo(elementId)
+        .highcharts({
+
+          chart: {
+            renderTo: element,
+            marginLeft: 120, // Keep all charts left aligned
+            spacingTop: 20,
+            spacingBottom: 20,
+            type: 'scatter',
+            backgroundColor: '#F9F3F9',
+            borderWidth: 2,
+            borderColor: '#ddd'
+          },
+
+          title: '',
+
+          xAxis: {
+            type: 'datetime',
+            min: Date.UTC(2005, 6, 12),
+            max: new Date().getTime(),
+            crosshair: true,
+            events: {
+              setExtremes: syncExtremes
+            },
+            labels: {
+              enabled: false
+            },
+
+            //things that are normally xAxis defaults
+            endOnTick: false,
+            gridLineWidth: 0,
+            lineWidth: 1,
+            maxPadding: 0.01,
+            minPadding: 0.01,
+            startOnTick: false,
+            tickWidth: 0,
+            title: {
+              text: ''
+            },
+            tickPixelInterval: 100
+          },
+
+          yAxis: {
+            labels: {
+              enabled: false
+            },
+            startOnTick: false,
+            endOnTick: false,
+            title: {
+              text: 'Contacts',
+              margin: 60,
+              rotation: 0
+            },
+            tickWidth: 0,
+            minPadding: 0.2,
+            maxPadding: 0.2,
+
+            //things that are normally yAxis defaults
+            gridLineWidth: 0,
+            lineWidth: 0
+
+          },
+          credits: {
+            enabled: false
+          },
+
+          legend: {
+            enabled: false
+          },
+
+          tooltip: {
+            formatter: function() {
+
+              var time = this.x;
+              return contacts.filter(function(val) {
+                return val.time === time;
+              }).map(function(val) {
+                return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%d/%m/%Y', time);
+              }).join('<br/>');
+
+            },
+            followPointer: true
+
+          },
+
+          series: [{
+            data: contactSeries
+          }]
+
+        });
+    };
+
+    var plotImportantCodes = function(importantCodes) {
+      ll.charts++;
+
+      var markerTemplate = { "lineWidth": 1, "lineColor": "black", "radius": 8 };
+      var markers = {
+        "default": $.extend({ "symbol": "triangle" }, markerTemplate),
+        "Face to face": $.extend({ "symbol": "square" }, markerTemplate),
+        "Telephone": $.extend({ "symbol": "bar" }, markerTemplate),
+        "Hospital admission": $.extend({ "symbol": "triangle" }, markerTemplate)
+      };
+
+      var latestImportantCode;
+      var eventSeries = importantCodes.map(function(v) {
+        if (!latestImportantCode) latestImportantCode = v.time;
+        else latestImportantCode = Math.max(latestImportantCode, v.time);
+        return { x: v.time, y: v.task, name: v.name, marker:markers.Telephone };
+      });
+
+      if (latestImportantCode) minMaxDate = Math.min(latestImportantCode, minMaxDate);
+
+      // create the chart
+      $('<div class="h-chart h-important-codes-chart">')
+        .appendTo(elementId)
+        .highcharts({
+
+          chart: {
+            renderTo: element,
+            marginLeft: 120, // Keep all charts left aligned
+            spacingTop: 20,
+            spacingBottom: 20,
+            type: 'scatter',
+            backgroundColor: '#F9F3F9',
+            borderWidth: 2,
+            borderColor: '#ddd'
+          },
+
+          title: '',
+
+          xAxis: {
+            type: 'datetime',
+            min: Date.UTC(2005, 6, 12),
+            max: new Date().getTime(),
+            crosshair: true,
+            events: {
+              setExtremes: syncExtremes
+            },
+            labels: {
+              enabled: false
+            },
+
+            //things that are normally xAxis defaults
+            endOnTick: false,
+            gridLineWidth: 0,
+            lineWidth: 1,
+            maxPadding: 0.01,
+            minPadding: 0.01,
+            startOnTick: false,
+            tickWidth: 0,
+            title: {
+              text: ''
+            },
+            tickPixelInterval: 100
+          },
+
+          yAxis: {
+            labels: {
+              enabled: false
+            },
+            startOnTick: false,
+            endOnTick: false,
+            title: {
+              text: 'Important events',
+              margin: 60,
+              rotation: 0
+            },
+            tickWidth: 0,
+            minPadding: 0.2,
+            maxPadding: 0.2,
+
+            //things that are normally yAxis defaults
+            gridLineWidth: 0,
+            lineWidth: 0
+
+          },
+          credits: {
+            enabled: false
+          },
+
+          legend: {
+            enabled: false
+          },
+
+          tooltip: {
+            formatter: function() {
+
+              var time = this.x;
+              return importantCodes.filter(function(val) {
+                return val.time === time;
+              }).map(function(val) {
+                return '<b>' + val.name + '</b><br/>' + Highcharts.dateFormat('%d/%m/%Y', time);
+              }).join('<br/>');
+
+            },
+            followPointer: true
+
+          },
+
+          series: [{ data: eventSeries }]
+
+        });
+    };
+
     var plotMeasurements = function(measurements) {
-      $(elementId).append($('<div class="chart-title">Patient measurements</div>'));
       //Make measurements alphabetical so they are always in the same order
       measurements.sort(function(a, b) {
         if (a.name < b.name) return -1;
@@ -318,14 +482,14 @@ var ll = {
         var maxMeasurementDate = 0;
         var dataDates = {};
         dataset.data.forEach(function(v) {
-          if(!dataDates[v[0]]) {
+          if (!dataDates[v[0]]) {
             dataDates[v[0]] = v;
-          } else if(dataDates[v[0]][1]==="salfordt") {
-            dataDates[v[0]]=v;
+          } else if (dataDates[v[0]][1] === "salfordt") {
+            dataDates[v[0]] = v;
           }
           maxMeasurementDate = Math.max(maxMeasurementDate, v[0]);
         });
-        var dataFromDataDates = Object.keys(dataDates).map(function(v){
+        var dataFromDataDates = Object.keys(dataDates).map(function(v) {
           return dataDates[v];
         });
         minMaxDate = Math.min(minMaxDate, maxMeasurementDate);
@@ -413,7 +577,7 @@ var ll = {
           series: [{
             data: dataFromDataDates.map(function(v) {
               var dataObj = { x: v[0], loc: v[1] };
-              if(v[1] === "salfordt"){
+              if (v[1] === "salfordt") {
                 dataObj.loc = "Salford Royal";
                 dataObj.color = "#E9573F";
               }
@@ -527,7 +691,9 @@ var ll = {
             startOnTick: false,
             endOnTick: false,
             title: {
-              text: ''
+              text: 'Zoom',
+              margin: 60,
+              rotation: 0
             },
             minPadding: 0.2,
             maxPadding: 0.2,
@@ -541,7 +707,12 @@ var ll = {
           },
 
           navigator: {
-            enabled: true
+            enabled: true,
+            xAxis: {
+              labels: {
+                enabled: false
+              }
+            }
           },
 
           plotOptions: {
@@ -603,7 +774,7 @@ var ll = {
       }
 
       //$(elementId).append($('<div class="chart-title"' + (noData ? 'style="display:none"' : '') + '>Patient medications</div>'));
-      $(elementId).append($('<div class="chart-title">Patient medications</div>'));
+      //$(elementId).append($('<div class="chart-title">Patient medications</div>'));
       // create the chart
       //return $('<div class="h-chart h-medication-chart"' + (noData ? 'style="display:none"' : '') + '>')
       return $('<div class="h-chart h-medication-chart">')
@@ -642,9 +813,9 @@ var ll = {
             events: {
               setExtremes: syncExtremes
             },
-            labels: {
+            /*labels: {
               enabled: false
-            },
+            },*/
 
             //things that are normally xAxis defaults
             endOnTick: false,
@@ -667,7 +838,9 @@ var ll = {
             startOnTick: false,
             endOnTick: false,
             title: {
-              text: ''
+              text: 'Medications',
+              margin: 60,
+              rotation: 0
             },
             tickWidth: 0,
             minPadding: 0.2,
@@ -733,7 +906,9 @@ var ll = {
 
     minMaxDate.setMonth(minMaxDate.getMonth() - 1); //gives 1 month padding
 
-    plotConditions(data.conditions, data.events, data.contacts);
+    plotConditions(data.conditions);
+    plotImportantCodes(data.events);
+    plotContacts(data.contacts);
     plotMeasurements(data.measurements);
     var c = plotMedications(data.medications);
     plotNavigator();
