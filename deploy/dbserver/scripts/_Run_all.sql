@@ -1,3 +1,8 @@
+--changes:
+--removed 'other' from contacts
+--1% read codes (history) now means f2f contact
+--sorted stroke date in pt list issue
+
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.run-all') DROP PROCEDURE [pingr.run-all];
 
 GO
@@ -203,8 +208,11 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source = 'salfordt' then 'strokeHosp'
 	end as measure,
 CodeValue as value, Source from SIR_ALL_Records
-where ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp','fev1', 'strokeQof'))
-	and CodeValue is not NULL
+where 
+	(
+		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp','fev1', 'strokeQof')) and CodeValue is not NULL)
+		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof')))
+	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
 --Contacts
@@ -216,7 +224,11 @@ CREATE TABLE [output.pingr.contacts] (PatID int, date date, event varchar(100))
 	DECLARE	@CON int;
 	DECLARE	@MED int;
 	DECLARE	@OTH int;
-	set @TELE = 5;
+	DECLARE	@HOSP int;
+	DECLARE	@AE int;
+	set @TELE = 7;
+	set @AE = 6;
+	set @HOSP = 5;
 	set @FACE = 4;
 	set @CON = 3;
 	set @MED = 2;
@@ -225,11 +237,14 @@ CREATE TABLE [output.pingr.contacts] (PatID int, date date, event varchar(100))
 insert into [output.pingr.contacts](PatID, date, event)
 select PatID, date,
 	case
-		when eventcode = 5 then 'Telephone contact'
+		when eventcode = 7 then 'Telephone contact'
+		when eventcode = 6 then 'A+E contact'
+		when eventcode = 5 then 'Hospital contact'
 		when eventcode = 4 then 'Face-to-face contact'
-		when eventcode = 3 then 'Other contact'
+		--when eventcode = 3 then 'Other contact'
 		when eventcode = 2 then 'Medication prescribed'
-		when eventcode <= 1 then 'Record opened'
+		--when eventcode <= 1 then 'Record opened'
+		else null
 		end as event from
 			(
 				select PatID,
@@ -243,7 +258,7 @@ select PatID, date,
 						when ReadCode like '[ABCDEFGHIJKLMNOPQRSTUVWXYZ]%' then @CON
 						when ReadCode like '[abcdefghijklmnopqrstuvwxyz]%' then @MED
 						when ReadCode like '0%' then @CON
-						when ReadCode like '1%' then @CON
+						when ReadCode like '1%' then @FACE
 						when ReadCode like '2%' then @FACE
 						when ReadCode like '3%' then @CON
 						when ReadCode like '4%' then @REC
@@ -260,17 +275,20 @@ select PatID, date,
 						when ReadCode like '8B%' then @CON
 						when ReadCode in ('8BS3.') then @FACE
 						when ReadCode like '8H[1-3]%' then @REC
+						when ReadCode like '8H2%' then @AE
 						when ReadCode like '8H[4-8]%' then @FACE
 						when ReadCode like '8H9%' then @TELE
 						when ReadCode like '8H[ABCDHKMPQRSTUVWYZpckenmojiklprs]%' then @CON
 						when ReadCode like '8H[EFGIJLNOXdabgfhqtuvwxyz]%' then @REC
 						when ReadCode like '8[^BH]%' then @CON
 						when ReadCode like '94Z%' then @FACE
+						when ReadCode in ('9N19','8HJA.','8HC..','8Hu..','8HC1.') then @AE
 						when ReadCode like '9N1C%' then @FACE
 						when ReadCode like '9N21%' then @FACE
 						when ReadCode like '9N31%' then @TELE
 						when ReadCode like '9N3G%' then @CON
 						when ReadCode like '9N3A%' then @TELE
+						when ReadCode like '9N%' then @HOSP
 						when ReadCode like '9%' then @REC
 						when ReadCode in ('9kF1.','9kR..','9HB5.') then @FACE --patient reviewed / annual review
 						when ReadCode like '9H9%' then @FACE

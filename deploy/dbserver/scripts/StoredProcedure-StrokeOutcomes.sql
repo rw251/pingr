@@ -1,3 +1,9 @@
+--v2
+--each patient can have ONLY ONE stroke
+--strokes measured from SRFT and GP
+--no practice list calculation
+
+
 									--TO RUN AS STORED PROCEDURE--
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.cvd.stroke.outcome') DROP PROCEDURE [pingr.cvd.stroke.outcome];
 GO
@@ -12,200 +18,98 @@ SET NOCOUNT ON
 --set @refdate = '2016-11-17';
 --set @JustTheIndicatorNumbersPlease= 0;
 
---declare @startDate datetime;
---set @startDate = (select 
---case --for 12 monthly targets
---	when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-03-31' --when today's date is before April, today is 31st March LAST year
---	when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --when today's date is after March, today is 31st March THIS year
---end);
-
---declare @endDate datetime;
---set @endDate = (select 
---case --for 12 monthly targets
---	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --when today's date is before April, today is 31st March THIS year
---	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' --when today's date is after March, today is 31st March NEXT year
---end);
-
 									----------------------------------------------
 											-------NO OF STROKES--------
 											-------IN THE LAST YEAR--------
 									----------------------------------------------
 
---patients with strokes this year IN HOSPITAL
---multiple patients included
-IF OBJECT_ID('tempdb..#strokePts') IS NOT NULL DROP TABLE #strokePts
-CREATE TABLE #strokePts (PatID int, strokeCodeDate date, strokeCode varchar(512), strokeRead varchar(512), strokeSource varchar(512), pracID varchar(512));
-insert into #strokePts
-select a.PatID, EntryDate, MAX(Rubric), ReadCode, Source,  pracID from SIR_ALL_Records as a
-inner join ptPractice as b on a.PatID = b.PatID
-where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
-and EntryDate > DATEADD(month, -12, @refdate)
-and EntryDate < @refdate
-and Source = 'salfordt' --ONLY FROM HOSPITAL
-group by a.PatID, EntryDate, Source, pracID, ReadCode
+--latest stroke code in last year IN HOSPITAL RECORD
+IF OBJECT_ID('tempdb..#latestStrokeHosp') IS NOT NULL DROP TABLE #latestStrokeHosp
+CREATE TABLE #latestStrokeHosp (PatID int, latestStrokeHospDate date, latestStrokeHosp varchar(512), latestStrokeHospCode varchar(512));
+insert into #latestStrokeHosp
+select a.PatID, latestStrokeHospDate, MAX(Rubric), MAX(ReadCode) from SIR_ALL_Records as a
+	inner join (
+		select PatID, MAX(EntryDate) as latestStrokeHospDate from SIR_ALL_Records
+		where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
+		and (Rubric like '%stroke%' --guard against rubric over-writes
+			or Rubric like '%haemorrhage%'
+			or  Rubric like '%occlusion%'
+			or  Rubric like '%stenosis%'
+			or  Rubric like '%infarction%'
+			or  Rubric like '%CVA%'
+			or  Rubric like '%lacunar%'
+			or  Rubric like '%cerebral%'
+			or  Rubric like '%Wallenberg%')
+		and (Rubric not like '%unknown%' --guard against rubric over-writes
+			and Rubric not like '%no %'
+			and Rubric not like '%negative%'
+			and Rubric not like '%ruled out%'
+			and Rubric not like '%absent%'
+			and Rubric not like '%possible%'
+			and Rubric not like '%probable%'
+			and Rubric not like '%previous%'
+			and Rubric not like '%suspect%'
+			and Rubric not like '%epilepsy%'
+			and Rubric not like '%[0-9]%')--no dates
+		and EntryDate < @refdate
+		and EntryDate > DATEADD(month, -12, @refdate)
+		and Source = 'salfordt'
+		group by PatID
+	) as b on b.PatID = a.PatID and b.latestStrokeHospDate = a.EntryDate
+where ReadCode  in (select code from codeGroups where [group] in ('strokeQof'))
+		and (Rubric like '%stroke%' --guard against rubric over-writes
+			or Rubric like '%haemorrhage%'
+			or  Rubric like '%occlusion%'
+			or  Rubric like '%stenosis%'
+			or  Rubric like '%infarction%'
+			or  Rubric like '%CVA%'
+			or  Rubric like '%lacunar%'
+			or  Rubric like '%cerebral%'
+			or  Rubric like '%Wallenberg%')
+		and (Rubric not like '%unknown%' --guard against rubric over-writes
+			and Rubric not like '%no %'
+			and Rubric not like '%negative%'
+			and Rubric not like '%ruled out%'
+			and Rubric not like '%absent%'
+			and Rubric not like '%possible%'
+			and Rubric not like '%probable%'
+			and Rubric not like '%previous%'
+			and Rubric not like '%suspect%'
+			and Rubric not like '%epilepsy%'
+			and Rubric not like '%[0-9]%')--no dates
+and Source = 'salfordt'
+group by a.PatID, latestStrokeHospDate
 
---no of strokes per practice this year
---multiple patients included
+--latest stroke code in last year IN GP RECORD
+IF OBJECT_ID('tempdb..#latestStrokeGp') IS NOT NULL DROP TABLE #latestStrokeGp
+CREATE TABLE #latestStrokeGp (PatID int, latestStrokeGpDate date, latestStrokeGp varchar(512), latestStrokeGpCode varchar(512));
+insert into #latestStrokeGp
+select a.PatID, latestStrokeGpDate, MAX(Rubric), MAX(ReadCode) from SIR_ALL_Records as a
+	inner join (
+		select PatID, MAX(EntryDate) as latestStrokeGpDate from SIR_ALL_Records
+		where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
+		and EntryDate < @refdate
+		and EntryDate > DATEADD(month, -12, @refdate)
+		and Source != 'salfordt'
+		group by PatID
+	) as b on b.PatID = a.PatID and b.latestStrokeGpDate = a.EntryDate
+where ReadCode  in (select code from codeGroups where [group] in ('strokeQof'))
+and Source != 'salfordt'
+group by a.PatID, latestStrokeGpDate
+
+--combined strokes latest stroke list code in last year FROM HOSPITAL AND GP RECORD
+IF OBJECT_ID('tempdb..#latestStrokeCombined') IS NOT NULL DROP TABLE #latestStrokeCombined
+CREATE TABLE #latestStrokeCombined (PatID int, latestStrokeGpDate date, latestStrokeHospDate date, latestStrokeGp varchar(512), latestStrokeHosp varchar(512), latestStrokeGpCode varchar(512), latestStrokeHospCode varchar(512), pracID varchar(10));
+insert into #latestStrokeCombined
+select case when a.PatID is not null then a.PatID else b.PatID end, latestStrokeGpDate, latestStrokeHospDate, latestStrokeGp, latestStrokeHosp, latestStrokeGpCode, latestStrokeHospCode, gpcode from #latestStrokeGp as a
+full outer join (select * from #latestStrokeHosp) as b on b.PatID = a.PatID
+left outer join (select patid, gpcode from patients) as c on c.patid = case when a.PatID is not null then a.PatID else b.PatID end
+
+--no of PATIENTS with strokes per practice this year
 IF OBJECT_ID('tempdb..#strokePractices') IS NOT NULL DROP TABLE #strokePractices
 CREATE TABLE #strokePractices (pracID varchar(1000), noStrokes int);
 insert into #strokePractices 
-select pracID, COUNT(*) from #strokePts as a
-group by pracID
-
---no of strokes per patient this year
-IF OBJECT_ID('tempdb..#numberOfStrokesPerPatient') IS NOT NULL DROP TABLE #numberOfStrokesPerPatient
-CREATE TABLE #numberOfStrokesPerPatient (PatID int, numberOfStrokesPerPatient int);
-insert into #numberOfStrokesPerPatient
-select distinct PatID, count (*) from #strokePts
-group by PatID
-
---latest stroke
-IF OBJECT_ID('tempdb..#latestStrokeDate') IS NOT NULL DROP TABLE #latestStrokeDate
-CREATE TABLE #latestStrokeDate (PatID int, latestStrokeDate date, latestStrokeCode varchar(512), latestStrokeRead varchar(512));
-insert into #latestStrokeDate
-select PatID, MAX(strokeCodeDate), strokeCode, strokeRead from #strokePts
-group by PatID, strokeRead, strokeCode
-
---second latest stroke
-IF OBJECT_ID('tempdb..#secondLatestStrokeDate') IS NOT NULL DROP TABLE #secondLatestStrokeDate
-CREATE TABLE #secondLatestStrokeDate (PatID int, secondLatestStrokeDate date);
-insert into #secondLatestStrokeDate
-select a.PatID, MAX(strokeCodeDate) from #strokePts as a
-left outer join	 (select * from #latestStrokeDate) as b on a.PatID = b.PatID 
-where strokeCodeDate < latestStrokeDate
-group by a.PatID
-
---third latest stroke
-IF OBJECT_ID('tempdb..#thirdLatestStrokeDate') IS NOT NULL DROP TABLE #thirdLatestStrokeDate
-CREATE TABLE #thirdLatestStrokeDate (PatID int, thirdLatestStrokeDate date);
-insert into #thirdLatestStrokeDate
-select a.PatID, MAX(strokeCodeDate) from #strokePts as a
-left outer join	 (select * from #secondLatestStrokeDate) as b on a.PatID = b.PatID 
-where strokeCodeDate < secondLatestStrokeDate
-group by a.PatID
-
---fourth latest stroke
-IF OBJECT_ID('tempdb..#fourthLatestStrokeDate') IS NOT NULL DROP TABLE #fourthLatestStrokeDate
-CREATE TABLE #fourthLatestStrokeDate (PatID int, fourthLatestStrokeDate date);
-insert into #fourthLatestStrokeDate
-select a.PatID, MAX(strokeCodeDate) from #strokePts as a
-left outer join	 (select * from #thirdLatestStrokeDate) as b on a.PatID = b.PatID 
-where strokeCodeDate < thirdLatestStrokeDate
-group by a.PatID
-
---patients with strokes this year IN PRIMARY CARE
---multiple patients included
-IF OBJECT_ID('tempdb..#primCareStroke') IS NOT NULL DROP TABLE #primCareStroke
-CREATE TABLE #primCareStroke (PatID int, strokeCodeDate date, strokeCode varchar(512), strokeSource varchar(512), pracID varchar(512));
-insert into #primCareStroke
-select a.PatID, EntryDate, MAX(Rubric), Source,  pracID from SIR_ALL_Records as a
-inner join ptPractice as b on a.PatID = b.PatID
-where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
-and EntryDate > DATEADD(month, -12, @refdate)
-and EntryDate < @refdate
-and Source != 'salfordt' --NOT FROM HOSPITAL
-group by a.PatID, EntryDate, Source, pracID
-
---no of PRIM CARE strokes per patient this year
-IF OBJECT_ID('tempdb..#numberOfPrimCareStrokesPerPatient') IS NOT NULL DROP TABLE #numberOfPrimCareStrokesPerPatient
-CREATE TABLE #numberOfPrimCareStrokesPerPatient (PatID int, numberOfPrimCareStrokesPerPatient int);
-insert into #numberOfPrimCareStrokesPerPatient
-select distinct PatID, count (*) from #primCareStroke
-group by PatID
-
-
-									----------------------------------------------
-											------PRACTICE LIST SIZE--------
-												-------AS OF TODAY--------
-									----------------------------------------------
-
---all patients
---not dead according to dead table or died > 1 year ago
-IF OBJECT_ID('tempdb..#allPats') IS NOT NULL DROP TABLE #allPats
-CREATE TABLE #allPats (PatID int, pracID varchar(1000));
-insert into #allPats 
-select distinct(a.PatID), pracID from SIR_ALL_Records as a
-left outer join	(select patid, dead, month_of_death, year_of_death from patients) as b on a.PatID = b.patid
-inner join ptPractice as c on a.PatID = c.PatID
-where dead = 0 
---	or (dead = 1 and year_of_death < CONVERT(VARCHAR,YEAR(@refdate)) and (month_of_death < CONVERT(VARCHAR,MONTH(@refdate)))) --died > 1 year ago
---group by a.PatID
-
---latest any code
-IF OBJECT_ID('tempdb..#latestAnyCode') IS NOT NULL DROP TABLE #latestAnyCode
-CREATE TABLE #latestAnyCode (PatID int, latestAnyCodeDate date, latestAnyCode varchar(512));
-insert into #latestAnyCode
-select s.PatID, latestAnyCodeDate, MAX(Rubric) from SIR_ALL_Records as s
-	inner join (
-		select PatID, MAX(EntryDate) as latestAnyCodeDate from SIR_ALL_Records
-		where PatID in (select PatID from #allPats)
-		and EntryDate < @refdate
-		group by PatID
-	) sub on sub.PatID = s.PatID and sub.latestAnyCodeDate = s.EntryDate
-group by s.PatID, latestAnyCodeDate
-
---latest dead code
-IF OBJECT_ID('tempdb..#latestDeadCode') IS NOT NULL DROP TABLE #latestDeadCode
-CREATE TABLE #latestDeadCode (PatID int, latestDeadCodeDate date, latestDeadCode varchar(512));
-insert into #latestDeadCode
-select s.PatID, latestDeadCodeDate, MAX(Rubric) from SIR_ALL_Records as s
-	inner join (
-		select PatID, MAX(EntryDate) as latestDeadCodeDate from SIR_ALL_Records
-		where PatID in (select PatID from #allPats)
-		and ReadCode in (select code from codeGroups where [group] = 'dead')
-		and EntryDate < @refdate
-		group by PatID
-	) sub on sub.PatID = s.PatID and sub.latestDeadCodeDate = s.EntryDate
-where ReadCode in (select code from codeGroups where [group] = 'dead')
-group by s.PatID, latestDeadCodeDate
-
---number of ANY codes AFTER a dead code
-IF OBJECT_ID('tempdb..#noCodesAfterDeadCode') IS NOT NULL DROP TABLE #noCodesAfterDeadCode
-CREATE TABLE #noCodesAfterDeadCode (PatID int, noCodesAfterDeadCode int);
-insert into #noCodesAfterDeadCode
-select a.PatID, COUNT(*) from SIR_ALL_Records as a
-left outer join (select * from #latestDeadCode) as b on a.PatID = b.PatID
-where EntryDate > latestDeadCodeDate
-group by a.PatID
-
---latest dereg code
-IF OBJECT_ID('tempdb..#latestDeregCode') IS NOT NULL DROP TABLE #latestDeregCode
-CREATE TABLE #latestDeregCode (PatID int, latestDeregCodeDate date, latestDeregCode varchar(512));
-insert into #latestDeregCode
-select s.PatID, latestDeregCodeDate, MAX(Rubric) from SIR_ALL_Records as s
-	inner join (
-		select PatID, MAX(EntryDate) as latestDeregCodeDate from SIR_ALL_Records
-		where PatID in (select PatID from #allPats)
-		and ReadCode in (select code from codeGroups where [group] = 'deRegistered')
-		and EntryDate < @refdate
-		group by PatID
-	) sub on sub.PatID = s.PatID and sub.latestDeregCodeDate = s.EntryDate
-where ReadCode in (select code from codeGroups where [group] = 'deRegistered')
-group by s.PatID, latestDeregCodeDate
-
---practice list AS OF TODAY
-IF OBJECT_ID('tempdb..#practiceList') IS NOT NULL DROP TABLE #practiceList
-CREATE TABLE #practiceList (PatID int, pracID varchar(1000), age int, gender varchar(1), latestAnyCode varchar(512), latestAnyCodeDate date, latestDeadCode varchar(512), latestDeadCodeDate date, noCodesAfterDeadCode int, latestDeregCode varchar(512), latestDeregCodeDate date);
-insert into #practiceList
-select a.PatID, pracID, YEAR(@refdate) - year_of_birth, sex, latestAnyCode, latestAnyCodeDate, latestDeadCode, latestDeadCodeDate, noCodesAfterDeadCode, latestDeregCode, latestDeregCodeDate from #allPats as a
-left outer join (select PatID, latestDeadCode, latestDeadCodeDate from #latestDeadCode) as b on a.PatID = b.PatID
-left outer join (select PatID, latestDeregCode, latestDeregCodeDate from #latestDeregCode) as c on a.PatID = c.PatID
-left outer join (select PatID, latestAnyCode, latestAnyCodeDate from #latestAnyCode) as d on a.PatID = d.PatID
-left outer join (select patid, sex, year_of_birth from dbo.patients) as e on a.PatID = e.patid
-left outer join (select * from #noCodesAfterDeadCode) as f on a.PatID = f.PatID
-where 
-	(
-		noCodesAfterDeadCode is null or noCodesAfterDeadCode < 5 --either 0 or < 5 codes after dead code
---		latestDeadCodeDate is null 
---		or ((latestDeadCodeDate < latestAnyCodeDate) and (latestAnyCode not like '%telephone%' and latestAnyCode not like '%administration%')) --either not dead, or has other codes after dead codes
-	)
-	and (latestDeregCodeDate is null or (latestDeregCodeDate < latestAnyCodeDate)) --either not deregistered, or has other other codes after deregistered code
-
---practice list sizes AS OF TODAY
-IF OBJECT_ID('tempdb..#practiceListSizes') IS NOT NULL DROP TABLE #practiceListSizes
-CREATE TABLE #practiceListSizes (practiceId varchar(1000), practiceListSize int);
-insert into #practiceListSizes 
-select pracID, COUNT(*) from #practiceList as a
+select pracID, COUNT(*) from #latestStrokeCombined as a
 group by pracID
 
 									----------------------------------------------
@@ -223,8 +127,8 @@ select pracID, noStrokes, practiceListSize,
 		when noStrokes is NULL then 0 --prevents null when no strokes
 		else cast(noStrokes as float)/cast(practiceListSize as float) 
 	end as strokeIncidence 
-from #practiceListSizes as a
-left outer join (select * from #strokePractices) as b on b.pracID = a.practiceId
+from practiceListSizes as a
+left outer join (select * from #strokePractices) as b on b.pracID = a.practiceId  collate Latin1_General_100_CI_AS
 order by strokeIncidence asc
 
 					-----------------------------------------------------------------------------
@@ -262,26 +166,19 @@ insert into [output.pingr.denominators](PatID, indicatorId, why)
 
 select a.PatID, 'cvd.stroke.outcome',
 	case 
-		when numberOfStrokesPerPatient = 0 or numberOfStrokesPerPatient is null then 'Patient has not had a stroke recorded in hospital in the last 12 months.'
-		when numberOfStrokesPerPatient = 1 then 'Patient had a stroke recorded in hospital in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + '.'
-		when numberOfStrokesPerPatient = 2 then 'Patient had strokes recorded in hospital in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDate, 3) + '.'
-		when numberOfStrokesPerPatient = 3 then 'Patient had strokes recorded in hospital in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, thirdLatestStrokeDate, 3)+ '.'
-		when numberOfStrokesPerPatient = 4 then 'Patient had strokes recorded in hospital in the last 12 monthson ' + CONVERT(VARCHAR, latestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, thirdLatestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, fourthLatestStrokeDate, 3) + '.'
-		when numberOfStrokesPerPatient > 4 then 'Patient had more than 4 strokes recorded in hospital in the last 12 months. The latest was on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + '.'
+		when a.PatID in (select PatID from #latestStrokeCombined) and latestStrokeGpDate is not null then 'Patient had a stroke in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeGpDate, 3) + '.'
+		when a.PatID in (select PatID from #latestStrokeCombined) and latestStrokeGpDate is null then 'Patient had a stroke in the last 12 months <strong>recorded in hospital (but not the GP record)</strong> on ' + CONVERT(VARCHAR, latestStrokeHospDate, 3) + '.'
+		else 'Patient has not had a stroke in the last 12 months.'
 	end
-from #practiceList as a
-left outer join (select * from #numberOfStrokesPerPatient) as b on a.PatID = b.PatID
-left outer join (select * from #latestStrokeDate) as c on a.PatID = c.PatID
-left outer join (select * from #secondLatestStrokeDate) as d on a.PatID = d.PatID
-left outer join (select * from #thirdLatestStrokeDate) as e on a.PatID = e.PatID
-left outer join (select * from #fourthLatestStrokeDate) as f on a.PatID = f.PatID
+from practiceList as a
+left outer join (select * from #latestStrokeCombined) as b on a.PatID = b.PatID
 
 									----------------------------------------------
 									-------DEFINE % POINTS PER PATIENT------------
 									----------------------------------------------
 
 declare @ptPercPoints float;
-set @ptPercPoints = (select 100 / COUNT (*) from #practiceList);
+set @ptPercPoints = (select 100 / COUNT (*) from practiceList);
 
 								---------------------------------------------------------
 								-- Exit if we're just getting the indicator numbers -----
@@ -301,7 +198,7 @@ insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumbe
 --insert into #patActions
 
 --STROKE - CODED
-select a.PatID,
+select PatID,
 	'cvd.stroke.outcome' as indicatorId,
 	'strokeCoded' as actionCat,
 	null as reasonNumber,
@@ -309,37 +206,26 @@ select a.PatID,
 	null as priority,
 	null as actionText,
 	null as supportingText
-from #numberOfStrokesPerPatient as a
-left outer join (select * from #numberOfPrimCareStrokesPerPatient) as b on b.PatID = a.PatID
-where numberOfStrokesPerPatient is not null and numberOfPrimCareStrokesPerPatient is not null
+from #latestStrokeCombined
+where latestStrokeGp is not null
 
 union
 --STROKE - UNCODED
-select a.PatID,
+select PatID,
 	'cvd.stroke.outcome' as indicatorId,
 	'strokeUncoded' as actionCat,
 	1 as reasonNumber,
 	@ptPercPoints as pointsPerAction,
 	5 as priority,
-	'Record ''' + latestStrokeCode + ''' (using code ' + latestStrokeRead + '[' + latestStrokeRead + ']) on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + '.' as actionText,
+	'Record ''' + latestStrokeHosp + ''' (using code ' + latestStrokeHospCode + '[' + latestStrokeHospCode + ']) on ' + CONVERT(VARCHAR, latestStrokeHospDate, 3) + '.' as actionText,
 	'Reasoning' +
-		'<ul><li>'+
-		case 
-			when numberOfStrokesPerPatient = 1 then 'Patient had a stroke recorded in hospital in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + '.'
-			when numberOfStrokesPerPatient = 2 then 'Patient had strokes recorded in hospital in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDate, 3) + '.'
-			when numberOfStrokesPerPatient = 3 then 'Patient had strokes recorded in hospital in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, thirdLatestStrokeDate, 3)+ '.'
-			when numberOfStrokesPerPatient = 4 then 'Patient had strokes recorded in hospital in the last 12 monthson ' + CONVERT(VARCHAR, latestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, thirdLatestStrokeDate, 3) + ' and ' + CONVERT(VARCHAR, fourthLatestStrokeDate, 3) + '.'
-			when numberOfStrokesPerPatient > 4 then 'Patient had more than 4 strokes recorded in hospital in the last 12 months. The latest was on ' + CONVERT(VARCHAR, latestStrokeDate, 3) + '.'
-		end + '</li>' +
-		'<li>But there is no recorded stroke in the GP record.</li>'
+		'<ul>'+
+			'<li>Patient had a stroke recorded in hospital on ' + CONVERT(VARCHAR, latestStrokeHospDate, 3) + '.</li>'+
+			'<li>This does not seem to appear in the GP record.</li>'+
+		'</ul>'
 	as supportingText
-from #numberOfStrokesPerPatient as a
-left outer join (select * from #numberOfPrimCareStrokesPerPatient) as b on b.PatID = a.PatID
-left outer join (select * from #latestStrokeDate) as c on c.PatID = a.PatID
-left outer join (select * from #secondLatestStrokeDate) as d on d.PatID = a.PatID
-left outer join (select * from #thirdLatestStrokeDate) as e on e.PatID = a.PatID
-left outer join (select * from #fourthLatestStrokeDate) as f on f.PatID = a.PatID
-where numberOfStrokesPerPatient is not null and numberOfPrimCareStrokesPerPatient is null
+from #latestStrokeCombined as a
+where latestStrokeGp is null
 
 							---------------------------------------------------------------
 							---------------SORT ORG-LEVEL ACTION PRIORITY ORDER------------
@@ -373,7 +259,7 @@ insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion
 --CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
 --insert into #orgActions
 
---CODE HTN
+--CODE STROKE
 select
 	pracID as pracID,
 	'cvd.stroke.outcome' as indicatorId,
@@ -396,10 +282,11 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --overview tab
-('cvd.stroke.outcome','name','Strokes in hospital - last 12 months'), --overview table name
+('cvd.stroke.outcome','name','Strokes in hospital - last 12 months (beta testing)'), --overview table name
 ('cvd.stroke.outcome','tabText','Strokes in hospital'), --indicator tab text
 ('cvd.stroke.outcome','description', --'show more' on overview tab
-	'<strong>Definition:</strong> Patients who have had a stroke recorded in hospital in the past 12 months.<br>'),
+	'<strong>Definition:</strong> Patients who have had a stroke recorded in hospital in the past 12 months on your practice list.<br>'+
+	'<strong>NB:</strong> Your practice list may appear 1-2% smaller than indicated due to opt outs from data sharing agreements'),
 --indicator tab
 --summary text
 ('cvd.stroke.outcome','tagline','of patients on your practice list had a stroke recorded in hospital in the past 12 months.'),
