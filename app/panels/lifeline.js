@@ -5,11 +5,11 @@ require('highcharts/highcharts-more')(Highcharts);
 var ID = "LIFELINE";
 
 // Define a custom symbol path
-Highcharts.SVGRenderer.prototype.symbols.bar = function (x, y, w, h) {
-    return ['M', x +w/2, y, 'L', x + w/2, y + h];
+Highcharts.SVGRenderer.prototype.symbols.bar = function(x, y, w, h) {
+  return ['M', x + w / 2, y, 'L', x + w / 2, y + h];
 };
 if (Highcharts.VMLRenderer) {
-    Highcharts.VMLRenderer.prototype.symbols.bar = Highcharts.SVGRenderer.prototype.symbols.bar;
+  Highcharts.VMLRenderer.prototype.symbols.bar = Highcharts.SVGRenderer.prototype.symbols.bar;
 }
 
 var colour = {
@@ -117,7 +117,7 @@ var ll = {
         $.each(task.intervals, function(j, interval) {
           if (!latestIntervalEndDate) latestIntervalEndDate = interval.to;
           else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
-          item.data.push([i + 0.49, interval.from, interval.to]);
+          item.data.push([i + 0, interval.from, interval.to]);
         });
 
         if (latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
@@ -127,19 +127,20 @@ var ll = {
 
       //$(elementId).append($('<div class="chart-title">Patient conditions and contacts</div>'));
       // create the chart
-      $('<div class="h-chart h-condition-chart">')
+      var barWidth = 16;
+      var barSpace = 1;
+      $('<div class="h-chart h-condition-chart" style="height:' + (0 + conditions.length * (barWidth + barSpace)) + 'px">')
         .appendTo(elementId)
         .highcharts({
 
           chart: {
-            renderTo: element,
             marginLeft: 120, // Keep all charts left aligned
-            spacingTop: 20,
-            spacingBottom: 20,
+            marginBottom: 0,
+            marginTop: 0,
             type: 'columnrange',
             inverted: true,
             backgroundColor: '#F9F3F9',
-            borderWidth: 2,
+            borderWidth: 0,
             borderColor: '#ddd'
           },
 
@@ -149,29 +150,17 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: true,
-            events: {
-              setExtremes: syncExtremes
-            },
-            labels: {
-              enabled: false
-            },
+            crosshair: false,
 
+            visible: false,
             //things that are normally xAxis defaults
             endOnTick: false,
-            gridLineWidth: 0,
-            lineWidth: 1,
-            maxPadding: 0.01,
-            minPadding: 0.01,
             startOnTick: false,
-            tickWidth: 0,
-            title: {
-              text: ''
-            },
-            tickPixelInterval: 100
           },
 
           xAxis: {
+            min: -0.6,
+            max: conditions.length - 0.5,
             labels: {
               enabled: false
             },
@@ -183,12 +172,7 @@ var ll = {
               rotation: 0
             },
             tickWidth: 0,
-            minPadding: 0.2,
-            maxPadding: 0.2,
-
-            //things that are normally yAxis defaults
-            gridLineWidth: 0,
-            lineWidth: 0
+            lineWidth: 1
 
           },
           credits: {
@@ -216,7 +200,9 @@ var ll = {
           plotOptions: {
             columnrange: {
               grouping: false,
-              /*groupPadding: 0.3,*/
+              groupPadding: 0.01, // Defaults to 0.2
+              pointWidth: barWidth,
+              pointPlacement: "between",
               dataLabels: {
                 allowOverlap: false,
                 enabled: true,
@@ -247,7 +233,17 @@ var ll = {
 
     var plotContacts = function(contacts) {
       ll.charts++;
-      var markerTemplate = { "lineWidth": 1, "lineColor": "black", "radius": 8 };
+      var markerTemplate = {
+        "lineWidth": 1,
+        "lineColor": "black",
+        "radius": 10,
+        states: {
+          hover: {
+            lineColor: 'red',
+            radius: 12
+          }
+        }
+      };
       var markers = {
         "default": $.extend({ "symbol": "triangle" }, markerTemplate),
         "Face to face": $.extend({ "symbol": "square" }, markerTemplate),
@@ -259,24 +255,25 @@ var ll = {
       var contactSeries = contacts.map(function(v) {
         if (!latestContact) latestContact = v.time;
         else latestContact = Math.max(latestContact, v.time);
-        return { x: v.time, y: v.task, name: v.name, marker: markers.Telephone };
+        return { x: v.time, y: 0, name: v.name, marker: markers.Telephone };
       });
 
       if (latestContact) minMaxDate = Math.min(latestContact, minMaxDate);
 
       // create the chart
-      $('<div class="h-chart h-contact-chart">')
+      $('<div class="sync-chart h-chart h-contact-chart">')
         .appendTo(elementId)
         .highcharts({
 
           chart: {
             renderTo: element,
             marginLeft: 120, // Keep all charts left aligned
-            spacingTop: 20,
-            spacingBottom: 20,
+            marginTop: 0,
+            //marginBottom: 0,
+            spacingBottom: 0, //gap between x-axis labels/title and edge of chart
             type: 'scatter',
             backgroundColor: '#F9F3F9',
-            borderWidth: 2,
+            borderWidth: 0,
             borderColor: '#ddd'
           },
 
@@ -286,18 +283,21 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: true,
+            crosshair: {
+              snap: false
+            },
             events: {
               setExtremes: syncExtremes
             },
             labels: {
-              enabled: false
+              enabled: true,
+              y: 0 //gap between axis labels and chart
             },
 
             //things that are normally xAxis defaults
             endOnTick: false,
             gridLineWidth: 0,
-            lineWidth: 1,
+            lineWidth: 0,
             maxPadding: 0.01,
             minPadding: 0.01,
             startOnTick: false,
@@ -312,6 +312,8 @@ var ll = {
             labels: {
               enabled: false
             },
+            min: -0.1,
+            max: 0.1,
             startOnTick: false,
             endOnTick: false,
             title: {
@@ -320,12 +322,10 @@ var ll = {
               rotation: 0
             },
             tickWidth: 0,
-            minPadding: 0.2,
-            maxPadding: 0.2,
 
             //things that are normally yAxis defaults
             gridLineWidth: 0,
-            lineWidth: 0
+            lineWidth: 1
 
           },
           credits: {
@@ -350,6 +350,27 @@ var ll = {
             followPointer: true
 
           },
+          plotOptions: {
+            series: {
+              states: {
+                hover: {
+                  enabled: true,
+                  halo: {
+                    size: 0
+                  }
+                }
+              },
+              events: {
+                mouseOut: function() {
+                  var chart, i;
+                  for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+                    chart = ll.chartArray[i];
+                    chart.tooltip.hide();
+                  }
+                }
+              }
+            }
+          },
 
           series: [{
             data: contactSeries
@@ -361,7 +382,17 @@ var ll = {
     var plotImportantCodes = function(importantCodes) {
       ll.charts++;
 
-      var markerTemplate = { "lineWidth": 1, "lineColor": "black", "radius": 8 };
+      var markerTemplate = {
+        "lineWidth": 1,
+        "lineColor": "black",
+        "radius": 10,
+        states: {
+          hover: {
+            lineColor: 'red',
+            radius: 12
+          }
+        }
+      };
       var markers = {
         "default": $.extend({ "symbol": "triangle" }, markerTemplate),
         "Face to face": $.extend({ "symbol": "square" }, markerTemplate),
@@ -373,24 +404,29 @@ var ll = {
       var eventSeries = importantCodes.map(function(v) {
         if (!latestImportantCode) latestImportantCode = v.time;
         else latestImportantCode = Math.max(latestImportantCode, v.time);
-        return { x: v.time, y: v.task, name: v.name, marker:markers.Telephone };
+        return {
+          x: v.time,
+          y: 0,
+          name: v.name,
+          marker: markers.Telephone
+        };
       });
 
       if (latestImportantCode) minMaxDate = Math.min(latestImportantCode, minMaxDate);
 
       // create the chart
-      $('<div class="h-chart h-important-codes-chart">')
+      $('<div class="sync-chart h-chart h-important-codes-chart">')
         .appendTo(elementId)
         .highcharts({
 
           chart: {
             renderTo: element,
             marginLeft: 120, // Keep all charts left aligned
-            spacingTop: 20,
-            spacingBottom: 20,
+            marginTop: 0,
+            marginBottom: 0,
             type: 'scatter',
             backgroundColor: '#F9F3F9',
-            borderWidth: 2,
+            borderWidth: 0,
             borderColor: '#ddd'
           },
 
@@ -400,7 +436,9 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: true,
+            crosshair: {
+              snap: false
+            },
             events: {
               setExtremes: syncExtremes
             },
@@ -411,7 +449,7 @@ var ll = {
             //things that are normally xAxis defaults
             endOnTick: false,
             gridLineWidth: 0,
-            lineWidth: 1,
+            lineWidth: 0,
             maxPadding: 0.01,
             minPadding: 0.01,
             startOnTick: false,
@@ -426,6 +464,8 @@ var ll = {
             labels: {
               enabled: false
             },
+            min: -0.1,
+            max: 0.1,
             startOnTick: false,
             endOnTick: false,
             title: {
@@ -434,12 +474,10 @@ var ll = {
               rotation: 0
             },
             tickWidth: 0,
-            minPadding: 0.2,
-            maxPadding: 0.2,
 
             //things that are normally yAxis defaults
             gridLineWidth: 0,
-            lineWidth: 0
+            lineWidth: 1
 
           },
           credits: {
@@ -448,6 +486,28 @@ var ll = {
 
           legend: {
             enabled: false
+          },
+
+          plotOptions: {
+            series: {
+              states: {
+                hover: {
+                  enabled: true,
+                  halo: {
+                    size: 0
+                  }
+                }
+              },
+              events: {
+                mouseOut: function() {
+                  var chart, i;
+                  for (i = 1; i < ll.chartArray.length - 2; i = i + 1) {
+                    chart = ll.chartArray[i];
+                    chart.tooltip.hide();
+                  }
+                }
+              }
+            }
           },
 
           tooltip: {
@@ -498,8 +558,8 @@ var ll = {
             marginLeft: 120, // Keep all charts left aligned
             spacingTop: 0,
             spacingBottom: 8,
-            backgroundColor: '#F9F9F3',
-            borderWidth: 2,
+            backgroundColor: 'rgba(249, 249, 243, 1)',
+            borderWidth: 0,
             borderColor: '#ddd'
           },
           title: {
@@ -601,44 +661,31 @@ var ll = {
 
         if (dataset.name === "BP") {
           chartOptions.tooltip.pointFormat = "<b>BP:</b> {point.low}/{point.high} mmHg<br><small>Recorded at: {point.loc}</small>";
-          //chartOptions.series[0].tooltip = {};
           chartOptions.series[0].stemWidth = 3;
           chartOptions.series[0].whiskerLength = 10;
-          chartOptions.series[0].states = {
-            hover: {
-              halo: {
-                size: 9,
-                attributes: {
-                  'stroke-width': 1,
-                  stroke: Highcharts.getOptions().colors[1]
-                }
+          chartOptions.plotOptions.errorbar = {
+            states: {
+              hover: {
+                halo: {
+                  size: 9,
+                  attributes: {
+                    'stroke-width': 1,
+                    stroke: Highcharts.getOptions().colors[1]
+                  }
+                },
+                brightness: 0.5,
+                color: 'green',
+                borderColor: 'blue'
               }
             }
           };
         }
 
-        /*if (i === 0) {
-          chartOptions.title = {
-            text: 'Patient measurements',
-            align: 'left',
-            margin: 1,
-            style: {
-              color: "#333333",
-              fontSize: "12px",
-              fontWeight: "bold"
-            }
+        if (i === measurements.length - 1) {
+          chartOptions.xAxis.labels = {
+            enabled: true
           };
-        }*/
-
-        /*if (i === measurements.datasets.length - 1) {
-          chartOptions.xAxis = {
-            crosshair: true,
-            events: {
-              setExtremes: syncExtremes
-            },
-            type: 'datetime'
-          };
-        }*/
+        }
         $('<div class="sync-chart h-chart' + (i === measurements.length - 1 ? " h-last-measurement-chart" : "") + '">')
           .appendTo(elementId)
           .highcharts(chartOptions);
@@ -658,7 +705,7 @@ var ll = {
             spacingTop: 20,
             spacingBottom: 20,
             ignoreHiddenSeries: false,
-            borderWidth: 2,
+            borderWidth: 0,
             borderColor: '#ddd'
           },
 
@@ -756,7 +803,7 @@ var ll = {
         $.each(task.intervals.filter(function(v) { return v.label !== "0mg"; }), function(j, interval) {
           if (!latestIntervalEndDate) latestIntervalEndDate = interval.to;
           else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
-          item.data.push([i + 0.49, interval.from, interval.to]);
+          item.data.push([i + 0, interval.from, interval.to]);
         });
 
         //if(latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
@@ -777,19 +824,20 @@ var ll = {
       //$(elementId).append($('<div class="chart-title">Patient medications</div>'));
       // create the chart
       //return $('<div class="h-chart h-medication-chart"' + (noData ? 'style="display:none"' : '') + '>')
-      return $('<div class="h-chart h-medication-chart">')
+      var barWidth = 16;
+      var barSpace = 1;
+      return $('<div class="sync-chart h-chart h-medication-chart" style="height:' + (12 + series.length * (barWidth + barSpace)) + 'px">')
         .appendTo(elementId)
         .highcharts({
 
           chart: {
-            renderTo: element,
             marginLeft: 120, // Keep all charts left aligned
-            spacingTop: 20,
-            spacingBottom: 20,
+            spacingBottom: 0,
+            marginTop: 0,
             type: 'columnrange',
             inverted: true,
-            backgroundColor: '#F3F9F9',
-            borderWidth: 2,
+            backgroundColor: '#F9F3F9',
+            borderWidth: 0,
             borderColor: '#ddd'
           },
           lang: {
@@ -809,29 +857,36 @@ var ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: true,
+            crosshair: {
+              snap: false
+            },
             events: {
               setExtremes: syncExtremes
             },
-            /*labels: {
-              enabled: false
-            },*/
+
+            labels: {
+              enabled: true,
+              y: 12
+            },
 
             //things that are normally xAxis defaults
             endOnTick: false,
             gridLineWidth: 0,
-            lineWidth: 1,
+            lineWidth: 0,
             maxPadding: 0.01,
             minPadding: 0.01,
             startOnTick: false,
             tickWidth: 0,
             title: {
-              text: ''
+              text: '',
+              margin: 0
             },
             tickPixelInterval: 100
           },
 
           xAxis: {
+            min: -0.6,
+            max: medications.length - 0.5,
             labels: {
               enabled: false
             },
@@ -843,12 +898,13 @@ var ll = {
               rotation: 0
             },
             tickWidth: 0,
-            minPadding: 0.2,
-            maxPadding: 0.2,
+            //minPadding: 0,
+            //maxPadding: 0.2,
 
             //things that are normally yAxis defaults
-            gridLineWidth: 0,
-            lineWidth: 0
+            //gridLineWidth: 0,
+            lineWidth: 1
+
           },
           credits: {
             enabled: false
@@ -861,6 +917,7 @@ var ll = {
           tooltip: {
             formatter: function() {
               var yCoord = this.y;
+
               var labelTmp = medications[Math.floor(this.x)].intervals.filter(function(v) {
                 return yCoord >= v.from && yCoord <= v.to;
               });
@@ -874,8 +931,12 @@ var ll = {
 
           plotOptions: {
             columnrange: {
-              pointWidth: 20,
               grouping: false,
+              //pointPadding: barSpace,// Defaults to 0.1
+              groupPadding: 0.01, // Defaults to 0.2
+              pointWidth: barWidth,
+              pointPlacement: "between",
+              /*groupPadding: 0.3,*/
               dataLabels: {
                 allowOverlap: false,
                 enabled: true,
@@ -900,7 +961,6 @@ var ll = {
           },
 
           series: series
-
         });
     };
 
