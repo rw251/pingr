@@ -570,7 +570,7 @@ async.series([
                           }
 
                           if (!patients[+data.patientId].actions) patients[+data.patientId].actions = [];
-                          if (patients[+data.patientId].actions.filter(function(v) {
+                          if (data.actionText && patients[+data.patientId].actions.filter(function(v) {
                               return v.actionText === data.actionText && v.indicatorId === data.indicatorId;
                             }).length === 0) {
                             patients[+data.patientId].actions.push({
