@@ -180,18 +180,26 @@ var pl = {
       base.setupClipboard($('.btn-copy'), true);
 
       base.wireUpTooltips();
+      // 
+      // $('#patient-list').floatThead({
+      //   position: 'absolute',
+      //   scrollContainer: true,
+      //   zIndex:50
+      // });
 
-      $('#patient-list').floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex:50
+      var $scrollTable = $('#patient-list');
+
+      $scrollTable.floatThead({
+          scrollContainer: function($scrollTable){
+            return $scrollTable.closest('.wrapper');
+        }
       });
 
       $('#patient-list').floatThead('reflow');
 
       base.hideLoading();
 
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
+      //base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
 
     });
 

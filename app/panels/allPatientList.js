@@ -84,10 +84,14 @@ var pl = {
       base.wireUpTooltips();
 
       base.hideLoading();
-      $('#allPatientTable').floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex:50
+
+
+      var $scrollTable = $('#allPatientTable')
+
+      $scrollTable.floatThead({
+        scrollContainer: function($scrollTable){
+          return $scrollTable.closest('.wrapper');
+      }
       });
     });
 

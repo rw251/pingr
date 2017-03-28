@@ -37,10 +37,12 @@ var indicatorList = {
         width: "100px"
       });
 
-      $('#overview-table').floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex:50
+      var $scrollTable = $('#overview-table');
+
+      $scrollTable.floatThead({
+        scrollContainer: function($scrollTable){
+          return $scrollTable.closest('.wrapper');
+      }
       });
 
       indicatorList.wireUp(panel, loadContentFn);

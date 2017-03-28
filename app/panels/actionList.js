@@ -129,16 +129,8 @@ var al = {
         }
       });
       $('.ps-child').perfectScrollbar();
-      // .floatThead({
-      //    position: 'absolute',
-      //   // scrollContainer: true,
-      //    scrollContainer: function($scrollTable){
-      //      return $scrollTable.closest('.wrapper');
-      //    }
-      //    //zIndex: 50
-      //});
 
-    base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250, minHeight: 300 }]);
+    //base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250, minHeight: 300 }]);
   }
 
 };

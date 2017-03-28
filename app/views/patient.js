@@ -130,6 +130,9 @@ var pv = {
           data.pathwayId = pathwayId;
 
           patientSearch.show($('#title-right'), true, true, loadContentFn);
+
+          $('#patient-Search .card-title').html("<div class='col-sm-6'><p>Find another patient</p></div><div class='col-sm-2'><a class='btn btn-sm' href='/#patients'>reset</a></div>");
+
           qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
 
           //this shows the charts
@@ -154,14 +157,14 @@ var pv = {
           farLeftPanel.attr("class", "col-xl-6 col-lg-6 ps-child");
 
           //update the search container to ask...
-          $('#patient-Search .card-title').html("Find another patient");
+          //$('#patient-Search .card-title').html("Find another patient");
 
           // BG-TODO might need re inserting - probably not.
           //$('#right-panel').css("overflow-y","auto");
           //$('#right-panel').css("overflow-x","hidden");
           //$('#left-panel').css("overflow-y","auto");
           //$('#left-panel').css("overflow-x","hidden");
-          base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 },{selector:'#personalPlanIndividual',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
+          //base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 },{selector:'#personalPlanIndividual',padding:820},{selector:'#advice-list',padding:430, minHeight:250}]);
         });
       } else {
         //scroll to top
@@ -171,6 +174,9 @@ var pv = {
         base.switchToSingleColumn();
         base.savePanelState();
         patientSearch.show(centrePanel, false, false, loadContentFn);
+
+        $('#patient-Search .card-title').html("<p>Find a patient</p>");
+
         allPatientList.show(centrePanel, true, skip, limit, loadContentFn);
 
         layout.allPatientView = {skip: skip, limit: limit};
@@ -188,16 +194,18 @@ var pv = {
         farLeftPanel.attr("class", "col-xl-4 col-lg-4 state-patient-leftPanel");
         farRightPanel.attr("class", "col-xl-4 col-lg-4 state-patient-rightPanel");
         //update the search container to ask...
-        $('#patient-Search .card-title').html("Find a patient");
+        //$('#patient-Search .card-title').html("Find a patient");
 
         //BG-TODO RW - don't think this is needed anymore??
         //$('#right-panel').css("overflow","visible");
 
         //BG-TODO - from RW dev branch - might not be needed
         base.updateTab("patients", "", "");
-        base.updateFixedHeightElements([{ selector: '#centre-panel', padding: 15,minHeight:300 }, { selector: '.table-scroll', padding: 220,minHeight:300 }]);
+        //base.updateFixedHeightElements([{ selector: '#centre-panel', padding: 15,minHeight:300 }, { selector: '.table-scroll', padding: 220,minHeight:300 }]);
 
       }
+
+
 
     }, 0);
 

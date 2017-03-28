@@ -2,12 +2,18 @@
   .card-header.card-header-icon(data-background-color="green")
     i.material-icons search
   .card-content
-    h4.card-title Search patients 
+    h4.card-title if you can see this...
     form#search-box.app-search.hidden-xs.ng-pristine.ng-valid(role='search')
-      //input.typeahead.form-control.form-control-circle(type='text', placeholder='Search by patients NHS number...')
       .form-group.label-floating.is-empty
-        label.control-label Enter an NHS number
-        input.typeahead.form-control(type='text')
+        label.control-label(for='pSearch')
+            if dataLoaded
+              | Enter an NHS number
+            else
+              | Loading patient list... please wait
+          if dataLoaded
+            input.typeahead.form-control(id='pSearch', name='pSearch', type='text')
+          else
+            input.typeahead.form-control(id='pSearch', name='pSearch', type='text', disabled=true)
 
 // BG-TODO notes on merged dev below
 // 1. dataloaded is true when the nhs lookup is ready - show a "loading patient data" otherwise

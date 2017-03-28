@@ -4,7 +4,7 @@ if noSuggestions
   p There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
   include mixins/personal-action-plan
 else 
-  .col-md-4
+  .col-md-4.ps-child
     ul.nav.nav-pills.nav-pills-icons.nav-pills-default.nav-stacked(role="tablist")
       //#tab-plan-individual.panel.panel-default
       each suggestion, index in suggestions
@@ -17,10 +17,13 @@ else
   .col-md-8
     .tab-content
       each suggestion, index in suggestions
+        
         -var actionTextClass = "tab-pane"
         if index == 0
           -actionTextClass = "active tab-pane"
         li.suggestion(class= actionTextClass, id=suggestion.actionTextId, data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index)
+          #advice-placeholder
+            h3.text-primary.text-center= suggestion.actionText
           .col-md-12
             +thumbs(suggestion)
           .col-md-12

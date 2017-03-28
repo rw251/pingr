@@ -310,7 +310,8 @@ var iap = {
         any = true;
         //if there is a history - display appropriate title
         if (patientActionsObject[self.data("id")].history != "") {
-          var tooltipInfo = "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+          //var tooltipInfo = "<p>" + patientActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+          var tooltipInfo = "<p>" + base.textFromHistory(patientActionsObject[self.data("id")].history[0]) + "</p><p>Click again to cancel</p>";
           $(this).closest('label').attr("title", tooltipInfo).attr("data-original-title", tooltipInfo).attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
         }
         //if no history but selected is affirmative
@@ -320,7 +321,7 @@ var iap = {
         //if no history but selected is negative
         else {
           $(this).closest('label').attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
-//BG-TODO incorporate the base.textFromHistory to populate tooltip
+//BG-TODO-DONE incorporate the base.textFromHistory to populate tooltip
 // =======
 //         if (this.value === "yes") {
 //           all.removeClass('danger');

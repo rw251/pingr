@@ -94,6 +94,8 @@ var ps = {
 
     if (isAppend) panel.append(html);
     else panel.html(html);
+    // if (isAppend) panel.append(html);
+    //panel.html(html);
 
     //$('#search-box').find('.typeahead').typeahead(); //so it looks ok even while data loading
 
@@ -104,8 +106,14 @@ var ps = {
         } else {
           tmpl = require("templates/patient-search");
           html = tmpl({ dataLoaded: true, patientSelected: isPatientSelected });
-          $('#search-box').replaceWith(html);
-
+          $('#patient-Search').replaceWith(html);
+          if(isPatientSelected)
+          {
+            $('#patient-Search .card-title').html("<div class='col-sm-6'><p>Find another patient</p></div><div class='col-sm-2'><a class='btn btn-sm' href='/#patients'>reset</a></div>");
+          }
+          else {
+            $('#patient-Search .card-title').html("<p>Find a patient</p>");
+          }
           setTimeout(function() {
             ps.wireUp();
           }, 0);

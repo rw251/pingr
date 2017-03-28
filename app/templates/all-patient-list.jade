@@ -3,7 +3,7 @@
     a.btn(href='/#patients/' + (Math.max(0,skip-limit)) +'/'+limit)= "Previous " + limit
   label= "Patients " + (skip+1) + " to " + (skip+limit) 
   a.btn(href='/#patients/' + (limit+skip) +'/'+limit)= "Next " + limit
-.table-scroll
+.table-scroll.wrapper
   table#allPatientTable.table.patient-list
     thead
       tr(style='background:#fff')

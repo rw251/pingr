@@ -194,7 +194,7 @@ var ind = {
       //farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
       farRightPanel.attr("class", "col-xl-6 col-lg-6 state-indicator-rightPanel");
       farLeftPanel.attr("class", "col-xl-6 col-lg-6 state-indicator-leftPanel");
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
+      //base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
 
     }, 0);
   }

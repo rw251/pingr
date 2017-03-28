@@ -11,8 +11,7 @@ else
         if index == 0
           -actionSelectorClass = "active"
         li(class= actionSelectorClass)
-          a(href="#" + suggestion.actionTextId role="tab" data-toggle="tab")
-            p= suggestion.actionText
+          a(href="#" + suggestion.actionTextId role="tab" data-toggle="tab") #{suggestion.actionTextClean} 
   .col-md-8
     .tab-content
       each suggestion, index in suggestions
@@ -20,6 +19,8 @@ else
         if index == 0
           -actionTextClass = "active tab-pane"
         li.suggestion(class= actionTextClass, id=suggestion.actionTextId, data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index)
+          #advice-placeholder
+            h3.text-info.text-center!= suggestion.actionText
           .col-md-12
             +thumbs(suggestion)
           .col-md-12

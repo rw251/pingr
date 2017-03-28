@@ -47,8 +47,12 @@ var tap = {
   },
 
   wireUp: function(pathwayId, pathwayStage, standard) {
-    actionPanel = $('#team-action-panel');
-    userActionPanel = $('#user-action-panel');
+    //BG-TODO hotfix implemented needs to be tided into one OR two cards (personalPlanTeam -> team-action-panel | user-action-panel)
+    // actionPanel = $('#team-action-panel');
+    // userActionPanel = $('#user-action-panel');
+
+    actionPanel = $('#personalPlanTeam');
+    userActionPanel = $('#personalPlanTeam');
 
     var indicatorId = "";
     if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
@@ -226,7 +230,7 @@ var tap = {
 
         //if there is a history - display appropriate title
         if (teamActionsObject[self.data("id")].history != "") {
-          var tooltipInfo = "<p>" + teamActionsObject[self.data("id")].history[0].replace($('#user_fullname').text().trim(), "You") + "</p><p>Click again to cancel</p>";
+          var tooltipInfo = "<p>" + base.textFromHistory(teamActionsObject[self.data("id")].history[0]) + "</p><p>Click again to cancel</p>";
           $(this).closest('label').attr("title", tooltipInfo).attr("data-original-title", tooltipInfo).attr("data-html", "true").tooltip('fixTitle').tooltip('hide');
         }
         //if no history but selected is affirmative
@@ -236,7 +240,7 @@ var tap = {
         //if no history but selected is negative
         else {
           $(this).closest('label').attr("title", "You disagreed with this - click again to edit/cancel").tooltip('fixTitle').tooltip('hide');
-//BG-TODO incorporate the base.textFromHistory to populate tooltip
+//BG-TODO-DONE incorporate the base.textFromHistory to populate tooltip
 
 // =======
 //         if (this.value === "yes") {
@@ -338,6 +342,19 @@ var tap = {
         });
         if (v.agree !== true && v.agree !== false) v.agree = null;
         teamActionsObject[v.actionTextId] = v;
+
+        //save a clean version that removes all html from injected text
+        var tmp = v.actionText.search("<");
+        var tmpStr = v.actionText;
+        while(tmp >= 0)
+        {
+          var openIndex = tmp;
+          var closeIndex = tmpStr.search(">")
+          tmpStr = tmpStr.replace(tmpStr.substring(openIndex, closeIndex+1), "");
+          var tmp = tmpStr.search("<");
+        }
+        v.actionTextClean = tmpStr;
+
         return v;
       });
       tap.populateTeamSuggestedActions(pathwayId, pathwayStage, standard, visible);
