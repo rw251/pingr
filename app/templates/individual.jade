@@ -2,11 +2,11 @@ include mixins/thumbs
 
 if noSuggestions
   p There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
-  include mixins/personal-action-plan
+  //include mixins/personal-action-plan
 else 
   .col-md-4.ps-child
     ul.nav.nav-pills.nav-pills-icons.nav-pills-default.nav-stacked(role="tablist")
-      //#tab-plan-individual.panel.panel-default
+      #tab-plan-individual.panel.panel-default
       each suggestion, index in suggestions
         -var actionSelectorClass = ""
         if index == 0
@@ -23,7 +23,7 @@ else
           -actionTextClass = "active tab-pane"
         li.suggestion(class= actionTextClass, id=suggestion.actionTextId, data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index)
           #advice-placeholder
-            h3.text-primary.text-center= suggestion.actionText
+            h3.text-info.text-center= suggestion.actionText
           .col-md-12
             +thumbs(suggestion)
           .col-md-12
@@ -38,7 +38,7 @@ else
                 p.pre-icon-text= "Number of points this is worth: " + suggestion.pointsPerAction.toFixed(1) + " "
                 i.material-icons.text-rose(data-toggle='tooltip', data-placement='right', title='A patient is worth a number of percentage points for each indicator they are in. If a patient is in more than one indicator, these points are added together') help
   .col-md-12
-    include mixins/personal-action-plan
+    //include mixins/personal-action-plan
   //- table#individual-suggested-actions-table.table
   //-   thead
   //-     tr

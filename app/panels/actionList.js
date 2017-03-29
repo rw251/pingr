@@ -125,10 +125,9 @@ var al = {
       $scrollTable.html(tmpl(dataObject));
       $scrollTable.floatThead({
         scrollContainer: function($scrollTable){
-          return $scrollTable.closest('.wrapper');
+          return $scrollTable.closest('.wrapper-floatTHead');
         }
       });
-      $('.ps-child').perfectScrollbar();
 
     //base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250, minHeight: 300 }]);
   }

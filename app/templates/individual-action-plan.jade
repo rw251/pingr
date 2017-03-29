@@ -5,15 +5,16 @@
     h4.card-title Suggested Actions
     small.category= "Total Suggested Actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " For this Patient"
     .row
-      #tab-plan-individual.panel.panel-default
-        //.affix.panel.panel-default
-        //.clearfix.panel-heading= "Top 3 suggested actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " for patient with NHS number " + nhs
-        //#tab-plan-individual.panel-body.fit-to-screen-height
-        //- #advice-placeholder
-        //-   | Select an individual patient from the patient panel to view advice
-        
+      .panel.panel-default
         #advice-list
-        #personalPlanIndividual
+.card
+  .card-header.card-header-icon(data-background-color="green")
+    i.material-icons assignment_ind
+  .card-content
+    h4.card-title Suggestion you have made
+    small.category= "These suggestions are shared with your team so everyone can benefit"
+    #tab-plan-individual.panel.panel-default
+      #personalPlanIndividual
       
         
         

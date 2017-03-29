@@ -14,6 +14,7 @@ var tap = {
   show: function(panel, title, pathwayId, pathwayStage, standard) {
     panel.html(tap.create(title));
     tap.wireUp(pathwayId, pathwayStage, standard);
+    $('.ps-child').perfectScrollbar();
   },
 
   updateAction: function(action) {
@@ -47,7 +48,7 @@ var tap = {
   },
 
   wireUp: function(pathwayId, pathwayStage, standard) {
-    //BG-TODO hotfix implemented needs to be tided into one OR two cards (personalPlanTeam -> team-action-panel | user-action-panel)
+    //BG-TODO-NEO hotfix implemented needs to be tided into one OR two cards (personalPlanTeam -> team-action-panel | user-action-panel)
     // actionPanel = $('#team-action-panel');
     // userActionPanel = $('#user-action-panel');
 
@@ -100,7 +101,7 @@ var tap = {
       var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
       log.recordTeamPlan(actionText, indicatorId, function(err, a){
         if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
-        //BG-TODO below line left in after dev merge
+        //BG-TODO-NOTED below line left in after dev merge
         //we now redraw the panel instead of manually inserting
         tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
       });
@@ -444,6 +445,8 @@ var tap = {
     base.setupClipboard($('.btn-copy'), true);
 
     tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
+
+    $('.ps-child').perfectScrollbar();
   },
 
   launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {

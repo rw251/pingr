@@ -109,7 +109,8 @@ var ps = {
           $('#patient-Search').replaceWith(html);
           if(isPatientSelected)
           {
-            $('#patient-Search .card-title').html("<div class='col-sm-6'><p>Find another patient</p></div><div class='col-sm-2'><a class='btn btn-sm' href='/#patients'>reset</a></div>");
+            $('#patient-Search .card-title').html("<p>Find another patient</p>");
+            $('#patient-Search').append("<div class='text-center'><a class='btn btn-info' href='/#patients'>return to patient list</a></div>");
           }
           else {
             $('#patient-Search .card-title').html("<p>Find a patient</p>");

@@ -1,0 +1,32 @@
+//- .col-md-6
+//-   .card.card-stats
+//-     .card-header(data-background-color="blue")
+//-       i.material-icons face
+//-     .card-content
+//-       h2 Patient View 
+//-     .card-footer
+//-       .col-md-10
+//-         .col-md-12
+//-           h4= 'Patient ' + patid 
+//-         .col-md-12
+//-           h4= '(' + sex + ' - ' + age + ' yrs)'
+//-         .col-md-12
+//-           br
+//-       .col-md-2
+//-         button.btn.btn-xs.btn-round.btn-just-icon.btn-default.btn-copy(type='button', data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+//-           i.material-icons content_copy          
+.col-md-6
+  .card
+    .card-header.card-header-icon(data-background-color="blue")
+      i.material-icons aspect_ratio
+    .card-content
+      h2.card-title Overview
+      h4 Start here to look over all of the data
+.col-md-6
+  .card
+    .card-header.card-header-icon(data-background-color="green")
+      i.material-icons assignment_returned
+    #tab-plan-addition.card-content
+      h4.card-title Add an action
+      .col-md-12
+        include mixins/personal-action-plan

@@ -36,6 +36,31 @@ var pv = {
 
   wireUp: function() {
 
+      individualAdditionTab = $('#tab-plan-addition');
+
+      individualAdditionTab.on('click', '.add-plan', function() {
+        //var actionText = $(this).parent().parent().find('textarea').val();
+        var actionText = $('textarea.form-control').val();
+        $('textarea.form-control').val("");
+
+        var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+        var indicatorList = [];
+        if (pathwayId && pathwayStage && standard) {
+          indicatorList.push([pathwayId, pathwayStage, standard].join("."));
+        } else {
+          indicatorList = patientActions.reduce(function(prev, curr) {
+            var union = prev.concat(curr.indicatorList);
+            return union.filter(function(item, pos) {
+              return union.indexOf(item) == pos;
+            });
+          }, []);
+        }
+        log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
+          if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
+          iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
+          qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+        });
+      });
   },
 
   create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
@@ -130,8 +155,9 @@ var pv = {
           data.pathwayId = pathwayId;
 
           patientSearch.show($('#title-right'), true, true, loadContentFn);
-
-          $('#patient-Search .card-title').html("<div class='col-sm-6'><p>Find another patient</p></div><div class='col-sm-2'><a class='btn btn-sm' href='/#patients'>reset</a></div>");
+          //$('#patient-Search .card-title').append("<div class='card-footer'><a class='btn btn-info' href='/#patients'>reset</a></div>");
+          $('#patient-Search .card-title').html("<p>Find another patient</p>");
+          $('#patient-Search').append("<div class='text-center'><a class='btn btn-info' href='/#patients'>return to patient list</a></div>");
 
           qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
 

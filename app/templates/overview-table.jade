@@ -7,30 +7,32 @@
   .card-content
     h4.card-title Overview Tables
     small.category An overview list of ***********
-    .panel-body.overview-table.wrapper
-      table.table#overview-table
-        thead.col-md-12
+    .panel-body.overview-table.wrapper-floatTHead
+      table.table.table-hover#overview-table
+        thead
           tr
             th.col-md-3 Indicator
-            th.col-md-1 Current Performance
+            th.col-md-1.text-center Current Performance
             // BG-TODO the below column is new
-            th.col-md-1 Actioned Patients
-            th.col-md-2 Salford Target
-            th.col-md-2 Top 10% Benchmark
+            th.col-md-1.text-center Actioned Patients
+            th.col-md-2.text-center Salford Target
+            th.col-md-2.text-center Top 10% Benchmark
             // BB-TODO in dev merge this is "Change from Yesterday"
-            th.col-md-2 Daily Trajectory
+            th.col-md-1.text-center Daily Trajectory
             th.col-md-2 1 Year Trend
-        tbody.ps-child.ps-boilerplate.col-md-12
+        tbody.ps-child.ps-boilerplate
           - var alt=false
           each indicator in indicators
-            tr(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
+            tr.standard-row(data-id=indicator.id,class=alt ? 'info': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
               td.col-md-3
+                //td
                 strong!= indicator.name
                 br
                 a.show-more(data-id=indicator.id)
                   | Show more 
                   i.fa.fa-caret-down
-              td.col-md-1
+              td.col-md-1.text-center
+                //td
                 //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
                 if isNaN(indicator.performance.percentage)
                   strong(class = 'text-underPerform') N/A
@@ -44,10 +46,15 @@
                   
                 //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
                 span= ' (' + indicator.performance.fraction + ')'
-              td.col-md-1= indicator.reviewed + "/" + indicator.patientsWithOpportunity
-              td.col-md-2= indicator.target
-              td.col-md-2= (indicator.benchmark*100).toFixed(0)+"%"
-              td.col-md-2(style="text-align:center")
+              td.col-md-1.text-center= indicator.reviewed + "/" + indicator.patientsWithOpportunity
+              td.col-md-2.text-center= indicator.target
+              td.col-md-2.text-center= (indicator.benchmark*100).toFixed(0)+"%"
+              td.col-md-1.text-center
+                //(style="text-align:center")
+                //- td= indicator.reviewed + "/" + indicator.patientsWithOpportunity
+                //- td= indicator.target
+                //- td= (indicator.benchmark*100).toFixed(0)+"%"
+                //- td(style="text-align:center")
                 if indicator.change==="up"
                   i.material-icons trending_up
                 else if indicator.change==="down"
@@ -55,8 +62,9 @@
                 else
                   i.material-icons trending_flat
               td.col-md-2
+                //td
                 span.inlinesparkline= indicator.trend
-            tr.show-more-row(data-id=indicator.id,class=alt ? 'alternate-row': '')
+            tr.show-more-row(style="display: none" data-id=indicator.id,class=alt ? 'info': '' )
               td(colspan='6')!= indicator.description
                   br
                   a.show-more(data-id=indicator.id)

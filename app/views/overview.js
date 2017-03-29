@@ -12,7 +12,14 @@ var ID = "OVERVIEW";
  *   Team action plan
  */
 var overview = {
+  updateTabAndTitle: function(dontClearRight) {
+    var titleTmpl = require("templates/overview-title");
+    base.updateTitle(titleTmpl({}), dontClearRight);
 
+    //var tabUrl = patientId;
+    //if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+    //base.updateTab("patients", patid, tabUrl);
+  },
   create: function(loadContentFn) {
 
     lookup.suggestionModalText = "Screen: Overview\n===========\n";
@@ -35,12 +42,12 @@ var overview = {
         $('#mainTitle').show();
         base.updateTitle("Overview of " + practiceName + "'s performance");
 
-        base.hidePanels(farRightPanel);
+        //base.hidePanels(farRightPanel);
 
         layout.view = ID;
       }
 
-      data.pathwayId = "htn"; //TODO fudge
+      data.pathwayId = "htn";
 
       //The two panels we need to show
       //Panels decide whether they need to redraw themselves
@@ -59,11 +66,11 @@ var overview = {
       });*/
 
       base.hideLoading();
-
+      overview.updateTabAndTitle(true);
       //add state indicator
-      farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
-      //BG-TODO probably not needed - users preferred standard browser scroll
-      $('.ps-child').perfectScrollbar();
+      //farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
+      //farLeftPanel.attr("class", "col-xl-6 col-lg-6 state-overview-leftPanel");
+
       //base.updateFixedHeightElements([{selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250},{selector:'.table-scroll',padding:220, minHeight:300}]);
     }, 0);
 

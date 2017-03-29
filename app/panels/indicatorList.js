@@ -41,7 +41,7 @@ var indicatorList = {
 
       $scrollTable.floatThead({
         scrollContainer: function($scrollTable){
-          return $scrollTable.closest('.wrapper');
+          return $scrollTable.closest('.wrapper-floatTHead');
       }
       });
 
