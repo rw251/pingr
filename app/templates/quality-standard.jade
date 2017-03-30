@@ -8,6 +8,7 @@
           th Quality indicator
           th(style="max-width:100px") Target met?
           th(style="max-width:100px") Action plan?
+          th
           th(style="max-width:100px")
           th(style="width:400px")
       tbody
@@ -24,6 +25,11 @@
             td
               if standard.actionPlan
                 i.fa.fa-fw.fa-check.text-success
+            td
+              if standard.excluded
+                | Excluded
+              else
+                button.btn.exclude(data-id=standard.indicatorId) Exclude
             td
               a.reason-link(href='#',data-id=standard.indicatorId) 
                 | Show more

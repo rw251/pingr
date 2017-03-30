@@ -3,38 +3,38 @@ var base = require('../base.js'),
 
 var qs = {
 
-  create: function(patientId, pathwayId, pathwayStage, standard){
+  create: function(patientId, pathwayId, pathwayStage, standard) {
     var patientData = data.getPatientData(patientId);
 
     var tmpl = require("templates/quality-standard");
     //RW TEMP fix
-    patientData.standards = patientData.standards.map(function(v){
-      if(!v.indicatorId) {
+    patientData.standards = patientData.standards.map(function(v) {
+      if (!v.indicatorId) {
         var iid;
-        Object.keys(data.text.pathways).forEach(function(vv){
-          Object.keys(data.text.pathways[vv]).forEach(function(vvv){
-              Object.keys(data.text.pathways[vv][vvv].standards).forEach(function(vvvv){
-                if(data.text.pathways[vv][vvv].standards[vvvv].tabText===v.display) {
-                  iid=[vv,vvv,vvvv].join(".");
-                  return;
-                }
-              });
+        Object.keys(data.text.pathways).forEach(function(vv) {
+          Object.keys(data.text.pathways[vv]).forEach(function(vvv) {
+            Object.keys(data.text.pathways[vv][vvv].standards).forEach(function(vvvv) {
+              if (data.text.pathways[vv][vvv].standards[vvvv].tabText === v.display) {
+                iid = [vv, vvv, vvvv].join(".");
+                return;
+              }
+            });
           });
         });
-        if(iid) v.indicatorId = iid;
+        if (iid) v.indicatorId = iid;
       }
-      if(v.indicatorId) {
+      if (v.indicatorId) {
         v.indicatorDescription = data.text.pathways[v.indicatorId.split(".")[0]][v.indicatorId.split(".")[1]].standards[v.indicatorId.split(".")[2]].description;
       }
       return v;
-    }).sort(function(a,b){
-      if(a.targetMet === b.targetMet) return 0;
-      else if(a.targetMet) return 1;
+    }).sort(function(a, b) {
+      if (a.targetMet === b.targetMet) return 0;
+      else if (a.targetMet) return 1;
       return -1;
     });
     //
     var html = tmpl({
-      "noStandards" : patientData.standards.length===0,
+      "noStandards": patientData.standards.length === 0,
       "standards": patientData.standards,
       indicatorId: pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : null,
       patientId: patientId
@@ -54,16 +54,20 @@ var qs = {
       panel.html(html);
     }
 
-    panel.off('click','.reason-link').on('click','.reason-link',function(e){
+    panel.off('click', '.reason-link').on('click', '.reason-link', function(e) {
       var action = $(this).html();
       panel.find('.qs-show-more-row').hide();
       panel.find('.reason-link').html('Show more <i class="fa fa-caret-down"></i>');
-      if(action.indexOf('Show more')>-1){
+      if (action.indexOf('Show more') > -1) {
         panel.find('.qs-show-more-row[data-id="' + $(this).data('id') + '"]').show("fast");
         $(this).html('Show less <i class="fa fa-caret-up"></i>');
       }
 
       e.preventDefault();
+    }).off('click', '.exclude').on('click', '.exclude', function() {
+
+      // Modal pop up to capture reason
+      $(this).replaceWith("Excluded");
     });
   },
 

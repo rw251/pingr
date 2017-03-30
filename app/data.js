@@ -573,6 +573,38 @@ var dt = {
         return callback(err);
       }
     });
+  },
+
+  excludePatient: function(patientId, indicatorId, callback) {
+    $.ajax({
+      type: "POST",
+      url: "api/exclude",
+      data: JSON.stringify({ patientId: patientId, indicatorId: indicatorId }),
+      success: function(d) {
+        return callback(null, d);
+      },
+      error: function(e) {
+        return callback(e);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    })
+  },
+
+  includePatient: function(patientId, indicatorId, callback) {
+    $.ajax({
+      type: "POST",
+      url: "api/include",
+      data: JSON.stringify({ patientId: patientId, indicatorId: indicatorId }),
+      success: function(d) {
+        return callback(null, d);
+      },
+      error: function(e) {
+        return callback(e);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    })
   }
 
 };
