@@ -836,7 +836,7 @@ var ll = {
             marginTop: 0,
             type: 'columnrange',
             inverted: true,
-            backgroundColor: '#F9F3F9',
+            backgroundColor: '#F3F9F9',
             borderWidth: 0,
             borderColor: '#ddd'
           },

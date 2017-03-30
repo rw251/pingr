@@ -91,6 +91,14 @@ User.find(searchObject, function(err, users) {
         if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
         return;
       } //let's fall through if in test mode to see what happens
+    } else if(v.emailDay !== undefined && v.emailDay !== day){
+      console.log(v.email + " emailDay is " + v.emailDay + " and today is " + day);
+      if (MODE !== MODES.TEST) {
+        usersUpdated++;
+        emailsSent++;
+        if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+        return;
+      } //let's fall through if in test mode to see what happens
     }
     if (!v.emailFrequency) {
       v.emailFrequency = 1;
