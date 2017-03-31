@@ -74,6 +74,10 @@ min-width: 100%;
 //min-height: 100%;
 }
 
+.suppress-overflow{
+  overflow: hidden;
+}
+
 #suggested-actions-table-wrapper{
   overflow-y: auto;
 }
