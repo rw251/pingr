@@ -140,7 +140,7 @@ var iap = {
     });
 
     //action buttons
-    suggestionCard.on('click', '.btn-yes', function(e) {
+    actionCard.on('click', '.btn-yes', function(e) {
       // var AGREE_STATUS = $(this).closest('tr').data('agree');
       // var action = patientActionsObject[$(this).closest('tr').data('id')];
       var AGREE_STATUS = $(this).closest('li').data('agree');
