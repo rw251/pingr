@@ -202,7 +202,7 @@ var pv = {
           farRightPanel.attr("class", "col-xl-7 col-lg-7 ps-child state-patient-rightPanel"); //ps-child col-xl-4 col-lg-4
 
           pv.updateTab(true);
-          updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);
+          updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData, true);
           //update the search container to ask...
           //$('#patient-Search .card-title').html("Find another patient");
 

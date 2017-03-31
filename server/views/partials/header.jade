@@ -9,35 +9,42 @@
     .l4
       div
 section#main
-  header.top-head.container-fluid.hide-if-logged-out
-    nav.navbar.navbar-default.navbar-fixed-top.hidden-xs(role='navigation')
-      .navbar-inner
-        .container
-          ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
-            li.active(role='presentation', style='width:20%', data-id='overview')
-              a(href='#overview', data-href='#overview', role='tab') OVERVIEW
-              .nav-arrow
-            li(role='presentation', style='width:20%', data-id='indicator')
-              .nav-wedge
-              a(href='#indicators', data-href='#indicators', role='tab') INDICATOR
-              .nav-arrow
-            li(role='presentation', style='width:20%', data-id='patient')
-              .nav-wedge
-              a(href='#patients', data-href='#patients', role='tab') PATIENT
-              .nav-arrow
-            li(role='presentation', style='width:20%', data-id='actions')
-              .nav-wedge
-              a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
-          ul.nav.navbar-nav.navbar-right
-            li
-              //TODO *b* sort out the spacing properly!
-              //a( href='' style='margin-top:-8px' onClick)
-              button#tutorialLaunch.btn.btn-danger(style='margin:7px') Help
-              //a(class='btn btn-danger' href='#help') Help
-            li
-              a(href='#contact') Contact us
-            li.dropdown
-              a.dropdown-toggle(data-toggle='dropdown', href='#')
+    nav.navbar.navbar-success(role='navigation')
+      .container
+        .navbar-header
+          a(href="#")
+            .logo-container
+              .logo
+                img(src="images/icons/apple-icon_WHITE.png")
+              //ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
+        ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist' data-intro="By Jove! *bTut*" data-step="1")      
+          li(role='presentation', data-id='overview')
+            a(href='#overview', data-href='#overview', role='tab') OVERVIEW
+            .nav-arrow
+          li(role='presentation', data-id='indicator')
+            .nav-wedge
+            a(href='#indicators', data-href='#indicators', role='tab') INDICATOR
+            .nav-arrow
+          li(role='presentation', data-id='patient')
+            .nav-wedge
+            a(href='#patients', data-href='#patients', role='tab') PATIENT
+            .nav-arrow
+          li(role='presentation', data-id='actions')
+            .nav-wedge
+            a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
+        ul.nav.navbar-nav.navbar-right
+          li
+            //TODO *b* sort out the spacing properly!
+            //a( href='' style='margin-top:-8px' onClick)
+            a
+              #tutorialLaunch.btn.btn-danger Tutorial
+            //a(class='btn btn-danger' href='#help') Help
+          li
+            a(href='#contact')
+              .btn.btn-primary Contact us
+          li.dropdown
+            a
+              .btn.dropdown-toggle(data-toggle='dropdown', href='#')
                 span#user_fullname.hide-if-bit-small= fullname + " "
                 span#practice_name(style="display:none")= practice_name
                 span#practice_id(style="display:none")= practice_id
@@ -72,5 +79,6 @@ section#main
                   a(href='signout')
                     i.fa.fa-sign-out.fa-fw
                     |  Logout
-            li
-              button#suggestionsModalLauncher.btn.btn-warning(style='margin:7px' data-intro="hello world! *bTut*" data-step="2") Send a comment
+          li
+            a
+              #suggestionsModalLauncher.btn.btn-info(data-intro="hello world! *bTut*" data-step="2") Send a comment

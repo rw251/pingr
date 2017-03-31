@@ -1,0 +1,76 @@
+.loading-container
+  .loading
+    .l1
+      div
+    .l2
+      div
+    .l3
+      div
+    .l4
+      div
+section#main
+  header.top-head.container-fluid.hide-if-logged-out
+    nav.navbar.navbar-default.navbar-fixed-top.hidden-xs(role='navigation')
+      .navbar-inner
+        .container
+          ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
+            li.active(role='presentation', style='width:20%', data-id='overview')
+              a(href='#overview', data-href='#overview', role='tab') OVERVIEW
+              .nav-arrow
+            li(role='presentation', style='width:20%', data-id='indicator')
+              .nav-wedge
+              a(href='#indicators', data-href='#indicators', role='tab') INDICATOR
+              .nav-arrow
+            li(role='presentation', style='width:20%', data-id='patient')
+              .nav-wedge
+              a(href='#patients', data-href='#patients', role='tab') PATIENT
+              .nav-arrow
+            li(role='presentation', style='width:20%', data-id='actions')
+              .nav-wedge
+              a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
+          ul.nav.navbar-nav.navbar-right
+            li
+              //TODO *b* sort out the spacing properly!
+              //a( href='' style='margin-top:-8px' onClick)
+              button#tutorialLaunch.btn.btn-danger(style='margin:7px') Help
+              //a(class='btn btn-danger' href='#help') Help
+            li
+              a(href='#contact') Contact us
+            li.dropdown
+              a.dropdown-toggle(data-toggle='dropdown', href='#')
+                span#user_fullname.hide-if-bit-small= fullname + " "
+                span#practice_name(style="display:none")= practice_name
+                span#practice_id(style="display:none")= practice_id
+                span#practice_system(style="display:none")= practice_system
+                i.fa.fa-user.fa-fw
+                i.fa.fa-caret-down
+              ul.dropdown-menu.dropdown-user
+                - if(admin)
+                  li
+                    a(href='admin')
+                      i.fa.fa-user.fa-fw
+                      |  User management
+                  li
+                    a(href='emailadmin')
+                      i.fa.fa-pencil-square-o.fa-fw
+                      |  Email admin
+                  li
+                    a(href='events')
+                      i.fa.fa-list.fa-fw
+                      |  Event logs
+                  li.divider
+                li
+                  a(href='changepassword')
+                    i.fa.fa-key.fa-fw
+                    |  Change password
+                li
+                  a(href='emailpreference')
+                    i.fa.fa-envelope.fa-fw
+                    |  Manage email preferences
+                li.divider
+                li
+                  a(href='signout')
+                    i.fa.fa-sign-out.fa-fw
+                    |  Logout
+            li
+              button#suggestionsModalLauncher.btn.btn-warning(style='margin:7px' data-intro="hello world! *bTut*" data-step="2") Send a comment

@@ -49,6 +49,31 @@ $reducePerform: #E87D4C;
 /*****************************
 Misc
 *****************************/
+.logo-container .logo img{
+  width: 100%;
+}
+
+.logo-container .brand {
+  font-size: 16px;
+  line-height: 18px;
+  float: left;
+  color: #fff;
+  margin-left: 10px;
+  margin-top: 7px;
+  width: 70px;
+  height: 40px;
+  text-align: left;
+}
+.main-panel-wide{
+position: relative;
+//float: right;
+overflow: auto;
+height: calc(100% - 98px);
+min-width: 100%;
+//width: calc(100% - 260px);
+//min-height: 100%;
+}
+
 #suggested-actions-table-wrapper{
   overflow-y: auto;
 }
