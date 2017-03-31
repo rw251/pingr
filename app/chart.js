@@ -43,7 +43,7 @@ var cht = {
               load: function() {
                 var thisChart = this;
                 if (!isCCG) {
-                  thisChart.renderer.button('Toggle neighbourhood - ccg', thisChart.plotWidth - 160, 0, function() {
+                  thisChart.renderer.button('Toggle neighbourhood - ccg', (thisChart.plotWidth*0.5) - 10, 30, function() {
                     local = !local;
                     thisChart.xAxis[0].categories = _data.filter(function(v) {
                       if (local) return v.local;
