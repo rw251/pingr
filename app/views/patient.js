@@ -6,7 +6,8 @@ var lifeline = require('../panels/lifeline'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
   patientSearch = require('../panels/patientSearch'),
-  allPatientList = require('../panels/allPatientList');
+  allPatientList = require('../panels/allPatientList'),
+  log = require('../log');
 
 var ID = "PATIENT_VIEW";
 /*
@@ -29,6 +30,43 @@ var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, p
 
   var tabUrl = patientId;
   if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
+
+  suggestionCard = $('#individualSuggestionCard');
+
+
+
+  suggestionCard.on('click', '.add-plan', function() {
+    var patientActs = individualActionPlan.getPatientActions();
+    //var actionText = $(this).parent().parent().find('textarea').val();
+    var actionText = $('textarea.form-control').val();
+    $('textarea.form-control').val("");
+    var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+    var indicatorList = [];
+    if (pathwayId && pathwayStage && standard) {
+      indicatorList.push([pathwayId, pathwayStage, standard].join("."));
+    } else {
+      indicatorList = patientActs.reduce(function(prev, curr) {
+        var union = prev.concat(curr.indicatorList);
+        return union.filter(function(item, pos) {
+          return union.indexOf(item) == pos;
+        });
+      }, []);
+    }
+    log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
+      if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
+      individualActionPlan.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
+      qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
+    });
+  }).on('keyup', 'input[type=text]', function(e) {
+    if (e.which === 13) {
+      suggestionListCard.find('.add-plan').click();
+    }
+  }).on('change', '.btn-toggle input[type=checkbox]', function() {
+    //tap.updateTeamSapRows();
+  }).on('click', '.btn-undo', function(e) {
+
+  });
+
   base.updateTab("patients", patid, tabUrl);
 };
 
@@ -36,33 +74,12 @@ var pv = {
 
   wireUp: function() {
 
-      individualAdditionTab = $('#tab-plan-addition');
-
-      individualAdditionTab.on('click', '.add-plan', function() {
-        //var actionText = $(this).parent().parent().find('textarea').val();
-        var actionText = $('textarea.form-control').val();
-        $('textarea.form-control').val("");
-
-        var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-        var indicatorList = [];
-        if (pathwayId && pathwayStage && standard) {
-          indicatorList.push([pathwayId, pathwayStage, standard].join("."));
-        } else {
-          indicatorList = patientActions.reduce(function(prev, curr) {
-            var union = prev.concat(curr.indicatorList);
-            return union.filter(function(item, pos) {
-              return union.indexOf(item) == pos;
-            });
-          }, []);
-        }
-        log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
-          if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
-          iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
-          qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
-        });
-      });
   },
+  updateTab: function(dontClearRight) {
+    var titleTmpl = require("templates/patient-title");
+    base.updateTitle(titleTmpl({}), dontClearRight);
 
+  },
   create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
 
     var skip=0, limit=10;
@@ -92,9 +109,10 @@ var pv = {
 
     if (layout.view === ID && patientId === layout.patientId) {
       //the view is the same just need to update the actions
-      individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+      //individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
       qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
 
+      individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
       var tabUrl = patientId;
       if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
       base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
@@ -121,6 +139,8 @@ var pv = {
       }
 
       base.hidePanels(farLeftPanel);
+      //scroll to top
+      $("div").scrollTop(0);
 
       if (patientId) {
         base.switchTo2Column1Narrow1Wide();
@@ -147,8 +167,6 @@ var pv = {
 
           //title needs updating
           $('#mainTitle').show();
-
-          updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);
 
           layout.patientId = patientId;
           data.patientId = patientId;
@@ -182,6 +200,8 @@ var pv = {
           farRightPanel.attr("class", "col-xl-6 col-lg-6 ps-child state-patient-rightPanel"); //ps-child col-xl-4 col-lg-4
           farLeftPanel.attr("class", "col-xl-6 col-lg-6 ps-child");
 
+          pv.updateTab(true);
+          updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);
           //update the search container to ask...
           //$('#patient-Search .card-title').html("Find another patient");
 
@@ -194,7 +214,7 @@ var pv = {
         });
       } else {
         //scroll to top
-        $("div").scrollTop(0);
+        //$("div").scrollTop(0);
         //base.updateTitle("No patient currently selected");
         base.updateTitle("");
         base.switchToSingleColumn();
@@ -217,8 +237,8 @@ var pv = {
         //add state indicator
 
         // BG-TODO should this be on the centre panel now?
-        farLeftPanel.attr("class", "col-xl-4 col-lg-4 state-patient-leftPanel");
-        farRightPanel.attr("class", "col-xl-4 col-lg-4 state-patient-rightPanel");
+        //farLeftPanel.attr("class", "col-xl-4 col-lg-4 state-patient-leftPanel");
+        //farRightPanel.attr("class", "col-xl-4 col-lg-4 state-patient-rightPanel");
         //update the search container to ask...
         //$('#patient-Search .card-title').html("Find a patient");
 
@@ -227,12 +247,10 @@ var pv = {
 
         //BG-TODO - from RW dev branch - might not be needed
         base.updateTab("patients", "", "");
+
         //base.updateFixedHeightElements([{ selector: '#centre-panel', padding: 15,minHeight:300 }, { selector: '.table-scroll', padding: 220,minHeight:300 }]);
 
       }
-
-
-
     }, 0);
 
   },

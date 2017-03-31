@@ -8,7 +8,8 @@ var base = require('../base'),
   teamActionPlan = require('../panels/teamActionPlan'),
   wrapper = require('../panels/wrapper'),
   layout = require('../layout'),
-  lookup = require('../lookup');
+  lookup = require('../lookup'),
+  log = require('../log');
 
 var ID = "INDICATOR";
 /*
@@ -22,7 +23,31 @@ var ID = "INDICATOR";
  */
 
 var ind = {
+  //taken from overview to handle title and control cards, and own suggestions
+  //including minor edit for this context
+  updateTab: function(dontClearRight) {
+    var titleTmpl = require("templates/indicator-title");
+    base.updateTitle(titleTmpl({}), dontClearRight);
 
+    teamAdditionTab = $('#tab-plan-team-addition');
+
+    teamAdditionTab.on('click', '.add-plan', function() {
+      //var actionText = $(this).parent().parent().find('textarea').val();
+      var actionText = $('textarea.form-control').val();
+      $('textarea.form-control').val("");
+      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+      log.recordTeamPlan(actionText, null, function(err, a){
+        if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
+        //BG-TODO-NOTED below line left in after dev merge
+        //we now redraw the panel instead of manually inserting
+        teamActionPlan.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
+      });
+    }).on('keyup', 'input[type=text]', function(e) {
+      if (e.which === 13) {
+        actionPanel.find('.add-plan').click();
+      }
+    });
+  },
   create: function(pathwayId, pathwayStage, standard, tab, loadContentFn) {
 
     base.selectTab("indicator");
@@ -37,7 +62,7 @@ var ind = {
         base.switchTo2Column1Narrow1Wide();
         layout.showMainView();
 
-        //base.hidePanels(farRightPanel);
+        base.hidePanels(farRightPanel);
 
         layout.view = ID;
       }
@@ -189,7 +214,11 @@ var ind = {
       }), 2000);*/
 
       base.hideLoading();
+      ind.updateTab(true);
 
+      //scroll to top
+      $("div").scrollTop(0);
+      
       //add state indicator
       //farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
       //farRightPanel.attr("class", "col-xl-6 col-lg-6 state-indicator-rightPanel");

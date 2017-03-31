@@ -7,6 +7,5 @@ mixin thumbs(suggestion)
       label.btn.btn-lg.btn-just-icon.btn-no.btn-toggle.btn-warning(class= suggestion.agree===false ? 'active' : '', data-container='body', data-html='true', data-toggle='tooltip', data-placement='top', title='Click to disagree with this action and remove it from your suggested actions list ')
         input(type='checkbox', value='no', autocomplete='off', checked= suggestion.agree===false ? 'checked' : undefined)
         i.material-icons thumb_down
-  hr
 // BG-TODO the following added at merge:
 // data-container='body', data-html='true'

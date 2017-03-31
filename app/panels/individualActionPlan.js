@@ -7,7 +7,9 @@ var base = require('../base.js'),
 var patientActions = [];
 
 var iap = {
-
+  getPatientActions: function(){
+    return patientActions;
+  },
   create: function(nhs, pathwayId, pathwayStage, standard) {
     var dataObj = { nhs: nhs };
     if (data.text.pathways[pathwayId] && data.text.pathways[pathwayId][pathwayStage] && data.text.pathways[pathwayId][pathwayStage].standards[standard]) {
@@ -27,8 +29,10 @@ var iap = {
     //Use actionTextId to find the right row
     //var yesbox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
     //var nobox = individualTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
-    var yesbox = individualTab.find('li[data-id="' + action.actionTextId + '"] label.btn-yes input');
-    var nobox = individualTab.find('li[data-id="' + action.actionTextId + '"] label.btn-no input');
+    actionContainer = $('#individualActionCard');
+
+    var yesbox = actionContainer.find('li[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = actionContainer.find('li[data-id="' + action.actionTextId + '"] label.btn-no input');
     //checked action inactive
     if (action.agree === true) {
       yesbox.each(function() { this.checked = true; });
@@ -54,103 +58,20 @@ var iap = {
   },
 
   wireUp: function(pathwayId, pathwayStage, standard, patientId) {
-    individualTab = $('#tab-plan-individual');
-    individualAdditionTab = $('#tab-plan-addition');
-    //individualAdditionTab = $('#advice-list');
+    //actionPanel = $('');
+    //userActionPanel = $('#left-panel');
 
-    //find [] and replace with copy button
+    actionPanel = $('#tab-plan-addition');
+    userActionPanel = $('#left-panel');
 
-    /*$('#advice-list').on('click', '.cr-styled input[type=checkbox]', function() {
-      var ACTIONID = $(this).closest('tr').data('id');
-      log.editAction(data.patientId, ACTIONID, null, this.checked);
+    actionCard = $('#individualActionCard');
+    suggestionCard = $('#individualSuggestionCard');
+    suggestionListCard = $('#individualSuggestionListCard');
 
-      if (this.checked) {
-        log.recordEvent(pathwayId, data.patientId, "Item completed");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              ACTIONID = $(this).closest('tr').data('id');
-              log.editAction(data.patientId, ACTIONID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              iap.updateIndividualSapRows();
-            });
-          });
-        }, 1000);
-      }
+    var indicatorId = "";
+    if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
-      iap.updateIndividualSapRows();
-    });*/
-
-    /*$('#personalPlanIndividual').on('click', 'input[type=checkbox]', function() {
-      var PLANID = $(this).closest('tr').data("id");
-      log.editPlan(PLANID, null, this.checked);
-
-      if (this.checked) {
-        $(this).parent().parent().parent().addClass('success');
-        log.recordEvent(pathwayId, data.patientId, "Personal plan item");
-        var self = this;
-        $(self).parent().attr("title", "").attr("data-original-title", "").tooltip('fixTitle').tooltip('hide');
-        setTimeout(function(e) {
-          $(self).parent().fadeOut(300, function() {
-            var parent = $(this).parent();
-            $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-              "done": true
-            }));
-            base.wireUpTooltips();
-            parent.find('button').on('click', function() {
-              PLANID = $(this).closest('tr').data('id');
-              log.editPlan(data.patientId, PLANID, null, false);
-              $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-                "done": false
-              }));
-              iap.updateIndividualSapRows();
-            });
-          });
-        }, 1000);
-      }
-    }).on('click', '.btn-undo', function(e) {
-      var PLANID = $(this).closest('tr').data('id');
-      log.editPlan(PLANID, null, false);
-      $(this).replaceWith(base.createPanel($('#checkbox-template'), {
-        "done": false
-      }));
-      iap.updateIndividualSapRows();
-      e.stopPropagation();
-    });*/
-    individualAdditionTab.on('click', '.add-plan', function() {
-      //var actionText = $(this).parent().parent().find('textarea').val();
-      var actionText = $('textarea.form-control').val();
-      $('textarea.form-control').val("");
-
-      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-      var indicatorList = [];
-      if (pathwayId && pathwayStage && standard) {
-        indicatorList.push([pathwayId, pathwayStage, standard].join("."));
-      } else {
-        indicatorList = patientActions.reduce(function(prev, curr) {
-          var union = prev.concat(curr.indicatorList);
-          return union.filter(function(item, pos) {
-            return union.indexOf(item) == pos;
-          });
-        }, []);
-      }
-      log.recordIndividualPlan(actionText, patientId, indicatorList, function(err, a){
-        if(!userDefinedPatientActionsObject[actionTextId]) userDefinedPatientActionsObject[actionTextId]=a;
-        iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
-        qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
-      });
-    });
-
-    individualTab.on('click', '.edit-plan', function() {
+    suggestionListCard.on('click', '.edit-plan', function() {
       var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
@@ -175,9 +96,7 @@ var iap = {
       }).modal();
     }).on('click', '.delete-plan', function() {
       var action = userDefinedPatientActionsObject[$(this).closest('tr').data("id")];
-
       $('#modal-delete-item').html(action.actionText);
-
       $('#deletePlan').off('hidden.bs.modal').on('hidden.bs.modal', function() {
         iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
       }).off('click', '.delete-plan').on('click', '.delete-plan', function() {
@@ -185,10 +104,11 @@ var iap = {
           qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
         });
         delete userDefinedPatientActionsObject[action.actionTextId];
-
         $('#deletePlan').modal('hide');
       }).modal();
-    }).on('click', '.add-plan', function() {
+    });
+
+    suggestionCard.on('click', '.add-plan', function() {
       //var actionText = $(this).parent().parent().find('textarea').val();
       var actionText = $('textarea.form-control').val();
       $('textarea.form-control').val("");
@@ -209,11 +129,18 @@ var iap = {
         iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
         qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
       });
+    }).on('keyup', 'input[type=text]', function(e) {
+      if (e.which === 13) {
+        suggestionListCard.find('.add-plan').click();
+      }
     }).on('change', '.btn-toggle input[type=checkbox]', function() {
-      /*iap.updateIndividualSapRows();*/
+      //tap.updateTeamSapRows();
     }).on('click', '.btn-undo', function(e) {
 
-    }).on('click', '.btn-yes', function(e) {
+    });
+
+    //action buttons
+    suggestionCard.on('click', '.btn-yes', function(e) {
       // var AGREE_STATUS = $(this).closest('tr').data('agree');
       // var action = patientActionsObject[$(this).closest('tr').data('id')];
       var AGREE_STATUS = $(this).closest('li').data('agree');
@@ -231,10 +158,10 @@ var iap = {
 
       e.stopPropagation();
       e.preventDefault();
+
     }).on('click', '.btn-no', function(e) {
       //var AGREE_STATUS = $(this).closest('tr').data('agree');
-      //var action = patientActionsObject[$(this).closest('tr').data('id')];
-
+      //var action = teamActionsObject[$(this).closest('tr').data('id')];
       var AGREE_STATUS = $(this).closest('li').data('agree');
       var action = patientActionsObject[$(this).closest('li').data('id')];
 
@@ -423,6 +350,19 @@ var iap = {
         });
         if (v.agree !== true && v.agree !== false) v.agree = null;
         patientActionsObject[v.actionTextId] = v;
+
+        //save a clean version that removes all html from injected text
+        var tmp = v.actionText.search("<");
+        var tmpStr = v.actionText;
+        while(tmp >= 0)
+        {
+          var openIndex = tmp;
+          var closeIndex = tmpStr.search(">")
+          tmpStr = tmpStr.replace(tmpStr.substring(openIndex, closeIndex+1), "");
+          var tmp = tmpStr.search("<");
+        }
+        v.actionTextClean = tmpStr;
+
         return v;
       });
       iap.populateIndividualSuggestedActions(patientId, pathwayId, pathwayStage, standard, visible);
@@ -514,7 +454,6 @@ var iap = {
     });
 
     base.setupClipboard($('.btn-copy'), true);
-
     iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
   },
 

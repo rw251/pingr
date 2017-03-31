@@ -9,7 +9,7 @@
         if item
           label You have disagreed with the following suggested action:
           p
-          span.text-warning(style='font-style:italic')= (item.split("Show"))[0]
+          span.text-warning(style='font-style:italic')!= (item.split("Show"))[0]
         form
           div.form-group
             //text entry section

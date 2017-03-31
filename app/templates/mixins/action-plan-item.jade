@@ -1,7 +1,7 @@
 mixin actionPlanItem(suggestion)
-  tr.suggestion.active(data-id=suggestion.actionTextId, class=suggestion.done ? 'success' : '')
+  tr.suggestion(data-id=suggestion.actionTextId, class=suggestion.done ? 'success' : '')
     td
-      span!= suggestion.actionText
+      h4.text-info!= suggestion.actionText
     td
       button.btn.btn-primary.btn-simple.edit-plan
         //i.fa.fa-pencil.pull-left

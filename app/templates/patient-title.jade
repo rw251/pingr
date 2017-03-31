@@ -1,22 +1,22 @@
 .col-md-6
   .card.card-stats
-    .card-header(data-background-color="blue")
+    .card-header.text-center(data-background-color="blue")
       i.material-icons face
+      h2.card-title Patient
     .card-content
-      h2.card-title Patient View 
-    .card-footer
+      h4 Getting deeper insights on an individual
+      hr
       .col-md-10
         .col-md-12
-          h4= 'Patient ' + patid 
-        .col-md-12
-          h4= '(' + sex + ' - ' + age + ' yrs)'
+          h4.card-title= 'Patient ' + patid 
+          h4.card-title= '(' + sex + ' - ' + age + ' yrs)'
         .col-md-12
           br
       .col-md-2
         button.btn.btn-xs.btn-round.btn-just-icon.btn-default.btn-copy(type='button', data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
           i.material-icons content_copy          
 .col-md-6
-  .card
+  .card#individualSuggestionCard
     .card-header.card-header-icon(data-background-color="green")
       i.material-icons assignment_returned
     #tab-plan-addition.card-content

@@ -1,10 +1,11 @@
 include mixins/thumbs
 
 if noSuggestions
-  p There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
+  .col-md-12
+    h3 There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
   //include mixins/personal-action-plan
 else 
-  .col-md-4.ps-child
+  .col-md-4.ps-child.ps-boilerplate
     ul.nav.nav-pills.nav-pills-icons.nav-pills-default.nav-stacked(role="tablist")
       #tab-plan-individual.panel.panel-default
       each suggestion, index in suggestions
@@ -12,20 +13,21 @@ else
         if index == 0
           -actionSelectorClass = "active"
         li(class= actionSelectorClass)
-          a(href="#" + suggestion.actionTextId role="tab" data-toggle="tab")
-            p= suggestion.actionText
+          a(href="#" + suggestion.actionTextId role="tab" data-toggle="tab") #{suggestion.actionTextClean} 
   .col-md-8
-    .tab-content
+    .tab-content#advice-header
       each suggestion, index in suggestions
         
         -var actionTextClass = "tab-pane"
         if index == 0
           -actionTextClass = "active tab-pane"
         li.suggestion(class= actionTextClass, id=suggestion.actionTextId, data-id=suggestion.actionTextId, data-agree=""+suggestion.agree, data-indx=index)
-          #advice-placeholder
-            h3.text-info.text-center= suggestion.actionText
+          .col-md-12
+            h3.text-info.text-center!= suggestion.actionText
+            h4.text-center What do you think?
           .col-md-12
             +thumbs(suggestion)
+            hr
           .col-md-12
             if suggestion.supportingText
               != suggestion.supportingText

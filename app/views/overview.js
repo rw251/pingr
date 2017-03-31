@@ -3,7 +3,8 @@ var base = require('../base'),
   layout = require('../layout'),
   lookup = require('../lookup'),
   indicatorList = require('../panels/indicatorList'),
-  teamActionPlan = require('../panels/teamActionPlan');
+  teamActionPlan = require('../panels/teamActionPlan'),
+  log = require('../log');
 
 var ID = "OVERVIEW";
 /*
@@ -12,9 +13,28 @@ var ID = "OVERVIEW";
  *   Team action plan
  */
 var overview = {
-  updateTabAndTitle: function(dontClearRight) {
+  updateTab: function(dontClearRight) {
     var titleTmpl = require("templates/overview-title");
     base.updateTitle(titleTmpl({}), dontClearRight);
+
+    suggestionCard = $('#teamSuggestionCard');
+
+    suggestionCard.on('click', '.add-plan', function() {
+      //var actionText = $(this).parent().parent().find('textarea').val();
+      var actionText = $('textarea.form-control').val();
+      $('textarea.form-control').val("");
+      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+      log.recordTeamPlan(actionText, null, function(err, a){
+        if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
+        //BG-TODO-NOTED below line left in after dev merge
+        //we now redraw the panel instead of manually inserting
+        teamActionPlan.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
+      });
+    }).on('keyup', 'input[type=text]', function(e) {
+      if (e.which === 13) {
+        suggestionListCard.find('.add-plan').click();
+      }
+    });
 
     //var tabUrl = patientId;
     //if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
@@ -66,7 +86,9 @@ var overview = {
       });*/
 
       base.hideLoading();
-      overview.updateTabAndTitle(true);
+      overview.updateTab(true);
+      //scroll to top
+      $("div").scrollTop(0);
       //add state indicator
       //farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
       //farLeftPanel.attr("class", "col-xl-6 col-lg-6 state-overview-leftPanel");

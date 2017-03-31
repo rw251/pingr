@@ -18,11 +18,12 @@ var tap = {
   },
 
   updateAction: function(action) {
+    buttonContainer = $('#advice-header');
     //Use actionTextId to find the right row
     //var yesbox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-yes input');
     //var nobox = teamTab.find('tr[data-id="' + action.actionTextId + '"] label.btn-no input');
-    var yesbox = teamTab.find('li[data-id="' + action.actionTextId + '"] label.btn-yes input');
-    var nobox = teamTab.find('li[data-id="' + action.actionTextId + '"] label.btn-no input');
+    var yesbox = buttonContainer.find('li[data-id="' + action.actionTextId + '"] label.btn-yes input');
+    var nobox = buttonContainer.find('li[data-id="' + action.actionTextId + '"] label.btn-no input');
 
     //checked action inactive
     if (action.agree === true) {
@@ -52,13 +53,18 @@ var tap = {
     // actionPanel = $('#team-action-panel');
     // userActionPanel = $('#user-action-panel');
 
-    actionPanel = $('#personalPlanTeam');
-    userActionPanel = $('#personalPlanTeam');
+    //actionPanelTeam = $('#personalPlanTeam');
+    //userActionPanelTeam = $('#left-panel');
+
+    actionCard = $('#teamActionCard');
+    suggestionCard = $('#teamSuggestionCard');
+    suggestionListCard = $('#teamSuggestionListCard');
 
     var indicatorId = "";
     if (pathwayId && pathwayStage && standard) indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
-    userActionPanel.on('click', '.edit-plan', function() {
+    //suggestion list controls
+    suggestionListCard.on('click', '.edit-plan', function() {
       var action = userDefinedTeamActionsObject[$(this).closest('tr').data("id")];
 
       $('#editActionPlanItem').val(action.actionText);
@@ -94,28 +100,32 @@ var tap = {
 
         $('#deletePlan').modal('hide');
       }).modal();
-    }).on('click', '.add-plan', function() {
-      //var actionText = $(this).parent().parent().find('textarea').val();
-      var actionText = $('textarea.form-control').val();
-      $('textarea.form-control').val("");
-      var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
-      log.recordTeamPlan(actionText, indicatorId, function(err, a){
-        if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
-        //BG-TODO-NOTED below line left in after dev merge
-        //we now redraw the panel instead of manually inserting
-        tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
-      });
-    }).on('keyup', 'input[type=text]', function(e) {
-      if (e.which === 13) {
-        actionPanel.find('.add-plan').click();
-      }
     });
 
-    actionPanel.on('change', '.btn-toggle input[type=checkbox]', function() {
-      //tap.updateTeamSapRows();
-    }).on('click', '.btn-undo', function(e) {
+    // //suggestion addition control
+    // suggestionCard.on('click', '.add-plan', function() {
+    //   //var actionText = $(this).parent().parent().find('textarea').val();
+    //   var actionText = $('textarea.form-control').val();
+    //   $('textarea.form-control').val("");
+    //   var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g,"");
+    //   log.recordTeamPlan(actionText, indicatorId, function(err, a){
+    //     if(!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId]=a;
+    //     //BG-TODO-NOTED below line left in after dev merge
+    //     //we now redraw the panel instead of manually inserting
+    //     tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
+    //   });
+    // }).on('keyup', 'input[type=text]', function(e) {
+    //   if (e.which === 13) {
+    //     suggestionListCard.find('.add-plan').click();
+    //   }
+    // }).on('change', '.btn-toggle input[type=checkbox]', function() {
+    //   //tap.updateTeamSapRows();
+    // }).on('click', '.btn-undo', function(e) {
+    //
+    // });
 
-    }).on('click', '.btn-yes', function(e) {
+    //action buttons
+    actionCard.on('click', '.btn-yes', function(e) {
       //var AGREE_STATUS = $(this).closest('tr').data('agree');
       //var action = teamActionsObject[$(this).closest('tr').data('id')];
       var AGREE_STATUS = $(this).closest('li').data('agree');
