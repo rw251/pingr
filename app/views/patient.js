@@ -197,8 +197,9 @@ var pv = {
           base.hideLoading();
 
           //add state indicator
-          farRightPanel.attr("class", "col-xl-6 col-lg-6 ps-child state-patient-rightPanel"); //ps-child col-xl-4 col-lg-4
-          farLeftPanel.attr("class", "col-xl-6 col-lg-6 ps-child");
+
+          farLeftPanel.attr("class", "col-xl-5 col-lg-5 ps-child");
+          farRightPanel.attr("class", "col-xl-7 col-lg-7 ps-child state-patient-rightPanel"); //ps-child col-xl-4 col-lg-4
 
           pv.updateTab(true);
           updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);

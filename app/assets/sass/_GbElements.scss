@@ -6,6 +6,47 @@ Overrided CT-dashboard
 }
 
 /*****************************
+Performance colours
+*****************************/
+
+$overPerform: #0EDE61;
+$underPerform: #DEC110;
+$raisePerform: #5187E8;
+$reducePerform: #E87D4C;
+
+.text-overPerform {
+    color: $overPerform;
+}
+
+.bg-overPerform {
+    background-color: $overPerform;
+}
+
+.text-underPerform {
+    color: $underPerform;
+}
+
+.bg-underPerform {
+    background-color: $underPerform;
+}
+
+.text-raisePerform {
+    color: $raisePerform;
+}
+
+.bg-raisePerform {
+    background-color: $raisePerform;
+}
+
+.text-reducePerform {
+    color: $reducePerform;
+}
+
+.bg-reducePerform {
+    background-color: $reducePerform;
+}
+
+/*****************************
 Misc
 *****************************/
 #suggested-actions-table-wrapper{
@@ -75,6 +116,10 @@ Misc
 Overview panel
 *****************************/
 #overview-table{
+  display: inherit;
+}
+
+#patient-list-table{
   display: inherit;
 }
 

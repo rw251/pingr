@@ -290,7 +290,8 @@ var dt = {
         patient.age,
         patient.value,
         patient.opportunities.map(function(v) {
-          return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
+          //return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
+          return '<div class"col-md-12"><span class="material-icons" style="float:left;color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '">bookmark</span></div>';
         }).join("")
       ]; //The fields in the patient list table
       if (patient.actionStatus) {
@@ -317,7 +318,8 @@ var dt = {
               (info[v].agree > 0 && info[v].added > 0 ? " and " : "") +
               (info[v].added > 0 ? " added " + info[v].added + " action" + (info[v].added > 1 ? "s." : ".") : ".");
           }).join("<br>");
-          patient.items.push('<i class="fa fa-fw fa-check text-success" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + tooltip + '"></i>');
+          //patient.items.push('<i class="fa fa-fw fa-check text-success" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + tooltip + '"></i>');
+          patient.items.push('<i class="material-icons text-success",data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + tooltip + '">stars</i>');
         } else {
           patient.items.push("");
         }

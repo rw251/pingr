@@ -1,5 +1,6 @@
-mixin header(item)
-  th.sortable(style='min-width:90px', class=item.direction, data-toggle='tooltip', title=item.tooltip)
+mixin header(item, classIn)
+  //th.sortable(style='min-width:90px', class=item.direction classIn, data-toggle='tooltip', title=item.tooltip)
+  th.sortable(class=item.direction =classIn, data-toggle='tooltip', title=item.tooltip)
     if item.titleHTML
       !=item.titleHTML
     else 

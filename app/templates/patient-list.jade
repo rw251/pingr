@@ -1,9 +1,9 @@
 include mixins/patient-list-header-item
 
 .row
-  .col-xs-9
+  .col-md-6.col-lg-8.text-center
     h4!= header + '(n=' + n + ')'
-  .col-xs-3
+  .col-md-6.col-lg-4
     .btn-group
       button#downloadPatientList.btn.btn-danger Download patient list
       button.btn.btn-danger.dropdown-toggle(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
@@ -14,20 +14,34 @@ include mixins/patient-list-header-item
           a#downloadAsPdf(href="#") Full list (pdf)
         li
           a#downloadAsText(href="#") Nhs numbers (text file)
-.table-scroll.wrapper-floatTHead
-  table#patient-list.table.patient-list
+
+.panel-body.patient-list.wrapper-floatTHead
+  table.table.table-hover.patient-list#patient-list-table
+    //(style="max-height: 600px;")
     thead
-      tr(style='background-color:#fff')
+      tr.shade
+        //- th.col-md-2 A
+        //- th.col-md-2 B
+        //- th.col-md-2 C
+        //- th.col-md-2 D
+        //- th.col-md-2 E
+        //- th.col-md-2 F
+        //(style='background-color:#fff')
         each item in locals['header-items']
-          +header(item)
-    tbody
+          if(item.title == "Age" || item.title == "Latest SBP")
+            +header(item, "col-md-1")
+          else 
+            +header(item, "col-md-2")
+    tbody.ps-child.ps-boilerplate
       each patient in patients
         tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
-          td(style='min-width:130px')
+          td.text-center.col-md-2
+            //(style='min-width:130px')
             - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
             button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
-              span.fa.fa-clipboard
+              //span.fa.fa-clipboard
+              i.material-icons content_copy
             = ' ' + patient.nhsNumber
           each item in patient.items
             - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
-            td!= item
+            td.text-center!= item
