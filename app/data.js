@@ -257,7 +257,7 @@ var dt = {
     }
   },
 
-  processPatientList: function(pathwayId, pathwayStage, standard, subsection, patients) {
+  processPatientList: function(pathwayId, pathwayStage, standard, subsection, patients, type) {
     var i, k, prop, pList, header;
 
     if (subsection !== "all") {
@@ -330,6 +330,7 @@ var dt = {
 
     var rtn = {
       "patients": patients,
+      "type": type,
       "n": patients.length,
       "header": header,
       "header-items": [{
@@ -414,7 +415,7 @@ var dt = {
       $.ajax({
         url: "/api/PatientListForPractice/Indicator/" + indicatorId,
         success: function(file) {
-          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
+          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file.patients, file.type);
 
           callback(dt.patientList[practiceId][indicatorId][subsection]);
         },

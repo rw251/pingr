@@ -513,8 +513,8 @@ module.exports = function(passport) {
   });
   //Get list of patients for a practice and indicator - for use on indicator screen
   router.get('/api/PatientListForPractice/Indicator/:indicatorId', isAuthenticated, function(req, res) {
-    patients.getListForIndicator(req.user.practiceId, req.params.indicatorId, function(err, patients) {
-      res.send(patients);
+    patients.getListForIndicator(req.user.practiceId, req.params.indicatorId, function(err, patients, type) {
+      res.send({ patients, type });
     });
   });
 

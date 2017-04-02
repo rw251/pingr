@@ -298,7 +298,7 @@ module.exports = {
               return rtn;
             });
             console.timeEnd(["getListForIndicator", "patients", "process"].join("--"));
-            return done(null, p);
+            return done(null, p, indicator.type);
           });
       });
     });

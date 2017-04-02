@@ -1,45 +1,84 @@
-.panel.panel-default#qs
-  if noStandards
+if noStandards
+  #qs
     .alert.alert-success We don't think any of the quality indicators in PINGR are relevant to this patient - if you think this is incorrect, please tell us by clicking the "Send a comment" button in the top right corner of the screen.
-  else
-    table.table.table-condensed
-      thead
-        tr
-          th Quality indicator
-          th(style="max-width:100px") Target met?
-          th(style="max-width:100px") Action plan?
-          th(style="max-width:100px")
-          th(style="width:400px")
-      tbody
-        each standard in standards
-          tr(class=standard.targetMet ? 'success' : 'danger')
-            td
-              strong
-                = standard.display       
-            td
-              if standard.targetMet
-                i.fa.fa-fw.fa-check.text-success
-              else
-                i.fa.fa-fw.fa-times.text-danger      
-            td
-              if standard.actionPlan
-                i.fa.fa-fw.fa-check.text-success
-            td
-              a.reason-link(href='#',data-id=standard.indicatorId) 
-                | Show more
-                i.fa.fa-caret-down       
-            td(style="text-align:right")
-              if (standard.indicatorId === indicatorId && standards.filter(function(v){return !v.targetMet;}).length > 1)
-                a.btn.btn-warning.btn-sm(href='/#patient/'+patientId) Showing actions for this indicator - click to show all
-              else if (!standard.targetMet && standards.filter(function(v){return !v.targetMet;}).length === 1)
-                span Currently showing actions for this indicator 
-              else 
-                if !standard.targetMet
-                  a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only
-          tr(data-id=standard.indicatorId,class='qs-show-more-row')
-            td(colspan=4)
-              !=standard.indicatorDescription
-              br
-              strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
-              br
-              !=standard.why
+else
+  ul.nav.nav-tabs(role="tablist")
+    li.active(role="presentation")
+      a(href="#processIndicatorsQS",aria-controls="processIndicatorsQS",role="tab",data-toggle="tab",style="margin-top:0")= "Process indicators (" + processStandards.length + ")"
+    li(role="presentation")
+      a(href="#outcomeIndicatorsQS",aria-controls="outcomeIndicatorsQS",role="tab",data-toggle="tab",style="margin-top:0")= "Outcome indicators (" + outcomeStandards.length + ")"
+      
+  .tab-content
+    #processIndicatorsQS.tab-pane.fade.in.active(role="tabpanel")
+      .panel.panel-default#qs
+        table.table.table-condensed
+          thead
+            tr
+              th Quality indicator
+              th(style="max-width:100px") Target met?
+              th(style="max-width:100px") Action plan?
+              th(style="width:400px")
+          tbody
+            each standard in processStandards
+              tr(class=standard.targetMet ? 'success' : 'danger')
+                td
+                  strong
+                    = standard.display 
+                  a.reason-link(href='#',data-id=standard.indicatorId) 
+                    | Show more
+                    i.fa.fa-caret-down   
+                td
+                  if standard.targetMet
+                    i.fa.fa-fw.fa-check.text-success
+                  else
+                    i.fa.fa-fw.fa-times.text-danger      
+                td
+                  if standard.actionPlan
+                    i.fa.fa-fw.fa-check.text-success
+                td(style="text-align:right")
+                  if (standard.indicatorId === indicatorId && processStandards.filter(function(v){return !v.targetMet;}).length > 1)
+                    a.btn.btn-warning.btn-sm(href='/#patient/'+patientId) Showing actions for this indicator - click to show all
+                  else if (!standard.targetMet && processStandards.filter(function(v){return !v.targetMet;}).length === 1)
+                    span Currently showing actions for this indicator 
+                  else 
+                    if !standard.targetMet
+                      a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only
+              tr(data-id=standard.indicatorId,class='qs-show-more-row')
+                td(colspan=4)
+                  !=standard.indicatorDescription
+                  br
+                  strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
+                  br
+                  !=standard.why
+    #outcomeIndicatorsQS.tab-pane.fade(role="tabpanel")
+      .panel.panel-default#qs
+        table.table.table-condensed
+          thead
+            tr
+              th Quality indicator
+              th(style="max-width:100px") Target met?
+              th(style="max-width:100px") Action plan?
+          tbody
+            each standard in outcomeStandards
+              tr(class=standard.targetMet ? 'success' : 'danger')
+                td
+                  strong
+                    = standard.display                     
+                  a.reason-link(href='#',data-id=standard.indicatorId) 
+                    | Show more
+                    i.fa.fa-caret-down  
+                td
+                  if standard.targetMet
+                    i.fa.fa-fw.fa-check.text-success
+                  else
+                    i.fa.fa-fw.fa-times.text-danger      
+                td
+                  if standard.actionPlan
+                    i.fa.fa-fw.fa-check.text-success
+              tr(data-id=standard.indicatorId,class='qs-show-more-row')
+                td(colspan=4)
+                  !=standard.indicatorDescription
+                  br
+                  strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
+                  br
+                  !=standard.why

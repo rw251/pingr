@@ -82,7 +82,8 @@ var pl = {
     }).on('click', 'tbody tr', function(e) { //Select individual patient when row clicked#
       var callback = onPatientSelected.bind(this);
       var patientId = $(this).find('td button').attr('data-patient-id');
-      callback(patientId);
+      var type = $(this).find('td button').attr('data-type');
+      callback(patientId, type);
       e.preventDefault();
       e.stopPropagation();
     }).on('click', 'tbody tr button', function(e) {
@@ -205,9 +206,9 @@ var pl = {
     if (isAppend) panel.append(tmpl());
     else panel.html(tmpl());
 
-    pl.wireUp(function(patientId) {
+    pl.wireUp(function(patientId, type) {
       var url = '#patient/' + patientId;
-      if (pathwayId && pathwayStage && standard) url += '/' + [pathwayId, pathwayStage, standard].join("/");
+      if (type && type==="process" && pathwayId && pathwayStage && standard) url += '/' + [pathwayId, pathwayStage, standard].join("/");
       history.pushState(null, null, url);
       loadContentFn(url);
     });

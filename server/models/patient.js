@@ -52,6 +52,7 @@ var PatientSchema = new Schema({
   standards: [
     {
       _id:false,
+      type: { type: String, default: "process"}, //Currently "process" OR "outcome" - same as indicator model
       display: String,
       targetMet: Boolean
     }

@@ -10,6 +10,7 @@ var IndicatorSchema = new Schema({
   opportunities: [{ _id:false, id: String, patients: [Number] }],
   measurementId: String, // the id of the measurement to display
   displayDate: Boolean, // whether to display the value or the date of the measurement
+  type: String, //currently either "process" OR "outcome" - same as patient model
   actions: [
     {
       _id:false,

@@ -6,7 +6,6 @@ var base = require('../base.js'),
 var indicatorList = {
 
   show: function(panel, isAppend, loadContentFn) {
-    //data.getAllIndicatorData("P87024", function(indicators) {
     data.getAllIndicatorData(null, function(indicators) {
       indicators.sort(function(a,b){
         if(a.performance.percentage == b.performance.percentage) return 0;
@@ -16,8 +15,15 @@ var indicatorList = {
       });
       var tempMust = $('#overview-panel-table').html();
       var tmpl = require('templates/overview-table');
+      var processIndicators = indicators.filter(function(v){
+        return v.type==="process" || v.name.toLowerCase().indexOf("beta test")<0;
+      });
+      var outcomeIndicators = indicators.filter(function(v){
+        return v.type==="outcome" || v.name.toLowerCase().indexOf("beta test")>-1;
+      });
       var html = tmpl({
-        "indicators": indicators
+        "processIndicators": processIndicators,
+        "outcomeIndicators": outcomeIndicators
       });
       if (isAppend) {
         panel.append(html);
@@ -29,15 +35,23 @@ var indicatorList = {
         panel.html(html);
       }
 
-      $('.inlinesparkline').sparkline('html', {
+      $('#processIndicators .inlinesparkline').sparkline('html', {
         tooltipFormatter: function(sparkline, options, fields) {
-          var dts = indicators[$('.inlinesparkline').index(sparkline.el)].dates;
+          var dts = processIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return dts[fields.x] + ": " + fields.y + "%";
         },
         width: "100px"
       });
 
-      $('#overview-table').floatThead({
+      $('#outcomeIndicators .inlinesparkline').sparkline('html', {
+        tooltipFormatter: function(sparkline, options, fields) {
+          var dts = outcomeIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
+          return dts[fields.x] + ": " + fields.y + "%";
+        },
+        width: "100px"
+      });
+
+      $('#overview-table-process, #overview-table-outcomes').floatThead({
         position: 'absolute',
         scrollContainer: true,
         zIndex:50
@@ -100,7 +114,13 @@ var indicatorList = {
       return false;
     });
 
-    $('#overview-table').floatThead('reflow')
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      $.sparkline_display_visible(); //ensure sparklines on hidden tabs display
+      //e.target // newly activated tab
+      //e.relatedTarget // previous active tab
+    })
+
+    $('#overview-table-process, #overview-table-outcomes').floatThead('reflow')
   }
 
 };

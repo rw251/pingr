@@ -32,10 +32,19 @@ var qs = {
       else if(a.targetMet) return 1;
       return -1;
     });
+
+    var processStandards = patientData.standards.filter(function(v){
+      return v.type==="process" || v.indicatorId !== 'cvd.stroke.outcome';
+    });
+
+    var outcomeStandards = patientData.standards.filter(function(v){
+      return v.type==="outcome" || v.indicatorId === 'cvd.stroke.outcome';
+    });
     //
     var html = tmpl({
-      "noStandards" : patientData.standards.length===0,
-      "standards": patientData.standards,
+      noStandards : patientData.standards.length===0,
+      processStandards: processStandards,
+      outcomeStandards: outcomeStandards,
       indicatorId: pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : null,
       patientId: patientId
     });
