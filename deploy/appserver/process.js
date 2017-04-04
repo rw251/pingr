@@ -844,7 +844,7 @@ async.series([
     doPatientActions,
     writeFiles,
     displayWarning
-  }],
+  ],
   // optional callback
   function(err, results) {
     // results is now equal to ['one', 'two']
