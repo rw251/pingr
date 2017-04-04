@@ -1012,6 +1012,7 @@ async.series([
     doMeasurements,
     dump,
     doPatientActions,
+    doOrgActions,
     writeFiles,
     displayWarning
   ],
