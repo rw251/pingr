@@ -11,7 +11,7 @@ IF EXIST %IMPORT_DIR%COPYING.txt (
 
 for /f %%A in ('dir /b /a-d %IMPORT_DIR%^| find /v /c ""') do set cnt=%%A
 
-SET EXPECTED.FILE.NUMBER=11
+SET EXPECTED.FILE.NUMBER=13
 
 
 IF NOT "%cnt%"=="%EXPECTED.FILE.NUMBER%" (
@@ -49,6 +49,14 @@ IF NOT EXIST %IMPORT_DIR%orgActions.dat (
 )
 IF NOT EXIST %IMPORT_DIR%indicator.dat (
 	SET ERRRR=indicator file is missing
+	goto :failed
+)
+IF NOT EXIST %IMPORT_DIR%indicatorOutcome.dat (
+	SET ERRRR=indicatorOutcome file is missing
+	goto :failed
+)
+IF NOT EXIST %IMPORT_DIR%indicatorMapping.dat (
+	SET ERRRR=indicatorMapping file is missing
 	goto :failed
 )
 IF NOT EXIST %IMPORT_DIR%measures.dat (
