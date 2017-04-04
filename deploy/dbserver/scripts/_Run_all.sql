@@ -24,7 +24,7 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 -----------------------------------------------
 -- PatID 		Patient id
 -- indicatorId	Indicator id
--- why			Why this patient is flagging 
+-- why			Why this patient is flagging
 --				this indicator.
 -----------------------------------------------
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.denominators]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.denominators]
@@ -35,7 +35,7 @@ CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000), 
 ------------------------------------------------------------------------------------------
 -- PatID 			Patient id
 -- indicatorId		Indicator id
--- actionCat		Determines the bar that this belongs in on the 
+-- actionCat		Determines the bar that this belongs in on the
 --					"Patients with imp opps" chart
 -- reasonNumber		The number of reasons for this action.
 --					Could be used for prioritisation but not at present
@@ -208,7 +208,7 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source = 'salfordt' then 'strokeHosp'
 	end as measure,
 CodeValue as value, Source from SIR_ALL_Records
-where 
+where
 	(
 		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp','fev1', 'strokeQof')) and CodeValue is not NULL)
 		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof')))
@@ -335,12 +335,12 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'pulRehabTempExSs') then 'Pulmonary rehab exception code'
 		when ReadCode in (select code from codeGroups where [group] = 'mrc') then 'MRC breathlessness scale'
 		when ReadCode in (select code from codeGroups where [group] in ('CopdHosp','copdExacNonSs','copdExacSs')) then 'COPD exacerbation - coded'
-		when	(((ReadCode in ('fe62.','fe6i.','fe6j.')and((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%'))) 
-				or(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%'))) 
+		when	(((ReadCode in ('fe62.','fe6i.','fe6j.')and((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%')))
+				or(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%')))
 				or(ReadCode = 'fe6t.' and ((CodeUnits like '%3%') or(CodeUnits like '%three%'))))
 				or(ReadCode in ('e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
 					'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.')))
-		and PatID in (select PatID from [pingr.copdPatients]) 		
+		and PatID in (select PatID from [pingr.copdPatients])
 				then 'COPD exacerbation - uncoded'
 		when ReadCode in (select code from codeGroups where [group] = 'pulRehabOfferedSs') then 'Pulmonary rehab offered'
 		when ReadCode in (select code from codeGroups where [group] in ('asbp','adbp')) then 'Ambulatory BP reading'
@@ -431,7 +431,7 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'anxietyPermEx') then 'Resolved'
 		when ReadCode in (select code from codeGroups where [group] = 'hyperthyroidPermEx') then 'Resolved'
 	end as subcategory from SIR_ALL_Records
-where 
+where
 	(
 		ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx', 'dm','dmPermEx','phaeo','asthmaQof',
 		'asthmaPermEx','porphyria','MInow','AS','gout','addisons','whiteCoat','dmPermEx','asthmaPermEx', 'copdQof', 'copdPermEx', 'htnQof',

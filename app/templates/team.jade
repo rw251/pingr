@@ -1,7 +1,11 @@
 include mixins/thumbs
 
 if noSuggestions
-  p There are no improvement action suggestions from PINGR for this indicator.
+  p(style="padding:10px 15px") 
+    | There are 
+    strong currently 
+    | no improvement action suggestions from PINGR for this indicator. 
+    strong Please add your own below.
 else 
   table#team-suggested-actions-table.table(style='margin-bottom:0')
     thead
