@@ -3,6 +3,8 @@ var csv = require('csv-parser'),
   path = require('path'),
   async = require('async');
 
+var heapdump = require('heapdump');
+
 var FILENAMES = {
   demographics: 'demographics.dat',
   denominators: 'denominators.dat',
@@ -667,7 +669,7 @@ var doPatientActions = function(callback) {
       })[0];
       if (!opp) {
         if (!oppText[data.actionCat]) oppText[data.actionCat] = {};
-        console.log(data.actionCat);
+        //console.log(data.actionCat);
         opp = { id: data.actionCat, name: oppText[data.actionCat].name, positionInBarChart: oppText[data.actionCat].positionInBarChart, description: oppText[data.actionCat].description, patients: [] };
         i.opportunities.push(opp);
         i.opportunities.sort(function(a, b) {
@@ -830,17 +832,30 @@ var displayWarning = function(callback) {
   callback(null);
 };
 
+var dump = function(callback){
+  heapdump.writeSnapshot(function(err, filename) {
+    if(err) return callback(err);
+    callback(null);
+  });
+};
+
 var temp = {};
 
 async.series([
+    dump,
     doProcessIndicators,
     doDemographics,
     doDenominators,
     doEvents,
+    dump,
     doContacts,
+    dump,
     doDiagnoses,
+    dump,
     doMedications,
+    dump,
     doMeasurements,
+    dump,
     doPatientActions,
     writeFiles,
     displayWarning
