@@ -792,7 +792,7 @@ var doOrgActions = function(callback) {
 };
 
 var writeFiles = function(callback) {
-  consolg.log("Writing files...");
+  console.log("Writing files...");
   dataFile.text = textFile;
 
   fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
