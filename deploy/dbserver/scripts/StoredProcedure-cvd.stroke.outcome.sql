@@ -1,4 +1,16 @@
---v2
+--v4 changes 31/3/17
+--bug fixes with dates in 'why'
+--added both first ever and episode incidence - but used only first ever for indicator score
+--added possible stroke as an action
+
+--v3 changes 28/3/17
+--GP data ONLY
+--MULTIPLE strokes now INCLUDED because using GP data - is more reliable
+--imp opp cats - first stroke or prev stroke
+--counted from 1st april onwards
+--no relevant org actions --> removed
+
+--v2 changes 26/3/17
 --each patient can have ONLY ONE stroke
 --strokes measured from SRFT and GP
 --no practice list calculation
@@ -15,22 +27,109 @@ SET NOCOUNT ON
 --use PatientSafety_Records_Test
 --declare @refdate VARCHAR(10);
 --declare @JustTheIndicatorNumbersPlease bit;
---set @refdate = '2016-11-17';
+--set @refdate = '2017-03-31' --'2016-11-17';
 --set @JustTheIndicatorNumbersPlease= 0;
 
 									----------------------------------------------
 											-------NO OF STROKES--------
-											-------IN THE LAST YEAR--------
+										-------SINCE APRIL LAST YEAR--------
 									----------------------------------------------
 
---latest stroke code in last year IN HOSPITAL RECORD
-IF OBJECT_ID('tempdb..#latestStrokeHosp') IS NOT NULL DROP TABLE #latestStrokeHosp
-CREATE TABLE #latestStrokeHosp (PatID int, latestStrokeHospDate date, latestStrokeHosp varchar(512), latestStrokeHospCode varchar(512));
-insert into #latestStrokeHosp
-select a.PatID, latestStrokeHospDate, MAX(Rubric), MAX(ReadCode) from SIR_ALL_Records as a
-	inner join (
-		select PatID, MAX(EntryDate) as latestStrokeHospDate from SIR_ALL_Records
-		where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
+declare @startDate datetime;
+set @startDate = (select case
+	when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) + '-04-01' --1st April THIS YEAR
+	when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-04-01' end); --1st April LAST YEAR
+	
+--strokes EVER RECORDED IN GP RECORD
+--multiple patients included
+IF OBJECT_ID('tempdb..#strokePtsGp') IS NOT NULL DROP TABLE #strokePtsGp
+CREATE TABLE #strokePtsGp (PatID int, strokeCodeDate date, strokeCode varchar(512), strokeRead varchar(512), strokeSource varchar(512), pracID varchar(512));
+insert into #strokePtsGp
+select a.PatID, EntryDate, MAX(Rubric), ReadCode, Source,  pracID from SIR_ALL_Records as a
+inner join ptPractice as b on a.PatID = b.PatID
+where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
+and EntryDate <= @refdate
+and Source != 'salfordt' --ONLY FROM GP RECORD
+group by a.PatID, EntryDate, Source, pracID, ReadCode
+
+--no of strokes per patient BEFORE START DATE
+IF OBJECT_ID('tempdb..#numberOfStrokesPerPatientBeforeStartDate') IS NOT NULL DROP TABLE #numberOfStrokesPerPatientBeforeStartDate
+CREATE TABLE #numberOfStrokesPerPatientBeforeStartDate (PatID int, numberOfStrokesPerPatientBeforeStartDate int);
+insert into #numberOfStrokesPerPatientBeforeStartDate
+select distinct PatID, count (*) from #strokePtsGp
+where strokeCodeDate < @startDate
+group by PatID
+
+--latest stroke BEFORE START DATE
+IF OBJECT_ID('tempdb..#latestStrokeDateBeforeStartDate') IS NOT NULL DROP TABLE #latestStrokeDateBeforeStartDate
+CREATE TABLE #latestStrokeDateBeforeStartDate (PatID int, latestStrokeDateBeforeStartDate date, latestStrokeCode varchar(512), latestStrokeRead varchar(512));
+insert into #latestStrokeDateBeforeStartDate
+select PatID, MAX(strokeCodeDate), strokeCode, strokeRead from #strokePtsGp
+where strokeCodeDate < @startDate
+group by PatID, strokeRead, strokeCode
+
+--second latest stroke BEFORE START DATE
+IF OBJECT_ID('tempdb..#secondLatestStrokeDateBeforeStartDate') IS NOT NULL DROP TABLE #secondLatestStrokeDateBeforeStartDate
+CREATE TABLE #secondLatestStrokeDateBeforeStartDate (PatID int, secondLatestStrokeDateBeforeStartDate date);
+insert into #secondLatestStrokeDateBeforeStartDate
+select a.PatID, MAX(strokeCodeDate) from #strokePtsGp as a
+left outer join	 (select * from #latestStrokeDateBeforeStartDate) as b on a.PatID = b.PatID 
+where strokeCodeDate < latestStrokeDateBeforeStartDate
+group by a.PatID
+
+--third latest stroke BEFORE START DATE
+IF OBJECT_ID('tempdb..#thirdLatestStrokeDateBeforeStartDate') IS NOT NULL DROP TABLE #thirdLatestStrokeDateBeforeStartDate
+CREATE TABLE #thirdLatestStrokeDateBeforeStartDate (PatID int, thirdLatestStrokeDateBeforeStartDate date);
+insert into #thirdLatestStrokeDateBeforeStartDate
+select a.PatID, MAX(strokeCodeDate) from #strokePtsGp as a
+left outer join	 (select * from #secondLatestStrokeDateBeforeStartDate) as b on a.PatID = b.PatID 
+where strokeCodeDate < secondLatestStrokeDateBeforeStartDate
+group by a.PatID
+
+--no of strokes per patient SINCE START DATE
+IF OBJECT_ID('tempdb..#numberOfStrokesPerPatientSinceStartDate') IS NOT NULL DROP TABLE #numberOfStrokesPerPatientSinceStartDate
+CREATE TABLE #numberOfStrokesPerPatientSinceStartDate (PatID int, numberOfStrokesPerPatientSinceStartDate int);
+insert into #numberOfStrokesPerPatientSinceStartDate
+select distinct PatID, count (*) from #strokePtsGp
+where strokeCodeDate >= @startDate
+group by PatID
+
+--latest stroke SINCE START DATE
+IF OBJECT_ID('tempdb..#latestStrokeDateSinceStartDate') IS NOT NULL DROP TABLE #latestStrokeDateSinceStartDate
+CREATE TABLE #latestStrokeDateSinceStartDate (PatID int, latestStrokeDateSinceStartDate date, latestStrokeCode varchar(512), latestStrokeRead varchar(512));
+insert into #latestStrokeDateSinceStartDate
+select PatID, MAX(strokeCodeDate), strokeCode, strokeRead from #strokePtsGp
+where strokeCodeDate >= @startDate
+group by PatID, strokeRead, strokeCode
+
+--second latest stroke SINCE START DATE
+IF OBJECT_ID('tempdb..#secondLatestStrokeDateSinceStartDate') IS NOT NULL DROP TABLE #secondLatestStrokeDateSinceStartDate
+CREATE TABLE #secondLatestStrokeDateSinceStartDate (PatID int, secondLatestStrokeDateSinceStartDate date);
+insert into #secondLatestStrokeDateSinceStartDate
+select a.PatID, MAX(strokeCodeDate) from #strokePtsGp as a
+left outer join	 (select * from #latestStrokeDateSinceStartDate) as b on a.PatID = b.PatID 
+where strokeCodeDate < latestStrokeDateSinceStartDate
+and strokeCodeDate >= @startDate
+group by a.PatID
+
+--third latest stroke SINCE START DATE
+IF OBJECT_ID('tempdb..#thirdLatestStrokeDateSinceStartDate') IS NOT NULL DROP TABLE #thirdLatestStrokeDateSinceStartDate
+CREATE TABLE #thirdLatestStrokeDateSinceStartDate (PatID int, thirdLatestStrokeDateSinceStartDate date);
+insert into #thirdLatestStrokeDateSinceStartDate
+select a.PatID, MAX(strokeCodeDate) from #strokePtsGp as a
+left outer join	 (select * from #secondLatestStrokeDateSinceStartDate) as b on a.PatID = b.PatID 
+where strokeCodeDate < secondLatestStrokeDateSinceStartDate
+and strokeCodeDate >= @startDate
+group by a.PatID
+
+--all strokes EVER RECORDED IN HOSPITAL
+--multiple patients included
+IF OBJECT_ID('tempdb..#strokePtsHosp') IS NOT NULL DROP TABLE #strokePtsHosp
+CREATE TABLE #strokePtsHosp (PatID int, strokeCodeDate date, strokeCode varchar(512), strokeRead varchar(512), strokeSource varchar(512), pracID varchar(512));
+insert into #strokePtsHosp
+select a.PatID, EntryDate, MAX(Rubric), ReadCode, Source,  pracID from SIR_ALL_Records as a
+inner join ptPractice as b on a.PatID = b.PatID
+where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
 		and (Rubric like '%stroke%' --guard against rubric over-writes
 			or Rubric like '%haemorrhage%'
 			or  Rubric like '%occlusion%'
@@ -51,97 +150,86 @@ select a.PatID, latestStrokeHospDate, MAX(Rubric), MAX(ReadCode) from SIR_ALL_Re
 			and Rubric not like '%suspect%'
 			and Rubric not like '%epilepsy%'
 			and Rubric not like '%[0-9]%')--no dates
-		and EntryDate < @refdate
-		and EntryDate > DATEADD(month, -12, @refdate)
-		and Source = 'salfordt'
-		group by PatID
-	) as b on b.PatID = a.PatID and b.latestStrokeHospDate = a.EntryDate
-where ReadCode  in (select code from codeGroups where [group] in ('strokeQof'))
-		and (Rubric like '%stroke%' --guard against rubric over-writes
-			or Rubric like '%haemorrhage%'
-			or  Rubric like '%occlusion%'
-			or  Rubric like '%stenosis%'
-			or  Rubric like '%infarction%'
-			or  Rubric like '%CVA%'
-			or  Rubric like '%lacunar%'
-			or  Rubric like '%cerebral%'
-			or  Rubric like '%Wallenberg%')
-		and (Rubric not like '%unknown%' --guard against rubric over-writes
-			and Rubric not like '%no %'
-			and Rubric not like '%negative%'
-			and Rubric not like '%ruled out%'
-			and Rubric not like '%absent%'
-			and Rubric not like '%possible%'
-			and Rubric not like '%probable%'
-			and Rubric not like '%previous%'
-			and Rubric not like '%suspect%'
-			and Rubric not like '%epilepsy%'
-			and Rubric not like '%[0-9]%')--no dates
-and Source = 'salfordt'
-group by a.PatID, latestStrokeHospDate
+and EntryDate <= @refdate
+and Source = 'salfordt' --ONLY FROM GP RECORD
+group by a.PatID, EntryDate, Source, pracID, ReadCode
 
---latest stroke code in last year IN GP RECORD
-IF OBJECT_ID('tempdb..#latestStrokeGp') IS NOT NULL DROP TABLE #latestStrokeGp
-CREATE TABLE #latestStrokeGp (PatID int, latestStrokeGpDate date, latestStrokeGp varchar(512), latestStrokeGpCode varchar(512));
-insert into #latestStrokeGp
-select a.PatID, latestStrokeGpDate, MAX(Rubric), MAX(ReadCode) from SIR_ALL_Records as a
-	inner join (
-		select PatID, MAX(EntryDate) as latestStrokeGpDate from SIR_ALL_Records
-		where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
-		and EntryDate < @refdate
-		and EntryDate > DATEADD(month, -12, @refdate)
-		and Source != 'salfordt'
-		group by PatID
-	) as b on b.PatID = a.PatID and b.latestStrokeGpDate = a.EntryDate
-where ReadCode  in (select code from codeGroups where [group] in ('strokeQof'))
-and Source != 'salfordt'
-group by a.PatID, latestStrokeGpDate
+--latest HOSPITAL stroke SINCE START DATE
+IF OBJECT_ID('tempdb..#latestHospitalStrokeDateSinceStartDate') IS NOT NULL DROP TABLE #latestHospitalStrokeDateSinceStartDate
+CREATE TABLE #latestHospitalStrokeDateSinceStartDate (PatID int, latestHospitalStrokeDateSinceStartDate date, latestStrokeCode varchar(512), latestStrokeRead varchar(512));
+insert into #latestHospitalStrokeDateSinceStartDate
+select PatID, MAX(strokeCodeDate), strokeCode, strokeRead from #strokePtsHosp
+where strokeCodeDate >= @startDate
+group by PatID, strokeRead, strokeCode
 
---combined strokes latest stroke list code in last year FROM HOSPITAL AND GP RECORD
-IF OBJECT_ID('tempdb..#latestStrokeCombined') IS NOT NULL DROP TABLE #latestStrokeCombined
-CREATE TABLE #latestStrokeCombined (PatID int, latestStrokeGpDate date, latestStrokeHospDate date, latestStrokeGp varchar(512), latestStrokeHosp varchar(512), latestStrokeGpCode varchar(512), latestStrokeHospCode varchar(512), pracID varchar(10));
-insert into #latestStrokeCombined
-select case when a.PatID is not null then a.PatID else b.PatID end, latestStrokeGpDate, latestStrokeHospDate, latestStrokeGp, latestStrokeHosp, latestStrokeGpCode, latestStrokeHospCode, gpcode from #latestStrokeGp as a
-full outer join (select * from #latestStrokeHosp) as b on b.PatID = a.PatID
-left outer join (select patid, gpcode from patients) as c on c.patid = case when a.PatID is not null then a.PatID else b.PatID end
-
---no of PATIENTS with strokes per practice this year
-IF OBJECT_ID('tempdb..#strokePractices') IS NOT NULL DROP TABLE #strokePractices
-CREATE TABLE #strokePractices (pracID varchar(1000), noStrokes int);
-insert into #strokePractices 
-select pracID, COUNT(*) from #latestStrokeCombined as a
+									----------------------------------------------
+										------STROKE INCIDENCE (RAW)--------
+											------AS A PROPORTION--------
+									----------------------------------------------
+--no of strokes PER PRACTICE SINCE START DATE
+--EPISODE INDICENCE I.E. MULTIPLE STROKES PER PATIENT
+IF OBJECT_ID('tempdb..#numberOfStrokesPerPractice') IS NOT NULL DROP TABLE #numberOfStrokesPerPractice
+CREATE TABLE #numberOfStrokesPerPractice (pracID varchar(1000), numberOfStrokesPerPractice int);
+insert into #numberOfStrokesPerPractice
+select pracID, COUNT(*) from #strokePtsGp as a
+where strokeCodeDate >= @startDate
 group by pracID
 
-									----------------------------------------------
-											------STROKE INCIDENCE (RAW)--------
-												------AS A PROPORTION--------
-									----------------------------------------------
+--stroke incidence FOR EVERY PRACTICE ORDERED ASCENDING
+--EPISODE INDICENCE i.e. multiple strokes per patient
+IF OBJECT_ID('tempdb..#episodeStrokeIncidence') IS NOT NULL DROP TABLE #episodeStrokeIncidence
+CREATE TABLE #episodeStrokeIncidence (practiceId varchar(1000), noStrokes int, practiceListSize int, episodeStrokeIncidence float);
+insert into #episodeStrokeIncidence
+select practiceId, numberOfStrokesPerPractice, practiceListSize, 
+	case
+		when numberOfStrokesPerPractice is NULL then 0 --prevents null when no strokes
+		else cast(numberOfStrokesPerPractice as float)/cast(practiceListSize as float) 
+	end as episodeStrokeIncidence 
+from practiceListSizes as a
+left outer join (select * from #numberOfStrokesPerPractice) as b on b.pracID = a.practiceId  collate Latin1_General_100_CI_AS
+order by episodeStrokeIncidence asc
 
+--no of PATIENTS WHO HAVE HAD strokes PER PRACTICE SINCE START DATE
+--FIRST EVER INDICENCE i.e. only one stroke per patient
+IF OBJECT_ID('tempdb..#numberOfStrokePatientsPerPractice') IS NOT NULL DROP TABLE #numberOfStrokePatientsPerPractice
+CREATE TABLE #numberOfStrokePatientsPerPractice (pracID varchar(1000), numberOfStrokePatientsPerPractice int);
+insert into #numberOfStrokePatientsPerPractice
+select pracID, COUNT(distinct(PatID)) from #strokePtsGp as a
+where strokeCodeDate >= '2016-04-01'
+group by pracID
 
 --stroke incidence FOR EVERY PRACTICE ORDERED ASCENDING
-IF OBJECT_ID('tempdb..#strokeIncidence') IS NOT NULL DROP TABLE #strokeIncidence
-CREATE TABLE #strokeIncidence (practiceId varchar(1000), noStrokes int, practiceListSize int, strokeIncidence float);
-insert into #strokeIncidence
-select pracID, noStrokes, practiceListSize, 
+--FIRST EVER INDICENCE i.e. only one stroke per patient
+IF OBJECT_ID('tempdb..#firstEverStrokeIncidence') IS NOT NULL DROP TABLE #firstEverStrokeIncidence
+CREATE TABLE #firstEverStrokeIncidence (practiceId varchar(1000), noStrokes int, practiceListSize int, firstEverStrokeIncidence float);
+insert into #firstEverStrokeIncidence
+select practiceId, numberOfStrokePatientsPerPractice, practiceListSize, 
 	case
-		when noStrokes is NULL then 0 --prevents null when no strokes
-		else cast(noStrokes as float)/cast(practiceListSize as float) 
-	end as strokeIncidence 
+		when numberOfStrokePatientsPerPractice is NULL then 0 --prevents null when no strokes
+		else cast(numberOfStrokePatientsPerPractice as float)/cast(practiceListSize as float) 
+	end as firstEverStrokeIncidence 
 from practiceListSizes as a
-left outer join (select * from #strokePractices) as b on b.pracID = a.practiceId  collate Latin1_General_100_CI_AS
-order by strokeIncidence asc
+left outer join (select * from #numberOfStrokePatientsPerPractice) as b on b.pracID = a.practiceId  collate Latin1_General_100_CI_AS
+order by firstEverStrokeIncidence asc
 
 					-----------------------------------------------------------------------------
 					---------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
 					-----------------------------------------------------------------------------
+					---------------------	FIRST EVER INCIDENCE -----------------------------
+					-----------------------------------------------------------------------------
+
+
 declare @abc float;
 set @abc = (select round(avg(perc),2) from (
-select top 5 strokeIncidence as perc from #strokeIncidence
+select top 5 firstEverStrokeIncidence as perc from #firstEverStrokeIncidence
 order by perc desc) sub);
 
 					-----------------------------------------------------------------------------
 					--DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE-------------
 					-----------------------------------------------------------------------------
+					---------------------	FIRST EVER INCIDENCE -----------------------------
+					-----------------------------------------------------------------------------
+
 
 									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
@@ -151,8 +239,7 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
-select 'cvd.stroke.outcome', practiceId, CONVERT(char(10), @refdate, 126), noStrokes, practiceListSize, null, @abc from #strokeIncidence
-
+select 'cvd.stroke.outcome', practiceId, CONVERT(char(10), @refdate, 126), noStrokes, practiceListSize, null, @abc from #firstEverStrokeIncidence
 									----------------------------------------------
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
@@ -166,12 +253,28 @@ insert into [output.pingr.denominators](PatID, indicatorId, why)
 
 select a.PatID, 'cvd.stroke.outcome',
 	case 
-		when a.PatID in (select PatID from #latestStrokeCombined) and latestStrokeGpDate is not null then 'Patient had a stroke in the last 12 months on ' + CONVERT(VARCHAR, latestStrokeGpDate, 3) + '.'
-		when a.PatID in (select PatID from #latestStrokeCombined) and latestStrokeGpDate is null then 'Patient had a stroke in the last 12 months <strong>recorded in hospital (but not the GP record)</strong> on ' + CONVERT(VARCHAR, latestStrokeHospDate, 3) + '.'
-		else 'Patient has not had a stroke in the last 12 months.'
+		when numberOfStrokesPerPatientSinceStartDate = 0 or numberOfStrokesPerPatientSinceStartDate is null then 'Patient has not had a stroke recorded on or after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.<br>'
+		when numberOfStrokesPerPatientSinceStartDate = 1 then 'Patient had a stroke recorded on or after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' on ' + CONVERT(VARCHAR, latestStrokeDateSinceStartDate, 3) + '.<br>'
+		when numberOfStrokesPerPatientSinceStartDate = 2 then 'Patient had strokes recorded on or after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' on ' + CONVERT(VARCHAR, secondLatestStrokeDateSinceStartDate, 3) + ' and ' + CONVERT(VARCHAR, latestStrokeDateSinceStartDate , 3) + '.<br>'
+		when numberOfStrokesPerPatientSinceStartDate = 3 then 'Patient had strokes recorded on or after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' on ' + CONVERT(VARCHAR, thirdLatestStrokeDateSinceStartDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDateSinceStartDate, 3) + ' and ' + CONVERT(VARCHAR, latestStrokeDateSinceStartDate, 3)+ '.<br>'
+		when numberOfStrokesPerPatientSinceStartDate > 3 then 'Patient had more than 3 strokes recorded on or after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '. The latest was  ' + CONVERT(VARCHAR, latestStrokeDateSinceStartDate, 3) + '.<br>'
+	end +
+	case 
+		when (numberOfStrokesPerPatientBeforeStartDate = 0 or numberOfStrokesPerPatientBeforeStartDate is null) then 'And they have not had a stroke before this date.'
+		when numberOfStrokesPerPatientBeforeStartDate = 1 then 'And they had a stroke before this date on ' + CONVERT(VARCHAR, latestStrokeDateBeforeStartDate, 3) + '.<br>'
+		when numberOfStrokesPerPatientBeforeStartDate = 2 then 'And they had strokes before this date on ' + CONVERT(VARCHAR, secondLatestStrokeDateBeforeStartDate, 3) + ' and ' + CONVERT(VARCHAR, latestStrokeDateBeforeStartDate, 3) + '.<br>'
+		when numberOfStrokesPerPatientBeforeStartDate = 3 then 'And they had strokes documented before this date on ' + CONVERT(VARCHAR, thirdLatestStrokeDateBeforeStartDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDateBeforeStartDate, 3) + ' and ' + CONVERT(VARCHAR, latestStrokeDateBeforeStartDate, 3)+ '.<br>'
+		when numberOfStrokesPerPatientBeforeStartDate > 3 then 'And they had more than 3 strokes recorded before this date. The latest was  ' + CONVERT(VARCHAR, latestStrokeDateBeforeStartDate, 3) + '.<br>'
 	end
 from practiceList as a
-left outer join (select * from #latestStrokeCombined) as b on a.PatID = b.PatID
+left outer join (select * from #numberOfStrokesPerPatientSinceStartDate) as b on a.PatID = b.PatID
+left outer join (select * from #latestStrokeDateSinceStartDate) as c on a.PatID = c.PatID
+left outer join (select * from #secondLatestStrokeDateSinceStartDate) as d on a.PatID = d.PatID
+left outer join (select * from #thirdLatestStrokeDateSinceStartDate) as e on a.PatID = e.PatID
+left outer join (select * from #latestStrokeDateBeforeStartDate) as f on a.PatID = f.PatID
+left outer join (select * from #secondLatestStrokeDateBeforeStartDate) as g on a.PatID = g.PatID
+left outer join (select * from #thirdLatestStrokeDateBeforeStartDate) as h on a.PatID = h.PatID
+left outer join (select * from #numberOfStrokesPerPatientBeforeStartDate) as i on a.PatID = i.PatID
 
 									----------------------------------------------
 									-------DEFINE % POINTS PER PATIENT------------
@@ -188,6 +291,9 @@ IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 							---------------------------------------------------------------
 							----------------------PT-LEVEL ACTIONS-------------------------
 							---------------------------------------------------------------
+							---------------------------------------------------------------
+						---***HAS TO INCLUDE ALL PATIENTS WHO HAVE HAD THE OUTCOME***----------
+							---------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
 
@@ -197,35 +303,66 @@ insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumbe
 --	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
 --insert into #patActions
 
---STROKE - CODED
-select PatID,
+--FIRST STROKE
+select a.PatID,
 	'cvd.stroke.outcome' as indicatorId,
-	'strokeCoded' as actionCat,
+	'firstStroke' as actionCat,
 	null as reasonNumber,
 	null as pointsPerAction,
 	null as priority,
 	null as actionText,
 	null as supportingText
-from #latestStrokeCombined
-where latestStrokeGp is not null
+from #numberOfStrokesPerPatientSinceStartDate as a 
+left outer join (select * from #numberOfStrokesPerPatientBeforeStartDate) as b on b.PatID = a.PatID
+where numberOfStrokesPerPatientSinceStartDate = 1 and (numberOfStrokesPerPatientBeforeStartDate = 0 or numberOfStrokesPerPatientBeforeStartDate is null)
+
+union
+--PREVIOUS STROKE
+select a.PatID,
+	'cvd.stroke.outcome' as indicatorId,
+	'previousStroke' as actionCat,
+	null as reasonNumber,
+	null as pointsPerAction,
+	null as priority,
+	null as actionText,
+	null as supportingText
+from #numberOfStrokesPerPatientSinceStartDate as a 
+left outer join (select * from #numberOfStrokesPerPatientBeforeStartDate) as b on b.PatID = a.PatID
+where numberOfStrokesPerPatientSinceStartDate > 0 and numberOfStrokesPerPatientBeforeStartDate > 0
+
+union
+--MULTIPLE STROKES SINCE START DATE
+select a.PatID,
+	'cvd.stroke.outcome' as indicatorId,
+	'multipleStroke' as actionCat,
+	null as reasonNumber,
+	null as pointsPerAction,
+	null as priority,
+	null as actionText,
+	null as supportingText
+from #numberOfStrokesPerPatientSinceStartDate as a 
+left outer join (select * from #numberOfStrokesPerPatientBeforeStartDate) as b on b.PatID = a.PatID
+where numberOfStrokesPerPatientSinceStartDate > 1
 
 union
 --STROKE - UNCODED
-select PatID,
+select a.PatID,
 	'cvd.stroke.outcome' as indicatorId,
-	'strokeUncoded' as actionCat,
+	'possibleStroke' as actionCat,
 	1 as reasonNumber,
 	@ptPercPoints as pointsPerAction,
 	5 as priority,
-	'Record ''' + latestStrokeHosp + ''' (using code ' + latestStrokeHospCode + '[' + latestStrokeHospCode + ']) on ' + CONVERT(VARCHAR, latestStrokeHospDate, 3) + '.' as actionText,
+	'Possible stroke in hospital on ' + CONVERT(VARCHAR, latestHospitalStrokeDateSinceStartDate, 3) + '.' as actionText,
 	'Reasoning' +
 		'<ul>'+
-			'<li>Patient had a stroke recorded in hospital on ' + CONVERT(VARCHAR, latestStrokeHospDate, 3) + '.</li>'+
+			'<li>Patient had ''' + latestStrokeCode + ''' recorded in hospital on ' + CONVERT(VARCHAR, latestHospitalStrokeDateSinceStartDate, 3) + '.</li>'+
 			'<li>This does not seem to appear in the GP record.</li>'+
+			'<li>If this truly was a stroke, you can record it using code ' + latestStrokeRead + '[' + latestStrokeRead + ']) on ' + CONVERT(VARCHAR, latestHospitalStrokeDateSinceStartDate, 3) + '.</li>'+
 		'</ul>'
 	as supportingText
-from #latestStrokeCombined as a
-where latestStrokeGp is null
+from #latestHospitalStrokeDateSinceStartDate as a
+inner join (select * from #numberOfStrokesPerPatientSinceStartDate) as b on b.PatID = a.PatID
+where numberOfStrokesPerPatientSinceStartDate = 0 or numberOfStrokesPerPatientSinceStartDate is null
 
 							---------------------------------------------------------------
 							---------------SORT ORG-LEVEL ACTION PRIORITY ORDER------------
@@ -238,15 +375,14 @@ insert into #reasonProportions
 
 --STROKE - UNCODED
 select pracID, 'strokeUncoded', 
-	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'strokeUncoded' then 1.0 else 0.0 end) --no of uncoded strokes
+	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'possibleStroke' then 1.0 else 0.0 end) --no of uncoded strokes
 	/SUM(case when indicatorId = 'cvd.stroke.outcome' then 1.0 else 0.0 end), --out of total no of strokes
-	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'strokeUncoded' then 1.0 else 0.0 end),
-	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'strokeUncoded' then 1.0 else 0.0 end)*@ptPercPoints
+	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'possibleStroke' then 1.0 else 0.0 end),
+	SUM(case when indicatorId = 'cvd.stroke.outcome' and actionCat = 'possibleStroke' then 1.0 else 0.0 end)*@ptPercPoints
 from [output.pingr.patActions] as a
 left outer join ptPractice as b on b.PatID = a.PatID
 group by pracID
 having SUM(case when indicatorId = 'cvd.stroke.outcome' then 1.0 else 0.0 end) > 0 --where denom is not 0
-
 							---------------------------------------------------------------
 							----------------------ORG-LEVEL ACTIONS------------------------
 							---------------------------------------------------------------
@@ -263,55 +399,57 @@ insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion
 select
 	pracID as pracID,
 	'cvd.stroke.outcome' as indicatorId,
-	'RemindToCodeStrokes' as actionCat,
+	'reviewPossibleStrokes' as actionCat,
 	proportion as proportion,
 	numberPatients as numberPatients,
 	pointsPerAction as pointsPerAction,
 	3 as priority,
-	'Remind staff to code strokes in GP record from hospital discharge summaries' as actionText,
-	'<ul><li>' + STR(numberPatients) + ' (' + STR(proportion*100) 
-	+ '%) of who have had a stroke recorded in hospital in the last 12 months have not had this recorded in the GP record.</li>' +
-	'<li>You may wish to bring this up in your next practice meeting, or send a group message to all staff.</li></ul>'
+	'Review patients with possible strokes' as actionText,
+	'<ul><li>' + STR(numberPatients) + ' patients may have had a stroke in hospital since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' that is not in the GP record.</li>' +
+	'<li>You may wish to review this list <a href="#indicators/cvd/stroke/outcome">here</a>.</li></ul>'
 from #reasonProportions
-where proportionId = 'strokeUncoded' 
-
+where proportionId = 'possibleStroke' 
 							---------------------------------------------------------------
 							----------------------TEXT FILE OUTPUTS------------------------
 							---------------------------------------------------------------
 insert into [pingr.text] (indicatorId, textId, text)
-
 values
 --overview tab
-('cvd.stroke.outcome','name','Strokes in hospital - last 12 months (beta testing)'), --overview table name
-('cvd.stroke.outcome','tabText','Strokes in hospital'), --indicator tab text
+('cvd.stroke.outcome','name','Strokes since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' (beta testing)'), --overview table name
+('cvd.stroke.outcome','tabText','Strokes since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' (beta)'), --indicator tab text
 ('cvd.stroke.outcome','description', --'show more' on overview tab
-	'<strong>Definition:</strong> Patients who have had a stroke recorded in hospital in the past 12 months on your practice list.<br>'+
-	'<strong>NB:</strong> Your practice list may appear 1-2% smaller than indicated due to opt outs from data sharing agreements'),
+	'<strong>Definition:</strong> Number of patients who have had a stroke recorded since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' out of your practice list.<br>'+
+	'NB: Your practice list may appear 1-2% smaller than indicated due to opt outs from data sharing agreements'),
 --indicator tab
 --summary text
-('cvd.stroke.outcome','tagline','of patients on your practice list had a stroke recorded in hospital in the past 12 months.'),
-('cvd.stroke.outcome','positiveMessage', null), --tailored text
---	case 
---		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
---		when @indicatorScore >= @target and @indicatorScore < @abc then 'Well done! You’ve achieved the Target! To improve even further, look through the recommended actions on this page and for the patients below.'
---		else 'You''ve not yet achieved the Target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'
---	end),
+('cvd.stroke.outcome','tagline','of patients on your practice list had a stroke recorded since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
+('cvd.stroke.outcome','positiveMessage',null),
 --pt lists
 ('cvd.stroke.outcome','valueId','strokeHosp'),
 ('cvd.stroke.outcome','valueName','Latest stroke date'),
 ('cvd.stroke.outcome','dateORvalue','date'),
 ('cvd.stroke.outcome','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('cvd.stroke.outcome','tableTitle','All patients who have had a stroke recorded in hospital in the last 12 months '),
+('cvd.stroke.outcome','tableTitle','Patients who have had a stroke recorded since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
 
 --imp opp charts
 --based on actionCat
 
---STROKE - CODED
-('cvd.stroke.outcome','opportunities.strokeCoded.name','Stroke - Coded'),
-('cvd.stroke.outcome','opportunities.strokeCoded.description','Patients with a stroke recorded in hospital in the last 12 months that has been recorded in the GP record.'),
-('cvd.stroke.outcome','opportunities.strokeCoded.positionInBarChart','2'),
+--FIRST STROKE
+('cvd.stroke.outcome','opportunities.firstStroke.name','Patients with their first ever stroke on or after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
+('cvd.stroke.outcome','opportunities.firstStroke.description','Patients who have had their first ever stroke on or after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
+('cvd.stroke.outcome','opportunities.firstStroke.positionInBarChart','1'),
 
---STROKE UNCODED
-('cvd.stroke.outcome','opportunities.strokeUncoded.name','Stroke - Uncoded'),
-('cvd.stroke.outcome','opportunities.strokeUncoded.description','Patients with a stroke recorded in hospital in the last 12 months that has <strong>NOT</strong> been recorded in the GP record.'),
-('cvd.stroke.outcome','opportunities.strokeUncoded.positionInBarChart','1');
+--PREVIOUS STROKE
+('cvd.stroke.outcome','opportunities.previousStroke.name','Patients with strokes both before <strong>and</strong> after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end)),
+('cvd.stroke.outcome','opportunities.previousStroke.description','Patients who have had strokes both before <strong>and</strong> after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
+('cvd.stroke.outcome','opportunities.previousStroke.positionInBarChart','2'),
+
+--MULTIPLE STROKES SINCE START DATE
+('cvd.stroke.outcome','opportunities.multipleStroke.name','Patients with multiple strokes after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end)),
+('cvd.stroke.outcome','opportunities.multipleStroke.description','Patients who may have had multiple strokes after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
+('cvd.stroke.outcome','opportunities.multipleStroke.positionInBarChart','3'),
+
+--POSSIBLE STROKES
+('cvd.stroke.outcome','opportunities.possibleStroke.name','Patients with <strong>possible</strong> strokes after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end)),
+('cvd.stroke.outcome','opportunities.possibleStroke.description','Patients who <strong>may</strong> have had a stroke in hospital after 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' that is not in the GP record.'),
+('cvd.stroke.outcome','opportunities.possibleStroke.positionInBarChart','4');

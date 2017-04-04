@@ -3,21 +3,24 @@
 										------PRACTICE LIST SIZE AND eFI--------
 												-------AS OF TODAY--------
 									----------------------------------------------
+--v2
+--as a stored procedure
+
 --v1
 --includes eFI
 
 									--TO RUN AS STORED PROCEDURE--
 
---IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.cvd.stroke.outcome') DROP PROCEDURE [pingr.cvd.stroke.outcome];
---GO
---CREATE PROCEDURE [pingr.cvd.stroke.outcome] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
---AS
---SET NOCOUNT ON
+IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.practiceList.practiceListSizes.eFI') DROP PROCEDURE [pingr.practiceList.practiceListSizes.eFI];
+GO
+CREATE PROCEDURE [pingr.practiceList.practiceListSizes.eFI] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
+AS
+SET NOCOUNT ON
 
 									--TO TEST ON THE FLY--
-use PatientSafety_Records_Test
-declare @refdate VARCHAR(10);
-set @refdate = '2016-11-17';
+--use PatientSafety_Records_Test
+--declare @refdate VARCHAR(10);
+--set @refdate = '2016-11-17';
 
 --all patients currently alive
 --has to come from patients table not sir all records as some patients may have no data in sir
