@@ -12,7 +12,7 @@ var FILENAMES = {
   medications: 'medications.dat',
   events: 'impCodes.dat',
   processIndicators: 'indicator.dat',
-  indicatorOutcome: 'indicatorOutcome.dat',
+  outcomeIndicators: 'indicatorOutcome.dat',
   indicatorMapping: 'indicatorMapping.dat',
   measurements: 'measures.dat',
   contacts: 'contacts.dat',
@@ -173,6 +173,8 @@ dataFile.indicators = dataFile.indicators.filter(function(v) {
 
 var indicators = dataFile.indicators;
 
+var indicatorType = {};
+
 var doProcessIndicators = function(callback) {
   console.log("Doing process indicators...");
   fs.createReadStream(IN_DIR + FILENAMES.processIndicators)
@@ -184,6 +186,10 @@ var doProcessIndicators = function(callback) {
     )
     .on('data', function(data) {
       if (data.date) {
+
+        if (!indicatorType[data.indicatorid]) {
+          indicatorType[data.indicatorid] = "process";
+        }
 
         var i = indicators.filter(function(v) {
           return v.id === data.indicatorid && v.practiceId === data.gpcode;
@@ -204,6 +210,7 @@ var doProcessIndicators = function(callback) {
             measurementId: indText.valueId,
             benchmark: data.benchmark,
             displayDate: indText.dateORvalue === "date",
+            type: "process",
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
             name: indText.name,
             description: indText.description,
@@ -215,6 +222,7 @@ var doProcessIndicators = function(callback) {
           i.benchmark = data.benchmark;
           i.measurementId = indText.valueId;
           i.displayDate = indText.dateORvalue === "date";
+          i.type = "process";
           i.name = indText.name;
           i.description = indText.description;
         }
@@ -258,6 +266,136 @@ var doProcessIndicators = function(callback) {
     .on('err', function(err) {
       console.log("Error while doing process indicators.");
       callback(err);
+    });
+};
+
+var doOutcomeIndicators = function(callback) {
+  console.log("Doing outcome indicators...");
+  fs.createReadStream(IN_DIR + FILENAMES.outcomeIndicators)
+    .pipe(
+      csv({
+        separator: '\t',
+        headers: ['indicatorid', 'gpcode', 'date', 'patientCount', 'eventCount', 'denominator', 'standardisedIncidence', 'benchmark']
+      })
+    )
+    .on('data', function(data) {
+      if (data.date) {
+
+        if (!indicatorType[data.indicatorid]) {
+          indicatorType[data.indicatorid] = "outcome";
+        }
+
+        var i = indicators.filter(function(v) {
+          return v.id === data.indicatorid && v.practiceId === data.gpcode;
+        })[0];
+
+        var pathway = data.indicatorid.split('.')[0];
+        var stage = data.indicatorid.split('.')[1];
+        var standard = data.indicatorid.split('.')[2];
+
+        checkTextFile(pathway, stage, standard, FILENAMES.outcomeIndicators);
+        var indText = textFile.pathways[pathway][stage].standards[standard];
+        var oppText = indText.opportunities;
+
+        if (!i) {
+          i = {
+            id: data.indicatorid,
+            practiceId: data.gpcode,
+            measurementId: indText.valueId,
+            benchmark: data.benchmark,
+            displayDate: indText.dateORvalue === "date",
+            type: "outcome",
+            sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
+            name: indText.name,
+            description: indText.description,
+            values: [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]],
+            opportunities: []
+          };
+          indicators.push(i);
+        } else {
+          i.benchmark = data.benchmark;
+          i.measurementId = indText.valueId;
+          i.displayDate = indText.dateORvalue === "date";
+          i.type = "outcome";
+          i.name = indText.name;
+          i.description = indText.description;
+        }
+
+        var dtt = data.date.replace(/[^0-9-]/g, "");
+        //replace if already there
+        var dttIdx = i.values[0].indexOf(dtt);
+        if (dttIdx === -1) {
+          i.values[0].push(dtt);
+          i.values[1].push(data.patientCount);
+          i.values[2].push(data.denominator);
+          i.values[3].push(data.standardisedIncidence);
+          i.values[4].push(data.eventCount);
+        } else {
+          i.values[1][dttIdx] = data.patientCount;
+          i.values[2][dttIdx] = data.denominator;
+          i.values[3][dttIdx] = data.standardisedIncidence;
+          i.values[4][dttIdx] = data.eventCount;
+        }
+
+        //Sort them all..
+        var temp = i.values[0].slice(1).map(function(v, idx) {
+          return { a: v, b: i.values[1][idx + 1], c: i.values[2][idx + 1], d: i.values[3][idx + 1], e: i.values[4][idx + 1] };
+        });
+        //sort
+        temp.sort(function(a, b) {
+          return a.a === b.a ? 0 : (a.a < b.a ? -1 : 1);
+        });
+
+        //reassign
+        temp.forEach(function(v, idx) {
+          i.values[0][idx + 1] = v.a;
+          i.values[1][idx + 1] = v.b;
+          i.values[2][idx + 1] = v.c;
+          i.values[3][idx + 1] = v.d;
+          i.values[4][idx + 1] = v.e;
+        });
+      }
+    })
+    .on('end', function() {
+      console.log("Outcome indicators done.");
+      callback(null);
+    })
+    .on('err', function(err) {
+      console.log("Error while doing outcome indicators.");
+      callback(err);
+    });
+};
+
+var doIndicatorMapping = function(callback) {
+  console.log("Doing indicator mapping...");
+
+  indicators.forEach(function(v){
+    if(v.mappedIndicators) v.mappedIndicators=[];
+  });
+
+  fs.createReadStream(IN_DIR + FILENAMES.indicatorMapping)
+    .pipe(
+      csv({
+        separator: '\t',
+        headers: ['outcomeIndicatorId', 'processIndicatorId']
+      })
+    )
+    .on('data', function(data) {
+
+      indicators.filter(function(v) {
+        return v.id === data.outcomeIndicatorId;
+      }).forEach(function(v){
+        if(!v.mappedIndicators) v.mappedIndicators = [];
+        v.mappedIndicators.push(data.processIndicatorId);
+      });
+    })
+    .on('err', function(err) {
+      console.log("Error while doing indicator mapping.");
+      callback(err);
+    })
+    .on('end', function() {
+      console.log("Indicator mapping done.");
+      callback(null);
     });
 };
 
@@ -309,7 +447,7 @@ var doDenominators = function(callback) {
 
       checkTextFile(pathway, stage, standard, FILENAMES.denominators);
       var indText = textFile.pathways[pathway][stage].standards[standard];
-      var item = { indicatorId: v.indicatorId, display: indText.tabText, targetMet: true };
+      var item = { indicatorId: v.indicatorId, display: indText.tabText, targetMet: true, type: indicatorType[v.indicatorId] };
       if (v.why && v.why !== "") item.why = v.why;
       if (!patients[+v.patientId].standards) patients[+v.patientId].standards = [];
       patients[+v.patientId].standards.push(item);
@@ -650,7 +788,7 @@ var doPatientActions = function(callback) {
       if (patientsStandard.length === 0) {
         console.log("patient: " + data.patientId + " --numerator patient not appearing in denominator e.g. they appear in patActions but not in the denominator table");
         if (!patients[+data.patientId].standards) patients[+data.patientId].standards = [];
-        patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false });
+        patients[+data.patientId].standards.push({ display: indText.tabText, targetMet: false, type: indicatorType[data.indicatorId] });
       } else if (patientsStandard.length > 1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
       else patientsStandard[0].targetMet = false;
 
@@ -718,11 +856,15 @@ var doPatientActions = function(callback) {
               all_practice_hack[v.id].data[vv] = {
                 n: +v.values[1][i + 1],
                 d: +v.values[2][i + 1],
-                t: +v.values[3][i + 1]
+                t: +v.values[3][i + 1],
+                n2: v.values[4] ? +v.values[4][i + 1] : null
               };
             } else {
               all_practice_hack[v.id].data[vv].n += +v.values[1][i + 1];
               all_practice_hack[v.id].data[vv].d += +v.values[2][i + 1];
+              if (all_practice_hack[v.id].data[vv].n2) {
+                all_practice_hack[v.id].data[vv].n2 += +v.values[4][i + 1];
+              }
             }
           });
         }
@@ -730,13 +872,24 @@ var doPatientActions = function(callback) {
 
       Object.keys(all_practice_hack).forEach(function(v) {
         var x = all_practice_hack[v];
-        x.values = [["x"], ["numerator"], ["denominator"], ["target"]];
-        Object.keys(x.data).forEach(function(vv) {
-          x.values[0].push(vv);
-          x.values[1].push(x.data[vv].n);
-          x.values[2].push(x.data[vv].d);
-          x.values[3].push(x.data[vv].t);
-        });
+        if (x.data[Object.keys(x.data)[0]].n2) {
+          x.values = [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]];
+          Object.keys(x.data).forEach(function(vv) {
+            x.values[0].push(vv);
+            x.values[1].push(x.data[vv].n);
+            x.values[2].push(x.data[vv].d);
+            x.values[3].push(x.data[vv].t);
+            x.values[4].push(x.data[vv].n2);
+          });
+        } else {
+          x.values = [["x"], ["numerator"], ["denominator"], ["target"]];
+          Object.keys(x.data).forEach(function(vv) {
+            x.values[0].push(vv);
+            x.values[1].push(x.data[vv].n);
+            x.values[2].push(x.data[vv].d);
+            x.values[3].push(x.data[vv].t);
+          });
+        }
         delete x._id;
         delete x.data;
         indicators.push(x);
@@ -832,9 +985,9 @@ var displayWarning = function(callback) {
   callback(null);
 };
 
-var dump = function(callback){
+var dump = function(callback) {
   heapdump.writeSnapshot(function(err, filename) {
-    if(err) return callback(err);
+    if (err) return callback(err);
     callback(null);
   });
 };
@@ -844,6 +997,8 @@ var temp = {};
 async.series([
     dump,
     doProcessIndicators,
+    doOutcomeIndicators,
+    doIndicatorMapping,
     doDemographics,
     doDenominators,
     doEvents,

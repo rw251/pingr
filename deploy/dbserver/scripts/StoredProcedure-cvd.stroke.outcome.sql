@@ -233,14 +233,14 @@ order by perc desc) sub);
 
 									--TO RUN AS STORED PROCEDURE--
 --insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
-insert into [output.pingr.indicatorOutcome](indicatorId, practiceId, date, numerator, denominator, incidenceFirst, incidenceMultiple,  standardisedIncidenceFirst, benchmark)
+insert into [output.pingr.indicatorOutcome](indicatorId, practiceId, date, patientCount, eventCount, denominator, standardisedIncidence, benchmark)
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
-select 'cvd.stroke.outcome', practiceId, CONVERT(char(10), @refdate, 126), noStrokes, practiceListSize, 1000*noStrokes/practiceListSize,1000*noStrokes/practiceListSize,1000*noStrokes/practiceListSize, @abc from #firstEverStrokeIncidence
+select 'cvd.stroke.outcome', practiceId, CONVERT(char(10), @refdate, 126), noStrokes, noStrokes, practiceListSize, 0.01, @abc from #firstEverStrokeIncidence
 									----------------------------------------------
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------

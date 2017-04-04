@@ -11,6 +11,8 @@ var IndicatorSchema = new Schema({
   measurementId: String, // the id of the measurement to display
   displayDate: Boolean, // whether to display the value or the date of the measurement
   type: String, //currently either "process" OR "outcome" - same as patient model
+  mappedIndicators: [String], // for outcome indicators these are the relevant process
+                              // indicators for displaying actions
   actions: [
     {
       _id:false,
