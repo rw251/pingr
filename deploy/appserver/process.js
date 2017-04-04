@@ -313,6 +313,9 @@ var doOutcomeIndicators = function(callback) {
           };
           indicators.push(i);
         } else {
+          if(i.values[1][0]==="numerator") {
+            i.values = [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]];
+          }
           i.benchmark = data.benchmark;
           i.measurementId = indText.valueId;
           i.displayDate = indText.dateORvalue === "date";
