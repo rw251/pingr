@@ -3,7 +3,7 @@ var csv = require('csv-parser'),
   path = require('path'),
   async = require('async');
 
-var heapdump = require('heapdump');
+//var heapdump = require('heapdump');
 
 var FILENAMES = {
   demographics: 'demographics.dat',
@@ -989,32 +989,32 @@ var displayWarning = function(callback) {
   callback(null);
 };
 
-var dump = function(callback) {
+/*var dump = function(callback) {
   heapdump.writeSnapshot(function(err, filename) {
     if (err) return callback(err);
     callback(null);
   });
-};
+};*/
 
 var temp = {};
 
 async.series([
-    dump,
+    //dump,
     doProcessIndicators,
     doOutcomeIndicators,
     doIndicatorMapping,
     doDemographics,
     doDenominators,
     doEvents,
-    dump,
+    //dump,
     doContacts,
-    dump,
+    //dump,
     doDiagnoses,
-    dump,
+    //dump,
     doMedications,
-    dump,
+    //dump,
     doMeasurements,
-    dump,
+    //dump,
     doPatientActions,
     doOrgActions,
     writeFiles,
