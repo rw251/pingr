@@ -828,6 +828,7 @@ var doPatientActions = function(callback) {
       var all_practice_hack = {};
 
       indicators.forEach(function(v) {
+        if(!v.type) return;
         if (!all_practice_hack[v.id]) {
           all_practice_hack[v.id] = JSON.parse(JSON.stringify(v));
           all_practice_hack[v.id].practiceId = "ALL";
