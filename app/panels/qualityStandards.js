@@ -34,11 +34,11 @@ var qs = {
     });
 
     var processStandards = patientData.standards.filter(function(v){
-      return v.type==="process" || v.indicatorId !== 'cvd.stroke.outcome';
+      return v.type==="process";
     });
 
     var outcomeStandards = patientData.standards.filter(function(v){
-      return v.type==="outcome" || v.indicatorId === 'cvd.stroke.outcome';
+      return v.type==="outcome";
     });
     //
     var html = tmpl({

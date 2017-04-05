@@ -16,10 +16,10 @@ var indicatorList = {
       var tempMust = $('#overview-panel-table').html();
       var tmpl = require('templates/overview-table');
       var processIndicators = indicators.filter(function(v){
-        return v.type==="process" || v.name.toLowerCase().indexOf("beta test")<0;
+        return v.type==="process";
       });
       var outcomeIndicators = indicators.filter(function(v){
-        return v.type==="outcome" || v.name.toLowerCase().indexOf("beta test")>-1;
+        return v.type==="outcome";
       });
       var html = tmpl({
         "processIndicators": processIndicators,

@@ -105,7 +105,7 @@ var readCsvAsync = function(input, callback) {
 };
 
 dataFile.indicators = dataFile.indicators.filter(function(v) {
-  return v.practiceId !== "ALL";
+  return v.practiceId && v.practiceId !== "ALL";
 });
 
 var patients = dataFile.patients;

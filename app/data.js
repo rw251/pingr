@@ -93,6 +93,10 @@ var dt = {
         fraction: indicator.values[1][last] + "/" + indicator.values[2][last],
         percentage: percentage
       };
+      if(indicator.type==="outcome") {
+        indicator.performance.incidence = (percentage*10).toFixed(1);
+        indicator.performance.incidenceMultiple= (Math.round(100 * indicator.values[4][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
+      }
       indicator.patientsWithOpportunity = indicator.values[2][last] - indicator.values[1][last];
       //indicator.benchmark = "90%"; //TODO magic number
       indicator.target = indicator.values[3][last] * 100 + "%";
