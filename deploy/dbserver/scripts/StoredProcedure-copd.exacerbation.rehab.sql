@@ -10,7 +10,7 @@ SET NOCOUNT ON
 --use PatientSafety_Records_Test
 --declare @refdate VARCHAR(10);
 --declare @JustTheIndicatorNumbersPlease bit;
---set @refdate = '2016-11-17';
+--set @refdate = '2017-04-05';
 --set @JustTheIndicatorNumbersPlease= 0;
 
 							-----------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ SET NOCOUNT ON
 declare @achieveDate datetime;
 set @achieveDate = (select case
 	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
-	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-03-31' end); --31st March
+	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' end); --31st March
 
 --ELIGIBLE POPULATION
 --#latestCopdCode
@@ -656,7 +656,7 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 					--DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE-------------
 					-----------------------------------------------------------------------------
 declare @indicatorScore float;
-set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
+set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 declare @target float;
 set @target = 0.75;
 declare @numerator int;
@@ -713,7 +713,8 @@ where denominator = 1;
 declare @ptPercPoints float;
 set @ptPercPoints = 
 (select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end) 
-from #eligiblePopulationAllData);
+from #eligiblePopulationAllData
+having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 
 								---------------------------------------------------------
 								-- Exit if we're just getting the indicator numbers -----

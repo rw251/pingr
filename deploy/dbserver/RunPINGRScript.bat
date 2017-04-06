@@ -105,7 +105,7 @@ REM send log file
 REM cscript sendmail.vbs "Latest sql log dump" "E:\xfer\safety-data-importer\Batches\temp\logdump.txt"
 
 REM DO EXTRACT
-bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.contacts]" queryout %REPORT.DIRECTORY%/contacts.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.contacts] where [date] > '2012-01-01'" queryout %REPORT.DIRECTORY%/contacts.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.demographics]" queryout %REPORT.DIRECTORY%/demographics.dat -c -T -b 10000000
 bcp "SELECT PatID,indicatorId,replace (replace (why, char(10), ''), char(13), '')  FROM [%DB%].[dbo].[output.pingr.denominators]" queryout %REPORT.DIRECTORY%/denominators.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.diagnoses] order by PatID" queryout %REPORT.DIRECTORY%/diagnoses.dat -c -T -b 10000000
@@ -113,7 +113,9 @@ bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impCodes]" queryout %REPORT.DIRECT
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.patActions]" queryout %REPORT.DIRECTORY%/patActions.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.orgActions]" queryout %REPORT.DIRECTORY%/orgActions.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.indicator]" queryout %REPORT.DIRECTORY%/indicator.dat -c -T -b 10000000
-bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.measures] order by PatID" queryout %REPORT.DIRECTORY%/measures.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.indicatorOutcome]" queryout %REPORT.DIRECTORY%/indicatorOutcome.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.indicatorMapping]" queryout %REPORT.DIRECTORY%/indicatorMapping.dat -c -T -b 10000000
+bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.measures] where [date] > '2012-01-01' order by PatID" queryout %REPORT.DIRECTORY%/measures.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[MEDICATION_EVENTS] WHERE PatID in (select distinct PatID from [%DB%].[dbo].[output.pingr.patActions]) order by PatID" queryout %REPORT.DIRECTORY%/medications.dat -c -T -b 10000000
 bcp "SELECT left(indicatorId,CHARINDEX('.', indicatorId)-1),SUBSTRING(indicatorId,CHARINDEX('.', indicatorId)+1,CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)-1-CHARINDEX('.', indicatorId)),right(indicatorId,len(indicatorId)-CHARINDEX('.', indicatorId,CHARINDEX('.', indicatorId)+1)),textId, text FROM [%DB%].[dbo].[pingr.text]" queryout %REPORT.DIRECTORY%/text.dat -c -T -b 10000000
 
@@ -121,7 +123,7 @@ REM get number of files in directory
 for /f %%A in ('dir /b %REPORT.DIRECTORY%\^| find /v /c ""') do set cnt=%%A
 echo File count = %cnt%
 
-SET EXPECTED.FILE.NUMBER=11
+SET EXPECTED.FILE.NUMBER=13
 
 IF NOT "%cnt%"=="%EXPECTED.FILE.NUMBER%" (
 	GOTO :extractfailed

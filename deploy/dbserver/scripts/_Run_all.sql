@@ -1,7 +1,6 @@
---changes:
---removed 'other' from contacts
---1% read codes (history) now means f2f contact
---sorted stroke date in pt list issue
+--changes from last version:
+--changed contacts
+--added pingr.practiceList.practiceListSizes.eFI to run all
 
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.run-all') DROP PROCEDURE [pingr.run-all];
 
@@ -24,7 +23,7 @@ SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an ag
 -----------------------------------------------
 -- PatID 		Patient id
 -- indicatorId	Indicator id
--- why			Why this patient is flagging 
+-- why			Why this patient is flagging
 --				this indicator.
 -----------------------------------------------
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.denominators]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.denominators]
@@ -35,7 +34,7 @@ CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000), 
 ------------------------------------------------------------------------------------------
 -- PatID 			Patient id
 -- indicatorId		Indicator id
--- actionCat		Determines the bar that this belongs in on the 
+-- actionCat		Determines the bar that this belongs in on the
 --					"Patients with imp opps" chart
 -- reasonNumber		The number of reasons for this action.
 --					Could be used for prioritisation but not at present
@@ -80,6 +79,10 @@ CREATE TABLE [output.pingr.orgActions] (pracID varchar(1000), indicatorId varcha
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.indicator]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.indicator]
 CREATE TABLE [output.pingr.indicator] (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float)
 
+--Outcome indicator results
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.indicatorOutcome]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.indicatorOutcome]
+CREATE TABLE [output.pingr.indicatorOutcome] (indicatorId varchar(1000), practiceId varchar(1000), date date, patientCount int, eventCount int, denominator int, standardisedIncidence float, benchmark float)
+
 --Text
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[pingr.text]') AND type in (N'U')) DROP TABLE [dbo].[pingr.text]
 CREATE TABLE [pingr.text] (indicatorId varchar(512), textId varchar(512), text varchar(max))
@@ -94,12 +97,32 @@ select patid, gpcode from patients
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[pingr.copdPatients]') AND type in (N'U')) DROP TABLE [dbo].[pingr.copdPatients]
 CREATE TABLE [pingr.copdPatients] (PatID int)
 
+--The process indicator actions associated with the outcome indicators
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.indicatorMapping]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.indicatorMapping]
+CREATE TABLE [output.pingr.indicatorMapping] (outcomeIndicatorId varchar(512), processIndicatorId varchar(512))
+insert into [output.pingr.indicatorMapping]
+values
+('cvd.stroke.outcome', 'htn.treatment.bp'),
+-- i.e. the actions for htn.treatment.bp will appear when viewing the cvd.stroke.outcome indicator.
+('cvd.stroke.outcome', 'htn.undiagnosed.measures'),
+('cvd.stroke.outcome', 'htn.undiagnosed.med')
+
 							---------------------------------------------------------------
 							---------------------EXECUTE STORED PROCEDURES-----------------
 							---------------------------------------------------------------
-
 DECLARE	@return_value int
 
+--practice list and eFI FIRST
+
+EXEC	@return_value = [dbo].[pingr.practiceList.practiceListSizes.eFI]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
+--then rest of indicators
 EXEC	@return_value = [dbo].[pingr.ckd.coding]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -205,13 +228,13 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'sbp') then 'SBP'
 		when ReadCode in (select code from codeGroups where [group] = 'dbp') then 'DBP'
 		when ReadCode in (select code from codeGroups where [group] = 'fev1') then 'FEV1'
-		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source = 'salfordt' then 'strokeHosp'
+		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source != 'salfordt' then 'strokeHosp'
 	end as measure,
 CodeValue as value, Source from SIR_ALL_Records
-where 
+where
 	(
 		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp','fev1', 'strokeQof')) and CodeValue is not NULL)
-		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof')))
+		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof'))and Source != 'salfordt')
 	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
@@ -226,80 +249,82 @@ CREATE TABLE [output.pingr.contacts] (PatID int, date date, event varchar(100))
 	DECLARE	@OTH int;
 	DECLARE	@HOSP int;
 	DECLARE	@AE int;
+	DECLARE	@TEST int;
 	set @TELE = 7;
 	set @AE = 6;
 	set @HOSP = 5;
 	set @FACE = 4;
 	set @CON = 3;
 	set @MED = 2;
-	set @REC = 1;
+	set @TEST = 1;
 	set @OTH = 0;
 insert into [output.pingr.contacts](PatID, date, event)
 select PatID, date,
 	case
-		when eventcode = 7 then 'Telephone contact'
-		when eventcode = 6 then 'A+E contact'
-		when eventcode = 5 then 'Hospital contact'
-		when eventcode = 4 then 'Face-to-face contact'
+		when eventcode = 7 then 'Telephone'
+		when eventcode = 6 then 'A+E'
+		when eventcode = 5 then 'Hospital'
+		when eventcode = 4 then 'Face-to-face'
 		--when eventcode = 3 then 'Other contact'
-		when eventcode = 2 then 'Medication prescribed'
-		--when eventcode <= 1 then 'Record opened'
+		when eventcode = 2 then 'Medication'
+		when eventcode = 1 then 'Investigation'
 		else null
 		end as event from
 			(
 				select PatID,
 				max(
 					case
-						when (ReadCode like 'ALLERGY%' OR ReadCode like 'EMIS' OR ReadCode like 'EGTON' OR ReadCode like 'CLEAT') then @CON
+						--when (ReadCode like 'ALLERGY%' OR ReadCode like 'EMIS' OR ReadCode like 'EGTON' OR ReadCode like 'CLEAT') then @CON
 						when LEN(ReadCode) >= 8 then @MED
 						when LEN(ReadCode) = 6 then @MED
 						when ReadCode like '[ABCDEFGHIJKLMNOPQRSTUVWXYZ][ABCDEFGHIJKLMNOPQRSTUVWXYZ][ABCDEFGHIJKLMNOPQRSTUVWXYZ][ABCDEFGHIJKLMNOPQRSTUVWXYZ]___' THEN @MED
-						when LEN(ReadCode) <=4 then @OTH
-						when ReadCode like '[ABCDEFGHIJKLMNOPQRSTUVWXYZ]%' then @CON
+						--when LEN(ReadCode) <=4 then @OTH
+						--when ReadCode like '[ABCDEFGHIJKLMNOPQRSTUVWXYZ]%' then @CON
 						when ReadCode like '[abcdefghijklmnopqrstuvwxyz]%' then @MED
-						when ReadCode like '0%' then @CON
+						--when ReadCode like '0%' then @CON
 						when ReadCode like '1%' then @FACE
 						when ReadCode like '2%' then @FACE
-						when ReadCode like '3%' then @CON
-						when ReadCode like '4%' then @REC
-						when ReadCode like '5%' then @REC
+						--when ReadCode like '3%' then @CON
+						when ReadCode like '4%' then @TEST
+						when ReadCode like '5%' then @TEST
 						when ReadCode in ('6A2..','6A9..','6AA..','6AB..','662d.','662e.','66AS.','66AS0','66AT.','66BB.','66f0.','66YJ.','66YM.','661Q.','66480','6AH..','6A9..','66p0.','6A2..','66Ay.','66Az.','69DC.') then @FACE --annual review
 						when ReadCode like '6A%' then @FACE --patient reviewed
 						when ReadCode like '65%' then @FACE
-						when ReadCode like '6%' then @CON
-						when ReadCode like '7%' then @REC
+						--when ReadCode like '6%' then @CON
+						when ReadCode like '7%' then @HOSP
 						when ReadCode like '8B31[356]%' then @FACE
 						when ReadCode like '8B3[3569ADEfilOqRxX]%' then @FACE
 						when ReadCode like '8B3[168hHjklNSTUVy]%' then @MED
 						when ReadCode like '8B4%' then @MED
-						when ReadCode like '8B%' then @CON
+						--when ReadCode like '8B%' then @CON
 						when ReadCode in ('8BS3.') then @FACE
-						when ReadCode like '8H[1-3]%' then @REC
+						when ReadCode like '8H[1-3]%' then @HOSP
 						when ReadCode like '8H2%' then @AE
 						when ReadCode like '8H[4-8]%' then @FACE
 						when ReadCode like '8H9%' then @TELE
-						when ReadCode like '8H[ABCDHKMPQRSTUVWYZpckenmojiklprs]%' then @CON
-						when ReadCode like '8H[EFGIJLNOXdabgfhqtuvwxyz]%' then @REC
-						when ReadCode like '8[^BH]%' then @CON
+						--when ReadCode like '8H[ABCDHKMPQRSTUVWYZpckenmojiklprs]%' then @CON
+						--when ReadCode like '8H[EFGIJLNOXdabgfhqtuvwxyz]%' then @REC
+						--when ReadCode like '8[^BH]%' then @CON
 						when ReadCode like '94Z%' then @FACE
 						when ReadCode in ('9N19','8HJA.','8HC..','8Hu..','8HC1.') then @AE
 						when ReadCode like '9N1C%' then @FACE
 						when ReadCode like '9N21%' then @FACE
 						when ReadCode like '9N31%' then @TELE
-						when ReadCode like '9N3G%' then @CON
+						--when ReadCode like '9N3G%' then @CON
 						when ReadCode like '9N3A%' then @TELE
 						when ReadCode like '9N%' then @HOSP
-						when ReadCode like '9%' then @REC
+						--when ReadCode like '9%' then @REC
 						when ReadCode in ('9kF1.','9kR..','9HB5.') then @FACE --patient reviewed / annual review
 						when ReadCode like '9H9%' then @FACE
-						when ReadCode like '~%' then @CON
-						when ReadCode like '$%' then @REC
-						else @CON end
+						--when ReadCode like '~%' then @CON
+						--when ReadCode like '$%' then @REC
+						else NULL end
 					) as eventcode,
 					EntryDate as date from SIR_ALL_Records
 					where PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 					group by EntryDate, PatID
 			) sub
+WHERE eventcode in (1,2,4,5,6,7)
 
 --Important codes
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]
@@ -321,7 +346,6 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'pacemakerDefib') then 'Pacemaker or defibrillator'
 		when ReadCode in (select code from codeGroups where [group] = 'sickSinus') then 'Sick sinus syndrome'
 		when ReadCode in (select code from codeGroups where [group] = '2/3heartBlock') then 'Heart block'
-		when ReadCode in (select code from codeGroups where [group] = 'MInow') then 'Myocardial infarction'
 		when ReadCode in (select code from codeGroups where [group] = 'ASrepair') then 'Aortic repair'
 		when ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') then 'Loop Diuretic allergy or adverse reaction'
 		when ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') then 'Alpha Blocker allergy or adverse reaction'
@@ -335,26 +359,31 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'pulRehabTempExSs') then 'Pulmonary rehab exception code'
 		when ReadCode in (select code from codeGroups where [group] = 'mrc') then 'MRC breathlessness scale'
 		when ReadCode in (select code from codeGroups where [group] in ('CopdHosp','copdExacNonSs','copdExacSs')) then 'COPD exacerbation - coded'
-		when	(((ReadCode in ('fe62.','fe6i.','fe6j.')and((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%'))) 
-				or(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%'))) 
+		when	(((ReadCode in ('fe62.','fe6i.','fe6j.')and((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%')))
+				or(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%')))
 				or(ReadCode = 'fe6t.' and ((CodeUnits like '%3%') or(CodeUnits like '%three%'))))
 				or(ReadCode in ('e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
 					'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.')))
-		and PatID in (select PatID from [pingr.copdPatients]) 		
+		and PatID in (select PatID from [pingr.copdPatients])
 				then 'COPD exacerbation - uncoded'
 		when ReadCode in (select code from codeGroups where [group] = 'pulRehabOfferedSs') then 'Pulmonary rehab offered'
 		when ReadCode in (select code from codeGroups where [group] in ('asbp','adbp')) then 'Ambulatory BP reading'
+		when ReadCode in (select code from codeGroups where [group] in ('strokeQof')) and Source = 'salfordt' then '?Stroke in hospital'
 	end as importantCode from SIR_ALL_Records
 where (ReadCode in (select code from codeGroups where [group] in
 	('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
-	'phaeo', 'asthmaPermEx', 'asthmaQof', 'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs', 'pacemakerDefib',
-	'sickSinus', '2/3heartBlock', 'porphyria', 'MInow', 'ASrepair', 'AS', 'gout', 'addisons', 'loopDiurAllergyAdverseReaction',
+	'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs', 'pacemakerDefib',
+	'sickSinus', '2/3heartBlock', 'ASrepair', 'loopDiurAllergyAdverseReaction',
 	'alphaAllergyAdverseReaction', 'PotSparDiurAllergyAdverseReaction', 'BBallergyAdverseReaction', 'CCBallergyAdverseReaction',
-	'ARBallergyAdverseReaction', 'ACEIallergyAdverseReaction', 'thiazideAllergyAdverseReaction', 'whiteCoat', 'copdTempEx', 'pulRehabTempExSs',
-	'mrc', 'CopdHosp','copdExacNonSs','copdExacSs','pulRehabOfferedSs'))
-or ReadCode in ('fe62.','fe6i.','fe6j.','fe6s.', 'fe6t.','e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
-					'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.'))
-and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
+	'ARBallergyAdverseReaction', 'ACEIallergyAdverseReaction', 'thiazideAllergyAdverseReaction', 'copdTempEx', 'pulRehabTempExSs',
+	'mrc', 'CopdHosp','copdExacNonSs','copdExacSs','pulRehabOfferedSs','asbp','adbp')))
+	or	((((ReadCode in ('fe62.','fe6i.','fe6j.')and((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%')))
+				or(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%')))
+				or(ReadCode = 'fe6t.' and ((CodeUnits like '%3%') or(CodeUnits like '%three%'))))
+				or(ReadCode in ('e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
+					'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.')))
+		and PatID in (select PatID from [pingr.copdPatients]))
+	or ReadCode in (select code from codeGroups where [group] in ('strokeQof')) and Source = 'salfordt'
 
 --Diagnoses
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.diagnoses]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.diagnoses]
@@ -431,7 +460,7 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'anxietyPermEx') then 'Resolved'
 		when ReadCode in (select code from codeGroups where [group] = 'hyperthyroidPermEx') then 'Resolved'
 	end as subcategory from SIR_ALL_Records
-where 
+where
 	(
 		ReadCode in (select code from codeGroups where [group] in ('ckd35','ckdPermEx', 'dm','dmPermEx','phaeo','asthmaQof',
 		'asthmaPermEx','porphyria','MInow','AS','gout','addisons','whiteCoat','dmPermEx','asthmaPermEx', 'copdQof', 'copdPermEx', 'htnQof',

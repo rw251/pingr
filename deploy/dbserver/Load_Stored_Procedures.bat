@@ -16,6 +16,7 @@ REM == Add code groupings and text    ==
 REM ====================================
 sqlcmd -E -d %SMASH.DB% -i scripts/codeGroups.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/regularText.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/practiceList.practiceListSizes.eFI.sql
 
 REM ===========================
 REM == Add stored procedures ==
@@ -30,11 +31,6 @@ sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-ckd-bp-control.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-copd.exacerbation.rehab.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-measures-undiagnosed.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-med-undiagnosed.sql
-sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-StrokeOutcomes.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-cvd.stroke.outcome.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_Run_all.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_generate_trend_data.sql
-
-REM ==================================
-REM == Extract NHS lookup for mongo ==
-REM ==================================
-REM bcp "SELECT '{\"_id\":' + CONVERT(nvarchar, patid) + ', \"nhs\": ' + CONVERT(nvarchar, nhsNumber) + '.0 }' from [%SMASH.DB%].[dbo].[patientsNHSNumbers]" queryout temp/patients.dat -c -T -b 10000000

@@ -1,7 +1,10 @@
 include mixins/thumbs
 
 if noSuggestions
-  p There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
+  p(style="padding:10px 15px")  
+    | There are 
+    strong currently 
+    | no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
 else 
   table#individual-suggested-actions-table.table(style='margin-bottom:0')
     thead
