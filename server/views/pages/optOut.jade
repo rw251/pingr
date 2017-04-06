@@ -31,13 +31,13 @@ include ../partials/head.jade
       .col-xs-12
         label(for="day") Send it on a..
           select.form-control(name="day")
-            option(value="1",selected=!user.emailDay || user.emailDay==="1") Monday
-            option(value="2",selected=user.emailDay==="2") Tuesday
-            option(value="3",selected=user.emailDay==="3") Wednesday
-            option(value="4",selected=user.emailDay==="4") Thursday
-            option(value="5",selected=user.emailDay==="5") Friday
-            option(value="6",selected=user.emailDay==="6") Saturday
-            option(value="0",selected=user.emailDay==="0") Sunday
+            option(value="1",selected=!user.emailDay || user.emailDay===1) Monday
+            option(value="2",selected=user.emailDay===2) Tuesday
+            option(value="3",selected=user.emailDay===3) Wednesday
+            option(value="4",selected=user.emailDay===4) Thursday
+            option(value="5",selected=user.emailDay===5) Friday
+            option(value="6",selected=user.emailDay===6) Saturday
+            option(value="0",selected=user.emailDay===0) Sunday
         label(for="day") at..
           select.form-control(name="hour")
             - for(var time = 5; time < 23; time++)

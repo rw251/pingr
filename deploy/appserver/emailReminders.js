@@ -152,6 +152,7 @@ User.find(searchObject, function(err, users) {
         var urlBaseWithToken = config.server.url + "/t/" + token + "/";
         console.log(urlBaseWithToken);
         data.pingrUrl = urlBaseWithToken;
+        data.pingrUrlWithoutTracking = config.server.url + "/"
 
         emailTemplates.getDefault(function(err, emailTemplate) {
           //send email
