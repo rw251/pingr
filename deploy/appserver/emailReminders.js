@@ -20,6 +20,7 @@ var jade2html = function(input, data) {
 
 var now = new Date();
 var day = now.getDay();
+var hour = now.getHours();
 var yesterday = new Date();
 var oneWeekAgo = new Date();
 var twoWeeksAgo = new Date();
@@ -62,6 +63,9 @@ andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't
 andComponent.push({ emailFrequency: { $ne: 0 } }); // never receives emails
 var searchObject = { $and: andComponent };
 
+//const devUsersToReceiveEmails = ["benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"];
+const devUsersToReceiveEmails = ["richard.williams2@manchester.ac.uk"];
+
 User.find(searchObject, function(err, users) {
   // In case of any error, return using the done method
   if (err) {
@@ -76,7 +80,7 @@ User.find(searchObject, function(err, users) {
   }
   console.log(users.map(function(v) { return v.fullname; }).join("\n"));
   users.forEach(function(v) {
-    if (MODE !== MODES.PROD && ["benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"].indexOf(v.email) < 0) {
+    if (MODE !== MODES.PROD && devUsersToReceiveEmails.indexOf(v.email) < 0) {
       console.log("Not doing: " + v);
       usersUpdated++;
       emailsSent++;
@@ -93,6 +97,23 @@ User.find(searchObject, function(err, users) {
       } //let's fall through if in test mode to see what happens
     } else if(v.emailDay !== undefined && v.emailDay !== day){
       console.log(v.email + " emailDay is " + v.emailDay + " and today is " + day);
+      if (MODE !== MODES.TEST) {
+        usersUpdated++;
+        emailsSent++;
+        if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+        return;
+      } //let's fall through if in test mode to see what happens
+    }
+    if (v.emailHour === undefined && hour !== 10) {
+      console.log(v.email + " no emailHour and not 10am");
+      if (MODE !== MODES.TEST) {
+        usersUpdated++;
+        emailsSent++;
+        if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+        return;
+      } //let's fall through if in test mode to see what happens
+    } else if(v.emailHour !== undefined && v.emailHour !== hour){
+      console.log(v.email + " emailHour is " + v.emailHour + " and now is " + hour);
       if (MODE !== MODES.TEST) {
         usersUpdated++;
         emailsSent++;

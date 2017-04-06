@@ -60,6 +60,10 @@ script.
         html: $('#html').html(),
         text: $('#html').text()
       };
+      //Below doesn't really work
+      //dataToSend.html = dataToSend.html
+      //  .replace(/(https?):/g,"$1<span>:</span>") // add span around : to stop email from auto hyperlinking it
+      //  .replace(/(href=['"]https?)<span>:<\/span>/g,"$1:") //but don't do this if inside a href
       $.ajax({
         type: "POST",
         url: "/emailsendtest",
