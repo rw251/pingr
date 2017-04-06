@@ -65,7 +65,7 @@ module.exports = function(passport) {
   });
 
   router.post('/emailpreference', isAuthenticated, function(req, res) {
-    users.updateEmailPreference(req.user.email, req.body.freq, req.body.day, function(err, user, msg) {
+    users.updateEmailPreference(req.user.email, req.body.freq, req.body.day, req.body.hour, function(err, user, msg) {
       if (err || msg) {
         res.render('pages/optOut.jade', { user: req.user });
       } else {

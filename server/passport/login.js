@@ -29,7 +29,7 @@ module.exports = function(passport) {
               return done(null, false, req.flash('error', 'Invalid Password')); // redirect back to login page
             }
             else {
-              console.log('match'); // -> Password123: true
+              //console.log('match'); // -> Password123: true
               user.last_login = new Date();
               user.save(function(err) {
                 if (err) {

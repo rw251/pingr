@@ -43,7 +43,8 @@ var UserSchema = new Schema({
   email_opt_out: Boolean,
   email_url_tracking_code: String,
   emailFrequency: Number,
-  emailDay: Number
+  emailDay: Number,
+  emailHour: Number
 });
 
 UserSchema.pre('save', function(next) {
