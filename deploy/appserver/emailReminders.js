@@ -37,13 +37,17 @@ fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 47);
 //        regardless of whether it is the right day or not
 var MODES = { PROD: "production", DEV: "development", TEST: "test" };
 var MODE = MODES.PROD;
-if (process.argv.length > 2){
-  if(process.argv[2].toLowerCase() === "dev") {
+if (process.argv.length > 2) {
+  if (process.argv[2].toLowerCase() === "dev") {
     MODE = MODES.DEV;
-  } else if(process.argv[2].toLowerCase() === "test") {
+  } else if (process.argv[2].toLowerCase() === "test") {
     MODE = MODES.TEST;
   }
 }
+
+console.log("Email reminder.js mode: " + MODE);
+console.log("Day: " + day);
+console.log("Hour: " + hour);
 
 var andComponent = [];
 if (MODE !== MODES.TEST) {
@@ -56,17 +60,18 @@ if (MODE !== MODES.TEST) {
   });
 }
 if (MODE === MODES.PROD) {
-  andComponent.push({ email: {$regex : "nhs.net$"} }); //don't send nhs numbers to none nhs.net accounts
+  andComponent.push({ email: { $regex: "nhs.net$" } }); //don't send nhs numbers to none nhs.net accounts
 }
 andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only authorised people
 andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
 andComponent.push({ emailFrequency: { $ne: 0 } }); // never receives emails
 var searchObject = { $and: andComponent };
+var fieldsToReturn = {password:0};
 
 //const devUsersToReceiveEmails = ["benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"];
 const devUsersToReceiveEmails = ["richard.williams2@manchester.ac.uk"];
 
-User.find(searchObject, function(err, users) {
+User.find(searchObject, fieldsToReturn, function(err, users) {
   // In case of any error, return using the done method
   if (err) {
     console.log('Error in finding users to pester: ' + err);
@@ -95,7 +100,7 @@ User.find(searchObject, function(err, users) {
         if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
         return;
       } //let's fall through if in test mode to see what happens
-    } else if(v.emailDay !== undefined && v.emailDay !== day){
+    } else if (v.emailDay !== undefined && v.emailDay !== day) {
       console.log(v.email + " emailDay is " + v.emailDay + " and today is " + day);
       if (MODE !== MODES.TEST) {
         usersUpdated++;
@@ -112,7 +117,7 @@ User.find(searchObject, function(err, users) {
         if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
         return;
       } //let's fall through if in test mode to see what happens
-    } else if(v.emailHour !== undefined && v.emailHour !== hour){
+    } else if (v.emailHour !== undefined && v.emailHour !== hour) {
       console.log(v.email + " emailHour is " + v.emailHour + " and now is " + hour);
       if (MODE !== MODES.TEST) {
         usersUpdated++;
