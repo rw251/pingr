@@ -66,10 +66,10 @@ andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only aut
 andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
 andComponent.push({ emailFrequency: { $ne: 0 } }); // never receives emails
 var searchObject = { $and: andComponent };
-var fieldsToReturn = {password:0};
+var fieldsToReturn = { password: 0 };
 
-//const devUsersToReceiveEmails = ["benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"];
-const devUsersToReceiveEmails = ["richard.williams2@manchester.ac.uk"];
+const devUsersToReceiveEmails = ["benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"];
+const testUsersToReceiveEmails = ["richard.williams2@manchester.ac.uk"];
 
 User.find(searchObject, fieldsToReturn, function(err, users) {
   // In case of any error, return using the done method
@@ -85,7 +85,14 @@ User.find(searchObject, fieldsToReturn, function(err, users) {
   }
   console.log(users.map(function(v) { return v.fullname; }).join("\n"));
   users.forEach(function(v) {
-    if (MODE !== MODES.PROD && devUsersToReceiveEmails.indexOf(v.email) < 0) {
+    if (MODE === MODES.DEV && devUsersToReceiveEmails.indexOf(v.email) < 0) {
+      console.log("Not doing: " + v);
+      usersUpdated++;
+      emailsSent++;
+      if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+      return;
+    }
+    if (MODE === MODES.TEST && testUsersToReceiveEmails.indexOf(v.email) < 0) {
       console.log("Not doing: " + v);
       usersUpdated++;
       emailsSent++;
