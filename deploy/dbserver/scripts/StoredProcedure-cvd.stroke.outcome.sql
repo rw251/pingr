@@ -1,3 +1,6 @@
+--v4 changes 5/4/17
+--changes to make it fit into tab
+
 --v4 changes 31/3/17
 --bug fixes with dates in 'why'
 --added both first ever and episode incidence - but used only first ever for indicator score
@@ -178,7 +181,7 @@ group by pracID
 --stroke incidence FOR EVERY PRACTICE ORDERED ASCENDING
 --EPISODE INDICENCE i.e. multiple strokes per patient
 IF OBJECT_ID('tempdb..#episodeStrokeIncidence') IS NOT NULL DROP TABLE #episodeStrokeIncidence
-CREATE TABLE #episodeStrokeIncidence (practiceId varchar(1000), noStrokes int, practiceListSize int, episodeStrokeIncidence float);
+CREATE TABLE #episodeStrokeIncidence (practiceId varchar(1000), numberOfStrokesPerPractice int, practiceListSize int, episodeStrokeIncidence float);
 insert into #episodeStrokeIncidence
 select practiceId, numberOfStrokesPerPractice, practiceListSize, 
 	case
@@ -201,7 +204,7 @@ group by pracID
 --stroke incidence FOR EVERY PRACTICE ORDERED ASCENDING
 --FIRST EVER INDICENCE i.e. only one stroke per patient
 IF OBJECT_ID('tempdb..#firstEverStrokeIncidence') IS NOT NULL DROP TABLE #firstEverStrokeIncidence
-CREATE TABLE #firstEverStrokeIncidence (practiceId varchar(1000), noStrokes int, practiceListSize int, firstEverStrokeIncidence float);
+CREATE TABLE #firstEverStrokeIncidence (practiceId varchar(1000), numberOfStrokePatientsPerPractice int, practiceListSize int, firstEverStrokeIncidence float);
 insert into #firstEverStrokeIncidence
 select practiceId, numberOfStrokePatientsPerPractice, practiceListSize, 
 	case
@@ -232,15 +235,16 @@ order by perc desc) sub);
 
 
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
 insert into [output.pingr.indicatorOutcome](indicatorId, practiceId, date, patientCount, eventCount, denominator, standardisedIncidence, benchmark)
-									--TO TEST ON THE FLY--
---IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
---CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
---insert into #indicator
 
---select 'cvd.stroke.outcome', practiceId, CONVERT(char(10), @refdate, 126), noStrokes, practiceListSize, null, @abc from #firstEverStrokeIncidence
-select 'cvd.stroke.outcome', practiceId, CONVERT(char(10), @refdate, 126), noStrokes, noStrokes, practiceListSize, 0.01, @abc from #firstEverStrokeIncidence
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#indicatorOutcome') IS NOT NULL DROP TABLE #indicatorOutcome
+--CREATE TABLE #indicatorOutcome (indicatorId varchar(1000), practiceId varchar(1000), patientCount int, eventCount int, denominator int, standardisedIncidence float, benchmark float);
+--insert into #indicatorOutcome
+
+select 'cvd.stroke.outcome', a.practiceId, CONVERT(char(10), @refdate, 126), numberOfStrokePatientsPerPractice, numberOfStrokesPerPractice, a.practiceListSize, 0.01, @abc from #firstEverStrokeIncidence as a
+left outer join (select * from #episodeStrokeIncidence) as b on b.practiceId = a.practiceId
+
 									----------------------------------------------
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
