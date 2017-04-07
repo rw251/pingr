@@ -1,13 +1,13 @@
 div
   ul.nav.nav-tabs(role="tablist")
     li.active(role="presentation")
-      a(href="#outcomeIndicators",aria-controls="outcomeIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Outcome indicators (" + outcomeIndicators.length + ")"
+      a.pastel-pink(href="#outcomeIndicators",aria-controls="outcomeIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Outcome indicators (" + outcomeIndicators.length + ")"
     li(role="presentation")
-      a(href="#processIndicators",aria-controls="processIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Process indicators (" + processIndicators.length + ")"
+      a.pastel-pink(href="#processIndicators",aria-controls="processIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Process indicators (" + processIndicators.length + ")"
 
   .tab-content    
     #outcomeIndicators.tab-pane.fade.in.active(role="tabpanel")
-      .panel.panel-default
+      .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
         .panel-body.pastel-pink.overview-table
           .table-scroll(style='overflow-x:hidden')
             table#overview-table-outcomes.table
@@ -64,7 +64,7 @@ div
                           i.fa.fa-caret-up
                   - alt = !alt
     #processIndicators.tab-pane.fade(role="tabpanel")
-      .panel.panel-default
+      .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
         .panel-body.pastel-pink.overview-table
           .table-scroll(style='overflow-x:hidden')
             table#overview-table-process.table

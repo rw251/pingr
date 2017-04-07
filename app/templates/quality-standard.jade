@@ -56,9 +56,8 @@ else
           table.table.table-condensed
             thead
               tr
-                th Quality indicator
-                th(style="max-width:100px") Target met?
-                th(style="max-width:100px") Action plan?
+                th(style="max-width:300px") Quality indicator
+                th
             tbody
               each standard in outcomeStandards
                 tr(class=standard.targetMet ? 'success' : 'danger')
@@ -68,14 +67,7 @@ else
                     a.reason-link.pull-right(href='#',data-id=standard.indicatorId) 
                       | Show more 
                       i.fa.fa-caret-down  
-                  td
-                    if standard.targetMet
-                      i.fa.fa-fw.fa-check.text-success
-                    else
-                      i.fa.fa-fw.fa-times.text-danger      
-                  td
-                    if standard.actionPlan
-                      i.fa.fa-fw.fa-check.text-success
+                  td 
                 tr(data-id=standard.indicatorId,class='qs-show-more-row')
                   td(colspan=4)
                     !=standard.indicatorDescription
