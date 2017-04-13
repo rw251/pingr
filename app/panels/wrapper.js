@@ -10,6 +10,7 @@ var bd = {
 
       $('#mainPage-tabs li').removeClass('active');
       $(this).closest('li').addClass('active');
+      $(this).closest('li').addClass('test_test_test');
       //var tempMust = $('#welcome-task-list').html();
       //var rendered = Mustache.render(tempMust);
       //var tmpl = require("templates/action-plan-task-list");
@@ -30,6 +31,7 @@ var bd = {
 
       $('#mainPage-tabs li').removeClass('active');
       $(this).closest('li').addClass('active');
+      $(this).closest('li').addClass('test_test_test');
       //var tempMust = $('#welcome-task-list').html();
       //var rendered = Mustache.render(tempMust);
       //var tmpl = require("templates/action-plan-task-list");
@@ -50,6 +52,7 @@ var bd = {
 
       $('#mainPage-tabs li').removeClass('active');
       $(this).closest('li').addClass('active');
+      $(this).closest('li').addClass('test_test_test');
       //var tempMust = $('#welcome-task-list').html();
       //var rendered = Mustache.render(tempMust);
       //var tmpl = require("templates/action-plan-task-list");

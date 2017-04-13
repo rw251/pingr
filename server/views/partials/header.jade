@@ -11,27 +11,25 @@
 section#main
     nav.navbar.navbar-default(role='navigation')
       .container-fluid
-        .navbar-header
-          a(href="#")
-            .logo-container
-              .logo
-                img(src="images/icons/apple-icon_WHITE.png")
+        //ul.nav.navbar-nav
+        ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
+          li.logo-container
+            .logo
+              img(src="images/icons/apple-icon.png")
               //ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
-        ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist' data-intro="By Jove! *bTut*" data-step="1")      
+              //ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist' data-intro="By Jove! *bTut*" data-step="1")      
           li(role='presentation', data-id='overview')
-            a(href='#overview', data-href='#overview', role='tab') OVERVIEW
-            .nav-arrow
+            a(href='#overview', data-href='#overview', role='button') 
+              .btn.btn-arrow-right OVERVIEW
           li(role='presentation', data-id='indicator')
-            .nav-wedge
-            a(href='#indicators', data-href='#indicators', role='tab') INDICATOR
-            .nav-arrow
+            a(href='#indicators', data-href='#indicators', role='button') 
+              .btn.btn-arrow-right INDICATOR
           li(role='presentation', data-id='patient')
-            .nav-wedge
-            a(href='#patients', data-href='#patients', role='tab') PATIENT
-            .nav-arrow
+            a(href='#patients', data-href='#patients', role='button') 
+              .btn.btn-arrow-right PATIENT
           li(role='presentation', data-id='actions')
-            .nav-wedge
-            a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
+            a(href='#agreedactions', data-href='#agreedactions', role='button') 
+              .btn ACTION PLANS
         ul.nav.navbar-nav.navbar-right
           li
             //TODO *b* sort out the spacing properly!
@@ -43,7 +41,7 @@ section#main
             a(href='#contact')
               .btn.btn-primary Contact us
           li.dropdown
-            a.dropdown-toggle(data-toggle='dropdown', href='#', aria-expanded="true")
+            a.dropdown-toggle(type='button', data-toggle='dropdown', href='#', aria-expanded="false") 
               .btn.btn-info
                 span#user_fullname.hide-if-bit-small= fullname + " "
                 span#practice_name(style="display:none")= practice_name

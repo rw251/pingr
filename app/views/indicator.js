@@ -222,7 +222,7 @@ var ind = {
 
       //scroll to top
       $("div").scrollTop(0);
-
+      $('.dropdown-toggle').dropdown();
       //add state indicator
       //farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
       //farRightPanel.attr("class", "col-xl-6 col-lg-6 state-indicator-rightPanel");

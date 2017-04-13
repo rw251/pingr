@@ -43,7 +43,7 @@ var ap = {
       //$('#suggested-actions-table-wrapper').css("overflow-x","hidden");
 
       //base.updateFixedHeightElements([{selector:'#suggested-actions-table-wrapper',padding:250,minHeight:300}]);
-
+      $('.dropdown-toggle').dropdown();
     }, 0);
 
   }

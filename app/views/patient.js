@@ -248,7 +248,7 @@ var pv = {
 
         //BG-TODO - from RW dev branch - might not be needed
         base.updateTab("patients", "", "");
-
+        $('.dropdown-toggle').dropdown();
         //base.updateFixedHeightElements([{ selector: '#centre-panel', padding: 15,minHeight:300 }, { selector: '.table-scroll', padding: 220,minHeight:300 }]);
 
       }

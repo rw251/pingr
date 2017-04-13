@@ -89,6 +89,8 @@ var overview = {
       overview.updateTab(true);
       //scroll to top
       $("div").scrollTop(0);
+
+      $('.dropdown-toggle').dropdown();
       //add state indicator
       //farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
       //farLeftPanel.attr("class", "col-xl-6 col-lg-6 state-overview-leftPanel");

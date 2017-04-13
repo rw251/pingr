@@ -24,8 +24,9 @@ var base = {
 
   selectTab: function(id) {
     var href = $('#mainTab li.active a').data("href");
-    $('#mainTab li.active').removeClass('active').find('a').attr("href", href);
-    $('#mainTab li[data-id="' + id + '"]').addClass('active').find('a').removeAttr("href");
+    $('#mainTab li.active').removeClass('active').find('a').attr("href", href).find('div.btn').removeClass('btn-warning');
+    $('#mainTab li[data-id="' + id + '"]').addClass('active').find('a').removeAttr("href").find('div.btn').addClass('btn-warning');
+
   },
 
   createPanel: function(templateFn, data, templates) {
@@ -213,8 +214,13 @@ var base = {
   },
 
   updateTab: function(tab, value, url) {
-    var tabElement = $('#mainTab a[data-href="#' + tab + '"]');
+    /*var tabElement = $('#mainTab a[data-href="#' + tab + '"]');
     tabElement.html(tabElement.text().split(":")[0] + ":<br><span><strong>" + value + "</strong></span>");
+    tabElement.data("href", "#" + tab + "/" + url);*/
+
+    var tabElement = $('#mainTab a[data-href="#' + tab + '"]');
+    var tabPresentation = tabElement.find('div.btn')
+    tabPresentation.html("<i>" + tabElement.text().split("-")[0] + "</i> - <span><strong>" + value + "</strong></span><div class='ripple-container'></div>");
     tabElement.data("href", "#" + tab + "/" + url);
   },
 

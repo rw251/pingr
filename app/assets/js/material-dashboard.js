@@ -65,6 +65,8 @@ var seq2 = 0, delays2 = 80, durations2 = 500;
 
 $(document).ready(function(){
 
+    $('.dropdown-toggle').dropdown();
+
     $sidebar = $('.sidebar');
 
     $.material.init();
