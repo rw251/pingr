@@ -1,3 +1,6 @@
+--v5 19/4/17
+--removed 'beta'
+
 --v4 changes 5/4/17
 --changes to make it fit into tab
 
@@ -420,8 +423,8 @@ where proportionId = 'possibleStroke'
 insert into [pingr.text] (indicatorId, textId, text)
 values
 --overview tab
-('cvd.stroke.outcome','name','Strokes since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' (beta testing)'), --overview table name
-('cvd.stroke.outcome','tabText','Strokes since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' (beta)'), --indicator tab text
+('cvd.stroke.outcome','name','Strokes since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end)), --overview table name
+('cvd.stroke.outcome','tabText','Strokes since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end)), --indicator tab text
 ('cvd.stroke.outcome','description', --'show more' on overview tab
 	'<strong>Definition:</strong> Number of patients who have had a stroke recorded since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + ' out of your practice list.<br>'+
 	'<strong>NB:</strong> Your practice list may appear 1-2% smaller than it actually is due to opt outs from data sharing agreements'),

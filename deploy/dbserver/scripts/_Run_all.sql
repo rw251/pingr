@@ -1,3 +1,7 @@
+--changes from 5/4/16:
+--using codegroups for contacts
+--used source for contacts
+
 --changes from last version:
 --changed contacts
 --added pingr.practiceList.practiceListSizes.eFI to run all
@@ -211,6 +215,14 @@ BEGIN
 	RETURN;
 END
 
+EXEC	@return_value = [dbo].[pingr.cvd.af.screening]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
 							---------------------------------------------------------------
 							---------CREATE AND POPULATE PATIENT-LEVEL DATA TABLES---------
 							---------------------------------------------------------------
@@ -225,16 +237,17 @@ select PatID, EntryDate as date,
 	case
 		when ReadCode in (select code from codeGroups where [group] = 'egfr') then 'eGFR'
 		when ReadCode in (select code from codeGroups where [group] = 'acr') then 'ACR'
-		when ReadCode in (select code from codeGroups where [group] = 'sbp') then 'SBP'
-		when ReadCode in (select code from codeGroups where [group] = 'dbp') then 'DBP'
-		when ReadCode in (select code from codeGroups where [group] = 'fev1') then 'FEV1'
+		when ReadCode in (select code from codeGroups where [group] = 'sbp') and Source != 'salfordt' then 'SBP'
+		when ReadCode in (select code from codeGroups where [group] = 'dbp') and Source != 'salfordt' then 'DBP'
+		when ReadCode in (select code from codeGroups where [group] = 'fev1') and Source != 'salfordt' then 'FEV1'
 		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source != 'salfordt' then 'strokeHosp'
+		when ReadCode in (select code from codeGroups where [group] = 'pulseRhythm') and Source != 'salfordt' then 'pulseRhythm'
 	end as measure,
 CodeValue as value, Source from SIR_ALL_Records
 where
 	(
-		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'sbp', 'dbp','fev1', 'strokeQof')) and CodeValue is not NULL)
-		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof'))and Source != 'salfordt')
+		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof')) and CodeValue is not NULL)
+		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof','pulseRhythm', 'sbp', 'dbp','fev1'))and Source != 'salfordt')
 	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
@@ -272,57 +285,36 @@ select PatID, date,
 		end as event from
 			(
 				select PatID,
-				max(
+--				max(
 					case
 						--when (ReadCode like 'ALLERGY%' OR ReadCode like 'EMIS' OR ReadCode like 'EGTON' OR ReadCode like 'CLEAT') then @CON
-						when LEN(ReadCode) >= 8 then @MED
-						when LEN(ReadCode) = 6 then @MED
-						when ReadCode like '[ABCDEFGHIJKLMNOPQRSTUVWXYZ][ABCDEFGHIJKLMNOPQRSTUVWXYZ][ABCDEFGHIJKLMNOPQRSTUVWXYZ][ABCDEFGHIJKLMNOPQRSTUVWXYZ]___' THEN @MED
+						when ReadCode in (select code from codeGroups where [group] = 'medication') and Source != 'salfordt' then @MED
 						--when LEN(ReadCode) <=4 then @OTH
 						--when ReadCode like '[ABCDEFGHIJKLMNOPQRSTUVWXYZ]%' then @CON
-						when ReadCode like '[abcdefghijklmnopqrstuvwxyz]%' then @MED
 						--when ReadCode like '0%' then @CON
-						when ReadCode like '1%' then @FACE
-						when ReadCode like '2%' then @FACE
+						when ReadCode in (select code from codeGroups where [group] = 'f2f') and Source != 'salfordt' then @FACE
 						--when ReadCode like '3%' then @CON
-						when ReadCode like '4%' then @TEST
-						when ReadCode like '5%' then @TEST
-						when ReadCode in ('6A2..','6A9..','6AA..','6AB..','662d.','662e.','66AS.','66AS0','66AT.','66BB.','66f0.','66YJ.','66YM.','661Q.','66480','6AH..','6A9..','66p0.','6A2..','66Ay.','66Az.','69DC.') then @FACE --annual review
-						when ReadCode like '6A%' then @FACE --patient reviewed
-						when ReadCode like '65%' then @FACE
+						when ReadCode in (select code from codeGroups where [group] = 'test') and Source != 'salfordt' then @TEST
 						--when ReadCode like '6%' then @CON
-						when ReadCode like '7%' then @HOSP
-						when ReadCode like '8B31[356]%' then @FACE
-						when ReadCode like '8B3[3569ADEfilOqRxX]%' then @FACE
-						when ReadCode like '8B3[168hHjklNSTUVy]%' then @MED
-						when ReadCode like '8B4%' then @MED
+						when ReadCode in (select code from codeGroups where [group] = 'hospital') and Source != 'salfordt' then @HOSP
 						--when ReadCode like '8B%' then @CON
-						when ReadCode in ('8BS3.') then @FACE
-						when ReadCode like '8H[1-3]%' then @HOSP
-						when ReadCode like '8H2%' then @AE
-						when ReadCode like '8H[4-8]%' then @FACE
-						when ReadCode like '8H9%' then @TELE
+						when ReadCode in (select code from codeGroups where [group] = 'a+e') and Source != 'salfordt' then @AE
+						when ReadCode in (select code from codeGroups where [group] = 'tel') and Source != 'salfordt' then @TELE
 						--when ReadCode like '8H[ABCDHKMPQRSTUVWYZpckenmojiklprs]%' then @CON
 						--when ReadCode like '8H[EFGIJLNOXdabgfhqtuvwxyz]%' then @REC
 						--when ReadCode like '8[^BH]%' then @CON
-						when ReadCode like '94Z%' then @FACE
-						when ReadCode in ('9N19','8HJA.','8HC..','8Hu..','8HC1.') then @AE
-						when ReadCode like '9N1C%' then @FACE
-						when ReadCode like '9N21%' then @FACE
-						when ReadCode like '9N31%' then @TELE
 						--when ReadCode like '9N3G%' then @CON
-						when ReadCode like '9N3A%' then @TELE
-						when ReadCode like '9N%' then @HOSP
 						--when ReadCode like '9%' then @REC
-						when ReadCode in ('9kF1.','9kR..','9HB5.') then @FACE --patient reviewed / annual review
-						when ReadCode like '9H9%' then @FACE
 						--when ReadCode like '~%' then @CON
 						--when ReadCode like '$%' then @REC
+						when Source = 'salfordt' then @HOSP
 						else NULL end
-					) as eventcode,
+						
+		--			) 
+					as eventcode,
 					EntryDate as date from SIR_ALL_Records
 					where PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
-					group by EntryDate, PatID
+					group by EntryDate, PatID, ReadCode, Source
 			) sub
 WHERE eventcode in (1,2,4,5,6,7)
 
