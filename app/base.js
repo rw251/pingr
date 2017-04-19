@@ -175,6 +175,9 @@ var base = {
 
     $('#modal').html(tmpl({ text: lookup.suggestionModalText }));
 
+    $('#modal .modal').off('shown.bs.modal').on('shown.bs.modal', function (e) {
+      $('#modal-suggestion-text').focus();
+    });
 
     $('#modal .modal').off('submit', 'form').on('submit', 'form', function(e) {
 
@@ -185,6 +188,7 @@ var base = {
       e.preventDefault();
       $('#modal .modal').modal('hide');
     }).modal();
+
   },
 
   switchTo2Column1Narrow1Wide: function() {
