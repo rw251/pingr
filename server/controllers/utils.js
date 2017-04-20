@@ -1,5 +1,6 @@
 /* jshint esversion:6 */
 var patients = require('./patients');
+var practices = require('./practices');
 var indicators = require('./indicators');
 var config = require('../config');
 
@@ -49,18 +50,25 @@ var processPatients = function(patients) {
 module.exports = {
 
   getDataForEmails: function(user, callback) {
-    patients.getAllPatientsPaginated(user.practiceId, 0, 25, function(err, patients) {
-      if (err) return callback(err);
-      indicators.list(user.practiceId, function(err, indicators) {
+
+    var greetings = ["Hi","Hello","Dear","Greetings"];
+
+    practices.get(user.practiceId, function(err, practice){
+      patients.getAllPatientsPaginated(user.practiceId, 0, 25, function(err, patients) {
         if (err) return callback(err);
-        indicators = processIndicators(indicators);
-        patients = processPatients(patients);
-        user = user.toObject();
-        if(user.last_login) user.last_login = (new Date(user.last_login)).toDateString();
-        user.indicators = indicators;
-        user.patients = patients;
-        user.reminderEmailsFrom = config.mail.reminderEmailsFrom;
-        return callback(null, { data: user });
+        indicators.list(user.practiceId, function(err, indicators) {
+          if (err) return callback(err);
+          indicators = processIndicators(indicators);
+          patients = processPatients(patients);
+          user = user.toObject();
+          if(user.last_login) user.last_login = (new Date(user.last_login)).toDateString();
+          user.indicators = indicators;
+          user.patients = patients;
+          user.reminderEmailsFrom = config.mail.reminderEmailsFrom;
+          user.practiceSystem = practice.ehr;
+          user.greeting = greetings[Math.floor(Math.random()*greetings.length)];
+          return callback(null, { data: user });
+        });
       });
     });
   }
