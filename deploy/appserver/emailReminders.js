@@ -11,7 +11,7 @@ var User = require('../../server/models/user'),
   indicators = require('../../server/controllers/indicators'),
   jade = require('jade');
 
-var jade2html = function(input, data) {
+var jade2html = function (input, data) {
   return jade.compile(input, {
     pretty: true,
     doctype: "5"
@@ -71,7 +71,7 @@ var fieldsToReturn = { password: 0 };
 const devUsersToReceiveEmails = ["benjamin.brown@manchester.ac.uk", "richard.williams2@manchester.ac.uk"];
 const testUsersToReceiveEmails = ["richard.williams2@manchester.ac.uk"];
 
-User.find(searchObject, fieldsToReturn, function(err, users) {
+User.find(searchObject, fieldsToReturn, function (err, users) {
   // In case of any error, return using the done method
   if (err) {
     console.log('Error in finding users to pester: ' + err);
@@ -83,8 +83,8 @@ User.find(searchObject, fieldsToReturn, function(err, users) {
     console.log("No users to remind");
     process.exit(0);
   }
-  console.log(users.map(function(v) { return v.fullname; }).join("\n"));
-  users.forEach(function(v) {
+  console.log(users.map(function (v) { return v.fullname; }).join("\n"));
+  users.forEach(function (v) {
     if (MODE === MODES.DEV && devUsersToReceiveEmails.indexOf(v.email) < 0) {
       console.log("Not doing: " + v);
       usersUpdated++;
@@ -156,9 +156,9 @@ User.find(searchObject, fieldsToReturn, function(err, users) {
     }
     console.log("Doing: " + v.email);
 
-    utils.getDataForEmails(v, function(err, data) {
+    utils.getDataForEmails(v, function (err, data) {
       data = data.data; //!!
-      crypto.randomBytes(6, function(err, buf) {
+      crypto.randomBytes(6, function (err, buf) {
         var token = buf.toString('hex');
 
         var urlBaseWithToken = config.server.url + "/t/" + token + "/";
@@ -166,25 +166,25 @@ User.find(searchObject, fieldsToReturn, function(err, users) {
         data.pingrUrl = urlBaseWithToken;
         data.pingrUrlWithoutTracking = config.server.url + "/"
 
-        emailTemplates.getDefault(function(err, emailTemplate) {
+        emailTemplates.getDefault(function (err, emailTemplate) {
           //send email
           var emailHTMLBody = jade2html(emailTemplate.body, data);
           emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
           var emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, null, emailHTMLBody, null);
 
-          emailSender.send(emailConfig, function(error, info) {
+          emailSender.send(emailConfig, function (error, info) {
             emailsSent++;
             if (error) {
               console.log("email not sent: " + error);
               usersUpdated++;
             } else {
-              events.emailReminder(v.email, token, emailHTMLBody, now, function(err) {
+              events.emailReminder(v.email, token, emailHTMLBody, now, function (err) {
                 if (err) {
                   console.log("email event not recorded: " + err);
                 }
                 v.last_email_reminder = now;
                 v.email_url_tracking_code = token;
-                v.save(function(err) {
+                v.save(function (err) {
                   usersUpdated++;
                   if (err) {
                     console.log("User failed to update: " + error);
