@@ -55,7 +55,7 @@ var filter = {
 
 var formatDate = function (d) {
   if (!d) d = new Date('2000-01-01');
-  return d.toISOString().replace(/[:\-T]/g, "").replace(/\.[0-9]{3}Z/,"");
+  return d.toISOString().replace(/[:\-T]/g, "").replace(/\.[0-9]{3}Z/, "");
 };
 
 var padded = function (text, length) {
@@ -114,10 +114,14 @@ var generateFormatFile = function (headings) {
 var generateBatchLoaderFile = function (file) {
   return [
     "echo off",
+    "SET DIR=%~dp0",
     "cd /d %~dp0",
     "SET DB=PatientSafety_Records_Test",
     "SET FILE=" + file,
-    "sqlcmd -E -d %DB% -Q \"BULK INSERT [pingr.logs] FROM '%FILE%' WITH (FORMATFILE = '%FILE%.fmt')\""
+    "sqlcmd -E -d %DB% -Q \"BULK INSERT [pingr.logs] FROM '%DIR%%FILE%' WITH (FORMATFILE = '%DIR%%FILE%.fmt')\"",
+    "ECHO .",
+    "ECHO If the previous line shows 0 rows affected then this data has already been loaded.",
+    "pause"
   ].join("\r\n");
 };
 
@@ -137,86 +141,130 @@ props.get(LASTTIMESTAMP, function (err, value) {
 
   events.tab(filter, function (err, data) {
 
-    var completedFiles = 0;
     var shouldBe = 0;
     var shouldWrite = true;
-    var errors = [];
+    var files = [];
+    var async_job_id;
 
-    var isDone = function (err) {
-      if (err) errors.push(err);
-      completedFiles += 1;
-      if (completedFiles === shouldBe) {
-        if (errors.length > 0) {
-          errors.forEach(function (e) {
-            console.log(e);
-          });
-          process.exit(1)
-        } else if (shouldWrite) {
-          props.set(LASTTIMESTAMP, filter.date.$lte.toISOString(), function (err) {
-            if (err) {
-              console.log(err);
-              process.exit(1)
-            }
-            process.exit(0);
-          });
-        } else {
-          process.exit(0);
-        }
-      }
+    var lengthInUtf8Bytes = function (str) {
+      // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+      var m = encodeURIComponent(str).match(/%[89ABab]/g);
+      return str.length + (m ? m.length : 0);
     };
+
+    var upload = function (contents, uploadObject) {
+      console.log("Adding " + uploadObject.path + " to batch");
+      dbx
+        .filesUploadSessionStart({ contents: contents, close: true })
+        .then(function (response) {
+          files.push({ uploadObject, response, offset: lengthInUtf8Bytes(contents) });
+        });
+    };
+
+    var uploadLog = function () {
+      upload(data.body, { path: '/' + filename });
+    };
+
+    var uploadFormat = function () {
+      upload(generateFormatFile(data.headings), { path: '/' + filename + ".fmt" });
+    };
+
+    var uploadBatch = function () {
+      upload(generateBatchLoaderFile(filename), { path: '/' + filename + ".bat" });
+    }
+
+    var uploadSql = function () {
+      upload(generateCreateSql(filename), { path: '/_create_table.sql', mode: { '.tag': 'overwrite' } });
+    }
+
+    var check = function () {
+      console.log("checking status..");
+      dbx.filesUploadSessionFinishBatchCheck({ async_job_id })
+        .then(function (response) {
+          if (response['.tag'] === 'in_progress') {
+            console.log(response);
+            setTimeout(check, 500);
+          } else {
+            if (response.entries) {
+              response.entries.forEach(function (v) {
+                console.log(v.failure || v);
+              });
+
+              if (response.entries.filter(function (v) {
+                return v['.tag'] === 'success';
+              }).length === shouldBe) {
+                if (shouldWrite) {
+                  props.set(LASTTIMESTAMP, filter.date.$lte.toISOString(), function (err) {
+                    if (err) {
+                      console.log(err);
+                      process.exit(1)
+                    }
+                    process.exit(0);
+                  });
+                } else {
+                  process.exit(0);
+                }
+              } else {
+                console.log("Some failed");
+                process.exit(1);
+              }
+            } else {
+              console.log("An error?!");
+              process.exit(1);
+            }
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+          process.exit(1);
+        });
+    };
+
+    var commit = function () {
+      if (files.length !== shouldBe) {
+        return setTimeout(commit, 100);
+      }
+      console.log("Starting commit");
+      files.forEach(function (v) {
+        console.log(v.uploadObject.path);
+        console.log(v.offset);
+      })
+      dbx
+        .filesUploadSessionFinishBatch({
+          entries: files.map(function (v) {
+            return {
+              cursor: {
+                session_id: v.response.session_id,
+                offset: v.offset
+              },
+              commit: v.uploadObject
+            };
+          })
+        })
+        .then(function (response) {
+          async_job_id = response.async_job_id;
+          setTimeout(check, 500);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
 
     if (!err && data.body.length > 0) {
       shouldBe = 4;
+      uploadFormat();
+      uploadBatch();
+      uploadSql();
+      uploadLog();
 
-      // upload the log file
-      dbx
-        .filesUpload({ path: '/' + filename, contents: data.body })
-        .then(function (response) {
-          isDone();
-        })
-        .catch(function (error) {
-          isDone(error);
-        });
-
-      // upload the format file
-      dbx
-        .filesUpload({ path: '/' + filename + ".fmt", contents: generateFormatFile(data.headings) })
-        .then(function (response) {
-          isDone();
-        })
-        .catch(function (error) {
-          isDone(error);
-        });
-
-      // upload the loader file
-      dbx.filesUpload({ path: '/' + filename + ".bat", contents: generateBatchLoaderFile(filename) })
-        .then(function (response) {
-          isDone();
-        })
-        .catch(function (error) {
-          isDone(error);
-        });
-
-      // upload the create sql
-      dbx.filesUpload({ path: '/_create_table.sql', contents: generateCreateSql(filename), mode: { '.tag': 'overwrite' } })
-        .then(function (response) {
-          isDone();
-        })
-        .catch(function (error) {
-          isDone(error);
-        });
+      commit();
     } else {
       console.log("no data to send");
       shouldBe = 1;
       shouldWrite = false;
+      uploadSql();
 
-      dbx.filesUpload({ path: '/_create_table.sql', contents: generateCreateSql(filename), mode: { '.tag': 'overwrite' } })
-        .then(function (response) {
-          isDone();
-        })
-        .catch(function (error) {
-          isDone(error);
-        });
+      commit();
     }
   });
 
