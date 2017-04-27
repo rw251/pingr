@@ -4,9 +4,22 @@
  * optional date to execute up to from previous date run
  * - previous date run is stored in the config collection of mongo
  * 
+ * To generate a new access token first get BB to go to:
  * 
+ * https://www.dropbox.com/oauth2/authorize?client_id=<insert client id from https://www.dropbox.com/developers/apps>&response_type=code
  * 
- * Current SQL to create table
+ * or change the client_id if using a different app to PINGR-logs
+ * 
+ * He will accept and get given an initial code
+ * 
+ * POST that code as follows with e.g. Postman:
+ * POST: https://api.dropboxapi.com/oauth2/token
+ * x-www-form-urlencodes
+ * code: <code from BB>
+ * grant_type:authorization_code
+ * client_id:<insert client id from https://www.dropbox.com/developers/apps>
+ * client_secret:<insert client secret from https://www.dropbox.com/developers/apps>
+ * 
  * 
     
  */
@@ -158,7 +171,10 @@ props.get(LASTTIMESTAMP, function (err, value) {
         .filesUploadSessionStart({ contents: contents, close: true })
         .then(function (response) {
           files.push({ uploadObject, response, offset: lengthInUtf8Bytes(contents) });
-        });
+        })        
+        .catch(function (error) {
+          console.log(error);
+        });;
     };
 
     var uploadLog = function () {
