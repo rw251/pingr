@@ -8,39 +8,7 @@
  * 
  * Current SQL to create table
  * 
-    USE [PatientSafety_Records_Test]
-    GO
-
-    CREATE TABLE [dbo].[pingr.logs](
-      [sessionId] [varchar](50) NULL,
-      [user] [varchar](255) NULL,
-      [type] [varchar](50) NULL,
-      [date] [datetime] NULL,
-      [url] [varchar](255) NULL,
-      [xpath] [varchar](max) NULL,
-      [data.text] [varchar](max) NULL,
-      [data.indicator] [varchar](max) NULL,
-      [data.link] [varchar](max) NULL,
-      [data.token] [varchar](50) NULL,
-      [data.body] [varchar](max) NULL,
-      [data.action] [varchar](max) NULL,
-      [data.patientId] [varchar](20) NULL,
-      [data.reasonText] [varchar](max) NULL,
-      [data.indicatorId] [varchar](100) NULL,
-      [data.data] [varchar](max) NULL,
-      [data.patid] [varchar](20) NULL,
-      [data.pathwayId] [varchar](100) NULL,
-      [data.patient] [varchar](20) NULL,
-      [data.reason] [varchar](max) NULL,
-      [_id] [varchar](50) NOT NULL,
-      [__v] [varchar](50) NULL,
-      CONSTRAINT [PK_log_id] PRIMARY KEY CLUSTERED 
-    (
-      [_id] ASC
-    )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = ON, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-    ) ON [PRIMARY]
-
-    GO
+    
  */
 
 var currentColumns =
@@ -87,11 +55,46 @@ var filter = {
 
 var formatDate = function (d) {
   if (!d) d = new Date('2000-01-01');
-  return d.toISOString().replace(/:/g, "");
+  return d.toISOString().replace(/[:\-T]/g, "").replace(/\.[0-9]{3}Z/,"");
 };
 
-var padded = function(text, length) {
-  return (text + "                                                                                                   ").substr(0,length);
+var padded = function (text, length) {
+  return (text + "                                                                                                   ").substr(0, length);
+};
+
+var generateCreateSql = function () {
+  return [
+    '-- Generated: ' + (new Date()).toISOString(),
+    'USE [PatientSafety_Records_Test]',
+    'GO',
+    'CREATE TABLE [dbo].[pingr.logs](',
+    '  [sessionId] [varchar](50) NULL,',
+    '  [user] [varchar](255) NULL,',
+    '  [type] [varchar](50) NULL,',
+    '  [date] [datetime] NULL,',
+    '  [url] [varchar](255) NULL,',
+    '  [xpath] [varchar](max) NULL,',
+    '  [data.text] [varchar](max) NULL,',
+    '  [data.indicator] [varchar](max) NULL,',
+    '  [data.link] [varchar](max) NULL,',
+    '  [data.token] [varchar](50) NULL,',
+    '  [data.body] [varchar](max) NULL,',
+    '  [data.action] [varchar](max) NULL,',
+    '  [data.patientId] [varchar](20) NULL,',
+    '  [data.reasonText] [varchar](max) NULL,',
+    '  [data.indicatorId] [varchar](100) NULL,',
+    '  [data.data] [varchar](max) NULL,',
+    '  [data.patid] [varchar](20) NULL,',
+    '  [data.pathwayId] [varchar](100) NULL,',
+    '  [data.patient] [varchar](20) NULL,',
+    '  [data.reason] [varchar](max) NULL,',
+    '  [_id] [varchar](50) NOT NULL,',
+    '  [__v] [varchar](50) NULL,',
+    '  CONSTRAINT [PK_log_id] PRIMARY KEY CLUSTERED ([_id] ASC)',
+    '  WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = ON, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]',
+    ') ON [PRIMARY]',
+    'GO'
+  ].join('\r\n');
 };
 
 var generateFormatFile = function (headings) {
@@ -105,18 +108,17 @@ var generateFormatFile = function (headings) {
     currentColumns[v][5] = padded(currentColumns[v][5], 6);
     currentColumns[v][6] = padded(currentColumns[v][6], 37);
     return currentColumns[v].join("");
-  }).join("\r\n")+"\r\n";
+  }).join("\r\n") + "\r\n";
 };
 
-var generateBatchLoaderFile = function() {
-// SET DB=PatientSafety_Records_Test
-// SET FILE=C:\Users\richard\Desktop\2000-01-01T000000.000Z - 2017-01-01T000000.000Z.log
-// SET FILE=C:\Users\richard\Desktop\2017-01-01T000000.000Z - 2017-04-01T000000.000Z.log
-// SET FILE=C:\Users\richard\Desktop\2017-04-01T000000.000Z - 2017-04-20T000000.000Z.log
-// SET FILE=C:\Users\richard\Desktop\2017-04-20T000000.000Z - 2017-04-21T135801.450Z.log
-
-
-// sqlcmd -E -d %DB% -Q "BULK INSERT [pingr.logs] FROM '%FILE%' WITH (FORMATFILE = '%FILE%.fmt')"
+var generateBatchLoaderFile = function (file) {
+  return [
+    "echo off",
+    "cd /d %~dp0",
+    "SET DB=PatientSafety_Records_Test",
+    "SET FILE=" + file,
+    "sqlcmd -E -d %DB% -Q \"BULK INSERT [pingr.logs] FROM '%FILE%' WITH (FORMATFILE = '%FILE%.fmt')\""
+  ].join("\r\n");
 };
 
 props.get(LASTTIMESTAMP, function (err, value) {
@@ -131,33 +133,89 @@ props.get(LASTTIMESTAMP, function (err, value) {
     filter.date.$lte = new Date();
   }
 
-  var filename = formatDate(filter.date.$gte) + " - " + formatDate(filter.date.$lte) + ".log";
+  var filename = formatDate(filter.date.$gte) + "-" + formatDate(filter.date.$lte) + ".log";
 
   events.tab(filter, function (err, data) {
+
+    var completedFiles = 0;
+    var shouldBe = 0;
+    var shouldWrite = true;
+    var errors = [];
+
+    var isDone = function (err) {
+      if (err) errors.push(err);
+      completedFiles += 1;
+      if (completedFiles === shouldBe) {
+        if (errors.length > 0) {
+          errors.forEach(function (e) {
+            console.log(e);
+          });
+          process.exit(1)
+        } else if (shouldWrite) {
+          props.set(LASTTIMESTAMP, filter.date.$lte.toISOString(), function (err) {
+            if (err) {
+              console.log(err);
+              process.exit(1)
+            }
+            process.exit(0);
+          });
+        } else {
+          process.exit(0);
+        }
+      }
+    };
+
     if (!err && data.body.length > 0) {
+      shouldBe = 4;
 
-      var formatFile = generateFormatFile(data.headings);
-
+      // upload the log file
       dbx
         .filesUpload({ path: '/' + filename, contents: data.body })
         .then(function (response) {
-          console.log(response);
-          dbx
-            .filesUpload({ path: '/' + filename + ".fmt", contents: formatFile })
-            .then(function (response) {
-              console.log(response);
-              props.set(LASTTIMESTAMP, filter.date.$lte.toISOString(), function (err) {
-                process.exit(0);
-              });
-            })
-            .catch(function (error) {
-              console.error(error);
-              process.exit(1);
-            });
+          isDone();
         })
         .catch(function (error) {
-          console.error(error);
-          process.exit(1);
+          isDone(error);
+        });
+
+      // upload the format file
+      dbx
+        .filesUpload({ path: '/' + filename + ".fmt", contents: generateFormatFile(data.headings) })
+        .then(function (response) {
+          isDone();
+        })
+        .catch(function (error) {
+          isDone(error);
+        });
+
+      // upload the loader file
+      dbx.filesUpload({ path: '/' + filename + ".bat", contents: generateBatchLoaderFile(filename) })
+        .then(function (response) {
+          isDone();
+        })
+        .catch(function (error) {
+          isDone(error);
+        });
+
+      // upload the create sql
+      dbx.filesUpload({ path: '/_create_table.sql', contents: generateCreateSql(filename), mode: { '.tag': 'overwrite' } })
+        .then(function (response) {
+          isDone();
+        })
+        .catch(function (error) {
+          isDone(error);
+        });
+    } else {
+      console.log("no data to send");
+      shouldBe = 1;
+      shouldWrite = false;
+
+      dbx.filesUpload({ path: '/_create_table.sql', contents: generateCreateSql(filename), mode: { '.tag': 'overwrite' } })
+        .then(function (response) {
+          isDone();
+        })
+        .catch(function (error) {
+          isDone(error);
         });
     }
   });
