@@ -11,3 +11,5 @@ SchTasks /RU system /Create /SC DAILY /TN "PINGR Email Reminder" /TR "\"%BATCH.D
 SchTasks /RU system /Create /SC DAILY /TN "PINGR Logs to dropbox" /TR "\"%BATCH.DIRECTORY%RunLogCopyScript_ST_DEBUG.bat\"" /ST 06:30
 SchTasks /RU system /Create /SC ONSTART /TN "PINGR web app" /TR "\"%START.BAT%\""
 SchTasks /RU system /Create /SC DAILY /TN "PINGR MongoDB backup" /TR "\"%BACKUP.BAT%\"" /ST 21:10
+
+REM Might need to restart TaskEng.exe to pick up new env variables
