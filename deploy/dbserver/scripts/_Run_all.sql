@@ -254,69 +254,47 @@ where
 --Contacts
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.contacts]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.contacts]
 CREATE TABLE [output.pingr.contacts] (PatID int, date date, event varchar(100))
-	DECLARE	@FACE int;
-	DECLARE	@TELE int;
-	DECLARE	@REC int;
-	DECLARE	@CON int;
-	DECLARE	@MED int;
-	DECLARE	@OTH int;
-	DECLARE	@HOSP int;
-	DECLARE	@AE int;
-	DECLARE	@TEST int;
-	set @TELE = 7;
-	set @AE = 6;
-	set @HOSP = 5;
-	set @FACE = 4;
-	set @CON = 3;
-	set @MED = 2;
-	set @TEST = 1;
-	set @OTH = 0;
+DECLARE	@FACE int;
+DECLARE	@TELE int;
+DECLARE	@REC int;
+DECLARE	@MED int;
+DECLARE	@HOSP int;
+DECLARE	@AE int;
+DECLARE	@TEST int;
+set @TELE = 7;
+set @AE = 6;
+set @HOSP = 5;
+set @FACE = 4;
+set @MED = 2;
+set @TEST = 1;
 insert into [output.pingr.contacts](PatID, date, event)
 select PatID, date,
 	case
-		when eventcode = 7 then 'Telephone'
-		when eventcode = 6 then 'A+E'
-		when eventcode = 5 then 'Hospital'
-		when eventcode = 4 then 'Face-to-face'
-		--when eventcode = 3 then 'Other contact'
-		when eventcode = 2 then 'Medication'
-		when eventcode = 1 then 'Investigation'
-		else null
-		end as event from
-			(
-				select PatID,
---				max(
+		when eventcode = @TELE then 'Telephone'
+		when eventcode = @AE then 'A+E'
+		when eventcode = @HOSP then 'Hospital'
+		when eventcode = @FACE then 'Face-to-face'
+		when eventcode = @MED then 'Medication'
+		when eventcode = @TEST then 'Investigation'
+		end as event from (
+			select s.PatID,
+				max (
 					case
-						--when (ReadCode like 'ALLERGY%' OR ReadCode like 'EMIS' OR ReadCode like 'EGTON' OR ReadCode like 'CLEAT') then @CON
-						when ReadCode in (select code from codeGroups where [group] = 'medication') and Source != 'salfordt' then @MED
-						--when LEN(ReadCode) <=4 then @OTH
-						--when ReadCode like '[ABCDEFGHIJKLMNOPQRSTUVWXYZ]%' then @CON
-						--when ReadCode like '0%' then @CON
-						when ReadCode in (select code from codeGroups where [group] = 'f2f') and Source != 'salfordt' then @FACE
-						--when ReadCode like '3%' then @CON
-						when ReadCode in (select code from codeGroups where [group] = 'test') and Source != 'salfordt' then @TEST
-						--when ReadCode like '6%' then @CON
-						when ReadCode in (select code from codeGroups where [group] = 'hospital') and Source != 'salfordt' then @HOSP
-						--when ReadCode like '8B%' then @CON
-						when ReadCode in (select code from codeGroups where [group] = 'a+e') and Source != 'salfordt' then @AE
-						when ReadCode in (select code from codeGroups where [group] = 'tel') and Source != 'salfordt' then @TELE
-						--when ReadCode like '8H[ABCDHKMPQRSTUVWYZpckenmojiklprs]%' then @CON
-						--when ReadCode like '8H[EFGIJLNOXdabgfhqtuvwxyz]%' then @REC
-						--when ReadCode like '8[^BH]%' then @CON
-						--when ReadCode like '9N3G%' then @CON
-						--when ReadCode like '9%' then @REC
-						--when ReadCode like '~%' then @CON
-						--when ReadCode like '$%' then @REC
-						when Source = 'salfordt' then @HOSP
-						else NULL end
-						
-		--			) 
-					as eventcode,
-					EntryDate as date from SIR_ALL_Records
-					where PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
-					group by EntryDate, PatID, ReadCode, Source
-			) sub
-WHERE eventcode in (1,2,4,5,6,7)
+						when [group] = 'medication' and Source != 'salfordt' then @MED
+						when [group] = 'f2f' and Source != 'salfordt' then @FACE
+						when [group] = 'test' and Source != 'salfordt' then @TEST
+						when [group] = 'a+e' and Source != 'salfordt' then @AE
+						when [group] = 'tel' and Source != 'salfordt' then @TELE
+						when [group] = 'hospital' OR Source = 'salfordt' then @HOSP
+					end
+				)
+			as eventcode,
+			EntryDate as date from SIR_ALL_Records s
+				inner join [output.pingr.patActions] pa on pa.PatID = s.PatID
+				inner join codeGroups cg on cg.code = s.ReadCode
+			where [group] in ('medication', 'f2f', 'test', 'a+e', 'tel', 'hospital')
+			group by s.PatID, EntryDate
+		) sub
 
 --Important codes
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]
