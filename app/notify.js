@@ -1,4 +1,14 @@
-var messages = ["Thanks!", "Cheers!", "Nice one!", "Nice work!", "Great!"];
+var messages = [
+  "Thanks!",
+  "Cheers!",
+  "Nice one!",
+  "Nice work!",
+  "Great!",
+  "Top work!",
+  "Excellent!",
+  "Fantastic!",
+  "Super!"
+];
 
 var randomMessage = function () {
   return messages[Math.floor(Math.random() * messages.length)];
