@@ -14,6 +14,10 @@ AS
 SET NOCOUNT ON --exclude row count results for call from R
 SET ANSI_WARNINGS OFF -- prevent the "Warning: Null value is eliminated by an aggregate or other SET operation." error though BB needs to check this out at some point
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[pingr.sql.log]') AND type in (N'U'))
+CREATE TABLE [pingr.sql.log](	[msg] [varchar](255) NULL, [date] [datetime] NULL) ON [PRIMARY]
+
+INSERT INTO [pingr.sql.log] ('Creating tables', GETDATE());
 							---------------------------------------------------------------
 							--------------CREATE TABLES USED BY STORED PROCEDURES----------
 							---------------------------------------------------------------
@@ -114,10 +118,12 @@ values
 							---------------------------------------------------------------
 							---------------------EXECUTE STORED PROCEDURES-----------------
 							---------------------------------------------------------------
+INSERT INTO [pingr.sql.log] ('Starting stored procedures', GETDATE());
+
 DECLARE	@return_value int
 
 --practice list and eFI FIRST
-
+INSERT INTO [pingr.sql.log] ('Starting pingr.practiceList.practiceListSizes.eFI', GETDATE());
 EXEC	@return_value = [dbo].[pingr.practiceList.practiceListSizes.eFI]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -127,6 +133,7 @@ BEGIN
 END
 
 --then rest of indicators
+INSERT INTO [pingr.sql.log] ('Starting pingr.ckd.coding', GETDATE());
 EXEC	@return_value = [dbo].[pingr.ckd.coding]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -135,6 +142,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.ckd.undiagnosed', GETDATE());
 EXEC	@return_value = [dbo].[pingr.ckd.undiagnosed]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -143,6 +151,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.ckd.monitoring', GETDATE());
 EXEC	@return_value = [dbo].[pingr.ckd.monitoring]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -151,6 +160,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.ckd.treatment.bp', GETDATE());
 EXEC	@return_value = [dbo].[pingr.ckd.treatment.bp]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -159,6 +169,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.ckdAndDm.treatment.bp', GETDATE());
 EXEC	@return_value = [dbo].[pingr.ckdAndDm.treatment.bp]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -167,6 +178,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.ckdAndProt.treatment.bp', GETDATE());
 EXEC	@return_value = [dbo].[pingr.ckdAndProt.treatment.bp]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -175,6 +187,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.htn.treatment.bp', GETDATE());
 EXEC	@return_value = [dbo].[pingr.htn.treatment.bp]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -183,6 +196,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.copd.exacerbation.rehab', GETDATE());
 EXEC	@return_value = [dbo].[pingr.copd.exacerbation.rehab]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -191,6 +205,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.htn.undiagnosed.med', GETDATE());
 EXEC	@return_value = [dbo].[pingr.htn.undiagnosed.med]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -199,6 +214,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.htn.undiagnosed.measures', GETDATE());
 EXEC	@return_value = [dbo].[pingr.htn.undiagnosed.measures]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -207,6 +223,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.cvd.stroke.outcome', GETDATE());
 EXEC	@return_value = [dbo].[pingr.cvd.stroke.outcome]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -215,6 +232,7 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Starting pingr.cvd.af.screening', GETDATE());
 EXEC	@return_value = [dbo].[pingr.cvd.af.screening]
 		@refdate = @ReportDate
 IF @return_value != 0
@@ -223,12 +241,15 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] ('Stored procedures completed', GETDATE());
+
 							---------------------------------------------------------------
 							---------CREATE AND POPULATE PATIENT-LEVEL DATA TABLES---------
 							---------------------------------------------------------------
 							--------------i.e. data common to all queries------------------
 							---------------------------------------------------------------
 
+INSERT INTO [pingr.sql.log] ('Starting measures', GETDATE());
 --physiological measures
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.measures]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.measures]
 CREATE TABLE [output.pingr.measures] (PatID int, date date, measure varchar(100), value float, source varchar(20))
@@ -251,6 +272,7 @@ where
 	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
+INSERT INTO [pingr.sql.log] ('Starting contacts', GETDATE());
 --Contacts
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.contacts]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.contacts]
 CREATE TABLE [output.pingr.contacts] (PatID int, date date, event varchar(100))
@@ -296,6 +318,7 @@ select PatID, date,
 			group by s.PatID, EntryDate
 		) sub
 
+INSERT INTO [pingr.sql.log] ('Starting important codes', GETDATE());
 --Important codes
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]
 CREATE TABLE [output.pingr.impCodes] (PatID int, date date, importantCode varchar(100))
@@ -355,6 +378,7 @@ where (ReadCode in (select code from codeGroups where [group] in
 		and PatID in (select PatID from [pingr.copdPatients]))
 	or ReadCode in (select code from codeGroups where [group] in ('strokeQof')) and Source = 'salfordt'
 
+INSERT INTO [pingr.sql.log] ('Starting diagnoses', GETDATE());
 --Diagnoses
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.diagnoses]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.diagnoses]
 CREATE TABLE [output.pingr.diagnoses] (PatID int, date date, diagnosis varchar(100), subcategory varchar(100))
@@ -442,6 +466,7 @@ where
 	)
 and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
+INSERT INTO [pingr.sql.log] ('Starting demographics', GETDATE());
 --Demographics
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.demographics]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.demographics]
 CREATE TABLE [output.pingr.demographics] (PatID int, nhsNumber bigint, age int, sex varchar(100), pracID varchar(1000))
@@ -449,5 +474,6 @@ insert into [output.pingr.demographics]
 select p.patid, n.nhsNumber, YEAR (@ReportDate) - year_of_birth as age, sex, gpcode from dbo.patients p
 inner join patientsNHSNumbers n on n.patid = p.patid
 
+INSERT INTO [pingr.sql.log] ('All done', GETDATE());
 SELECT 0
 RETURN
