@@ -4,6 +4,7 @@ node_modules
 .DS_Store
 *.log
 .idea/
+.vscode/
 index.html.bak
 mod.html
 npm-debug.log*

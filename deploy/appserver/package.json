@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.1.2",
-    "csv-parser": "^1.11.0"
+    "csv-parser": "^1.11.0",
+    "dropbox": "^2.5.2"
   },
   "devDependencies": {
     "heapdump": "^0.3.8"
