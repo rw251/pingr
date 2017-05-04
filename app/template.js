@@ -2,6 +2,7 @@ var log = require('./log'),
   lookup = require('./lookup'),
   base = require('./base'),
   layout = require('./layout'),
+  tutorial = require('./tutorial'),
   overview = require('./views/overview'),
   indicatorView = require('./views/indicator'),
   patientView = require('./views/patient'),
@@ -92,7 +93,7 @@ var template = {
 
       //tutorial system entry point
       $('#tutorialLaunch').off('click').on('click', function(e){
-        introJs().start();
+        tutorial.run();
         e.preventDefault();
       });
     }

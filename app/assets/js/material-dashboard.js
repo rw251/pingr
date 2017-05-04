@@ -37,7 +37,7 @@
 
      if (isWindows && !$('body').hasClass('sidebar-mini')){
         // if we are on windows OS we activate the perfectScrollbar function
-        $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar();
+        $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar({wheelPropagation: true});
         $('.ps-child').perfectScrollbar();
 
         $('html').addClass('perfect-scrollbar-on');

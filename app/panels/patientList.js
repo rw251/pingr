@@ -197,8 +197,8 @@ var pl = {
 
       $('#patient-list-table').floatThead('reflow');
 
-      $('.ps-child').perfectScrollbar();
-      
+      $('.ps-child').perfectScrollbar({wheelPropagation: true});
+
       base.hideLoading();
 
       //base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);

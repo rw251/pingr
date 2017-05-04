@@ -541,8 +541,11 @@
         tooltipLayer.style.marginTop  = '-' + (tooltipOffset.height / 2) + 'px';
 
         if (typeof(helperNumberLayer) != 'undefined' && helperNumberLayer != null) {
-          helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18) + 'px';
-          helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18) + 'px';
+          //original
+          //helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18) + 'px';
+          //helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18) + 'px';
+          helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18 - 11) + 'px';
+          helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18 - 10) + 'px';
         }
 
         break;
@@ -974,7 +977,9 @@
 
       //skip button
       var skipTooltipButton = document.createElement('a');
-      skipTooltipButton.className = 'introjs-button introjs-skipbutton';
+      //skipTooltipButton.className = 'introjs-button introjs-skipbutton';
+      //*bootstrap*
+      skipTooltipButton.className = 'btn btn-sm btn-primary introjs-button introjs-skipbutton';
       _setAnchorAsButton(skipTooltipButton);
       skipTooltipButton.innerHTML = this._options.skipLabel;
 
@@ -1013,32 +1018,35 @@
     nextTooltipButton.removeAttribute('tabIndex');
 
     if (this._currentStep == 0 && this._introItems.length > 1) {
-      nextTooltipButton.className = 'introjs-button introjs-nextbutton';
+
+      //nextTooltipButton.className = 'introjs-button introjs-nextbutton';
+      /*bootstrap*/
+      nextTooltipButton.className = 'btn btn-sm btn-info introjs-button introjs-nextbutton';
 
       if (this._options.hidePrev == true) {
         prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
         nextTooltipButton.className += ' introjs-fullbutton';
       } else {
-        prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-disabled';
+        prevTooltipButton.className = 'btn btn-sm btn-defualt introjs-button introjs-prevbutton introjs-disabled';
       }
 
       prevTooltipButton.tabIndex = '-1';
       skipTooltipButton.innerHTML = this._options.skipLabel;
     } else if (this._introItems.length - 1 == this._currentStep || this._introItems.length == 1) {
       skipTooltipButton.innerHTML = this._options.doneLabel;
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton';
+      prevTooltipButton.className = 'btn btn-sm btn-warning introjs-button introjs-prevbutton';
 
       if (this._options.hideNext == true) {
         nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
         prevTooltipButton.className += ' introjs-fullbutton';
       } else {
-        nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-disabled';
+        nextTooltipButton.className = 'btn btn-sm btn-defualt introjs-button introjs-nextbutton introjs-disabled';
       }
 
       nextTooltipButton.tabIndex = '-1';
     } else {
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton';
-      nextTooltipButton.className = 'introjs-button introjs-nextbutton';
+      prevTooltipButton.className = 'btn btn-sm btn-warning introjs-button introjs-prevbutton';
+      nextTooltipButton.className = 'btn btn-sm btn-info introjs-button introjs-nextbutton';
       skipTooltipButton.innerHTML = this._options.skipLabel;
     }
 
@@ -1570,31 +1578,62 @@
    * @param {Object} element
    * @returns Element's position info
    */
+  // function _getOffset(element) {
+  //   var elementPosition = {};
+  //
+  //   //set width
+  //   elementPosition.width = element.offsetWidth;
+  //
+  //   //set height
+  //   elementPosition.height = element.offsetHeight;
+  //
+  //   //calculate element top and left
+  //   var _x = 0;
+  //   var _y = 0;
+  //   while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
+  //     _x += element.offsetLeft;
+  //     _y += element.offsetTop;
+  //     element = element.offsetParent;
+  //   }
+  //   //set top
+  //   elementPosition.top = _y;
+  //   //set left
+  //   elementPosition.left = _x;
+  //
+  //   return elementPosition;
+  // };
+  //
+  //patched version
   function _getOffset(element) {
-    var elementPosition = {};
+      var elementPosition = {};
 
-    //set width
-    elementPosition.width = element.offsetWidth;
+      //set width
+      elementPosition.width = element.offsetWidth;
 
-    //set height
-    elementPosition.height = element.offsetHeight;
+      //set height
+      elementPosition.height = element.offsetHeight;
 
-    //calculate element top and left
-    var _x = 0;
-    var _y = 0;
-    while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
-      _x += element.offsetLeft;
-      _y += element.offsetTop;
-      element = element.offsetParent;
-    }
-    //set top
-    elementPosition.top = _y;
-    //set left
-    elementPosition.left = _x;
+      //calculate element top and left
+      /* ( Comment old way to get the offsets )
+      var _x = 0;
+      var _y = 0;
+      while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
+          _x += element.offsetLeft;
+          _y += element.offsetTop;
+          element = element.offsetParent;
+      }
+      //set top
+      elementPosition.top = _y;
+      //set left
+      elementPosition.left = _x;
+      */
 
-    return elementPosition;
-  };
+      var clientRect = element.getBoundingClientRect();
+      elementPosition.top = clientRect.top;
+      elementPosition.left = clientRect.left;
 
+      return elementPosition;
+  }
   /**
    * Gets the current progress percentage
    *

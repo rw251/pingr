@@ -1,3 +1,5 @@
+include ../mixins/tutorial-text.jade
+
 .loading-container
   .loading
     .l1
@@ -8,11 +10,11 @@
       div
     .l4
       div
-section#main
+//- *bTut*
+section#main(data-intro= btut_element1 data-position="bottom-middle-aligned" data-step="3")
     nav.navbar.navbar-default(role='navigation')
       .container-fluid
-        //ul.nav.navbar-nav
-        ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
+        ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist')
           li.logo-container
             .logo
               img(src="images/icons/apple-icon.png")
@@ -30,7 +32,7 @@ section#main
           li(role='presentation', data-id='actions')
             a(href='#agreedactions', data-href='#agreedactions', role='button') 
               .btn ACTION PLANS
-        ul.nav.navbar-nav.navbar-right
+        ul.nav.navbar-nav.navbar-right#system-buttons
           li
             //TODO *b* sort out the spacing properly!
             //a( href='' style='margin-top:-8px' onClick)
@@ -79,4 +81,4 @@ section#main
                   |  Logout
           li
             a
-              #suggestionsModalLauncher.btn.btn-success(data-intro="hello world! *bTut*" data-step="2") Send a comment
+              #suggestionsModalLauncher.btn.btn-success(data-intro="hello world! *bTut*" data-step="4") Send a comment

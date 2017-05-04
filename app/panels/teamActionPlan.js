@@ -14,7 +14,7 @@ var tap = {
   show: function(panel, title, pathwayId, pathwayStage, standard) {
     panel.html(tap.create(title));
     tap.wireUp(pathwayId, pathwayStage, standard);
-    $('.ps-child').perfectScrollbar();
+    $('.ps-child').perfectScrollbar({wheelPropagation: true});
   },
 
   updateAction: function(action) {
@@ -456,7 +456,7 @@ var tap = {
 
     tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
 
-    $('.ps-child').perfectScrollbar();
+    $('.ps-child').perfectScrollbar({wheelPropagation: true});
   },
 
   launchModal: function(label, value, rejectedReason, rejectedReasonText, isUndo, callbackOnSave, callbackOnCancel, callbackOnUndo) {

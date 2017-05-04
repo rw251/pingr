@@ -1,4 +1,5 @@
 include ../partials/head.jade
+include ../mixins/tutorial-text.jade
 //note this is the ORIGINAL header - it will be removed entirely in the new order
 //include ../partials/header.jade
 
@@ -20,6 +21,8 @@ include ../partials/head.jade
                   .card-header-text
                     h4.card-title Agreed actions
                     p.category
+                    +thing("stuff")
+                    +thing("words")
                       //*review* do something about this text
                       | To see more suggested improvement actions, select a clinical area from the menu on the left 
                       i.fa.fa-hand-o-left
@@ -83,7 +86,7 @@ include ../partials/head.jade
           .tab-content
             #title-row.row.title-row
               .col-sm-6
-                span#title-left(data-intro="Ay up?! *bTut*" data-step="3")
+                span#title-left(data-intro= "Wowzer *bTut*" data-step="5")
               .col-sm-6 
                 .col-sm-6.col-sm-offset-6
                 span#title-right(style='width:100%')
