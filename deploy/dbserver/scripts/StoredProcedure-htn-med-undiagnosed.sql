@@ -1,3 +1,6 @@
+--v2 5/3/17
+--changed name to 'casefinding'
+
 									--TO RUN AS STORED PROCEDURE--
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.htn.undiagnosed.med') DROP PROCEDURE [pingr.htn.undiagnosed.med];
 GO
@@ -944,14 +947,14 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --overview tab
-('htn.undiagnosed.med','name','Undiagnosed hypertension - medication'), --overview table name
-('htn.undiagnosed.med','tabText','HTN Diagnosis - Medication'), --indicator tab text
+('htn.undiagnosed.med','name','Hypertension Casefinding 2: Anti-Hypertensive medication'), --overview table name
+('htn.undiagnosed.med','tabText','HTN Casefinding 2: Medication'), --indicator tab text
 ('htn.undiagnosed.med','description', --'show more' on overview tab
-	'<strong>Definition:</strong> Patients prescribed anti-hypertensive medication that are on the hypertension register. (NB: Some patients may have these medications prescribed for reasons other than hypertension.)<br>' + 
+	'<strong>Definition:</strong> Patients prescribed anti-hypertensive medication that are on the hypertension register. <strong>Patients <i>not</i> on the register <i>may</i> have undiagnosed hypertension</strong>. (Though some may have these medications prescribed for other reasons.)<br>' + 
 	'<strong>Why this is important:</strong> The recorded prevalence of hypertension in Salford is lower than expected. Finding undiagnosed patients can help provide better care and increase your QOF scores.<br>'),
 --indicator tab
 --summary text
-('htn.undiagnosed.med','tagline','of patients currently prescribed anti-hypertensive medication are on the hypertension register. (NB: Some may have these medications prescribed for reasons other than hypertension.)'),
+('htn.undiagnosed.med','tagline','of patients currently prescribed anti-hypertensive medication are on the hypertension register. <strong>Patients <i>not</i> on the register <i>may</i> have undiagnosed hypertension</strong>. (Though some may have these medications prescribed for other reasons.)'),
 ('htn.undiagnosed.med','positiveMessage', --tailored text
 	case 
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
