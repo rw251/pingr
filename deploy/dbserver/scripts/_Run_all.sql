@@ -274,6 +274,7 @@ where
 
 INSERT INTO [pingr.sql.log] VALUES ('Starting contacts', GETDATE());
 --Contacts
+-- RW: Pre-optimisation 0:49. Post-optimisation 0:16
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.contacts]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.contacts]
 CREATE TABLE [output.pingr.contacts] (PatID int, date date, event varchar(100))
 DECLARE	@FACE int;
@@ -320,63 +321,70 @@ select PatID, date,
 
 INSERT INTO [pingr.sql.log] VALUES ('Starting important codes', GETDATE());
 --Important codes
+-- RW: Pre-optimisation 1:01. Post-optimisation <0:01
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.impCodes]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.impCodes]
 CREATE TABLE [output.pingr.impCodes] (PatID int, date date, importantCode varchar(100))
 insert into [output.pingr.impCodes](PatID, date, importantCode)
-select PatID, EntryDate as date,
-	case
-		when ReadCode in (select code from codeGroups where [group] = 'pal') then 'Palliative'
-		when ReadCode in (select code from codeGroups where [group] = 'frail') then 'Frail'
-		when ReadCode in (select code from codeGroups where [group] = 'housebound') then 'Housebound'
-		when ReadCode in (select code from codeGroups where [group] = 'bedridden') then 'Bedridden'
-		when ReadCode in (select code from codeGroups where [group] = 'houseboundPermEx') then 'Not housebound'
-		when ReadCode in (select code from codeGroups where [group] = 'ckdInvite') then 'CKD invite'
+select distinct PatID, EntryDate, case
+		when [group] = 'pal' then 'Palliative'
+		when [group] = 'frail' then 'Frail'
+		when [group] = 'housebound' then 'Housebound'
+		when [group] = 'bedridden' then 'Bedridden'
+		when [group] = 'houseboundPermEx' then 'Not housebound'
+		when [group] = 'ckdInvite' then 'CKD invite'
 		when ReadCode in ('9RX..') then 'Urine specimen declined'
-		when ReadCode in (select code from codeGroups where [group] = 'ckdTempEx') then 'CKD exception code'
-		when ReadCode in (select code from codeGroups where [group] = 'bpTempEx') then 'BP exception code'
-		when ReadCode in (select code from codeGroups where [group] = 'posturalHypo') then 'Postural hypotension'
-		when ReadCode in (select code from codeGroups where [group] in ('asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs')) then 'Asthma-related code'
-		when ReadCode in (select code from codeGroups where [group] = 'pacemakerDefib') then 'Pacemaker or defibrillator'
-		when ReadCode in (select code from codeGroups where [group] = 'sickSinus') then 'Sick sinus syndrome'
-		when ReadCode in (select code from codeGroups where [group] = '2/3heartBlock') then 'Heart block'
-		when ReadCode in (select code from codeGroups where [group] = 'ASrepair') then 'Aortic repair'
-		when ReadCode in (select code from codeGroups where [group] = 'loopDiurAllergyAdverseReaction') then 'Loop Diuretic allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'alphaAllergyAdverseReaction') then 'Alpha Blocker allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'PotSparDiurAllergyAdverseReaction') then 'Potassium Sparing Diuretic allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'BBallergyAdverseReaction') then 'Beta Blocker allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'CCBallergyAdverseReaction') then 'Calcium Channel Blocker allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'ARBallergyAdverseReaction') then 'ARB allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'ACEIallergyAdverseReaction') then 'ACE Inhibitor  diuretic allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'thiazideAllergyAdverseReaction') then 'Thiazide Diuretic allergy or adverse reaction'
-		when ReadCode in (select code from codeGroups where [group] = 'copdTempEx') then 'COPD exception code'
-		when ReadCode in (select code from codeGroups where [group] = 'pulRehabTempExSs') then 'Pulmonary rehab exception code'
-		when ReadCode in (select code from codeGroups where [group] = 'mrc') then 'MRC breathlessness scale'
-		when ReadCode in (select code from codeGroups where [group] in ('CopdHosp','copdExacNonSs','copdExacSs')) then 'COPD exacerbation - coded'
-		when	(((ReadCode in ('fe62.','fe6i.','fe6j.')and((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%')))
-				or(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%')))
-				or(ReadCode = 'fe6t.' and ((CodeUnits like '%3%') or(CodeUnits like '%three%'))))
-				or(ReadCode in ('e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
-					'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.')))
-		and PatID in (select PatID from [pingr.copdPatients])
-				then 'COPD exacerbation - uncoded'
-		when ReadCode in (select code from codeGroups where [group] = 'pulRehabOfferedSs') then 'Pulmonary rehab offered'
-		when ReadCode in (select code from codeGroups where [group] in ('asbp','adbp')) then 'Ambulatory BP reading'
-		when ReadCode in (select code from codeGroups where [group] in ('strokeQof')) and Source = 'salfordt' then '?Stroke in hospital'
-	end as importantCode from SIR_ALL_Records
-where (ReadCode in (select code from codeGroups where [group] in
-	('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
+		when [group] = 'ckdTempEx' then 'CKD exception code'
+		when [group] = 'bpTempEx' then 'BP exception code'
+		when [group] = 'posturalHypo' then 'Postural hypotension'
+		when [group] in ('asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs') then 'Asthma-related code'
+		when [group] = 'pacemakerDefib' then 'Pacemaker or defibrillator'
+		when [group] = 'sickSinus' then 'Sick sinus syndrome'
+		when [group] = '2/3heartBlock' then 'Heart block'
+		when [group] = 'ASrepair' then 'Aortic repair'
+		when [group] = 'loopDiurAllergyAdverseReaction' then 'Loop Diuretic allergy or adverse reaction'
+		when [group] = 'alphaAllergyAdverseReaction' then 'Alpha Blocker allergy or adverse reaction'
+		when [group] = 'PotSparDiurAllergyAdverseReaction' then 'Potassium Sparing Diuretic allergy or adverse reaction'
+		when [group] = 'BBallergyAdverseReaction' then 'Beta Blocker allergy or adverse reaction'
+		when [group] = 'CCBallergyAdverseReaction' then 'Calcium Channel Blocker allergy or adverse reaction'
+		when [group] = 'ARBallergyAdverseReaction' then 'ARB allergy or adverse reaction'
+		when [group] = 'ACEIallergyAdverseReaction' then 'ACE Inhibitor  diuretic allergy or adverse reaction'
+		when [group] = 'thiazideAllergyAdverseReaction' then 'Thiazide Diuretic allergy or adverse reaction'
+		when [group] = 'copdTempEx' then 'COPD exception code'
+		when [group] = 'pulRehabTempExSs' then 'Pulmonary rehab exception code'
+		when [group] = 'mrc' then 'MRC breathlessness scale'
+		when [group] in ('CopdHosp','copdExacNonSs','copdExacSs') then 'COPD exacerbation - coded'
+		when [group] = 'pulRehabOfferedSs' then 'Pulmonary rehab offered'
+		when [group] in ('asbp','adbp') then 'Ambulatory BP reading'
+	end as importantCode
+from SIR_ALL_Records s inner join codeGroups cg on cg.code = s.ReadCode
+where [group] in ('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
 	'asthmaOther', 'asthmaSpiro', 'asthmaReview', 'asthmaRcp6', 'asthmaDrugs', 'pacemakerDefib',
 	'sickSinus', '2/3heartBlock', 'ASrepair', 'loopDiurAllergyAdverseReaction',
 	'alphaAllergyAdverseReaction', 'PotSparDiurAllergyAdverseReaction', 'BBallergyAdverseReaction', 'CCBallergyAdverseReaction',
 	'ARBallergyAdverseReaction', 'ACEIallergyAdverseReaction', 'thiazideAllergyAdverseReaction', 'copdTempEx', 'pulRehabTempExSs',
-	'mrc', 'CopdHosp','copdExacNonSs','copdExacSs','pulRehabOfferedSs','asbp','adbp')))
-	or	((((ReadCode in ('fe62.','fe6i.','fe6j.')and((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%')))
-				or(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%')))
-				or(ReadCode = 'fe6t.' and ((CodeUnits like '%3%') or(CodeUnits like '%three%'))))
-				or(ReadCode in ('e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
-					'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.')))
-		and PatID in (select PatID from [pingr.copdPatients]))
-	or ReadCode in (select code from codeGroups where [group] in ('strokeQof')) and Source = 'salfordt'
+	'mrc', 'CopdHosp','copdExacNonSs','copdExacSs','pulRehabOfferedSs','asbp','adbp')
+
+union
+
+select distinct s.PatID, EntryDate, 'COPD exacerbation - uncoded' from SIR_ALL_Records s
+	inner join [pingr.copdPatients] cp on cp.PatID = s.PatID
+where	(
+				(ReadCode in ('fe62.','fe6i.','fe6j.') and ((CodeUnits like '%8%')or(CodeUnits like '%eight%') or(CodeUnits like '%6%') or(CodeUnits like '%six%')))
+				or
+				(ReadCode = 'fe6s.' and ((CodeUnits like '%2%') or(CodeUnits like '%two%')))
+				or
+				(ReadCode = 'fe6t.' and ((CodeUnits like '%3%') or(CodeUnits like '%three%')))
+			)
+			or
+			(
+				ReadCode in ('e311.','e312.','e315.','e316.','e3zF.','e3zG.','e3zm.','e3zn.','e3z5.','e3z6.','e3zA.',
+				'e3zB.','e3zE.','e3zF.','e3zG.','e3zb.','e3zc.','e3zk.','e3zm.','e3zn.','e3zo.','e3zq.','e3zu.','e31b.','e758.','e75z.','e752.','e757.')
+			)
+
+union
+select distinct PatID, EntryDate, '?Stroke in hospital' from SIR_ALL_Records s
+	inner join codeGroups cg on cg.code = s.ReadCode
+where [group] in ('strokeQof') and Source = 'salfordt'
 
 INSERT INTO [pingr.sql.log] VALUES ('Starting diagnoses', GETDATE());
 --Diagnoses

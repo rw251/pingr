@@ -29,6 +29,7 @@ SET NOCOUNT ON
 
 --all patients currently alive
 --has to come from patients table not sir all records as some patients may have no data in sir
+INSERT INTO [pingr.sql.log] VALUES ('    - allPats', GETDATE());
 IF OBJECT_ID('tempdb..#allPats') IS NOT NULL DROP TABLE #allPats
 CREATE TABLE #allPats (PatID int);
 insert into #allPats 
@@ -36,19 +37,22 @@ select patid from patients
 where dead = 0 
 
 --latest any code
-IF OBJECT_ID('tempdb..#latestAnyCode') IS NOT NULL DROP TABLE #latestAnyCode
-CREATE TABLE #latestAnyCode (PatID int, latestAnyCodeDate date, latestAnyCode varchar(512));
-insert into #latestAnyCode
-select s.PatID, latestAnyCodeDate, MAX(Rubric) from SIR_ALL_Records as s
-	inner join (
-		select PatID, MAX(EntryDate) as latestAnyCodeDate from SIR_ALL_Records
-		where PatID in (select PatID from #allPats)
-		and EntryDate < @refdate
-		group by PatID
-	) sub on sub.PatID = s.PatID and sub.latestAnyCodeDate = s.EntryDate
-group by s.PatID, latestAnyCodeDate
+-- RW never used?
+-- INSERT INTO [pingr.sql.log] VALUES ('    - latest any code', GETDATE());
+-- IF OBJECT_ID('tempdb..#latestAnyCode') IS NOT NULL DROP TABLE #latestAnyCode
+-- CREATE TABLE #latestAnyCode (PatID int, latestAnyCodeDate date, latestAnyCode varchar(512));
+-- insert into #latestAnyCode
+-- select s.PatID, latestAnyCodeDate, MAX(Rubric) from SIR_ALL_Records as s
+-- 	inner join (
+-- 		select PatID, MAX(EntryDate) as latestAnyCodeDate from SIR_ALL_Records
+-- 		where PatID in (select PatID from #allPats)
+-- 		and EntryDate < @refdate
+-- 		group by PatID
+-- 	) sub on sub.PatID = s.PatID and sub.latestAnyCodeDate = s.EntryDate
+-- group by s.PatID, latestAnyCodeDate
 
 --latest dead code
+INSERT INTO [pingr.sql.log] VALUES ('    - latest dead code', GETDATE());
 IF OBJECT_ID('tempdb..#latestDeadCode') IS NOT NULL DROP TABLE #latestDeadCode
 CREATE TABLE #latestDeadCode (PatID int, latestDeadCodeDate date, latestDeadCode varchar(512));
 insert into #latestDeadCode
@@ -64,6 +68,7 @@ where ReadCode in (select code from codeGroups where [group] = 'dead')
 group by s.PatID, latestDeadCodeDate
 
 --latest dereg code
+INSERT INTO [pingr.sql.log] VALUES ('    - latest dereg code', GETDATE());
 IF OBJECT_ID('tempdb..#latestDeregCode') IS NOT NULL DROP TABLE #latestDeregCode
 CREATE TABLE #latestDeregCode (PatID int, latestDeregCodeDate date, latestDeregCode varchar(512));
 insert into #latestDeregCode
@@ -79,6 +84,7 @@ where ReadCode in (select code from codeGroups where [group] = 'deRegistered')
 group by s.PatID, latestDeregCodeDate
 
 --number of ANY codes AFTER a dereg code
+INSERT INTO [pingr.sql.log] VALUES ('    - number of ANY codes AFTER a dereg code', GETDATE());
 IF OBJECT_ID('tempdb..#noCodesAfterDeregCode') IS NOT NULL DROP TABLE #noCodesAfterDeregCode
 CREATE TABLE #noCodesAfterDeregCode (PatID int, noCodesAfterDeregCode int);
 insert into #noCodesAfterDeregCode
@@ -88,6 +94,7 @@ where EntryDate > latestDeregCodeDate
 group by a.PatID
 
 --practice list AS OF TODAY
+INSERT INTO [pingr.sql.log] VALUES ('    - practice list AS OF TODAY', GETDATE());
 IF OBJECT_ID('dbo.practiceList', 'U') IS NOT NULL DROP TABLE dbo.practiceList;
 CREATE TABLE practiceList (PatID int, pracID varchar(1000), age int, gender varchar(1));
 insert into practiceList
@@ -101,6 +108,7 @@ where
 --	and (latestDeregCode is null or noCodesAfterDeregCode > 0) --either no deregistered code, or they have codes after their dereg code
 	
 --practice list sizes AS OF TODAY
+INSERT INTO [pingr.sql.log] VALUES ('    - practice list sizes AS OF TODAY', GETDATE());
 IF OBJECT_ID('dbo.practiceListSizes', 'U') IS NOT NULL DROP TABLE dbo.practiceListSizes
 CREATE TABLE practiceListSizes (practiceId varchar(1000), practiceListSize int);
 insert into practiceListSizes 
@@ -115,6 +123,7 @@ group by pracID
 -->=0.24 = moderate
 -->=0.12 = mild
 -->=0.36 = severe
+INSERT INTO [pingr.sql.log] VALUES ('    - eFI v3', GETDATE());
 IF OBJECT_ID('dbo.eFI', 'U') IS NOT NULL DROP TABLE dbo.eFI;
 CREATE TABLE eFI (PatID int, eFI float);
 insert into eFI
@@ -191,6 +200,7 @@ and patid in (select PatID from practiceList)
 group by PatID
 
 --latestPalCode
+INSERT INTO [pingr.sql.log] VALUES ('    - latestPalCode', GETDATE());
 IF OBJECT_ID('dbo.latestPalCode', 'U') IS NOT NULL DROP TABLE dbo.latestPalCode
 CREATE TABLE latestPalCode (PatID int, latestPalCodeDate date, latestPalCode varchar(512));
 insert into latestPalCode
@@ -205,6 +215,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestPalCodeDate
 
 --latestPalPermExCode
+INSERT INTO [pingr.sql.log] VALUES ('    - latestPalPermExCode', GETDATE());
 IF OBJECT_ID('dbo.latestPalPermExCode', 'U') IS NOT NULL DROP TABLE dbo.latestPalPermExCode
 CREATE TABLE latestPalPermExCode (PatID int, latestPalPermExCodeDate date, latestPalPermExCode varchar(512));
 insert into latestPalPermExCode
@@ -219,6 +230,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestPalPermExCodeDate
 
 --latestAnnualReviewCode
+INSERT INTO [pingr.sql.log] VALUES ('    - latestAnnualReviewCode', GETDATE());
 IF OBJECT_ID('dbo.latestAnnualReviewCode', 'U') IS NOT NULL DROP TABLE dbo.latestAnnualReviewCode
 CREATE TABLE latestAnnualReviewCode (PatID int, latestAnnualReviewCodeDate date, latestAnnualReviewCode varchar(512));
 insert into latestAnnualReviewCode
@@ -241,6 +253,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestAnnualReviewCodeDate
 
 --latestPrimCareContact
+INSERT INTO [pingr.sql.log] VALUES ('    - latestPrimCareContact', GETDATE());
 IF OBJECT_ID('dbo.latestPrimCareContact', 'U') IS NOT NULL DROP TABLE dbo.latestPrimCareContact
 CREATE TABLE latestPrimCareContact (PatID int, latestPrimCareContactDate date, latestPrimCareContactRubric varchar(512));
 insert into latestPrimCareContact
@@ -257,6 +270,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestPrimCareContactDate
 
 --latestFluVacc
+INSERT INTO [pingr.sql.log] VALUES ('    - latestFluVacc', GETDATE());
 IF OBJECT_ID('dbo.latestFluVacc', 'U') IS NOT NULL DROP TABLE dbo.latestFluVacc
 CREATE TABLE latestFluVacc (PatID int, latestFluVaccDate date, latestFluVaccRubric varchar(512));
 insert into latestFluVacc
@@ -273,6 +287,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestFluVaccDate
 
 --latestFluVaccTempEx
+INSERT INTO [pingr.sql.log] VALUES ('    - latestFluVaccTempEx', GETDATE());
 IF OBJECT_ID('dbo.latestFluVaccTempEx', 'U') IS NOT NULL DROP TABLE dbo.latestFluVaccTempEx
 CREATE TABLE latestFluVaccTempEx (PatID int, latestFluVaccTempExDate date, latestFluVaccTempExRubric varchar(512));
 insert into latestFluVaccTempEx
@@ -289,6 +304,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestFluVaccTempExDate
 
 --latestFluVaccPermEx
+INSERT INTO [pingr.sql.log] VALUES ('    - latestFluVaccPermEx', GETDATE());
 IF OBJECT_ID('dbo.latestFluVaccPermEx','U') IS NOT NULL DROP TABLE dbo.latestFluVaccPermEx
 CREATE TABLE latestFluVaccPermEx (PatID int, latestFluVaccPermExDate date, latestFluVaccPermExRubric varchar(512));
 insert into latestFluVaccPermEx
@@ -305,6 +321,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestFluVaccPermExDate
 
 --latestF2fContact
+INSERT INTO [pingr.sql.log] VALUES ('    - latestF2fContact', GETDATE());
 IF OBJECT_ID('dbo.latestF2fContact', 'U') IS NOT NULL DROP TABLE dbo.latestF2fContact
 CREATE TABLE latestF2fContact (PatID int, latestF2fContactDate date, latestF2fContactRubric varchar(512));
 insert into latestF2fContact
@@ -321,6 +338,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestF2fContactDate
 
 --latestNonF2fContact
+INSERT INTO [pingr.sql.log] VALUES ('    - latestNonF2fContact', GETDATE());
 IF OBJECT_ID('dbo.latestNonF2fContact', 'U') IS NOT NULL DROP TABLE dbo.latestNonF2fContact
 CREATE TABLE latestNonF2fContact (PatID int, latestNonF2fContactDate date, latestNonF2fContactRubric varchar(512));
 insert into latestNonF2fContact
@@ -337,6 +355,7 @@ and s.PatID in (select PatID from practiceList)
 group by s.PatID, latestNonF2fContactDate
 
 --noOfMedContactsInLastYear
+INSERT INTO [pingr.sql.log] VALUES ('    - noOfMedContactsInLastYear', GETDATE());
 IF OBJECT_ID('dbo.noOfMedContactsInLastYear', 'U') IS NOT NULL DROP TABLE dbo.noOfMedContactsInLastYear
 CREATE TABLE noOfMedContactsInLastYear (PatID int, noOfMedContactsInLastYear int);
 insert into noOfMedContactsInLastYear
@@ -348,6 +367,7 @@ and PatID in (select PatID from practiceList)
 group by PatID
 
 --noOfF2fContactsInLastYear
+INSERT INTO [pingr.sql.log] VALUES ('    - noOfF2fContactsInLastYear', GETDATE());
 IF OBJECT_ID('dbo.noOfF2fContactsInLastYear', 'U') IS NOT NULL DROP TABLE dbo.noOfF2fContactsInLastYear
 CREATE TABLE noOfF2fContactsInLastYear (PatID int, noOfF2fContactsInLastYear int);
 insert into noOfF2fContactsInLastYear
@@ -359,6 +379,7 @@ and PatID in (select PatID from practiceList)
 group by PatID
 
 --noOfAnnualreviewsInLast2Years
+INSERT INTO [pingr.sql.log] VALUES ('    - noOfAnnualreviewsInLast2Years', GETDATE());
 IF OBJECT_ID('dbo.noOfAnnualreviewsInLast2Years') IS NOT NULL DROP TABLE dbo.noOfAnnualreviewsInLast2Years
 CREATE TABLE noOfAnnualreviewsInLast2Years (PatID int, noOfAnnualreviewsInLast2Years int);
 insert into noOfAnnualreviewsInLast2Years
