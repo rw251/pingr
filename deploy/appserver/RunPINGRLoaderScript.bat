@@ -76,7 +76,8 @@ REM extract existing indicator data
 mongoexport --db pingr --collection indicators --out %IMPORT_DIR%existingIndicators.json --jsonArray
 
 REM run the loader
-node process.js
+REM Based on this to stop the HEAP errors: http://stackoverflow.com/questions/38558989/node-js-heap-out-of-memory
+node --max_old_space_size=4096 process.js
 IF ERRORLEVEL 1 (
 	GOTO :nodefailed
 )
