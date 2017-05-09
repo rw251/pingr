@@ -99,7 +99,7 @@ REM move the files
 mongoimport --db pingr --collection text --drop data/text.json --jsonArray
 mongoimport --db pingr --collection indicators --drop data/indicators.json --jsonArray
 mongoimport --db pingr --collection patients --drop data/patients.json
-mongoimport --db pingr --collection practices --drop in/practices.json --jsonArray
+mongoimport --db pingr --collection practices --drop in/practices.json
 
 cscript sendmail.vbs "All files successfully loaded into mongo"
 
