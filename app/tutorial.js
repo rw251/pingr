@@ -2,6 +2,25 @@ var tutorial = {
   run: function(){
     var intro = introJs();
     intro.setOptions({
+      /*{
+      /// ---- demostration of contents ---- ///
+        // this is the target element - this needs to be as targeted as possible and I wouyld suggest a unique label - hence #xxx (id) not .xxx (class)
+        e.g.
+        element: document.querySelector('#system-buttons'),
+        // this is the positon of the tutorial object relation to the target object
+        e.g.
+        position: "bottom-left-aligned",
+        //this is the text
+        //note: tp make it a manageable size for editiong and review split lines up using +
+        //      split lines do not corrolate with carriage returns in the text - you need to use <br/> objects for this
+        //      in case this isn't obvious, you can use full html in these objects
+        e.g.
+        intro: "<h2 class='text-center'>System Buttons</h2><br/>"
+              +"<h4>These buttons are system level buttons<br/>"
+              +"They are used to let you log out, change your password or contact the admins to help you out!"
+              +"</h4>"
+      },
+      */
       steps: [
         {
           intro: "<h2 class='text-center'>Hello!</h2>"
@@ -78,18 +97,100 @@ var tutorial = {
         {
           element: document.querySelector('#teamSuggestionListCard .card-content'),
           position: "right",
-          intro: "<h2 class='text-center'>Suggested Actions</h2><br/>"
+          intro: "<h2 class='text-center'>TODO - TUTORIAL CARD IN PROGRESS</h2><br/>"
                 +"teamActionCard<br/>"
                 +"<br/>"
                 +"</h4>"
         },
         {
-          intro: "<h1 class='text-center'>-- E N D --</h1>"
+          element: document.querySelector('#overviewTableCard'),
+          position: "left",
+          intro: "<h2 class='text-center'>TODO - TUTORIAL CARD IN PROGRESS</h2><br/>"
         }
       ]
     });
-    intro.start();
-  }
-};
 
+    //this makes sure that the object that we are interested in is always in view
+    intro.onchange(function(targetElement){
+        target = $(targetElement);
+        floatPane = $('div.introjsFloatingElement');
+        if(target[0] != floatPane[0])
+        {
+          $('.main-panel-wide').scrollTop($(targetElement).offset().top - $('.main-panel-wide').offset().top + $('.main-panel-wide').scrollTop());
+          //$('.main-panel-wide').animate({scrollTop: $(targetElement).offset().top - $('.main-panel-wide').offset().top + $('.main-panel-wide').scrollTop()});
+        }
+    })
+
+    intro.setOption('doneLabel', 'Next page')
+
+    intro.oncomplete(function() {
+         window.location.href = '#indicators?tuttip=a1p1';
+
+         //tutorial.runIndicator();
+    });
+
+    //this function runs after the tutorial session closes
+    intro.onexit(function(){
+      //remove overflow prevention at the end of the tutorial
+      $('body').css({overflow: "auto"});
+    });
+
+    //apply hidden overflow to body for the duration of tutorial session
+    $('body').css({overflow: "hidden"});
+
+    //window.location.href = '#overview';
+    //starts the tutorial
+    intro.start();
+  },
+  runIndicator: function(){
+
+      var intro = introJs();
+      intro.setOptions({
+        steps: [
+          {
+            element: document.querySelector('#title-row'),
+            position: "bottom",
+            intro: "<h2 class='text-center'>You made it!</h2>"
+          }
+        ]
+      });
+
+      intro.onexit(function(){
+        //remove overflow prevention at the end of the tutorial
+        $('body').css({overflow: "auto"});
+        window.location.href = '#overview';
+      });
+
+      intro.start();
+    },
+    runPatinet: function(){
+
+        var nextIntro = introJs();
+        intro.setOptions({
+          steps: [
+            {
+              element: document.querySelector('#title-row'),
+              position: "bottom",
+              intro: "<h2 class='text-center'>You made it!</h2>"
+            }
+          ]
+        });
+        intro.start();
+      },
+      runActionPlan: function(){
+
+          var nextIntro = introJs();
+          intro.setOptions({
+            steps: [
+              {
+                element: document.querySelector('#title-row'),
+                position: "bottom",
+                intro: "<h2 class='text-center'>You made it!</h2>"
+              }
+            ]
+          });
+          intro.start();
+        }
+  //}
+};
 module.exports = tutorial;

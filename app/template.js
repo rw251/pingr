@@ -81,7 +81,7 @@ var template = {
 
       } else {
         //if screen not in correct segment then select it
-        alert("shouldn't get here");
+        //alert("shouldn't get here");
 
         base.wireUpTooltips();
       }
@@ -96,6 +96,12 @@ var template = {
         tutorial.run();
         e.preventDefault();
       });
+
+      $(document).ready(function(){
+      if (RegExp('tuttip=a1p1', 'gi').test(window.location.hash.split("?")[1])) {
+        tutorial.runIndicator();
+      }
+    });
     }
 
     lookup.currentUrl = hash;
