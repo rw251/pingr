@@ -28,6 +28,7 @@ sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-CKD-Undiagnosed.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-ckdAndDm-bp-control.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-ckdAndProt-bp-control.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-copd.exacerbation.rehab.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-cvd.af.screening.acute.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-cvd.af.screening.nice.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-cvd.stroke.outcome.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-bp-control.sql
