@@ -241,6 +241,15 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] VALUES ('Starting pingr.cvd.af.screeningAcute', GETDATE());
+EXEC	@return_value = [dbo].[pingr.cvd.af.screeningAcute]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
 INSERT INTO [pingr.sql.log] VALUES ('Stored procedures completed', GETDATE());
 
 							---------------------------------------------------------------
@@ -258,17 +267,18 @@ select PatID, EntryDate as date,
 	case
 		when ReadCode in (select code from codeGroups where [group] = 'egfr') then 'eGFR'
 		when ReadCode in (select code from codeGroups where [group] = 'acr') then 'ACR'
-		when ReadCode in (select code from codeGroups where [group] = 'sbp') and Source != 'salfordt' then 'SBP'
-		when ReadCode in (select code from codeGroups where [group] = 'dbp') and Source != 'salfordt' then 'DBP'
+		when (ReadCode in (select code from codeGroups where [group] in ('sbp') and Source != 'salfordt')) or (ReadCode in (select code from codeGroups where [group] in ('asbp') and CodeValue is not NULL))  then 'SBP'
+		when (ReadCode in (select code from codeGroups where [group] in ('sdp') and Source != 'salfordt')) or (ReadCode in (select code from codeGroups where [group] in ('adbp') and CodeValue is not NULL))  then 'DBP'
 		when ReadCode in (select code from codeGroups where [group] = 'fev1') and Source != 'salfordt' then 'FEV1'
 		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source != 'salfordt' then 'strokeHosp'
-		when ReadCode in (select code from codeGroups where [group] = 'pulseRhythm') and Source != 'salfordt' then 'pulseRhythm'
+		when ReadCode in (select code from codeGroups where [group] = 'pulseRhythm') then 'pulseRhythm'
+		when ReadCode in (select code from codeGroups where [group] in ('tiaQof','strokeIsch','cp', 'syncope', 'palps', 'sob', 'hfQof')) and Source != 'salfordt' then 'latestSx'
 	end as measure,
 CodeValue as value, Source from SIR_ALL_Records
 where
 	(
-		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof')) and CodeValue is not NULL)
-		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof','pulseRhythm', 'sbp', 'dbp','fev1'))and Source != 'salfordt')
+		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof','pulseRhythm', 'asbp', 'adbp')) and CodeValue is not NULL)
+		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof', 'sbp', 'dbp', 'fev1', 'tiaQof','strokeIsch','cp', 'syncope', 'palps', 'sob', 'hfQof'))and Source != 'salfordt')
 	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
@@ -355,6 +365,11 @@ select distinct PatID, EntryDate, case
 		when [group] in ('CopdHosp','copdExacNonSs','copdExacSs') then 'COPD exacerbation - coded'
 		when [group] = 'pulRehabOfferedSs' then 'Pulmonary rehab offered'
 		when [group] in ('asbp','adbp') then 'Ambulatory BP reading'
+		when [group] = 'cp' and Source != 'salfordt' then 'Chest pain'
+		when [group] = 'syncope' and Source != 'salfordt' then 'Syncope or dizziness'
+		when [group] = 'palps' and Source != 'salfordt' then 'Palpitations'
+		when [group] = 'sob' and Source != 'salfordt' then 'Shortness of breath'
+		when [group] = 'pulseRhythm' and Source != 'salfordt' then 'Pulse rhythm'
 	end as importantCode
 from SIR_ALL_Records s inner join codeGroups cg on cg.code = s.ReadCode
 where [group] in ('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
@@ -363,6 +378,7 @@ where [group] in ('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx',
 	'alphaAllergyAdverseReaction', 'PotSparDiurAllergyAdverseReaction', 'BBallergyAdverseReaction', 'CCBallergyAdverseReaction',
 	'ARBallergyAdverseReaction', 'ACEIallergyAdverseReaction', 'thiazideAllergyAdverseReaction', 'copdTempEx', 'pulRehabTempExSs',
 	'mrc', 'CopdHosp','copdExacNonSs','copdExacSs','pulRehabOfferedSs','asbp','adbp')
+	or ([group] in ('cp','syncope','palps','sob', 'pulseRhythm') and Source != 'salfordt')
 
 union
 

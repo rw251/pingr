@@ -1,3 +1,6 @@
+--v4 12/5/17
+--removed reasons from pt-level actions so no duplication with other AF casefiding indicator
+
 --v3 18/4/17
 --enddate changed to 31/12 to align with TR's visits
 --added evidence from NICE as per Shaun
@@ -421,16 +424,16 @@ select a.PatID,
 	'Send letter to request pulse rhythm assessment using code 243.. [243..]' as actionText,
 	'Reasoning' +
 		'<ul>'+
-		'<li>Patient has:</li>'+
-			'<ul>'+
-				case when latestHtnCodeDate is not null then '<li>Hypertension</li>' else '' end+
-				case when latestDmCodeDate is not null then '<li>Diabetes</li>' else '' end+
-				case when latestCkdCodeDate is not null then '<li>CKD stage 3 or above</li>' else '' end+
-				case when latestPadCodeDate is not null then '<li>Peripheral arterial disease</li>' else '' end+
-				case when latestStrokeCodeDate is not null then '<li>Previous stroke</li>' else '' end+
-				case when latestCopdCodeDate is not null then '<li>COPD</li>' else '' end+
-			'</ul>'+
-		'<li>NICE recommends they should have their pulse rhythm assessed every 12 months to casefind AF.</li>'+
+		--'<li>Patient has:</li>'+
+		--	'<ul>'+
+		--		case when latestHtnCodeDate is not null then '<li>Hypertension</li>' else '' end+
+		--		case when latestDmCodeDate is not null then '<li>Diabetes</li>' else '' end+
+		--		case when latestCkdCodeDate is not null then '<li>CKD stage 3 or above</li>' else '' end+
+		--		case when latestPadCodeDate is not null then '<li>Peripheral arterial disease</li>' else '' end+
+		--		case when latestStrokeCodeDate is not null then '<li>Previous stroke</li>' else '' end+
+		--		case when latestCopdCodeDate is not null then '<li>COPD</li>' else '' end+
+		--	'</ul>'+
+		--'<li>NICE recommends they should have their pulse rhythm assessed every 12 months to casefind AF.</li>'+
 		case 
 			when latestPulseRhythmCodeDate is null then '<li><strong>They have never had their pulse rhythm assessed.</strong></li>' 
 			when latestPulseRhythmCodeDate is not null then '<li><strong>Latest pulse rhythm assessment was on ' + CONVERT(VARCHAR, latestPulseRhythmCodeDate, 3) + '.</strong></li>'
