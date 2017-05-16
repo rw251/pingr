@@ -267,8 +267,8 @@ select PatID, EntryDate as date,
 	case
 		when ReadCode in (select code from codeGroups where [group] = 'egfr') then 'eGFR'
 		when ReadCode in (select code from codeGroups where [group] = 'acr') then 'ACR'
-		when (ReadCode in (select code from codeGroups where [group] in ('sbp') and Source != 'salfordt')) or (ReadCode in (select code from codeGroups where [group] in ('asbp') and CodeValue is not NULL))  then 'SBP'
-		when (ReadCode in (select code from codeGroups where [group] in ('sdp') and Source != 'salfordt')) or (ReadCode in (select code from codeGroups where [group] in ('adbp') and CodeValue is not NULL))  then 'DBP'
+		when (ReadCode in (select code from codeGroups where [group] in ('sbp'))) or (ReadCode in (select code from codeGroups where [group] in ('asbp') and CodeValue is not NULL))  then 'SBP'
+		when (ReadCode in (select code from codeGroups where [group] in ('dbp'))) or (ReadCode in (select code from codeGroups where [group] in ('adbp') and CodeValue is not NULL))  then 'DBP'
 		when ReadCode in (select code from codeGroups where [group] = 'fev1') and Source != 'salfordt' then 'FEV1'
 		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source != 'salfordt' then 'strokeHosp'
 		when ReadCode in (select code from codeGroups where [group] = 'pulseRhythm') then 'pulseRhythm'
@@ -277,8 +277,8 @@ select PatID, EntryDate as date,
 CodeValue as value, Source from SIR_ALL_Records
 where
 	(
-		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof','pulseRhythm', 'asbp', 'adbp')) and CodeValue is not NULL)
-		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof', 'sbp', 'dbp', 'fev1', 'tiaQof','strokeIsch','cp', 'syncope', 'palps', 'sob', 'hfQof'))and Source != 'salfordt')
+		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof','pulseRhythm', 'asbp', 'adbp', 'sbp', 'dbp')) and CodeValue is not NULL)
+		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof', 'fev1', 'tiaQof','strokeIsch','cp', 'syncope', 'palps', 'sob', 'hfQof'))and Source != 'salfordt')
 	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 

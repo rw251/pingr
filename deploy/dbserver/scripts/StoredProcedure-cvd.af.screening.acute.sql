@@ -171,16 +171,16 @@ declare @target float;
 set @target = null;
 declare @abc float;
 set @abc = (select round(avg(perc),2) from (
-select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / sum(case when numerator = 0 then 1.0 else 0.0 end) as perc from #numerator as a
+select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / sum(case when numerator in (0,1) then 1.0 else 0.0 end) as perc from #numerator as a
 inner join ptPractice as b on a.PatID = b.PatID
 group by b.pracID
-having sum(case when numerator = 0 then 1.0 else 0.0 end) > 0
+having sum(case when numerator in (0,1) then 1.0 else 0.0 end) > 0
 order by perc desc) sub);
 declare @ptPercPoints float;
 set @ptPercPoints = 
-(select 100 / SUM(case when numerator = 0 then 1.0 else 0.0 end) 
+(select 100 / SUM(case when numerator in (0,1) then 1.0 else 0.0 end) 
 from #numerator
-having SUM(case when numerator = 0 then 1.0 else 0.0 end) > 0);
+having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0);
 
 									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
@@ -681,11 +681,11 @@ having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom
 and @daysLeft < 122 --only appears later than august to coincide with flu vacc season
 
 union
---PROPORTION OF LATEST SX THAT ARE SOB
+--PROPORTION OF LATEST SX THAT ARE SOB THAT ARE NOT MEETING NUMERATOR
 select c.pracID, 'sob',
 	SUM(case when numerator = 0 and latestSobCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	SUM(case when numerator = 0 then 1.0 else 0.0 end),
 	SUM(case when numerator = 0 and latestSobCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestSobCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -695,11 +695,11 @@ group by c.pracID
 having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom is not 0
 
 union
---PROPORTION OF LATEST SX THAT ARE palps
+--PROPORTION OF LATEST SX THAT ARE palps THAT ARE NOT MEETING NUMERATOR
 select c.pracID, 'palps', 
 	SUM(case when numerator = 0 and latestPalpsCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	SUM(case when numerator = 0 then 1.0 else 0.0 end),
 	SUM(case when numerator = 0 and latestPalpsCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestPalpsCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -709,11 +709,11 @@ group by c.pracID
 having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom is not 0
 
 union
---PROPORTION OF LATEST SX THAT ARE Syncope
+--PROPORTION OF LATEST SX THAT ARE Syncope THAT ARE NOT MEETING NUMERATOR
 select c.pracID, 'Syncope', 
 	SUM(case when numerator = 0 and latestSyncopeCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	SUM(case when numerator = 0 then 1.0 else 0.0 end),
 	SUM(case when numerator = 0 and latestSyncopeCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestSyncopeCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -723,11 +723,11 @@ group by c.pracID
 having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom is not 0
 
 union
---PROPORTION OF LATEST SX THAT ARE ChestPain
+--PROPORTION OF LATEST SX THAT ARE ChestPain THAT ARE NOT MEETING NUMERATOR
 select c.pracID, 'ChestPain', 
 	SUM(case when numerator = 0 and latestChestPainCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	SUM(case when numerator = 0 then 1.0 else 0.0 end),
 	SUM(case when numerator = 0 and latestChestPainCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestChestPainCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -737,11 +737,11 @@ group by c.pracID
 having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom is not 0
 
 union
---PROPORTION OF LATEST SX THAT ARE StrokeIsch
+--PROPORTION OF LATEST SX THAT ARE StrokeIsch THAT ARE NOT MEETING NUMERATOR
 select c.pracID, 'StrokeIsch', 
 	SUM(case when numerator = 0 and latestStrokeIschCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	SUM(case when numerator = 0 then 1.0 else 0.0 end),
 	SUM(case when numerator = 0 and latestStrokeIschCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestStrokeIschCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -751,11 +751,11 @@ group by c.pracID
 having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom is not 0
 
 union
---PROPORTION OF LATEST SX THAT ARE Tia
+--PROPORTION OF LATEST SX THAT ARE Tia THAT ARE NOT MEETING NUMERATOR
 select c.pracID, 'Tia', 
 	SUM(case when numerator = 0 and latestTiaCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	SUM(case when numerator = 0 then 1.0 else 0.0 end),
 	SUM(case when numerator = 0 and latestTiaCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestTiaCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -765,11 +765,11 @@ group by c.pracID
 having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom is not 0
 
 union
---PROPORTION OF LATEST SX THAT ARE Hf
+--PROPORTION OF LATEST SX THAT ARE HF THAT ARE NOT MEETING NUMERATOR
 select c.pracID, 'Hf', 
 	SUM(case when numerator = 0 and latestHfCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	SUM(case when numerator = 0 then 1.0 else 0.0 end),
 	SUM(case when numerator = 0 and latestHfCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestHfCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -1027,15 +1027,15 @@ values
 '<strong>Why this is important:</strong> <a href=''https://cks.nice.org.uk/atrial-fibrillation#!diagnosissub'' target=''_blank'' title=''NICE AF Guidelines''>NICE recommends these patients should have their pulse rhythm assessed to rule out AF</a>.'),
 --INDICATOR TAB
 --summary text
-('cvd.af.screeningAcute','tagline',' of patients aged 55 years and over diagnosed with who presented with one or more of the following: shortness of breath, palpitations, chest pain, syncope, dizziness, stroke, TIA or heart failure between '+ 
+('cvd.af.screeningAcute','tagline',' of patients aged 55 years and over who presented with one or more of the following: shortness of breath, palpitations, chest pain, syncope, dizziness, stroke, TIA or heart failure between '+ 
 	case
 		when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
 		when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 	end +
 	' and ' +
 		case		
-			when MONTH(@refdate) >4 then '31st December ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
-			when MONTH(@refdate) <3 then '31st December ' + CONVERT(VARCHAR,YEAR(@refdate))
+			when MONTH(@refdate) <4 then '31st December ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+			when MONTH(@refdate) >3 then '31st December ' + CONVERT(VARCHAR,YEAR(@refdate))
 		end +		
 ' inclusive, have had a pulse rhythm assessment afterwards.'),
 ('cvd.af.screeningAcute','positiveMessage', --tailored text

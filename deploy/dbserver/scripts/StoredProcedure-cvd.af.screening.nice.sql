@@ -564,7 +564,7 @@ where numerator = 0
 and (latestFluVaccDate is null or latestFluVaccDate < @refdate)
 and (latestFluVaccTempExDate is null or latestFluVaccTempExDate < @startDate)
 and (latestFluVaccPermExDate is null or latestFluVaccPermExDate < latestFluVaccDate)
-and @daysLeft < 240 --only appears later than august to coincide with flu vacc season
+and @daysLeft < 122 --only appears later than august to coincide with flu vacc season
 
 union
 --SUGGEST EXCLUDE
@@ -650,7 +650,7 @@ left outer join (select * from [output.pingr.patActions]) as b on b.PatID = a.Pa
 left outer join ptPractice as e on e.PatID = a.PatID
 group by e.pracID
 having SUM(case when numerator in (0,1) then 1.0 else 0.0 end) > 0 --where denom is not 0
-and @daysLeft < 240 --only appears later than august to coincide with flu vacc season
+and @daysLeft < 122 --only appears later than august to coincide with flu vacc season
 
 							---------------------------------------------------------------
 							----------------------ORG-LEVEL ACTIONS------------------------
@@ -775,8 +775,8 @@ values
 	end +
 	' to ' +
 		case		
-			when MONTH(@refdate) >4 then '31st December ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
-			when MONTH(@refdate) <3 then '31st December ' + CONVERT(VARCHAR,YEAR(@refdate))
+			when MONTH(@refdate) <4 then '31st December ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+			when MONTH(@refdate) >3 then '31st December ' + CONVERT(VARCHAR,YEAR(@refdate))
 		end +		
 ' inclusive.'),
 ('cvd.af.screening','positiveMessage', --tailored text
