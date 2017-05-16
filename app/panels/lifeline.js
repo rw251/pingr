@@ -538,6 +538,7 @@ var ll = {
         return 0;
       });
       $.each(measurements, function(i, dataset) {
+        if(!dataset.data || dataset.data.length===0) return;
         ll.charts++;
         var maxMeasurementDate = 0;
         var dataDates = {};
