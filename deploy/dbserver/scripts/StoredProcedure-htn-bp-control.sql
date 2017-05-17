@@ -2938,7 +2938,7 @@ values
 --pt lists
 ('htn.treatment.bp','valueId','SBP'),
 ('htn.treatment.bp','valueName','Latest SBP'),
-('htn.treatment.bp','dateORvalue','value'),
+('htn.treatment.bp','dateORvalue','both'),
 ('htn.treatment.bp','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.treatment.bp','tableTitle','All patients with improvement opportunities'),
 
