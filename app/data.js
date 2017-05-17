@@ -290,13 +290,12 @@ var dt = {
 
     patients = patients.map(function(patient) {
       patient.nhsNumber = patient.nhs || patient.patientId;
-      patient.items = [
-        patient.age,
-        patient.value,
-        patient.opportunities.map(function(v) {
+      patient.items = [patient.age];
+      if(patient.value) patient.items.push(patient.value);
+      if(patient.date) patient.items.push(patient.date);        
+      patient.items.push(patient.opportunities.map(function(v) {
           return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
-        }).join("")
-      ]; //The fields in the patient list table
+        }).join("")); //The fields in the patient list table
       if (patient.actionStatus) {
         var releventActions = patient.actionStatus.filter(function(v) {
           return !v.indicatorList || v.indicatorList.indexOf(indicatorId) > -1;
@@ -352,12 +351,22 @@ var dt = {
 
     //middle column is either value or date
     if (dOv) {
-      rtn["header-items"].push({
-        "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
-        "tooltip": dOv === "date" ? "Last date " + vId + " was measured" : "Last " + vId + " reading",
-        "isSorted": false,
-        "direction": "sort-asc"
-      });
+      if(dOv!=='date') {
+        rtn["header-items"].push({
+          "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
+          "tooltip": "Last " + vId + " reading",
+          "isSorted": false,
+          "direction": "sort-asc"
+        });
+      }
+      if(dOv!=='value') {
+        rtn["header-items"].push({
+          "title": dt.text.pathways[pathwayId][pathwayStage].standards[standard].valueName,
+          "tooltip": "Last date " + vId + " was measured",
+          "isSorted": false,
+          "direction": "sort-asc"
+        });
+      }
     } else {
       if (pathwayStage === lookup.categories.monitoring.name) {
         rtn["header-items"].push({

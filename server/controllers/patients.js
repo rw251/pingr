@@ -270,14 +270,26 @@ module.exports = {
             console.time(["getListForIndicator", "patients", "process"].join("--"));
             var p = patients.map(function(patient) {
               patient = patient.toObject();
-              var meas = "?";
+              var measValue, measDate;
+              if(indicator.displayDate) measDate='?';
+              if(indicator.displayValue) measValue='?';
               if (patient.measurements && patient.measurements.length > 0 && patient.measurements[0].data && patient.measurements[0].data.length > 0 && patient.measurements[0].data[0].length > 2) {
                 if (indicator.measurementId === "SBP") {
-                  meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                  if(indicator.displayDate) {
+                    measDate = patient.measurements[0].data[0][0];
+                  }
+                  if(indicator.displayValue) {
+                    measValue = patient.measurements[0].data[0][2];  
+                  }
                   // for dbp use:
                   //meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][3];
                 } else {
-                  meas = indicator.displayDate ? patient.measurements[0].data[0][0] : patient.measurements[0].data[0][2];
+                  if(indicator.displayDate) {
+                    measDate = patient.measurements[0].data[0][0];
+                  }
+                  if(indicator.displayValue) {
+                    measValue = patient.measurements[0].data[0][2];  
+                  }
                 }
               }
               var opps = indicator.opportunities.filter(function(v) {
@@ -289,9 +301,10 @@ module.exports = {
                 patientId: patient.patientId,
                 nhs: patient.characteristics.nhs,
                 age: patient.characteristics.age,
-                value: meas,
                 opportunities: opps
               };
+              if(measValue) rtn.value = measValue;
+              if(measDate) rtn.date = measDate;
               if (patientsWithActionsObject[patient.patientId]) {
                 rtn.actionStatus = patientsWithActionsObject[patient.patientId];
               }

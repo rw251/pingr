@@ -209,7 +209,8 @@ var doProcessIndicators = function(callback) {
             practiceId: data.gpcode,
             measurementId: indText.valueId,
             benchmark: data.benchmark,
-            displayDate: indText.dateORvalue === "date",
+            displayValue: indText.dateORvalue !== "date",
+            displayDate: indText.dateORvalue !== "value",
             type: "process",
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
             name: indText.name,
@@ -221,7 +222,8 @@ var doProcessIndicators = function(callback) {
         } else {
           i.benchmark = data.benchmark;
           i.measurementId = indText.valueId;
-          i.displayDate = indText.dateORvalue === "date";
+          i.displayValue = indText.dateORvalue !== "date";
+          i.displayDate = indText.dateORvalue !== "value";
           i.type = "process";
           i.name = indText.name;
           i.description = indText.description;
@@ -303,7 +305,8 @@ var doOutcomeIndicators = function(callback) {
             practiceId: data.gpcode,
             measurementId: indText.valueId,
             benchmark: data.benchmark,
-            displayDate: indText.dateORvalue === "date",
+            displayValue: indText.dateORvalue !== "date",
+            displayDate: indText.dateORvalue !== "value",
             type: "outcome",
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
             name: indText.name,
@@ -318,7 +321,8 @@ var doOutcomeIndicators = function(callback) {
           }
           i.benchmark = data.benchmark;
           i.measurementId = indText.valueId;
-          i.displayDate = indText.dateORvalue === "date";
+          i.displayValue = indText.dateORvalue !== "date";
+          i.displayDate = indText.dateORvalue !== "value";
           i.type = "outcome";
           i.name = indText.name;
           i.description = indText.description;
