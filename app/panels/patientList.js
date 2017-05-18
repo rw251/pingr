@@ -6,26 +6,30 @@ var Highcharts = require('highcharts/highstock'),
   jsPDF = require('jspdf'),
   jspdfAutoTable = require('jspdf-autotable');
 
+var $ = require('jquery');
+var dt = require('datatables.net-bs')();
+//var buttons = require('datatables.net-buttons-bs')();
+
 var ID = "PATIENT_LIST";
 var currentPatients;
 
-var writeToFile = function(list) {
+var writeToFile = function (list) {
   var blob = new Blob([list.join("\r\n")], { type: "text/plain;charset=utf-8" });
   FileSaver.saveAs(blob, "nhsNumbers.txt");
 };
 
-var parseHtml = function(html) {
+var parseHtml = function (html) {
   return html
     .replace(/<[^>]*>/g, "")
-    .replace("&gt;",">")
-    .replace("&gte;","≥")
-    .replace("&lt;","<")
-    .replace("&lte;","≤");
+    .replace("&gt;", ">")
+    .replace("&gte;", "≥")
+    .replace("&lt;", "<")
+    .replace("&lte;", "≤");
 };
 
-var writePdf = function() {
-  var columns = currentPatients["header-items"].map(function(v) { return v.title; });
-  var rows = currentPatients.patients.map(function(v) {
+var writePdf = function () {
+  var columns = currentPatients["header-items"].map(function (v) { return v.title; });
+  var rows = currentPatients.patients.map(function (v) {
     return [
       v.nhs,
       v.age,
@@ -68,10 +72,11 @@ var writePdf = function() {
 
 var pl = {
 
-  wireUp: function(onPatientSelected) {
+  wireUp: function (onPatientSelected) {
     patientsPanel = $('#patients');
 
-    patientsPanel.on('click', 'thead tr th.sortable', function() { //Sort columns when column header clicked
+    patientsPanel
+      /*.on('click', 'thead tr th.sortable', function () { //Sort columns when column header clicked
       var sortAsc = !$(this).hasClass('sort-asc');
       if (sortAsc) {
         $(this).removeClass('sort-desc').addClass('sort-asc');
@@ -79,39 +84,40 @@ var pl = {
         $(this).removeClass('sort-asc').addClass('sort-desc');
       }
       pl.populate(pl.state[0], pl.state[1], pl.state[2], pl.state[3], $(this).index(), sortAsc);
-    }).on('click', 'tbody tr', function(e) { //Select individual patient when row clicked#
-      var callback = onPatientSelected.bind(this);
-      var patientId = $(this).find('td button').attr('data-patient-id');
-      var type = $(this).find('td button').attr('data-type');
-      callback(patientId, type);
-      e.preventDefault();
-      e.stopPropagation();
-    }).on('click', 'tbody tr button', function(e) {
-      //don't want row selected if just button pressed?
-      e.preventDefault();
-      e.stopPropagation();
-    }).on('click', '#downloadPatientList', function() {
-      writePdf();
-    }).on('click', '#downloadAsPdf', function(e) {
-      writePdf();
-      e.preventDefault();
-    }).on('click', '#downloadAsText', function(e) {
-      writeToFile(currentPatients.patients.map(function(v) {
-        return v.nhs;
-      }));
-      e.preventDefault();
-    });
+    })*/
+      .on('click', 'tbody tr', function (e) { //Select individual patient when row clicked#
+        var callback = onPatientSelected.bind(this);
+        var patientId = $(this).find('td button').attr('data-patient-id');
+        var type = $(this).find('td button').attr('data-type');
+        callback(patientId, type);
+        e.preventDefault();
+        e.stopPropagation();
+      }).on('click', 'tbody tr button', function (e) {
+        //don't want row selected if just button pressed?
+        e.preventDefault();
+        e.stopPropagation();
+      }).on('click', '#downloadPatientList', function () {
+        writePdf();
+      }).on('click', '#downloadAsPdf', function (e) {
+        writePdf();
+        e.preventDefault();
+      }).on('click', '#downloadAsText', function (e) {
+        writeToFile(currentPatients.patients.map(function (v) {
+          return v.nhs;
+        }));
+        e.preventDefault();
+      });
   },
 
-  selectSubsection: function(section) {
+  selectSubsection: function (section) {
     pl.populate(pl.state[0], pl.state[1], pl.state[2], section, pl.state[4], pl.state[5]);
   },
 
-  restoreFromState: function() {
+  restoreFromState: function () {
     pl.populate.apply(this, pl.state);
   },
 
-  populate: function(pathwayId, pathwayStage, standard, subsection, sortField, sortAsc) {
+  populate: function (pathwayId, pathwayStage, standard, subsection, sortField, sortAsc) {
     pl.state = [pathwayId, pathwayStage, standard, subsection, sortField, sortAsc];
     patientsPanel = $('#patients');
     //Remove scroll if exists
@@ -120,11 +126,11 @@ var pl = {
     var i, k, prop, header, pList = [];
 
     //data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
-    data.getPatientList(data.userDetails.practiceId, pathwayId, pathwayStage, standard, subsection, function(list) {
+    data.getPatientList(data.userDetails.practiceId, pathwayId, pathwayStage, standard, subsection, function (list) {
 
-      if (sortField === undefined) sortField = 2;
+      /*if (sortField === undefined) sortField = 2;
       if (sortField !== undefined) {
-        list.patients.sort(function(a, b) {
+        list.patients.sort(function (a, b) {
           if (sortField === 0) { //NHS number
             if (a.nhsNumber === b.nhsNumber) {
               return 0;
@@ -155,26 +161,22 @@ var pl = {
               return sortAsc ? -1 : 1;
             }
           }
-        });
+        });*/
 
-        for (i = 0; i < list["header-items"].length; i++) {
-          if (i === sortField) {
-            list["header-items"][i].direction = sortAsc ? "sort-asc" : "sort-desc";
-            list["header-items"][i].isAsc = sortAsc;
-            list["header-items"][i].isSorted = true;
-          } else {
-            list["header-items"][i].isSorted = false;
-          }
+      /*for (i = 0; i < list["header-items"].length; i++) {
+        if (i === sortField) {
+          list["header-items"][i].direction = sortAsc ? "sort-asc" : "sort-desc";
+          list["header-items"][i].isAsc = sortAsc;
+          list["header-items"][i].isSorted = true;
+        } else {
+          list["header-items"][i].isSorted = false;
         }
       }
+  }*/
 
       list.indicatorId = [pathwayId, pathwayStage, standard].join(".");
       currentPatients = list;
       base.createPanelShow(require('templates/patient-list'), patientsPanel, list);
-      /*, {
-              "header-item": require('src/templates/partials/_patient-list-header-item')(),
-              "item": require('src/templates/partials/_patient-list-item')()
-            });*/
 
       $('#patients-placeholder').hide();
 
@@ -182,23 +184,43 @@ var pl = {
 
       base.wireUpTooltips();
 
-      $('#patient-list').floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex:50
+      $('#patient-list').on('draw.dt', function () {
+        console.log('Redraw occurred at: ' + new Date().getTime());
       });
 
-      $('#patient-list').floatThead('reflow');
+      $('#patient-list').on('init.dt', function () {
+        console.log('Init occurred at: ' + new Date().getTime());
+      });
+
+      $('#patient-list').on('preInit.dt', function () {
+        console.log('PreInit occurred at: ' + new Date().getTime());
+      });
+
+      $('#patient-list').on('processing.dt', function () {
+        console.log('processing occurred at: ' + new Date().getTime());
+      });
+
+      $('#patient-list').DataTable({
+        searching: false,
+      });
+
+      /*$('#patient-list').floatThead({
+        position: 'absolute',
+        scrollContainer: true,
+        zIndex: 50
+      });
+
+      $('#patient-list').floatThead('reflow');*/
 
       base.hideLoading();
 
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
+      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight: 300 }, { selector: '.table-scroll', padding: 340, minHeight: 170 }, { selector: '#personalPlanTeam', padding: 820, minHeight: 200 }, { selector: '#advice-list', padding: 430, minHeight: 250 }]);
 
     });
 
   },
 
-  show: function(panel, isAppend, pathwayId, pathwayStage, standard, loadContentFn) {
+  show: function (panel, isAppend, pathwayId, pathwayStage, standard, loadContentFn) {
 
     //var tempMust = $('#patients-panel-yes').html();
     var tmpl = require('templates/patient-list-wrapper');
@@ -206,9 +228,9 @@ var pl = {
     if (isAppend) panel.append(tmpl());
     else panel.html(tmpl());
 
-    pl.wireUp(function(patientId, type) {
+    pl.wireUp(function (patientId, type) {
       var url = '#patient/' + patientId;
-      if (type && type==="process" && pathwayId && pathwayStage && standard) url += '/' + [pathwayId, pathwayStage, standard].join("/");
+      if (type && type === "process" && pathwayId && pathwayStage && standard) url += '/' + [pathwayId, pathwayStage, standard].join("/");
       history.pushState(null, null, url);
       loadContentFn(url);
     });
