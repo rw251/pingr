@@ -2,6 +2,7 @@ var base = require('../base'),
   data = require('../data'),
   layout = require('../layout'),
   lookup = require('../lookup'),
+  state = require('../state'),
   indicatorList = require('../panels/indicatorList'),
   teamActionPlan = require('../panels/teamActionPlan');
 
@@ -51,12 +52,7 @@ var overview = {
 
       base.wireUpTooltips();
 
-      //farRightPanel.find('div.table-scroll').getNiceScroll().remove();
-      /*farRightPanel.find('div.table-scroll').niceScroll({
-        cursoropacitymin: 0.3,
-        cursorwidth: "7px",
-        horizrailenabled: false
-      });*/
+      state.rememberTabs('overview');
 
       base.hideLoading();
 

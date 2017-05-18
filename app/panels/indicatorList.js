@@ -1,6 +1,7 @@
 var base = require('../base.js'),
   log = require('../log.js'),
   data = require('../data.js'),
+  state = require('../state'),
   sparkline = require('jquery-sparkline');
 
 var indicatorList = {
@@ -23,7 +24,8 @@ var indicatorList = {
       });
       var html = tmpl({
         "processIndicators": processIndicators,
-        "outcomeIndicators": outcomeIndicators
+        "outcomeIndicators": outcomeIndicators,
+        "selectedTab": state.getTab('overview'),
       });
       if (isAppend) {
         panel.append(html);

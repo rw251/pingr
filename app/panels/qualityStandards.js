@@ -1,5 +1,6 @@
-var base = require('../base.js'),
-  data = require('../data.js');
+var base = require('../base'),
+  data = require('../data'),
+  state = require('../state');
 
 var qs = {
 
@@ -46,7 +47,8 @@ var qs = {
       processStandards: processStandards,
       outcomeStandards: outcomeStandards,
       indicatorId: pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : null,
-      patientId: patientId
+      patientId: patientId,
+      selectedTab: state.getTab('individual'),
     });
 
     return html;

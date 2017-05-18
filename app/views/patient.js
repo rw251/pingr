@@ -3,6 +3,7 @@ var lifeline = require('../panels/lifeline'),
   base = require('../base'),
   layout = require('../layout'),
   lookup = require('../lookup'),
+  state = require('../state'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
   patientSearch = require('../panels/patientSearch'),
@@ -145,6 +146,9 @@ var pv = {
           $('#patient-pane').show();
 
           base.wireUpTooltips();
+
+          state.rememberTabs('individual');
+
           base.hideLoading();
 
           //add state indicator

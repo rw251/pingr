@@ -4,13 +4,13 @@ if noStandards
 else
   #qs
     ul.nav.nav-tabs(role="tablist")
-      li.active(role="presentation")
+      li(class=!selectedTab || selectedTab==='#processIndicatorsQS' ? "active" : "",role="presentation")
         a(href="#processIndicatorsQS",aria-controls="processIndicatorsQS",role="tab",data-toggle="tab",style="margin-top:0")= "Process indicators (" + processStandards.length + ")"
-      li(role="presentation")
+      li(class=selectedTab==='#outcomeIndicatorsQS' ? "active" : "",role="presentation")
         a(href="#outcomeIndicatorsQS",aria-controls="outcomeIndicatorsQS",role="tab",data-toggle="tab",style="margin-top:0")= "Outcome indicators (" + outcomeStandards.length + ")"
         
     .tab-content
-      #processIndicatorsQS.tab-pane.fade.in.active(role="tabpanel")
+      #processIndicatorsQS.tab-pane.fade(class=!selectedTab || selectedTab==='#processIndicatorsQS' ? "active in" : "",role="tabpanel")
         .panel.panel-default
           table.table.table-condensed
             thead
@@ -51,7 +51,7 @@ else
                     strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
                     br
                     !=standard.why
-      #outcomeIndicatorsQS.tab-pane.fade(role="tabpanel")
+      #outcomeIndicatorsQS.tab-pane.fade(class=selectedTab==='#outcomeIndicatorsQS' ? "active in" : "",role="tabpanel")
         .panel.panel-default#qs
           table.table.table-condensed
             thead
