@@ -232,8 +232,9 @@ var base = {
     $('#title-row').fadeIn(0);
   },
 
-  getCssText: function() {
-    var cssText = base.elements.map(function(v) {
+  getCssText: function(elements) {
+    if(!elements) elements = base.elements;
+    var cssText = elements.map(function(v) {
       return v.selector + " {max-height:" + Math.max(v.minHeight,Math.floor($(window).height() - $(v.selector).position().top - v.padding)) + "px;min-height:" + v.minHeight + "px;}";
     }).join(" ");
     return cssText;
@@ -245,8 +246,16 @@ var base = {
     if (!elements) elements = base.elements;
     base.elements = elements;
     console.log("shall we update?");
-    if ($(elements.map(function(v) { return v.selector + ":visible"; }).join(",")).length !== elements.length) {
+    var currentlyVisibleElements = elements.filter(function(v){
+      return $(v.selector + ":visible").length>0 ;
+    });
+    if (currentlyVisibleElements.length !== elements.length) {
       console.log("no - wait a bit.");
+      if ($('#addedCSS').length === 0) {
+        $('head').append('<style id="addedCSS" type="text/css"></style>');
+      }
+
+      $('#addedCSS').text(base.getCssText(currentlyVisibleElements));
       setTimeout(function() {
         base.updateFixedHeightElements(elements);
       }, 100);

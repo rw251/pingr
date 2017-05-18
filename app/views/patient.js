@@ -162,7 +162,7 @@ var pv = {
       } else {
         base.updateTitle("No patient currently selected");
         base.switchToSingleColumn();
-        //base.savePanelState();
+        base.savePanelState();
         patientSearch.show(centrePanel, false, false, loadContentFn);
         allPatientList.show(centrePanel, true, skip, limit, loadContentFn);
 
@@ -176,7 +176,7 @@ var pv = {
         base.hideLoading();
 
         //add state indicator
-        //farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
         base.updateTab("patients", "", "");
 

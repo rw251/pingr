@@ -3,7 +3,7 @@ var data = require('../data.js'),
 
 var bd = {
 
-  wireUp: function() {
+  wireUp: function(firstTabVisibleCallback) {
 
     $('#overviewPaneTab').on('click', function(e) {
       e.preventDefault();
@@ -16,7 +16,7 @@ var bd = {
       $('#mainPage-tab-content').fadeOut(250, function() {
 
         $('#mainPage-tab-content').children().fadeOut(1);
-        $('#overview-content').fadeIn(1);
+        $('#overview-content').fadeIn(1, firstTabVisibleCallback);
 
     //*b* tabbed content
 
@@ -88,7 +88,7 @@ var bd = {
 
       //change this to add li
       var sectionElement = panel;
-      var tabSection = $('<li id="'+ routeSuffix.toLowerCase() +'" data-toggle="tooltip" title="'+ tooltipDesc.toLowerCase() +'"><a id="'+ routeSuffix.toLowerCase() +'PaneTab" href="#'+ routeSuffix.toLowerCase() +'PaneTab">'+name+'</a></li>');
+      var tabSection = $('<li id="'+ routeSuffix.toLowerCase() +'" data-toggle="tooltip" title="'+ tooltipDesc.toLowerCase() +'"><a id="'+ routeSuffix.toLowerCase() +'PaneTab" data-toggle="tab" href="#'+ routeSuffix.toLowerCase() +'PaneTab">'+name+'</a></li>');
 
       var contentObject = $('<div id="'+ routeSuffix.toLowerCase() +'-content"></div>');
       $(sectionElement).append(contentObject);

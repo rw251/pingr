@@ -7,8 +7,64 @@ var Highcharts = require('highcharts/highstock'),
   jspdfAutoTable = require('jspdf-autotable');
 
 var $ = require('jquery');
-var dt = require('datatables.net-bs')();
-//var buttons = require('datatables.net-buttons-bs')();
+require('datatables.net-bs')(window, $);
+require('datatables.net-buttons-bs')(window, $);
+require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
+require('datatables.net-buttons/js/buttons.html5.js')(window, $);
+
+var table;
+
+var standardAsc = function (a, b) {
+  return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+};
+
+var standardDesc = function (a, b) {
+  return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+};
+
+$.extend($.fn.dataTableExt.oSort, {
+
+  "date-uk-pre": function (a) {
+    if (a == null || a == "" || a === "?") {
+      return 0;
+    }
+    var ukDatea = a.split('/');
+    return (ukDatea[2] + ("0" + ukDatea[1]).substr(ukDatea[1].length - 1) + ("0" + ukDatea[0]).substr(ukDatea[0].length - 1)) * 1;
+  },
+
+  "date-uk-asc": standardAsc,
+  "date-uk-desc": standardDesc,
+
+  "numeric-?-pre": function (a) {
+    if (a == null || a == "" || a === "?") {
+      return 0;
+    }
+    return +a;
+  },
+
+  "numeric-?-asc": standardAsc,
+  "numeric-?-desc": standardDesc,
+
+  "plan-pre": function (a) {
+    if (a == null || a == "" || a === "?") {
+      return 0;
+    }
+    return 1;
+  },
+
+  "plan-asc": standardAsc,
+  "plan-desc": standardDesc,
+
+  "opps-pre": function (a) {
+    if (a == null || a == "" || a === "?") {
+      return 0;
+    }
+    return $(a).length;
+  },
+
+  "opps-asc": standardAsc,
+  "opps-desc": standardDesc,
+});
 
 var ID = "PATIENT_LIST";
 var currentPatients;
@@ -180,14 +236,6 @@ var pl = {
 
       $('#patients-placeholder').hide();
 
-      base.setupClipboard($('.btn-copy'), true);
-
-      base.wireUpTooltips();
-
-      $('#patient-list').on('draw.dt', function () {
-        console.log('Redraw occurred at: ' + new Date().getTime());
-      });
-
       $('#patient-list').on('init.dt', function () {
         console.log('Init occurred at: ' + new Date().getTime());
       });
@@ -200,21 +248,68 @@ var pl = {
         console.log('processing occurred at: ' + new Date().getTime());
       });
 
-      $('#patient-list').DataTable({
-        searching: false,
+      table = $('#patient-list').DataTable({
+        searching: false, //we don't want a search box
+        stateSave: true, // let's remember which page/sorting etc
+        dom: '<"row"<"col-sm-7 toolbar"i><"col-sm-5"B>>rt<"row"<"col-sm-5"l><"col-sm-7"p>><"clear">',
+        columnDefs: list["header-items"].map(function (v, i) {
+          return { type: v.type, orderSequence: v.orderSequence, targets: i };
+        }),
+        scrollY: '50vh',
+        scrollCollapse: true,
+        buttons: [
+          'colvis',
+          {
+            text: 'Pdf',
+            className: 'download-button',
+            action: function (e, dt, node, config) {
+              //writePdf();
+            }
+          }
+        ]
       });
+
+      $('#overviewPaneTab').on('shown.bs.tab', function (e) {
+        table.columns.adjust().draw(false); //ensure sparklines on hidden tabs display
+      });
+
+      setTimeout(function () {
+        table.columns.adjust().draw(false);
+
+        base.setupClipboard($('.btn-copy'), true);
+        base.wireUpTooltips();
+      }, 100);
+
+
+      var updateInfo = function () {
+        $("#patient-list_info")
+          .html('<span class="h4">' + list.header + '</span><span> (' + $("#patient-list_info").text().toLowerCase() + ')</span>')
+          .css('white-space', 'normal');
+      };
+
+      $('.download-button').replaceWith($('<div class="btn-group"><button id="downloadPatientList" class="btn btn-danger">Download patient list</button><button data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-danger dropdown-toggle"><span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button><ul class="dropdown-menu"><li><a id="downloadAsPdf" href="#">Full list (pdf)</a></li><li><a id="downloadAsText" href="#">Nhs numbers (text file)</a></li></ul></div>'));
+
+      updateInfo();
+
+      // Must update after every redraw
+      $('#patient-list').on('draw.dt', function () {
+        updateInfo();
+        console.log('Redraw occurred at: ' + new Date().getTime());
+      });
+
+      $('.dt-buttons').addClass('pull-right');
 
       /*$('#patient-list').floatThead({
         position: 'absolute',
         scrollContainer: true,
         zIndex: 50
       });
-
+      
       $('#patient-list').floatThead('reflow');*/
 
       base.hideLoading();
 
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight: 300 }, { selector: '.table-scroll', padding: 340, minHeight: 170 }, { selector: '#personalPlanTeam', padding: 820, minHeight: 200 }, { selector: '#advice-list', padding: 430, minHeight: 250 }]);
+      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight: 300 }, /*{ selector: '.table-scroll', padding: 340, minHeight: 170 }, */{ selector: '#personalPlanTeam', padding: 820, minHeight: 200 }, { selector: '#advice-list', padding: 430, minHeight: 250 }]);
 
     });
 
