@@ -176,6 +176,7 @@ var pl = {
   populate: function (pathwayId, pathwayStage, standard, subsection, sortField, sortAsc) {
     pl.state = [pathwayId, pathwayStage, standard, subsection, sortField, sortAsc];
     patientsPanel = $('#patients');
+    base.showLocalLoading(patientsPanel, "Loading patient list...");
     //Remove scroll if exists
     /*patientsPanel.find('div.table-scroll').getNiceScroll().remove();*/
 

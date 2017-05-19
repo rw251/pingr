@@ -222,9 +222,20 @@ var base = {
     tabElement.data("href", "#" + tab + "/" + url);
   },
 
+/**
+ * Show the main loading page and hide everything else
+ */
   showLoading: function() {
     $('.loading-container').show();
     $('#title-row').hide();
+  },
+
+/**
+ * Show a loading icon in a given element with an optional message
+ */
+  showLocalLoading: function(element, message) {
+    var tmpl = require('./templates/loading');
+    element.html(tmpl({message: message}));
   },
 
   hideLoading: function() {
