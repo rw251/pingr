@@ -970,7 +970,7 @@ var writeFiles = function (callback) {
     console.log("Error writing files.");
     return callback(err);
   });
-  Object.keys(dataFile.patients).forEach(function (v) { file.write(JSON.stringify(v) + '\n'); });
+  Object.keys(dataFile.patients).forEach(function (v) { file.write(JSON.stringify(dataFile.patients[v]) + '\n'); });
   file.end();
 
   fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
