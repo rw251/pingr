@@ -964,7 +964,7 @@ values
 --pt lists
 ('htn.undiagnosed.med','valueId','SBP'),
 ('htn.undiagnosed.med','valueName','Latest SBP'),
-('htn.undiagnosed.med','dateORvalue','value'),
+('htn.undiagnosed.med','dateORvalue','both'),
 ('htn.undiagnosed.med','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.undiagnosed.med','tableTitle','All patients currently prescribed anti-hypertensive medication <strong>not</strong> on the hypertension register'),
 

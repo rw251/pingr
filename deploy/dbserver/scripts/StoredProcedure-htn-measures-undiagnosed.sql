@@ -763,7 +763,7 @@ values
 --pt lists
 ('htn.undiagnosed.measures','valueId','SBP'),
 ('htn.undiagnosed.measures','valueName','Latest SBP'),
-('htn.undiagnosed.measures','dateORvalue','value'),
+('htn.undiagnosed.measures','dateORvalue','both'),
 ('htn.undiagnosed.measures','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.undiagnosed.measures','tableTitle','All patients with persistently raised blood pressure <strong>not</strong> who may have undiagnosed hypertension'),
 

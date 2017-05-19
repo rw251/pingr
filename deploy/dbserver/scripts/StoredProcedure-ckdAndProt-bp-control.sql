@@ -2952,7 +2952,7 @@ values
 --pt lists
 ('ckdAndProt.treatment.bp','valueId','SBP'),
 ('ckdAndProt.treatment.bp','valueName','Latest SBP'),
-('ckdAndProt.treatment.bp','dateORvalue','value'),
+('ckdAndProt.treatment.bp','dateORvalue','both'),
 ('ckdAndProt.treatment.bp','valueSortDirection','desc'),
 ('ckdAndProt.treatment.bp','tableTitle','All patients with improvement opportunities'),
 

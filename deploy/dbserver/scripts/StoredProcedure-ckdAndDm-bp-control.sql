@@ -2941,7 +2941,7 @@ values
 --pt lists
 ('ckdAndDm.treatment.bp','valueId','SBP'),
 ('ckdAndDm.treatment.bp','valueName','Latest SBP'),
-('ckdAndDm.treatment.bp','dateORvalue','value'),
+('ckdAndDm.treatment.bp','dateORvalue','both'),
 ('ckdAndDm.treatment.bp','valueSortDirection','desc'),
 ('ckdAndDm.treatment.bp','tableTitle','All patients with improvement opportunities'),
 
