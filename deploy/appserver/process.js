@@ -965,16 +965,12 @@ var writeFiles = function (callback) {
 
   fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
 
-  dataFile.patients = Object.keys(dataFile.patients).map(function (v) {
-    return dataFile.patients[v];
-  });
-
   var file = fs.createWriteStream(OUT_DIR + 'patients.json');
   file.on('error', function (err) {
     console.log("Error writing files.");
     return callback(err);
   });
-  dataFile.patients.forEach(function (v) { file.write(JSON.stringify(v) + '\n'); });
+  Object.keys(dataFile.patients).forEach(function (v) { file.write(JSON.stringify(v) + '\n'); });
   file.end();
 
   fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
