@@ -103,7 +103,8 @@ var ll = {
     }
 
     var plotConditions = function(conditions) {
-      ll.charts = 1;
+      if(!conditions || conditions.length === 0 ) return;
+      ll.charts++;
       var series = [];
       $.each(conditions.reverse(), function(i, task) {
         var item = {
@@ -129,7 +130,7 @@ var ll = {
       // create the chart
       var barWidth = 16;
       var barSpace = 1;
-      $('<div class="h-chart h-condition-chart" style="height:' + (0 + conditions.length * (barWidth + barSpace)) + 'px">')
+      $('<div class="h-chart h-condition-chart" style="height:' + Math.max(50,(0 + conditions.length * (barWidth + barSpace))) + 'px">')
         .appendTo(elementId)
         .highcharts({
 
@@ -232,6 +233,7 @@ var ll = {
     };
 
     var plotContacts = function(contacts) {
+      if(!contacts || contacts.length === 0 ) return;
       ll.charts++;
       var markerTemplate = {
         "lineWidth": 1,
@@ -380,6 +382,7 @@ var ll = {
     };
 
     var plotImportantCodes = function(importantCodes) {
+      if(!importantCodes || importantCodes.length === 0 ) return;
       ll.charts++;
 
       var markerTemplate = {
@@ -531,6 +534,7 @@ var ll = {
     };
 
     var plotMeasurements = function(measurements) {
+      if(!measurements || measurements.length === 0 ) return;
       //Make measurements alphabetical so they are always in the same order
       measurements.sort(function(a, b) {
         if (a.name < b.name) return -1;
@@ -790,8 +794,11 @@ var ll = {
     };
 
     var plotMedications = function(medications) {
+      //Don't do this we need this to render even if no medications
+      //if(!medications || medications.length === 0 ) return;
       ll.charts++;
       var series = [];
+      var latestIntervalEndDate;
       $.each(medications.reverse(), function(i, task) {
         var item = {
           name: task.name,
@@ -799,18 +806,17 @@ var ll = {
           color: colour.next()
         };
 
-        var latestIntervalEndDate;
-
         $.each(task.intervals.filter(function(v) { return v.label !== "0mg"; }), function(j, interval) {
           if (!latestIntervalEndDate) latestIntervalEndDate = interval.to;
           else latestIntervalEndDate = Math.max(latestIntervalEndDate, interval.to);
           item.data.push([i + 0, interval.from, interval.to]);
         });
 
-        //if(latestIntervalEndDate) minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
-
         series.push(item);
       });
+      if(latestIntervalEndDate) {
+        minMaxDate = Math.min(latestIntervalEndDate, minMaxDate);
+      }
       var noData = false;
       if (series.length === 0) {
         series.push({
@@ -827,7 +833,7 @@ var ll = {
       //return $('<div class="h-chart h-medication-chart"' + (noData ? 'style="display:none"' : '') + '>')
       var barWidth = 16;
       var barSpace = 1;
-      return $('<div class="sync-chart h-chart h-medication-chart" style="height:' + (12 + series.length * (barWidth + barSpace)) + 'px">')
+      return $('<div class="sync-chart h-chart h-medication-chart" style="' + (noData ? 'display:none;' : '') + 'height:' + Math.max(50, (12 + series.length * (barWidth + barSpace))) + 'px">')
         .appendTo(elementId)
         .highcharts({
 
@@ -966,6 +972,8 @@ var ll = {
     };
 
     minMaxDate.setMonth(minMaxDate.getMonth() - 1); //gives 1 month padding
+
+    ll.charts = 0;
 
     plotConditions(data.conditions);
     plotImportantCodes(data.events);

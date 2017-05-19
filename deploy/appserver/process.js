@@ -21,7 +21,7 @@ var FILENAMES = {
   text: 'text.dat'
 };
 
-var dp = function(number, decimalPlaces) {
+var dp = function (number, decimalPlaces) {
   return Math.round(number * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
 };
 
@@ -56,6 +56,11 @@ var textFile = {
       "unit": "Stroke",
       "type": "line"
     },
+    "pulseRhythm": {
+      "name": "Pulse rhythm",
+      "unit": "Pulse rhythm",
+      "type": "line"
+    },
     "FEV1": {
       "name": "FEV1",
       "unit": "L",
@@ -69,27 +74,27 @@ var textFile = {
 
 var messages = [];
 
-var readCsvAsyncToObject = function(input, callback) {
+var readCsvAsyncToObject = function (input, callback) {
   var obj = [];
   fs.createReadStream(input.file)
     .pipe(csv({ separator: '\t', headers: input.headers }))
-    .on('data', function(data) {
+    .on('data', function (data) {
       var o = {};
       for (var i = 0; i < input.headers.length; i++) {
         o[input.headers[i]] = data[input.headers[i]];
       }
       obj.push(o);
     })
-    .on('err', function(err) { callback(err); })
-    .on('end', function() { callback(null, obj); });
+    .on('err', function (err) { callback(err); })
+    .on('end', function () { callback(null, obj); });
 };
 
 //for files of the form PatID, Date, Thing
-var readCsvAsync = function(input, callback) {
+var readCsvAsync = function (input, callback) {
   var obj = [];
   fs.createReadStream(input.file)
     .pipe(csv({ separator: '\t', headers: ['patientId', 'date', 'thing'] }))
-    .on('data', function(data) {
+    .on('data', function (data) {
       if (!patients[+data.patientId]) console.log(input.thing + " without patient:" + JSON.stringify(data));
       else {
         if (!patients[+data.patientId][input.thing]) patients[+data.patientId][input.thing] = [];
@@ -100,17 +105,17 @@ var readCsvAsync = function(input, callback) {
         });
       }
     })
-    .on('err', function(err) { callback(err); })
-    .on('end', function() { callback(null); });
+    .on('err', function (err) { callback(err); })
+    .on('end', function () { callback(null); });
 };
 
-dataFile.indicators = dataFile.indicators.filter(function(v) {
+dataFile.indicators = dataFile.indicators.filter(function (v) {
   return v.practiceId && v.practiceId !== "ALL";
 });
 
 var patients = dataFile.patients;
 
-var assign = function(obj, prop, value) {
+var assign = function (obj, prop, value) {
   if (typeof prop === "string")
     prop = prop.split(".");
 
@@ -128,7 +133,7 @@ var assign = function(obj, prop, value) {
 
 
 //read existing indicators as dumped from mongo
-fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function(line) {
+fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function (line) {
   var els = line.trim("\r").split("\t");
   if (els.length < 5) {
     if (els[0].replace(/[^a-zA-Z0-9]/g, "").length > 0) messages.push("The text.dat file contains a row with no TAB character: " + els[0]);
@@ -147,14 +152,14 @@ fs.readFileSync(IN_DIR + FILENAMES.text, 'utf8').split("\n").forEach(function(li
 
 var tempDates = [];
 
-var isInTextFile = function(pathway, stage, standard) {
+var isInTextFile = function (pathway, stage, standard) {
   if (!textFile.pathways[pathway] || !textFile.pathways[pathway][stage] || !textFile.pathways[pathway][stage].standards[standard]) {
     return false;
   }
   return true;
 };
 
-var checkTextFile = function(pathway, stage, standard, file) {
+var checkTextFile = function (pathway, stage, standard, file) {
   if (!isInTextFile(pathway, stage, standard)) {
     console.log("#######################");
     console.log("##    ERROR         ###");
@@ -164,7 +169,7 @@ var checkTextFile = function(pathway, stage, standard, file) {
   }
 };
 
-dataFile.indicators = dataFile.indicators.filter(function(v) {
+dataFile.indicators = dataFile.indicators.filter(function (v) {
   var pathway = v.id.split('.')[0];
   var stage = v.id.split('.')[1];
   var standard = v.id.split('.')[2];
@@ -175,23 +180,23 @@ var indicators = dataFile.indicators;
 
 var indicatorType = {};
 
-var doProcessIndicators = function(callback) {
+var doProcessIndicators = function (callback) {
   console.log("Doing process indicators...");
   fs.createReadStream(IN_DIR + FILENAMES.processIndicators)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['indicatorid', 'gpcode', 'date', 'numerator', 'denominator', 'target', 'benchmark']
-      })
+    csv({
+      separator: '\t',
+      headers: ['indicatorid', 'gpcode', 'date', 'numerator', 'denominator', 'target', 'benchmark']
+    })
     )
-    .on('data', function(data) {
+    .on('data', function (data) {
       if (data.date) {
 
         if (!indicatorType[data.indicatorid]) {
           indicatorType[data.indicatorid] = "process";
         }
 
-        var i = indicators.filter(function(v) {
+        var i = indicators.filter(function (v) {
           return v.id === data.indicatorid && v.practiceId === data.gpcode;
         })[0];
 
@@ -244,16 +249,16 @@ var doProcessIndicators = function(callback) {
         }
 
         //Sort them all..
-        var temp = i.values[0].slice(1).map(function(v, idx) {
+        var temp = i.values[0].slice(1).map(function (v, idx) {
           return { a: v, b: i.values[1][idx + 1], c: i.values[2][idx + 1], d: i.values[3][idx + 1] };
         });
         //sort
-        temp.sort(function(a, b) {
+        temp.sort(function (a, b) {
           return a.a === b.a ? 0 : (a.a < b.a ? -1 : 1);
         });
 
         //reassign
-        temp.forEach(function(v, idx) {
+        temp.forEach(function (v, idx) {
           i.values[0][idx + 1] = v.a;
           i.values[1][idx + 1] = v.b;
           i.values[2][idx + 1] = v.c;
@@ -261,33 +266,33 @@ var doProcessIndicators = function(callback) {
         });
       }
     })
-    .on('end', function() {
+    .on('end', function () {
       console.log("Process indicators done.");
       callback(null);
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error while doing process indicators.");
       callback(err);
     });
 };
 
-var doOutcomeIndicators = function(callback) {
+var doOutcomeIndicators = function (callback) {
   console.log("Doing outcome indicators...");
   fs.createReadStream(IN_DIR + FILENAMES.outcomeIndicators)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['indicatorid', 'gpcode', 'date', 'patientCount', 'eventCount', 'denominator', 'standardisedIncidence', 'benchmark']
-      })
+    csv({
+      separator: '\t',
+      headers: ['indicatorid', 'gpcode', 'date', 'patientCount', 'eventCount', 'denominator', 'standardisedIncidence', 'benchmark']
+    })
     )
-    .on('data', function(data) {
+    .on('data', function (data) {
       if (data.date) {
 
         if (!indicatorType[data.indicatorid]) {
           indicatorType[data.indicatorid] = "outcome";
         }
 
-        var i = indicators.filter(function(v) {
+        var i = indicators.filter(function (v) {
           return v.id === data.indicatorid && v.practiceId === data.gpcode;
         })[0];
 
@@ -316,7 +321,7 @@ var doOutcomeIndicators = function(callback) {
           };
           indicators.push(i);
         } else {
-          if(i.values[1][0]==="numerator") {
+          if (i.values[1][0] === "numerator") {
             i.values = [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]];
           }
           i.benchmark = data.benchmark;
@@ -345,16 +350,16 @@ var doOutcomeIndicators = function(callback) {
         }
 
         //Sort them all..
-        var temp = i.values[0].slice(1).map(function(v, idx) {
+        var temp = i.values[0].slice(1).map(function (v, idx) {
           return { a: v, b: i.values[1][idx + 1], c: i.values[2][idx + 1], d: i.values[3][idx + 1], e: i.values[4][idx + 1] };
         });
         //sort
-        temp.sort(function(a, b) {
+        temp.sort(function (a, b) {
           return a.a === b.a ? 0 : (a.a < b.a ? -1 : 1);
         });
 
         //reassign
-        temp.forEach(function(v, idx) {
+        temp.forEach(function (v, idx) {
           i.values[0][idx + 1] = v.a;
           i.values[1][idx + 1] = v.b;
           i.values[2][idx + 1] = v.c;
@@ -363,61 +368,61 @@ var doOutcomeIndicators = function(callback) {
         });
       }
     })
-    .on('end', function() {
+    .on('end', function () {
       console.log("Outcome indicators done.");
       callback(null);
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error while doing outcome indicators.");
       callback(err);
     });
 };
 
-var doIndicatorMapping = function(callback) {
+var doIndicatorMapping = function (callback) {
   console.log("Doing indicator mapping...");
 
-  indicators.forEach(function(v){
-    if(v.mappedIndicators) v.mappedIndicators=[];
+  indicators.forEach(function (v) {
+    if (v.mappedIndicators) v.mappedIndicators = [];
   });
 
   fs.createReadStream(IN_DIR + FILENAMES.indicatorMapping)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['outcomeIndicatorId', 'processIndicatorId']
-      })
+    csv({
+      separator: '\t',
+      headers: ['outcomeIndicatorId', 'processIndicatorId']
+    })
     )
-    .on('data', function(data) {
+    .on('data', function (data) {
 
-      indicators.filter(function(v) {
+      indicators.filter(function (v) {
         return v.id === data.outcomeIndicatorId;
-      }).forEach(function(v){
-        if(!v.mappedIndicators) v.mappedIndicators = [];
+      }).forEach(function (v) {
+        if (!v.mappedIndicators) v.mappedIndicators = [];
         v.mappedIndicators.push(data.processIndicatorId);
       });
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error while doing indicator mapping.");
       callback(err);
     })
-    .on('end', function() {
+    .on('end', function () {
       console.log("Indicator mapping done.");
       callback(null);
     });
 };
 
-var doDemographics = function(callback) {
+var doDemographics = function (callback) {
   console.log("Doing demographics...");
   readCsvAsyncToObject({
     file: IN_DIR + FILENAMES.demographics,
     headers: ['patientId', 'nhsnumber', 'age', 'sex', 'gpcode']
-  }, function(err, result) {
+  }, function (err, result) {
     if (err) {
       console.log("Error doing demographics.");
       return callback(err);
     }
     //age, sex
-    result.forEach(function(v) {
+    result.forEach(function (v) {
       temp[+v.patientId] = {};
       if (!patients[+v.patientId]) {
         patients[+v.patientId] = {
@@ -432,18 +437,18 @@ var doDemographics = function(callback) {
   });
 };
 
-var doDenominators = function(callback) {
+var doDenominators = function (callback) {
   console.log("Doing denominators...");
   readCsvAsyncToObject({
     file: IN_DIR + FILENAMES.denominators,
     headers: ['patientId', 'indicatorId', 'why']
-  }, function(err, result) {
+  }, function (err, result) {
     if (err) {
       console.log("Error doing denominators.");
       return callback(err);
     }
     //denominator
-    result.forEach(function(v) {
+    result.forEach(function (v) {
       if (!temp[+v.patientId]) {
         console.log("Denominator for unknown patient: " + v.patientId);
         return;
@@ -465,13 +470,13 @@ var doDenominators = function(callback) {
   });
 };
 
-var doEvents = function(callback) {
+var doEvents = function (callback) {
   console.log("Doing events...");
   readCsvAsync({
     file: IN_DIR + FILENAMES.events,
     thing: 'events',
     task: 1
-  }, function(err, result) {
+  }, function (err, result) {
     if (err) {
       console.log("Error when doing events.");
       return callback(err);
@@ -482,13 +487,13 @@ var doEvents = function(callback) {
   });
 };
 
-var doContacts = function(callback) {
+var doContacts = function (callback) {
   console.log("Doing contacts...");
   readCsvAsync({
     file: IN_DIR + FILENAMES.contacts,
     thing: 'contacts',
     task: 2
-  }, function(err, result) {
+  }, function (err, result) {
     if (err) {
       console.log("Error when doing contacts.");
       return callback(err);
@@ -499,19 +504,19 @@ var doContacts = function(callback) {
   });
 };
 
-var doDiagnoses = function(callback) {
+var doDiagnoses = function (callback) {
   console.log("Doing diagnoses.");
   var lastPatId = -1;
   temp = {};
-  var processDiagnoses = function(patientId) {
+  var processDiagnoses = function (patientId) {
     if (temp.diag) {
       patients[patientId].conditions = [];
-      Object.keys(temp.diag).forEach(function(d) {
-        temp.diag[d].sort(function(a, b) {
+      Object.keys(temp.diag).forEach(function (d) {
+        temp.diag[d].sort(function (a, b) {
           return a.date - b.date;
         });
         var intervals = [];
-        var last = temp.diag[d].reduce(function(prev, cur) {
+        var last = temp.diag[d].reduce(function (prev, cur) {
           var end = new Date(cur.date);
           end.setDate(end.getDate() - 1);
           intervals.push({
@@ -536,12 +541,12 @@ var doDiagnoses = function(callback) {
 
   fs.createReadStream(IN_DIR + FILENAMES.diagnoses)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['patientId', 'date', 'diag', 'cat']
-      })
+    csv({
+      separator: '\t',
+      headers: ['patientId', 'date', 'diag', 'cat']
+    })
     )
-    .on('data', function(data) {
+    .on('data', function (data) {
       if (+data.patientId !== lastPatId) {
         processDiagnoses(lastPatId);
         temp = {};
@@ -555,32 +560,32 @@ var doDiagnoses = function(callback) {
       if (!temp.diag[data.diag]) temp.diag[data.diag] = [];
       temp.diag[data.diag].push({ date: new Date(data.date).getTime(), cat: data.cat });
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error when doing diagnoses.");
       return callback(err);
     })
-    .on('end', function() {
+    .on('end', function () {
       processDiagnoses(lastPatId);
       console.log('Diagnoses done.');
       callback(null);
     });
 };
 
-var doMedications = function(callback) {
+var doMedications = function (callback) {
   console.log("Doing medications...");
   temp = {};
   lastPatId = -1;
 
 
-  var processMedications = function(patientId) {
+  var processMedications = function (patientId) {
     if (temp.meds) {
       patients[patientId].medications = [];
-      Object.keys(temp.meds).forEach(function(d) {
-        temp.meds[d].sort(function(a, b) {
+      Object.keys(temp.meds).forEach(function (d) {
+        temp.meds[d].sort(function (a, b) {
           return a.date - b.date;
         });
         var intervals = [];
-        var last = temp.meds[d].reduce(function(prev, cur) {
+        var last = temp.meds[d].reduce(function (prev, cur) {
           var end = new Date(cur.date);
           end.setDate(end.getDate() - 1);
           if (prev) {
@@ -608,12 +613,12 @@ var doMedications = function(callback) {
   };
   fs.createReadStream(IN_DIR + FILENAMES.medications)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['patientId', 'date', 'type', 'family', 'mg', 'event']
-      })
+    csv({
+      separator: '\t',
+      headers: ['patientId', 'date', 'type', 'family', 'mg', 'event']
+    })
     )
-    .on('data', function(data) {
+    .on('data', function (data) {
       if (+data.patientId !== lastPatId) {
         processMedications(lastPatId);
         temp = {};
@@ -628,27 +633,27 @@ var doMedications = function(callback) {
       temp.meds[data.type].push({ date: new Date(data.date).getTime(), type: data.type, family: data.family, mg: data.mg, event: data.event });
 
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error when doing medications.");
       return callback(err);
     })
-    .on('end', function() {
+    .on('end', function () {
       processMedications(lastPatId);
       console.log('Medications done.');
       callback(null);
     });
 };
 
-var doMeasurements = function(callback) {
+var doMeasurements = function (callback) {
   console.log("Doing measurements...");
   temp = {};
   lastPatId = -1;
 
-  var processMeasurements = function(patientId) {
+  var processMeasurements = function (patientId) {
     if (temp.meas) {
       patients[patientId].measurements = [];
-      Object.keys(temp.meas).forEach(function(d) {
-        temp.meas[d].sort(function(a, b) {
+      Object.keys(temp.meas).forEach(function (d) {
+        temp.meas[d].sort(function (a, b) {
           return a.date - b.date;
         });
         var mData = [];
@@ -689,7 +694,7 @@ var doMeasurements = function(callback) {
             "valueDecimals": 0
           });
         } else {
-          temp.meas[d].forEach(function(v) {
+          temp.meas[d].forEach(function (v) {
             mData.push([v.date, v.source, +v.value]);
           });
 
@@ -708,12 +713,12 @@ var doMeasurements = function(callback) {
 
   fs.createReadStream(IN_DIR + FILENAMES.measurements)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['patientId', 'date', 'thing', 'value', 'source']
-      })
+    csv({
+      separator: '\t',
+      headers: ['patientId', 'date', 'thing', 'value', 'source']
+    })
     )
-    .on('data', function(data) {
+    .on('data', function (data) {
       if (!textFile.measurements[data.thing]) return;
       if (+data.patientId !== lastPatId) {
         processMeasurements(lastPatId);
@@ -735,31 +740,31 @@ var doMeasurements = function(callback) {
         temp.meas[data.thing].push({ date: new Date(data.date).getTime(), value: parseFloat(data.value), source: data.source });
       }
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error when doing measurements.");
       return callback(err);
     })
-    .on('end', function() {
+    .on('end', function () {
       console.log('Measurements done.');
       callback(null);
     });
 };
 
-var doPatientActions = function(callback) {
+var doPatientActions = function (callback) {
   console.log("Doing patient actions...");
-  indicators.forEach(function(v) {
+  indicators.forEach(function (v) {
     v.opportunities = [];
     v.actions = [];
   });
 
   fs.createReadStream(IN_DIR + FILENAMES.patientActions)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['patientId', 'indicatorId', 'actionCat', 'reasonNumber', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
-      })
+    csv({
+      separator: '\t',
+      headers: ['patientId', 'indicatorId', 'actionCat', 'reasonNumber', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
+    })
     )
-    .on('data', function(data) {
+    .on('data', function (data) {
       var pathway = data.indicatorId.split('.')[0];
       var stage = data.indicatorId.split('.')[1];
       var standard = data.indicatorId.split('.')[2];
@@ -774,9 +779,9 @@ var doPatientActions = function(callback) {
       }
 
       if (!patients[+data.patientId].actions) patients[+data.patientId].actions = [];
-      if (data.actionText && patients[+data.patientId].actions.filter(function(v) {
-          return v.actionText === data.actionText && v.indicatorId === data.indicatorId;
-        }).length === 0) {
+      if (data.actionText && patients[+data.patientId].actions.filter(function (v) {
+        return v.actionText === data.actionText && v.indicatorId === data.indicatorId;
+      }).length === 0) {
         patients[+data.patientId].actions.push({
           indicatorId: data.indicatorId,
           actionCat: data.actionCat,
@@ -789,7 +794,7 @@ var doPatientActions = function(callback) {
         });
       }
 
-      var patientsStandard = patients[+data.patientId].standards ? patients[+data.patientId].standards.filter(function(v) {
+      var patientsStandard = patients[+data.patientId].standards ? patients[+data.patientId].standards.filter(function (v) {
         return v.display === indText.tabText;
       }) : [];
       if (patientsStandard.length === 0) {
@@ -799,7 +804,7 @@ var doPatientActions = function(callback) {
       } else if (patientsStandard.length > 1) console.log("patient: " + data.patientId + " --numerator patient appearing more than once in the denominator e.g. they appear in the denominator table more than once");
       else patientsStandard[0].targetMet = false;
 
-      var i = indicators.filter(function(v) {
+      var i = indicators.filter(function (v) {
         return v.id === data.indicatorId && v.practiceId === patients[+data.patientId].characteristics.practiceId;
       })[0];
 
@@ -809,7 +814,7 @@ var doPatientActions = function(callback) {
       }
       if (!i.opportunities) i.opportunities = [];
 
-      var opp = i.opportunities.filter(function(v) {
+      var opp = i.opportunities.filter(function (v) {
         return v.id === data.actionCat;
       })[0];
       if (!opp) {
@@ -817,26 +822,26 @@ var doPatientActions = function(callback) {
         //console.log(data.actionCat);
         opp = { id: data.actionCat, name: oppText[data.actionCat].name, positionInBarChart: oppText[data.actionCat].positionInBarChart, description: oppText[data.actionCat].description, patients: [] };
         i.opportunities.push(opp);
-        i.opportunities.sort(function(a, b) {
+        i.opportunities.sort(function (a, b) {
           return a.positionInBarChart - b.positionInBarChart;
         });
       }
       if (opp.patients.indexOf(+data.patientId) === -1) opp.patients.push(+data.patientId);
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error when doing patient actions.");
       return callback(err);
     })
-    .on('end', function() {
+    .on('end', function () {
 
       var all_practice_hack = {};
 
-      indicators.forEach(function(v) {
-        if(!v.type) return;
+      indicators.forEach(function (v) {
+        if (!v.type) return;
         if (!all_practice_hack[v.id]) {
           all_practice_hack[v.id] = JSON.parse(JSON.stringify(v));
           all_practice_hack[v.id].practiceId = "ALL";
-          all_practice_hack[v.id].opportunities = all_practice_hack[v.id].opportunities.map(function(vv) {
+          all_practice_hack[v.id].opportunities = all_practice_hack[v.id].opportunities.map(function (vv) {
             vv.patients = [];
             vv.patientCount = 0;
             return vv;
@@ -844,8 +849,8 @@ var doPatientActions = function(callback) {
           all_practice_hack[v.id].values = [];
           all_practice_hack[v.id].data = {};
         }
-        v.opportunities.forEach(function(vv) {
-          var opp = all_practice_hack[v.id].opportunities.filter(function(vvv) {
+        v.opportunities.forEach(function (vv) {
+          var opp = all_practice_hack[v.id].opportunities.filter(function (vvv) {
             return vvv.id === vv.id;
           });
           if (opp.length === 0) {
@@ -859,7 +864,7 @@ var doPatientActions = function(callback) {
           opp.patientCount += vv.patients.length;
         });
         if (v.values && v.values[0].length > 0) {
-          v.values[0].slice(1).forEach(function(vv, i) {
+          v.values[0].slice(1).forEach(function (vv, i) {
             if (!all_practice_hack[v.id].data[vv]) {
               all_practice_hack[v.id].data[vv] = {
                 n: +v.values[1][i + 1],
@@ -878,11 +883,11 @@ var doPatientActions = function(callback) {
         }
       });
 
-      Object.keys(all_practice_hack).forEach(function(v) {
+      Object.keys(all_practice_hack).forEach(function (v) {
         var x = all_practice_hack[v];
         if (x.data[Object.keys(x.data)[0]].n2) {
           x.values = [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]];
-          Object.keys(x.data).forEach(function(vv) {
+          Object.keys(x.data).forEach(function (vv) {
             x.values[0].push(vv);
             x.values[1].push(x.data[vv].n);
             x.values[2].push(x.data[vv].d);
@@ -891,7 +896,7 @@ var doPatientActions = function(callback) {
           });
         } else {
           x.values = [["x"], ["numerator"], ["denominator"], ["target"]];
-          Object.keys(x.data).forEach(function(vv) {
+          Object.keys(x.data).forEach(function (vv) {
             x.values[0].push(vv);
             x.values[1].push(x.data[vv].n);
             x.values[2].push(x.data[vv].d);
@@ -908,19 +913,19 @@ var doPatientActions = function(callback) {
     });
 };
 
-var doOrgActions = function(callback) {
+var doOrgActions = function (callback) {
   console.log("Doing org actions...");
   //now for the orgactions
   fs.createReadStream(IN_DIR + FILENAMES.orgActions)
     .pipe(
-      csv({
-        separator: '\t',
-        headers: ['practiceId', 'indicatorId', 'actionId', 'proportion', 'numberPatients', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
-      })
+    csv({
+      separator: '\t',
+      headers: ['practiceId', 'indicatorId', 'actionId', 'proportion', 'numberPatients', 'pointsPerAction', 'priority', 'actionText', 'supportingText']
+    })
     ) //NEED practiceId, actionId and priority
-    .on('data', function(data) {
+    .on('data', function (data) {
 
-      var i = indicators.filter(function(v) {
+      var i = indicators.filter(function (v) {
         return v.id === data.indicatorId && v.practiceId === data.practiceId;
       })[0];
 
@@ -944,32 +949,32 @@ var doOrgActions = function(callback) {
         priority: data.priority
       });
     })
-    .on('err', function(err) {
+    .on('err', function (err) {
       console.log("Error when doing org actions.");
       return callback(err);
     })
-    .on('end', function() {
+    .on('end', function () {
       console.log("Org actions done.");
       callback(null);
     });
 };
 
-var writeFiles = function(callback) {
+var writeFiles = function (callback) {
   console.log("Writing files...");
   dataFile.text = textFile;
 
   fs.writeFileSync(OUT_DIR + 'indicators.json', JSON.stringify(dataFile.indicators, null, 2));
 
-  dataFile.patients = Object.keys(dataFile.patients).map(function(v) {
+  dataFile.patients = Object.keys(dataFile.patients).map(function (v) {
     return dataFile.patients[v];
   });
 
   var file = fs.createWriteStream(OUT_DIR + 'patients.json');
-  file.on('error', function(err) {
+  file.on('error', function (err) {
     console.log("Error writing files.");
     return callback(err);
   });
-  dataFile.patients.forEach(function(v) { file.write(JSON.stringify(v) + '\n'); });
+  dataFile.patients.forEach(function (v) { file.write(JSON.stringify(v) + '\n'); });
   file.end();
 
   fs.writeFileSync(OUT_DIR + 'text.json', JSON.stringify([textFile], null, 2));
@@ -977,7 +982,7 @@ var writeFiles = function(callback) {
   callback(null);
 };
 
-var displayWarning = function(callback) {
+var displayWarning = function (callback) {
   if (messages.length > 0) {
     console.log();
     console.log("################");
@@ -986,7 +991,7 @@ var displayWarning = function(callback) {
     console.log();
     console.log("The following errors were detected and should be investigated:");
     console.log();
-    messages.forEach(function(msg) {
+    messages.forEach(function (msg) {
       console.warn(msg);
     });
   }
@@ -1003,29 +1008,29 @@ var displayWarning = function(callback) {
 var temp = {};
 
 async.series([
-    //dump,
-    doProcessIndicators,
-    doOutcomeIndicators,
-    doIndicatorMapping,
-    doDemographics,
-    doDenominators,
-    doEvents,
-    //dump,
-    doContacts,
-    //dump,
-    doDiagnoses,
-    //dump,
-    doMedications,
-    //dump,
-    doMeasurements,
-    //dump,
-    doPatientActions,
-    doOrgActions,
-    writeFiles,
-    displayWarning
-  ],
+  //dump,
+  doProcessIndicators,
+  doOutcomeIndicators,
+  doIndicatorMapping,
+  doDemographics,
+  doDenominators,
+  doEvents,
+  //dump,
+  doContacts,
+  //dump,
+  doDiagnoses,
+  //dump,
+  doMedications,
+  //dump,
+  doMeasurements,
+  //dump,
+  doPatientActions,
+  doOrgActions,
+  writeFiles,
+  displayWarning
+],
   // optional callback
-  function(err, results) {
+  function (err, results) {
     // results is now equal to ['one', 'two']
     if (err) {
       console.log(err);
