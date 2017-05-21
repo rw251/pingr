@@ -1,5 +1,6 @@
 var tutorial = {
   run: function(){
+
     var intro = introJs();
     intro.setOptions({
       /*{
@@ -37,7 +38,7 @@ var tutorial = {
         {
           intro: "<h2 class='text-center'>You can help PINGR</h2><br/>"
                 +"<h4>Your input improves PINGR over time.<br/>"
-                +"By giving a <i class='material-icons icon-in-text'>thumb_up</i> or <i class='material-icons icon-in-text'>thumb_down</i> you help PINGR's suggestions for <strong>all</strong> users<br/>"
+                +"By giving a <i class='material-icons icon-in-text</i> or <i class='material-icons icon-in-text'>thumb_down</i> you help PINGR's suggestions for <strong>all</strong> users<br/>"
                 +"</h4>"
         },
         {
@@ -117,26 +118,40 @@ var tutorial = {
         if(target[0] != floatPane[0])
         {
           $('.main-panel-wide').scrollTop($(targetElement).offset().top - $('.main-panel-wide').offset().top + $('.main-panel-wide').scrollTop());
-          //$('.main-panel-wide').animate({scrollTop: $(targetElement).offset().top - $('.main-panel-wide').offset().top + $('.main-panel-wide').scrollTop()});
         }
     })
 
-    intro.setOption('doneLabel', 'Next page')
+    intro.setOption('doneLabel', 'Lets go to Overview')
 
     intro.oncomplete(function() {
          window.location.href = '#indicators?tuttip=a1p1';
-
-         //tutorial.runIndicator();
     });
 
+
+    //if not on this page go to this page
     //this function runs after the tutorial session closes
     intro.onexit(function(){
       //remove overflow prevention at the end of the tutorial
       $('body').css({overflow: "auto"});
+      //enable perfectScrollbar again
+      $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar({wheelPropagation: true}).css({overflow: "auto"});
+
     });
+
+
+    // // add listener to disable scroll
+    // window.addEventListener('scroll', noscroll);
+    // // Remove listener to disable scroll
+    // window.removeEventListener('scroll', noscroll);
+
 
     //apply hidden overflow to body for the duration of tutorial session
     $('body').css({overflow: "hidden"});
+    // $('body').unbind('mousewheel');
+    // $('body').unbind('wheel');
+    $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar('destroy').css({overflow: "hidden"});
+    // $('.ps-child').perfectScrollbar('destroy').css({overflow: "hidden"});
+    //$('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar('destroy');
 
     //window.location.href = '#overview';
     //starts the tutorial
@@ -148,47 +163,147 @@ var tutorial = {
       intro.setOptions({
         steps: [
           {
-            element: document.querySelector('#title-row'),
+            element: document.querySelector('#indicatorHeadCard'),
             position: "bottom",
-            intro: "<h2 class='text-center'>You made it!</h2>"
+            intro: "<h2 class='text-center'>You made it!<br/>This is the Indicator page...</h2>"
+          },
+          {
+            element: document.querySelector('#teamActionCard'),
+            position: "right",
+            intro: "<h2 class='text-center'>Next page then? ... lets do it!</h2>"
+          },
+          {
+            element: document.querySelector('#dataBrowser'),
+            position: "left",
+            intro: "<h2 class='text-center'>This be the data panel</h2>"
+          },
+          {
+            element: document.querySelector('#indicatorDataContainer'),
+            position: "left",
+            intro: "<h2 class='text-center'>Interract with this!</h2>"
+          },
+          {
+            element: document.querySelector('#indicatorDataContainer #mainPage-tabs'),
+            position: "left",
+            intro: "<h2 class='text-center'>You will to press these!</h2>"
+          },
+          {
+            intro: "<h2 class='text-center'>Next page then? ... lets do it!</h2>"
           }
         ]
+      });
+      intro.onchange(function(targetElement){
+          target = $(targetElement);
+          floatPane = $('div.introjsFloatingElement');
+          if(target[0] != floatPane[0])
+          {
+            $('.main-panel-wide').scrollTop($(targetElement).offset().top - $('.main-panel-wide').offset().top + $('.main-panel-wide').scrollTop());
+          }
+      });
+
+      intro.setOption('doneLabel', 'Next up, Patients');
+
+      intro.oncomplete(function() {
+           window.location.href = '#patient?tuttip=a2q4'
+           $('body').css({overflow: "auto"});
+           //enable perfectScrollbar again
       });
 
       intro.onexit(function(){
         //remove overflow prevention at the end of the tutorial
         $('body').css({overflow: "auto"});
         window.location.href = '#overview';
+        //enable perfectScrollbar again
+        $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar({wheelPropagation: true}).css({overflow: "auto"});
       });
+
+      //apply hidden overflow to body for the duration of tutorial session
+      $('body').css({overflow: "hidden"});
+      $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar('destroy').css({overflow: "hidden"});
 
       intro.start();
     },
-    runPatinet: function(){
+    runPatient: function(){
 
-        var nextIntro = introJs();
+        var intro = introJs();
         intro.setOptions({
           steps: [
             {
-              element: document.querySelector('#title-row'),
+              element: document.querySelector('#patient-Search'),
               position: "bottom",
               intro: "<h2 class='text-center'>You made it!</h2>"
+            },
+            {
+              element: document.querySelector('#all-patient-list'),
+              position: "top",
+              intro: "<h2 class='text-center'>Check this list yo</h2>"
             }
           ]
         });
+        // intro.onchange(function(targetElement){
+        //     target = $(targetElement);
+        //     floatPane = $('div.introjsFloatingElement');
+        //     if(target[0] != floatPane[0])
+        //     {
+        //       $('.main-panel-wide').scrollTop($(targetElement).offset().top - $('.main-panel-wide').offset().top + $('.main-panel-wide').scrollTop());
+        //     }
+        // });
+        //
+        intro.setOption('doneLabel', 'Onwards to Action Plans');
+
+        intro.oncomplete(function() {
+             window.location.href = '#agreedactions?tuttip=a3r8'
+        });
+
+        intro.onexit(function(){
+          //remove overflow prevention at the end of the tutorial
+          $('body').css({overflow: "auto"});
+          window.location.href = '#overview';
+          //enable perfectScrollbar again
+          $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar({wheelPropagation: true}).css({overflow: "auto"});
+        });
+
+        //apply hidden overflow to body for the duration of tutorial session
+        $('body').css({overflow: "hidden"});
+        $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar('destroy').css({overflow: "hidden"});
+
         intro.start();
+
       },
       runActionPlan: function(){
 
-          var nextIntro = introJs();
+          var intro = introJs();
           intro.setOptions({
             steps: [
               {
-                element: document.querySelector('#title-row'),
-                position: "bottom",
                 intro: "<h2 class='text-center'>You made it!</h2>"
+              },
+              {
+                element: document.querySelector('#actionPlanCard'),
+                position: "top",
+                intro: "<h2 class='text-center'>This is the last card!</h2>"
               }
             ]
           });
+
+          intro.onexit(function(){
+            //remove overflow prevention at the end of the tutorial
+            $('body').css({overflow: "auto"});
+            window.location.href = '#overview';
+            //enable perfectScrollbar again
+            $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar({wheelPropagation: true}).css({overflow: "auto"});
+          });
+
+          intro.oncomplete(function() {
+            $('body').css({overflow: "auto"});
+            window.location.href = '#agreedactions'
+            $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar({wheelPropagation: true}).css({overflow: "auto"});
+          });
+
+          //apply hidden overflow to body for the duration of tutorial session
+          $('body').css({overflow: "hidden"});
+          $('.sidebar .sidebar-wrapper, .main-panel, .main-panel-wide').perfectScrollbar('destroy').css({overflow: "hidden"});
+
           intro.start();
         }
   //}

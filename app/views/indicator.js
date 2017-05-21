@@ -129,13 +129,25 @@ var ind = {
         card.append(tabList);
         card.append(tabContent);
 
+        var cardTitle = $('#cardHeaderSection');
+
+
         // *B* 1st tabbed panel *tinman*
-        wrapper.showTab(tabContent, tabList, "Improvement opportunities", "A summary of all the relevant information",  "Overview", [
+        wrapper.show(cardTitle, true, [
           {
             show: indicatorHeadlines.show,
             args: [pathwayId, pathwayStage, standard]
             //args: [pathwayId, pathways, standard]
-          }, {
+          }
+        ]);
+
+        wrapper.showTab(tabContent, tabList, "Improvement opportunities", "A summary of all the relevant information",  "Overview", [
+          // {
+          //   show: indicatorHeadlines.show,
+          //   args: [pathwayId, pathwayStage, standard]
+          //   //args: [pathwayId, pathways, standard]
+          // },
+          {
             show: indicatorBreakdown.show,
            args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
          }, {

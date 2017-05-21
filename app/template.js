@@ -93,6 +93,7 @@ var template = {
 
       //tutorial system entry point
       $('#tutorialLaunch').off('click').on('click', function(e){
+        window.location.href = '#overview';
         tutorial.run();
         e.preventDefault();
       });
@@ -100,6 +101,12 @@ var template = {
       $(document).ready(function(){
       if (RegExp('tuttip=a1p1', 'gi').test(window.location.hash.split("?")[1])) {
         tutorial.runIndicator();
+      }
+      else if (RegExp('tuttip=a2q4', 'gi').test(window.location.hash.split("?")[1])) {
+        tutorial.runPatient();
+      }
+      else if (RegExp('tuttip=a3r8', 'gi').test(window.location.hash.split("?")[1])) {
+        tutorial.runActionPlan();
       }
     });
     }
