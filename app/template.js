@@ -105,6 +105,9 @@ var template = {
       else if (RegExp('tuttip=a2q4', 'gi').test(window.location.hash.split("?")[1])) {
         tutorial.runPatient();
       }
+      else if (RegExp('tuttip=b2q4', 'gi').test(window.location.hash.split("?")[1])) {
+        tutorial.runPatientSelected();
+      }
       else if (RegExp('tuttip=a3r8', 'gi').test(window.location.hash.split("?")[1])) {
         tutorial.runActionPlan();
       }
