@@ -162,7 +162,7 @@ var ind = {
           ], false);
 */
         //setup tab buttons
-        wrapper.wireUp();
+        wrapper.wireUp(patientList.restoreFromState);
       }
       else {
         //reload active tab
@@ -193,7 +193,7 @@ var ind = {
       //add state indicator
       farRightPanel.attr("class", "col-xl-8 col-lg-8 state-indicator-rightPanel");
 
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
+      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, /*{ selector: '.table-scroll', padding: 200, minHeight:170 },*/ {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
 
     }, 0);
   }

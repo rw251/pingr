@@ -175,6 +175,9 @@ var base = {
 
     $('#modal').html(tmpl({ text: lookup.suggestionModalText }));
 
+    $('#modal .modal').off('shown.bs.modal').on('shown.bs.modal', function (e) {
+      $('#modal-suggestion-text').focus();
+    });
 
     $('#modal .modal').off('submit', 'form').on('submit', 'form', function(e) {
 
@@ -185,6 +188,7 @@ var base = {
       e.preventDefault();
       $('#modal .modal').modal('hide');
     }).modal();
+
   },
 
   switchTo2Column1Narrow1Wide: function() {
@@ -218,9 +222,20 @@ var base = {
     tabElement.data("href", "#" + tab + "/" + url);
   },
 
+/**
+ * Show the main loading page and hide everything else
+ */
   showLoading: function() {
     $('.loading-container').show();
     $('#title-row').hide();
+  },
+
+/**
+ * Show a loading icon in a given element with an optional message
+ */
+  showLocalLoading: function(element, message) {
+    var tmpl = require('./templates/loading');
+    element.html(tmpl({message: message}));
   },
 
   hideLoading: function() {
@@ -228,8 +243,9 @@ var base = {
     $('#title-row').fadeIn(0);
   },
 
-  getCssText: function() {
-    var cssText = base.elements.map(function(v) {
+  getCssText: function(elements) {
+    if(!elements) elements = base.elements;
+    var cssText = elements.map(function(v) {
       return v.selector + " {max-height:" + Math.max(v.minHeight,Math.floor($(window).height() - $(v.selector).position().top - v.padding)) + "px;min-height:" + v.minHeight + "px;}";
     }).join(" ");
     return cssText;
@@ -241,8 +257,16 @@ var base = {
     if (!elements) elements = base.elements;
     base.elements = elements;
     console.log("shall we update?");
-    if ($(elements.map(function(v) { return v.selector + ":visible"; }).join(",")).length !== elements.length) {
+    var currentlyVisibleElements = elements.filter(function(v){
+      return $(v.selector + ":visible").length>0 ;
+    });
+    if (currentlyVisibleElements.length !== elements.length) {
       console.log("no - wait a bit.");
+      if ($('#addedCSS').length === 0) {
+        $('head').append('<style id="addedCSS" type="text/css"></style>');
+      }
+
+      $('#addedCSS').text(base.getCssText(currentlyVisibleElements));
       setTimeout(function() {
         base.updateFixedHeightElements(elements);
       }, 100);

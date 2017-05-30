@@ -1,33 +1,18 @@
 include mixins/patient-list-header-item
 
-.row
-  .col-xs-9
-    h4!= header + '(n=' + n + ')'
-  .col-xs-3
-    .btn-group
-      button#downloadPatientList.btn.btn-danger Download patient list
-      button.btn.btn-danger.dropdown-toggle(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-        span.caret
-        span.sr-only Toggle Dropdown
-      ul.dropdown-menu
-        li
-          a#downloadAsPdf(href="#") Full list (pdf)
-        li
-          a#downloadAsText(href="#") Nhs numbers (text file)
-.table-scroll
-  table#patient-list.table.patient-list
-    thead
-      tr(style='background-color:#fff')
-        each item in locals['header-items']
-          +header(item)
-    tbody
-      each patient in patients
-        tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
-          td(style='min-width:130px')
-            - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
-            button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
-              span.fa.fa-clipboard
-            = ' ' + patient.nhsNumber
-          each item in patient.items
-            - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
-            td!= item
+table#patient-list.table.table-condensed.patient-list.order-column.hover
+  thead
+    tr(style='background-color:#fff')
+      each item in locals['header-items']
+        +header(item)
+  tbody
+    each patient in patients
+      tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+        td(style='min-width:130px')
+          - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+          button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-type=type, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+            span.fa.fa-clipboard
+          = ' ' + patient.nhsNumber
+        each item in patient.items
+          - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
+          td!= item

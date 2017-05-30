@@ -28,6 +28,7 @@ module.exports = {
           last_login: new Date(),
           emailFrequency: req.body.freq,
           emailDay: req.body.day,
+          emailHour: req.body.hour,
           practiceIdNotAuthorised: els[0] !== "" ? els[0] : "",
           practiceNameNotAuthorised: els[0] !== "" ? els[1] : "None"
         });

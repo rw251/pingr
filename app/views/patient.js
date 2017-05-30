@@ -3,6 +3,7 @@ var lifeline = require('../panels/lifeline'),
   base = require('../base'),
   layout = require('../layout'),
   lookup = require('../lookup'),
+  state = require('../state'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
   patientSearch = require('../panels/patientSearch'),
@@ -145,6 +146,9 @@ var pv = {
           $('#patient-pane').show();
 
           base.wireUpTooltips();
+
+          state.rememberTabs('individual');
+
           base.hideLoading();
 
           //add state indicator
@@ -158,7 +162,7 @@ var pv = {
       } else {
         base.updateTitle("No patient currently selected");
         base.switchToSingleColumn();
-        //base.savePanelState();
+        base.savePanelState();
         patientSearch.show(centrePanel, false, false, loadContentFn);
         allPatientList.show(centrePanel, true, skip, limit, loadContentFn);
 
@@ -172,7 +176,7 @@ var pv = {
         base.hideLoading();
 
         //add state indicator
-        //farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
 
         base.updateTab("patients", "", "");
 

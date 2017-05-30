@@ -27,6 +27,7 @@ var log = {
       url: "/api/action/addIndividual/" + patientId,
       data: JSON.stringify({ actionText: text, indicatorList: indicatorList }),
       success: function(action) {
+        notify.showSaved();
         data.addOrUpdatePatientAction(patientId, action);
         return done(null, action);
       },
@@ -41,6 +42,7 @@ var log = {
       type: "DELETE",
       url: "/api/action/userdefinedpatient/" + patientId + "/" + actionTextId,
       success: function(d) {
+        notify.showSaved();
         data.removePatientAction(patientId, actionTextId);
         if (done) return done(null, d);
       },
@@ -56,6 +58,7 @@ var log = {
       url: "/api/action/update/individual/" + patientId,
       data: JSON.stringify({ action: updatedAction }),
       success: function(action) {
+        notify.showSaved();
         if(action.agree===true) {
           data.addOrUpdatePatientAction(patientId, action);
         } else if(action.agree===false){
@@ -76,6 +79,7 @@ var log = {
       url: "/api/action/update/team/" + indicatorId,
       data: JSON.stringify({ action: data }),
       success: function(d) {
+        notify.showSaved();
         if (done) return done(null, d);
       },
       dataType: "json",
@@ -89,6 +93,7 @@ var log = {
       url: "/api/action/update/userdefinedpatient/" + patientId + "/" + actionTextId,
       data: JSON.stringify({ action: data }),
       success: function(d) {
+        notify.showSaved();
         if (done) return done(null, d);
       },
       dataType: "json",
@@ -101,6 +106,7 @@ var log = {
       type: "DELETE",
       url: "/api/action/userdefinedteam/" + actionTextId,
       success: function(d) {
+        notify.showSaved();
         if (done) return done(null, d);
       },
       dataType: "json",
@@ -114,6 +120,7 @@ var log = {
       url: "/api/action/update/userdefinedteam/" + actionTextId,
       data: JSON.stringify({ action: data }),
       success: function(d) {
+        notify.showSaved();
         if (done) return done(null, d);
       },
       dataType: "json",
@@ -128,6 +135,7 @@ var log = {
       url: url,
       data: JSON.stringify({ actionText: text }),
       success: function(d) {
+        notify.showSaved();
         return done(null, d);
       },
       dataType: "json",

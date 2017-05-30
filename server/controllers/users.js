@@ -31,7 +31,7 @@ module.exports = {
     User.find({ email: email }).remove(done);
   },
 
-  updateEmailPreference: function(email, freq, day, done){
+  updateEmailPreference: function(email, freq, day, hour, done){
     User.findOne({
       'email': email
     }, function(err, user) {
@@ -47,12 +47,12 @@ module.exports = {
       } else {
         user.emailFrequency = freq;
         user.emailDay = day;
+        user.emailHour = hour;
         user.save(function(err) {
           if (err) {
             console.log('Error in Saving user: ' + err);
             throw err;
           }
-          console.log('User edit succesful');
           return done(null, user);
         });
       }
@@ -83,6 +83,7 @@ module.exports = {
           user.fullname = req.body.fullname;
           user.emailFrequency = req.body.freq;
           user.emailDay = req.body.day;
+          user.emailHour = req.body.hour;
           var els = req.body.practice.split("|");
           user.practiceId = els[0] !== "" ? els[0] : "";
           user.practiceName = els[0] !== "" ? els[1] : "None";
@@ -93,7 +94,6 @@ module.exports = {
               console.log('Error in Saving user: ' + err);
               throw err;
             }
-            console.log('User edit succesful');
             return done(null, user);
           });
         } else {
@@ -110,6 +110,7 @@ module.exports = {
               originalUser.fullname = req.body.fullname;
               originalUser.emailFrequency = req.body.freq;
               originalUser.emailDay = req.body.day;
+              originalUser.emailHour = req.body.hour;
               var els = req.body.practice.split("|");
               originalUser.practiceId = els[0] !== "" ? els[0] : "";
               originalUser.practiceName = els[0] !== "" ? els[1] : "None";
@@ -120,7 +121,6 @@ module.exports = {
                   console.log('Error in Saving user: ' + err);
                   throw err;
                 }
-                console.log('User edit succesful');
                 return done(null, originalUser);
               });
             }
@@ -154,6 +154,7 @@ module.exports = {
           email: req.body.email,
           emailFrequency: req.body.freq,
           emailDay: req.body.day,
+          emailHour: req.body.hour,
           password: req.body.password,
           fullname: req.body.fullname,
           practiceId: els[0] !== "" ? els[0] : "",

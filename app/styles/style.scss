@@ -2333,6 +2333,7 @@ th {
 }
 
 .table-scroll {
+    overflow-x: hidden;
     overflow-y: auto;
     min-height: 170px;
 }
@@ -2843,6 +2844,7 @@ body > svg {
     background-color: #f9ffff;
 }
 
+.nav-tabs > li.active > a.pastel-pink,
 .pastel-pink {
     background-color: #fff9ff;
 }

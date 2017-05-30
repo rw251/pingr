@@ -41,17 +41,22 @@ include ../partials/head.jade
         | every 4 weeks
       label.radio-inline
         input(type="radio" name="freq", value="0")
-        | never
-    .form-group
-      label(for="day") Send it on a..
-      select.form-control(name="day")
-        option(value="1",selected=true) Monday
-        option(value="2") Tuesday
-        option(value="3") Wednesday
-        option(value="4") Thursday
-        option(value="5") Friday
-        option(value="6") Saturday
-        option(value="0") Sunday
+        | never        
+    .row
+      .col-xs-12
+        label(for="day") Send it on a..
+          select.form-control(name="day")
+            option(value="1",selected=true) Monday
+            option(value="2") Tuesday
+            option(value="3") Wednesday
+            option(value="4") Thursday
+            option(value="5") Friday
+            option(value="6") Saturday
+            option(value="0") Sunday
+        label(for="day") at..
+          select.form-control(name="hour")
+            - for(var time = 5; time < 23; time++)
+              option(value=time,selected=(time===10))=( time < 10 ? "0" : "" )+time+":00"
     button.btn.btn-purple.btn-block.history(type='submit')
       | Create
       span.fa.fa-arrow-circle-right

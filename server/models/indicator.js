@@ -9,7 +9,11 @@ var IndicatorSchema = new Schema({
   benchmark: Number,
   opportunities: [{ _id:false, id: String, patients: [Number] }],
   measurementId: String, // the id of the measurement to display
-  displayDate: Boolean, // whether to display the value or the date of the measurement
+  displayValue: Boolean, // whether to display the value of the measurement
+  displayDate: Boolean, // whether to display the date of the measurement
+  type: String, //currently either "process" OR "outcome" - same as patient model
+  mappedIndicators: [String], // for outcome indicators these are the relevant process
+                              // indicators for displaying actions
   actions: [
     {
       _id:false,
