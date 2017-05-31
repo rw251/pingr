@@ -48,8 +48,11 @@ $.extend($.fn.dataTableExt.oSort, {
   "plan-pre": function (a) {
     if (a == null || a == "" || a === "?") {
       return 0;
+    } else if($(a).hasClass('text-success')) {
+      return 1;
+    } else {
+      return -1;
     }
-    return 1;
   },
 
   "plan-asc": standardAsc,
@@ -184,52 +187,6 @@ var pl = {
 
     //data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
     data.getPatientList(data.userDetails.practiceId, pathwayId, pathwayStage, standard, subsection, function (list) {
-
-      /*if (sortField === undefined) sortField = 2;
-      if (sortField !== undefined) {
-        list.patients.sort(function (a, b) {
-          if (sortField === 0) { //NHS number
-            if (a.nhsNumber === b.nhsNumber) {
-              return 0;
-            }
-
-            if (a.nhsNumber > b.nhsNumber) {
-              return sortAsc ? 1 : -1;
-            } else if (a.nhsNumber < b.nhsNumber) {
-              return sortAsc ? -1 : 1;
-            }
-          } else {
-            if (a.items[sortField - 1] === b.items[sortField - 1]) {
-              return 0;
-            }
-
-            if (a.items[sortField - 1] == "?") return 1;
-            if (b.items[sortField - 1] == "?") return -1;
-
-            var A = Number(a.items[sortField - 1]);
-            var B = Number(b.items[sortField - 1]);
-            if (isNaN(A) || isNaN(B)) {
-              A = a.items[sortField - 1];
-              B = b.items[sortField - 1];
-            }
-            if (A > B) {
-              return sortAsc ? 1 : -1;
-            } else if (A < B) {
-              return sortAsc ? -1 : 1;
-            }
-          }
-        });*/
-
-      /*for (i = 0; i < list["header-items"].length; i++) {
-        if (i === sortField) {
-          list["header-items"][i].direction = sortAsc ? "sort-asc" : "sort-desc";
-          list["header-items"][i].isAsc = sortAsc;
-          list["header-items"][i].isSorted = true;
-        } else {
-          list["header-items"][i].isSorted = false;
-        }
-      }
-  }*/
 
       list.indicatorId = [pathwayId, pathwayStage, standard].join(".");
       currentPatients = list;

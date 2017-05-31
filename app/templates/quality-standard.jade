@@ -21,7 +21,7 @@ else
                 th(style="width:400px")
             tbody
               each standard in processStandards
-                tr(class=standard.targetMet ? 'success' : 'danger')
+                tr(class=standard.excluded ? 'active' : (standard.targetMet ? 'success' : 'danger'))
                   td
                     strong
                       = standard.display 
@@ -44,6 +44,11 @@ else
                     else 
                       if !standard.targetMet
                         a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/")) Show actions for this indicator only
+                    
+                    if standard.excluded
+                      button.btn.btn-success.btn-sm.include(data-id=standard.indicatorId) Include
+                    else
+                      button.btn.btn-danger.btn-sm.exclude(data-id=standard.indicatorId) Exclude
                 tr(data-id=standard.indicatorId,class='qs-show-more-row')
                   td(colspan=4)
                     !=standard.indicatorDescription

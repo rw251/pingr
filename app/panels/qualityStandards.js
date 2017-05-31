@@ -1,20 +1,21 @@
 var base = require('../base'),
   data = require('../data'),
-  state = require('../state');
+  state = require('../state'),
+  log = require('../log');
 
 var qs = {
 
-  create: function(patientId, pathwayId, pathwayStage, standard) {
+  create: function (patientId, pathwayId, pathwayStage, standard) {
     var patientData = data.getPatientData(patientId);
 
     var tmpl = require("templates/quality-standard");
     //RW TEMP fix
-    patientData.standards = patientData.standards.map(function(v) {
+    patientData.standards = patientData.standards.map(function (v) {
       if (!v.indicatorId) {
         var iid;
-        Object.keys(data.text.pathways).forEach(function(vv) {
-          Object.keys(data.text.pathways[vv]).forEach(function(vvv) {
-            Object.keys(data.text.pathways[vv][vvv].standards).forEach(function(vvvv) {
+        Object.keys(data.text.pathways).forEach(function (vv) {
+          Object.keys(data.text.pathways[vv]).forEach(function (vvv) {
+            Object.keys(data.text.pathways[vv][vvv].standards).forEach(function (vvvv) {
               if (data.text.pathways[vv][vvv].standards[vvvv].tabText === v.display) {
                 iid = [vv, vvv, vvvv].join(".");
                 return;
@@ -25,25 +26,33 @@ var qs = {
         if (iid) v.indicatorId = iid;
       }
       if (v.indicatorId) {
+        v.excluded = data.isExcluded(patientId, v.indicatorId);
         v.indicatorDescription = data.text.pathways[v.indicatorId.split(".")[0]][v.indicatorId.split(".")[1]].standards[v.indicatorId.split(".")[2]].description;
       }
       return v;
-    }).sort(function(a, b) {
-      if (a.targetMet === b.targetMet) return 0;
-      else if (a.targetMet) return 1;
-      return -1;
+    }).sort(function (a, b) {
+      if (a.excluded && b.excluded) return 0;
+      if (a.excluded === b.excluded) {
+        if (a.targetMet === b.targetMet) return 0;
+        else if (a.targetMet) return 1;
+        return -1;
+      } else {
+        if (a.excluded) return 1;
+        return -1;
+      }
+
     });
 
-    var processStandards = patientData.standards.filter(function(v){
-      return v.type==="process";
+    var processStandards = patientData.standards.filter(function (v) {
+      return v.type === "process";
     });
 
-    var outcomeStandards = patientData.standards.filter(function(v){
-      return v.type==="outcome";
+    var outcomeStandards = patientData.standards.filter(function (v) {
+      return v.type === "outcome";
     });
     //
     var html = tmpl({
-      noStandards : patientData.standards.length===0,
+      noStandards: patientData.standards.length === 0,
       processStandards: processStandards,
       outcomeStandards: outcomeStandards,
       indicatorId: pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : null,
@@ -54,7 +63,7 @@ var qs = {
     return html;
   },
 
-  show: function(panel, isAppend, patientId, pathwayId, pathwayStage, standard) {
+  show: function (panel, isAppend, patientId, pathwayId, pathwayStage, standard) {
 
     var html = qs.create(patientId, pathwayId, pathwayStage, standard);
 
@@ -65,7 +74,7 @@ var qs = {
       panel.html(html);
     }
 
-    panel.off('click', '.reason-link').on('click', '.reason-link', function(e) {
+    panel.off('click', '.reason-link').on('click', '.reason-link', function (e) {
       var action = $(this).html();
       panel.find('.qs-show-more-row').hide();
       panel.find('.reason-link').html('Show more <i class="fa fa-caret-down"></i>');
@@ -75,14 +84,47 @@ var qs = {
       }
 
       e.preventDefault();
-    }).off('click', '.exclude').on('click', '.exclude', function() {
+    }).off('click', '.exclude').on('click', '.exclude', function () {
 
-      // Modal pop up to capture reason
-      $(this).replaceWith("Excluded");
+      var tmpl = require("templates/modal-exclude");
+      var indicatorId = $(this).data('id');
+      var bits = indicatorId.split('.');
+
+      $('#modal').html(tmpl({ nhs: data.patLookup ? data.patLookup[patientId] : patientId, indicator: data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText }));
+
+      $('input[type=radio][name=reason]').change(function() {
+        if (this.value === 'other') {
+          $('#modal-why-text').show().prop('required', true).focus();
+        }
+        else {
+          $('#modal-why-text').prop('required', false).val('').hide();
+        }
+    });
+
+      $('#modal .modal').off('submit', 'form').on('submit', 'form', function (e) {
+
+        var freetext = $('#modal textarea').val();
+
+        log.excludePatient(patientId, indicatorId, $('[name="reason"]:checked').val(), freetext);
+        // Modal pop up to capture reason
+        qs.updateFromId(patientId, indicatorId);
+
+        e.preventDefault();
+        $('#modal .modal').modal('hide');
+      }).modal();
+    }).off('click', '.include').on('click', '.include', function () {
+
+      log.includePatient(patientId, $(this).data('id'));
+      qs.updateFromId(patientId, $(this).data('id'));
     });
   },
 
-  update: function(patientId, pathwayId, pathwayStage, standard) {
+  updateFromId: function (patientId, indicatorId) {
+    var bits = indicatorId.split('.');
+    qs.update(patientId, bits[0], bits[1], bits[2]);
+  },
+
+  update: function (patientId, pathwayId, pathwayStage, standard) {
     var html = qs.create(patientId, pathwayId, pathwayStage, standard);
 
     $('#qs').replaceWith(html);

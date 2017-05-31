@@ -7,6 +7,7 @@ var rp = require('../passport/reset-password');
 var users = require('../controllers/users.js');
 var practices = require('../controllers/practices.js');
 var patients = require('../controllers/patients.js');
+var excludedPatients = require('../controllers/excludedPatients.js');
 var indicators = require('../controllers/indicators.js');
 var events = require('../controllers/events.js');
 var actions = require('../controllers/actions.js');
@@ -517,6 +518,13 @@ module.exports = function(passport) {
       res.send({ patients, type });
     });
   });
+
+  //Exclude a patient from an indicator
+  router.post('/api/exclude/patient/:patientId/for/indicator/:indicatorId', isAuthenticated, excludedPatients.exclude); 
+  //Include a patient from an indicator
+  router.post('/api/include/patient/:patientId/for/indicator/:indicatorId', isAuthenticated, excludedPatients.include);
+  //Get all exclusions for a practice
+  router.get('/api/excludedpatients', isAuthenticated, excludedPatients.get);
 
   //note for 2xFn's below:
   //req.user.practiceId = inject current user practiceId
