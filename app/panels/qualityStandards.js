@@ -3,6 +3,21 @@ var base = require('../base'),
   state = require('../state'),
   log = require('../log');
 
+
+var deleteRow = function(row, callback) {
+  var row = row.children('td').css({ backgroundColor: "red", color: "white" });
+  setTimeout(function () {
+    $(row)
+      .animate({ paddingTop: 0, paddingBottom: 0 }, 500)
+      .wrapInner('<div />')
+      .children()
+      .slideUp(500, function () { 
+          $(this).closest('tr').remove();
+          return callback();
+      });
+  }, 350);
+};
+
 var qs = {
 
   create: function (patientId, pathwayId, pathwayStage, standard) {
@@ -27,6 +42,7 @@ var qs = {
       }
       if (v.indicatorId) {
         v.excluded = data.isExcluded(patientId, v.indicatorId);
+        if (v.excluded) v.excludedTooltip = data.getExcludedTooltip(patientId, v.indicatorId);
         v.indicatorDescription = data.text.pathways[v.indicatorId.split(".")[0]][v.indicatorId.split(".")[1]].standards[v.indicatorId.split(".")[2]].description;
       }
       return v;
@@ -89,6 +105,7 @@ var qs = {
       var tmpl = require("templates/modal-exclude");
       var indicatorId = $(this).data('id');
       var bits = indicatorId.split('.');
+      var row = $(this).parent().parent();
 
       $('#modal').html(tmpl({ nhs: data.patLookup ? data.patLookup[patientId] : patientId, indicator: data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText }));
 
@@ -97,8 +114,11 @@ var qs = {
         var freetext = $('#modal textarea').val();
 
         log.excludePatient(patientId, indicatorId, $('[name="reason"]:checked').val(), freetext);
-        // Modal pop up to capture reason
-        qs.updateFromId(patientId, indicatorId);
+
+        // hide row
+        deleteRow(row, function(){
+          qs.updateFromId(patientId, indicatorId);
+        });
 
         e.preventDefault();
         $('#modal .modal').modal('hide');
@@ -119,6 +139,8 @@ var qs = {
     var html = qs.create(patientId, pathwayId, pathwayStage, standard);
 
     $('#qs').replaceWith(html);
+
+    base.wireUpTooltips();
   }
 };
 
