@@ -131,7 +131,7 @@ var pv = {
           data.pathwayId = pathwayId;
 
           patientSearch.show($('#title-right'), true, true, loadContentFn);
-          qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
+          qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard, individualActionPlan.refresh);
 
           if (patientData.conditions.length +
             patientData.contacts.length +

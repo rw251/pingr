@@ -40,6 +40,7 @@ var dt = {
   pathwayNames: {},
   diseases: [],
   options: [],
+  excludedPatients: {},
 
   populateNhsLookup: function (done) {
     if (isFetchingNhsLookup) return;
@@ -71,9 +72,11 @@ var dt = {
       $.getJSON("/api/Text", function (textfile) {
         dt.text = textfile;
         dt.getAllIndicatorData(null, function () {
-          if (typeof callback === 'function') {
-            callback();
-          }
+          dt.getExcludedPatients(function(err) {
+            if (typeof callback === 'function') {
+              callback();
+            }
+          });
         });
       }).fail(function (err) {
         //alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
@@ -261,15 +264,15 @@ var dt = {
     }
   },
 
-  processPatientList: function (pathwayId, pathwayStage, standard, subsection, patients, type) {
-    var i, k, prop, pList, header;
+  processPatientList: function (pathwayId, pathwayStage, standard, subsection, file) {
+    var i, k, prop, pList, header, localPatients = file.patients;
 
     if (subsection !== "all") {
       var subsectionIds = Object.keys(dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities).filter(function (key) {
         return dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[key].name === subsection;
       });
       if (subsectionIds.length > 0) {
-        patients = patients.filter(function (v) {
+        localPatients = localPatients.filter(function (v) {
           return v.opportunities.indexOf(subsectionIds[0]) > -1;
         });
         header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[subsectionIds[0]].description;
@@ -288,7 +291,9 @@ var dt = {
       return v.id;
     });
 
-    patients = patients.map(function (patient) {
+    var numExcluded = 0;
+
+    localPatients = localPatients.map(function (patient) {
       patient.nhsNumber = patient.nhs || patient.patientId;
       patient.items = [patient.age];
       if (patient.value) patient.items.push(patient.value);
@@ -296,7 +301,11 @@ var dt = {
       patient.items.push(patient.opportunities.map(function (v) {
         return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
       }).join("")); //The fields in the patient list table
-      if (patient.actionStatus) {
+      if(dt.isExcluded(patient.patientId, indicatorId)){
+        numExcluded+=1;
+        patient.excluded=true;
+        patient.items.push('<span class="text-muted" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + dt.getExcludedTooltip(patient.patientId, indicatorId) + '"><i class="fa fa-fw fa-times"></i> EXCLUDED</span>');
+      } else if (patient.actionStatus) {
         var releventActions = patient.actionStatus.filter(function (v) {
           return !v.indicatorList || v.indicatorList.indexOf(indicatorId) > -1;
         });
@@ -327,14 +336,21 @@ var dt = {
       } else {
         patient.items.push("");
       }
+      //add a hidden column excluded / not excluded for sorting
+      if(patient.excluded) {
+        patient.items.push(1);
+      } else {
+        patient.items.push(0);
+      }
       return patient;
 
     });
 
     var rtn = {
-      "patients": patients,
-      "type": type,
-      "n": patients.length,
+      "patients": localPatients,
+      "numExcluded": numExcluded,
+      "type": file.type,
+      "n": localPatients.length,
       "header": header,
       "header-items": [{
         "title": "NHS no.",
@@ -396,6 +412,14 @@ var dt = {
       "tooltip": "Whether this patient has had any actions added or agreed"
     });
 
+    rtn["header-items"].push({
+      "title": "Excluded",
+      "type": "numeric?",
+      "orderSequence": ["asc"],
+      "isSorted": false,
+      "hidden": true
+    });
+
     return rtn;
   },
 
@@ -418,15 +442,16 @@ var dt = {
     if (!dt.patientList[practiceId]) dt.patientList[practiceId] = {};
     if (!dt.patientList[practiceId][indicatorId]) dt.patientList[practiceId][indicatorId] = {};
 
-    if (dt.patientList[practiceId][indicatorId][subsection]) {
+    if (dt.patientList[practiceId][indicatorId].file) {
+      dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, dt.patientList[practiceId][indicatorId].file);
       return callback(dt.patientList[practiceId][indicatorId][subsection]);
     } else {
 
       $.ajax({
         url: "/api/PatientListForPractice/Indicator/" + indicatorId,
         success: function (file) {
-          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file.patients, file.type);
-
+          dt.patientList[practiceId][indicatorId].file = file;
+          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
           callback(dt.patientList[practiceId][indicatorId][subsection]);
         },
         error: function () {
@@ -584,8 +609,39 @@ var dt = {
         return callback(err);
       }
     });
-  }
+  },
+
+  getExcludedPatients: function (callback) {
+    $.ajax({
+      url: "/api/excludedpatients",
+      success: function (file) {
+        dt.excludedPatients = {};
+        file.forEach(function(v){
+          if(!dt.excludedPatients[v.patientId]) dt.excludedPatients[v.patientId] = [v];
+          else dt.excludedPatients[v.patientId].push(v);
+        });
+        if(callback) return callback(null, dt.excludedPatients);
+      },
+      error: function (err) {
+        if(callback) return callback(err);
+      }
+    });
+  },
+
+  isExcluded: function(patientId, indicatorId) {
+    if(dt.excludedPatients[patientId] && dt.excludedPatients[patientId].filter(function(v){
+      return v.indicatorId === indicatorId;
+    }).length>0) return true;
+    return false;
+  },
+
+  getExcludedTooltip: function(patientId, indicatorId) {
+    var thing = dt.excludedPatients[patientId].filter(function(v){
+      return v.indicatorId === indicatorId;
+    })[0];
+    return thing.who + ' excluded this patient from this indicator on ' + new Date(thing.when).toDateString() + (thing.reason ? ' because: ' + (thing.reason === 'other' && thing.freetext ? thing.freetext : thing.reason)  : '');
+  },
 
 };
-
+window.DATA = dt;
 module.exports = dt;
