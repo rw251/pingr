@@ -218,7 +218,7 @@ var pl = {
             thing.name="not";
           } else if(i<numColumns-2){
             //everything sorted by exclusion first except exclusion column
-            thing.orderData = [numColumns-1, i];
+            thing.orderData = [[numColumns-1,"asc"], i];
           }
           return thing;
         }),
