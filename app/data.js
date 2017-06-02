@@ -264,15 +264,15 @@ var dt = {
     }
   },
 
-  processPatientList: function (pathwayId, pathwayStage, standard, subsection, patients, type) {
-    var i, k, prop, pList, header, localPatients;
+  processPatientList: function (pathwayId, pathwayStage, standard, subsection, file) {
+    var i, k, prop, pList, header, localPatients = file.patients;
 
     if (subsection !== "all") {
       var subsectionIds = Object.keys(dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities).filter(function (key) {
         return dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[key].name === subsection;
       });
       if (subsectionIds.length > 0) {
-        localPatients = patients.filter(function (v) {
+        localPatients = localPatients.filter(function (v) {
           return v.opportunities.indexOf(subsectionIds[0]) > -1;
         });
         header = dt.text.pathways[pathwayId][pathwayStage].standards[standard].opportunities[subsectionIds[0]].description;
@@ -291,7 +291,7 @@ var dt = {
       return v.id;
     });
 
-    localPatients = patients.map(function (patient) {
+    localPatients = localPatients.map(function (patient) {
       patient.nhsNumber = patient.nhs || patient.patientId;
       patient.items = [patient.age];
       if (patient.value) patient.items.push(patient.value);
@@ -337,9 +337,8 @@ var dt = {
     });
 
     var rtn = {
-      "filePatients": patients,
       "patients": localPatients,
-      "type": type,
+      "type": file.type,
       "n": localPatients.length,
       "header": header,
       "header-items": [{
@@ -424,15 +423,16 @@ var dt = {
     if (!dt.patientList[practiceId]) dt.patientList[practiceId] = {};
     if (!dt.patientList[practiceId][indicatorId]) dt.patientList[practiceId][indicatorId] = {};
 
-    if (dt.patientList[practiceId][indicatorId][subsection]) {
-      dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, dt.patientList[practiceId][indicatorId][subsection].filePatients, dt.patientList[practiceId][indicatorId][subsection].type);
+    if (dt.patientList[practiceId][indicatorId].file) {
+      dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, dt.patientList[practiceId][indicatorId].file);
       return callback(dt.patientList[practiceId][indicatorId][subsection]);
     } else {
 
       $.ajax({
         url: "/api/PatientListForPractice/Indicator/" + indicatorId,
         success: function (file) {
-          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file.patients, file.type);
+          dt.patientList[practiceId][indicatorId].file = file;
+          dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
           callback(dt.patientList[practiceId][indicatorId][subsection]);
         },
         error: function () {
