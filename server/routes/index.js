@@ -192,6 +192,11 @@ module.exports = function(passport) {
       res.render('pages/userregister.jade', { practices: practices, message: req.flash() });
     });
   });
+  router.get('/register/:token', reg.token, function(req, res) {
+    practices.list(function(err, practices) {
+      res.render('pages/userregister.jade', { practices: practices, message: req.flash() });
+    });
+  });
   router.get('/authorise/:email', isAuthenticated, isAdmin, reg.authorise, function(req, res) {
     res.render('pages/userauthorise.jade', { message: req.flash() });
   });

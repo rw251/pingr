@@ -44,7 +44,8 @@ var UserSchema = new Schema({
   email_url_tracking_code: String,
   emailFrequency: Number,
   emailDay: Number,
-  emailHour: Number
+  emailHour: Number,
+  registrationCode: String
 });
 
 UserSchema.pre('save', function(next) {

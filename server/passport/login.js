@@ -21,6 +21,9 @@ module.exports = function(passport) {
             console.log('User Not Found with email ' + username);
             return done(null, false, req.flash('error', 'User Not found.'));
           }
+          if(user.registrationCode) {
+            return done(null, false, req.flash('error', 'Sorry you haven\t yet confirmed your email address. Please check your spam/junk folder.'));
+          }
           // User exists but wrong password, log the error
           user.comparePassword(password, function(err, isMatch) {
             if (err) return done(err);
