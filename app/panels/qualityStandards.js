@@ -92,15 +92,6 @@ var qs = {
 
       $('#modal').html(tmpl({ nhs: data.patLookup ? data.patLookup[patientId] : patientId, indicator: data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText }));
 
-      $('input[type=radio][name=reason]').change(function() {
-        if (this.value === 'other') {
-          $('#modal-why-text').show().prop('required', true).focus();
-        }
-        else {
-          $('#modal-why-text').prop('required', false).val('').hide();
-        }
-    });
-
       $('#modal .modal').off('submit', 'form').on('submit', 'form', function (e) {
 
         var freetext = $('#modal textarea').val();

@@ -7,12 +7,16 @@
         h4.modal-title Exclude a patient
       .modal-body
         label 
-          | Exclude patient 
+          | You are about to exclude patient  
           = nhs 
           |  from: 
-          = indicator
-        p Please let us know why:
+        p
+        span.text-warning(style='font-style:italic')= indicator
         form
+          div.form-group
+            //text entry section
+            h3 That's fair enough! 
+            p  All we need is a bit about your reasoning!
           div.form-group
             .radio
               label
@@ -24,14 +28,10 @@
                 | No longer registered
             .radio
               label
-                input(type="radio",name="reason",id="optionsRadios1",value="decision postponed", required)
-                | Postpone decision
-            .radio
-              label
                 input(type="radio",name="reason",id="optionsRadios1",value="other", required)
                 | Other
           div.form-group
-            textarea#modal-why-text.form-control(rows='3', style='resize:none;display:none', placeholder=placeholder)
+            textarea#modal-why-text.form-control(rows='3', style='resize:none;', placeholder='Provide more information here...')
           button.btn.btn-primary.save-plan(type='submit') Save
           button.btn.btn-default(type='button', data-dismiss='modal') Cancel
       .modal-footer
