@@ -306,6 +306,11 @@ var iap = {
     });
   },
 
+  refresh: function(patientId, indicator){
+    var b = indicator.split('.');
+    iap.populateIndividualSuggestedActions(patientId, b[0], b[1], b[2], false);
+  },
+
   populateIndividualSuggestedActions: function(patientId, pathwayId, pathwayStage, standard, visible) {
     var localData = {
       "nhsNumber": data.patLookup ? data.patLookup[patientId] : patientId,
@@ -313,13 +318,19 @@ var iap = {
       visible: visible
     };
 
-    if (patientActions.length === 0 || (pathwayId && pathwayStage && standard && patientActions.filter(function(v) {
+    var suggestions = patientActions.filter(function(v){
+      return v.indicatorList.filter(function(vv){
+        return !data.isExcluded(patientId, vv);
+      }).length > 0;
+    });
+
+    if (suggestions.length === 0 || (pathwayId && pathwayStage && standard && suggestions.filter(function(v) {
         return v.indicatorList.indexOf([pathwayId, pathwayStage, standard].join(".")) > -1;
       }).length === 0)) {
       localData.noSuggestions = true;
     } else {
 
-      localData.suggestions = patientActions;
+      localData.suggestions = suggestions;
 
       localData.suggestions = localData.suggestions.filter(function(v) {
         if (!pathwayId || !pathwayStage || !standard) return true;

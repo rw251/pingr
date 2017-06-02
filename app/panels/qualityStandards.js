@@ -20,6 +20,8 @@ var deleteRow = function(row, callback) {
 
 var qs = {
 
+  actionPlanRefresh: {},
+
   create: function (patientId, pathwayId, pathwayStage, standard) {
     var patientData = data.getPatientData(patientId);
 
@@ -79,7 +81,9 @@ var qs = {
     return html;
   },
 
-  show: function (panel, isAppend, patientId, pathwayId, pathwayStage, standard) {
+  show: function (panel, isAppend, patientId, pathwayId, pathwayStage, standard, refreshFn) {
+
+    actionPlanRefresh = refreshFn;
 
     var html = qs.create(patientId, pathwayId, pathwayStage, standard);
 
@@ -117,6 +121,7 @@ var qs = {
 
         // hide row
         deleteRow(row, function(){
+          actionPlanRefresh(patientId, indicatorId);
           qs.updateFromId(patientId, indicatorId);
         });
 
@@ -124,9 +129,10 @@ var qs = {
         $('#modal .modal').modal('hide');
       }).modal();
     }).off('click', '.include').on('click', '.include', function () {
-
-      log.includePatient(patientId, $(this).data('id'));
-      qs.updateFromId(patientId, $(this).data('id'));
+      var indicatorId = $(this).data('id');
+      actionPlanRefresh(patientId, indicatorId);
+      log.includePatient(patientId, indicatorId);
+      qs.updateFromId(patientId, indicatorId);
     });
   },
 
