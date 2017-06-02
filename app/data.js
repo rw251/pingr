@@ -291,6 +291,8 @@ var dt = {
       return v.id;
     });
 
+    var numExcluded = 0;
+
     localPatients = localPatients.map(function (patient) {
       patient.nhsNumber = patient.nhs || patient.patientId;
       patient.items = [patient.age];
@@ -300,6 +302,8 @@ var dt = {
         return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
       }).join("")); //The fields in the patient list table
       if(dt.isExcluded(patient.patientId, indicatorId)){
+        numExcluded+=1;
+        patient.excluded=true;
         patient.items.push('<span class="text-muted" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + dt.getExcludedTooltip(patient.patientId, indicatorId) + '"><i class="fa fa-fw fa-times"></i> EXCLUDED</span>');
       } else if (patient.actionStatus) {
         var releventActions = patient.actionStatus.filter(function (v) {
@@ -332,12 +336,19 @@ var dt = {
       } else {
         patient.items.push("");
       }
+      //add a hidden column excluded / not excluded for sorting
+      if(patient.excluded) {
+        patient.items.push(1);
+      } else {
+        patient.items.push(0);
+      }
       return patient;
 
     });
 
     var rtn = {
       "patients": localPatients,
+      "numExcluded": numExcluded,
       "type": file.type,
       "n": localPatients.length,
       "header": header,
@@ -399,6 +410,14 @@ var dt = {
       "orderSequence": ["desc", "asc"],
       "isSorted": false,
       "tooltip": "Whether this patient has had any actions added or agreed"
+    });
+
+    rtn["header-items"].push({
+      "title": "Excluded",
+      "type": "numeric?",
+      "orderSequence": ["asc"],
+      "isSorted": false,
+      "hidden": true
     });
 
     return rtn;

@@ -6,11 +6,11 @@ var Highcharts = require('highcharts/highstock'),
   jsPDF = require('jspdf'),
   jspdfAutoTable = require('jspdf-autotable');
 
-var $ = require('jquery');
-require('datatables.net-bs')(window, $);
-require('datatables.net-buttons-bs')(window, $);
-require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
-require('datatables.net-buttons/js/buttons.html5.js')(window, $);
+// var $ = require('jquery');
+// require('datatables.net-bs')(window, $);
+// require('datatables.net-buttons-bs')(window, $);
+// require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
+// require('datatables.net-buttons/js/buttons.html5.js')(window, $);
 
 var table;
 
@@ -48,7 +48,7 @@ $.extend($.fn.dataTableExt.oSort, {
   "plan-pre": function (a) {
     if (a == null || a == "" || a === "?") {
       return 0;
-    } else if($(a).hasClass('text-success')) {
+    } else if ($(a).hasClass('text-success')) {
       return 1;
     } else {
       return -1;
@@ -206,17 +206,29 @@ var pl = {
         console.log('processing occurred at: ' + new Date().getTime());
       });
 
+      var numColumns = list["header-items"].length;
       table = $('#patient-list').DataTable({
         searching: false, //we don't want a search box
         stateSave: true, // let's remember which page/sorting etc
         dom: '<"row"<"col-sm-7 toolbar"i><"col-sm-5"B>>rt<"row"<"col-sm-5"l><"col-sm-7"p>><"clear">',
         columnDefs: list["header-items"].map(function (v, i) {
-          return { type: v.type, orderSequence: v.orderSequence, targets: i };
+          var thing = { type: v.type, orderSequence: v.orderSequence, targets: i, name:"shown" };
+          if(v.hidden) {
+            thing.visible=false;
+            thing.name="not";
+          } else if(i<numColumns-2){
+            //everything sorted by exclusion first except exclusion column
+            thing.orderData = [numColumns-1, i];
+          }
+          return thing;
         }),
         scrollY: '50vh',
         scrollCollapse: true,
         buttons: [
-          'colvis',
+          {
+            extend: 'colvis',
+            columns: 'shown:name'
+          },
           {
             text: 'Pdf',
             className: 'download-button',
@@ -224,7 +236,10 @@ var pl = {
               //writePdf();
             }
           }
-        ]
+        ],
+        infoCallback: function (settings, start, end, max, total, pre) {
+          return "showing " + start + " to " + end + " of " + total + " patients" + (list.numExcluded>0 ? " [including " + list.numExcluded + " exclusions]" : "");
+        }
       });
 
       $('#overviewPaneTab').on('shown.bs.tab', function (e) {

@@ -12,7 +12,13 @@ module.exports = {
       },
       order: {
         before: [
-          'vendor/scripts/bootstrap.js'
+          'vendor/scripts/bootstrap.js',
+          'vendor/scripts/jquery.dataTables.js',
+          'vendor/scripts/dataTables.bootstrap.js',
+          'vendor/scripts/dataTables.buttons.js',
+          'vendor/scripts/buttons.bootstrap.js',
+          'vendor/scripts/buttons.colVis.js',
+          'vendor/scripts/buttons.html5.js',
           ]
       },
       entryPoints: {
