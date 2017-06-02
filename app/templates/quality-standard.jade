@@ -48,7 +48,7 @@ else
                     if standard.excluded
                       button.btn.btn-success.btn-sm.include(data-id=standard.indicatorId) Include
                     else
-                      button.btn.btn-danger.btn-sm.exclude(data-id=standard.indicatorId) Exclude
+                      button.btn.btn-danger.btn-sm.exclude(data-id=standard.indicatorId,data-toggle='tooltip', data-placement='left', title='Exclude patient from ' + standard.display) Exclude
                 tr(data-id=standard.indicatorId,class='qs-show-more-row')
                   td(colspan=4)
                     !=standard.indicatorDescription
