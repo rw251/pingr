@@ -10,16 +10,13 @@ include ../mixins/tutorial-text.jade
       div
     .l4
       div
-//- *bTut*
-section#main(data-intro= btut_element1 data-position="bottom-middle-aligned" data-step="3")
+section#main
     nav.navbar.navbar-default(role='navigation')
       .container-fluid
         ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist')
           li.logo-container
             .logo
-              img(src="images/icons/apple-icon.png")
-              //ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist' data-intro="By Jove! *bTut*" data-step="1")
-              //ul#mainTab.nav.navbar-nav.nav-tabs-tall(role='tablist' data-intro="By Jove! *bTut*" data-step="1")      
+              img(src="images/icons/apple-icon.png")   
           li(role='presentation', data-id='overview')
             a(href='#overview', data-href='#overview', role='button') 
               .btn.btn-arrow-right OVERVIEW
@@ -81,4 +78,4 @@ section#main(data-intro= btut_element1 data-position="bottom-middle-aligned" dat
                   |  Logout
           li
             a
-              #suggestionsModalLauncher.btn.btn-success(data-intro="hello world! *bTut*" data-step="4") Send a comment
+              #suggestionsModalLauncher.btn.btn-success Send a comment

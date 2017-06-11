@@ -312,7 +312,7 @@ tr.introjs-showElement > th {
 }
 
 .introjs-hidden {
-     display: none;
+     display: none !important;
 }
 
 .introjs-bullets {
