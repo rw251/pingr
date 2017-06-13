@@ -54,10 +54,11 @@ module.exports = {
               if (error) {
                 console.log("email not sent: " + error);
               }
+              emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, null, "PINGR: Validate email address",
+              "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nPlease confirm your email address by following this link: https://" + req.headers.host + "/register/" + token + ".",
+              null, null);
               emailConfig.to = [{ name: newUser.fullname, email: newUser.email }];
-              emailConfig.subject = "PINGR: Validate email address";
               //emailConfig.text = "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR";
-              emailConfig.text = "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nPlease confirm your email address by following this link: https://" + req.headers.host + "/register/" + token + ".";
               emailSender.send(emailConfig, function (error, info) {
                 if (error) {
                   console.log("email not sent: " + error);

@@ -238,10 +238,10 @@ module.exports = {
   getListForIndicator: function(practiceId, indicatorId, done) {
     //need to get
     // [{patientId, age, value, [impOpps]}]
-    console.time(["getListForIndicator", "indicators", "get"].join("--"));
+    //console.time(["getListForIndicator", "indicators", "get"].join("--"));
     indicators.get(practiceId, indicatorId, function(err, indicator) {
-      console.timeEnd(["getListForIndicator", "indicators", "get"].join("--"));
-      console.time(["getListForIndicator", "indicators", "process"].join("--"));
+      //console.timeEnd(["getListForIndicator", "indicators", "get"].join("--"));
+      //console.time(["getListForIndicator", "indicators", "process"].join("--"));
       var patientList = indicator.opportunities.reduce(function(prev, curr) {
         var union = prev.concat(curr.patients);
         return union.filter(function(item, pos) {
@@ -252,22 +252,22 @@ module.exports = {
       var indicatorValue = indicator.measurementId;
       if (indicatorValue === "SBP") indicatorValue = "BP";
 
-      console.timeEnd(["getListForIndicator", "indicators", "process"].join("--"));
-      console.time(["getListForIndicator", "actions", "get"].join("--"));
+      //console.timeEnd(["getListForIndicator", "indicators", "process"].join("--"));
+      //console.time(["getListForIndicator", "actions", "get"].join("--"));
       actions.patientsWithPlan(patientList, function(err, patientsWithActions) {
-        console.timeEnd(["getListForIndicator", "actions", "get"].join("--"));
-        console.time(["getListForIndicator", "actions", "process"].join("--"));
+        //console.timeEnd(["getListForIndicator", "actions", "get"].join("--"));
+        //console.time(["getListForIndicator", "actions", "process"].join("--"));
         var patientsWithActionsObject = {};
         patientsWithActions.forEach(function(v) {
           patientsWithActionsObject[v._id] = v.actions;
         });
         if (err) return done(err);
-        console.timeEnd(["getListForIndicator", "actions", "process"].join("--"));
-        console.time(["getListForIndicator", "patients", "get"].join("--"));
+        //console.timeEnd(["getListForIndicator", "actions", "process"].join("--"));
+        //console.time(["getListForIndicator", "patients", "get"].join("--"));
         Patient.find({ patientId: { $in: patientList } }, { _id: 0, patientId: 1, characteristics: 1, actions: 1, measurements: { $elemMatch: { id: indicatorValue } }, "measurements.data": { $slice: -1 } },
           function(err, patients) {
-            console.timeEnd(["getListForIndicator", "patients", "get"].join("--"));
-            console.time(["getListForIndicator", "patients", "process"].join("--"));
+            //console.timeEnd(["getListForIndicator", "patients", "get"].join("--"));
+            //console.time(["getListForIndicator", "patients", "process"].join("--"));
             var p = patients.map(function(patient) {
               patient = patient.toObject();
               var measValue, measDate;
@@ -310,7 +310,7 @@ module.exports = {
               }
               return rtn;
             });
-            console.timeEnd(["getListForIndicator", "patients", "process"].join("--"));
+            //console.timeEnd(["getListForIndicator", "patients", "process"].join("--"));
             return done(null, p, indicator.type);
           });
       });

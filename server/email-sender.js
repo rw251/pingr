@@ -66,7 +66,11 @@ var formatEmail = function(emailObject) {
 var parseEmail = function(email) {
   if (email.name && email.email) return email;
   var bits = email.split("<");
-  if (bits.length !== 2) return callback(new Error("Email should be of form: Name <name@email.com>. Instead it is: " + email));
+  if (bits.length !== 2) {
+    console.log("ERROR with email: " + email);
+    return email;
+    //return callback(new Error("Email should be of form: Name <name@email.com>. Instead it is: " + email));
+  }
   var fromName = bits[0].trim();
   var fromEmail = bits[1].replace(">", "").trim();
   return { name: fromName, email: fromEmail };
