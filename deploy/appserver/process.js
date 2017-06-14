@@ -216,6 +216,8 @@ var doProcessIndicators = function (callback) {
             benchmark: data.benchmark,
             displayValue: indText.dateORvalue !== "date",
             displayDate: indText.dateORvalue !== "value",
+            displayReviewDate: indText.showLastReviewDateColumn,
+            displayValueFrom: indText.valueFrom,
             type: "process",
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
             name: indText.name,
@@ -229,6 +231,8 @@ var doProcessIndicators = function (callback) {
           i.measurementId = indText.valueId;
           i.displayValue = indText.dateORvalue !== "date";
           i.displayDate = indText.dateORvalue !== "value";
+          i.displayReviewDate = indText.showLastReviewDateColumn;
+          i.displayValueFrom = indText.valueFrom;
           i.type = "process";
           i.name = indText.name;
           i.description = indText.description;
@@ -312,6 +316,8 @@ var doOutcomeIndicators = function (callback) {
             benchmark: data.benchmark,
             displayValue: indText.dateORvalue !== "date",
             displayDate: indText.dateORvalue !== "value",
+            displayReviewDate: indText.showLastReviewDateColumn,
+            displayValueFrom: indText.valueFrom,
             type: "outcome",
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
             name: indText.name,
@@ -328,6 +334,8 @@ var doOutcomeIndicators = function (callback) {
           i.measurementId = indText.valueId;
           i.displayValue = indText.dateORvalue !== "date";
           i.displayDate = indText.dateORvalue !== "value";
+          i.displayReviewDate = indText.showLastReviewDateColumn;
+          i.displayValueFrom = indText.valueFrom;
           i.type = "outcome";
           i.name = indText.name;
           i.description = indText.description;
@@ -441,7 +449,7 @@ var doDenominators = function (callback) {
   console.log("Doing denominators...");
   readCsvAsyncToObject({
     file: IN_DIR + FILENAMES.denominators,
-    headers: ['patientId', 'indicatorId', 'why']
+    headers: ['patientId', 'indicatorId', 'why', 'nextReviewDate']
   }, function (err, result) {
     if (err) {
       console.log("Error doing denominators.");
@@ -461,6 +469,7 @@ var doDenominators = function (callback) {
       var indText = textFile.pathways[pathway][stage].standards[standard];
       var item = { indicatorId: v.indicatorId, display: indText.tabText, targetMet: true, type: indicatorType[v.indicatorId] };
       if (v.why && v.why !== "") item.why = v.why;
+      if (v.nextReviewDate && v.nextReviewDate !== "") item.nextReviewDate = new Date(v.nextReviewDate);
       if (!patients[+v.patientId].standards) patients[+v.patientId].standards = [];
       patients[+v.patientId].standards.push(item);
     });

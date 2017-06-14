@@ -54,7 +54,9 @@ var PatientSchema = new Schema({
       _id:false,
       type: { type: String, default: "process"}, //Currently "process" OR "outcome" - same as indicator model
       display: String,
-      targetMet: Boolean
+      targetMet: Boolean,
+      //missing why ???
+      nextReviewDate: Date
     }
   ],
   medications: [
