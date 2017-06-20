@@ -2,10 +2,12 @@ ul
   li.perf-bullet
     //b!= performance.percentage + '%'
     if aboveTarget
-      b(class="text-overPerform")!= performance.percentage + '%'
+      b#iPercentage(class="text-overPerform")!= performance.percentage + '%'
     else
-      b(class="text-underPerform")!= performance.percentage + '%'
-    span!= ' (' + performance.fraction + ') ' + tagline
+      b#iPercentage(class="text-underPerform")!= performance.percentage + '%'
+    span  (
+    span#iFraction= performance.fraction
+    span!= ') ' + tagline
   li.perf-bullet
     | The target for this quality indicator is 
     b= target
