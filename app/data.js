@@ -298,6 +298,7 @@ var dt = {
       patient.items = [patient.age];
       if (patient.value) patient.items.push(patient.value);
       if (patient.date) patient.items.push(patient.date);
+      if (patient.reviewDate) patient.items.push(patient.reviewDate);
       patient.items.push(patient.opportunities.map(function (v) {
         return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
       }).join("")); //The fields in the patient list table
@@ -392,6 +393,17 @@ var dt = {
           "direction": "sort-asc"
         });
       }
+    }
+
+    if(dt.text.pathways[pathwayId][pathwayStage].standards[standard].displayReviewDate) {
+      rtn["header-items"].push({
+          "title": "Next review date",
+          "type": "date-uk",
+          "orderSequence": ["desc", "asc"],
+          "tooltip": "Next review date",
+          "isSorted": false,
+          "direction": "sort-asc"
+        });
     }
 
     //add qual standard column

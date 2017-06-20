@@ -266,15 +266,15 @@ module.exports = {
         //console.time(["getListForIndicator", "patients", "get"].join("--"));
         var query = [
           { $match: { patientId: { $in: patientList } } },
-          { $project: { _id: 0, patientId: 1, characteristics: 1, actions: 1, measurements: { $filter: { input: "$measurements", as: "measurement", cond: { $eq: ["$$measurement.id", indicatorValue] } } } } },
-          { $project: { patientId: 1, characteristics: 1, actions: 1, measurements: { $arrayElemAt: ["$measurements", 0] } } },
+          { $project: { _id: 0, standards: { $filter: { input: "$standards", as: "standard",	cond: { $eq: [ "$$standard.indicatorId", indicatorId ] } } }, patientId: 1, characteristics: 1, actions: 1, measurements: { $filter: { input: "$measurements", as: "measurement",	cond: { $eq: [ "$$measurement.id", indicatorValue ] } } } }	},
+          { $project: { reviewDateObj: {$arrayElemAt: [ "$standards", 0 ]}, patientId: 1, characteristics: 1, actions: 1, data : {$arrayElemAt: [ "$measurements", 0 ]}}},	
         ];
         if(indicator.displayValueFrom === 'practice') {
-          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, measurements: { $slice: [{ $filter: { input: "$measurements.data", as: "data", cond: { $not: { $setIsSubset: [["salfordt"], "$$data"] } } } }, -1] } } });
+          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, reviewDate:"$reviewDateObj.nextReviewDate", measurements: { $slice: [{ $filter: { input: "$measurements.data", as: "data", cond: { $not: { $setIsSubset: [["salfordt"], "$$data"] } } } }, -1] } } });
         } else if(indicator.displayValueFrom === 'hospital') {
-          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, measurements: { $slice: [{ $filter: { input: "$measurements.data", as: "data", cond: { $setIsSubset: [["salfordt"], "$$data"] } } }, -1] } } });
+          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, reviewDate:"$reviewDateObj.nextReviewDate", measurements: { $slice: [{ $filter: { input: "$measurements.data", as: "data", cond: { $setIsSubset: [["salfordt"], "$$data"] } } }, -1] } } });
         } else {
-          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, measurements: { $slice: [ "$measurements.data", -1] } } });
+          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, reviewDate:"$reviewDateObj.nextReviewDate", measurements: { $slice: [ "$measurements.data", -1] } } });
         }
         Patient.aggregate(query,
           function (err, patients) {
@@ -283,9 +283,10 @@ module.exports = {
             //console.time(["getListForIndicator", "patients", "process"].join("--"));
             var p = patients.map(function (patient) {
               //patient = patient.toObject();
-              var measValue, measDate;
+              var measValue, measDate, reviewDate;
               if (indicator.displayDate) measDate = '?';
               if (indicator.displayValue) measValue = '?';
+              if (indicator.displayReviewDate) reviewDate = '?';
               if (patient.measurements && patient.measurements.length > 0) {
                 if (patient.measurements[0].length > 2) {
                   if (indicator.measurementId === "SBP") {
@@ -307,6 +308,9 @@ module.exports = {
                   }
                 }
               }
+              if(patient.reviewDate) {
+                reviewDate = patient.reviewDate;
+              }
               var opps = indicator.opportunities.filter(function (v) {
                 return v.patients.indexOf("" + patient.patientId) > -1;
               }).map(function (v) {
@@ -320,6 +324,7 @@ module.exports = {
               };
               if (measValue) rtn.value = measValue;
               if (measDate) rtn.date = measDate;
+              if (reviewDate) rtn.reviewDate = reviewDate;
               if (patientsWithActionsObject[patient.patientId]) {
                 rtn.actionStatus = patientsWithActionsObject[patient.patientId];
               }
