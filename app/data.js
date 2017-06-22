@@ -41,6 +41,7 @@ var dt = {
   diseases: [],
   options: [],
   excludedPatients: {},
+  excludedPatientsByIndicator: {},
 
   populateNhsLookup: function (done) {
     if (isFetchingNhsLookup) return;
@@ -72,7 +73,7 @@ var dt = {
       $.getJSON("/api/Text", function (textfile) {
         dt.text = textfile;
         dt.getAllIndicatorData(null, function () {
-          dt.getExcludedPatients(function(err) {
+          dt.getExcludedPatients(function (err) {
             if (typeof callback === 'function') {
               callback();
             }
@@ -81,6 +82,37 @@ var dt = {
       }).fail(function (err) {
         //alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
       });
+    });
+  },
+
+  processIndicatorRemoveExcludedPatients: function (indicator) {
+    var indicatorClone = JSON.parse(JSON.stringify(indicator));
+    var excludedPatients = dt.excludedPatientsByIndicator[indicatorClone.id];
+
+    if (excludedPatients) {
+      var includedPatients = {};
+      indicatorClone.opportunities.forEach((opp) => {
+        opp.patients.forEach((patid) => {
+          includedPatients[patid] = true;
+        });
+      });
+      excludedPatients = excludedPatients.filter((p) => {
+        return includedPatients[p];
+      });
+      if (excludedPatients.length > 0) {
+        var numDen = indicatorClone.performance.fraction.split('/');
+        indicatorClone.performance.fraction = numDen[0] + '/' + (+numDen[1] - excludedPatients.length);
+        indicatorClone.performance.percentage = Math.round(100 * +numDen[0] * 100 / (+numDen[1] - excludedPatients.length)) / 100;
+        indicatorClone.patientsWithOpportunity -= excludedPatients.length;
+      }
+    }
+
+    return indicatorClone;
+  },
+
+  processIndicatorsRemoveExcludedPatients: function (indicators) {
+    return indicators.map(function (indicator) {
+      return dt.processIndicatorRemoveExcludedPatients(indicator);
     });
   },
 
@@ -191,7 +223,8 @@ var dt = {
 
     //we never want to cache this anymore.
     if (dt.indicators) {
-      return callback(dt.indicators);
+      var indicatorsToReturn = dt.processIndicatorsRemoveExcludedPatients(dt.indicators);
+      return callback(indicatorsToReturn);
     } else {
 
       $.ajax({
@@ -200,7 +233,8 @@ var dt = {
           //don't retian the object, refresh of object
           dt.indicators = dt.processIndicators(file);
 
-          return callback(dt.indicators);
+          var indicatorsToReturn = dt.processIndicatorsRemoveExcludedPatients(dt.indicators);
+          return callback(indicatorsToReturn);
         },
         error: function () {
 
@@ -260,7 +294,7 @@ var dt = {
       return v.id === indicatorId;
     });
     if (indicator.length > 0) {
-      return indicator[0];
+      return dt.processIndicatorRemoveExcludedPatients(indicator[0]);
     }
   },
 
@@ -302,9 +336,10 @@ var dt = {
       patient.items.push(patient.opportunities.map(function (v) {
         return '<span style="width:13px;height:13px;float:left;background-color:' + Highcharts.getOptions().colors[opps.indexOf(v)] + '"></span>';
       }).join("")); //The fields in the patient list table
-      if(dt.isExcluded(patient.patientId, indicatorId)){
-        numExcluded+=1;
-        patient.excluded=true;
+      patient.excluded = false;
+      if (dt.isExcluded(patient.patientId, indicatorId)) {
+        numExcluded += 1;
+        patient.excluded = true;
         patient.items.push('<span class="text-muted" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="' + dt.getExcludedTooltip(patient.patientId, indicatorId) + '"><i class="fa fa-fw fa-times"></i> EXCLUDED</span>');
       } else if (patient.actionStatus) {
         var releventActions = patient.actionStatus.filter(function (v) {
@@ -338,7 +373,7 @@ var dt = {
         patient.items.push("");
       }
       //add a hidden column excluded / not excluded for sorting
-      if(patient.excluded) {
+      if (patient.excluded) {
         patient.items.push(1);
       } else {
         patient.items.push(0);
@@ -628,30 +663,33 @@ var dt = {
       url: "/api/excludedpatients",
       success: function (file) {
         dt.excludedPatients = {};
-        file.forEach(function(v){
-          if(!dt.excludedPatients[v.patientId]) dt.excludedPatients[v.patientId] = [v];
+        dt.excludedPatientsByIndicator = {};
+        file.forEach(function (v) {
+          if (!dt.excludedPatients[v.patientId]) dt.excludedPatients[v.patientId] = [v];
           else dt.excludedPatients[v.patientId].push(v);
+          if (!dt.excludedPatientsByIndicator[v.indicatorId]) dt.excludedPatientsByIndicator[v.indicatorId] = [v.patientId];
+          else dt.excludedPatientsByIndicator[v.indicatorId].push(v.patientId);
         });
-        if(callback) return callback(null, dt.excludedPatients);
+        if (callback) return callback(null, dt.excludedPatients);
       },
       error: function (err) {
-        if(callback) return callback(err);
+        if (callback) return callback(err);
       }
     });
   },
 
-  isExcluded: function(patientId, indicatorId) {
-    if(dt.excludedPatients[patientId] && dt.excludedPatients[patientId].filter(function(v){
+  isExcluded: function (patientId, indicatorId) {
+    if (dt.excludedPatients[patientId] && dt.excludedPatients[patientId].filter(function (v) {
       return v.indicatorId === indicatorId;
-    }).length>0) return true;
+    }).length > 0) return true;
     return false;
   },
 
-  getExcludedTooltip: function(patientId, indicatorId) {
-    var thing = dt.excludedPatients[patientId].filter(function(v){
+  getExcludedTooltip: function (patientId, indicatorId) {
+    var thing = dt.excludedPatients[patientId].filter(function (v) {
       return v.indicatorId === indicatorId;
     })[0];
-    return thing.who + ' excluded this patient from this indicator on ' + new Date(thing.when).toDateString() + (thing.reason ? ' because: ' + (thing.reason === 'other' && thing.freetext ? thing.freetext : thing.reason)  : '');
+    return thing.who + ' excluded this patient from this indicator on ' + new Date(thing.when).toDateString() + (thing.reason ? ' because: ' + (thing.reason === 'other' && thing.freetext ? thing.freetext : thing.reason) : '');
   },
 
 };

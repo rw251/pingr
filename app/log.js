@@ -35,6 +35,12 @@ var log = {
     } else {
       data.excludedPatients[patientId].push(obj);
     }
+    if (!data.excludedPatientsByIndicator[indicatorId]) {
+      data.excludedPatientsByIndicator[indicatorId] = [patientId];
+    } else {
+      data.excludedPatientsByIndicator[indicatorId].push(patientId);
+    }
+    
     $.ajax({
       type: "POST",
       url: "/api/exclude/patient/" + patientId + "/for/indicator/" + indicatorId,
@@ -51,6 +57,11 @@ var log = {
     if (data.excludedPatients[patientId]) {
       data.excludedPatients[patientId] = data.excludedPatients[patientId].filter(function (v) {
         return v.indicatorId !== indicatorId;
+      });
+    }
+    if(data.excludedPatientsByIndicator[indicatorId]) {
+      data.excludedPatientsByIndicator[indicatorId] = data.excludedPatientsByIndicator[indicatorId].filter(function (v) {
+        return v !== patientId;
       });
     }
     $.ajax({
