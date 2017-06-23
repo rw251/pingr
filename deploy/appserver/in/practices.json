@@ -1,0 +1,48 @@
+{"_id":"ALL","name":"Salford CCG","neighbourhood":"ALL"}
+{"_id":"P87002","name":"Poplars","neighbourhood":"Swinton","ehr":"Vision"}
+{"_id":"P87003","name":"St Andrews (Lindsay)","neighbourhood":"Eccles","ehr":"Vision"}
+{"_id":"P87004","name":"Salford Medical Centre (Salim)","neighbourhood":"Ordsall","ehr":"Vision"}
+{"_id":"P87008","name":"Walkden Medical Centre","neighbourhood":"Walkden","ehr":"EMIS Web"}
+{"_id":"P87014","name":"Irlam Group Practice","neighbourhood":"Irlam","ehr":"Vision"}
+{"_id":"P87015","name":"Pendleton Gateway (Austin)","neighbourhood":"Claremont","ehr":"Vision"}
+{"_id":"P87016","name":"The Sides","neighbourhood":"Swinton","ehr":"Vision"}
+{"_id":"P87017","name":"The Limes","neighbourhood":"Walkden","ehr":"EMIS Web"}
+{"_id":"P87019","name":"Silverdale Medical Practice","neighbourhood":"Swinton","ehr":"Vision"}
+{"_id":"P87020","name":"St Andrews (Budden)","neighbourhood":"Eccles","ehr":"Vision"}
+{"_id":"P87022","name":"Mocha Parade","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"P87024","name":"Springfield Medical Centre","neighbourhood":"Eccles","ehr":"Vision"}
+{"_id":"P87025","name":"The Lakes","neighbourhood":"Swinton","ehr":"Vision"}
+{"_id":"P87026","name":"Higher Broughton Health Centre (Larah)","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"P87027","name":"Langworthy Medical Centre","neighbourhood":"Ordsall","ehr":"Vision"}
+{"_id":"P87028","name":"The Gill","neighbourhood":"Walkden","ehr":"EMIS Web"}
+{"_id":"P87032","name":"Orient Road Medical Practice","neighbourhood":"Claremont","ehr":"Vision"}
+{"_id":"P87035","name":"Ordsall Health Centre","neighbourhood":"Ordsall","ehr":"Vision"}
+{"_id":"P87036","name":"Lower Broughton Health Centre (Sultan)","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"P87039","name":"Irlam Medical Centre","neighbourhood":"Irlam","ehr":"Vision"}
+{"_id":"P87040","name":"Sorrell Group Practice","neighbourhood":"Claremont","ehr":"Vision"}
+{"_id":"P87610","name":"Mosslands Medical Centre","neighbourhood":"Irlam","ehr":"Vision"}
+{"_id":"P87613","name":"Cleggs Lane Medical Practice","neighbourhood":"Little Hulton","ehr":"EMIS Web"}
+{"_id":"P87618","name":"Dr Y Loomba \u0026 Partners","neighbourhood":"Walkden","ehr":"EMIS Web"}
+{"_id":"P87620","name":"Monton Medical Centre","neighbourhood":"Eccles","ehr":"Vision"}
+{"_id":"P87624","name":"Ellenbrook Medical Centre","neighbourhood":"Walkden","ehr":"EMIS Web"}
+{"_id":"P87625","name":"Dearden Avenue","neighbourhood":"Little Hulton","ehr":"EMIS Web"}
+{"_id":"P87627","name":"Orchard Medical Centre","neighbourhood":"Walkden","ehr":"EMIS Web"}
+{"_id":"P87630","name":"Cherry Medical Centre","neighbourhood":"Little Hulton","ehr":"EMIS Web"}
+{"_id":"P87634","name":"Clarendon Surgery","neighbourhood":"Ordsall","ehr":"EMIS Web"}
+{"_id":"P87639","name":"Cornerstone Medical Practice","neighbourhood":"Claremont","ehr":"Vision"}
+{"_id":"P87641","name":"Higher Broughton","neighbourhood":"Broughton","ehr":"Unknown"}
+{"_id":"P87648","name":"Leicester Road Surgery","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"P87649","name":"Chapel Medical Centre","neighbourhood":"Irlam","ehr":"EMIS Web"}
+{"_id":"P87651","name":"Limefield Road Medical Practice","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"P87652","name":"Lower Broughton Health Centre (Buch)","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"P87654","name":"Lower Broughton Health Centre (Jeet)","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"P87657","name":"Salford Care Centre Irlam","neighbourhood":"Irlam","ehr":"Vision"}
+{"_id":"P87658","name":"The Willows","neighbourhood":"Claremont","ehr":"EMIS Web"}
+{"_id":"P87659","name":"St Andrews Medical Centre (Yates)","neighbourhood":"Eccles","ehr":"Vision"}
+{"_id":"P87660","name":"Eccles Gateway","neighbourhood":"Eccles","ehr":"Vision"}
+{"_id":"P87661","name":"Manchester Road East Medical Practice","neighbourhood":"Little Hulton","ehr":"Vision"}
+{"_id":"P87668","name":"Salford Medical Centre (Rahman)","neighbourhood":"Ordsall","ehr":"Vision"}
+{"_id":"Y00445","name":"Salford Health Matters","neighbourhood":"Eccles","ehr":"Vision"}
+{"_id":"Y02622","name":"Blackfriars","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"Y02625","name":"Care Homes Medical Practice","neighbourhood":"Broughton","ehr":"Vision"}
+{"_id":"Y02767","name":"The Heights Practice","neighbourhood":"Claremont","ehr":"Unknown"}

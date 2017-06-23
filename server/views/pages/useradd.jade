@@ -1,0 +1,64 @@
+include ../partials/head.jade
+.container-narrow.starter-template-high
+  .btn-toolbar
+    a.btn.btn-info(href='/admin') Back to user list
+  =message.error
+  form(action='/adduser', method='post')
+    .form-group.input-group
+      span.input-group-addon
+        i.fa.fa-user
+      input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='')
+    .form-group.input-group
+      span.input-group-addon
+        i.fa.fa-envelope
+      input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='')
+    .form-group.input-group
+      span.input-group-addon
+        i.fa.fa-key
+      input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
+    .form-group.input-group
+      span.input-group-addon
+        i.fa.fa-stethoscope
+      select.form-control(name='practice')
+        option(value="") Select GP practice - or ignore to not assign a practice
+        each practice in practices
+          option(value=practice._id+"|"+practice.name)= practice.name
+    .form-group
+      label.cr-styled
+        input(name='isAdmin', type='checkbox')
+        i.fa
+      |               Is Admin
+    .form-group
+      label.radio.inline.control-label Emails..
+      label.radio-inline
+        input(type="radio" name="freq", value="1", checked=true)
+        | every week 
+      label.radio-inline
+        input(type="radio" name="freq", value="2")
+        | every 2 weeks
+      label.radio-inline
+        input(type="radio" name="freq", value="4")
+        | every 4 weeks
+      label.radio-inline
+        input(type="radio" name="freq", value="0")
+        | never        
+    .row
+      .col-xs-12
+        label(for="day") Send it on a..
+          select.form-control(name="day")
+            option(value="1",selected=true) Monday
+            option(value="2") Tuesday
+            option(value="3") Wednesday
+            option(value="4") Thursday
+            option(value="5") Friday
+            option(value="6") Saturday
+            option(value="0") Sunday
+        label(for="day") at..
+          select.form-control(name="hour")
+            - for(var time = 5; time < 23; time++)
+              option(value=time,selected=(time===10))=( time < 10 ? "0" : "" )+time+":00"
+    button.btn.btn-purple.btn-block.history(type='submit')
+      | Create
+      span.fa.fa-arrow-circle-right
+    - if(message && message.error)
+      div.alert.alert-danger(role="alert")= message.error

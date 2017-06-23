@@ -1,0 +1,12 @@
+include mixins/action-plan-item
+
+include mixins/personal-action-plan
+if hasSuggestions
+  table.table(style='margin-bottom:5px')
+    thead
+      tr
+        th Suggested by you
+        th(style='width: 175px') Actions
+    tbody
+      each suggestion in suggestions
+        +actionPlanItem(suggestion)

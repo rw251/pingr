@@ -1,0 +1,82 @@
+if noStandards
+  #qs
+    .alert.alert-success We don't think any of the quality indicators in PINGR are relevant to this patient - if you think this is incorrect, please tell us by clicking the "Send a comment" button in the top right corner of the screen.
+else
+  #qs
+    ul.nav.nav-tabs(role="tablist")
+      li(class=!selectedTab || selectedTab==='#processIndicatorsQS' ? "active" : "",role="presentation")
+        a(href="#processIndicatorsQS",aria-controls="processIndicatorsQS",role="tab",data-toggle="tab",style="margin-top:0")= "Process indicators (" + processStandards.length + ")"
+      li(class=selectedTab==='#outcomeIndicatorsQS' ? "active" : "",role="presentation")
+        a(href="#outcomeIndicatorsQS",aria-controls="outcomeIndicatorsQS",role="tab",data-toggle="tab",style="margin-top:0")= "Outcome indicators (" + outcomeStandards.length + ")"
+        
+    .tab-content
+      #processIndicatorsQS.tab-pane.fade(class=!selectedTab || selectedTab==='#processIndicatorsQS' ? "active in" : "",role="tabpanel")
+        .panel.panel-default
+          table.table.table-condensed
+            thead
+              tr
+                th Quality indicator
+                th(style="max-width:100px") Target met?
+                th(style="max-width:100px") Action plan?
+                th(style="width:400px")
+            tbody
+              each standard in processStandards
+                tr(class=standard.excluded ? 'active' : (standard.targetMet ? 'success' : 'danger'))
+                  td(style=standard.excluded ? 'opacity:0.5' : '')
+                    strong
+                      = standard.display 
+                    a.reason-link.pull-right(href='#',data-id=standard.indicatorId) 
+                      | Show more 
+                      i.fa.fa-caret-down   
+                  td(style=standard.excluded ? 'opacity:0.5' : '')
+                    if standard.targetMet
+                      i.fa.fa-fw.fa-check.text-success
+                    else
+                      i.fa.fa-fw.fa-times.text-danger      
+                  td(style=standard.excluded ? 'opacity:0.5' : '')
+                    if standard.actionPlan
+                      i.fa.fa-fw.fa-check.text-success
+                  td(style=standard.excluded ? 'text-align:right;background-color:rgba(245,245,245,0.5)' : 'text-align:right;')
+                    if (standard.indicatorId === indicatorId && processStandards.filter(function(v){return !v.targetMet;}).length > 1)
+                      a.btn.btn-warning.btn-sm(href='/#patient/'+patientId,disabled=standard.excluded,class=standard.excluded ? 'disabled':'') Showing actions for this indicator - click to show all
+                    else if (!standard.targetMet && processStandards.filter(function(v){return !v.targetMet;}).length === 1)
+                      span Currently showing actions for this indicator 
+                    else 
+                      if !standard.targetMet
+                        a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/"),disabled=standard.excluded,class=standard.excluded ? 'disabled':'') Show actions for this indicator only
+                    
+                    if standard.excluded
+                      button.btn.btn-default.btn-sm.include(data-id=standard.indicatorId, style='opacity:1', data-container='body', data-html='true', data-toggle='tooltip', data-placement='left', title=standard.excludedTooltip + '<p>Click to include this patient for this indicator.</p>') Excluded
+                    else
+                      button.btn.btn-danger.btn-sm.exclude(data-id=standard.indicatorId,data-toggle='tooltip', data-container='body', data-html='true', data-placement='left', title='Exclude patient from ' + standard.display) Exclude
+                tr(data-id=standard.indicatorId,class='qs-show-more-row')
+                  td(colspan=4)
+                    !=standard.indicatorDescription
+                    br
+                    strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
+                    br
+                    !=standard.why
+      #outcomeIndicatorsQS.tab-pane.fade(class=selectedTab==='#outcomeIndicatorsQS' ? "active in" : "",role="tabpanel")
+        .panel.panel-default#qs
+          table.table.table-condensed
+            thead
+              tr
+                th(style="max-width:300px") Quality indicator
+                th
+            tbody
+              each standard in outcomeStandards
+                tr(class=standard.targetMet ? 'success' : 'danger')
+                  td
+                    strong
+                      = standard.display                     
+                    a.reason-link.pull-right(href='#',data-id=standard.indicatorId) 
+                      | Show more 
+                      i.fa.fa-caret-down  
+                  td 
+                tr(data-id=standard.indicatorId,class='qs-show-more-row')
+                  td(colspan=4)
+                    !=standard.indicatorDescription
+                    br
+                    strong= "Reason for this patient " + (standard.targetMet ? "meet" : "miss") + "ing the target"
+                    br
+                    !=standard.why

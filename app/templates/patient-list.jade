@@ -1,0 +1,18 @@
+include mixins/patient-list-header-item
+
+table#patient-list.table.table-condensed.patient-list.order-column.hover
+  thead
+    tr(style='background-color:#fff')
+      each item in locals['header-items']
+        +header(item)
+  tbody
+    each patient in patients
+      tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+        td(style=patient.excluded?'opacity:0.4;min-width:130px':'min-width:130px')
+          - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+          button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-type=type, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+            span.fa.fa-clipboard
+          = ' ' + patient.nhsNumber
+        each item in patient.items
+          - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
+          td(style=(patient.excluded && (typeof(item) !== "string" || item.indexOf('text-muted') < 0)) ?'opacity:0.4;':'')!= item

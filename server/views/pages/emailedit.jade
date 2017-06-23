@@ -1,0 +1,33 @@
+include ../partials/headMinimalCss.jade
+a.pure-button(href='/emailadmin') Back to email template list
+.pure-g
+  .pure-u-1-8
+  .pure-u-3-4
+    p.
+      You can make use of the following dynamic properties when constructing 
+      the email: User's full name = \#{fullname} (or email \#{email}), their practice = \#{practiceName} (or \#{practiceId}),
+      last login date = \#{last_login} (or last email \#{last_email_reminder}), the url of pingr = \#{pingrUrl} (which
+      includes a tracking token when they click it - use \#{pingrUrlWithoutTracking} for just the url), the day they receive emails \#{emailDay} 
+      and the frequency of the emails \#{emailFrequency}. Also the email address to contact \#{reminderEmailsFrom}.
+.pure-u-1-8
+.pure-g
+  .pure-u-1-8
+  .pure-u-3-4
+    form.pure-form(action='/emailedit/'+email.label, method='post')
+      label(for='label')= "Label (for id purposes):"
+      input.pure-input-1(type='text', name='label', placeholder='Label to identify template', required='', autofocus='', value=email.label)
+      label(for='subject') Email subject:
+      input.pure-input-1(type='text', name='subject', placeholder='Email subject', required='', autofocus='', value=email.subject)
+      .pure-g
+        .pure-u-1-2
+          label(for='body') Email body
+          textarea.pure-input-1(rows='30', name='body', placeholder='Email body as html', required='', autofocus='')= email.body
+        .pure-u-1-2
+          #html
+      button.pure-button.pure-button-primary(type='submit') Save
+      button#testEmail.pure-button.pure-button-primary Send test email to:
+      input#emailAddress.pure-input-1-2(type="text", value="richard.williams2@manchester.ac.uk")
+      - if(message && message.error)
+        div.alert.alert-danger(role="alert")= message.error
+  .pure-u-1-8
+include ../partials/htmlEdit.js.jade

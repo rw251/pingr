@@ -1,0 +1,10 @@
+include ../partials/head.jade
+a.btn.btn-info(href='/admin') Back to user list
+form(action='/reset/'+email, method='post')
+  label(for='password')= 'Enter the new password for ' + email
+  input.form-control(type='password', name='password', placeholder='Password', required='', autofocus='')
+  button.btn.btn-purple.btn-block.history(type='submit') Update
+if message && message.success
+  h1= message.success
+if message && message.error
+  h1= message.error

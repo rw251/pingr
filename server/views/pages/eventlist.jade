@@ -1,0 +1,51 @@
+include ../mixins/data-item
+include ../partials/head.jade
+div
+  .btn-toolbar
+    a.btn.btn-info(href='/') Back to interface
+  form.form-inline(action='/eventsdownload', method='get')
+    .form-group
+      label(for='from') From:
+      input.form-control(type='text',name='from',placeholder='Records from (YYYY-MM-DD)')
+    .form-group
+      label(for='to') To::
+      input.form-control(type='text',name='to',placeholder='Records to (YYYY-MM-DD)')
+    .form-group
+      label(for='user') Email:
+      input.form-control(type='text',name='user',placeholder='Filter to a user email')
+    .form-group
+      .radio
+        label
+          input(type='radio',name='csv' id='csv1' value='csv',checked='')
+          |CSV
+      .radio
+        label
+          input(type='radio',name='csv' id='csv2' value='json')
+          |JSON                
+    button.btn.btn-purple(type='submit') Download
+  table.table
+    thead
+      tr
+        th User
+        th Session
+        th Event
+        th Url
+        th Time
+        th Data
+        th XPath
+    tbody
+      each event in events
+        tr
+          td(title=event.user)
+            a(href='/events/'+event.user)= (event.user && event.user.match(/^[^@]+/)) ? event.user.match(/^[^@]+/) : ""
+          td(title=event.sessionId)= event.sessionId ? event.sessionId.substr(0,5)+"..." : ""
+          td= event.type
+          td= event.url
+          td= event.date.getDate() + '/' + (event.date.getMonth()+1) + '/' + event.date.getFullYear() + ' ' + event.date.getHours() + ':' + (event.date.getMinutes() < 10 ? '0' : '') + event.date.getMinutes() + ':' + (event.date.getSeconds() < 10 ? '0' : '') + event.date.getSeconds()
+          td
+            if(event.data && event.data.length>0)
+              table.nopadding
+                tbody
+                  each item in event.data
+                    +dataItem(item)
+          td(title=event.xpath)= event.xpath ? event.xpath.substr(0,15)+"..." : ""

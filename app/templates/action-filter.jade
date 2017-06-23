@@ -1,0 +1,37 @@
+.action-filter
+  h3 Show actions..
+  table.table
+    thead
+      tr
+        td ..where you have
+        td ..that are related to
+        td ..that are added
+    tbody
+      tr
+        td
+          form
+            label.checkbox-inline
+              input(type="checkbox" value="agreed" checked="checked")
+              | agreed with it
+            label.checkbox-inline
+              input(type="checkbox" value="disagreed")
+              | disagreed with it 
+            label.checkbox-inline
+              input(type="checkbox" value="none")
+              | done neither
+        td
+          form
+            label.checkbox-inline
+              input(type="checkbox" value="agreed" checked="checked")
+              | your team
+            label.checkbox-inline
+              input(type="checkbox" value="disagreed" checked="checked")
+              | a specific patient 
+        td
+          form
+            label.checkbox-inline
+              input(type="checkbox" value="agreed" checked="checked")
+              | by PINGR
+            label.checkbox-inline
+              input(type="checkbox" value="disagreed" checked="checked")
+              | by you

@@ -1,0 +1,9 @@
+.panel.panel-default(style='margin-bottom:10px')
+  .clearfix.panel-heading= "Top 3 suggested actions" + (indicator ? " for indicator '" + indicator + "'" : "" )  + " for patient with NHS number " + nhs
+  #individual-action-panel.panel-body(style='padding:0')
+    #advice-list(style='overflow-y:auto')
+.panel.panel-default(style='margin-bottom:5px')
+  #user-action-panel.panel-body
+    #personalPlanIndividual(style='overflow-y:auto')
+include mixins/edit-plan-modal
+include mixins/delete-plan-modal

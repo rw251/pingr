@@ -1,0 +1,17 @@
+#deletePlan.modal.fade(tabindex='-1', role='dialog', aria-labelledby='deleteModalLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#deleteModalLabel.modal-title Delete a suggested action you added
+      .modal-body
+        p
+          strong You indicated that you want to delete:
+        span#modal-delete-item(style='font-style:italic')
+        br
+        p
+          strong Are you sure?
+      .modal-footer
+        button.btn.btn-danger.delete-plan(type='button') Delete
+        button.btn.btn-default(type='button', data-dismiss='modal') Cancel

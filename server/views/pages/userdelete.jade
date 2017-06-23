@@ -1,0 +1,8 @@
+include ../partials/head.jade
+.container-narrow.starter-template-high
+  a.btn.btn-info(href='/admin') Back to user list
+  form(action='/delete/'+email, method='post')
+    = 'Are you sure you want to delete ' + email
+    .btn-toolbar
+      button.btn.btn-danger(type='submit') Delete
+      a.btn.btn-default(href='/admin') Cancel

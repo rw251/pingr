@@ -1,0 +1,19 @@
+include action-plan-task-list-item
+
+mixin actionPlanTaskList(thing)
+  if thing.hasTasks
+    table.table
+      thead
+        tr
+          th(style='width: 150px') Condition
+          if thing.isPatientTable
+            th NHS number
+          th Planned action
+          th(style='width: 105px') Agree?
+          th(style='width: 106px', data-toggle='tooltip', data-placement='bottom', title='Click to indicate you have implemented this action in your practice and remove it from your awaiting implementation list') Action implemented?
+      tbody
+        each task in thing.tasks
+          +actionPlanTaskListItem(task)
+  else
+    .panel-body
+      | You currently have no outstanding planned actions

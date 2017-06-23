@@ -1,0 +1,13 @@
+doctype html
+html(lang='en')
+  head
+    include ../partials/head.jade
+  body
+    header
+      include('../partials/header.jade')
+    main
+      h1= message
+      h2= error.status
+      pre= error.stack
+    footer
+      include('../partials/footer.jade')

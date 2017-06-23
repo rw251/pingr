@@ -1,0 +1,25 @@
+.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#modalLabel.modal-title= header
+      .modal-body
+        if item
+          label You have disagreed with the following suggested action:
+          p
+          span.text-warning(style='font-style:italic')= (item.split("Show"))[0]
+        form
+          div.form-group
+            //text entry section
+            h3 That's fair enough! 
+            p  All we need is a bit about your reasoning in this box!
+            //placeholder remains until I can figure out where 'placeholder' lives and something better to say!
+            textarea#modal-why-text.form-control(rows='3', style='resize:none', placeholder=placeholder)
+          button.btn.btn-primary.save-plan(type='submit') Save
+          span  
+          if isUndo
+            button.btn.btn-warning.undo-plan(type='button', data-dismiss='modal') Undo disagree
+          button.btn.btn-default(type='button', data-dismiss='modal') Cancel
+      .modal-footer

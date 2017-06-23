@@ -1,0 +1,11 @@
+//form.app-search.hidden-xs.ng-pristine.ng-valid.form-inline(role='search', style='margin: 0 auto;width:350px;')
+form#search-box.app-search.hidden-xs.ng-pristine.ng-valid.form-inline(role='search', style='margin: 0 auto;width:450px;')
+  label(for='pSearch', style="padding-right:5px")
+    if patientSelected
+      a(href='/#patients') View all patients 
+    else
+      | Showing all patients 
+  if dataLoaded
+    input.typeahead.form-control.form-control-circle(id='pSearch', name='pSearch', type='text', placeholder='Search by patients NHS number...')
+  else
+    input.typeahead.form-control.form-control-circle(id='pSearch', name='pSearch', type='text', disabled=true, placeholder='Loading... please wait')

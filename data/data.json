@@ -1,0 +1,190 @@
+{
+  "patients": {
+    "1000000001": {
+      "characteristics": {
+        "age": "70",
+        "sex": "F"
+      },
+      "conditions": [
+        {
+          "name": "CKD",
+          "intervals": [
+            {
+              "from": 1401580800000,
+              "to": 1419984000000,
+              "label": "Stage 3b"
+            },
+            {
+              "from": 1420070400000,
+              "to": 1433030400000,
+              "label": "Stage 4"
+            },
+            {
+              "from": 1433116800000,
+              "to": 1462539918624,
+              "label": "Stage 5"
+            }
+          ]
+        }
+      ],
+      "contacts": [
+        {
+          "name": "Palliative care",
+          "time": 1436227200000,
+          "task": 1
+        }
+      ],
+      "measurements": [
+        {
+          "id": "acr",
+          "name": "ACR",
+          "data": [
+            [
+              1456790400000,
+              5.5
+            ],
+            [
+              1459468800000,
+              5
+            ]
+          ],
+          "unit": "μg/mg",
+          "type": "line",
+          "valueDecimals": 0
+        },
+        {
+          "id": "egfr",
+          "name": "eGFR",
+          "data": [
+            [
+              1456790400000,
+              50
+            ],
+            [
+              1459468800000,
+              55
+            ]
+          ],
+          "unit": "ml/min/1.73m^2",
+          "type": "line",
+          "valueDecimals": 1
+        }
+      ],
+      "standards": [],
+      "medications": []
+    },
+    "1000000002": {
+      "characteristics": {
+        "age": "54",
+        "sex": "M"
+      },
+      "conditions": [
+        {
+          "name": "HTN",
+          "intervals": [
+            {
+              "from": 1420070400000,
+              "to": 1462539918625
+            }
+          ]
+        }
+      ],
+      "contacts": [
+        {
+          "name": "Face to face",
+          "time": 1436227200000,
+          "task": 1
+        }
+      ],
+      "measurements": [
+        {
+          "id": "acr",
+          "name": "ACR",
+          "data": [
+            [
+              1459468800000,
+              55
+            ]
+          ],
+          "unit": "μg/mg",
+          "type": "line",
+          "valueDecimals": 0
+        },
+        {
+          "id": "egfr",
+          "name": "eGFR",
+          "data": [
+            [
+              1456790400000,
+              50
+            ]
+          ],
+          "unit": "ml/min/1.73m^2",
+          "type": "line",
+          "valueDecimals": 1
+        }
+      ],
+      "standards": [],
+      "medications": []
+    }
+  },
+  "indicators": [
+        {
+      "id": "ckd.diagnosis.ckd",
+      "name": "CKD diagnoses",
+      "description": "a description of ckd diag",
+      "values": [
+        [
+          "x",
+          "2016-03-01",
+          "2016-04-01",
+          "2016-05-01"
+        ],
+        [
+          "numerator",
+          "15",
+          "16",
+          "17"
+        ],
+        [
+          "denominator",
+          "20",
+          "20",
+          "20"
+        ],
+        [
+          "target",
+          "0.75",
+          "0.8",
+          "0.85"
+        ]
+      ],
+      "opportunities": [
+        {
+          "id": "undiagnosed",
+          "name": "Undiagnosed",
+          "description": "undiag la",
+          "patients": [
+            1000000001
+          ]
+        },
+        {
+          "id": "overdiagnosed",
+          "name": "Overdiagnosed",
+          "description": "overdiag la",
+          "patients": [
+            1000000001
+          ]
+        },
+        {
+          "id": "misdiagnosed",
+          "name": "Misdiagnosed",
+          "description": "misdiag la",
+          "patients": [
+            1000000002
+          ]
+        }
+      ]
+    }
+  ]
+}
