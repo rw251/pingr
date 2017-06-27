@@ -370,7 +370,7 @@ var tap = {
       }
     });
 
-    base.setupClipboard($('.btn-copy'), true);
+    base.setupClipboard('.btn-copy', true);
 
     tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
   },

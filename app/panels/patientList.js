@@ -132,6 +132,9 @@ var writePdf = function () {
 var pl = {
 
   wireUp: function (onPatientSelected) {
+
+    var buttonClicked = false;
+
     patientsPanel = $('#patients');
 
     patientsPanel
@@ -145,16 +148,22 @@ var pl = {
       pl.populate(pl.state[0], pl.state[1], pl.state[2], pl.state[3], $(this).index(), sortAsc);
     })*/
       .on('click', 'tbody tr', function (e) { //Select individual patient when row clicked#
-        var callback = onPatientSelected.bind(this);
-        var patientId = $(this).find('td button').attr('data-patient-id');
-        var type = $(this).find('td button').attr('data-type');
-        callback(patientId, type);
-        e.preventDefault();
-        e.stopPropagation();
+        if(!buttonClicked) {
+          var callback = onPatientSelected.bind(this);
+          var patientId = $(this).find('td button').attr('data-patient-id');
+          var type = $(this).find('td button').attr('data-type');
+          callback(patientId, type);
+          e.preventDefault();
+          e.stopPropagation();
+        } 
+        buttonClicked = false;
       }).on('click', 'tbody tr button', function (e) {
         //don't want row selected if just button pressed?
-        e.preventDefault();
-        e.stopPropagation();
+        //but can't use:
+        //e.preventDefault();
+        //e.stopPropagation();
+        //as it seems the clipboard event is triggered last
+        buttonClicked = true;
       }).on('click', '#downloadPatientList', function () {
         writePdf();
       }).on('click', '#downloadAsPdf', function (e) {
@@ -242,6 +251,11 @@ var pl = {
         }
       });
 
+      $('#patient-list').on( 'draw.dt', function () {
+        base.setupClipboard('.btn-copy', true);
+        base.wireUpTooltips();
+      });
+
       $('#overviewPaneTab').on('shown.bs.tab', function (e) {
         table.columns.adjust().draw(false); //ensure sparklines on hidden tabs display
       });
@@ -249,7 +263,7 @@ var pl = {
       setTimeout(function () {
         table.columns.adjust().draw(false);
 
-        base.setupClipboard($('.btn-copy'), true);
+        base.setupClipboard('.btn-copy', true);
         base.wireUpTooltips();
       }, 100);
 

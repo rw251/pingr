@@ -398,7 +398,7 @@ var iap = {
       }
     });
 
-    base.setupClipboard($('.btn-copy'), true);
+    base.setupClipboard('.btn-copy', true);
 
     iap.displayPersonalisedIndividualActionPlan($('#personalPlanIndividual'), pathwayId, pathwayStage, standard);
   },
