@@ -4,6 +4,9 @@ include ../partials/head.jade
     a.btn.btn-info(href='/') Back to PINGR
   - if(message && message.success)
     div.alert.alert-success(role="alert")= message.success
+    - if(message.warning)
+      div.alert.alert-warning(role="alert")
+        strong= message.warning
   - else
     form(action='/register', method='post')
       .form-group.input-group

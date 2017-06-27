@@ -6,7 +6,6 @@
   "scripts": {
     "prestart": "rimraf dist/*",
     "start": "brunch watch --server",
-    "prebuild": "ncp node_modules/zeroclipboard/dist/ZeroClipboard.swf ./app/assets/ZeroClipboard.swf",
     "build": "brunch build --production",
     "postbuild": "ncp deploy/appserver/.foreverignore dist/.foreverignore",
     "postinstall": "npm run build",
@@ -42,6 +41,7 @@
     "async": "^2.0.0-rc.3",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
+    "clipboard": "^1.7.1",
     "connect-flash": "^0.1.1",
     "csv-parser": "^1.9.3",
     "datatables.net": "^1.10.15",
@@ -67,8 +67,7 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "sendgrid": "^4.7.1",
-    "serve-favicon": "^2.3.0",
-    "zeroclipboard": "^2.2.0"
+    "serve-favicon": "^2.3.0"
   },
   "engines": {
     "node": "6.9.5"

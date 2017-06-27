@@ -64,7 +64,8 @@ module.exports = {
                   console.log("email not sent: " + error);
                 }
 
-                req.flash('success', 'Thanks for registering. You will receive an email shortly to confirm your email address. Please check your spam/junk folder - if the email is there then please mark it as not junk.');
+                req.flash('success', 'Thanks for registering. You will receive an email shortly to confirm your email address.'); 
+                req.flash('warning', 'Please check your spam/junk folder - if the email is there then please mark it as not junk.');
                 return next();
               });
             });

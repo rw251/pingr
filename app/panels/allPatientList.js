@@ -85,7 +85,7 @@ var pl = {
       var html = tmpl({ patients: list, skip: skip, limit: limit });
       $('#all-patient-list').html(html);
 
-      base.setupClipboard($('.btn-copy'), true);
+      base.setupClipboard('.btn-copy', true);
       base.wireUpTooltips();
 
       base.hideLoading();
