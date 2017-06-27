@@ -464,20 +464,32 @@ var dt = {
 
   addOrUpdatePatientAction: function (patientId, action) {
     if (dt.patients && dt.patients[patientId] && dt.patients[patientId].standards) {
+      var actions = {}; //keep track of which indicators need their action total updating
       dt.patients[patientId].standards = dt.patients[patientId].standards.map(function (v) {
+        if(!actions[v.indicatorId]) {
+          actions[v.indicatorId] = {before: 0, after: 0};
+        }
         if (!v.actionPlans) v.actionPlans = [];
-        if (v.actionPlans.filter(function (vv) {
+        actions[v.indicatorId].before += v.actionPlans.length;
+        actions[v.indicatorId].after += v.actionPlans.length;
+        if (v.actionPlans.filter(function (vv) { 
           return vv.actionTextId === action.actionTextId;
-        }).length === 0) {
+        }).length === 0) { //This is a new action
           if (action.indicatorList.indexOf(v.indicatorId) > -1 && (action.agree || action.userDefined)) {
+            actions[v.indicatorId].after += 1;
             v.actionPlans.push({ actionTextId: action.actionTextId, agree: action.agree, history: action.history, indicatorList: action.indicatorList });
           }
-        } else {
+        } else { // it's an existing action
           v.actionPlans = v.actionPlans.map(function (vv) {
             if (vv.actionTextId === action.actionTextId) {
               vv.agree = action.agree;
               vv.history = action.history;
               vv.indicatorList = action.indicatorList;
+              if(action.agree || action.userDefined) {
+                actions[v.indicatorId].after += 1;
+              } else {
+                actions[v.indicatorId].after -= 1;
+              }
             }
             return vv;
           }).filter(function (vv) {
@@ -487,6 +499,13 @@ var dt = {
         if (v.actionPlans.length > 0) v.actionPlan = true;
         else v.actionPlan = false;
         return v;
+      });
+      Object.keys(actions).forEach((indicatorId) => {
+        const currentIndicator = dt.indicators.filter((v) => {
+          return v.id === indicatorId;
+        })[0];
+        if(actions[indicatorId].after===0 && actions[indicatorId].before>0) currentIndicator.reviewed -= 1;
+        else if(actions[indicatorId].before===0 && actions[indicatorId].after>0) currentIndicator.reviewed += 1;
       });
     }
     if (dt.patientList) {
@@ -551,14 +570,27 @@ var dt = {
 
   removePatientAction: function (patientId, actionTextId) {
     if (dt.patients && dt.patients[patientId] && dt.patients[patientId].standards) {
+      var actions = {}; //keep track of which indicators need their action total updating
       dt.patients[patientId].standards = dt.patients[patientId].standards.map(function (v) {
+        if(!actions[v.indicatorId]) {
+          actions[v.indicatorId] = {before: 0, after: 0};
+        }
         if (v.actionPlans) {
+          actions[v.indicatorId].before += v.actionPlans.length;
           v.actionPlans = v.actionPlans.filter(function (vv) {
             return vv.actionTextId !== actionTextId;
           });
+          actions[v.indicatorId].after += v.actionPlans.length;
           if (v.actionPlans.length === 0) v.actionPlan = false;
         }
         return v;
+      });
+      Object.keys(actions).forEach((indicatorId) => {
+        const currentIndicator = dt.indicators.filter((v) => {
+          return v.id === indicatorId;
+        })[0];
+        if(actions[indicatorId].after===0 && actions[indicatorId].before>0) currentIndicator.reviewed -= 1;
+        else if(actions[indicatorId].before===0 && actions[indicatorId].after>0) currentIndicator.reviewed += 1;
       });
     }
     if (dt.patientList) {
