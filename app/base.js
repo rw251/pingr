@@ -2,6 +2,7 @@ var data = require('./data'),
   lookup = require('./lookup'),
   chart = require('./chart'),
   log = require('./log'),
+  notify = require('./notify'),
   ZeroClipboard = require('zeroclipboard');
 
 require('./helpers/jquery-smartresize');
@@ -187,6 +188,8 @@ var base = {
 
       e.preventDefault();
       $('#modal .modal').modal('hide');
+
+      notify.showSaved();
     }).modal();
 
   },
