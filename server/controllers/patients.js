@@ -2,6 +2,12 @@ var Patient = require('../models/patient'),
   indicators = require('./indicators'),
   actions = require('./actions');
 
+var mean = function(arr) {
+  if(arr.length===0) return 1000;
+  var sum = arr.reduce((a, b) => a + b, 0);
+  return sum/arr.length;
+}
+
 var mergeActions = function (actions, patients, patientId) {
   var actionObject = {};
   var userDefinedActions = {};
@@ -30,15 +36,18 @@ var mergeActions = function (actions, patients, patientId) {
       v.actionTextId = actionIdFromText;
       if (!uniqueActions[patient.patientId][actionIdFromText]) {
         uniqueActions[patient.patientId][actionIdFromText] = v;
+        uniqueActions[patient.patientId][actionIdFromText].priority = [v.priority || 1000];
       } else {
         uniqueActions[patient.patientId][actionIdFromText].indicatorList.push(v.indicatorId);
         uniqueActions[patient.patientId][actionIdFromText].pointsPerAction += v.pointsPerAction;
-        // how about numberPatients and priority
+        uniqueActions[patient.patientId][actionIdFromText].priority.push(v.priority);
+        // how about numberPatients
       }
     });
 
     //convert back to array and sort
     var rtn = Object.keys(uniqueActions[patient.patientId]).map(function (v) {
+      uniqueActions[patient.patientId][v].priority = mean(uniqueActions[patient.patientId][v].priority);
       return uniqueActions[patient.patientId][v];
     });
 
@@ -56,7 +65,10 @@ var mergeActions = function (actions, patients, patientId) {
     //do the sorting
     rtn.sort(function (a, b) {
       if (a.agree === false) {
-        if (b.agree === false) return b.pointsPerAction - a.pointsPerAction;
+        if (b.agree === false) {
+          if(b.pointsPerAction === a.pointsPerAction) return a.priority - b.priority;
+          return b.pointsPerAction - a.pointsPerAction;
+        } 
         else return 1;
       } else if (b.agree === false) {
         return -1;
@@ -64,7 +76,8 @@ var mergeActions = function (actions, patients, patientId) {
         if (!b.agree) return 1;
       } else if (b.agree) {
         return -1;
-      }
+      }      
+      if(b.pointsPerAction === a.pointsPerAction) return a.priority - b.priority;
       return b.pointsPerAction - a.pointsPerAction;
     });
 

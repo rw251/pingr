@@ -1,6 +1,12 @@
 var Indicator = require('../models/indicator'),
   actions = require('./actions');
 
+var mean = function(arr) {
+  if(arr.length===0) return 1000;
+  var sum = arr.reduce((a, b) => a + b, 0);
+  return sum/arr.length;
+}
+
 var mergeActions = function(actions, indicators, indicatorId) {
   var actionObject = {};
   var userDefinedActions = [];
@@ -21,16 +27,19 @@ var mergeActions = function(actions, indicators, indicatorId) {
       v.actionTextId = actionIdFromText;
       if (!uniqueActions[actionIdFromText]) {
         uniqueActions[actionIdFromText] = v;
+        uniqueActions[actionIdFromText].priority = [v.priority || 1000];
       } else {
         uniqueActions[actionIdFromText].indicatorList.push(v.indicatorId);
         uniqueActions[actionIdFromText].pointsPerAction += v.pointsPerAction;
-        // how about numberPatients and priority
+        uniqueActions[actionIdFromText].priority.push(v.priority);
+        // how about numberPatients
       }
     });
   });
 
   //convert back to array and sort
   var rtn = Object.keys(uniqueActions).map(function(v) {
+    uniqueActions[v].priority = mean(uniqueActions[v].priority);
     return uniqueActions[v];
   });
 
@@ -48,7 +57,10 @@ var mergeActions = function(actions, indicators, indicatorId) {
   //do the sorting
   rtn.sort(function(a, b) {
     if (a.agree === false) {
-      if (b.agree === false) return b.pointsPerAction - a.pointsPerAction;
+      if (b.agree === false) {
+        if(b.pointsPerAction === a.pointsPerAction) return a.priority - b.priority;
+        return b.pointsPerAction - a.pointsPerAction;
+      } 
       else return 1;
     } else if (b.agree === false) {
       return -1;
@@ -57,6 +69,7 @@ var mergeActions = function(actions, indicators, indicatorId) {
     } else if (b.agree) {
       return -1;
     }
+    if(b.pointsPerAction === a.pointsPerAction) return a.priority - b.priority;
     return b.pointsPerAction - a.pointsPerAction;
   });
 

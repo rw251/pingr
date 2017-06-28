@@ -796,7 +796,7 @@ var doPatientActions = function (callback) {
           actionCat: data.actionCat,
           reasonNumber: data.reasonNumber,
           pointsPerAction: +data.pointsPerAction,
-          priority: data.priority,
+          priority: +data.priority,
           actionText: data.actionText,
           actionTextId: data.actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
           supportingText: data.supportingText
@@ -955,7 +955,7 @@ var doOrgActions = function (callback) {
         supportingText: data.supportingText,
         numberPatients: data.numberPatients,
         pointsPerAction: +data.pointsPerAction,
-        priority: data.priority
+        priority: +data.priority
       });
     })
     .on('err', function (err) {
