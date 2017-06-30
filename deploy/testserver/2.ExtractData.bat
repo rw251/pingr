@@ -10,7 +10,7 @@ if not exist "%REPORT.DIRECTORY%" mkdir %REPORT.DIRECTORY%
 REM DO EXTRACT
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.contacts] where [date] > '2012-01-01'" queryout %REPORT.DIRECTORY%/contacts.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.demographics]" queryout %REPORT.DIRECTORY%/demographics.dat -c -T -b 10000000
-bcp "SELECT PatID,indicatorId,replace (replace (why, char(10), ''), char(13), '')  FROM [%DB%].[dbo].[output.pingr.denominators]" queryout %REPORT.DIRECTORY%/denominators.dat -c -T -b 10000000
+bcp "SELECT PatID,indicatorId,replace (replace (why, char(10), ''), char(13), ''),nextReviewDate  FROM [%DB%].[dbo].[output.pingr.denominators]" queryout %REPORT.DIRECTORY%/denominators.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.diagnoses] order by PatID" queryout %REPORT.DIRECTORY%/diagnoses.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.impCodes]" queryout %REPORT.DIRECTORY%/impCodes.dat -c -T -b 10000000
 bcp "SELECT * FROM [%DB%].[dbo].[output.pingr.patActions]" queryout %REPORT.DIRECTORY%/patActions.dat -c -T -b 10000000
