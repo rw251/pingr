@@ -469,7 +469,7 @@ var doDenominators = function (callback) {
       var indText = textFile.pathways[pathway][stage].standards[standard];
       var item = { indicatorId: v.indicatorId, display: indText.tabText, targetMet: true, type: indicatorType[v.indicatorId] };
       if (v.why && v.why !== "") item.why = v.why;
-      if (v.nextReviewDate && v.nextReviewDate !== "") item.nextReviewDate = new Date(v.nextReviewDate);
+      if (v.nextReviewDate && v.nextReviewDate !== "") item.nextReviewDate = new Date(v.nextReviewDate).getTime();
       if (!patients[+v.patientId].standards) patients[+v.patientId].standards = [];
       patients[+v.patientId].standards.push(item);
     });

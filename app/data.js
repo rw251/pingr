@@ -319,9 +319,8 @@ var dt = {
     var dOv = dt.text.pathways[pathwayId][pathwayStage].standards[standard].dateORvalue;
 
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
-    var opps = dt.indicators.filter(function (v) {
-      return v.id === indicatorId;
-    })[0].opportunities.map(function (v) {
+    var indicator = dt.indicators.filter((v)=>{return v.id===indicatorId;})[0];
+    var opps = indicator.opportunities.map(function (v) {
       return v.id;
     });
 
@@ -430,7 +429,7 @@ var dt = {
       }
     }
 
-    if(dt.text.pathways[pathwayId][pathwayStage].standards[standard].displayReviewDate) {
+    if(indicator.displayReviewDate) {
       rtn["header-items"].push({
           "title": "Next review date",
           "type": "date-uk",

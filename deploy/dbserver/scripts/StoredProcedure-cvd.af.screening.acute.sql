@@ -1044,7 +1044,7 @@ values
 null),
 	--pt lists
 ('cvd.af.screeningAcute','valueId','latestSx'),
-('cvd.af.screeningAcute','valueName','Presentation date'),
+('cvd.af.screeningAcute','valueName','Presentation'),
 ('cvd.af.screeningAcute','dateORvalue','date'),
 ('cvd.af.screeningAcute','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('cvd.af.screeningAcute','showNextReviewDateColumn', 'true'),

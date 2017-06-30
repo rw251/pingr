@@ -280,7 +280,7 @@ module.exports = {
         var query = [
           { $match: { patientId: { $in: patientList } } },
           { $project: { _id: 0, standards: { $filter: { input: "$standards", as: "standard",	cond: { $eq: [ "$$standard.indicatorId", indicatorId ] } } }, patientId: 1, characteristics: 1, actions: 1, measurements: { $filter: { input: "$measurements", as: "measurement",	cond: { $eq: [ "$$measurement.id", indicatorValue ] } } } }	},
-          { $project: { reviewDateObj: {$arrayElemAt: [ "$standards", 0 ]}, patientId: 1, characteristics: 1, actions: 1, data : {$arrayElemAt: [ "$measurements", 0 ]}}},	
+          { $project: { reviewDateObj: {$arrayElemAt: [ "$standards", 0 ]}, patientId: 1, characteristics: 1, actions: 1, measurements : {$arrayElemAt: [ "$measurements", 0 ]}}},	
         ];
         if(indicator.displayValueFrom === 'practice') {
           query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, reviewDate:"$reviewDateObj.nextReviewDate", measurements: { $slice: [{ $filter: { input: "$measurements.data", as: "data", cond: { $not: { $setIsSubset: [["salfordt"], "$$data"] } } } }, -1] } } });
@@ -322,7 +322,7 @@ module.exports = {
                 }
               }
               if(patient.reviewDate) {
-                reviewDate = patient.reviewDate;
+                reviewDate = (new Date(patient.reviewDate)).toLocaleDateString();
               }
               var opps = indicator.opportunities.filter(function (v) {
                 return v.patients.indexOf("" + patient.patientId) > -1;
