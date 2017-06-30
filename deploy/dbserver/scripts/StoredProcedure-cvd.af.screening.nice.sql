@@ -788,7 +788,7 @@ null),
 ('cvd.af.screening','valueName','Latest pulse rhythm'),
 ('cvd.af.screening','dateORvalue','date'),
 ('cvd.af.screening','valueSortDirection','asc'),  -- 'asc' or 'desc'
-('cvd.af.screening','showNextReviewDateColumn', 'false'),
+('cvd.af.screening','showNextReviewDateColumn', 'true'),
 ('cvd.af.screening','tableTitle','All patients who require pulse rhythm assessment'),
 
 	--imp opp charts (based on actionCat)

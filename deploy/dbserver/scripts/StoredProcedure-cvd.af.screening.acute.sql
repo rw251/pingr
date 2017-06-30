@@ -1047,7 +1047,7 @@ null),
 ('cvd.af.screeningAcute','valueName','Presentation date'),
 ('cvd.af.screeningAcute','dateORvalue','date'),
 ('cvd.af.screeningAcute','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('cvd.af.screeningAcute','showNextReviewDateColumn', 'false'),
+('cvd.af.screeningAcute','showNextReviewDateColumn', 'true'),
 ('cvd.af.screeningAcute','tableTitle','All patients who require pulse rhythm assessment'),
 
 	--imp opp charts (based on actionCat)
