@@ -216,7 +216,7 @@ var doProcessIndicators = function (callback) {
             benchmark: data.benchmark,
             displayValue: indText.dateORvalue !== "date",
             displayDate: indText.dateORvalue !== "value",
-            displayReviewDate: indText.showNextReviewDateColumn,
+            displayReviewDate: indText.showNextReviewDateColumn !== "false",
             displayValueFrom: indText.valueFrom,
             type: "process",
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
@@ -231,7 +231,7 @@ var doProcessIndicators = function (callback) {
           i.measurementId = indText.valueId;
           i.displayValue = indText.dateORvalue !== "date";
           i.displayDate = indText.dateORvalue !== "value";
-          i.displayReviewDate = indText.showNextReviewDateColumn;
+          i.displayReviewDate = indText.showNextReviewDateColumn !== "false";
           i.displayValueFrom = indText.valueFrom;
           i.type = "process";
           i.name = indText.name;
@@ -316,7 +316,7 @@ var doOutcomeIndicators = function (callback) {
             benchmark: data.benchmark,
             displayValue: indText.dateORvalue !== "date",
             displayDate: indText.dateORvalue !== "value",
-            displayReviewDate: indText.showNextReviewDateColumn,
+            displayReviewDate: indText.showNextReviewDateColumn !== "false",
             displayValueFrom: indText.valueFrom,
             type: "outcome",
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
@@ -334,7 +334,7 @@ var doOutcomeIndicators = function (callback) {
           i.measurementId = indText.valueId;
           i.displayValue = indText.dateORvalue !== "date";
           i.displayDate = indText.dateORvalue !== "value";
-          i.displayReviewDate = indText.showNextReviewDateColumn;
+          i.displayReviewDate = indText.showNextReviewDateColumn !== "false";
           i.displayValueFrom = indText.valueFrom;
           i.type = "outcome";
           i.name = indText.name;
