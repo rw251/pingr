@@ -35,7 +35,7 @@ INSERT INTO [pingr.sql.log] VALUES ('Creating tables', GETDATE());
 --				this indicator.
 -----------------------------------------------
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.denominators]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.denominators]
-CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000), why varchar(max))
+CREATE TABLE [output.pingr.denominators] (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date)
 
 ------------------------------------------------------------------------------------------
 --Pt-level data: improvement opportunity categories and actions							--

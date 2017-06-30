@@ -331,7 +331,7 @@ group by b.pracID;
 					------------------------POPULATE DENOMINATOR TABLE---------------------------
 					-----------------------------------------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
@@ -352,7 +352,8 @@ select a.PatID, 'cvd.af.screening',
 		case 
 			when latestPulseRhythmCodeDate is null then '<li><strong>They have never had their pulse rhythm assessed.</li></strong>' 
 			when latestPulseRhythmCodeDate is not null then '<li><strong>Latest pulse rhythm assessment was on ' + CONVERT(VARCHAR, latestPulseRhythmCodeDate, 3) + '.</li></strong>'
-		end
+		end,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
 from #numerator as a
 left outer join (select * from #latestHtnCode) as b on b.PatID = a.PatID
 left outer join (select * from #latestDmCode) as d on d.PatID = a.PatID
@@ -361,6 +362,7 @@ left outer join (select * from #latestPadCode) as h on h.PatID = a.PatID
 left outer join (select * from #latestStrokeCode) as i on i.PatID = a.PatID
 left outer join (select * from #latestCopdCode) as j on j.PatID = a.PatID
 left outer join (select * from #latestPulseRhythmCode) as k on k.PatID = a.PatID
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 
 
 								---------------------------------------------------------
