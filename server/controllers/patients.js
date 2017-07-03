@@ -322,7 +322,7 @@ module.exports = {
                 }
               }
               if(patient.reviewDate) {
-                reviewDate = (new Date(patient.reviewDate)).toLocaleDateString();
+                reviewDate = patient.reviewDate;
               }
               var opps = indicator.opportunities.filter(function (v) {
                 return v.patients.indexOf("" + patient.patientId) > -1;
