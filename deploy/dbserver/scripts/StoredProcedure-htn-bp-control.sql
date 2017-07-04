@@ -538,12 +538,12 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
 select PatID, 'htn.treatment.bp',
@@ -590,8 +590,10 @@ select PatID, 'htn.treatment.bp',
 			else ''
 			end	
 		else ''
-		end 
-from #eligiblePopulationAllData 
+		end ,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 where denominator = 1;
 
 									----------------------------------------------
@@ -2939,6 +2941,7 @@ values
 ('htn.treatment.bp','valueId','SBP'),
 ('htn.treatment.bp','valueName','Latest SBP'),
 ('htn.treatment.bp','dateORvalue','both'), 
+('htn.treatment.bp','valueFrom','practice'),
 ('htn.treatment.bp','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.treatment.bp','tableTitle','All patients with improvement opportunities'),
 

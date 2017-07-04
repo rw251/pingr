@@ -302,12 +302,12 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
---insert into [output.pingr.denominators](PatID, indicatorId, why)
+--insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 
 									--TO TEST ON THE FLY--
 IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
-CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 insert into #denominators
 
 select PatID, 'htn.undiagnosed.screening',
@@ -318,8 +318,10 @@ case
 	when numerator = 0 then 
 		'<li>Patient &ge; 40, not on the hypertension register, and has <strong>not</strong> had a blood pressure recorded in the last 5 years.</li>'
 	else ''
-end	
-from #eligiblePopulationAllData 
+end	,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 where denominator = 1;
 
 									----------------------------------------------
@@ -564,6 +566,7 @@ values
 ('htn.undiagnosed.screening','valueId','SBP'),
 ('htn.undiagnosed.screening','valueName','Latest SBP'),
 ('htn.undiagnosed.screening','dateORvalue','value'),
+('htn.undiagnosed.screening','valueFrom','practice'),
 ('htn.undiagnosed.screening','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.undiagnosed.screening','tableTitle','All patients with persistently raised blood pressure <strong>not</strong> on the hypertension register'),
 

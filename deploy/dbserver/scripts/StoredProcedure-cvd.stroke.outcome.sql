@@ -252,11 +252,11 @@ left outer join (select * from #episodeStrokeIncidence) as b on b.practiceId = a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
 select a.PatID, 'cvd.stroke.outcome',
@@ -273,7 +273,8 @@ select a.PatID, 'cvd.stroke.outcome',
 		when numberOfStrokesPerPatientBeforeStartDate = 2 then 'And they had strokes before this date on ' + CONVERT(VARCHAR, secondLatestStrokeDateBeforeStartDate, 3) + ' and ' + CONVERT(VARCHAR, latestStrokeDateBeforeStartDate, 3) + '.<br>'
 		when numberOfStrokesPerPatientBeforeStartDate = 3 then 'And they had strokes documented before this date on ' + CONVERT(VARCHAR, thirdLatestStrokeDateBeforeStartDate, 3) + ' and ' + CONVERT(VARCHAR, secondLatestStrokeDateBeforeStartDate, 3) + ' and ' + CONVERT(VARCHAR, latestStrokeDateBeforeStartDate, 3)+ '.<br>'
 		when numberOfStrokesPerPatientBeforeStartDate > 3 then 'And they had more than 3 strokes recorded before this date. The latest was  ' + CONVERT(VARCHAR, latestStrokeDateBeforeStartDate, 3) + '.<br>'
-	end
+	end,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
 from practiceList as a
 left outer join (select * from #numberOfStrokesPerPatientSinceStartDate) as b on a.PatID = b.PatID
 left outer join (select * from #latestStrokeDateSinceStartDate) as c on a.PatID = c.PatID
@@ -283,6 +284,7 @@ left outer join (select * from #latestStrokeDateBeforeStartDate) as f on a.PatID
 left outer join (select * from #secondLatestStrokeDateBeforeStartDate) as g on a.PatID = g.PatID
 left outer join (select * from #thirdLatestStrokeDateBeforeStartDate) as h on a.PatID = h.PatID
 left outer join (select * from #numberOfStrokesPerPatientBeforeStartDate) as i on a.PatID = i.PatID
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 
 									----------------------------------------------
 									-------DEFINE % POINTS PER PATIENT------------

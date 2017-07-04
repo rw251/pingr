@@ -684,12 +684,12 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
 select PatID, 'copd.exacerbation.rehab',
@@ -702,8 +702,10 @@ select PatID, 'copd.exacerbation.rehab',
 			end + 
 		'</li>'+
 		'<li>Last recorded breathlessness level was <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!diagnosisadditional:2" target="_blank" title="NICE Clinical Knowledge Summary: COPD">MRC stage 2</a> on ' + CONVERT(VARCHAR, latestMrc2CodeDate, 3) + '. </li>'+
-		'<li><a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend these patients are offered pulmonary rehabilitation < 2 months afterwards because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.</li>'
-from #eligiblePopulationAllData 
+		'<li><a href="http://www.salfordccg.nhs.uk/respiratory-disease#key" target="_blank" title="Salford Standards">Salford Standards</a> and <a href="https://cks.nice.org.uk/chronic-obstructive-pulmonary-disease#!scenariorecommendation:2" target="_blank" title="NICE Clinical Knowledge Summary">NICE guidelines</a> recommend these patients are offered pulmonary rehabilitation < 2 months afterwards because <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1164434/" target="_blank" title="Respiratory Research Journal">evidence suggests it may decrease hospital admission and mortality risk, and increase exercise capacity and quality of life</a>.</li>',
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 where denominator = 1;
 
 									----------------------------------------------
@@ -1618,8 +1620,8 @@ values
 	' have been offered or declined Pulmonary Rehabilitation within 2 months of their latest exacerbation.'),
 ('copd.exacerbation.rehab','positiveMessage', --tailored text
 	case 
-		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Salford Standard target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
-		when @indicatorScore >= @target and @indicatorScore < @abc then 'Well done! You’ve achieved the Salford Standard target! To improve even further, look through the recommended actions on this page and for the patients below.'
+		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! Youï¿½ve achieved the Salford Standard target <i>and</i> youï¿½re in the top 10% of practices in Salford for this indicator!'
+		when @indicatorScore >= @target and @indicatorScore < @abc then 'Well done! Youï¿½ve achieved the Salford Standard target! To improve even further, look through the recommended actions on this page and for the patients below.'
 		when @denominator = 0  then 'You don''t have any patients eligible for this indicator. If you think this is incorrect, please send us a comment using the orange box in the top right of this page.'
 		else 'You''ve not yet achieved the Salford Standard target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'
 	end),

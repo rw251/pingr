@@ -460,12 +460,12 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
 select PatID, 'htn.undiagnosed.measures',
@@ -488,8 +488,10 @@ case
 		case when latestSbp < 180 and latestDbp < 110 and (latestAsbpValue >= 135 or latestAdbpValue >= 85) then '<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title=''NICE Hypertension Diagnosis''>NICE suggests patients should be diagnosed with hypertension if they have ambulatory / home BP &ge; 135/85 mmHg</a>.' else '' end +
 		case when latestSbp < 180 and latestDbp < 110 and (latestAdbpValue is null and latestAsbpValue is null) then '<li><a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!diagnosissub'' target=''_blank'' title=''NICE Hypertension Diagnosis''>NICE suggests patients with 2 blood pressure readings &ge; 140/90 should be offered ambulatory (or home) blood pressure monitoring to diagnose hypertension</a>.' else '' end
 	else ''
-end	
-from #eligiblePopulationAllData 
+end	,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 where denominator = 1;
 
 									----------------------------------------------
@@ -764,6 +766,7 @@ values
 ('htn.undiagnosed.measures','valueId','SBP'),
 ('htn.undiagnosed.measures','valueName','Latest SBP'),
 ('htn.undiagnosed.measures','dateORvalue','both'),
+('htn.undiagnosed.measures','valueFrom','practice'),
 ('htn.undiagnosed.measures','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.undiagnosed.measures','tableTitle','All patients with persistently raised blood pressure <strong>not</strong> who may have undiagnosed hypertension'),
 
