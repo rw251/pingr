@@ -540,7 +540,7 @@ insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 --CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
-select PatID, 'ckd.treatment.bp',
+select a.PatID, 'ckd.treatment.bp',
 	case
 		when bpMeasuredOK = 0 then 
 			'<ul><li>Patient is on CKD register.</li>' +

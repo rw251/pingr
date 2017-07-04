@@ -708,7 +708,7 @@ insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 --CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
-select PatID, 'htn.undiagnosed.med',
+select a.PatID, 'htn.undiagnosed.med',
 case
 	when numerator = 1 then
 	'<li>Patient is prescribed anti-hypertensive medication, and is not on hypertension register.</li>'

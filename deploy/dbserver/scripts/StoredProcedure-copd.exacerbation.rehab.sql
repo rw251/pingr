@@ -692,7 +692,7 @@ insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 --CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
-select PatID, 'copd.exacerbation.rehab',
+select a.PatID, 'copd.exacerbation.rehab',
 		'<ul>'+
 		'<li>Patient has COPD (since ' + CONVERT(VARCHAR, firstCopdCodeDate, 3) + ').</li>'+
 		'<li>Latest COPD exacerbation was on ' + CONVERT(VARCHAR, latestCopdExacThisFinancialYearDate, 3) + '.' +
