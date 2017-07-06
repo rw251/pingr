@@ -30,4 +30,5 @@ deploy/dbserver/research-events-medication-htn/
 !deploy/dbserver/research-events-medication-htn/medication-sorter-node.js
 mongoimport.exe
 mongoexport.exe
+analysis/data/*
 
