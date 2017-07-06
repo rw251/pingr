@@ -3,7 +3,8 @@ var mongoose = require('mongoose'),
 
 var PatientSchema = new Schema({
   patientId: {
-    type: Number
+    type: Number,
+    index: true
   },
   characteristics: {
     age: Number,

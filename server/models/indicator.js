@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
 var IndicatorSchema = new Schema({
-  practiceId: String,
+  practiceId: {type: String, index: true},
   id: String,
   name: String,
   values: [[String]],
