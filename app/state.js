@@ -1,3 +1,5 @@
+var log = require('./log');
+
 var tabs = {};
 
 module.exports = {
@@ -8,6 +10,7 @@ module.exports = {
   rememberTabs: function (identifier) {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       tabs[identifier] = e.target.hash; //e.target new tab
+      log.navigate(e.target.hash);
     });
   },
 

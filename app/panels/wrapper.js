@@ -1,11 +1,13 @@
 var data = require('../data.js'),
-  chart = require('../chart.js');
+  chart = require('../chart.js'),
+  log = require('../log.js');
 
 var bd = {
 
   wireUp: function(firstTabVisibleCallback) {
 
     $('#overviewPaneTab').on('click', function(e) {
+      log.navigate('#indicator-patient-list');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
@@ -26,6 +28,7 @@ var bd = {
     });
 
     $('#indicatorPaneTab').on('click', function(e) {
+      log.navigate('#indicator-trend');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
@@ -46,6 +49,7 @@ var bd = {
     });
 
     $('#patientPaneTab').on('click', function(e) {
+      log.navigate('#indicator-benchmark');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
