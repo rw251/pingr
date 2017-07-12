@@ -24,7 +24,8 @@ module.exports = {
       entryPoints: {
         'app/script.js': {
           'app.js': /^app\//
-        }
+        },
+        'app/justTheTracking.js': 'jtt.js',
       }
     },
     stylesheets: {
