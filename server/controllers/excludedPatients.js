@@ -1,4 +1,5 @@
-var ExcludedPatient = require('../models/excludedPatient');
+const ExcludedPatient = require('../models/excludedPatient');
+const events = require('./events');
 
 module.exports = {
 
@@ -34,7 +35,9 @@ module.exports = {
         console.log('Error in excluding patient: ' + err);
         return res.send(false);
       }
-      return res.send(patient);
+      events.excludePatient(req.sessionID, req.params.patientId, req.params.indicatorId, req.body.reason, req.body.freetext, req.user.email, (err) => {
+        return res.send(patient);
+      });
     });
   },
 
@@ -49,7 +52,9 @@ module.exports = {
         console.log('Error in including patient: ' + err);
         return res.send(false);
       }
-      return res.send(true);
+      events.includePatient(req.sessionID, req.params.patientId, req.params.indicatorId, req.user.email, (err) => {
+        return res.send(true);
+      });
     });
   },
 };

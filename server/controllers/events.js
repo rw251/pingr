@@ -133,6 +133,50 @@ var e = {
     }
   },
 
+  excludePatient: function(session, patientId, indicatorId, reason, text, email, done) {
+    var newEvent = new Event({ 
+      sessionId: session,
+      user: email, 
+      type: "excludePatient", 
+      data: [
+        { key: "patientId", value: patientId },
+        { key: "indicatorId", value: indicatorId },
+        { key: "text", value: text },
+        { key: "reasonText", value: reason },
+      ]
+    });
+
+    // save the event
+    newEvent.save(function (err) {
+      if (err) {
+        console.log("Error writing login event: " + err);
+        return done(err);
+      }
+      return done(null);
+    });
+  },
+
+  includePatient: function(session, patientId, indicatorId, email, done) {
+    var newEvent = new Event({ 
+      sessionId: session,
+      user: email, 
+      type: "includePatient", 
+      data: [
+        { key: "patientId", value: patientId },
+        { key: "indicatorId", value: indicatorId },
+      ]
+    });
+
+    // save the event
+    newEvent.save(function (err) {
+      if (err) {
+        console.log("Error writing login event: " + err);
+        return done(err);
+      }
+      return done(null);
+    });
+  },
+
   emailReminder: function (email, token, body, date, patientIdLookup, done) {
 
     var newEvent = new Event({ date: date, user: email, type: "emailReminderSent", data: [{ key: "token", value: token }] });
