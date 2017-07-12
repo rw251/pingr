@@ -133,10 +133,22 @@ var e = {
     }
   },
 
-  emailReminder: function (email, token, body, date, done) {
+  emailReminder: function (email, token, body, date, patientIdLookup, done) {
+
+    var newEvent = new Event({ date: date, user: email, type: "emailReminderSent", data: [{ key: "token", value: token }] });
+
+    //find nhs numbers if any
+    var matches = body.match(/[0-9]{9,10}/g);
+    if(matches && matches.length>0){
+      var patientIds = matches.map((nhs) => {
+        return patientIdLookup[nhs] || '?';
+      }).join(',');
+      newEvent.data.push({key: "patientIds", value: patientIds});
+    }
+
     //remove nhs numbers
     body = body.replace(/[0-9]{9}/g, "?????????");
-    var newEvent = new Event({ date: date, user: email, type: "emailReminderSent", data: [{ key: "token", value: token }, { key: "body", value: body }] });
+    newEvent.data.push({ key: "body", value: body });
 
     // save the event
     newEvent.save(function (err) {

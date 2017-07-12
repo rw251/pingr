@@ -164,7 +164,14 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
         var urlBaseWithToken = config.server.url + "/t/" + token + "/";
         console.log(urlBaseWithToken);
         data.pingrUrl = urlBaseWithToken;
-        data.pingrUrlWithoutTracking = config.server.url + "/"
+        data.pingrUrlWithoutTracking = config.server.url + "/";
+
+        var patientIdLookup = {};
+        if(data.patients) {
+          data.patients.forEach((p) => {
+            patientIdLookup[p.nhsNumber] = p._id;
+          });
+        }
 
         emailTemplates.getDefault(function (err, emailTemplate) {
           //send email
@@ -181,7 +188,7 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
               console.log("email not sent: " + error);
               usersUpdated++;
             } else {
-              events.emailReminder(v.email, token, emailHTMLBody, now, function (err) {
+              events.emailReminder(v.email, token, emailHTMLBody, now, patientIdLookup, function (err) {
                 if (err) {
                   console.log("email event not recorded: " + err);
                 }
