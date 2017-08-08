@@ -31,4 +31,5 @@ deploy/dbserver/research-events-medication-htn/
 mongoimport.exe
 mongoexport.exe
 analysis/data/*
-
+rc.txt
+rc.zip

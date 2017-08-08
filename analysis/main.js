@@ -72,7 +72,7 @@ const getDeets = (json,ts) => {
   obj.opportunities.forEach((o) => {
     if(o.patients && o.patients.length>0) {
       o.patients.forEach((p)=>{
-        rtn.push([ts.substr(0,4)+'-'+ts.substr(4,2)+'-'+ts.substr(6,2),obj.id,p,o.id]);
+        rtn.push([ts.substr(0,4)+'-'+ts.substr(4,2)+'-'+ts.substr(6,2),obj.id,p,o.id, obj.practiceId]);
       });
     }
   });
@@ -205,6 +205,5 @@ const getTrendData = () => {
 
 //extractTgzFiles();
 //extractIndicatorJsons();
-//getData();
-
-getTrendData();
+getData();
+//getTrendData();
