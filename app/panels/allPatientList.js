@@ -97,13 +97,14 @@ var pl = {
       $scrollTable.floatThead({
         scrollContainer: function($scrollTable){
           return $scrollTable.closest('.wrapper-floatTHead');
-      }
+        }
+      });
       //this was mine
-      $('#allPatientTable').floatThead({
+      /*$('#allPatientTable').floatThead({
         position: 'absolute',
         scrollContainer: true,
         zIndex: 50
-      });
+      });*/
       //REVIEW END
     });
 
