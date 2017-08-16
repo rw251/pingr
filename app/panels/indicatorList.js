@@ -23,7 +23,7 @@ var indicatorList = {
         return v.type==="outcome";
       });
       var html = tmpl({
-        "processIndicators": processIndicators,
+        "indicators": processIndicators, //REVIEW needs changing back to processIndicators
         "outcomeIndicators": outcomeIndicators,
         "selectedTab": state.getTab('overview'),
       });
@@ -37,7 +37,7 @@ var indicatorList = {
         panel.html(html);
       }
 
-      $('#processIndicators .inlinesparkline').sparkline('html', {
+      $('#overview-table .inlinesparkline').sparkline('html', { //REVIEW was '#processIndicators .inline..." in rw version
         tooltipFormatter: function(sparkline, options, fields) {
           var dts = processIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return dts[fields.x] + ": " + fields.y + "%";
@@ -52,7 +52,8 @@ var indicatorList = {
       $scrollTable.floatThead({
         scrollContainer: function($scrollTable){
           return $scrollTable.closest('.wrapper-floatTHead');
-      }
+        }
+      });
 
       //this can be ignored?
       $('#outcomeIndicators .inlinesparkline').sparkline('html', {
@@ -64,11 +65,11 @@ var indicatorList = {
       });
 
       // this is mine
-      $('#overview-table-process, #overview-table-outcomes').floatThead({
+      /*$('#overview-table-process, #overview-table-outcomes').floatThead({
         position: 'absolute',
         scrollContainer: true,
         zIndex:50
-      });
+      });*/
       //REVIEW END
 
       indicatorList.wireUp(panel, loadContentFn);

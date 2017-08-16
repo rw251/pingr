@@ -71,7 +71,7 @@ var qs = {
     //
     var html = tmpl({
       noStandards: patientData.standards.length === 0,
-      processStandards: processStandards,
+      standards: processStandards, //REVIEW needs to be called processStandards
       outcomeStandards: outcomeStandards,
       indicatorId: pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : null,
       patientId: patientId,
