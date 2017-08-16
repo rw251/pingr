@@ -2,7 +2,12 @@ include mixins/thumbs
 
 if noSuggestions
   .col-md-12
-    h3 There are no improvement action suggestions from PINGR for this indicator.
+    // REVIEW strong header
+    h3
+      | There are 
+      strong currently 
+      | no improvement action suggestions from PINGR for this indicator. 
+      strong Please add your own below.
 else 
   .col-md-4.ps-child.ps-boilerplate
     ul.nav.nav-pills.nav-pills-icons.nav-pills-default.nav-stacked(role="tablist")

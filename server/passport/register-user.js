@@ -1,14 +1,14 @@
 var User = require('../models/user'),
+  crypto = require('crypto'),
   emailSender = require('../email-sender');
 
 var config = require('../config');
-var mailConfig = config.mail;
 
 module.exports = {
-  register: function(req, res, next) {
+  register: function (req, res, next) {
     User.findOne({
       'email': req.body.email
-    }, function(err, user) {
+    }, function (err, user) {
       // In case of any error, return using the done method
       if (err) {
         console.log('Error in user register: ' + err);
@@ -21,45 +21,53 @@ module.exports = {
         req.flash('error', 'That email address is already in the system.');
         return next();
       } else {
-        var els = req.body.practice.split("|");
-        var newUser = new User({
-          email: req.body.email,
-          password: req.body.password,
-          fullname: req.body.fullname,
-          last_login: new Date(),
-          practiceIdNotAuthorised: els[0] !== "" ? els[0] : "",
-          practiceNameNotAuthorised: els[0] !== "" ? els[1] : "None"
-        });
+        crypto.randomBytes(20, function (err, buf) {
+          var token = buf.toString('hex');
+          var els = req.body.practice.split("|");
+          var newUser = new User({
+            email: req.body.email,
+            password: req.body.password,
+            fullname: req.body.fullname,
+            last_login: new Date(),
+            emailFrequency: req.body.freq,
+            emailDay: req.body.day,
+            emailHour: req.body.hour,
+            practiceIdNotAuthorised: els[0] !== "" ? els[0] : "",
+            practiceNameNotAuthorised: els[0] !== "" ? els[1] : "None",
+            registrationCode: token
+          });
 
-        // save the user
-        newUser.save(function(err) {
-          if (err) {
-            console.log('Error saving user');
-            req.flash('error', 'An error occurred please try again.');
-            return next();
-          }
-          var localMailConfig = {
-            sendEmailOnError: mailConfig.sendEmailOnError,
-            smtp: mailConfig.smtp,
-            options: {}
-          };
-console.log(JSON.stringify(config));
-console.log(JSON.stringify(mailConfig));
-	  localMailConfig.options.to = mailConfig.options.to;
-          localMailConfig.options.from = mailConfig.options.from;
-console.log(JSON.stringify(localMailConfig));
-          //to is now in config file
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'A user has requested to access pingr at ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1], null, null, function(error, info) {
-            if (error) {
-              console.log("email not sent: " + error);
+          // save the user
+          newUser.save(function (err) {
+            if (err) {
+              console.log('Error saving user');
+              req.flash('error', 'An error occurred please try again.');
+              return next();
             }
-            localMailConfig.options.to = newUser.email;
-            emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'We have received your request to access ' + config.server.url + '.\n\nName: ' + req.body.fullname + '\n\nEmail: ' + req.body.email + '\n\nPractice: ' + els[1] + '\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR', null, null, function(error, info) {
+
+            var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, config.mail.newUsersNotificationEmail.split(","), "PINGR: Request for access",
+              "A user has requested to access pingr at " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1],
+              null, null);
+
+            //to is now in config file
+            emailSender.send(emailConfig, function (error, info) {
               if (error) {
                 console.log("email not sent: " + error);
               }
-              req.flash('success', 'Thanks for registering. You will receive an email shortly when your request has been authorised. You can log in to PINGR now, but you won\'t see any data until you are authorised.');
-              return next();
+              emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, null, "PINGR: Validate email address",
+              "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nPlease confirm your email address by following this link: https://" + req.headers.host + "/register/" + token + ".",
+              null, null);
+              emailConfig.to = [{ name: newUser.fullname, email: newUser.email }];
+              //emailConfig.text = "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR";
+              emailSender.send(emailConfig, function (error, info) {
+                if (error) {
+                  console.log("email not sent: " + error);
+                }
+
+                req.flash('success', 'Thanks for registering. You will receive an email shortly to confirm your email address.'); 
+                req.flash('warning', 'Please check your spam/junk folder - if the email is there then please mark it as not junk.');
+                return next();
+              });
             });
           });
         });
@@ -67,10 +75,28 @@ console.log(JSON.stringify(localMailConfig));
     });
   },
 
-  authorise: function(req, res, next) {
+  token: function(req, res, next) {
+    User.findOne({
+      'registrationCode': req.params.token
+    }, function (err, user) {
+      // In case of any error, return using the done method
+      if (err || !user) {
+        req.flash('error', 'User doesn\'t exist');
+        return next();
+      } else {
+        user.registrationCode = undefined;
+        user.save(function(err){
+          req.flash('success', 'Thanks for validating your email - you can now login - though you may still need to wait to be authorised to view practice data.');
+          return next();
+        });
+      }
+    });
+  },
+
+  authorise: function (req, res, next) {
     User.findOne({
       'email': req.params.email
-    }, function(err, user) {
+    }, function (err, user) {
       // In case of any error, return using the done method
       if (err || !user) {
         console.log('Error in user register: ' + err);
@@ -88,22 +114,17 @@ console.log(JSON.stringify(localMailConfig));
         user.practiceNameNotAuthorised = null;
         user.practiceIdNotAuthorised = null;
 
-        user.save(function(err) {
+        user.save(function (err) {
           if (err) {
             console.log('Error saving user');
             req.flash('error', 'An error occurred updating the user.');
             return next();
           }
           //send email
-          var config = require('../config');
-          var localMailConfig = {
-            sendEmailOnError: mailConfig.sendEmailOnError,
-            smtp: mailConfig.smtp,
-            options: {}
-          };
-          localMailConfig.options.to = user.email;
-          localMailConfig.options.from = mailConfig.options.from;
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been authorised to view PINGR for practice ' + user.practiceName + '\n\nYou can access the site at ' + config.server.url + '.\n\nRegards\n\nPINGR', null, null, function(error, info) {
+          var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
+            "You have been authorised to view PINGR for practice " + user.practiceName + "\n\nYou can access the site at " + config.server.url + ".\n\nRegards\n\nPINGR",
+            null, null);
+          emailSender.send(emailConfig, function (error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User authorised but confirmation email failed to send.');
@@ -118,32 +139,27 @@ console.log(JSON.stringify(localMailConfig));
     });
   },
 
-  reject: function(req, res, next) {
+  reject: function (req, res, next) {
     User.findOne({
       'email': req.params.email
-    }, function(err, user) {
+    }, function (err, user) {
       // In case of any error, return using the done method
       if (err || !user) {
         console.log('Error in user register: ' + err);
         req.flash('error', 'User doesn\'t exist');
         return next();
       } else {
-        User.remove({'email': user.email}, function(err){
+        User.remove({ 'email': user.email }, function (err) {
           if (err) {
             console.log('Error removing user');
             req.flash('error', 'An error occurred deleting the user.');
             return next();
           }
           //send email
-          var config = require('../config');
-          var localMailConfig = {
-            sendEmailOnError: mailConfig.sendEmailOnError,
-            smtp: mailConfig.smtp,
-            options: {}
-          };
-          localMailConfig.options.to = user.email;
-          localMailConfig.options.from = mailConfig.options.from;
-          emailSender.sendEmail(localMailConfig, 'PINGR: Request for access', 'You have been denied access to view PINGR for practice ' + user.practiceNameNotAuthorised + '\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR', null, null, function(error, info) {
+          var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
+            "You have been denied access to view PINGR for practice " + user.practiceNameNotAuthorised + "\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR",
+            null, null);
+          emailSender.send(emailConfig, function (error, info) {
             if (error) {
               console.log("email not sent: " + error);
               req.flash('error', 'User rejected but confirmation email failed to send.');

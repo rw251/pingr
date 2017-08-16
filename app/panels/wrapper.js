@@ -1,11 +1,13 @@
 var data = require('../data.js'),
-  chart = require('../chart.js');
+  chart = require('../chart.js'),
+  log = require('../log.js');
 
 var bd = {
 
-  wireUp: function() {
+  wireUp: function(firstTabVisibleCallback) {
 
     $('#overviewPaneTab').on('click', function(e) {
+      log.navigate('#indicator-patient-list');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
@@ -17,7 +19,7 @@ var bd = {
       $('#mainPage-tab-content').fadeOut(250, function() {
 
         $('#mainPage-tab-content').children().fadeOut(1);
-        $('#overview-content').fadeIn(1);
+        $('#overview-content').fadeIn(1, firstTabVisibleCallback);
 
     //*b* tabbed content
 
@@ -27,6 +29,7 @@ var bd = {
     });
 
     $('#indicatorPaneTab').on('click', function(e) {
+      log.navigate('#indicator-trend');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
@@ -48,6 +51,7 @@ var bd = {
     });
 
     $('#patientPaneTab').on('click', function(e) {
+      log.navigate('#indicator-benchmark');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
@@ -91,7 +95,7 @@ var bd = {
 
       //change this to add li
       var sectionElement = panel;
-      var tabSection = $('<li id="'+ routeSuffix.toLowerCase() +'" data-toggle="tooltip" title="'+ tooltipDesc.toLowerCase() +'"><a id="'+ routeSuffix.toLowerCase() +'PaneTab" href="#'+ routeSuffix.toLowerCase() +'PaneTab">'+name+'</a></li>');
+      var tabSection = $('<li id="'+ routeSuffix.toLowerCase() +'" data-toggle="tooltip" title="'+ tooltipDesc.toLowerCase() +'"><a id="'+ routeSuffix.toLowerCase() +'PaneTab" data-toggle="tab" href="#'+ routeSuffix.toLowerCase() +'PaneTab">'+name+'</a></li>');
 
       var contentObject = $('<div id="'+ routeSuffix.toLowerCase() +'-content"></div>');
       $(sectionElement).append(contentObject);

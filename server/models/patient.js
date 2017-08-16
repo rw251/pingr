@@ -3,7 +3,8 @@ var mongoose = require('mongoose'),
 
 var PatientSchema = new Schema({
   patientId: {
-    type: Number
+    type: Number,
+    index: true
   },
   characteristics: {
     age: Number,
@@ -52,8 +53,11 @@ var PatientSchema = new Schema({
   standards: [
     {
       _id:false,
+      type: { type: String, default: "process"}, //Currently "process" OR "outcome" - same as indicator model
       display: String,
-      targetMet: Boolean
+      targetMet: Boolean,
+      //missing why ???
+      nextReviewDate: Date
     }
   ],
   medications: [
@@ -68,7 +72,7 @@ var PatientSchema = new Schema({
       actionCat: String,
       reasonNumber: String,
       pointsPerAction: Number,
-      priority: String,
+      priority: Number,
       actionText: String,
       actionTextId: String,
       supportingText: String

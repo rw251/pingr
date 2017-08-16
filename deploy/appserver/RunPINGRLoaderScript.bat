@@ -11,7 +11,7 @@ IF EXIST %IMPORT_DIR%COPYING.txt (
 
 for /f %%A in ('dir /b /a-d %IMPORT_DIR%^| find /v /c ""') do set cnt=%%A
 
-SET EXPECTED.FILE.NUMBER=11
+SET EXPECTED.FILE.NUMBER=13
 
 
 IF NOT "%cnt%"=="%EXPECTED.FILE.NUMBER%" (
@@ -51,6 +51,14 @@ IF NOT EXIST %IMPORT_DIR%indicator.dat (
 	SET ERRRR=indicator file is missing
 	goto :failed
 )
+IF NOT EXIST %IMPORT_DIR%indicatorOutcome.dat (
+	SET ERRRR=indicatorOutcome file is missing
+	goto :failed
+)
+IF NOT EXIST %IMPORT_DIR%indicatorMapping.dat (
+	SET ERRRR=indicatorMapping file is missing
+	goto :failed
+)
 IF NOT EXIST %IMPORT_DIR%measures.dat (
 	SET ERRRR=measures file is missing
 	goto :failed
@@ -68,7 +76,8 @@ REM extract existing indicator data
 mongoexport --db pingr --collection indicators --out %IMPORT_DIR%existingIndicators.json --jsonArray
 
 REM run the loader
-node process.js
+REM Based on this to stop the HEAP errors: http://stackoverflow.com/questions/38558989/node-js-heap-out-of-memory
+node --max_old_space_size=4096 process.js
 IF ERRORLEVEL 1 (
 	GOTO :nodefailed
 )
@@ -90,7 +99,7 @@ REM move the files
 mongoimport --db pingr --collection text --drop data/text.json --jsonArray
 mongoimport --db pingr --collection indicators --drop data/indicators.json --jsonArray
 mongoimport --db pingr --collection patients --drop data/patients.json
-mongoimport --db pingr --collection practices --drop in/practices.json --jsonArray
+mongoimport --db pingr --collection practices --drop in/practices.json
 
 cscript sendmail.vbs "All files successfully loaded into mongo"
 

@@ -23,7 +23,7 @@ module.exports = function(req, res, next) {
           req.flash('error', 'Incorrect password');
           return next(); // redirect back to login page
         } else {
-          console.log('match');
+          //console.log('match');
           user.password = req.body.newpassword;
           user.save(function(err) {
             if (err) {

@@ -2,7 +2,7 @@ var Action = require('../models/action');
 
 var _updateAction = function(action, updatedAction, callback) {
   Object.keys(updatedAction).forEach(function(v) {
-    if(v[0]==="_") return; //ignore hidden properties like _id and __v;
+    if (v[0] === "_") return; //ignore hidden properties like _id and __v;
     action[v] = updatedAction[v];
   });
   action.save(function(err, act) {
@@ -33,8 +33,8 @@ module.exports = {
     });
   },
 
-  listAgreedWith: function(practiceId, done){
-    Action.find({ practiceId: practiceId, $or: [{agree: true},{userDefined:true}] }, function(err, actions) {
+  listAgreedWith: function(practiceId, done) {
+    Action.find({ practiceId: practiceId, $or: [{ agree: true }, { userDefined: true }] }, function(err, actions) {
       if (err) {
         console.log(err);
         return done(new Error("Error finding action list for practice: " + practiceId));
@@ -49,7 +49,7 @@ module.exports = {
   },
 
   updatePatientUserDefined: function(patientId, actionTextId, updatedAction, done) {
-    Action.findOne({ actionTextId: actionTextId, patientId:patientId, userDefined: true }, function(err, action) {
+    Action.findOne({ actionTextId: actionTextId, patientId: patientId, userDefined: true }, function(err, action) {
       if (err) {
         console.log(err);
         return done(new Error("Error finding patient user defined actions for  " + actionTextId));
@@ -90,16 +90,16 @@ module.exports = {
     });
   },
 
-  deleteUserDefinedTeamAction: function(actionTextId, done){
-    Action.remove({actionTextId: actionTextId, userDefined: true}, function(err){
-      if(err) return done(err);
+  deleteUserDefinedTeamAction: function(actionTextId, done) {
+    Action.remove({ actionTextId: actionTextId, userDefined: true }, function(err) {
+      if (err) return done(err);
       return done(null);
     });
   },
 
-  deleteUserDefinedPatientAction: function(patientId, actionTextId, done){
-    Action.remove({actionTextId: actionTextId, patientId:patientId, userDefined: true}, function(err){
-      if(err) return done(err);
+  deleteUserDefinedPatientAction: function(patientId, actionTextId, done) {
+    Action.remove({ actionTextId: actionTextId, patientId: patientId, userDefined: true }, function(err) {
+      if (err) return done(err);
       return done(null);
     });
   },
@@ -153,7 +153,7 @@ module.exports = {
         });
       }
       Object.keys(updatedAction).forEach(function(v) {
-        if(v[0]==="_") return; //ignore hidden properties like _id and __v;
+        if (v[0] === "_") return; //ignore hidden properties like _id and __v;
         action[v] = updatedAction[v];
       });
       action.save(function(err, act) {
@@ -202,7 +202,7 @@ module.exports = {
       practiceId: practiceId,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [{who: username, what: "added", when: new Date()}],
+      history: [{ who: username, what: "added", when: new Date() }],
       userDefined: true,
       done: false
     };
@@ -226,7 +226,7 @@ module.exports = {
       indicatorList: indicatorList,
       actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
       actionText: actionText,
-      history: [{who: username, what: "added", when: new Date()}],
+      history: [{ who: username, what: "added", when: new Date() }],
       userDefined: true,
       done: false
     });
@@ -241,10 +241,30 @@ module.exports = {
     });
   },
 
-  patientsWithPlan: function(patientList, done){
+  patientsWithPlansPerIndicator: function(patientList, done) {
     Action.aggregate([
-      {$match: {patientId: {$in: patientList }, $or:[{agree:true},{userDefined:true}]}},
-      {$group: {_id:"$patientId",actions:{$push:{actionTextId:"$actionTextId",agree:"$agree", history:"$history", indicatorList:"$indicatorList"}}}}
+      { $match: { patientId: { $in: patientList }, $or: [{ agree: true }, { userDefined: true }] } },
+      { $project: { patientId: 1, indicatorList: 1 } },
+      { $unwind: "$indicatorList" },
+      { $group: { _id: "$patientId", indicatorList: { $addToSet: "$indicatorList" } } }
+    ], function(err, actions) {
+      if (err) {
+        console.log(err);
+        return done(new Error("Error finding actions for patients: " + patientList));
+      }
+      if (!actions) {
+        console.log("Error finding actions for patients: " + patientList);
+        return done(null, false);
+      } else {
+        done(null, actions);
+      }
+    });
+  },
+
+  patientsWithPlan: function(patientList, done) {
+    Action.aggregate([
+      { $match: { patientId: { $in: patientList }, $or: [{ agree: true }, { userDefined: true }] } },
+      { $group: { _id: "$patientId", actions: { $push: { actionTextId: "$actionTextId", agree: "$agree", history: "$history", indicatorList: "$indicatorList" } } } }
     ], function(err, actions) {
       if (err) {
         console.log(err);

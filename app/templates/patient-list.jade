@@ -1,47 +1,64 @@
 include mixins/patient-list-header-item
 
-.row
-  .col-md-6.col-lg-8.text-center
-    h4!= header + '(n=' + n + ')'
-  .col-md-6.col-lg-4
-    .btn-group
-      button#downloadPatientList.btn.btn-danger Download patient list
-      button.btn.btn-danger.dropdown-toggle(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-        span.caret
-        span.sr-only Toggle Dropdown
-      ul.dropdown-menu
-        li
-          a#downloadAsPdf(href="#") Full list (pdf)
-        li
-          a#downloadAsText(href="#") Nhs numbers (text file)
+//- .row
+//-   .col-md-6.col-lg-8.text-center
+//-     h4!= header + '(n=' + n + ')'
+//-   .col-md-6.col-lg-4
+//-     .btn-group
+//-       button#downloadPatientList.btn.btn-danger Download patient list
+//-       button.btn.btn-danger.dropdown-toggle(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+//-         span.caret
+//-         span.sr-only Toggle Dropdown
+//-       ul.dropdown-menu
+//-         li
+//-           a#downloadAsPdf(href="#") Full list (pdf)
+//-         li
+//-           a#downloadAsText(href="#") Nhs numbers (text file)
 
-.panel-body.patient-list.wrapper-floatTHead
-  table.table.table-hover.patient-list#patient-list-table
-    //(style="max-height: 600px;")
-    thead
-      tr.shade
-        //- th.col-md-2 A
-        //- th.col-md-2 B
-        //- th.col-md-2 C
-        //- th.col-md-2 D
-        //- th.col-md-2 E
-        //- th.col-md-2 F
-        //(style='background-color:#fff')
-        each item in locals['header-items']
-          if(item.title == "Age" || item.title == "Latest SBP")
-            +header(item, "col-md-1")
-          else 
-            +header(item, "col-md-2")
-    tbody.ps-child.ps-boilerplate
-      each patient in patients
-        tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
-          td.text-center.col-md-2
-            //(style='min-width:130px')
-            - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
-            button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
-              //span.fa.fa-clipboard
-              i.material-icons content_copy
-            = ' ' + patient.nhsNumber
-          each item in patient.items
-            - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
-            td.text-center!= item
+//- .panel-body.patient-list.wrapper-floatTHead
+//-   table.table.table-hover.patient-list#patient-list-table
+//-     //(style="max-height: 600px;")
+//-     thead
+//-       tr.shade
+//-         //- th.col-md-2 A
+//-         //- th.col-md-2 B
+//-         //- th.col-md-2 C
+//-         //- th.col-md-2 D
+//-         //- th.col-md-2 E
+//-         //- th.col-md-2 F
+//-         //(style='background-color:#fff')
+//-         each item in locals['header-items']
+//-           if(item.title == "Age" || item.title == "Latest SBP")
+//-             +header(item, "col-md-1")
+//-           else 
+//-             +header(item, "col-md-2")
+//-     tbody.ps-child.ps-boilerplate
+//-       each patient in patients
+//-         tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+//-           td.text-center.col-md-2
+//-             //(style='min-width:130px')
+//-             - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+//-             button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+//-               //span.fa.fa-clipboard
+//-               i.material-icons content_copy
+//-             = ' ' + patient.nhsNumber
+//-           each item in patient.items
+//-             - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
+//-             td.text-center!= item
+// REVIEW ben above richard below
+table#patient-list.table.table-condensed.patient-list.order-column.hover
+  thead
+    tr(style='background-color:#fff')
+      each item in locals['header-items']
+        +header(item)
+  tbody
+    each patient in patients
+      tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
+        td(style=patient.excluded?'opacity:0.4;min-width:130px':'min-width:130px')
+          - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
+          button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-type=type, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+            span.fa.fa-clipboard
+          = ' ' + patient.nhsNumber
+        each item in patient.items
+          - if(typeof(item) === "number" && item > 100000000000) item = new Date(item).getDate() + '/' + (new Date(item).getMonth()+1) + '/' + new Date(item).getFullYear()
+          td(style=(patient.excluded && (typeof(item) !== "string" || item.indexOf('text-muted') < 0)) ?'opacity:0.4;':'')!= item

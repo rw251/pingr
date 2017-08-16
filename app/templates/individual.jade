@@ -2,7 +2,11 @@ include mixins/thumbs
 
 if noSuggestions
   .col-md-12
-    h3 There are no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
+    // REVIEW does the strong work in header
+    h3
+      | There are 
+      strong currently 
+      | no improvement action suggestions from PINGR because this patient has either met the quality standard or it is not relevant to them.
   //include mixins/personal-action-plan
 else 
   .col-md-4.ps-child.ps-boilerplate

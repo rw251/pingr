@@ -1,9 +1,7 @@
 script.
-  var data = !{JSON.stringify(user)};
-  if(data.last_login) data.last_login = (new Date(data.last_login)).toDateString();
-  data.pingrUrl = "https://pingr-dev.herokuapp.com/";
-  data.indicators = !{JSON.stringify(indicators)};
-  data.patients = !{JSON.stringify(patients)};
+  var data = !{JSON.stringify(data)};
+  data.pingrUrl = "https://pingr-dev.herokuapp.com/t/a8fj39jd3l/";
+  data.pingrUrlWithoutTracking = "https://pingr-dev.herokuapp.com/";
   jade2html = function(input, data) {
     return jade.compile(input, {
       pretty: true,
@@ -39,6 +37,22 @@ script.
     $.fn.tabOverride.tabSize(2);
     $textarea.tabOverride();
     
+    $('.set-default').on('click', function(e){
+      $.ajax({
+        type: "POST",
+        url: "/emaildefault/" + $(this).data("id"),
+        success: function(d) { 
+          window.location.reload();
+        },
+        error: function(){
+          alert('Failed to set default - maybe refresh the page');
+        },
+        dataType: "json",
+        contentType: "application/json"
+      });
+      e.preventDefault();
+    });
+    
     $('#testEmail').on('click', function(e){
       var dataToSend = {
         to: $('#emailAddress').val(),
@@ -46,6 +60,10 @@ script.
         html: $('#html').html(),
         text: $('#html').text()
       };
+      //Below doesn't really work
+      //dataToSend.html = dataToSend.html
+      //  .replace(/(https?):/g,"$1<span>:</span>") // add span around : to stop email from auto hyperlinking it
+      //  .replace(/(href=['"]https?)<span>:<\/span>/g,"$1:") //but don't do this if inside a href
       $.ajax({
         type: "POST",
         url: "/emailsendtest",

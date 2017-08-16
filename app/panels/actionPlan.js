@@ -13,6 +13,10 @@ var ap = {
     ap.modalSaved = false;
     ap.modalUndo = false;
 
+    $('#modal .modal').off('shown.bs.modal').on('shown.bs.modal', function (e) {
+      $('#modal-why-text').focus();
+    });
+
     $('#modal .modal').off('click', '.undo-plan').on('click', '.undo-plan', function(e) {
       ap.modalUndo = true;
     }).off('submit', 'form').on('submit', 'form', {

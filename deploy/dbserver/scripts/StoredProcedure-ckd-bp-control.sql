@@ -533,14 +533,14 @@ select 'ckd.treatment.bp', b.pracID, CONVERT(char(10), @refdate, 126) as date, s
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
-select PatID, 'ckd.treatment.bp',
+select a.PatID, 'ckd.treatment.bp',
 	case
 		when bpMeasuredOK = 0 then 
 			'<ul><li>Patient is on CKD register.</li>' +
@@ -583,8 +583,11 @@ select PatID, 'ckd.treatment.bp',
 			else '</ul>'
 			end			
 		else ''
-		end 
-from #eligiblePopulationAllData where denominator = 1;
+		end,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData as a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
+where denominator = 1;
 
 									----------------------------------------------
 									-------DEFINE % POINTS PER PATIENT------------
@@ -2934,7 +2937,8 @@ values
 --pt lists
 ('ckd.treatment.bp','valueId','SBP'),
 ('ckd.treatment.bp','valueName','Latest SBP'),
-('ckd.treatment.bp','dateORvalue','value'),
+('ckd.treatment.bp','valueFrom','practice'),
+('ckd.treatment.bp','dateORvalue','both'),
 ('ckd.treatment.bp','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('ckd.treatment.bp','tableTitle','All patients with improvement opportunities'),
 

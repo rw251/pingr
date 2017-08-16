@@ -558,3 +558,10 @@ Debug
 .highlight-yellow{
   background: yellow !important;
 }
+
+/* from rw - datatable stuff - can't remember why
+table.dataTable.table-condensed .sorting:after, 
+table.dataTable.table-condensed .sorting_asc:after,
+table.dataTable.table-condensed .sorting_desc:after {
+  top:auto;
+}

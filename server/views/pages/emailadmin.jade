@@ -13,6 +13,19 @@ include ../partials/headMinimalCss.jade
       button.close(type="button" data-dismiss="alert" aria-label="Close")
         span(aria-hidden="true") ×
       p= message.success
+  p 
+    | Email details for 
+    strong= serverUrl
+  ul
+    li
+      | Reminder emails come from: 
+      strong= reminderEmailsFrom
+    li
+      | Admin emails (new user / password reset etc.) come from: 
+      strong= adminEmailsFrom
+    li
+      | New user notifications are sent to: 
+      strong= newUsersNotificationEmail
   table.pure-table.pure-table-bordered
     thead
       tr
@@ -20,6 +33,7 @@ include ../partials/headMinimalCss.jade
         th Subject
         th Body
         th Actions
+        th Default
     tbody
       each emailTemplate in emailList
         tr
@@ -31,4 +45,7 @@ include ../partials/headMinimalCss.jade
             .btn-toolbar
                 a.pure-button.pure-button-primary(href='/emailedit/'+emailTemplate.label) Edit
                 a.pure-button.pure-button-primary(href='/emaildelete/'+emailTemplate.label) Delete
+                if !emailTemplate.isDefault
+                  a.pure-button.pure-button-primary.set-default(href='#', data-id=emailTemplate.label) Set Default
+          td= emailTemplate.isDefault ? "YES" : "NO"
 include ../partials/htmlEdit.js.jade

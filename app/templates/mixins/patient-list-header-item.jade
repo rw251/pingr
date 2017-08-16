@@ -6,11 +6,11 @@ mixin header(item, classIn)
     else 
       !=item.title + ' '
       
-    if !item.isUnSortable
-      if item.isSorted
-        if item.isAsc
-          i.fa.fa-sort-asc(data-toggle='tooltip', title='Order patients by'+item.title)
-        else
-          i.fa.fa-sort-desc(data-toggle='tooltip', title='Order patients by'+item.title)
-      else
-        i.fa.fa-sort(data-toggle='tooltip', title='Order patients by'+item.title)
+    //- if !item.isUnSortable
+    //-   if item.isSorted
+    //-     if item.isAsc
+    //-       i.fa.fa-sort-asc(data-toggle='tooltip', title='Order patients by'+item.title)
+    //-     else
+    //-       i.fa.fa-sort-desc(data-toggle='tooltip', title='Order patients by'+item.title)
+    //-   else
+    //-     i.fa.fa-sort(data-toggle='tooltip', title='Order patients by'+item.title)

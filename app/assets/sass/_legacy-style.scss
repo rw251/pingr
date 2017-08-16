@@ -1962,7 +1962,7 @@ mod
 }
 /* position the dialog a bit lower down the screen */
 .modal-dialog {
-    margin-top: 300px;
+    margin-top: 20vh;
 }
 
 .modal-dialog.modal-dialog-top {
@@ -2331,6 +2331,7 @@ th {
 }
 
 .table-scroll {
+    overflow-x: hidden;
     overflow-y: auto;
     min-height: 170px;
 }
@@ -2571,11 +2572,19 @@ body > svg {
 }
 
 .h-condition-chart {
-    height: 110px;
+    height: 200px;
 }
 
 .h-medication-chart {
     height: 200px;
+}
+
+.h-important-codes-chart {
+    height:40px;
+}
+
+.h-contact-chart {
+    height:50px;
 }
 
 .h-last-measurement-chart {
@@ -2833,6 +2842,7 @@ body > svg {
     background-color: #f9ffff;
 }
 
+.nav-tabs > li.active > a.pastel-pink,
 .pastel-pink {
     background-color: #fff9ff;
 }

@@ -39,7 +39,7 @@ module.exports = function(PORT, PATH, CALLBACK) {
     secret: config.passport.secret,
     cookie: { maxAge: SESSION_TIMEOUT },
     rolling: true,
-    resave: true,
+    resave: false,
     saveUninitialized: false
   }));
   app.use(passport.initialize());

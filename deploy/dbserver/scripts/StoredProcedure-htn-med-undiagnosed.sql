@@ -1,3 +1,6 @@
+--v2 5/3/17
+--changed name to 'casefinding'
+
 									--TO RUN AS STORED PROCEDURE--
 IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.htn.undiagnosed.med') DROP PROCEDURE [pingr.htn.undiagnosed.med];
 GO
@@ -697,23 +700,25 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
-select PatID, 'htn.undiagnosed.med',
+select a.PatID, 'htn.undiagnosed.med',
 case
 	when numerator = 1 then
 	'<li>Patient is prescribed anti-hypertensive medication, and is not on hypertension register.</li>'
 	when numerator = 0 then
 	'<li>Patient is prescribed anti-hypertensive medication, <strong>but</strong> is not on hypertension register.</li>'
 	else ''
-end	
-from #eligiblePopulationAllData 
+end	,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 where denominator = 1;
 
 									----------------------------------------------
@@ -944,14 +949,14 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --overview tab
-('htn.undiagnosed.med','name','Undiagnosed hypertension - medication'), --overview table name
-('htn.undiagnosed.med','tabText','HTN Diagnosis - Medication'), --indicator tab text
+('htn.undiagnosed.med','name','Hypertension Casefinding 2: Anti-Hypertensive medication'), --overview table name
+('htn.undiagnosed.med','tabText','HTN Casefinding 2: Medication'), --indicator tab text
 ('htn.undiagnosed.med','description', --'show more' on overview tab
-	'<strong>Definition:</strong> Patients prescribed anti-hypertensive medication that are on the hypertension register. (NB: Some patients may have these medications prescribed for reasons other than hypertension.)<br>' + 
+	'<strong>Definition:</strong> Patients prescribed anti-hypertensive medication that are on the hypertension register. <strong>Patients <i>not</i> on the register <i>may</i> have undiagnosed hypertension</strong>. (Though some may have these medications prescribed for other reasons.)<br>' + 
 	'<strong>Why this is important:</strong> The recorded prevalence of hypertension in Salford is lower than expected. Finding undiagnosed patients can help provide better care and increase your QOF scores.<br>'),
 --indicator tab
 --summary text
-('htn.undiagnosed.med','tagline','of patients currently prescribed anti-hypertensive medication are on the hypertension register. (NB: Some may have these medications prescribed for reasons other than hypertension.)'),
+('htn.undiagnosed.med','tagline','of patients currently prescribed anti-hypertensive medication are on the hypertension register. <strong>Patients <i>not</i> on the register <i>may</i> have undiagnosed hypertension</strong>. (Though some may have these medications prescribed for other reasons.)'),
 ('htn.undiagnosed.med','positiveMessage', --tailored text
 	case 
 		when @indicatorScore >= @target and @indicatorScore >= @abc then 'Fantastic! You’ve achieved the Target <i>and</i> you’re in the top 10% of practices in Salford for this indicator!'
@@ -961,7 +966,8 @@ values
 --pt lists
 ('htn.undiagnosed.med','valueId','SBP'),
 ('htn.undiagnosed.med','valueName','Latest SBP'),
-('htn.undiagnosed.med','dateORvalue','value'),
+('htn.undiagnosed.med','dateORvalue','both'),
+('htn.undiagnosed.med','valueFrom','practice'),
 ('htn.undiagnosed.med','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.undiagnosed.med','tableTitle','All patients currently prescribed anti-hypertensive medication <strong>not</strong> on the hypertension register'),
 

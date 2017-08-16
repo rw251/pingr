@@ -2,6 +2,7 @@ var base = require('../base'),
   data = require('../data'),
   layout = require('../layout'),
   lookup = require('../lookup'),
+  state = require('../state'),
   indicatorList = require('../panels/indicatorList'),
   teamActionPlan = require('../panels/teamActionPlan'),
   log = require('../log');
@@ -78,12 +79,7 @@ var overview = {
 
       base.wireUpTooltips();
 
-      //farRightPanel.find('div.table-scroll').getNiceScroll().remove();
-      /*farRightPanel.find('div.table-scroll').niceScroll({
-        cursoropacitymin: 0.3,
-        cursorwidth: "7px",
-        horizrailenabled: false
-      });*/
+      state.rememberTabs('overview');
 
       base.hideLoading();
       overview.updateTab(true);
@@ -95,7 +91,7 @@ var overview = {
       //farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
       //farLeftPanel.attr("class", "col-xl-6 col-lg-6 state-overview-leftPanel");
 
-      //base.updateFixedHeightElements([{selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250},{selector:'.table-scroll',padding:220, minHeight:300}]);
+      //base.updateFixedHeightElements([{selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250},{selector:'.table-scroll',padding:250, minHeight:300}]);
     }, 0);
 
   }

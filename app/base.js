@@ -2,7 +2,8 @@ var data = require('./data'),
   lookup = require('./lookup'),
   chart = require('./chart'),
   log = require('./log'),
-  ZeroClipboard = require('zeroclipboard');
+  notify = require('./notify'),
+  Clipboard = require('clipboard');
 
 require('./helpers/jquery-smartresize');
 
@@ -10,6 +11,8 @@ $(window).smartresize(function() {
   $('#addedCSS').text(base.getCssText());
   base.updateFixedHeightElements();
 });
+
+var clipboard;
 
 var base = {
 
@@ -115,50 +118,48 @@ var base = {
   },
 
   setupClipboard: function(selector, destroy) {
-    if (destroy) ZeroClipboard.destroy(); //tidy up
+    if (destroy && clipboard) clipboard.destroy(); //tidy up
 
-    var client = new ZeroClipboard(selector);
+    clipboard = new Clipboard(selector);
 
-    client.on('ready', function() {
-      client.on('aftercopy', function(event) {
-        var dataText = event.data['text/plain'];
-        var ispatid = dataText.match(/[0-9]{10}/);
-        if (ispatid && ispatid.length > 0) {
-          var poss = Object.keys(data.patLookup).filter(function(v) {
-            return data.patLookup[v] === ispatid[0];
-          });
-          if (poss & poss.length > 0) {
-            dataText = poss[0];
-          } else {
-            dataText = "XXX XXX XXXX";
-          }
-        }
-        log.event("copy-button", window.location.hash, [{ key: "data", value: dataText }]);
-        console.log('Copied text to clipboard: ' + dataText);
-        $(event.target).tooltip('hide');
-        $(event.target).popover({
-          trigger: 'manual',
-          template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>',
-          delay: {
-            show: 500,
-            hide: 500
-          },
-          html: true
+    clipboard.on('success', function(event) {
+      var dataText = event.text;//data['text/plain'];
+      var ispatid = dataText.match(/[0-9]{10}/);
+      if (ispatid && ispatid.length > 0) {
+        var poss = Object.keys(data.patLookup).filter(function(v) {
+          return data.patLookup[v] === ispatid[0];
         });
-        if (lookup.tmp) {
-          clearTimeout(lookup.tmp.timeout);
-          $(lookup.tmp.target).popover('hide');
+        if (poss & poss.length > 0) {
+          dataText = poss[0];
+        } else {
+          dataText = "XXX XXX XXXX";
         }
-        $(event.target).popover('show');
-        lookup.tmp = { target: event.target };
-        lookup.tmp.timeout = setTimeout(function() {
-          delete lookup.tmp;
-          $(event.target).popover('hide');
-        }, 5000);
-        $(event.target).blur();
-        //event.stopPropagation();
-        //event.preventDefault();
+      }
+      log.event("copy-button", window.location.hash, [{ key: "data", value: dataText }]);
+      console.log('Copied text to clipboard: ' + dataText);
+      $(event.trigger).tooltip('hide');
+      $(event.trigger).popover({
+        trigger: 'manual',
+        template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>',
+        delay: {
+          show: 500,
+          hide: 500
+        },
+        html: true
       });
+      if (lookup.tmp) {
+        clearTimeout(lookup.tmp.timeout);
+        $(lookup.tmp.target).popover('hide');
+      }
+      $(event.trigger).popover('show');
+      lookup.tmp = { target: event.trigger };
+      lookup.tmp.timeout = setTimeout(function() {
+        delete lookup.tmp;
+        $(event.trigger).popover('hide');
+      }, 5000);
+      $(event.trigger).blur();
+      //event.stopPropagation();
+      //event.preventDefault();
     });
   },
 
@@ -176,6 +177,9 @@ var base = {
 
     $('#modal').html(tmpl({ text: lookup.suggestionModalText }));
 
+    $('#modal .modal').off('shown.bs.modal').on('shown.bs.modal', function (e) {
+      $('#modal-suggestion-text').focus();
+    });
 
     $('#modal .modal').off('submit', 'form').on('submit', 'form', function(e) {
 
@@ -185,7 +189,10 @@ var base = {
 
       e.preventDefault();
       $('#modal .modal').modal('hide');
+
+      notify.showSaved();
     }).modal();
+
   },
 
   switchTo2Column1Narrow1Wide: function() {
@@ -224,9 +231,20 @@ var base = {
     tabElement.data("href", "#" + tab + "/" + url);
   },
 
+/**
+ * Show the main loading page and hide everything else
+ */
   showLoading: function() {
     $('.loading-container').show();
     $('#title-row').hide();
+  },
+
+/**
+ * Show a loading icon in a given element with an optional message
+ */
+  showLocalLoading: function(element, message) {
+    var tmpl = require('./templates/loading');
+    element.html(tmpl({message: message}));
   },
 
   hideLoading: function() {
@@ -234,8 +252,9 @@ var base = {
     $('#title-row').fadeIn(0);
   },
 
-  getCssText: function() {
-    var cssText = base.elements.map(function(v) {
+  getCssText: function(elements) {
+    if(!elements) elements = base.elements;
+    var cssText = elements.map(function(v) {
       return v.selector + " {max-height:" + Math.max(v.minHeight,Math.floor($(window).height() - $(v.selector).position().top - v.padding)) + "px;min-height:" + v.minHeight + "px;}";
     }).join(" ");
     return cssText;
@@ -246,9 +265,17 @@ var base = {
     //console.log("update called");
     if (!elements) elements = base.elements;
     base.elements = elements;
-//    console.log("shall we update?");
-    if ($(elements.map(function(v) { return v.selector + ":visible"; }).join(",")).length !== elements.length) {
-//      console.log("no - wait a bit.");
+    console.log("shall we update?");
+    var currentlyVisibleElements = elements.filter(function(v){
+      return $(v.selector + ":visible").length>0 ;
+    });
+    if (currentlyVisibleElements.length !== elements.length) {
+      console.log("no - wait a bit.");
+      if ($('#addedCSS').length === 0) {
+        $('head').append('<style id="addedCSS" type="text/css"></style>');
+      }
+
+      $('#addedCSS').text(base.getCssText(currentlyVisibleElements));
       setTimeout(function() {
         base.updateFixedHeightElements(elements);
       }, 100);

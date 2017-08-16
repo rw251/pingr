@@ -1,0 +1,24 @@
+var log = require('./log');
+
+var tabs = {};
+
+module.exports = {
+
+  /**
+   * Adds a listener to update the saved tab on change
+   */
+  rememberTabs: function (identifier) {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      tabs[identifier] = e.target.hash; //e.target new tab
+      log.navigate(e.target.hash);
+    });
+  },
+
+  /**
+   * Gets the current tab hash
+   */
+  getTab: function (identifier) {
+    return tabs[identifier];
+  },
+
+};

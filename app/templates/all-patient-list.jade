@@ -23,6 +23,7 @@
             th Age
             th Sex
             th(data-toggle='tooltip', data-placement='top', title="The number of indicators that each patient is flagging against. Click on 'show which indicators' to see more details. ") Indicators violated
+            th(data-toggle='tooltip', data-placement='top', title="The number of indicators that each patient is flagging against but for which the patient has an action plan. Click on 'show which indicators' to see more details. ") Indicators violated with action plan
             th(data-toggle='tooltip', data-placement='top', title='A patient is worth a number of percentage points for each indicator they are in. If a patient is in more than one indicator, these points are added together') Number of points this patient is worth
         tbody
           each patient in patients
@@ -45,4 +46,17 @@
                     | hide indicators
                     i.fa.fa-caret-up
                   .indicatorList(data-id=patient._id, style='display:none')!= patient.indicatorNames.join("<br>")
+              td
+                if patient.numberOfIndicatorsWithAction
+                  strong(style='vertical-align:top;padding-right:15px')= patient.numberOfIndicatorsWithAction
+                  span(style='display:inline-block')
+                    a.showIndicators(href='#',data-id=patient._id) 
+                      | show which indicators
+                      i.fa.fa-caret-down
+                    a.hideIndicators(href='#',data-id=patient._id, style='display:none') 
+                      | hide indicators
+                      i.fa.fa-caret-up
+                    .indicatorList(data-id=patient._id, style='display:none')!= patient.indicatorsWithActionsNames.join("<br>")
+                else
+                  strong(style='vertical-align:top;padding-right:15px') 0
               td= patient.tot.toFixed(2)

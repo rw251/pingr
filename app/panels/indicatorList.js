@@ -1,23 +1,31 @@
 var base = require('../base.js'),
   log = require('../log.js'),
   data = require('../data.js'),
+  state = require('../state'),
   sparkline = require('jquery-sparkline');
 
 var indicatorList = {
 
   show: function(panel, isAppend, loadContentFn) {
-    //data.getAllIndicatorData("P87024", function(indicators) {
     data.getAllIndicatorData(null, function(indicators) {
       indicators.sort(function(a,b){
         if(a.performance.percentage == b.performance.percentage) return 0;
-        if(isNaN(a.performance.percentage)) return 1;
-        if(isNaN(b.performance.percentage)) return -1;
+        if(isNaN(a.performance.percentage) || a.name.toLowerCase().indexOf("beta test")>-1) return 1;
+        if(isNaN(b.performance.percentage) || b.name.toLowerCase().indexOf("beta test")>-1) return -1;
         return a.performance.percentage - b.performance.percentage;
       });
       var tempMust = $('#overview-panel-table').html();
       var tmpl = require('templates/overview-table');
+      var processIndicators = indicators.filter(function(v){
+        return v.type==="process";
+      });
+      var outcomeIndicators = indicators.filter(function(v){
+        return v.type==="outcome";
+      });
       var html = tmpl({
-        "indicators": indicators
+        "processIndicators": processIndicators,
+        "outcomeIndicators": outcomeIndicators,
+        "selectedTab": state.getTab('overview'),
       });
       if (isAppend) {
         panel.append(html);
@@ -29,21 +37,39 @@ var indicatorList = {
         panel.html(html);
       }
 
-      $('.inlinesparkline').sparkline('html', {
+      $('#processIndicators .inlinesparkline').sparkline('html', {
         tooltipFormatter: function(sparkline, options, fields) {
-          var dts = indicators[$('.inlinesparkline').index(sparkline.el)].dates;
+          var dts = processIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return dts[fields.x] + ": " + fields.y + "%";
         },
         width: "100px"
       });
 
+      //REVIEW
+      //this is ben's
       var $scrollTable = $('#overview-table');
 
       $scrollTable.floatThead({
         scrollContainer: function($scrollTable){
           return $scrollTable.closest('.wrapper-floatTHead');
       }
+
+      //this can be ignored?
+      $('#outcomeIndicators .inlinesparkline').sparkline('html', {
+        tooltipFormatter: function(sparkline, options, fields) {
+          var dts = outcomeIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
+          return dts[fields.x] + ": " + fields.y + "%";
+        },
+        width: "100px"
       });
+
+      // this is mine
+      $('#overview-table-process, #overview-table-outcomes').floatThead({
+        position: 'absolute',
+        scrollContainer: true,
+        zIndex:50
+      });
+      //REVIEW END
 
       indicatorList.wireUp(panel, loadContentFn);
 
@@ -102,7 +128,13 @@ var indicatorList = {
       return false;
     });
 
-    $('#overview-table').floatThead('reflow')
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      $.sparkline_display_visible(); //ensure sparklines on hidden tabs display
+      //e.target // newly activated tab
+      //e.relatedTarget // previous active tab
+    })
+
+    $('#overview-table-process, #overview-table-outcomes').floatThead('reflow')
   }
 
 };

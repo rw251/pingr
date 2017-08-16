@@ -3,6 +3,7 @@ var lifeline = require('../panels/lifeline'),
   base = require('../base'),
   layout = require('../layout'),
   lookup = require('../lookup'),
+  state = require('../state'),
   individualActionPlan = require('../panels/individualActionPlan'),
   qualityStandards = require('../panels/qualityStandards'),
   patientSearch = require('../panels/patientSearch'),
@@ -177,7 +178,7 @@ var pv = {
           $('#patient-Search .card-title').html("<p>Find another patient</p>");
           $('#patient-Search').append("<div class='text-center'><a class='btn btn-info' href='/#patients'>return to patient list</a></div>");
 
-          qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard);
+          qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard, individualActionPlan.refresh);
 
           //this shows the charts
           if (patientData.conditions.length +
@@ -194,6 +195,9 @@ var pv = {
           $('#patient-pane').show();
 
           base.wireUpTooltips();
+
+          state.rememberTabs('individual');
+
           base.hideLoading();
 
           //add state indicator

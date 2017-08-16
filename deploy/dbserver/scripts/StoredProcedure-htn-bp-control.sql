@@ -22,8 +22,8 @@ SET NOCOUNT ON
 -----------------------------------------------------------------------------------
 declare @achieveDate datetime;
 set @achieveDate = (select case
-	when MONTH(@refdate) <4 then CONVERT(VARCHAR,YEAR(@refdate)) + '-03-31' --31st March
-	when MONTH(@refdate) >3 then CONVERT(VARCHAR,(YEAR(@refdate) + 1)) + '-03-31' end); --31st March
+	when MONTH(@refdate) <4 then CONVERT(VARCHAR, YEAR(@refdate)) + '-03-31' --31st March
+	when MONTH(@refdate) >3 then CONVERT(VARCHAR, (YEAR(@refdate) + 1)) + '-03-31' end); --31st March
 
 --#latestHtnCode
 --ELIGIBLE POPULATION
@@ -538,15 +538,15 @@ from #eligiblePopulationAllData as a
 									-------POPULATE MAIN DENOMINATOR TABLE--------
 									----------------------------------------------
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.denominators](PatID, indicatorId, why)
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
---CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max));
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
-select PatID, 'htn.treatment.bp',
+select a.PatID, 'htn.treatment.bp',
 	case
 		when bpMeasuredOK = 0 then 
 			'<ul><li>Patient is on hypertension register.</li>' +
@@ -590,8 +590,10 @@ select PatID, 'htn.treatment.bp',
 			else ''
 			end	
 		else ''
-		end 
-from #eligiblePopulationAllData 
+		end ,
+		DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID
 where denominator = 1;
 
 									----------------------------------------------
@@ -2908,13 +2910,13 @@ values
 ('htn.treatment.bp','name','Hypertension blood pressure control'), --overview table name
 ('htn.treatment.bp','tabText','HTN BP Control'), --indicator tab text
 ('htn.treatment.bp','description', --'show more' on overview tab
-	'<strong>Definition:</strong>Patients on the hypertension register with a BP recorded in the last 12 months (since ' +
+	'<strong>Definition:</strong> Patients on the hypertension register with a BP recorded in the last 12 months (since ' +
 	case
-		when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-		when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+		when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+		when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 	end +
 	') where the latest BP is &lt;140/90 mmHg for patients under 80 years and &lt;150/90 mmHg in patients 80 years or older.<br>' + 
-	'<strong>Why this is important:</strong>Cardiovascular disease is the biggest cause of death across the globe.<br>' +
+	'<strong>Why this is important:</strong> Cardiovascular disease is the biggest cause of death across the globe.<br>' +
 	'<strong>Useful information:</strong>' +
 	'<ul><li>'  + (select text from regularText where [textId] = 'linkBmjCkdBp') + '</li>' +
 	'<li>'  + (select text from regularText where [textId] = 'linkNiceBpTargetsCkd') + '</li>' +
@@ -2925,8 +2927,8 @@ values
 --summary text
 ('htn.treatment.bp','tagline','of your patients on the hypertension register have had a BP measurement in the 12 months (from ' +
 	case
-		when MONTH(@refdate) <4 then '1st April' + CONVERT(VARCHAR,YEAR(@refdate))
-		when MONTH(@refdate) >3 then '1st April' + CONVERT(VARCHAR,(YEAR(@refdate) + 1))
+		when MONTH(@refdate) <4 then '1st April ' + CONVERT(VARCHAR,(YEAR(@refdate) - 1))
+		when MONTH(@refdate) >3 then '1st April ' + CONVERT(VARCHAR,YEAR(@refdate))
 	end +
 	') where the latest BP is <a href=''https://cks.nice.org.uk/hypertension-not-diabetic#!scenario:1'' target=''_blank'' title="NICE BP targets">&lt;140/90 mmHg in patients under 80 years and &lt;150/90 mmHg in patients 80 years or older</a>.'),
 ('htn.treatment.bp','positiveMessage', --tailored text
@@ -2938,7 +2940,8 @@ values
 --pt lists
 ('htn.treatment.bp','valueId','SBP'),
 ('htn.treatment.bp','valueName','Latest SBP'),
-('htn.treatment.bp','dateORvalue','value'),
+('htn.treatment.bp','dateORvalue','both'), 
+('htn.treatment.bp','valueFrom','practice'),
 ('htn.treatment.bp','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('htn.treatment.bp','tableTitle','All patients with improvement opportunities'),
 
