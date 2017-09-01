@@ -78,6 +78,19 @@ var mergeActions = function(actions, indicators, indicatorId) {
 
 module.exports = {
 
+  // just get the indicator names and details
+  getList: (done) => {
+    Indicator.aggregate([
+        {$group:{_id:"$id", name:{$max:"$name"}, description:{$max:"$description"}}},
+        {$sort:{"name":1}}
+      ], (err, indicators)=>{
+      if(err) {
+        console.log(err);
+        return done(new Error("Error finding indicator list"));
+      }
+      return done(null, indicators);
+    });
+  },
   //Get list of indicators for a single practice - for use on the overview screen
   list: function(practiceId, done) {
     Indicator.find({ practiceId: practiceId }, function(err, indicators) {

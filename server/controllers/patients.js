@@ -212,6 +212,49 @@ module.exports = {
     });
   },
 
+  getAllPatientsPaginatedConsiderLastReviewDate: function (practiceId, skip, limit, done) {
+    //TODO really need to double check this logic with ben
+    var now = new Date();
+    var elevenmonthshence = new Date(now.getTime());
+    elevenmonthshence.setMonth(elevenmonthshence.getMonth()+11);
+    var elevenmonthsago = new Date(now.getTime());
+    elevenmonthsago.setMonth(elevenmonthsago.getMonth()-11);
+
+    var aggregateQuery = [
+      { $match: { "characteristics.practiceId": practiceId } },
+      { $project: { _id: 0, patientId: 1, standards: 1, characteristics: 1 } },
+      { $unwind: "$standards" },
+      { $match: { $and : [ {"standards.targetMet":false} , { $or : [ {"standards.nextReviewDate" : {$lt: now.getTime()}}, {"standards.nextReviewDate" : {$gt: elevenmonthshence.getTime()}}, { "standards.nextReviewDate" : { $exists:false } } ]} ]}},
+      { $group: { _id: "$patientId", nhsNumber: { $max: "$characteristics.nhs" }, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" },  indicators: { $addToSet: "$standards.indicatorId" } } },
+      { $project: { _id: 1, nhsNumber: 1, age: 1, sex: 1, indicators: 1, numberOfIndicators: { $size: "$indicators" } } },
+      { $sort: { numberOfIndicators: -1 } },
+      { $skip: skip },
+      { $limit: limit }
+    ];
+
+    Patient.aggregate(aggregateQuery, function (err, results) {
+      if (err) return done(err);
+      var patientIds = results.map(function (v) {
+        return v._id;
+      });
+      var resultsObject = {};
+      results.forEach(function (v, i) {
+        resultsObject[v._id] = v;
+        resultsObject[v._id].pos = i;
+      });
+      actions.patientsWithPlansPerIndicator(patientIds, function (err, patientsWithActions) {
+        patientsWithActions.forEach(function (v) {
+          resultsObject[v._id].indicatorsWithAction = v.indicatorList;
+          resultsObject[v._id].numberOfIndicatorsWithAction = v.indicatorList.length;
+        });
+        Object.keys(resultsObject).map(function (v) {
+          results[v.pos] = resultsObject[v];
+        });
+        return done(null, results);
+      });
+    });
+  },
+
   getAllPatientsPaginated: function (practiceId, skip, limit, done) {
     var aggregateQuery = [
       { $match: { "characteristics.practiceId": practiceId, "actions": { $exists: true } } },

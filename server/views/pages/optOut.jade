@@ -44,6 +44,14 @@ include ../partials/head.jade
               option(value=time,selected=(!user.emailHour && time===10) || user.emailHour===time)=( time < 10 ? "0" : "" )+time+":00"
       .col-xs-12
         span.help-block If you have a day with dedicated time for quality work then you might want this to be the day we send you emails.
+    .row
+      .col-xs-12
+        label(for="indicatorIdsToInclude") If there are any indicators that you are NOT interested in uncheck them below:
+        each indicator in indicatorList
+          .checkbox
+            label(data-toggle="tooltip", data-html="true", data-container="html", data-placement="right",title=indicator.description)
+              input(type='checkbox', name='indicatorIdsToInclude', value=indicator._id, checked=!user.emailIndicatorIdsToExclude||user.emailIndicatorIdsToExclude.indexOf(indicator._id)===-1)
+              = indicator.name
     button.btn.btn-purple.btn-block.history(type='submit')
       | Update 
       span.fa.fa-arrow-circle-right

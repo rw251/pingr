@@ -31,7 +31,7 @@ module.exports = {
     User.find({ email: email }).remove(done);
   },
 
-  updateEmailPreference: function(email, freq, day, hour, done){
+  updateEmailPreference: function(email, body, indicatorList, done){
     User.findOne({
       'email': email
     }, function(err, user) {
@@ -45,9 +45,17 @@ module.exports = {
         console.log('User doesnt exist with email: ' + email);
         return done(null, false, 'Trying to edit a user with an email not found in the system');
       } else {
-        user.emailFrequency = freq;
-        user.emailDay = day;
-        user.emailHour = hour;
+        const indicatorsToExclude = {};
+        indicatorList.forEach((i)=>{
+          indicatorsToExclude[i._id]=true;
+        });
+        body.indicatorIdsToInclude.forEach((i)=>{
+          delete indicatorsToExclude[i];
+        });
+        user.emailFrequency = body.freq;
+        user.emailDay = body.day;
+        user.emailHour = body.hour;
+        user.emailIndicatorIdsToExclude = Object.keys(indicatorsToExclude);
         user.save(function(err) {
           if (err) {
             console.log('Error in Saving user: ' + err);

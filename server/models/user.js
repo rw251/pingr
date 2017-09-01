@@ -45,6 +45,7 @@ var UserSchema = new Schema({
   emailFrequency: Number,
   emailDay: Number,
   emailHour: Number,
+  emailIndicatorIdsToExclude: [String],
   registrationCode: String
 });
 

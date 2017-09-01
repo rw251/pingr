@@ -62,16 +62,20 @@ module.exports = function(passport) {
   });
 
   router.get('/emailpreference', isAuthenticated, function(req, res) {
-    res.render('pages/optOut.jade', { user: req.user });
+    indicators.getList((err, indicatorList) => {
+      res.render('pages/optOut.jade', { user: req.user, indicatorList });
+    });
   });
 
   router.post('/emailpreference', isAuthenticated, function(req, res) {
-    users.updateEmailPreference(req.user.email, req.body.freq, req.body.day, req.body.hour, function(err, user, msg) {
-      if (err || msg) {
-        res.render('pages/optOut.jade', { user: req.user });
-      } else {
-        res.render('pages/optOut.jade', { user: user, message: { success: "Email preference updated. " + (req.body.freq === "0" ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
-      }
+    indicators.getList((err, indicatorList) => {
+      users.updateEmailPreference(req.user.email, req.body, indicatorList.slice(0), function(err, user, msg) {
+        if (err || msg) {
+          res.render('pages/optOut.jade', { user: req.user, indicatorList });
+        } else {
+          res.render('pages/optOut.jade', { user: user, indicatorList, message: { success: "Email preference updated. " + (req.body.freq === "0" ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
+        }
+      });
     });
   });
 
