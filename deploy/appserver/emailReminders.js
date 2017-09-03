@@ -179,7 +179,7 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
           emailHTMLBody = emailHTMLBody.replace(/http(s?):\/\/([^\/]+\/[^i])/g,"http$1<a href='#' style='text-decoration:none; color:#000;'>://$2</a>");
           
           emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
-          var emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, null, emailHTMLBody, null);
+          var emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, null, emailHTMLBody, null);
 
           emailSender.send(emailConfig, function (error, info) {
             emailsSent++;

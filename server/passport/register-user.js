@@ -45,7 +45,7 @@ module.exports = {
               return next();
             }
 
-            var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, config.mail.newUsersNotificationEmail.split(","), "PINGR: Request for access",
+            var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, config.mail.newUsersNotificationEmail.split(","), "PINGR: Request for access",
               "A user has requested to access pingr at " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1],
               null, null);
 
@@ -54,7 +54,7 @@ module.exports = {
               if (error) {
                 console.log("email not sent: " + error);
               }
-              emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, null, "PINGR: Validate email address",
+              emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, null, "PINGR: Validate email address",
               "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nPlease confirm your email address by following this link: https://" + req.headers.host + "/register/" + token + ".",
               null, null);
               emailConfig.to = [{ name: newUser.fullname, email: newUser.email }];
@@ -121,7 +121,7 @@ module.exports = {
             return next();
           }
           //send email
-          var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
+          var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
             "You have been authorised to view PINGR for practice " + user.practiceName + "\n\nYou can access the site at " + config.server.url + ".\n\nRegards\n\nPINGR",
             null, null);
           emailSender.send(emailConfig, function (error, info) {
@@ -156,7 +156,7 @@ module.exports = {
             return next();
           }
           //send email
-          var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
+          var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
             "You have been denied access to view PINGR for practice " + user.practiceNameNotAuthorised + "\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR",
             null, null);
           emailSender.send(emailConfig, function (error, info) {

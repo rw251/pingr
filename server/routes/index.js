@@ -80,7 +80,7 @@ module.exports = function(passport) {
   });
 
   router.post('/emailsendtest', isAuthenticated, isAdmin, function(req, res, next) {
-    var emailConfig = emailSender.config(req.body.type === 'smtp' ? "SMTP" : null, config.mail.reminderEmailsFrom, req.body.to.replace(",", ";").split(";").map(function(v) { return { name: v.split("@")[0], email: v }; }), req.body.subject, req.body.text, req.body.html, null);
+    var emailConfig = emailSender.config(req.body.type === 'smtp' ? "SMTP" : config.mail.type, config.mail.reminderEmailsFrom, req.body.to.replace(",", ";").split(";").map(function(v) { return { name: v.split("@")[0], email: v }; }), req.body.subject, req.body.text, req.body.html, null);
 
     emailSender.send(emailConfig, function(err) {
       if (err) {
