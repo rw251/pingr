@@ -32,7 +32,7 @@ const ENV = {
   SENDGRID_API_KEY: process.env.PINGR_SENDGRID_API_KEY,
   NEW_USERS_NOTIFICATION_EMAIL: mustExist("PINGR_NEW_USERS_NOTIFICATION_EMAIL"),
 
-  EMAIL_TRANSPORT: process.env.PINGR_SMTP_OR_SENDGRID
+  EMAIL_TRANSPORT: process.env.PINGR_SMTP_OR_SENDGRIDHTTP
 };
 
 module.exports = {
@@ -64,6 +64,6 @@ module.exports = {
     sendGridAPIKey: ENV.SENDGRID_API_KEY,
     newUsersNotificationEmail: ENV.NEW_USERS_NOTIFICATION_EMAIL,
 
-    type: process.env.PINGR_SMTP_OR_SENDGRID || "SENDGRIDHTTP"
+    type: ENV.EMAIL_TRANSPORT || "SENDGRIDHTTP"
   }
 };
