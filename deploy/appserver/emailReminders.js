@@ -33,8 +33,7 @@ fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 47);
 // Mode:
 // PROD: production
 // DEV: do same as production but only email RW and BB
-// TEST: Ensures that RW and BB receive an email
-//        regardless of whether it is the right day or not
+// TEST: Ensures that only RW receives an email regardless of whether it is the right day or not
 var MODES = { PROD: "production", DEV: "development", TEST: "test" };
 var MODE = MODES.PROD;
 if (process.argv.length > 2) {

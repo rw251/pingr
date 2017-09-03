@@ -27,7 +27,15 @@ a.pure-button(href='/emailadmin') Back to email template list
         .pure-u-1-2
           #html
       button.pure-button.pure-button-primary(type='submit') Create
-      button#testEmail.pure-button.pure-button-primary Send test email to:
+      button#testEmail.pure-button.pure-button-primary Send test via
+      .form-group
+      label.radio-inline
+        input(type="radio" name="type", value="smtp", checked)
+        | smtp 
+      label.radio-inline
+        input(type="radio" name="type", value="sendgrid") 
+        | sendgrid
+      label to:
       input#emailAddress.pure-input-1-2(type="text", value="richard.williams2@manchester.ac.uk")
       - if(message && message.error)
         div.alert.alert-danger(role="alert")= message.error
