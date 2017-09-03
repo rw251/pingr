@@ -212,7 +212,7 @@ module.exports = {
     });
   },
 
-  getAllPatientsPaginatedConsiderLastReviewDate: function (practiceId, skip, limit, done) {
+  getAllPatientsPaginatedConsiderLastReviewDate: function (user, skip, limit, done) {
     //TODO really need to double check this logic with ben
     var now = new Date();
     var elevenmonthshence = new Date(now.getTime());
@@ -221,10 +221,18 @@ module.exports = {
     elevenmonthsago.setMonth(elevenmonthsago.getMonth()-11);
 
     var aggregateQuery = [
-      { $match: { "characteristics.practiceId": practiceId } },
+      { $match: { "characteristics.practiceId": user.practiceId } },
       { $project: { _id: 0, patientId: 1, standards: 1, characteristics: 1 } },
       { $unwind: "$standards" },
-      { $match: { $and : [ {"standards.targetMet":false} , { $or : [ {"standards.nextReviewDate" : {$lt: now.getTime()}}, {"standards.nextReviewDate" : {$gt: elevenmonthshence.getTime()}}, { "standards.nextReviewDate" : { $exists:false } } ]} ]}},
+      { $match: { $and : [ 
+        { "standards.indicatorId" : { $nin: user.emailIndicatorIdsToExclude } }, 
+        {"standards.targetMet":false} , 
+        { $or : [ 
+          {"standards.nextReviewDate" : {$lt: now.getTime()}}, 
+          {"standards.nextReviewDate" : {$gt: elevenmonthshence.getTime()}}, 
+          { "standards.nextReviewDate" : { $exists:false } } 
+        ]} 
+      ]}},
       { $group: { _id: "$patientId", nhsNumber: { $max: "$characteristics.nhs" }, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" },  indicators: { $addToSet: "$standards.indicatorId" } } },
       { $project: { _id: 1, nhsNumber: 1, age: 1, sex: 1, indicators: 1, numberOfIndicators: { $size: "$indicators" } } },
       { $sort: { numberOfIndicators: -1 } },

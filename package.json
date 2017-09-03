@@ -12,7 +12,8 @@
     "watch": "brunch watch",
     "debug": "node --inspect --debug-brk server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "jshint --show-non-errors app"
+    "lint": "jshint --show-non-errors app",
+    "test:email": "node deploy/appserver/emailReminders.js test"
   },
   "repository": {
     "type": "git",

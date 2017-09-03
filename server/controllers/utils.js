@@ -54,7 +54,7 @@ module.exports = {
     var greetings = ["Hi","Hello","Dear","Greetings"];
 
     practices.get(user.practiceId, function(err, practice){
-      patients.getAllPatientsPaginated(user.practiceId, 0, 25, function(err, patients) {
+      patients.getAllPatientsPaginatedConsiderLastReviewDate(user, 0, 25, function(err, patients) {
         if (err) return callback(err);
         indicators.list(user.practiceId, function(err, indicators) {
           if (err) return callback(err);
