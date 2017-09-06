@@ -21,7 +21,14 @@
  * client_secret:<insert client secret from https://www.dropbox.com/developers/apps>
  * 
  * 
-    
+ * 
+ * NB - if new key is added to data array (most recent patientIds in August) then need the following steps:
+ * 1. Add a line to currentColumns - must add to the end
+ * 2. Add a line to generateCreateSql - must add to the end
+ * 3. MANUAL step 
+ *    Create an update sql script to update the table to add the extra column
+ *    e.g. ALTER TABLE [pingr.logs] ADD [data.patientIds] [varchar](max) NULL
+ *    The create_table.sql script will always be up to date but existing table wont be
  */
 
 var currentColumns =
@@ -47,7 +54,8 @@ var currentColumns =
     "data.patient": [19, "SQLCHAR", 0, 20, "\"\\t\"", 19, "data.patient", "\"\""],
     "data.reason": [20, "SQLCHAR", 0, 0, "\"\\t\"", 20, "data.reason", "\"\""],
     "_id": [21, "SQLCHAR", 0, 50, "\"\\t\"", 21, "_id", "\"\""],
-    "__v": [22, "SQLCHAR", 0, 50, "\"\\t\"", 22, "__v", "\"\""]
+    "__v": [22, "SQLCHAR", 0, 50, "\"\\t\"", 22, "__v", "\"\""],
+    "data.patientIds": [23, "SQLCHAR", 0, 0, "\"\\t\"", 23, "data.patientIds", "\"\""],
   }
 
 var mongoose = require('mongoose');
@@ -103,6 +111,7 @@ var generateCreateSql = function () {
     '  [data.reason] [varchar](max) NULL,',
     '  [_id] [varchar](50) NOT NULL,',
     '  [__v] [varchar](50) NULL,',
+    '  [data.patientIds] [varchar](max) NULL,',
     '  CONSTRAINT [PK_log_id] PRIMARY KEY CLUSTERED ([_id] ASC)',
     '  WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = ON, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]',
     ') ON [PRIMARY]',
