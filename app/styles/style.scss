@@ -46,6 +46,11 @@ a:hover {
     margin-right: auto;
 }
 
+.container-wide {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 table.nopadding tr td {
     padding: 0 5px 0 0;
     line-height: 1em;
@@ -1943,14 +1948,18 @@ td > .fa-caret-down {
     .container {
         width: 970px;
     }
+    .container-wide {
+        width: 1150px;
+        width: 95vw;
+    }
 }
 @media (min-width: 1500px) {
-    .container {
+    .container, .container-wide {
         width: 1270px;
     }
 }
 @media (min-width: 1800px) {
-    .container {
+    .container, .container-wide {
         width: 1570px;
     }
 }
@@ -1970,6 +1979,21 @@ mod
 .modal-dialog.modal-dialog-top {
     margin-top: 100px;
 }
+
+.modal-dialog.modal-dialog-top.modal-fit {
+    margin-top: 10vh;
+    height: 80vh;
+}
+
+.modal-dialog.modal-dialog-top.modal-fit .modal-content {
+    height: 100%;
+}
+
+.modal-dialog.modal-dialog-top.modal-fit .modal-body {
+    overflow-y: auto;
+    height: 90%;
+}
+
 /* Change header*/
 /*.modal-content {
   background-color: #0480be;
@@ -2875,4 +2899,14 @@ body > svg {
 
 .v-small {
     font-size: 0.5em;
+}
+
+.checkbox input[type="checkbox"].big-checkbox {
+    width: 30px;
+    height: 30px;
+    margin-left: -30px;
+}
+.checkbox label.big-checkbox-label {
+    line-height: 30px;
+    margin-left: 30px;
 }

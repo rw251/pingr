@@ -1,4 +1,5 @@
 var User = require('../models/user');
+var patients = require('./patients');
 
 module.exports = {
 
@@ -45,17 +46,36 @@ module.exports = {
         console.log('User doesnt exist with email: ' + email);
         return done(null, false, 'Trying to edit a user with an email not found in the system');
       } else {
-        const indicatorsToExclude = {};
-        indicatorList.forEach((i)=>{
-          indicatorsToExclude[i._id]=true;
-        });
-        body.indicatorIdsToInclude.forEach((i)=>{
-          delete indicatorsToExclude[i];
-        });
+        if(body.indicatorIdsToInclude) {
+          const indicatorsToExclude = {};
+          indicatorList.forEach((i)=>{
+            indicatorsToExclude[i._id]=true;
+          });
+          // either string or array depending on whether 1 or more things selected
+          if(typeof body.indicatorIdsToInclude === 'string') body.indicatorIdsToInclude = [body.indicatorIdsToInclude];
+          body.indicatorIdsToInclude.forEach((i)=>{
+            delete indicatorsToExclude[i];
+          });
+          user.emailIndicatorIdsToExclude = Object.keys(indicatorsToExclude);
+        } else {
+          user.emailIndicatorIdsToExclude = indicatorList.map(i => i._id);
+        }
+        if(body.patientsToInclude) {
+          const patientTypesToExclude = {};
+          patients.possibleExcludeType.forEach((i)=>{
+            patientTypesToExclude[i.id]=true;
+          });
+          if(typeof body.patientsToInclude === 'string') body.patientsToInclude = [body.patientsToInclude];
+          body.patientsToInclude.forEach((i)=>{
+            delete patientTypesToExclude[i];
+          });
+          user.patientTypesToExclude = Object.keys(patientTypesToExclude);
+        } else {
+          user.patientTypesToExclude = patients.possibleExcludeType.map(i => i.id);
+        }
         user.emailFrequency = body.freq;
         user.emailDay = body.day;
         user.emailHour = body.hour;
-        user.emailIndicatorIdsToExclude = Object.keys(indicatorsToExclude);
         user.save(function(err) {
           if (err) {
             console.log('Error in Saving user: ' + err);

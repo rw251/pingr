@@ -1,4 +1,29 @@
-var Email = require('../models/email');
+const Email = require('../models/email');
+const utils = require('./utils');
+const config = require('../config');
+const jade = require('jade');
+
+const jade2html = function (input, data) {
+  return jade.compile(input, {
+    pretty: true,
+    doctype: "5"
+  })(data);
+};
+
+const getDefault = (done) => {
+  Email.findOne({ isDefault: true }, function(err, email) {
+    if (err) {
+      console.log(err);
+      return done(new Error("Error finding default email"));
+    }
+    if (!email) {
+      console.log('No default email');
+      return done(null, false);
+    } else {
+      done(null, email);
+    }
+  });
+};
 
 module.exports = {
 
@@ -33,20 +58,7 @@ module.exports = {
     });
   },
 
-  getDefault: function(done) {
-    Email.findOne({ isDefault: true }, function(err, email) {
-      if (err) {
-        console.log(err);
-        return done(new Error("Error finding default email"));
-      }
-      if (!email) {
-        console.log('No default email');
-        return done(null, false);
-      } else {
-        done(null, email);
-      }
-    });
-  },
+  getDefault,
 
   setDefault: function(label, done) {
     Email.findOne({
@@ -162,6 +174,27 @@ module.exports = {
           return done(null, email);
         });
       }
+    });
+  },
+
+  sample: (user, done) => {
+    utils.getDataForEmails(user, (err, data) => {
+      if (err) return done(err);
+      data = data.data; // !!
+      data.pingrUrl = config.server.url + "/";
+      data.pingrUrlWithoutTracking = config.server.url + "/";
+
+      var patientIdLookup = {};
+      if(data.patients) {
+        data.patients.forEach((p) => {
+          patientIdLookup[p.nhsNumber] = p._id;
+        });
+      }
+      return getDefault((err, emailTemplate) => {
+        if (err) return done(err);
+        var emailHTMLBody = jade2html(emailTemplate.body, data);
+        return done(null, emailHTMLBody);
+      });
     });
   }
 };

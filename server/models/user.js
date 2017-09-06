@@ -46,6 +46,7 @@ var UserSchema = new Schema({
   emailDay: Number,
   emailHour: Number,
   emailIndicatorIdsToExclude: [String],
+  patientTypesToExclude: [String],
   registrationCode: String
 });
 

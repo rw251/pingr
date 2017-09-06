@@ -1,13 +1,62 @@
 const events = require('./events');
 
 const JTT = {
-  init: ()=>{
+  init: () => {
     $(document).on('ready', () => {
       //Wire up global click/hover listener
       events.listen();
 
       // and tooltips
       $('[data-toggle="tooltip"]').tooltip();
+
+      $('#emailPrefs').validate({
+        rules: {
+          "patientsToInclude": {
+            required: true,
+            minlength: 1
+          }
+        },
+        messages: {
+          "patientsToInclude": "Please select at least one. If you don't want to receive emails - change the email frequency above to 'never'"
+        },
+        errorPlacement: (error, element) => {
+          error.appendTo('#errors');
+        },
+        invalidHandler: function(event, validator) {
+          $('#errorAlert').show();
+        },
+        showErrors: function (errorMap, errorList) {
+          if(errorList.length===0) $('#errorAlert').hide();
+          else $('#errorAlert').show();
+          this.defaultShowErrors();
+        },  
+      });
+
+      // and email sample if available
+      $('#sampleEmail').on('click', (e) => {
+        e.preventDefault();
+        $('#modalLoader').show();
+        $('#modalContent').hide();
+        $.
+          ajax({
+            url: '/emailsample',
+            success(email) {
+              $('#modalLoader').fadeOut(() => {
+                $('#modalContent').html(email).show();
+              });
+            },
+            error(err) {
+              console.log(err);
+            },
+          });
+      });
+
+      //auto hide alerts
+      setTimeout(() => {
+        $('.alert-autoclose').slideUp(() => {
+          $('.alert-autoclose').remove();
+        });
+      }, 5000);
     });
   }
 };

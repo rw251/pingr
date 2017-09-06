@@ -63,7 +63,7 @@ module.exports = function(passport) {
 
   router.get('/emailpreference', isAuthenticated, function(req, res) {
     indicators.getList((err, indicatorList) => {
-      res.render('pages/optOut.jade', { user: req.user, indicatorList });
+      res.render('pages/optOut.jade', { user: req.user, indicatorList, patientsToIncludeList: patients.possibleExcludeType });
     });
   });
 
@@ -71,11 +71,18 @@ module.exports = function(passport) {
     indicators.getList((err, indicatorList) => {
       users.updateEmailPreference(req.user.email, req.body, indicatorList.slice(0), function(err, user, msg) {
         if (err || msg) {
-          res.render('pages/optOut.jade', { user: req.user, indicatorList });
+          res.render('pages/optOut.jade', { user: req.user, indicatorList, patientsToIncludeList: patients.possibleExcludeType });
         } else {
-          res.render('pages/optOut.jade', { user: user, indicatorList, message: { success: "Email preference updated. " + (req.body.freq === "0" ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
+          res.render('pages/optOut.jade', { user: user, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: { success: "Email preference updated. " + (req.body.freq === "0" ? "You wil not longer receive our reminder emails." : "You are currently set to receive reminder emails.") } });
         }
       });
+    });
+  });
+
+  router.get('/emailsample', isAuthenticated, (req, res, next) => {
+    emails.sample(req.user, (err, sampleEmail) => {
+      if(err) return next(err);
+      return res.send(sampleEmail);
     });
   });
 

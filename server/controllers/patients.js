@@ -215,10 +215,27 @@ module.exports = {
   getAllPatientsPaginatedConsiderLastReviewDate: function (user, skip, limit, done) {
     //TODO really need to double check this logic with ben
     var now = new Date();
-    var elevenmonthshence = new Date(now.getTime());
-    elevenmonthshence.setMonth(elevenmonthshence.getMonth()+11);
-    var elevenmonthsago = new Date(now.getTime());
-    elevenmonthsago.setMonth(elevenmonthsago.getMonth()-11);
+    var nextApril1st = new Date();
+    if(nextApril1st.getMonth()>2) {
+      nextApril1st.setFullYear(nextApril1st.getFullYear()+1);
+    }
+    nextApril1st.setMonth(3);
+    nextApril1st.setDate(1);
+    console.log(now);
+    console.log(nextApril1st);
+
+    const dateRangeQueryOptions = {
+      MISSED_REVIEW: { "standards.nextReviewDate" : {$lt: now.getTime() } },
+      NO_REVIEW: { "standards.nextReviewDate" : { $exists:false } },
+      AFTER_APRIL: { "standards.nextReviewDate" : {$gt: nextApril1st.getTime() } },
+    }
+    if(user.patientTypesToExclude) {
+      user.patientTypesToExclude.forEach((type) => {
+        delete dateRangeQueryOptions[type];
+      });
+    } 
+
+    const dateRangeOrQuery = Object.keys(dateRangeQueryOptions).map(key => dateRangeQueryOptions[key]);
 
     var aggregateQuery = [
       { $match: { "characteristics.practiceId": user.practiceId } },
@@ -227,11 +244,7 @@ module.exports = {
       { $match: { $and : [ 
         { "standards.indicatorId" : { $nin: user.emailIndicatorIdsToExclude } }, 
         {"standards.targetMet":false} , 
-        { $or : [ 
-          {"standards.nextReviewDate" : {$lt: now.getTime()}}, 
-          {"standards.nextReviewDate" : {$gt: elevenmonthshence.getTime()}}, 
-          { "standards.nextReviewDate" : { $exists:false } } 
-        ]} 
+        { $or : dateRangeOrQuery } 
       ]}},
       { $group: { _id: "$patientId", nhsNumber: { $max: "$characteristics.nhs" }, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" },  indicators: { $addToSet: "$standards.indicatorId" } } },
       { $project: { _id: 1, nhsNumber: 1, age: 1, sex: 1, indicators: 1, numberOfIndicators: { $size: "$indicators" } } },
@@ -399,5 +412,11 @@ module.exports = {
           });
       });
     });
-  }
+  },
+
+  possibleExcludeType: [
+    {id:"MISSED_REVIEW", description:"Patients who have missed their annual chronic disease review"},
+    {id:"AFTER_APRIL", description:`Patients whose next annual chronic disease review is due after 1st April ${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}`},
+    {id:"NO_REVIEW", description:"Patients who have not previously had an annual chronic disease review"},
+  ]
 };
