@@ -20,8 +20,8 @@ include ../partials/head.jade
   form#emailPrefs(action='/emailpreference', method='post')
     .form-group
       .row
-        .col-sm-3
-          label.control-label Send me an email..
+        .col-sm-3(style="text-align:right")
+          label.control-label Send me an email...
         .col-sm-9
           label.radio-inline
             input(type="radio" name="freq", value="1", checked=!user.emailFrequency || user.emailFrequency===1)
@@ -36,10 +36,10 @@ include ../partials/head.jade
             input(type="radio" name="freq", value="0", checked=user.emailFrequency===0) 
             | never
     .row
-      .col-xs-12
+      .col-xs-offset-3.col-xs-9
         span.help-block If you have a day with dedicated time for quality work then you might want this to be the day we send you emails.
-    .row
-      .col-sm-3
+    .row.form-group
+      .col-sm-3(style="text-align:right")
         label(for="day") Send it on a...
       .col-sm-3
         select.form-control(name="day")
@@ -73,7 +73,7 @@ include ../partials/head.jade
                 input.big-checkbox(type='checkbox', name='indicatorIdsToInclude', value=indicatorList[i+1]._id, checked=!user.emailIndicatorIdsToExclude||user.emailIndicatorIdsToExclude.indexOf(indicatorList[i+1]._id)===-1)
                 = indicatorList[i+1].name
         - i++
-    .row
+    .row(style="padding-top:15px")
       .col-xs-12
         label(for="patientsToInclude") Emails will be sent for the following groups of patients. Please uncheck any boxes you do NOT want to receive emails about:
     each patientToInclude in patientsToIncludeList
