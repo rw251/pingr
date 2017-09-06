@@ -31,6 +31,7 @@ const ENV = {
   ADMIN_EMAILS_FROM: mustExist("PINGR_ADMIN_EMAILS_FROM"),
   SENDGRID_API_KEY: process.env.PINGR_SENDGRID_API_KEY,
   NEW_USERS_NOTIFICATION_EMAIL: mustExist("PINGR_NEW_USERS_NOTIFICATION_EMAIL"),
+  SUGGESTION_EMAILS_TO: process.env.PINGR_SUGGESTION_EMAILS_TO,
 
   EMAIL_TRANSPORT: process.env.PINGR_SMTP_OR_SENDGRIDHTTP
 };
@@ -63,6 +64,7 @@ module.exports = {
     adminEmailsFrom: ENV.ADMIN_EMAILS_FROM,
     sendGridAPIKey: ENV.SENDGRID_API_KEY,
     newUsersNotificationEmail: ENV.NEW_USERS_NOTIFICATION_EMAIL,
+    suggestionEmailsTo: ENV.SUGGESTION_EMAILS_TO || 'benjamin.brown@nhs.net',
 
     type: ENV.EMAIL_TRANSPORT || "SENDGRIDHTTP"
   }
