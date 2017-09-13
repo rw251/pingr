@@ -416,7 +416,7 @@ module.exports = {
 
   possibleExcludeType: [
     {id:"MISSED_REVIEW", description:"Patients who have missed their annual chronic disease review"},
-    {id:"AFTER_APRIL", description:`Patients whose next annual chronic disease review is due after 1st April ${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}`},
+    {id:"AFTER_APRIL", description:`Patients whose next annual chronic disease review is after 1st April <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}</strong>`},
     {id:"NO_REVIEW", description:"Patients who have not previously had an annual chronic disease review"},
   ]
 };
