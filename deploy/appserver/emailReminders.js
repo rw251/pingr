@@ -9,7 +9,8 @@ var User = require('../../server/models/user'),
   events = require('../../server/controllers/events'),
   emailTemplates = require('../../server/controllers/emails'),
   indicators = require('../../server/controllers/indicators'),
-  jade = require('jade');
+  jade = require('jade'),
+  createTextVersion = require("textversionjs");
 
 var jade2html = function (input, data) {
   return jade.compile(input, {
@@ -178,8 +179,10 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
           //Replace urls with an unstyled hyperlink to allow people to select the text, rather than clicking the link
           emailHTMLBody = emailHTMLBody.replace(/http(s?):\/\/([^\/]+\/[^i])/g,"http$1<a href='#' style='text-decoration:none; color:#000;'>://$2</a>");
           
+          var emailTextBody = createTextVersion(emailHTMLBody);
+
           emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
-          var emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, null, emailHTMLBody, null);
+          var emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, emailTextBody, emailHTMLBody, null);
 
           emailSender.send(emailConfig, function (error, info) {
             emailsSent++;
