@@ -88,7 +88,7 @@ include ../partials/head.jade
             .col-xs-12
               .checkbox
                 label.big-checkbox-label
-                  input.big-checkbox(type='checkbox', name='patientsToInclude', value=patientToInclude.id, checked=!user.patientTypesToExclude||user.patientTypesToExclude.indexOf(patientToInclude.id)===-1)
+                  input.big-checkbox(type='checkbox', name='patientsToInclude', value=patientToInclude.id, checked=((!user.patientTypesToExclude && patientToInclude.checkedByDefault) || (user.patientTypesToExclude && user.patientTypesToExclude.indexOf(patientToInclude.id)===-1)))
                   != patientToInclude.description
     .row
       .col-xs-12

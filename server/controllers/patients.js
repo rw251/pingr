@@ -415,8 +415,10 @@ module.exports = {
   },
 
   possibleExcludeType: [
-    {id:"MISSED_REVIEW", description:"Patients who have missed their annual chronic disease review"},
-    {id:"AFTER_APRIL", description:`Patients whose next annual chronic disease review is after 1st April <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}</strong>`},
-    {id:"NO_REVIEW", description:"Patients who have not previously had an annual chronic disease review"},
+    //Date string: (i.e. from 1st April <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 0 : -1)}</strong> to 31st March <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}</strong>)
+    {id:"MISSED_REVIEW", description:"Patients who <strong>have missed</strong> their annual chronic disease review", checkedByDefault:true},
+    {id:"AFTER_APRIL", description:"Patients who <strong>have had</strong> their annual review but are still missing targets"},
+    {id:"REVIEW_YET_TO_HAPPEN", description:"Patients who <strong>have not yet had</strong> their annual review"},
+    {id:"NO_REVIEW", description:"Patients who <strong>have never before</strong> had an annual review"},
   ]
 };
