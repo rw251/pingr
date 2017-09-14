@@ -91,6 +91,14 @@ var mergeActions = function (actions, patients, patientId) {
   return finalRtn;
 };
 
+const possibleExcludeType = [
+  //Date string: (i.e. from 1st April <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 0 : -1)}</strong> to 31st March <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}</strong>)
+  {id:"MISSED_REVIEW", description:"Patients who <strong>have missed</strong> their annual chronic disease review"},
+  {id:"AFTER_APRIL", description:"Patients who <strong>have had</strong> their annual review but are still missing targets"},
+  {id:"REVIEW_YET_TO_HAPPEN", description:"Patients who <strong>have not yet had</strong> their annual review"},
+  {id:"NO_REVIEW", description:"Patients who <strong>have never before</strong> had an annual review"},
+];
+
 module.exports = {
 
   //Return a list of patients - not sure this is needed
@@ -213,7 +221,6 @@ module.exports = {
   },
 
   getAllPatientsPaginatedConsiderLastReviewDate: function (user, skip, limit, done) {
-    //TODO really need to double check this logic with ben
     var now = new Date();
     var nextApril1st = new Date();
     if(nextApril1st.getMonth()>2) {
@@ -234,7 +241,7 @@ module.exports = {
       user.patientTypesToExclude.forEach((type) => {
         delete dateRangeQueryOptions[type];
       });
-    } 
+    }
 
     const dateRangeOrQuery = Object.keys(dateRangeQueryOptions).map(key => dateRangeQueryOptions[key]);
 
@@ -415,11 +422,5 @@ module.exports = {
     });
   },
 
-  possibleExcludeType: [
-    //Date string: (i.e. from 1st April <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 0 : -1)}</strong> to 31st March <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}</strong>)
-    {id:"MISSED_REVIEW", description:"Patients who <strong>have missed</strong> their annual chronic disease review", checkedByDefault:true},
-    {id:"AFTER_APRIL", description:"Patients who <strong>have had</strong> their annual review but are still missing targets"},
-    {id:"REVIEW_YET_TO_HAPPEN", description:"Patients who <strong>have not yet had</strong> their annual review"},
-    {id:"NO_REVIEW", description:"Patients who <strong>have never before</strong> had an annual review"},
-  ]
+  possibleExcludeType
 };

@@ -46,7 +46,10 @@ var UserSchema = new Schema({
   emailDay: Number,
   emailHour: Number,
   emailIndicatorIdsToExclude: [String],
-  patientTypesToExclude: [String],
+  patientTypesToExclude: {
+    type: [String],
+    default: ["NO_REVIEW", "AFTER_APRIL", "REVIEW_YET_TO_HAPPEN"]
+  },
   registrationCode: String
 });
 
