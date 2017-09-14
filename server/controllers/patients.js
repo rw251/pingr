@@ -228,6 +228,7 @@ module.exports = {
       MISSED_REVIEW: { "standards.nextReviewDate" : {$lt: now.getTime() } },
       NO_REVIEW: { "standards.nextReviewDate" : { $exists:false } },
       AFTER_APRIL: { "standards.nextReviewDate" : {$gt: nextApril1st.getTime() } },
+      REVIEW_YET_TO_HAPPEN: { $and: [ { "standards.nextReviewDate": {$gte: now.getTime()}}, {"standards.nextReviewDate": {$lte: nextApril1st.getTime() }} ] },
     }
     if(user.patientTypesToExclude) {
       user.patientTypesToExclude.forEach((type) => {
