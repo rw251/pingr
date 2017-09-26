@@ -1450,10 +1450,12 @@ body.qof {
     background-color: rgb(68, 157, 68);
 }
 
+/*
 tr.standard-row:hover {
     background-color: #eee;
     cursor: pointer;
 }
+*/
 
 span.standard-missed {
     background-color: #ff9999;
@@ -2810,14 +2812,18 @@ body > svg {
     background-color: #f5f5f5;
 }
 
-.show-more-row,
-.standard-row {
+.show-more-row/*,
+.standard-row*/ {
     background-color: #fafafa;
 }
 
-.standard-row.hover {
+/*.standard-row.hover {
     background-color: #eee;
     cursor: pointer;
+}*/
+
+.standard-row {
+    background-color: white;
 }
 
 .alternate-row {
