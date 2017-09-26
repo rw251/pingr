@@ -23,7 +23,7 @@ module.exports = {
       } else {
         crypto.randomBytes(20, function (err, buf) {
           var token = buf.toString('hex');
-          var els = req.body.practice.split("|");
+          if(typeof req.body.practice === 'string') req.body.practice = [req.body.practice];
           var newUser = new User({
             email: req.body.email,
             password: req.body.password,
@@ -32,10 +32,22 @@ module.exports = {
             emailFrequency: req.body.freq,
             emailDay: req.body.day,
             emailHour: req.body.hour,
-            practiceIdNotAuthorised: els[0] !== "" ? els[0] : "",
-            practiceNameNotAuthorised: els[0] !== "" ? els[1] : "None",
+            //practiceIdNotAuthorised: els[0] !== "" ? els[0] : "",
+            //practiceNameNotAuthorised: els[0] !== "" ? els[1] : "None",
             registrationCode: token
           });
+          newUser.practices = req.body.practice.map((v) => {
+            var els = v.split('|');
+            if(els[0]!=="") {
+              return {id: els[0], name: els[1], authorised: false};
+            } else {
+              return null;
+            }
+          }).filter((v) => {
+            return v;
+          });
+
+          var practiceString = newUser.practices.map(v => v.name).join(', ');
 
           // save the user
           newUser.save(function (err) {
@@ -46,7 +58,7 @@ module.exports = {
             }
 
             var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, config.mail.newUsersNotificationEmail.split(","), "PINGR: Request for access",
-              "A user has requested to access pingr at " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1],
+              "A user has requested to access pingr at " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice(s): " + practiceString,
               null, null);
 
             //to is now in config file
@@ -55,7 +67,7 @@ module.exports = {
                 console.log("email not sent: " + error);
               }
               emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, null, "PINGR: Validate email address",
-              "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nPlease confirm your email address by following this link: https://" + req.headers.host + "/register/" + token + ".",
+              "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice(s): " + practiceString + "\n\nPlease confirm your email address by following this link: https://" + req.headers.host + "/register/" + token + ".",
               null, null);
               emailConfig.to = [{ name: newUser.fullname, email: newUser.email }];
               //emailConfig.text = "We have received your request to access " + config.server.url + ".\n\nName: " + req.body.fullname + "\n\nEmail: " + req.body.email + "\n\nPractice: " + els[1] + "\n\nWhen this has been authorised you will be sent another email.\n\nRegards\n\nPINGR";
@@ -103,16 +115,21 @@ module.exports = {
         req.flash('error', 'User doesn\'t exist');
         return next();
       } else {
-        if (!user.practiceIdNotAuthorised || !user.practiceNameNotAuthorised) {
+        //if (!user.practiceIdNotAuthorised || !user.practiceNameNotAuthorised) {
+        if (!user.practices || user.practices.length === 0) {
           console.log('No practice requested for user');
           req.flash('error', 'The user didn\'t request to view any practice.');
           return next();
         }
 
-        user.practiceId = user.practiceIdNotAuthorised;
-        user.practiceName = user.practiceNameNotAuthorised;
-        user.practiceNameNotAuthorised = null;
-        user.practiceIdNotAuthorised = null;
+        user.practices = user.practices.map((v) => {
+          v.authorised = true;
+          return v;
+        });
+        // user.practiceId = user.practiceIdNotAuthorised;
+        // user.practiceName = user.practiceNameNotAuthorised;
+        // user.practiceNameNotAuthorised = null;
+        // user.practiceIdNotAuthorised = null;
 
         user.save(function (err) {
           if (err) {
@@ -122,7 +139,7 @@ module.exports = {
           }
           //send email
           var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
-            "You have been authorised to view PINGR for practice " + user.practiceName + "\n\nYou can access the site at " + config.server.url + ".\n\nRegards\n\nPINGR",
+            "You have been authorised to view PINGR for practice(s) " + user.practices.map((v) => {return v.name}).join(', ') + "\n\nYou can access the site at " + config.server.url + ".\n\nRegards\n\nPINGR",
             null, null);
           emailSender.send(emailConfig, function (error, info) {
             if (error) {
@@ -157,7 +174,7 @@ module.exports = {
           }
           //send email
           var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Request for access",
-            "You have been denied access to view PINGR for practice " + user.practiceNameNotAuthorised + "\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR",
+            "You have been denied access to view PINGR for practice(s) " + user.practices.map((v) => {return v.name}).join(', ') + "\n\nIf you think this is a mistake please get in touch.\n\nRegards\n\nPINGR",
             null, null);
           emailSender.send(emailConfig, function (error, info) {
             if (error) {

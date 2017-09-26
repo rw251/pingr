@@ -19,6 +19,13 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+  practices: [
+    {
+      id: String,
+      name: String,
+      authorised: Boolean,
+    }
+  ],
   practiceId: {
     type: String
   },
