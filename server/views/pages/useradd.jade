@@ -19,8 +19,7 @@ include ../partials/head.jade
     .form-group.input-group
       span.input-group-addon
         i.fa.fa-stethoscope
-      select.form-control(name='practice')
-        option(value="") Select GP practice - or ignore to not assign a practice
+      select.form-control.selectpicker(name='practice',multiple='',title='Select one or more GP practices')
         each practice in practices
           option(value=practice._id+"|"+practice.name)= practice.name
     .form-group
@@ -62,3 +61,4 @@ include ../partials/head.jade
       span.fa.fa-arrow-circle-right
     - if(message && message.error)
       div.alert.alert-danger(role="alert")= message.error
+include ../partials/jquery-bootstrap-select.jade

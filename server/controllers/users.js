@@ -106,15 +106,25 @@ module.exports = {
         if (req.body.isAdmin) roles.push("admin");
         var originalUser = user;
 
+        if(typeof req.body.practice === 'string') req.body.practice = [req.body.practice];
+        var userPractices = req.body.practice.map((v) => {
+          var els = v.split('|');
+          if(els[0]!=="") {
+            return {id: els[0], name: els[1], authorised: true};
+          } else {
+            return null;
+          }
+        }).filter((v) => {
+          return v;
+        });
+
         if(email === req.body.email){
           //email not changing so update is fine
           user.fullname = req.body.fullname;
           user.emailFrequency = req.body.freq;
           user.emailDay = req.body.day;
           user.emailHour = req.body.hour;
-          var els = req.body.practice.split("|");
-          user.practiceId = els[0] !== "" ? els[0] : "";
-          user.practiceName = els[0] !== "" ? els[1] : "None";
+          user.practices = userPractices;
           user.roles = roles;
           // save the user
           user.save(function(err) {
@@ -139,9 +149,7 @@ module.exports = {
               originalUser.emailFrequency = req.body.freq;
               originalUser.emailDay = req.body.day;
               originalUser.emailHour = req.body.hour;
-              var els = req.body.practice.split("|");
-              originalUser.practiceId = els[0] !== "" ? els[0] : "";
-              originalUser.practiceName = els[0] !== "" ? els[1] : "None";
+              originalUser.practices = userPractices;
               originalUser.roles = roles;
               // save the user
               originalUser.save(function(err) {
@@ -177,7 +185,17 @@ module.exports = {
         var roles = [];
         if (req.body.isAdmin) roles.push("admin");
 
-        var els = req.body.practice.split("|");
+        if(typeof req.body.practice === 'string') req.body.practice = [req.body.practice];
+        var userPractices = req.body.practice.map((v) => {
+          var els = v.split('|');
+          if(els[0]!=="") {
+            return {id: els[0], name: els[1], authorised: true};
+          } else {
+            return null;
+          }
+        }).filter((v) => {
+          return v;
+        });
         var newUser = new User({
           email: req.body.email,
           emailFrequency: req.body.freq,
@@ -185,8 +203,7 @@ module.exports = {
           emailHour: req.body.hour,
           password: req.body.password,
           fullname: req.body.fullname,
-          practiceId: els[0] !== "" ? els[0] : "",
-          practiceName: els[0] !== "" ? els[1] : "None",
+          practices: userPractices,
           roles: roles
         });
 

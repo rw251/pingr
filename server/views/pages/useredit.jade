@@ -9,10 +9,9 @@ include ../partials/head.jade
     input.form-control(type='hidden', name='originalEmail', value=user.email)
     .form-group.input-group
       label(for='practice') Practice:
-      select.form-control(name='practice')
-        option(value="") Select GP practice - or ignore to not assign a practice
+      select.form-control.selectpicker(name='practice',multiple='',title='Select one or more GP practices')
         each practice in practices
-          option(value=practice._id+"|"+practice.name, selected=(user.practiceId === practice._id) )= practice.name
+          option(value=practice._id+"|"+practice.name, selected=(user.practices.map(function(v){return v.id;}).indexOf(practice._id) > -1 ))= practice.name
     .form-group
       label.cr-styled
         input(name='isAdmin', type='checkbox', checked=user.roles.indexOf('admin')>-1 ? 'checked' : undefined)
@@ -52,3 +51,4 @@ include ../partials/head.jade
       span.fa.fa-arrow-circle-right
     - if(message && message.error)
       div.alert.alert-danger(role="alert")= message.error
+include ../partials/jquery-bootstrap-select.jade
