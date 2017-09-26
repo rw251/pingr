@@ -3,6 +3,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+var compression = require('compression');
 
 var config = require('./server/config.js');
 var mongoose = require('mongoose');
@@ -15,6 +16,9 @@ module.exports = function(PORT, PATH, CALLBACK) {
   mongoose.connect(config.db.url);
 
   var app = express();
+
+  // add gzip
+  app.use(compression());
 
   // view engine setup
   //app.set('views', path.join(__dirname, 'views'));
