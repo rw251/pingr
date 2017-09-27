@@ -14,6 +14,21 @@ module.exports = {
       }
     });
   },
+  
+  getMany: function(ids, done) {
+    Practice.find({
+      '_id': {
+        $in: ids,
+      },
+    }, function(err, practices) {
+      if (!practices || practices.length === 0) {
+        console.log('Practice doesnt exists with ids: ' + ids.join(", "));
+        return done(null, false);
+      } else {
+        done(null, practices.map(v=>v.toObject()));
+      }
+    });
+  },
 
   list: function(done) {
     Practice.find({}, null, {sort: {name: 1}}, function(err, practices) {

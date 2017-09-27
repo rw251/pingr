@@ -25,7 +25,7 @@ var overview = {
     //before further execution
     setTimeout(function() {
 
-      var practiceName = $('#practice_name').text();
+      var practiceName = state.selectedPractice.name;
 
       if (layout.view !== ID) {
         //Not already in this view so we need to rejig a few things
@@ -34,7 +34,11 @@ var overview = {
         layout.showMainView();
 
         $('#mainTitle').show();
-        base.updateTitle("Overview of " + practiceName + "'s performance");
+        let title = `Overview of ${practiceName}'s performance`;
+        if(state.practices && state.practices.length>1) {
+          title = `Performance overview of <select class='practice-picker'>${state.practices.map(v=>'<option value="' + v._id + '" ' + (v._id===state.selectedPractice._id ? 'selected' : '') + ' >' + v.name + '</option>')}</select>`;
+        }
+        base.updateTitle(title);
 
         base.hidePanels(farRightPanel);
 

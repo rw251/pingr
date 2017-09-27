@@ -100,7 +100,7 @@ module.exports = function(passport) {
   });
 
   router.get('/emailadd', isAuthenticated, isAdmin, function(req, res) {
-    utils.getDataForEmails(req.user, function(err, data) {
+    utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
       data.message = req.flash();
       res.render('pages/emailadd.jade', data);
     });
@@ -109,7 +109,7 @@ module.exports = function(passport) {
   router.post('/emailadd', isAuthenticated, isAdmin, function(req, res) {
     emails.create(req, function(err, email, msg) {
       if (err || msg) {
-        utils.getDataForEmails(req.user, function(err, data) {
+        utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
           data.message = { error: msg };
           res.render('pages/emailadd.jade', data);
         });
@@ -127,7 +127,7 @@ module.exports = function(passport) {
   });
 
   router.get('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
-    utils.getDataForEmails(req.user, function(err, data) {
+    utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
       emails.get(req.params.label, function(err, email) {
         data.email = email;
         res.render('pages/emailedit.jade', data);
@@ -138,7 +138,7 @@ module.exports = function(passport) {
   router.post('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
     emails.edit(req.params.label, req, function(err, user, msg) {
       if (err || msg) {
-        utils.getDataForEmails(req.user, function(err, data) {
+        utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
           emails.get(req.params.label, function(err, email) {
             data.email = email;
             data.message = { error: msg };
@@ -162,7 +162,7 @@ module.exports = function(passport) {
   });
 
   router.get('/emailadmin', isAuthenticated, isAdmin, function(req, res) {
-    utils.getDataForEmails(req.user, function(err, data) {
+    utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
       emails.list(function(err, emailList) {
         if (err) {
           console.log(err);
@@ -326,11 +326,11 @@ module.exports = function(passport) {
 
 
   /* ACTIONS */
-  router.post('/api/action/addTeam/:indicatorId?', isAuthenticated, function(req, res) {
+  router.post('/api/action/addTeam/:practiceId/:indicatorId?', isAuthenticated, function(req, res) {
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
-      actions.addTeamAction(req.user.practiceId, req.params.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
+      actions.addTeamAction(req.params.practiceId, req.params.indicatorId, req.user.fullname, req.body.actionText, function(err, action) {
         if (err) res.send(err);
         else {
           var evt = {
@@ -350,11 +350,11 @@ module.exports = function(passport) {
     }
   });
 
-  router.post('/api/action/addIndividual/:patientId', isAuthenticated, function(req, res) {
+  router.post('/api/action/addIndividual/:practiceId/:patientId', isAuthenticated, function(req, res) {
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
-      actions.addIndividualAction(req.user.practiceId, req.params.patientId, req.body.indicatorList, req.user.fullname, req.body.actionText, function(err, action) {
+      actions.addIndividualAction(req.params.practiceId, req.params.patientId, req.body.indicatorList, req.user.fullname, req.body.actionText, function(err, action) {
         var evt = {
           type: "recordIndividualPlan",
           data: [
@@ -376,8 +376,8 @@ module.exports = function(passport) {
       else res.send({ status: "ok" });
     });
   });
-  router.post('/api/action/update/individual/:patientId', isAuthenticated, function(req, res) {
-    actions.updateIndividual(req.user.practiceId, req.params.patientId, req.body.action, function(err, action) {
+  router.post('/api/action/update/individual/:practiceId/:patientId', isAuthenticated, function(req, res) {
+    actions.updateIndividual(req.params.practiceId, req.params.patientId, req.body.action, function(err, action) {
       if (err) res.send(err);
       else {
         var evt = {
@@ -408,8 +408,8 @@ module.exports = function(passport) {
       else res.send(action);
     });
   });
-  router.post('/api/action/update/team/:indicatorId?', isAuthenticated, function(req, res) {
-    actions.updateTeam(req.user.practiceId, req.params.indicatorId, req.body.action, function(err, action) {
+  router.post('/api/action/update/team/:practiceId/:indicatorId?', isAuthenticated, function(req, res) {
+    actions.updateTeam(req.params.practiceId, req.params.indicatorId, req.body.action, function(err, action) {
       if (err) res.send(err);
       else {
         var evt = {
@@ -446,21 +446,21 @@ module.exports = function(passport) {
       else res.send({ status: "ok" });
     });
   });
-  router.get('/api/action/team/:indicatorId?', isAuthenticated, function(req, res) {
-    indicators.getActions(req.user.practiceId, req.params.indicatorId, function(err, actions) {
+  router.get('/api/action/team/:practiceId/:indicatorId?', isAuthenticated, function(req, res) {
+    indicators.getActions(req.params.practiceId, req.params.indicatorId, function(err, actions) {
       if (err) res.send(err);
       else res.send(actions);
     });
   });
-  router.get('/api/action/individual/:patientId?', isAuthenticated, function(req, res) {
-    patients.getActions(req.user.practiceId, req.params.patientId, function(err, actions) {
+  router.get('/api/action/individual/:practiceId/:patientId?', isAuthenticated, function(req, res) {
+    patients.getActions(req.params.practiceId, req.params.patientId, function(err, actions) {
       if (err) res.send(err);
       if (req.params.patientId) res.send(actions[req.params.patientId]);
       else res.send(actions);
     });
   });
-  router.get('/api/action/all', isAuthenticated, function(req, res) {
-    actions.listAgreedWith(req.user.practiceId, function(err, actions) {
+  router.get('/api/action/all/:practiceId', isAuthenticated, function(req, res) {
+    actions.listAgreedWith(req.params.practiceId, function(err, actions) {
       if (err) res.send(err);
       var patientActions = actions.filter(function(v) {
         return v.patientId;
@@ -470,7 +470,7 @@ module.exports = function(passport) {
       });
       patients.getSpecificActions(patientActions, function(err, patientActionsReady) {
         if (err) res.send(err);
-        indicators.getSpecificActions(req.user.practiceId, teamActions, function(err, teamActionsReady) {
+        indicators.getSpecificActions(req.params.practiceId, teamActions, function(err, teamActionsReady) {
           if (err) res.send(err);
           res.send({ patient: patientActionsReady, team: teamActionsReady });
         });
@@ -493,15 +493,10 @@ module.exports = function(passport) {
   });
 
   //Get nhs number lookup
-  router.get('/api/nhs', isAuthenticated, function(req, res) {
-    patients.nhsLookup(req.user.practiceId, function(err, lookup) {
+  router.get('/api/nhs/:practiceId', isAuthenticated, function(req, res) {
+    patients.nhsLookup(req.params.practiceId, function(err, lookup) {
       res.send(lookup);
     });
-  });
-
-  //return user data
-  router.get('/api/userDetails', isAuthenticated, function(req, res) {
-    res.send({ fullname: req.user.fullname, practiceId: req.user.practiceId });
   });
 
   //return a list of all practices
@@ -518,8 +513,8 @@ module.exports = function(passport) {
     });
   });
   //Return a page of the low hanging fruit patients
-  router.get('/api/WorstPatients/:skip/:limit', isAuthenticated, function(req, res) {
-    patients.getAllPatientsPaginated(req.user.practiceId, +req.params.skip, +req.params.limit, function(err, patients) {
+  router.get('/api/WorstPatients/:practiceId/:skip/:limit', isAuthenticated, function(req, res) {
+    patients.getAllPatientsPaginated(req.params.practiceId, +req.params.skip, +req.params.limit, function(err, patients) {
       res.send(patients);
     });
   });
@@ -530,26 +525,27 @@ module.exports = function(passport) {
     });
   });
   //Get list of patients for a practice and indicator - for use on indicator screen
-  router.get('/api/PatientListForPractice/Indicator/:indicatorId', isAuthenticated, function(req, res) {
-    patients.getListForIndicator(req.user.practiceId, req.params.indicatorId, function(err, patients, type) {
+  router.get('/api/PatientListForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+    patients.getListForIndicator(req.params.practiceId, req.params.indicatorId, function(err, patients, type) {
       res.send({ patients, type });
     });
   });
 
   //Exclude a patient from an indicator
-  router.post('/api/exclude/patient/:patientId/for/indicator/:indicatorId', isAuthenticated, excludedPatients.exclude); 
+  router.post('/api/exclude/patient/:patientId/for/indicator/:indicatorId/practice/:practiceId', isAuthenticated, excludedPatients.exclude); 
   //Include a patient from an indicator
-  router.post('/api/include/patient/:patientId/for/indicator/:indicatorId', isAuthenticated, excludedPatients.include);
+  router.post('/api/include/patient/:patientId/for/indicator/:indicatorId/practice/:practiceId', isAuthenticated, excludedPatients.include);
   //Get all exclusions for a practice
-  router.get('/api/excludedpatients', isAuthenticated, excludedPatients.get);
+  router.get('/api/excludedpatients/practice/:practiceId', isAuthenticated, excludedPatients.get);
 
   //note for 2xFn's below:
   //req.user.practiceId = inject current user practiceId
   //rep.params.practiceId = use practiceId passed by the function
+  // RW - ah but now we can have multiple practices so we have req.user.practices as an array
 
   //Get list of indicators for a single practice - for use on the overview screen
   router.get('/api/ListOfIndicatorsForPractice', isAuthenticated, function(req, res) {
-    indicators.list(req.user.practiceId, function(err, indicators) {
+    indicators.list(req.user.practices.length > 0 ? req.user.practices[0]._id : null, function(err, indicators) {
       res.send(indicators);
     });
   });
@@ -561,19 +557,19 @@ module.exports = function(passport) {
     });
   });
   //Get benchmark data for an indicator
-  router.get('/api/BenchmarkDataFor/:indicatorId', isAuthenticated, function(req, res) {
+  router.get('/api/BenchmarkDataFor/:practiceId/:indicatorId', isAuthenticated, function(req, res) {
     practices.list(function(err, practices) {
-      indicators.getBenchmark(req.user.practiceId, practices, req.params.indicatorId, function(err, benchmark) {
+      indicators.getBenchmark(req.params.practiceId, practices, req.params.indicatorId, function(err, benchmark) {
         res.send(benchmark);
       });
     });
   });
   //Get trend data for a practice and an indicator
-  router.get('/api/TrendDataForPractice/Indicator/:indicatorId', isAuthenticated, function(req, res) {
-    indicators.getTrend(req.user.practiceId, req.params.indicatorId, function(err, trend) {
-      res.send(trend);
-    });
-  });
+  // router.get('/api/TrendDataForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+  //   indicators.getTrend(req.params.practiceId, req.params.indicatorId, function(err, trend) {
+  //     res.send(trend);
+  //   });
+  // });
   //Get text
   router.get('/api/Text', isAuthenticated, function(req, res) {
     text.get(function(err, textObj) {
@@ -599,8 +595,12 @@ module.exports = function(passport) {
   });
 
   router.get('/', isAuthenticated, function(req, res, next) {
-    practices.get(req.user.practiceId, function(err, practice) {
-      res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_id: req.user.practiceId, practice_name: req.user.practiceName, practice_system: practice ? practice.ehr : "" });
+    // practices.get(req.user.practiceId, function(err, practice) {
+    //   res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practice_id: req.user.practiceId, practice_name: req.user.practiceName, practice_system: practice ? practice.ehr : "" });
+    // });
+    const practiceIds = req.user.practices.map(v=>v.id);
+    practices.getMany(practiceIds, function(err, practices) {
+      res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practices, selectedPractice: practices[0] });
     });
   });
 

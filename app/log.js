@@ -20,9 +20,9 @@ var log = {
     });
   },
 
-  excludePatient: function (patientId, indicatorId, reason, freetext) {
+  excludePatient: function (practiceId, patientId, indicatorId, reason, freetext) {
     var obj = {
-      practiceId: $('#practice_id').text(),
+      practiceId: practiceId,
       patientId: patientId, 
       indicatorId: indicatorId, 
       reason: reason, 
@@ -43,7 +43,7 @@ var log = {
     
     $.ajax({
       type: "POST",
-      url: "/api/exclude/patient/" + patientId + "/for/indicator/" + indicatorId,
+      url: "/api/exclude/patient/" + patientId + "/for/indicator/" + indicatorId + "/practice/" + practiceId,
       data: JSON.stringify({ reason: reason, freetext: freetext }),
       success: function () {
 
@@ -53,7 +53,7 @@ var log = {
     });
   },
 
-  includePatient: function (patientId, indicatorId) {
+  includePatient: function (practiceId, patientId, indicatorId) {
     if (data.excludedPatients[patientId]) {
       data.excludedPatients[patientId] = data.excludedPatients[patientId].filter(function (v) {
         return v.indicatorId !== indicatorId;
@@ -66,7 +66,7 @@ var log = {
     }
     $.ajax({
       type: "POST",
-      url: "/api/include/patient/" + patientId + "/for/indicator/" + indicatorId,
+      url: "/api/include/patient/" + patientId + "/for/indicator/" + indicatorId + "/practice/" + practiceId,
       success: function () {
 
       },
@@ -76,10 +76,10 @@ var log = {
   },
 
   //rwhere
-  recordIndividualPlan: function (text, patientId, indicatorList, done) {
+  recordIndividualPlan: function (text, practiceId, patientId, indicatorList, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/addIndividual/" + patientId,
+      url: "/api/action/addIndividual/" + practiceId + "/" + patientId,
       data: JSON.stringify({ actionText: text, indicatorList: indicatorList }),
       success: function (action) {
         notify.showSaved();
@@ -107,10 +107,10 @@ var log = {
   },
 
   //rwhere
-  updateIndividualAction: function (patientId, updatedAction, done) {
+  updateIndividualAction: function (practiceId, patientId, updatedAction, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/update/individual/" + patientId,
+      url: "/api/action/update/individual/" + practiceId + "/" + patientId,
       data: JSON.stringify({ action: updatedAction }),
       success: function (action) {
         notify.showSaved();
@@ -128,10 +128,10 @@ var log = {
     });
   },
 
-  updateTeamAction: function (indicatorId, data, done) {
+  updateTeamAction: function (practiceId, indicatorId, data, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/update/team/" + indicatorId,
+      url: "/api/action/update/team/" + practiceId + "/" + indicatorId,
       data: JSON.stringify({ action: data }),
       success: function (d) {
         notify.showSaved();
@@ -183,8 +183,8 @@ var log = {
     });
   },
 
-  recordTeamPlan: function (text, indicatorId, done) {
-    var url = "/api/action/addTeam/" + (indicatorId || "");
+  recordTeamPlan: function (practiceId, text, indicatorId, done) {
+    var url = "/api/action/addTeam/" + practiceId + "/" + (indicatorId || "");
     $.ajax({
       type: "POST",
       url: url,

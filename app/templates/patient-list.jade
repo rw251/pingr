@@ -10,7 +10,7 @@ table#patient-list.table.table-condensed.patient-list.order-column.hover
       tr.list-item.patient-row-tooltip(data-toggle='tooltip', data-placement='left', title='Click for more information about this patient')
         td(style=patient.excluded?'opacity:0.4;min-width:130px':'min-width:130px')
           - var nhs = patient.nhsNumber.toString().replace(/ /g,"")
-          button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-type=type, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + $("#practice_system").text() + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
+          button.btn.btn-xs.btn-default.btn-copy(type='button', data-patient-id=patient.patientId, data-type=type, data-clipboard-text=nhs, data-content='Copied!<br><strong>Use Ctrl + v to paste into ' + selectedPractice.ehr + '!</strong>', data-toggle='lone-tooltip', data-placement='right', title='Copy ' + nhs + ' to clipboard.')
             span.fa.fa-clipboard
           = ' ' + patient.nhsNumber
         each item in patient.items

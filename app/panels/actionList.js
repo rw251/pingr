@@ -50,7 +50,7 @@ var al = {
   },
 
   load: function(done) {
-    data.getAllAgreedWithActions(function(err, actions) {
+    data.getAllAgreedWithActions(state.selectedPractice._id, function(err, actions) {
       actionObject = actions;
 
       if (done && typeof done === "function") {

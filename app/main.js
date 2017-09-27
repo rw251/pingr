@@ -1,6 +1,7 @@
 var template = require('./template'),
   data = require('./data'),
   base = require('./base'),
+  state = require('./state'),
   layout = require('./layout'),
   log = require('./log'),
   wrapper = require('./panels/wrapper'), // *B*
@@ -23,7 +24,7 @@ var main = {
   },
 
   getInitialData: function(callback) {
-    data.get(callback);
+    data.get(state.selectedPractice ? state.selectedPractice._id : null, true, callback);
   },
 
   onSelected: function($e, nhsNumberObject) {
@@ -39,7 +40,7 @@ var main = {
       states.clearPrefetchCache();
     }
 
-    data.populateNhsLookup(function() {
+    data.populateNhsLookup(state.selectedPractice._id, function() {
 
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),

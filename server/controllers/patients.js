@@ -220,7 +220,7 @@ module.exports = {
     });
   },
 
-  getAllPatientsPaginatedConsiderLastReviewDate: function (user, skip, limit, done) {
+  getAllPatientsPaginatedConsiderLastReviewDate: function (practiceId, user, skip, limit, done) {
     var now = new Date();
     var nextApril1st = new Date();
     if(nextApril1st.getMonth()>2) {
@@ -246,7 +246,7 @@ module.exports = {
     const dateRangeOrQuery = Object.keys(dateRangeQueryOptions).map(key => dateRangeQueryOptions[key]);
 
     var aggregateQuery = [
-      { $match: { "characteristics.practiceId": user.practiceId } },
+      { $match: { "characteristics.practiceId": practiceId } },
       { $project: { _id: 0, patientId: 1, standards: 1, characteristics: 1 } },
       { $unwind: "$standards" },
       { $match: { $and : [ 
@@ -327,6 +327,10 @@ module.exports = {
     indicators.get(practiceId, indicatorId, function (err, indicator) {
       //console.timeEnd(["getListForIndicator", "indicators", "get"].join("--"));
       //console.time(["getListForIndicator", "indicators", "process"].join("--"));
+      if(!indicator) {
+        return done(null, [], null);
+      }
+
       var patientList = indicator.opportunities.reduce(function (prev, curr) {
         var union = prev.concat(curr.patients);
         return union.filter(function (item, pos) {

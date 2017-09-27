@@ -1,5 +1,6 @@
 var base = require('../base.js'),
   data = require('../data.js'),
+  state = require('../state.js'),
   lookup = require('../lookup.js'),
   log = require('../log.js');
 var states, loadContFn, ID = "PATIENT_SEARCH";
@@ -13,7 +14,7 @@ var ps = {
       states.clearPrefetchCache();
     }
 
-    data.populateNhsLookup(function() {
+    data.populateNhsLookup(state.selectedPractice._id, function() {
 
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),

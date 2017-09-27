@@ -1,5 +1,6 @@
 var Highcharts = require('highcharts/highstock'),
   data = require('./data'),
+  state = require('./state'),
   lookup = require('./lookup'),
   log = require('./log');
 
@@ -14,14 +15,14 @@ var cht = {
 
     //fully async load
     //pull out the necessary data and structure for display
-    data.getPracticePerformanceData(pathwayId, pathwayStage, standard, function(dataObj) {
+    data.getPracticePerformanceData(state.selectedPractice._id, pathwayId, pathwayStage, standard, function(dataObj) {
       _data = dataObj;
       //sort these into smallest to largest (last = largest always)
       _data.sort(function(a, b) {
         return a.x - b.x;
       });
 
-      var isCCG = $('#practice_id').text() === "ALL";
+      var isCCG = state.selectedPractice._id === "ALL";
 
       var title = isCCG ? "An illustration of the current performance of practices in Salford" : "An illustration of your current performance amongst other practices in Salford";
       //find max in order to set the ceiling of the chart

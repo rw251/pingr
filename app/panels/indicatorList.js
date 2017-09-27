@@ -18,7 +18,7 @@ var format = function (description) {
 var indicatorList = {
 
   show: function(panel, isAppend, loadContentFn) {
-    data.getAllIndicatorData(null, function(indicators) {
+    data.getAllIndicatorData(null, false, function(indicators) {
       indicators.sort(function(a,b){
         if(a.performance.percentage == b.performance.percentage) return 0;
         if(isNaN(a.performance.percentage) || a.name.toLowerCase().indexOf("beta test")>-1) return 1;

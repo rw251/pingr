@@ -193,6 +193,7 @@ module.exports = {
 
   //Get team actions for a single indicator or all indicators
   getActions: function(practiceId, indicatorId, done) {
+    console.log(practiceId, indicatorId);
     var searchObject = { practiceId: practiceId };
     actions.getTeam({ practiceId: practiceId, patientId: { $exists: false } }, function(err, actions) {
       if (err) return done(err);
@@ -205,7 +206,7 @@ module.exports = {
           return done(new Error("Error finding indicator"));
         }
 
-        if (indicatorId && indicators[0].type === "outcome") {
+        if (indicatorId && indicators.length > 0 && indicators[0].type === "outcome") {
           //we need to find the actions for the associated process indicators
 
           searchObject.id = { $in: indicators[0].mappedIndicators };

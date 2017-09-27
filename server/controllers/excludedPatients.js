@@ -5,7 +5,7 @@ module.exports = {
 
   //Get all excluded patients for a practice
   get: (req, res) => {
-    ExcludedPatient.find({ practiceId: req.user.practiceId }, (err, patients) => {
+    ExcludedPatient.find({ practiceId: req.params.practiceId }, (err, patients) => {
       if (err) {
         console.log(err);
         return res.send(new Error("Error finding excluded patients"));
@@ -22,7 +22,7 @@ module.exports = {
   // TODO check that practice id and patient id match
   exclude: (req, res) => {
     var patient = new ExcludedPatient({ 
-      practiceId: req.user.practiceId, 
+      practiceId: req.params.practiceId, 
       patientId: req.params.patientId, 
       indicatorId: req.params.indicatorId,
       reason: req.body.reason,
@@ -44,7 +44,7 @@ module.exports = {
   // TODO check that practice id and patient id match
   include: (req, res) => {
     ExcludedPatient.remove({
-      practiceId: req.user.practiceId, 
+      practiceId: req.params.practiceId, 
       patientId: req.params.patientId, 
       indicatorId: req.params.indicatorId
     }, (err) => {

@@ -1,6 +1,7 @@
 var Highcharts = require('highcharts/highstock'),
   base = require('../base.js'),
   data = require('../data.js'),
+  state = require('../state.js'),
   lookup = require('../lookup.js');
 
 require('floatthead');
@@ -67,7 +68,7 @@ var pl = {
 
     var i, k, prop, header, pList = [];
 
-    data.getAllPatientList(skip, limit, function(err, list) {
+    data.getAllPatientList(state.selectedPractice._id, skip, limit, function(err, list) {
 
       list = list.map(function(v) {
         v.indicatorNames = v.indicators.map(function(vv) {
@@ -82,7 +83,7 @@ var pl = {
       });
 
       var tmpl = require('templates/all-patient-list');
-      var html = tmpl({ patients: list, skip: skip, limit: limit });
+      var html = tmpl({ patients: list, skip: skip, limit: limit, selectedPractice: state.selectedPractice });
       $('#all-patient-list').html(html);
 
       base.setupClipboard('.btn-copy', true);

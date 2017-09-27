@@ -12,6 +12,7 @@
 var template = require('./template'),
   main = require('./main'),
   events = require('./events'),
+  state = require('./state'),
   layout = require('./layout');
 
 //TODO not sure why i did this - was in local variable
@@ -57,6 +58,19 @@ var App = {
       });
     };
 
+    $('body').on('change', '.practice-picker', (e)=>{
+      const newPracticeId = $(e.currentTarget).val();
+      const newPractice = state.practices.filter(v => v._id === newPracticeId)[0];
+      state.selectedPractice = newPractice;
+      console.log("changed practice to: ", newPractice);
+      main.getInitialData(()=>{
+        initialize();
+      });
+    });
+    
+    state.practices = JSON.parse($('#practices').text());
+    state.selectedPractice = JSON.parse($('#selectedPractice').text());
+
     main.getInitialData(function(){
       gotInitialData = true;
       if(gotInitialData && pageIsReady) {
@@ -68,6 +82,8 @@ var App = {
      *** This happens when the page is ready ***
      ******************************************/
     $(document).on('ready', function() {
+      state.practices = JSON.parse($('#practices').text());
+      state.selectedPractice = JSON.parse($('#selectedPractice').text());
       pageIsReady = true;
       if(gotInitialData && pageIsReady) {
         initialize();

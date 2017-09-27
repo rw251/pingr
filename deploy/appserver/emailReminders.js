@@ -160,60 +160,62 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
     }
     console.log("Doing: " + v.email);
 
-    utils.getDataForEmails(v, function (err, data) {
-      data = data.data; //!!
-      crypto.randomBytes(6, function (err, buf) {
-        var token = buf.toString('hex');
-
-        var urlBaseWithToken = config.server.url + "/t/" + token + "/";
-        console.log(urlBaseWithToken);
-        data.pingrUrl = urlBaseWithToken;
-        data.pingrUrlWithoutTracking = config.server.url + "/";
-
-        var patientIdLookup = {};
-        if(data.patients) {
-          data.patients.forEach((p) => {
-            patientIdLookup[p.nhsNumber] = p._id;
-          });
-        }
-
-        emailTemplates.getDefault(function (err, emailTemplate) {
-          //send email
-          var emailHTMLBody = jade2html(emailTemplate.body, data);
-          //Replace urls with an unstyled hyperlink to allow people to select the text, rather than clicking the link
-          emailHTMLBody = emailHTMLBody.replace(/http(s?):\/\/([^\/]+\/[^i])/g,"http$1<a href='#' style='text-decoration:none; color:#000;'>://$2</a>");
-          
-          var emailTextBody = createTextVersion(emailHTMLBody);
-
-          emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
-          var emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, emailTextBody, emailHTMLBody, null);
-
-          emailSender.send(emailConfig, function (error, info) {
-            emailsSent++;
-            if (error) {
-              console.log("email not sent: " + error);
-              usersUpdated++;
-            } else {
-              console.log("Info: " + info);
-              events.emailReminder(v.email, token, emailHTMLBody, now, patientIdLookup, function (err) {
-                if (err) {
-                  console.log("email event not recorded: " + err);
-                }
-                v.last_email_reminder = now;
-                v.email_url_tracking_code = token;
-                v.save(function (err) {
-                  usersUpdated++;
+    v.practices.forEach((p) => {
+      utils.getDataForEmails(p._id, v, function (err, data) {
+        data = data.data; //!!
+        crypto.randomBytes(6, function (err, buf) {
+          var token = buf.toString('hex');
+  
+          var urlBaseWithToken = config.server.url + "/t/" + token + "/";
+          console.log(urlBaseWithToken);
+          data.pingrUrl = urlBaseWithToken;
+          data.pingrUrlWithoutTracking = config.server.url + "/";
+  
+          var patientIdLookup = {};
+          if(data.patients) {
+            data.patients.forEach((p) => {
+              patientIdLookup[p.nhsNumber] = p._id;
+            });
+          }
+  
+          emailTemplates.getDefault(function (err, emailTemplate) {
+            //send email
+            var emailHTMLBody = jade2html(emailTemplate.body, data);
+            //Replace urls with an unstyled hyperlink to allow people to select the text, rather than clicking the link
+            emailHTMLBody = emailHTMLBody.replace(/http(s?):\/\/([^\/]+\/[^i])/g,"http$1<a href='#' style='text-decoration:none; color:#000;'>://$2</a>");
+            
+            var emailTextBody = createTextVersion(emailHTMLBody);
+  
+            emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
+            var emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, emailTextBody, emailHTMLBody, null);
+  
+            emailSender.send(emailConfig, function (error, info) {
+              emailsSent++;
+              if (error) {
+                console.log("email not sent: " + error);
+                usersUpdated++;
+              } else {
+                console.log("Info: " + info);
+                events.emailReminder(v.email, token, emailHTMLBody, now, patientIdLookup, function (err) {
                   if (err) {
-                    console.log("User failed to update: " + error);
+                    console.log("email event not recorded: " + err);
                   }
-                  if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+                  v.last_email_reminder = now;
+                  v.email_url_tracking_code = token;
+                  v.save(function (err) {
+                    usersUpdated++;
+                    if (err) {
+                      console.log("User failed to update: " + error);
+                    }
+                    if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+                  });
                 });
-              });
-            }
-            if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+              }
+              if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+            });
           });
         });
       });
-    });
+    });    
   });
 });

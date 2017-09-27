@@ -117,7 +117,7 @@ var qs = {
 
         var freetext = $('#modal textarea').val();
 
-        log.excludePatient(patientId, indicatorId, $('[name="reason"]:checked').val(), freetext);
+        log.excludePatient(state.selectedPractice._id, patientId, indicatorId, $('[name="reason"]:checked').val(), freetext);
 
         // hide row
         deleteRow(row, function(){
@@ -131,7 +131,7 @@ var qs = {
     }).off('click', '.include').on('click', '.include', function () {
       var indicatorId = $(this).data('id');
       actionPlanRefresh(patientId, indicatorId);
-      log.includePatient(patientId, indicatorId);
+      log.includePatient(state.selectedPractice._id, patientId, indicatorId);
       qs.updateFromId(patientId, indicatorId);
     });
   },

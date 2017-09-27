@@ -25,7 +25,8 @@ var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, p
     patid: patid,
     nhs: patid.toString().replace(/ /g, ""),
     age: patientData.characteristics.age,
-    sex: sex
+    sex: sex,
+    selectedPractice: state.selectedPractice,
   }), dontClearRight);
 
   var tabUrl = patientId;
