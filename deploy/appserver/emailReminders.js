@@ -19,6 +19,10 @@ var jade2html = function (input, data) {
   })(data);
 };
 
+console.log("version = v3.5.5"); // check if picked up
+console.log("Mail type: " + config.mail.type);
+console.log("Mail from: " + config.mail.reminderEmailsFrom);
+
 var now = new Date();
 var day = now.getDay();
 var hour = now.getHours();
@@ -190,6 +194,7 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
               console.log("email not sent: " + error);
               usersUpdated++;
             } else {
+              console.log("Info: " + info);
               events.emailReminder(v.email, token, emailHTMLBody, now, patientIdLookup, function (err) {
                 if (err) {
                   console.log("email event not recorded: " + err);
