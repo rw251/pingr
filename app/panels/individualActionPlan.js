@@ -20,7 +20,7 @@ var iap = {
   },
 
   show: function(panel, pathwayId, pathwayStage, standard, patientId) {
-    panel.html(iap.create(data.patLookup ? data.patLookup[patientId] : patientId, pathwayId, pathwayStage, standard));
+    panel.html(iap.create(data.getNHS(state.selectedPractice._id, patientId), pathwayId, pathwayStage, standard));
     iap.wireUp(pathwayId, pathwayStage, standard, patientId);
   },
 
@@ -314,7 +314,7 @@ var iap = {
 
   populateIndividualSuggestedActions: function(patientId, pathwayId, pathwayStage, standard, visible) {
     var localData = {
-      "nhsNumber": data.patLookup ? data.patLookup[patientId] : patientId,
+      "nhsNumber": data.getNHS(state.selectedPractice._id, patientId),
       "patientId": patientId,
       visible: visible
     };

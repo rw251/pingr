@@ -17,7 +17,7 @@ var ID = "PATIENT_VIEW";
  */
 
 var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, patientData, dontClearRight) {
-  var patid = (data.patLookup && data.patLookup[patientId] ? data.patLookup[patientId] : patientId);
+  var patid = data.getNHS(state.selectedPractice._id, patientId);
   var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
     "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
   var titleTmpl = require("templates/patient-title");
@@ -74,7 +74,7 @@ var pv = {
 
       var tabUrl = patientId;
       if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
-      base.updateTab("patients", data.patLookup[patientId] || patientId, tabUrl);
+      base.updateTab("patients", data.getNHS(state.selectedPractice._id, patientId), tabUrl);
 
       return;
     }
@@ -105,10 +105,10 @@ var pv = {
 
         data.getPatientData(patientId, function(patientData) {
 
-          if (!data.patLookup) {
+          if (!data.patLookup || ! data.patLookup[state.selectedPractice._id]) {
             //we're too early to get nhs number so let's repeat until it's there
             var updatePatientIds = function() {
-              if (!data.patLookup) {
+              if (!data.patLookup || ! data.patLookup[state.selectedPractice._id]) {
                 setTimeout(function() {
                   updatePatientIds();
                 }, 500);

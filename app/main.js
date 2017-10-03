@@ -8,7 +8,7 @@ var template = require('./template'),
   indicatorTrend = require('./panels/indicatorTrend'), // *B*
   patientView = require('./views/patient');
 
-var states, patLookup, page, hash;
+var states, page, hash;
 
 console.log("main.js: data.lastloader= " + data.lastloader);
 data.lastloader = "main.js";
@@ -45,10 +45,12 @@ var main = {
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(Object.keys(data.patLookup), function(state) {
+        local: $.map(Object.keys(data.patLookup[state.selectedPractice._id]), function(stt) {
           return {
-            id: state,
-            value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g, "") : state
+            id: stt,
+            value: data.patLookup[state.selectedPractice._id] &&
+                  data.patLookup[state.selectedPractice._id][stt] ? 
+                  data.patLookup[state.selectedPractice._id][stt].toString().replace(/ /g, "") : stt
           };
         })
       });

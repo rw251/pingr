@@ -43,12 +43,19 @@ var dt = {
   excludedPatients: {},
   excludedPatientsByIndicator: {},
 
+  getNHS: (practiceId, patientId) => {
+    if(dt.patLookup && dt.patLookup[practiceId] && dt.patLookup[practiceId][patientId]) 
+      return dt.patLookup[practiceId][patientId];
+    return patientId;
+  },
+
   populateNhsLookup: function (practiceId, done) {
     if (isFetchingNhsLookup) return;
-    if (dt.patLookup) return done();
+    if (dt.patLookup && dt.patLookup[practiceId]) return done();
     isFetchingNhsLookup = true;
     $.getJSON("/api/nhs/" + practiceId, function (lookup) {
-      dt.patLookup = lookup;
+      if(!dt.patLookup) dt.patLookup = {};
+      dt.patLookup[practiceId] = lookup;
       isFetchingNhsLookup = false;
       return done();
     });

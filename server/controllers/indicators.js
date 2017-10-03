@@ -193,7 +193,7 @@ module.exports = {
 
   //Get team actions for a single indicator or all indicators
   getActions: function(practiceId, indicatorId, done) {
-    console.log(practiceId, indicatorId);
+    //console.log(practiceId, indicatorId);
     var searchObject = { practiceId: practiceId };
     actions.getTeam({ practiceId: practiceId, patientId: { $exists: false } }, function(err, actions) {
       if (err) return done(err);

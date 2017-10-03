@@ -11,6 +11,8 @@
 
 var template = require('./template'),
   main = require('./main'),
+  base = require('./base'),
+  data = require('./data'),
   events = require('./events'),
   state = require('./state'),
   layout = require('./layout');
@@ -59,6 +61,10 @@ var App = {
     };
 
     $('body').on('change', '.practice-picker', (e)=>{
+      base.showLoading();
+      base.resetTab('indicators');
+      base.resetTab('patients');
+      layout.reset();
       const newPracticeId = $(e.currentTarget).val();
       const newPractice = state.practices.filter(v => v._id === newPracticeId)[0];
       state.selectedPractice = newPractice;

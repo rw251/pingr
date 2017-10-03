@@ -13,6 +13,14 @@ var layout = {
     layout.showPage('main-dashboard');
   },
 
+  reset: function() {
+    layout.patientId=null;
+    layout.pathwayId=null;
+    layout.pathwayStage=null;
+    layout.standard=null;
+    layout.allPatientView=null;
+  },
+
   showPage: function(page) {
     if (layout.page === page) return;
     layout.page = page;
