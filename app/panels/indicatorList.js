@@ -66,6 +66,7 @@ var indicatorList = {
 
       tableOutcomeIndicators = $('#overview-table-outcomes').DataTable({
         searching: true, //we want a search box
+        paging: false, // always want all indicators
         stateSave: true, // let's remember which page/sorting etc
         //dom: '<"row"<"col-sm-7 toolbar"i><"col-sm-5"B>>rt<"row"<"col-sm-5"l><"col-sm-7"p>><"clear">',
         /*columnDefs: list["header-items"].map(function (v, i) {
@@ -101,6 +102,7 @@ var indicatorList = {
 
       tableProcessIndicators = $('#overview-table-process').DataTable({
         searching: true, //we want a search box
+        paging: false, // always want all indicators
         stateSave: true, // let's remember which page/sorting etc
         //dom: '<"row"<"col-sm-7 toolbar"i><"col-sm-5"B>>rt<"row"<"col-sm-5"l><"col-sm-7"p>><"clear">',
         columnDefs: [
