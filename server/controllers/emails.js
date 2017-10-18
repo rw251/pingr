@@ -178,7 +178,7 @@ module.exports = {
   },
 
   sample: (user, done) => {
-    utils.getDataForEmails(user.practices[0]._id, user, (err, data) => {
+    utils.getDataForEmails(user.practices[0].id, user, (err, data) => {
       if (err) return done(err);
       data = data.data; // !!
       data.pingrUrl = config.server.url + "/";

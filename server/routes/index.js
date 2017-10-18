@@ -100,7 +100,7 @@ module.exports = function(passport) {
   });
 
   router.get('/emailadd', isAuthenticated, isAdmin, function(req, res) {
-    utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
+    utils.getDataForEmails(req.user.practices[0].id, req.user, function(err, data) {
       data.message = req.flash();
       res.render('pages/emailadd.jade', data);
     });
@@ -109,7 +109,7 @@ module.exports = function(passport) {
   router.post('/emailadd', isAuthenticated, isAdmin, function(req, res) {
     emails.create(req, function(err, email, msg) {
       if (err || msg) {
-        utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
+        utils.getDataForEmails(req.user.practices[0].id, req.user, function(err, data) {
           data.message = { error: msg };
           res.render('pages/emailadd.jade', data);
         });
@@ -127,7 +127,7 @@ module.exports = function(passport) {
   });
 
   router.get('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
-    utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
+    utils.getDataForEmails(req.user.practices[0].id, req.user, function(err, data) {
       emails.get(req.params.label, function(err, email) {
         data.email = email;
         res.render('pages/emailedit.jade', data);
@@ -138,7 +138,7 @@ module.exports = function(passport) {
   router.post('/emailedit/:label', isAuthenticated, isAdmin, function(req, res) {
     emails.edit(req.params.label, req, function(err, user, msg) {
       if (err || msg) {
-        utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
+        utils.getDataForEmails(req.user.practices[0].id, req.user, function(err, data) {
           emails.get(req.params.label, function(err, email) {
             data.email = email;
             data.message = { error: msg };
@@ -162,7 +162,7 @@ module.exports = function(passport) {
   });
 
   router.get('/emailadmin', isAuthenticated, isAdmin, function(req, res) {
-    utils.getDataForEmails(req.user.practices[0]._id, req.user, function(err, data) {
+    utils.getDataForEmails(req.user.practices[0].id, req.user, function(err, data) {
       emails.list(function(err, emailList) {
         if (err) {
           console.log(err);

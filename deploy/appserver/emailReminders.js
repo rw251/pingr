@@ -66,8 +66,10 @@ if (MODE !== MODES.TEST) {
 if (MODE === MODES.PROD) {
   andComponent.push({ email: { $regex: "nhs.net$" } }); //don't send nhs numbers to none nhs.net accounts
 }
-andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only authorised people
-andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
+andComponent.push({ "practices.authorised": true }); // to ensure it's only authorised people
+andComponent.push({ "practices.id": { $not: /ALL/ } }); // to ensure CCG users don't get one
+// andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only authorised people
+// andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
 andComponent.push({ emailFrequency: { $ne: 0 } }); // never receives emails
 var searchObject = { $and: andComponent };
 var fieldsToReturn = { password: 0 };
@@ -160,8 +162,12 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
     }
     console.log("Doing: " + v.email);
 
+    var practicesToDo = v.practices.filter(v => v.authorised && v.id !== 'ALL').length;
+    var practicesDone = 0;
+
     v.practices.forEach((p) => {
-      utils.getDataForEmails(p._id, v, function (err, data) {
+      if(!p.authorised || p.id === 'ALL') return;
+      utils.getDataForEmails(p.id, v, function (err, data) {
         data = data.data; //!!
         crypto.randomBytes(6, function (err, buf) {
           var token = buf.toString('hex');
@@ -190,10 +196,12 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
             var emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, emailTextBody, emailHTMLBody, null);
   
             emailSender.send(emailConfig, function (error, info) {
-              emailsSent++;
+              practicesDone += 1;
+              console.log(v.email, practicesDone, practicesToDo, emailsSent, usersUpdated);
+              if(practicesDone === practicesToDo) emailsSent++;
               if (error) {
                 console.log("email not sent: " + error);
-                usersUpdated++;
+                if(practicesDone === practicesToDo) usersUpdated++;
               } else {
                 console.log("Info: " + info);
                 events.emailReminder(v.email, token, emailHTMLBody, now, patientIdLookup, function (err) {
@@ -203,7 +211,7 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
                   v.last_email_reminder = now;
                   v.email_url_tracking_code = token;
                   v.save(function (err) {
-                    usersUpdated++;
+                    if(practicesDone === practicesToDo) usersUpdated++;
                     if (err) {
                       console.log("User failed to update: " + error);
                     }

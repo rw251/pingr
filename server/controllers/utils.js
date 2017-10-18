@@ -67,6 +67,8 @@ module.exports = {
           user.reminderEmailsFrom = config.mail.reminderEmailsFrom;
           user.practiceSystem = practice.ehr;
           user.greeting = greetings[Math.floor(Math.random()*greetings.length)];
+          user.practiceId = practiceId;
+          user.practiceName = practice.name;
           return callback(null, { data: user });
         });
       });
