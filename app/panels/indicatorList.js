@@ -68,6 +68,7 @@ var indicatorList = {
         searching: true, //we want a search box
         paging: false, // always want all indicators
         stateSave: true, // let's remember which page/sorting etc
+        dom: '<"row"<"pull-right"f><"pull-right"B>>rt<"clear">',
         //dom: '<"row"<"col-sm-7 toolbar"i><"col-sm-5"B>>rt<"row"<"col-sm-5"l><"col-sm-7"p>><"clear">',
         /*columnDefs: list["header-items"].map(function (v, i) {
           var thing = { type: v.type, orderSequence: v.orderSequence, targets: i, name:"shown" };
@@ -82,18 +83,18 @@ var indicatorList = {
         }),*/
         scrollY: '50vh',
         scrollCollapse: true,
-        // buttons: [
-        //   {
-        //     extend: 'colvis',
-        //     columns: 'shown:name'
-        //   },
-        //   {
-        //     text: 'Pdf',
-        //     className: 'download-button',
-        //     action: function (e, dt, node, config) {
-        //       //writePdf();
-        //     }
-        //   }
+        buttons: [ 'colvis' ],
+          // {
+          //   extend: 'colvis',
+          //   columns: 'shown:name'
+          // },
+          // {
+          //   text: 'Pdf',
+          //   className: 'download-button',
+          //   action: function (e, dt, node, config) {
+          //     //writePdf();
+          //   }
+          // }
         // ],
         // infoCallback: function (settings, start, end, max, total, pre) {
         //   return "showing " + start + " to " + end + " of " + total + " patients" + (list.numExcluded>0 ? " [including " + list.numExcluded + " exclusions]" : "");
@@ -104,7 +105,8 @@ var indicatorList = {
         searching: true, //we want a search box
         paging: false, // always want all indicators
         stateSave: true, // let's remember which page/sorting etc
-        //dom: '<"row"<"col-sm-7 toolbar"i><"col-sm-5"B>>rt<"row"<"col-sm-5"l><"col-sm-7"p>><"clear">',
+        dom: '<"row"<"pull-right"f><"pull-right"B>>rt<"clear">',
+        //dom: 'Bfrtip',
         columnDefs: [
           { "width": "90px", "targets": 6 }
         ],
@@ -122,18 +124,18 @@ var indicatorList = {
         }),*/
         scrollY: '50vh',
         scrollCollapse: true,
-        // buttons: [
-        //   {
-        //     extend: 'colvis',
-        //     columns: 'shown:name'
-        //   },
-        //   {
-        //     text: 'Pdf',
-        //     className: 'download-button',
-        //     action: function (e, dt, node, config) {
-        //       //writePdf();
-        //     }
-        //   }
+        buttons: [ 'colvis' ],
+          // {
+          //   extend: 'colvis',
+          //   columns: 'shown:name'
+          // },
+          // {
+          //   text: 'Pdf',
+          //   className: 'download-button',
+          //   action: function (e, dt, node, config) {
+          //     //writePdf();
+          //   }
+          // }
         // ],
         // infoCallback: function (settings, start, end, max, total, pre) {
         //   return "showing " + start + " to " + end + " of " + total + " patients" + (list.numExcluded>0 ? " [including " + list.numExcluded + " exclusions]" : "");
