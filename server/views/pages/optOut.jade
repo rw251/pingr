@@ -19,7 +19,7 @@ include ../mixins/email-preferences.jade
     a#sampleEmail(href='#',data-toggle="modal" data-target="#myModal") View an example email based on your selections below by clicking here (you'll need to save your changes first).
   hr
   form#emailPrefs(action='/emailpreference', method='post')
-    +email-prefs("Save", true, false)
+    +email-prefs("Save", false, true, false)
 
 // Modal
 #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel')

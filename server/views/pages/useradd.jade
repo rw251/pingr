@@ -36,7 +36,7 @@ include ../mixins/email-preferences.jade
     button.btn.btn-purple.btn-block.history(type='submit')
       | Create
       span.fa.fa-arrow-circle-right
-    +email-prefs("Create", false, true)
+    +email-prefs("Create", true, false, true)
     - if(message && message.error)
       div.alert.alert-danger(role="alert")= message.error
 include ../partials/jquery-bootstrap-select.jade

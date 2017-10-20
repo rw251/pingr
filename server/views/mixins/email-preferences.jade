@@ -1,5 +1,8 @@
-mixin email-prefs(submitText, isCancel, isFullWidth)
-  h3 When should we send you emails?
+mixin email-prefs(submitText, isAdminScreen, isCancel, isFullWidth)
+  if isAdminScreen
+    h3 When to send emails.
+  else  
+    h3 When should we send you emails?
   .form-group
     .row
       .col-sm-3(style="text-align:right")
@@ -17,11 +20,12 @@ mixin email-prefs(submitText, isCancel, isFullWidth)
         label.radio-inline
           input(type="radio" name="freq", value="0", checked=user.emailFrequency===0) 
           | Never
-  .row
-    .col-xs-offset-3.col-xs-9
-      span.help-block 
-        strong Tip: 
-        | If you have dedicated time for admin, you may want to receive emails at that time.
+  if !isAdminScreen
+    .row
+      .col-xs-offset-3.col-xs-9
+        span.help-block 
+          strong Tip: 
+          | If you have dedicated time for admin, you may want to receive emails at that time.
   .row.form-group
     .col-sm-3(style="text-align:right")
       label(for="day",style="font-weight:normal") Send it on a...

@@ -45,7 +45,7 @@ include ../mixins/email-preferences.jade
         | PINGR can send you emails to highlight patients that may need reviewing. 
         //- a#sampleEmail(href='#',data-toggle="modal" data-target="#myModal") View an example email based on your selections below by clicking here (you'll need to save your changes first).
       hr   
-      +email-prefs("Register", false, true) 
+      +email-prefs("Register", false, false, true) 
       - if(message && message.error)
         div.alert.alert-danger(role="alert")= message.error
 include ../partials/footerWithTracking.jade
