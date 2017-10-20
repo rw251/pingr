@@ -1,41 +1,13 @@
 include ../partials/head.jade
 include ../mixins/email-preferences.jade
+include ../mixins/user-details.jade
 .container-wide.starter-template-high(style="background-color: white")
   .btn-toolbar
     a.btn.btn-info(href='/admin') Back to user list
   h1 Add new user
   =message.error
   form(action='/adduser', method='post')
-    .row
-      .col-md-4
-        .form-group.input-group
-          span.input-group-addon
-            i.fa.fa-user
-          input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='')
-      .col-md-4
-        .form-group.input-group
-          span.input-group-addon
-            i.fa.fa-envelope
-          input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='')
-      .col-md-4
-        .form-group.input-group
-          span.input-group-addon
-            i.fa.fa-envelope
-          input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
-    .form-group.input-group
-      span.input-group-addon
-        i.fa.fa-stethoscope
-      select#selPractice.form-control.selectpicker(name='practice', required='',multiple='',title='Select one or more GP practices')
-        each practice in practices
-          option(value=practice._id+"|"+practice.name)= practice.name
-    .form-group
-      label.cr-styled
-        input(name='isAdmin', type='checkbox')
-        i.fa
-      |               Is Admin
-    button.btn.btn-purple.btn-block.history(type='submit')
-      | Create
-      span.fa.fa-arrow-circle-right
+    +user-details("Create", true, true)
     +email-prefs("Create", true, false, true)
     - if(message && message.error)
       div.alert.alert-danger(role="alert")= message.error

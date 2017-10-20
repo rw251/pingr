@@ -1,35 +1,11 @@
 include ../partials/head.jade
 include ../mixins/email-preferences.jade
+include ../mixins/user-details.jade
 .container-wide.starter-template-high(style="background-color: white")
   a.btn.btn-info(href='/admin') Back to user list
   h1(style="color:#333") Edit user
   form(action='/edit/'+user.email, method='post')
-    .row
-      .col-md-6
-        .form-group.input-group
-          span.input-group-addon
-            i.fa.fa-user
-          input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='', value=user.fullname)
-      .col-md-6
-        .form-group.input-group
-          span.input-group-addon
-            i.fa.fa-envelope
-          input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='', value=user.email)
-          input.form-control(type='hidden', name='originalEmail', value=user.email)
-    .form-group.input-group
-      span.input-group-addon
-        i.fa.fa-stethoscope
-      select#selPractice.form-control.selectpicker(name='practice', required='',multiple='',title='Select one or more GP practices')
-        each practice in practices
-          option(value=practice._id+"|"+practice.name, selected=(user.practices.map(function(v){return v.id;}).indexOf(practice._id) > -1 ))= practice.name
-    .form-group
-        label.cr-styled
-          input(name='isAdmin', type='checkbox', checked=user.roles.indexOf('admin')>-1 ? 'checked' : undefined)
-          i.fa
-        |               Is Admin
-    button.btn.btn-purple.btn-block.history(type='submit')
-      | Update  
-      span.fa.fa-arrow-circle-right
+    +user-details("Update", false, true)
     +email-prefs("Update", true, false, true) 
     - if(message && message.error)
       div.alert.alert-danger(role="alert")= message.error
