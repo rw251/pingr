@@ -180,33 +180,33 @@ module.exports = function(passport) {
   });
 
   //User forgets password
-  router.get('/forgot', function(req, res) {
-    res.render('pages/userforgot.jade');
+  router.get('/auth/reset', function(req, res) {
+    res.render('pages/auth-forgot-password.jade');
   });
-  router.post('/forgot', fp.forgot, function(req, res) {
-    res.render('pages/userforgot.jade', { message: req.flash() });
+  router.post('/auth/reset', fp.forgot, function(req, res) {
+    res.render('pages/auth-forgot-password.jade', { message: req.flash() });
   });
-  router.get('/forgot/:token', function(req, res) {
+  router.get('/auth/reset/:token', function(req, res) {
     res.render('pages/newpassword.jade', { message: req.flash() });
   });
-  router.post('/forgot/:token', fp.token, function(req, res) {
+  router.post('/auth/reset/:token', fp.token, function(req, res) {
     res.render('pages/newpassword.jade', { message: req.flash() });
   });
 
   //User registration
   router.get('/register', function(req, res) {
     practices.list(function(err, practices) {
-      res.render('pages/userregister.jade', { practices: practices });
+      res.render('pages/auth-register.jade', { practices: practices });
     });
   });
   router.post('/register', reg.register, function(req, res) {
     practices.list(function(err, practices) {
-      res.render('pages/userregister.jade', { practices: practices, message: req.flash() });
+      res.render('pages/auth-register.jade', { practices: practices, message: req.flash() });
     });
   });
   router.get('/register/:token', reg.token, function(req, res) {
     practices.list(function(err, practices) {
-      res.render('pages/userregister.jade', { practices: practices, message: req.flash() });
+      res.render('pages/auth-register.jade', { practices: practices, message: req.flash() });
     });
   });
   router.get('/authorise/:email', isAuthenticated, isAdmin, reg.authorise, function(req, res) {
