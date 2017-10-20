@@ -1,3 +1,4 @@
+include ../mixins/password-field.jade
 mixin user-details(submitText, isPasswordVisible, isAdminScreen)
   h3 Your details
   .row
@@ -14,11 +15,7 @@ mixin user-details(submitText, isPasswordVisible, isAdminScreen)
         if user.email
           input.form-control(type='hidden', name='originalEmail', value=user.email)
     if isPasswordVisible
-      .col-md-4
-        .form-group.input-group
-          span.input-group-addon
-            i.fa.fa-key
-          input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
+      +password(false)
   .form-group.input-group
     span.input-group-addon
       i.fa.fa-stethoscope

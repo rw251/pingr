@@ -1,9 +1,9 @@
 include ../partials/head.jade
 include ../mixins/email-preferences.jade
 include ../mixins/user-details.jade
+include ../mixins/toolbar.jade
 .container-wide.starter-template-high(style="background-color: white")
-  a.btn.btn-info(href='/admin') Back to user list
-  h1(style="color:#333") Edit user
+  +toolbar('Edit user', [{btn:'btn-info',path:'/admin',text:'Back to user list'}])
   form(action='/edit/'+user.email, method='post')
     +user-details("Update", false, true)
     +email-prefs("Update", true, false, true) 

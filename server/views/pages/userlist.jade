@@ -1,8 +1,7 @@
 include ../partials/head.jade
+include ../mixins/toolbar.jade
 .container.starter-template-high
-  .btn-toolbar
-    a.btn.btn-info(href='/') Back to interface
-    a.btn.btn-info(href='/adduser') Add User
+  +toolbar('User list', [{btn:'btn-info',path:'/',text:'Back to PINGR'},{btn:'btn-info',path:'/adduser',text:'Add user'}])
   table.table
     thead
       tr

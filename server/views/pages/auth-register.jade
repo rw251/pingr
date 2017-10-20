@@ -1,10 +1,9 @@
 include ../partials/head.jade
 include ../mixins/email-preferences.jade
 include ../mixins/user-details.jade
+include ../mixins/toolbar.jade
 .container-wide.starter-template-high(style="background-color: white")
-  .btn-toolbar
-    a.btn.btn-info(href='/') Back to PINGR
-  h1(style="color:#333") Register an account
+  +toolbar('Register an account', [{btn:'btn-info',path:'/',text:'Back to PINGR'}])
   - if(message && message.success)
     div.alert.alert-success(role="alert")= message.success
     - if(message.warning)
