@@ -1,5 +1,45 @@
-var User = require('../models/user');
-var patients = require('./patients');
+const User = require('../models/user');
+const patients = require('./patients');
+const indicators = require('./indicators');
+
+const addEmailPrefsToUser = (user, body, callback) => {
+  indicators.getList((err, indicatorList) => {
+    if(err) return callback(err);
+
+    if(body.indicatorIdsToInclude) {
+      const indicatorsToExclude = {};
+      indicatorList.forEach((i)=>{
+        indicatorsToExclude[i._id]=true;
+      });
+      // either string or array depending on whether 1 or more things selected
+      if(typeof body.indicatorIdsToInclude === 'string') body.indicatorIdsToInclude = [body.indicatorIdsToInclude];
+      body.indicatorIdsToInclude.forEach((i)=>{
+        delete indicatorsToExclude[i];
+      });
+      user.emailIndicatorIdsToExclude = Object.keys(indicatorsToExclude);
+    } else {
+      user.emailIndicatorIdsToExclude = indicatorList.map(i => i._id);
+    }
+    if(body.patientsToInclude) {
+      const patientTypesToExclude = {};
+      patients.possibleExcludeType.forEach((i)=>{
+        patientTypesToExclude[i.id]=true;
+      });
+      if(typeof body.patientsToInclude === 'string') body.patientsToInclude = [body.patientsToInclude];
+      body.patientsToInclude.forEach((i)=>{
+        delete patientTypesToExclude[i];
+      });
+      user.patientTypesToExclude = Object.keys(patientTypesToExclude);
+    } else {
+      user.patientTypesToExclude = patients.possibleExcludeType.map(i => i.id);
+    }
+    user.emailFrequency = body.freq;
+    user.emailDay = body.day;
+    user.emailHour = body.hour;
+
+    return callback(null, user);
+  });
+};
 
 module.exports = {
 
@@ -32,7 +72,7 @@ module.exports = {
     User.find({ email: email }).remove(done);
   },
 
-  updateEmailPreference: function(email, body, indicatorList, done){
+  updateEmailPreference: function(email, body, done){
     User.findOne({
       'email': email
     }, function(err, user) {
@@ -46,42 +86,14 @@ module.exports = {
         console.log('User doesnt exist with email: ' + email);
         return done(null, false, 'Trying to edit a user with an email not found in the system');
       } else {
-        if(body.indicatorIdsToInclude) {
-          const indicatorsToExclude = {};
-          indicatorList.forEach((i)=>{
-            indicatorsToExclude[i._id]=true;
+        addEmailPrefsToUser(user, body, (err, userToSave) => {
+          userToSave.save(function(err) {
+            if (err) {
+              console.log('Error in Saving user: ' + err);
+              throw err;
+            }
+            return done(null, user);
           });
-          // either string or array depending on whether 1 or more things selected
-          if(typeof body.indicatorIdsToInclude === 'string') body.indicatorIdsToInclude = [body.indicatorIdsToInclude];
-          body.indicatorIdsToInclude.forEach((i)=>{
-            delete indicatorsToExclude[i];
-          });
-          user.emailIndicatorIdsToExclude = Object.keys(indicatorsToExclude);
-        } else {
-          user.emailIndicatorIdsToExclude = indicatorList.map(i => i._id);
-        }
-        if(body.patientsToInclude) {
-          const patientTypesToExclude = {};
-          patients.possibleExcludeType.forEach((i)=>{
-            patientTypesToExclude[i.id]=true;
-          });
-          if(typeof body.patientsToInclude === 'string') body.patientsToInclude = [body.patientsToInclude];
-          body.patientsToInclude.forEach((i)=>{
-            delete patientTypesToExclude[i];
-          });
-          user.patientTypesToExclude = Object.keys(patientTypesToExclude);
-        } else {
-          user.patientTypesToExclude = patients.possibleExcludeType.map(i => i.id);
-        }
-        user.emailFrequency = body.freq;
-        user.emailDay = body.day;
-        user.emailHour = body.hour;
-        user.save(function(err) {
-          if (err) {
-            console.log('Error in Saving user: ' + err);
-            throw err;
-          }
-          return done(null, user);
         });
       }
     });
@@ -126,13 +138,16 @@ module.exports = {
           user.emailHour = req.body.hour;
           user.practices = userPractices;
           user.roles = roles;
-          // save the user
-          user.save(function(err) {
-            if (err) {
-              console.log('Error in Saving user: ' + err);
-              throw err;
-            }
-            return done(null, user);
+
+          addEmailPrefsToUser(user, req.body, (err, userToSave) => {          
+            // save the user
+            userToSave.save(function(err) {
+              if (err) {
+                console.log('Error in Saving user: ' + err);
+                throw err;
+              }
+              return done(null, userToSave);
+            });
           });
         } else {
           //check no existing user with that email
@@ -151,13 +166,16 @@ module.exports = {
               originalUser.emailHour = req.body.hour;
               originalUser.practices = userPractices;
               originalUser.roles = roles;
-              // save the user
-              originalUser.save(function(err) {
-                if (err) {
-                  console.log('Error in Saving user: ' + err);
-                  throw err;
-                }
-                return done(null, originalUser);
+
+              addEmailPrefsToUser(originalUser, req.body, (err, userToSave) => {          
+                // save the user
+                userToSave.save(function(err) {
+                  if (err) {
+                    console.log('Error in Saving user: ' + err);
+                    throw err;
+                  }
+                  return done(null, userToSave);
+                });
               });
             }
           });
@@ -207,14 +225,16 @@ module.exports = {
           roles: roles
         });
 
-        // save the user
-        newUser.save(function(err) {
-          if (err) {
-            console.log('Error in Saving user: ' + err);
-            throw err;
-          }
-          console.log('User Registration succesful');
-          return done(null, newUser);
+        addEmailPrefsToUser(newUser, req.body, (err, userToSave) => {          
+          // save the user
+          userToSave.save(function(err) {
+            if (err) {
+              console.log('Error in Saving user: ' + err);
+              throw err;
+            }
+            console.log('User Registration succesful');
+            return done(null, userToSave);
+          });
         });
       }
     });

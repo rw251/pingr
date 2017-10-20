@@ -93,7 +93,7 @@ var mergeActions = function (actions, patients, patientId) {
 
 const possibleExcludeType = [
   //Date string: (i.e. from 1st April <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 0 : -1)}</strong> to 31st March <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}</strong>)
-  {id:"MISSED_REVIEW", description:"Patients who <strong>have missed</strong> their annual chronic disease review"},
+  {id:"MISSED_REVIEW", checkedByDefault: true, description:"Patients who <strong>have missed</strong> their annual chronic disease review"},
   {id:"AFTER_APRIL", description:"Patients who <strong>have had</strong> their annual review but are still missing targets"},
   {id:"REVIEW_YET_TO_HAPPEN", description:"Patients who <strong>have not yet had</strong> their annual review"},
   {id:"NO_REVIEW", description:"Patients who <strong>have never before</strong> had an annual review"},

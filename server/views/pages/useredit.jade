@@ -1,54 +1,36 @@
 include ../partials/head.jade
-.container-narrow.starter-template-high
+include ../mixins/email-preferences.jade
+.container-wide.starter-template-high(style="background-color: white")
   a.btn.btn-info(href='/admin') Back to user list
+  h1(style="color:#333") Edit user
   form(action='/edit/'+user.email, method='post')
-    label(for='fullname') Full name:
-    input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='', value=user.fullname)
-    label(for='email') Email:
-    input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='', value=user.email)
-    input.form-control(type='hidden', name='originalEmail', value=user.email)
+    .row
+      .col-md-6
+        .form-group.input-group
+          span.input-group-addon
+            i.fa.fa-user
+          input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='', value=user.fullname)
+      .col-md-6
+        .form-group.input-group
+          span.input-group-addon
+            i.fa.fa-envelope
+          input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='', value=user.email)
+          input.form-control(type='hidden', name='originalEmail', value=user.email)
     .form-group.input-group
-      label(for='practice') Practice:
-      select.form-control.selectpicker(name='practice',multiple='',title='Select one or more GP practices')
+      span.input-group-addon
+        i.fa.fa-stethoscope
+      select#selPractice.form-control.selectpicker(name='practice', required='',multiple='',title='Select one or more GP practices')
         each practice in practices
           option(value=practice._id+"|"+practice.name, selected=(user.practices.map(function(v){return v.id;}).indexOf(practice._id) > -1 ))= practice.name
     .form-group
-      label.cr-styled
-        input(name='isAdmin', type='checkbox', checked=user.roles.indexOf('admin')>-1 ? 'checked' : undefined)
-        i.fa
-      |               Is Admin
-    .form-group
-      label.radio.inline.control-label Emails..
-      label.radio-inline
-        input(type="radio" name="freq", value="1", checked=!user.emailFrequency || user.emailFrequency===1)
-        | every week 
-      label.radio-inline
-        input(type="radio" name="freq", value="2", checked=user.emailFrequency===2) 
-        | every 2 weeks
-      label.radio-inline
-        input(type="radio" name="freq", value="4", checked=user.emailFrequency===4) 
-        | every 4 weeks
-      label.radio-inline
-        input(type="radio" name="freq", value="0", checked=user.emailFrequency===0) 
-        | never        
-    .row
-      .col-xs-12
-        label(for="day") Send it on a..
-          select.form-control(name="day")
-            option(value="1",selected=!user.emailDay || user.emailDay===1) Monday
-            option(value="2",selected=user.emailDay===2) Tuesday
-            option(value="3",selected=user.emailDay===3) Wednesday
-            option(value="4",selected=user.emailDay===4) Thursday
-            option(value="5",selected=user.emailDay===5) Friday
-            option(value="6",selected=user.emailDay===6) Saturday
-            option(value="0",selected=user.emailDay===0) Sunday
-        label(for="day") at..
-          select.form-control(name="hour")
-            - for(var time = 5; time < 23; time++)
-              option(value=time,selected=(!user.emailHour && time===10) || user.emailHour===time)=( time < 10 ? "0" : "" )+time+":00"
+        label.cr-styled
+          input(name='isAdmin', type='checkbox', checked=user.roles.indexOf('admin')>-1 ? 'checked' : undefined)
+          i.fa
+        |               Is Admin
     button.btn.btn-purple.btn-block.history(type='submit')
-      | Update
+      | Update  
       span.fa.fa-arrow-circle-right
+    +email-prefs("Update", false, true) 
     - if(message && message.error)
       div.alert.alert-danger(role="alert")= message.error
 include ../partials/jquery-bootstrap-select.jade

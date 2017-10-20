@@ -17,7 +17,7 @@ var text = require('../controllers/text.js');
 var utils = require('../controllers/utils.js');
 var config = require('../config');
 
-var isAuthenticated = function(req, res, next) {
+const isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
   // Passport adds this method to request object. A middleware is allowed to add properties to
   // request and response objects
@@ -26,6 +26,12 @@ var isAuthenticated = function(req, res, next) {
   // if the user is not authenticated then redirect him to the login page
   req.session.redirect_to = req.path; //remember the page they tried to load
   res.redirect('/login');
+};
+
+const isUserOkToViewPractice = function(req, res, next) {
+  const isUserAuthorisedForThisPractice = req.user.practices.filter(v => v.authorised && v.id === req.params.practiceId).length > 0;
+  if(!isUserAuthorisedForThisPractice) return res.send([]);
+  return next();
 };
 
 var isAdmin = function(req, res, next) {
@@ -69,7 +75,7 @@ module.exports = function(passport) {
 
   router.post('/emailpreference', isAuthenticated, function(req, res) {
     indicators.getList((err, indicatorList) => {
-      users.updateEmailPreference(req.user.email, req.body, indicatorList.slice(0), function(err, user, msg) {
+      users.updateEmailPreference(req.user.email, req.body, function(err, user, msg) {
         if (err || msg) {
           res.render('pages/optOut.jade', { user: req.user, indicatorList, patientsToIncludeList: patients.possibleExcludeType });
         } else {
@@ -195,18 +201,24 @@ module.exports = function(passport) {
 
   //User registration
   router.get('/register', function(req, res) {
-    practices.list(function(err, practices) {
-      res.render('pages/auth-register.jade', { practices: practices });
+    indicators.getList((err, indicatorList) => {
+      practices.list(function(err, practices) {
+        res.render('pages/auth-register.jade', { user: {}, practices: practices, indicatorList, patientsToIncludeList: patients.possibleExcludeType });
+      });
     });
   });
   router.post('/register', reg.register, function(req, res) {
-    practices.list(function(err, practices) {
-      res.render('pages/auth-register.jade', { practices: practices, message: req.flash() });
+    indicators.getList((err, indicatorList) => {
+      practices.list(function(err, practices) {
+        res.render('pages/auth-register.jade', { user: {}, practices: practices, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: req.flash() });
+      });
     });
   });
   router.get('/register/:token', reg.token, function(req, res) {
-    practices.list(function(err, practices) {
-      res.render('pages/auth-register.jade', { practices: practices, message: req.flash() });
+    indicators.getList((err, indicatorList) => {
+      practices.list(function(err, practices) {
+        res.render('pages/auth-register.jade', { user: {}, practices: practices, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: req.flash() });
+      });
     });
   });
   router.get('/authorise/:email', isAuthenticated, isAdmin, reg.authorise, function(req, res) {
@@ -265,16 +277,20 @@ module.exports = function(passport) {
   });
 
   router.get('/adduser', isAuthenticated, isAdmin, function(req, res) {
-    practices.list(function(err, practices) {
-      res.render('pages/useradd.jade', { practices: practices, message: req.flash() });
+    indicators.getList((err, indicatorList) => {
+      practices.list((err, practices) => {
+        res.render('pages/useradd.jade', { user: {}, practices, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: req.flash() });
+      });
     });
   });
 
   router.post('/adduser', isAuthenticated, isAdmin, function(req, res) {
     users.add(req, function(err, user, flash) {
       if (err || flash) {
-        practices.list(function(err, practices) {
-          res.render('pages/useradd.jade', { practices: practices, message: flash });
+        indicators.getList((err, indicatorList) => {
+          practices.list((err, practices) => {
+            res.render('pages/useradd.jade', { user: {}, practices, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: flash });
+          });
         });
       } else {
         res.redirect('/admin');
@@ -294,8 +310,10 @@ module.exports = function(passport) {
 
   router.get('/edit/:email', isAuthenticated, isAdmin, function(req, res) {
     users.get(req.params.email, function(err, user) {
-      practices.list(function(err, practices) {
-        res.render('pages/useredit.jade', { practices: practices, user: user });
+      indicators.getList((err, indicatorList) => {
+        practices.list((err, practices) => {
+          res.render('pages/useredit.jade', { user, practices, indicatorList, patientsToIncludeList: patients.possibleExcludeType });
+        });
       });
     });
   });
@@ -304,8 +322,10 @@ module.exports = function(passport) {
     users.edit(req.params.email, req, function(err, user, msg) {
       if (err || msg) {
         users.get(req.params.email, function(err, user) {
-          practices.list(function(err, practices) {
-            res.render('pages/useredit.jade', { practices: practices, user: user, message: { error: msg } });
+          indicators.getList((err, indicatorList) => {
+            practices.list((err, practices) => {
+              res.render('pages/useredit.jade', { user, practices, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: { error: msg } });
+            });
           });
         });
       } else {
@@ -326,7 +346,7 @@ module.exports = function(passport) {
 
 
   /* ACTIONS */
-  router.post('/api/action/addTeam/:practiceId/:indicatorId?', isAuthenticated, function(req, res) {
+  router.post('/api/action/addTeam/:practiceId/:indicatorId?', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
@@ -350,7 +370,7 @@ module.exports = function(passport) {
     }
   });
 
-  router.post('/api/action/addIndividual/:practiceId/:patientId', isAuthenticated, function(req, res) {
+  router.post('/api/action/addIndividual/:practiceId/:patientId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     if (!req.body.actionText) {
       res.send("No action posted");
     } else {
@@ -376,7 +396,7 @@ module.exports = function(passport) {
       else res.send({ status: "ok" });
     });
   });
-  router.post('/api/action/update/individual/:practiceId/:patientId', isAuthenticated, function(req, res) {
+  router.post('/api/action/update/individual/:practiceId/:patientId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     actions.updateIndividual(req.params.practiceId, req.params.patientId, req.body.action, function(err, action) {
       if (err) res.send(err);
       else {
@@ -408,7 +428,7 @@ module.exports = function(passport) {
       else res.send(action);
     });
   });
-  router.post('/api/action/update/team/:practiceId/:indicatorId?', isAuthenticated, function(req, res) {
+  router.post('/api/action/update/team/:practiceId/:indicatorId?', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     actions.updateTeam(req.params.practiceId, req.params.indicatorId, req.body.action, function(err, action) {
       if (err) res.send(err);
       else {
@@ -446,20 +466,20 @@ module.exports = function(passport) {
       else res.send({ status: "ok" });
     });
   });
-  router.get('/api/action/team/:practiceId/:indicatorId?', isAuthenticated, function(req, res) {
+  router.get('/api/action/team/:practiceId/:indicatorId?', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     indicators.getActions(req.params.practiceId, req.params.indicatorId, function(err, actions) {
       if (err) res.send(err);
       else res.send(actions);
     });
   });
-  router.get('/api/action/individual/:practiceId/:patientId?', isAuthenticated, function(req, res) {
+  router.get('/api/action/individual/:practiceId/:patientId?', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     patients.getActions(req.params.practiceId, req.params.patientId, function(err, actions) {
       if (err) res.send(err);
       if (req.params.patientId) res.send(actions[req.params.patientId]);
       else res.send(actions);
     });
   });
-  router.get('/api/action/all/:practiceId', isAuthenticated, function(req, res) {
+  router.get('/api/action/all/:practiceId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     actions.listAgreedWith(req.params.practiceId, function(err, actions) {
       if (err) res.send(err);
       var patientActions = actions.filter(function(v) {
@@ -493,7 +513,7 @@ module.exports = function(passport) {
   });
 
   //Get nhs number lookup
-  router.get('/api/nhs/:practiceId', isAuthenticated, function(req, res) {
+  router.get('/api/nhs/:practiceId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     patients.nhsLookup(req.params.practiceId, function(err, lookup) {
       res.send(lookup);
     });
@@ -513,7 +533,7 @@ module.exports = function(passport) {
     });
   });
   //Return a page of the low hanging fruit patients
-  router.get('/api/WorstPatients/:practiceId/:skip/:limit', isAuthenticated, function(req, res) {
+  router.get('/api/WorstPatients/:practiceId/:skip/:limit', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     patients.getAllPatientsPaginated(req.params.practiceId, +req.params.skip, +req.params.limit, function(err, patients) {
       res.send(patients);
     });
@@ -525,18 +545,18 @@ module.exports = function(passport) {
     });
   });
   //Get list of patients for a practice and indicator - for use on indicator screen
-  router.get('/api/PatientListForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+  router.get('/api/PatientListForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     patients.getListForIndicator(req.params.practiceId, req.params.indicatorId, function(err, patients, type) {
       res.send({ patients, type });
     });
   });
 
   //Exclude a patient from an indicator
-  router.post('/api/exclude/patient/:patientId/for/indicator/:indicatorId/practice/:practiceId', isAuthenticated, excludedPatients.exclude); 
+  router.post('/api/exclude/patient/:patientId/for/indicator/:indicatorId/practice/:practiceId', isAuthenticated, isUserOkToViewPractice, excludedPatients.exclude); 
   //Include a patient from an indicator
-  router.post('/api/include/patient/:patientId/for/indicator/:indicatorId/practice/:practiceId', isAuthenticated, excludedPatients.include);
+  router.post('/api/include/patient/:patientId/for/indicator/:indicatorId/practice/:practiceId', isAuthenticated, isUserOkToViewPractice, excludedPatients.include);
   //Get all exclusions for a practice
-  router.get('/api/excludedpatients/practice/:practiceId', isAuthenticated, excludedPatients.get);
+  router.get('/api/excludedpatients/practice/:practiceId', isAuthenticated, isUserOkToViewPractice, excludedPatients.get);
 
   //note for 2xFn's below:
   //req.user.practiceId = inject current user practiceId
@@ -545,19 +565,20 @@ module.exports = function(passport) {
 
   //Get list of indicators for a single practice - for use on the overview screen
   router.get('/api/ListOfIndicatorsForPractice', isAuthenticated, function(req, res) {
-    indicators.list(req.user.practices.length > 0 ? req.user.practices[0]._id : null, function(err, indicators) {
+    const authorisedPractices = req.user.practices.filter(v => v.authorised);
+    indicators.list(authorisedPractices.length > 0 ? authorisedPractices[0].id : null, function(err, indicators) {
       res.send(indicators);
     });
   });
 
   //Get list of indicators for a single practice (inc option) - for use on the overview screen
-  router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, function(req, res) {
+  router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     indicators.list(req.params.practiceId, function(err, indicators) {
       res.send(indicators);
     });
   });
   //Get benchmark data for an indicator
-  router.get('/api/BenchmarkDataFor/:practiceId/:indicatorId', isAuthenticated, function(req, res) {
+  router.get('/api/BenchmarkDataFor/:practiceId/:indicatorId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
     practices.list(function(err, practices) {
       indicators.getBenchmark(req.params.practiceId, practices, req.params.indicatorId, function(err, benchmark) {
         res.send(benchmark);
@@ -565,7 +586,7 @@ module.exports = function(passport) {
     });
   });
   //Get trend data for a practice and an indicator
-  // router.get('/api/TrendDataForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, function(req, res) {
+  // router.get('/api/TrendDataForPractice/:practiceId/Indicator/:indicatorId', isAuthenticated, isUserOkToViewPractice, function(req, res) {
   //   indicators.getTrend(req.params.practiceId, req.params.indicatorId, function(err, trend) {
   //     res.send(trend);
   //   });

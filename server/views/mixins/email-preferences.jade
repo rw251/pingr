@@ -1,0 +1,85 @@
+mixin email-prefs(submitText, isCancel, isFullWidth)
+  h3 When should we send you emails?
+  .form-group
+    .row
+      .col-sm-3(style="text-align:right")
+        label.control-label(style="font-weight:normal") Send me an email...
+      .col-sm-9
+        label.radio-inline
+          input(type="radio" name="freq", value="1", checked=!user.emailFrequency || user.emailFrequency===1)
+          | Every week 
+        label.radio-inline
+          input(type="radio" name="freq", value="2", checked=user.emailFrequency===2) 
+          | Every 2 weeks
+        label.radio-inline
+          input(type="radio" name="freq", value="4", checked=user.emailFrequency===4) 
+          | Every 4 weeks
+        label.radio-inline
+          input(type="radio" name="freq", value="0", checked=user.emailFrequency===0) 
+          | Never
+  .row
+    .col-xs-offset-3.col-xs-9
+      span.help-block 
+        strong Tip: 
+        | If you have dedicated time for admin, you may want to receive emails at that time.
+  .row.form-group
+    .col-sm-3(style="text-align:right")
+      label(for="day",style="font-weight:normal") Send it on a...
+    .col-sm-3
+      select.form-control(name="day")
+        option(value="1",selected=!user.emailDay || user.emailDay===1) Monday
+        option(value="2",selected=user.emailDay===2) Tuesday
+        option(value="3",selected=user.emailDay===3) Wednesday
+        option(value="4",selected=user.emailDay===4) Thursday
+        option(value="5",selected=user.emailDay===5) Friday
+        option(value="6",selected=user.emailDay===6) Saturday
+        option(value="0",selected=user.emailDay===0) Sunday
+    .col-sm-1
+      label(for="day") at...
+    .col-sm-2
+      select.form-control(name="hour")
+        - for(var time = 5; time < 23; time++)
+          option(value=time,selected=(!user.emailHour && time===10) || user.emailHour===time)=( time < 10 ? "0" : "" )+time+":00"
+  hr
+  h3 What should be in the emails?
+  .row
+    .col-sm-3
+      label(for="indicatorIdsToInclude",style="font-weight:normal") Send me emails about patients not meeting these indicators:
+    .col-sm-9
+      each indicator,i in indicatorList
+        .row
+          .col-md-12.col-lg-6
+            .checkbox
+              label.big-checkbox-label
+                input.big-checkbox( type='checkbox', name='indicatorIdsToInclude', value=indicator._id, checked=!user.emailIndicatorIdsToExclude||user.emailIndicatorIdsToExclude.indexOf(indicator._id)===-1)
+                = indicator.name.replace('&ge;','≥')
+          if i+1 < indicatorList.length
+            .col-md-12.col-lg-6
+              .checkbox
+                label.big-checkbox-label
+                  input.big-checkbox(type='checkbox', name='indicatorIdsToInclude', value=indicatorList[i+1]._id, checked=!user.emailIndicatorIdsToExclude||user.emailIndicatorIdsToExclude.indexOf(indicatorList[i+1]._id)===-1)
+                  = indicatorList[i+1].name
+          - i++
+  .row(style="padding-top:15px")
+    .col-sm-3
+      label(for="patientsToInclude",style="font-weight:normal") Send me emails about the following groups of patients:
+    .col-sm-9
+      each patientToInclude in patientsToIncludeList
+        .row
+          .col-xs-12
+            .checkbox
+              label.big-checkbox-label
+                input.big-checkbox(type='checkbox', name='patientsToInclude', value=patientToInclude.id, checked=((!user.patientTypesToExclude && patientToInclude.checkedByDefault) || (user.patientTypesToExclude && user.patientTypesToExclude.indexOf(patientToInclude.id)===-1)))
+                != patientToInclude.description
+  .row
+    .col-xs-12
+      #errorAlert.alert.alert-danger.alert-dismissible.fade-in(role="alert", style="display:none")
+        button.close(type="button" data-dismiss="alert" aria-label="Close")
+          span(aria-hidden="true") ×
+        p#errors
+  .btn-toolbar
+    button.btn.btn-purple.history(type='submit',class=isFullWidth ? 'btn-block' : '')
+      = submitText + ' '
+      span.fa.fa-arrow-circle-right
+    if isCancel
+      a.btn.btn-default(href='/') Cancel

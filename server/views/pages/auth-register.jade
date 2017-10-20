@@ -1,7 +1,9 @@
 include ../partials/head.jade
-.container-narrow.starter-template-high
+include ../mixins/email-preferences.jade
+.container-wide.starter-template-high(style="background-color: white")
   .btn-toolbar
     a.btn.btn-info(href='/') Back to PINGR
+  h1(style="color:#333") Register an account
   - if(message && message.success)
     div.alert.alert-success(role="alert")= message.success
     - if(message.warning)
@@ -9,58 +11,41 @@ include ../partials/head.jade
         strong= message.warning
   - else
     form(action='/register', method='post')
-      .form-group.input-group
-        span.input-group-addon
-          i.fa.fa-user
-        input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='')
-      .form-group.input-group
-        span.input-group-addon
-          i.fa.fa-envelope
-        input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='')
-      .form-group.input-group
-        span.input-group-addon
-          i.fa.fa-key
-        input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
+      h3 Your details
+      .row
+        .col-md-4
+          .form-group.input-group
+            span.input-group-addon
+              i.fa.fa-user
+            input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='')
+        .col-md-4
+          .form-group.input-group
+            span.input-group-addon
+              i.fa.fa-envelope
+            input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='')
+        .col-md-4
+          .form-group.input-group
+            span.input-group-addon
+              i.fa.fa-key
+            input.form-control.nomargin(type='password', name='password', placeholder='Password', required='')
       .form-group.input-group
         span.input-group-addon
           i.fa.fa-stethoscope
-        select#selPractice.form-control.selectpicker(name='practice', required='',multiple='',title='Select GP practice')
+        select#selPractice.form-control.selectpicker(name='practice', required='',multiple='',title='Select one or more GP practices')
           each practice in practices
             option(value=practice._id+"|"+practice.name)= practice.name
-      .form-group
-        label.radio.inline.control-label Emails..
-        label.radio-inline
-          input(type="radio" name="freq", value="1", checked=true)
-          | every week 
-        label.radio-inline
-          input(type="radio" name="freq", value="2")
-          | every 2 weeks
-        label.radio-inline
-          input(type="radio" name="freq", value="4")
-          | every 4 weeks
-        label.radio-inline
-          input(type="radio" name="freq", value="0")
-          | never          
-      .row
-        .col-xs-12
-          label(for="day") Send it on a..
-            select.form-control(name="day")
-              option(value="1",selected=true) Monday
-              option(value="2") Tuesday
-              option(value="3") Wednesday
-              option(value="4") Thursday
-              option(value="5") Friday
-              option(value="6") Saturday
-              option(value="0") Sunday
-          label(for="day") at..
-            select.form-control(name="hour")
-              - for(var time = 5; time < 23; time++)
-                option(value=time,selected=(time===10))=( time < 10 ? "0" : "" )+time+":00"
-        .col-xs-12
-          span.help-block If you have a day with dedicated time for quality work then you might want this to be the day we send you emails.
       button.btn.btn-purple.btn-block.history(type='submit')
         | Register 
         span.fa.fa-arrow-circle-right
+      - if(message && message.error)
+        div.alert.alert-danger(role="alert")= message.error
+      hr
+      h3 Reminder emails
+      p 
+        | PINGR can send you emails to highlight patients that may need reviewing. 
+        //- a#sampleEmail(href='#',data-toggle="modal" data-target="#myModal") View an example email based on your selections below by clicking here (you'll need to save your changes first).
+      hr   
+      +email-prefs("Register", false, true) 
       - if(message && message.error)
         div.alert.alert-danger(role="alert")= message.error
 include ../partials/footerWithTracking.jade
