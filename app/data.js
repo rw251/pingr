@@ -37,6 +37,16 @@ var isFetchingNhsLookup = false;
 
 var dt = {
 
+  clinicalArea: {
+    "copd" : "COPD",
+    "htn" : "Hypertension",
+    "cvd.stroke" : "Stroke",
+    "cvd.af" : "Atrial Fibrilation",
+    "ckd" : "CKD",
+    "ckdAndDm" : "Diabetes",
+    "ckdAndProt" : "CKD",    
+  },
+
   pathwayNames: {},
   diseases: [],
   options: [],
@@ -125,6 +135,13 @@ var dt = {
       var pathwayId = indicator.id.split(".")[0];
       var pathwayStage = indicator.id.split(".")[1];
       var standard = indicator.id.split(".")[2];
+      if(dt.clinicalArea[pathwayId]) {
+        indicator.clinicalArea = dt.clinicalArea[pathwayId];
+      } else if (dt.clinicalArea[pathwayId + '.' + pathwayStage]) {
+        indicator.clinicalArea = dt.clinicalArea[pathwayId + '.' + pathwayStage];
+      } else {
+        indicator.clinicalArea = 'Unknown';
+      }
       //if (!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId] = "";
       var percentage = Math.round(100 * indicator.values[1][last] * 100 / indicator.values[2][last]) / 100;
       indicator.performance = {

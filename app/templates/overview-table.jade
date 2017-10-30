@@ -12,6 +12,7 @@ div
           table#overview-table-outcomes.table.table-condensed.order-column.hover
             thead
               tr(style='background-color:#fff9ff')
+                th Clinical Area
                 th Indicator
                 th Incidence (first)
                 th Incidence (multiple)
@@ -22,6 +23,7 @@ div
             tbody
               each indicator in outcomeIndicators
                 tr.standard-row(data-id=indicator.id,data-description=indicator.description,data-toggle='tooltip', data-placement='left', title='Click for more detail')
+                  td= indicator.clinicalArea
                   td
                     strong!= indicator.name
                     br
@@ -60,6 +62,7 @@ div
           table#overview-table-process.table.table-condensed.order-column.hover
             thead
               tr(style='background-color:#fff9ff')
+                th Clinical Area
                 th Indicator
                 th Current Performance
                 th Actioned Patients
@@ -70,6 +73,7 @@ div
             tbody
               each indicator in processIndicators
                 tr.standard-row(data-id=indicator.id,data-description=indicator.description,data-toggle='tooltip', data-placement='left', title='Click for more detail')
+                  td= indicator.clinicalArea
                   td
                     strong!= indicator.name
                     br
