@@ -41,7 +41,7 @@ var dt = {
     "copd" : "COPD",
     "htn" : "Hypertension",
     "cvd.stroke" : "Stroke",
-    "cvd.af" : "Atrial Fibrilation",
+    "cvd.af" : "Atrial Fibrillation",
     "ckd" : "CKD",
     "ckdAndDm" : "Diabetes",
     "ckdAndProt" : "CKD",    
