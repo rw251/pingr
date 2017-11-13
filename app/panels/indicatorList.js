@@ -23,7 +23,7 @@ var indicatorList = {
         return v.type==="outcome";
       });
       var html = tmpl({
-        "indicators": processIndicators, //REVIEW needs changing back to processIndicators
+        "processIndicators": processIndicators, //REVIEW - [DONE] needs changing back to processIndicators
         "outcomeIndicators": outcomeIndicators,
         "selectedTab": state.getTab('overview'),
       });
@@ -37,7 +37,7 @@ var indicatorList = {
         panel.html(html);
       }
 
-      $('#overview-table .inlinesparkline').sparkline('html', { //REVIEW was '#processIndicators .inline..." in rw version
+      $('.inlinesparkline').sparkline('html', { //- REVIEW - [TEST] was '#processIndicators .inline..." in rw version -update- remove id selector - class is sufficient
         tooltipFormatter: function(sparkline, options, fields) {
           var dts = processIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return dts[fields.x] + ": " + fields.y + "%";
@@ -45,32 +45,13 @@ var indicatorList = {
         width: "100px"
       });
 
-      //REVIEW
-      //this is ben's
       var $scrollTable = $('#overview-table');
-
+      //
       $scrollTable.floatThead({
-        scrollContainer: function($scrollTable){
-          return $scrollTable.closest('.wrapper-floatTHead');
-        }
+         scrollContainer: function($scrollTable){
+           return $scrollTable.closest('.wrapper-floatTHead');
+         }
       });
-
-      //this can be ignored?
-      $('#outcomeIndicators .inlinesparkline').sparkline('html', {
-        tooltipFormatter: function(sparkline, options, fields) {
-          var dts = outcomeIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
-          return dts[fields.x] + ": " + fields.y + "%";
-        },
-        width: "100px"
-      });
-
-      // this is mine
-      /*$('#overview-table-process, #overview-table-outcomes').floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex:50
-      });*/
-      //REVIEW END
 
       indicatorList.wireUp(panel, loadContentFn);
 

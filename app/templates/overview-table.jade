@@ -3,223 +3,124 @@
     i.material-icons assessment
   .card-content#overviewTableCard
     h4.card-title Overview Tables
-    small.category An overview list of ***********
-    .panel-body.overview-table.wrapper-floatTHead
-      table.table.table-hover#overview-table
-        thead
-          tr
-            th.col-md-3 Indicator
-            th.col-md-1.text-center Current Performance
-            // BG-TODO the below column is new
-            th.col-md-1.text-center Actioned Patients
-            th.col-md-2.text-center Salford Target
-            th.col-md-2.text-center Top 10% Benchmark
-            // BB-TODO in dev merge this is "Change from Yesterday"
-            th.col-md-1.text-center Daily Trajectory
-            th.col-md-2 1 Year Trend
-        tbody.ps-child.ps-boilerplate
-          - var alt=false
-          each indicator in indicators
-            tr.standard-row(data-id=indicator.id,class=alt ? 'info': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
-              td.col-md-3
-                //td
-                strong!= indicator.name
-                br
-                a.show-more(data-id=indicator.id)
-                  | Show more 
-                  i.fa.fa-caret-down
-              td.col-md-1.text-center
-                //td
-                //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-                if isNaN(indicator.performance.percentage)
-                  strong(class = 'text-underPerform') N/A
-                else if indicator.aboveTarget
-                  if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
-                    strong(class = 'text-topTen')= indicator.performance.percentage + '%'
-                  else
-                    strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
-                else
-                  strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
-                  
-                //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-                span= ' (' + indicator.performance.fraction + ')'
-              td.col-md-1.text-center= indicator.reviewed + "/" + indicator.patientsWithOpportunity
-              td.col-md-2.text-center= indicator.target
-              td.col-md-2.text-center= (indicator.benchmark*100).toFixed(0)+"%"
-              td.col-md-1.text-center
-                //(style="text-align:center")
-                //- td= indicator.reviewed + "/" + indicator.patientsWithOpportunity
-                //- td= indicator.target
-                //- td= (indicator.benchmark*100).toFixed(0)+"%"
-                //- td(style="text-align:center")
-                if indicator.change==="up"
-                  i.material-icons trending_up
-                else if indicator.change==="down"
-                  i.material-icons trending_down
-                else
-                  i.material-icons trending_flat
-              td.col-md-2
-                //td
-                span.inlinesparkline= indicator.trend
-            tr.show-more-row(style="display: none" data-id=indicator.id,class=alt ? 'info': '' )
-              td(colspan='6')!= indicator.description
-                  br
-                  a.show-more(data-id=indicator.id)
-                    | Show less 
-                    i.fa.fa-caret-up
-            - alt = !alt
-
-//- table
-//- thead(style="display: block;")
-//-   tr
-//-     th Indicator
-//-     th Current Performance
-//-     th Salford Target
-//-     th Top 10% Benchmark
-//-     th Change from Yesterday
-//-     th Trend
-//- tbody.ps-child(style="max-height: 400px; display: block;")
-//-   each indicator in indicators
-//-     tr.standard-row
-//-       td
-//-         strong!= indicator.name
-//-       td
-//-         if isNaN(indicator.performance.percentage)
-//-           strong(class = 'text-underPerform') N/A
-//-         else if indicator.aboveTarget
-//-           if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
-//-             strong(class = 'text-topTen')= indicator.performance.percentage + '%'
-//-           else
-//-             strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
-//-         else
-//-           strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
-//-         span= ' (' + indicator.performance.fraction + ')'
-//-       td 75%
-//-       td 10%
-//-       td(style='font-size:2em') A
-//-       td(style='width:116px')
-//- .table-scroll
-
-//- // REVIEW - process and outcome indicators split into separate tabs
-//- div
-//-   ul.nav.nav-tabs(role="tablist")
-//-     li(class=!selectedTab || selectedTab==='#outcomeIndicators' ? "active" : "",role="presentation")
-//-       a.pastel-pink(href="#outcomeIndicators",aria-controls="outcomeIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Outcome indicators (" + outcomeIndicators.length + ")"
-//-     li(class=selectedTab==='#processIndicators' ? "active" : "",role="presentation")
-//-       a.pastel-pink(href="#processIndicators",aria-controls="processIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Process indicators (" + processIndicators.length + ")"
-
-//-   .tab-content    
-//-     #outcomeIndicators.tab-pane.fade(class=!selectedTab || selectedTab==='#outcomeIndicators' ? "active in" : "",role="tabpanel")
-//-       .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
-//-         .panel-body.pastel-pink.overview-table
-//-           .table-scroll(style='overflow-x:hidden')
-//-             table#overview-table-outcomes.table
-//-               thead
-//-                 tr(style='background-color:#fff9ff')
-//-                   th Indicator
-//-                   th Incidence (first)
-//-                   th Incidence (multiple)
-//-                   th Standardised Incidence (first)
-//-                   th Lowest 10% Benchmark
-//-                   th Change from Yesterday
-//-                   th 1 Year Trend
-//-               tbody
-//-                 - var alt=false
-//-                 each indicator in outcomeIndicators
-//-                   tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
-//-                     td
-//-                       strong!= indicator.name
-//-                       br
-//-                       a.show-more(data-id=indicator.id)
-//-                         | Show more 
-//-                         i.fa.fa-caret-down
-//-                     td
-//-                       //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-//-                       if isNaN(indicator.performance.percentage)
-//-                         strong(class = 'text-underPerform') N/A
-//-                       else if indicator.aboveTarget
-//-                         if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
-//-                           strong(class = 'text-topTen')= indicator.performance.incidence + ' per 1000'
-//-                         else
-//-                           strong(class = 'text-overPerform')= indicator.performance.incidence + ' per 1000'
-//-                       else
-//-                         strong(class = 'text-underPerform')= indicator.performance.incidence + ' per 1000'
-                        
-//-                       //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-//-                       span= ' (' + indicator.performance.fraction + ')'
-//-                     td= indicator.performance.incidenceMultiple + ' per 1000'
-//-                     td= indicator.performance.incidenceStandardised ?  indicator.performance.incidenceStandardised + ' per 1000' : 'TBA'
-//-                     td= (indicator.benchmark*100).toFixed(0)+"%"
-//-                     td(style="text-align:center")
-//-                       if indicator.change==="up"
-//-                         i.fa.fa-2x.fa-fw.fa-caret-up
-//-                       else if indicator.change==="down"
-//-                         i.fa.fa-2x.fa-fw.fa-caret-down
-//-                       else
-//-                         i.fa.fa-fw.fa-minus
-//-                     td
-//-                       span.inlinesparkline= indicator.trend
-//-                   tr.show-more-row(data-id=indicator.id,class=alt ? 'alternate-row': '')
-//-                     td(colspan='7')!= indicator.description
-//-                         br
-//-                         a.show-more(data-id=indicator.id)
-//-                           | Show less 
-//-                           i.fa.fa-caret-up
-//-                   - alt = !alt
-//-     #processIndicators.tab-pane.fade(class=selectedTab==='#processIndicators' ? "active in" : "",role="tabpanel")
-//-       .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
-//-         .panel-body.pastel-pink.overview-table
-//-           .table-scroll(style='overflow-x:hidden')
-//-             table#overview-table-process.table
-//-               thead
-//-                 tr(style='background-color:#fff9ff')
-//-                   th Indicator
-//-                   th Current Performance
-//-                   th Actioned Patients
-//-                   th Salford Target
-//-                   th Top 10% Benchmark
-//-                   th Change from Yesterday
-//-                   th 1 Year Trend
-//-               tbody
-//-                 - var alt=false
-//-                 each indicator in processIndicators
-//-                   tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
-//-                     td
-//-                       strong!= indicator.name
-//-                       br
-//-                       a.show-more(data-id=indicator.id)
-//-                         | Show more 
-//-                         i.fa.fa-caret-down
-//-                     td
-//-                       //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-//-                       if isNaN(indicator.performance.percentage)
-//-                         strong(class = 'text-underPerform') N/A
-//-                       else if indicator.aboveTarget
-//-                         if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
-//-                           strong(class = 'text-topTen')= indicator.performance.percentage + '%'
-//-                         else
-//-                           strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
-//-                       else
-//-                         strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
-                        
-//-                       //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-//-                       span= ' (' + indicator.performance.fraction + ')'
-//-                     td= indicator.reviewed + "/" + indicator.patientsWithOpportunity
-//-                     td= indicator.target
-//-                     td= (indicator.benchmark*100).toFixed(0)+"%"
-//-                     td(style="text-align:center")
-//-                       if indicator.change==="up"
-//-                         i.fa.fa-2x.fa-fw.fa-caret-up
-//-                       else if indicator.change==="down"
-//-                         i.fa.fa-2x.fa-fw.fa-caret-down
-//-                       else
-//-                         i.fa.fa-fw.fa-minus
-//-                     td
-//-                       span.inlinesparkline= indicator.trend
-//-                   tr.show-more-row(data-id=indicator.id,class=alt ? 'alternate-row': '')
-//-                     td(colspan='6')!= indicator.description
-//-                         br
-//-                         a.show-more(data-id=indicator.id)
-//-                           | Show less 
-//-                           i.fa.fa-caret-up
-//-                   - alt = !alt            
+    small.category Outcome indicators and process indicators lists...
+    .tab-content.panel-body.overview-table.wrapper-floatTHead
+          ul.nav.nav-tabs(role="tablist")
+            li(class=!selectedTab || selectedTab==='#outcomeIndicators' ? "active" : "",role="presentation")
+                a(href="#outcomeIndicators",aria-controls="outcomeIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Outcome indicators (" + outcomeIndicators.length + ")"
+            li(class=selectedTab==='#processIndicators' ? "active" : "",role="presentation")
+                a(href="#processIndicators",aria-controls="processIndicators",role="tab",data-toggle="tab",style="margin-top:0")= "Process indicators (" + processIndicators.length + ")" 
+          #outcomeIndicators.tab-pane.fade(class=!selectedTab || selectedTab==='#outcomeIndicators' ? "active in" : "",role="tabpanel")
+            .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
+              .panel-body.overview-table(style='padding-top: 0px !important')
+                .table-scroll(style='overflow-x:hidden')
+                  table#overview-table-outcomes.table
+                    thead
+                      tr
+                        th Indicator
+                        th Incidence (first)
+                        th Incidence (multiple)
+                        th Standardised Incidence (first)
+                        th Lowest 10% Benchmark
+                        th Change from Yesterday
+                        th 1 Year Trend
+                    tbody
+                      - var alt=false
+                      each indicator in outcomeIndicators
+                        tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
+                          td
+                            strong!= indicator.name
+                            br
+                            a.show-more(data-id=indicator.id)
+                              | Show more 
+                              i.fa.fa-caret-down
+                          td
+                            //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                            if isNaN(indicator.performance.percentage)
+                              strong(class = 'text-underPerform') N/A
+                            else if indicator.aboveTarget
+                              if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
+                                strong(class = 'text-topTen')= indicator.performance.incidence + ' per 1000'
+                              else
+                                strong(class = 'text-overPerform')= indicator.performance.incidence + ' per 1000'
+                            else
+                              strong(class = 'text-underPerform')= indicator.performance.incidence + ' per 1000'
+                              
+                            //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                            span= ' (' + indicator.performance.fraction + ')'
+                          td= indicator.performance.incidenceMultiple + ' per 1000'
+                          td= indicator.performance.incidenceStandardised ?  indicator.performance.incidenceStandardised + ' per 1000' : 'TBA'
+                          td= (indicator.benchmark*100).toFixed(0)+"%"
+                          td(style="text-align:center")
+                            if indicator.change==="up"
+                              i.fa.fa-2x.fa-fw.fa-caret-up
+                            else if indicator.change==="down"
+                              i.fa.fa-2x.fa-fw.fa-caret-down
+                            else
+                              i.fa.fa-fw.fa-minus
+                          td
+                            span.inlinesparkline= indicator.trend
+                        tr.show-more-row(style='display: none' data-id=indicator.id,class=alt ? 'alternate-row': '')
+                          td(colspan='7')!= indicator.description
+                              br
+                              a.show-more(data-id=indicator.id)
+                                | Show less 
+                                i.fa.fa-caret-up
+                        - alt = !alt
+          #processIndicators.tab-pane.fade(class=selectedTab==='#processIndicators' ? "active in" : "",role="tabpanel")
+            .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
+              .panel-body.overview-table(style='padding-top: 0px !important')
+                .table-scroll(style='overflow-x:hidden')
+                  table#overview-table-process.table
+                    thead
+                      tr
+                        th Indicator
+                        th Current Performance
+                        th Actioned Patients
+                        th Salford Target
+                        th Top 10% Benchmark
+                        th Change from Yesterday
+                        th 1 Year Trend
+                    tbody
+                      - var alt=false
+                      each indicator in processIndicators
+                        tr.standard-row(data-id=indicator.id,class=alt ? 'alternate-row': '',data-toggle='tooltip', data-placement='left', title='Click for more detail')
+                          td
+                            strong!= indicator.name
+                            br
+                            a.show-more(data-id=indicator.id)
+                              | Show more 
+                              i.fa.fa-caret-down
+                          td
+                            //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                            if isNaN(indicator.performance.percentage)
+                              strong(class = 'text-underPerform') N/A
+                            else if indicator.aboveTarget
+                              if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
+                                strong(class = 'text-topTen')= indicator.performance.percentage + '%'
+                              else
+                                strong(class = 'text-overPerform')= indicator.performance.percentage + '%'
+                            else
+                              strong(class = 'text-underPerform')= indicator.performance.percentage + '%'
+                              
+                            //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                            span= ' (' + indicator.performance.fraction + ')'
+                          td= indicator.reviewed + "/" + indicator.patientsWithOpportunity
+                          td= indicator.target
+                          td= (indicator.benchmark*100).toFixed(0)+"%"
+                          td(style="text-align:center")
+                            if indicator.change==="up"
+                              i.fa.fa-2x.fa-fw.fa-caret-up
+                            else if indicator.change==="down"
+                              i.fa.fa-2x.fa-fw.fa-caret-down
+                            else
+                              i.fa.fa-fw.fa-minus
+                          td
+                            span.inlinesparkline= indicator.trend
+                        tr.show-more-row(style='display: none' data-id=indicator.id,class=alt ? 'alternate-row': '')
+                          td(colspan='6')!= indicator.description
+                              br
+                              a.show-more(data-id=indicator.id)
+                                | Show less 
+                                i.fa.fa-caret-up
+                        - alt = !alt           

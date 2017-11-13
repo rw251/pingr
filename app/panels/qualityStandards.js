@@ -11,7 +11,7 @@ var deleteRow = function(row, callback) {
       .animate({ paddingTop: 0, paddingBottom: 0 }, 500)
       .wrapInner('<div />')
       .children()
-      .slideUp(500, function () { 
+      .slideUp(500, function () {
           $(this).closest('tr').remove();
           return callback();
       });
@@ -71,7 +71,7 @@ var qs = {
     //
     var html = tmpl({
       noStandards: patientData.standards.length === 0,
-      standards: processStandards, //REVIEW needs to be called processStandards
+      standards: processStandards, //REVIEW [done] needs to be called processStandards
       outcomeStandards: outcomeStandards,
       indicatorId: pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : null,
       patientId: patientId,

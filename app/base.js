@@ -265,12 +265,12 @@ var base = {
     //console.log("update called");
     if (!elements) elements = base.elements;
     base.elements = elements;
-    console.log("shall we update?");
+    //console.log("shall we update?");
     var currentlyVisibleElements = elements.filter(function(v){
       return $(v.selector + ":visible").length>0 ;
     });
     if (currentlyVisibleElements.length !== elements.length) {
-      console.log("no - wait a bit.");
+      //console.log("no - wait a bit.");
       if ($('#addedCSS').length === 0) {
         $('head').append('<style id="addedCSS" type="text/css"></style>');
       }

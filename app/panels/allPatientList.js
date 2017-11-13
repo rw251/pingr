@@ -90,8 +90,6 @@ var pl = {
 
       base.hideLoading();
 
-      //REVIEW
-      //this was ben's
       var $scrollTable = $('#allPatientTable')
 
       $scrollTable.floatThead({
@@ -99,13 +97,6 @@ var pl = {
           return $scrollTable.closest('.wrapper-floatTHead');
         }
       });
-      //this was mine
-      /*$('#allPatientTable').floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex: 50
-      });*/
-      //REVIEW END
     });
 
   },

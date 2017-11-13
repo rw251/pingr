@@ -155,7 +155,7 @@ var pl = {
           callback(patientId, type);
           e.preventDefault();
           e.stopPropagation();
-        } 
+        }
         buttonClicked = false;
       }).on('click', 'tbody tr button', function (e) {
         //don't want row selected if just button pressed?
@@ -266,7 +266,7 @@ var pl = {
         base.setupClipboard('.btn-copy', true);
         base.wireUpTooltips();
       }, 100);
-//REVIEW
+//REVIEW [done]
       base.wireUpTooltips();
       //
       // $('#patient-list').floatThead({
@@ -289,7 +289,7 @@ var pl = {
 
       base.hideLoading();
 
-      //base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
+      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight:300 }, { selector: '.table-scroll', padding: 440, minHeight:170 }, {selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
 // ben above me below
       var updateInfo = function () {
         $("#patient-list_info")
@@ -309,18 +309,11 @@ var pl = {
 
       $('.dt-buttons').addClass('pull-right');
 
-      /*$('#patient-list').floatThead({
-        position: 'absolute',
-        scrollContainer: true,
-        zIndex: 50
-      });
-      
-      $('#patient-list').floatThead('reflow');*/
+      $('#patient-list').floatThead('reflow');
 
       base.hideLoading();
 
-      base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight: 300 }, /*{ selector: '.table-scroll', padding: 340, minHeight: 170 }, */{ selector: '#personalPlanTeam', padding: 820, minHeight: 200 }, { selector: '#advice-list', padding: 430, minHeight: 250 }]);
-//REVIEW END
+      //base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15, minHeight: 300 }, /*{ selector: '.table-scroll', padding: 340, minHeight: 170 }, */{ selector: '#personalPlanTeam', padding: 820, minHeight: 200 }, { selector: '#advice-list', padding: 430, minHeight: 250 }]);
     });
 
   },
