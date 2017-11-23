@@ -1,7 +1,7 @@
 include ../partials/head.jade
 include ../mixins/toolbar.jade
 .container.starter-template-high
-  +toolbar('User list', [{btn:'btn-info',path:'/',text:'Back to PINGR'},{btn:'btn-info',path:'/adduser',text:'Add user'}])
+  +toolbar('User list', [{btn:'btn-info',path:'./',text:'Back to PINGR'},{btn:'btn-info',path:'adduser',text:'Add user'}])
   table.table
     thead
       tr
@@ -30,10 +30,10 @@ include ../mixins/toolbar.jade
           td
             .btn-toolbar
               - if(user.practices && user.practices.filter(function(v) { return !v.authorised;}).length>0)  
-                a.btn.btn-success(href='/authorise/'+user.email) Authorise
-                a.btn.btn-danger(href='/reject/'+user.email) Reject
+                a.btn.btn-success(href='authorise/'+user.email) Authorise
+                a.btn.btn-danger(href='reject/'+user.email) Reject
               - else
-                a.btn.btn-success(href='/edit/'+user.email) Edit
-                a.btn.btn-warning(href='/reset/'+user.email) Reset password
-                a.btn.btn-danger(href='/delete/'+user.email) Delete
-  a.btn.btn-info(href='/adduser') Add User
+                a.btn.btn-success(href='edit/'+user.email) Edit
+                a.btn.btn-warning(href='reset/'+user.email) Reset password
+                a.btn.btn-danger(href='delete/'+user.email) Delete
+  a.btn.btn-info(href='adduser') Add User

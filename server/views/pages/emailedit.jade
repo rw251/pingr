@@ -1,5 +1,5 @@
 include ../partials/headMinimalCss.jade
-a.pure-button(href='/emailadmin') Back to email template list
+a.pure-button(href='emailadmin') Back to email template list
 .pure-g
   .pure-u-1-8
   .pure-u-3-4
@@ -13,7 +13,7 @@ a.pure-button(href='/emailadmin') Back to email template list
 .pure-g
   .pure-u-1-8
   .pure-u-3-4
-    form.pure-form(action='/emailedit/'+email.label, method='post')
+    form.pure-form(method='post')
       label(for='label')= "Label (for id purposes):"
       input.pure-input-1(type='text', name='label', placeholder='Label to identify template', required='', autofocus='', value=email.label)
       label(for='subject') Email subject:

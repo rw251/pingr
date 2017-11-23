@@ -12,7 +12,7 @@ var log = {
     var dataToSend = { event: { type: type, url: url, data: data } };
     $.ajax({
       type: "POST",
-      url: "/api/event",
+      url: "api/event",
       data: JSON.stringify(dataToSend),
       success: function (d) { console.log(d); },
       dataType: "json",
@@ -43,7 +43,7 @@ var log = {
     
     $.ajax({
       type: "POST",
-      url: "/api/exclude/patient/" + patientId + "/for/indicator/" + indicatorId + "/practice/" + practiceId,
+      url: "api/exclude/patient/" + patientId + "/for/indicator/" + indicatorId + "/practice/" + practiceId,
       data: JSON.stringify({ reason: reason, freetext: freetext }),
       success: function () {
 
@@ -66,7 +66,7 @@ var log = {
     }
     $.ajax({
       type: "POST",
-      url: "/api/include/patient/" + patientId + "/for/indicator/" + indicatorId + "/practice/" + practiceId,
+      url: "api/include/patient/" + patientId + "/for/indicator/" + indicatorId + "/practice/" + practiceId,
       success: function () {
 
       },
@@ -79,7 +79,7 @@ var log = {
   recordIndividualPlan: function (text, practiceId, patientId, indicatorList, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/addIndividual/" + practiceId + "/" + patientId,
+      url: "api/action/addIndividual/" + practiceId + "/" + patientId,
       data: JSON.stringify({ actionText: text, indicatorList: indicatorList }),
       success: function (action) {
         notify.showSaved();
@@ -95,7 +95,7 @@ var log = {
   deleteUserDefinedPatientAction: function (patientId, actionTextId, done) {
     $.ajax({
       type: "DELETE",
-      url: "/api/action/userdefinedpatient/" + patientId + "/" + actionTextId,
+      url: "api/action/userdefinedpatient/" + patientId + "/" + actionTextId,
       success: function (d) {
         notify.showSaved();
         data.removePatientAction(patientId, actionTextId);
@@ -110,7 +110,7 @@ var log = {
   updateIndividualAction: function (practiceId, patientId, updatedAction, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/update/individual/" + practiceId + "/" + patientId,
+      url: "api/action/update/individual/" + practiceId + "/" + patientId,
       data: JSON.stringify({ action: updatedAction }),
       success: function (action) {
         notify.showSaved();
@@ -131,7 +131,7 @@ var log = {
   updateTeamAction: function (practiceId, indicatorId, data, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/update/team/" + practiceId + "/" + indicatorId,
+      url: "api/action/update/team/" + practiceId + "/" + indicatorId,
       data: JSON.stringify({ action: data }),
       success: function (d) {
         notify.showSaved();
@@ -145,7 +145,7 @@ var log = {
   updateUserDefinedPatientAction: function (patientId, actionTextId, data, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/update/userdefinedpatient/" + patientId + "/" + actionTextId,
+      url: "api/action/update/userdefinedpatient/" + patientId + "/" + actionTextId,
       data: JSON.stringify({ action: data }),
       success: function (d) {
         notify.showSaved();
@@ -159,7 +159,7 @@ var log = {
   deleteUserDefinedTeamAction: function (actionTextId, done) {
     $.ajax({
       type: "DELETE",
-      url: "/api/action/userdefinedteam/" + actionTextId,
+      url: "api/action/userdefinedteam/" + actionTextId,
       success: function (d) {
         notify.showSaved();
         if (done) return done(null, d);
@@ -172,7 +172,7 @@ var log = {
   updateUserDefinedTeamAction: function (actionTextId, data, done) {
     $.ajax({
       type: "POST",
-      url: "/api/action/update/userdefinedteam/" + actionTextId,
+      url: "api/action/update/userdefinedteam/" + actionTextId,
       data: JSON.stringify({ action: data }),
       success: function (d) {
         notify.showSaved();
@@ -184,7 +184,7 @@ var log = {
   },
 
   recordTeamPlan: function (practiceId, text, indicatorId, done) {
-    var url = "/api/action/addTeam/" + practiceId + "/" + (indicatorId || "");
+    var url = "api/action/addTeam/" + practiceId + "/" + (indicatorId || "");
     $.ajax({
       type: "POST",
       url: url,

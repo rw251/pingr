@@ -1,7 +1,7 @@
 include ../partials/head.jade
 .container.starter-template-high
   .btn-toolbar
-    a.btn.btn-info(href='/admin') Back to user list
+    a.btn.btn-info(href='../admin') Back to user list
   - if(message && message.error)
     div.alert.alert-danger(role="alert")= message.error
   - if(message && message.success)

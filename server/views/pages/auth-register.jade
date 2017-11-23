@@ -3,14 +3,14 @@ include ../mixins/email-preferences.jade
 include ../mixins/user-details.jade
 include ../mixins/toolbar.jade
 .container-wide.starter-template-high(style="background-color: white")
-  +toolbar('Register an account', [{btn:'btn-info',path:'/',text:'Back to PINGR'}])
+  +toolbar('Register an account', [{btn:'btn-info',path:'./',text:'Back to PINGR'}])
   - if(message && message.success)
     div.alert.alert-success(role="alert")= message.success
     - if(message.warning)
       div.alert.alert-warning(role="alert")
         strong= message.warning
   - else
-    form(action='/register', method='post')
+    form(method='post')
       +user-details('Register',true)
 
       - if(message && message.error)

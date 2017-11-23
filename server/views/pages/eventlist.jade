@@ -2,8 +2,8 @@ include ../mixins/data-item
 include ../partials/head.jade
 div
   .btn-toolbar
-    a.btn.btn-info(href='/') Back to interface
-  form.form-inline(action='/eventsdownload', method='get')
+    a.btn.btn-info(href='./') Back to interface
+  form.form-inline(action='eventsdownload', method='get')
     .form-group
       label(for='from') From:
       input.form-control(type='text',name='from',placeholder='Records from (YYYY-MM-DD)')
@@ -37,7 +37,7 @@ div
       each event in events
         tr
           td(title=event.user)
-            a(href='/events/'+event.user)= (event.user && event.user.match(/^[^@]+/)) ? event.user.match(/^[^@]+/) : ""
+            a(href='events/'+event.user)= (event.user && event.user.match(/^[^@]+/)) ? event.user.match(/^[^@]+/) : ""
           td(title=event.sessionId)= event.sessionId ? event.sessionId.substr(0,5)+"..." : ""
           td= event.type
           td= event.url

@@ -2,8 +2,8 @@ include ../partials/head.jade
 include ../mixins/toolbar.jade
 include ../mixins/password-field.jade
 .container-wide.starter-template-high(style="background-color: white")
-  +toolbar('Reset user\'s password', [{btn:'btn-info',path:'/admin',text:'Back to user list'}])
-  form(action='/reset/'+email, method='post')
+  +toolbar('Reset user\'s password', [{btn:'btn-info',path:'../admin',text:'Back to user list'}])
+  form(method='post')
     +password(true)
     button.btn.btn-purple.btn-block.history(type='submit') Update
   if message && message.success

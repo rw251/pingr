@@ -12,7 +12,7 @@ var _getPatientData = function (patient, callback) {
   }
 
   $.ajax({
-    url: "/api/PatientDetails/" + patient,
+    url: "api/PatientDetails/" + patient,
     async: isAsync,
     success: function (file) {
       if (!dt.patients) dt.patients = {};
@@ -63,7 +63,7 @@ var dt = {
     if (isFetchingNhsLookup) return;
     if (dt.patLookup && dt.patLookup[practiceId]) return done();
     isFetchingNhsLookup = true;
-    $.getJSON("/api/nhs/" + practiceId, function (lookup) {
+    $.getJSON("api/nhs/" + practiceId, function (lookup) {
       if(!dt.patLookup) dt.patLookup = {};
       dt.patLookup[practiceId] = lookup;
       isFetchingNhsLookup = false;
@@ -74,7 +74,7 @@ var dt = {
   getAllAgreedWithActions: function (practiceId, done) {
     $.ajax({
       type: "GET",
-      url: "/api/action/all/" + practiceId,
+      url: "api/action/all/" + practiceId,
       success: function (d) {
         return done(null, d);
       },
@@ -84,7 +84,7 @@ var dt = {
   },
 
   get: function (practiceId, force, callback, json) {
-    $.getJSON("/api/Text", function (textfile) {
+    $.getJSON("api/Text", function (textfile) {
       dt.text = textfile;
       dt.getAllIndicatorData(practiceId, force, function () {
         dt.getExcludedPatients(practiceId, function (err) {
@@ -212,7 +212,7 @@ var dt = {
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
     $.ajax({
-      url: "/api/BenchmarkDataFor/" + practiceId + "/" + indicatorId,
+      url: "api/BenchmarkDataFor/" + practiceId + "/" + indicatorId,
       success: function (benchmarkData) {
         return callback(benchmarkData);
       },
@@ -235,10 +235,10 @@ var dt = {
     //var addId = '/'+practiceId;
     var routeURL;
     if (practiceId) {
-      routeURL = "/api/ListOfIndicatorsForPractice/" + practiceId;
+      routeURL = "api/ListOfIndicatorsForPractice/" + practiceId;
 
     } else {
-      routeURL = "/api/ListOfIndicatorsForPractice";
+      routeURL = "api/ListOfIndicatorsForPractice";
     }
 
     //we never want to cache this anymore.
@@ -281,7 +281,7 @@ var dt = {
     var isAsync = typeof (callback) === "function";
 
     $.ajax({
-      url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
+      url: "api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
       async: isAsync,
       success: function (file) {
         if (!dt.indicators) dt.indicators = {};
@@ -514,7 +514,7 @@ var dt = {
     } else {
 
       $.ajax({
-        url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
+        url: "api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
         success: function (file) {
           dt.patientList[practiceId][indicatorId].file = file;
           dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
@@ -711,7 +711,7 @@ var dt = {
 
   getExcludedPatients: function (practiceId, callback) {
     $.ajax({
-      url: "/api/excludedpatients/practice/" + practiceId,
+      url: "api/excludedpatients/practice/" + practiceId,
       success: function (file) {
         dt.excludedPatients = {};
         dt.excludedPatientsByIndicator = {};

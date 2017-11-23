@@ -17,6 +17,8 @@ var text = require('../controllers/text.js');
 var utils = require('../controllers/utils.js');
 var config = require('../config');
 
+var subfolder = '/beta'; // or ''
+
 const isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
   // Passport adds this method to request object. A middleware is allowed to add properties to
@@ -24,8 +26,8 @@ const isAuthenticated = function(req, res, next) {
   if (req.isAuthenticated())
     return next();
   // if the user is not authenticated then redirect him to the login page
-  req.session.redirect_to = req.path; //remember the page they tried to load
-  res.redirect('/login');
+  req.session.redirect_to = [subfolder, req.path].join('/'); //remember the page they tried to load
+  res.redirect([subfolder,'login'].join('/'));
 };
 
 const isUserOkToViewPractice = function(req, res, next) {
@@ -36,7 +38,7 @@ const isUserOkToViewPractice = function(req, res, next) {
 
 var isAdmin = function(req, res, next) {
   if (req.user.roles.indexOf("admin") > -1) return next();
-  res.redirect('/login');
+  res.redirect([subfolder,'login'].join('/'));
 };
 
 module.exports = function(passport) {
@@ -48,9 +50,9 @@ module.exports = function(passport) {
   });
 
   /* Handle Login POST */
-  router.post('/login', passport.authenticate('login', { failureFlash: true, failureRedirect: '/login' }), function(req, res) {
+  router.post('/login', passport.authenticate('login', { failureFlash: true, failureRedirect: [subfolder,'login'].join('/') }), function(req, res) {
     events.login(req.user.email, req.sessionID);
-    var red = req.session.redirect_to || '/';
+    var red = req.session.redirect_to || [subfolder,''].join('/');
     if (req.body.hash) red += '#' + req.body.hash;
     req.session.redirect_to = null;
     delete req.session.redirect_to;
@@ -120,7 +122,7 @@ module.exports = function(passport) {
           res.render('pages/emailadd.jade', data);
         });
       } else {
-        res.redirect('/emailadmin');
+        res.redirect([subfolder,'emailadmin'].join('/'));
       }
     });
   });
@@ -152,7 +154,7 @@ module.exports = function(passport) {
           });
         });
       } else {
-        res.redirect('/emailadmin');
+        res.redirect([subfolder,'emailadmin'].join('/'));
       }
     });
   });
@@ -163,7 +165,7 @@ module.exports = function(passport) {
 
   router.post('/emaildelete/:label', isAuthenticated, isAdmin, function(req, res) {
     emails.delete(req.params.label, function(err, user, flash) {
-      res.redirect('/emailadmin');
+      res.redirect([subfolder,'emailadmin'].join('/'));
     });
   });
 
@@ -236,12 +238,12 @@ module.exports = function(passport) {
     }
     req.logout();
     req.session.destroy(function(err) {
-      res.redirect('/login'); //Inside a callback… bulletproof!
+      res.redirect([subfolder,'login'].join('/')); //Inside a callback… bulletproof!
     });
     //RW The below sometimes means the redirect occurs before the logout has finished
     //and the user remains logged in
     //req.logout();
-    //res.redirect('/login');
+    //res.redirect([subfolder,'login'].join('/'));
   });
 
   /* EVENT VIEWER */
@@ -293,7 +295,7 @@ module.exports = function(passport) {
           });
         });
       } else {
-        res.redirect('/admin');
+        res.redirect([subfolder,'admin'].join('/'));
       }
     });
   });
@@ -304,7 +306,7 @@ module.exports = function(passport) {
 
   router.post('/delete/:email', isAuthenticated, isAdmin, function(req, res) {
     users.delete(req.params.email, function(err, user, flash) {
-      res.redirect('/admin');
+      res.redirect([subfolder,'admin'].join('/'));
     });
   });
 
@@ -329,7 +331,7 @@ module.exports = function(passport) {
           });
         });
       } else {
-        res.redirect('/admin');
+        res.redirect([subfolder,'admin'].join('/'));
       }
     });
   });
@@ -607,12 +609,12 @@ module.exports = function(passport) {
 
   router.get('/t/:token/*', function(req, res) {
     events.emailReminderTokenCheck(req.params.token, req.url);
-    res.redirect('/');
+    res.redirect([subfolder,''].join('/'));
   });
 
   router.get('/t/:token', function(req, res) {
     events.emailReminderTokenCheck(req.params.token, req.url);
-    res.redirect('/');
+    res.redirect([subfolder,''].join('/'));
   });
 
   router.get('/', isAuthenticated, function(req, res, next) {

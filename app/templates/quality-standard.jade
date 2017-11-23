@@ -38,12 +38,12 @@ else
                       i.fa.fa-fw.fa-check.text-success
                   td(style=standard.excluded ? 'text-align:right;background-color:rgba(245,245,245,0.5)' : 'text-align:right;')
                     if (standard.indicatorId === indicatorId && processStandards.filter(function(v){return !v.targetMet;}).length > 1)
-                      a.btn.btn-warning.btn-sm(href='/#patient/'+patientId,disabled=standard.excluded,class=standard.excluded ? 'disabled':'') Showing actions for this indicator - click to show all
+                      a.btn.btn-warning.btn-sm(href='#patient/'+patientId,disabled=standard.excluded,class=standard.excluded ? 'disabled':'') Showing actions for this indicator - click to show all
                     else if (!standard.targetMet && processStandards.filter(function(v){return !v.targetMet;}).length === 1)
                       span Currently showing actions for this indicator 
                     else 
                       if !standard.targetMet
-                        a.btn.btn-info.btn-sm(href='/#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/"),disabled=standard.excluded,class=standard.excluded ? 'disabled':'') Show actions for this indicator only
+                        a.btn.btn-info.btn-sm(href='#patient/'+patientId+'/'+standard.indicatorId.replace(/\./g,"/"),disabled=standard.excluded,class=standard.excluded ? 'disabled':'') Show actions for this indicator only
                     
                     if standard.excluded
                       button.btn.btn-default.btn-sm.include(data-id=standard.indicatorId, style='opacity:1', data-container='body', data-html='true', data-toggle='tooltip', data-placement='left', title=standard.excludedTooltip + '<p>Click to include this patient for this indicator.</p>') Excluded

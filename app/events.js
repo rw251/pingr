@@ -99,7 +99,7 @@ var logInfo = function(event, type, href) {
     var dataToSend = { event: obj };
     $.ajax({
       type: "POST",
-      url: "/api/event",
+      url: "api/event",
       data: JSON.stringify(dataToSend),
       success: function(d) {
         eventFailCount = 0;

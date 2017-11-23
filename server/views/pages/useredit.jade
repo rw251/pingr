@@ -3,8 +3,8 @@ include ../mixins/email-preferences.jade
 include ../mixins/user-details.jade
 include ../mixins/toolbar.jade
 .container-wide.starter-template-high(style="background-color: white")
-  +toolbar('Edit user', [{btn:'btn-info',path:'/admin',text:'Back to user list'}])
-  form(action='/edit/'+user.email, method='post')
+  +toolbar('Edit user', [{btn:'btn-info',path:'../admin',text:'Back to user list'}])
+  form(method='post')
     +user-details("Update", false, true)
     +email-prefs("Update", true, false, true) 
     - if(message && message.error)
