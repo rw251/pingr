@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -19,6 +20,11 @@ module.exports = function(PORT, PATH, CALLBACK) {
 
   // add gzip
   app.use(compression());
+
+  // add cors (for reverse proxy and pingr-proxy)
+  app.use(cors({
+    origin: ["https://pingr-proxy.herokuapp.com", "https://pingr-dev.herokuapp.com", "https://pingr-ben.herokuapp.com"],
+  }));
 
   // view engine setup
   //app.set('views', path.join(__dirname, 'views'));
