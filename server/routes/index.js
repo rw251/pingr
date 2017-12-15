@@ -17,7 +17,7 @@ var text = require('../controllers/text.js');
 var utils = require('../controllers/utils.js');
 var config = require('../config');
 
-var subfolder = '/beta'; // or ''
+var subfolder = config.server.sub;// '/beta'; // or ''
 
 const isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler

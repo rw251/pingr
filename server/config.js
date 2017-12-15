@@ -20,6 +20,7 @@ const ENV = {
   //server details
   SERVER_PORT: process.env.PINGR_SERVER_PORT,
   SERVER_URL: mustExist("PINGR_SERVER_URL"),
+  SERVER_SUBFOLDER: process.env.PINGR_SERVER_SUBFOLDER || '', //Try '/beta'
 
   //email sending
   SMTP_HOST: process.env.PINGR_SMTP_HOST || 'mail.srft.nhs.uk',
@@ -46,7 +47,8 @@ module.exports = {
   },
   server: {
     port: ENV.SERVER_PORT,
-    url: ENV.SERVER_URL
+    url: ENV.SERVER_URL,
+    sub: ENV.SERVER_SUBFOLDER,
   },
   mail: {
     sendEmailOnError: true,
