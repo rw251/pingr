@@ -11,6 +11,7 @@
     "postinstall": "npm run build",
     "watch": "brunch watch",
     "debug": "node --inspect --debug-brk server.js",
+    "pretest": "eslint --ignore-path .gitignore .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jshint --show-non-errors app",
     "test:email": "node deploy/appserver/emailReminders.js test"
@@ -30,6 +31,8 @@
     "brunch": "^2.8.2",
     "cp": "^0.2.0",
     "decompress": "^4.2.0",
+    "eslint": "^4.13.1",
+    "eslint-config-strongloop": "^2.1.0",
     "jade-brunch": "^2.8.0",
     "javascript-brunch": "^2.0.0",
     "jshint": "^2.7.0",
