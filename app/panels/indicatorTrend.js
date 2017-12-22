@@ -1,29 +1,20 @@
-var base = require('../base.js'),
-  data = require('../data.js'),
-  chart = require('../chart.js'),
-  patientList = require('./patientList.js');
+const data = require('../data.js');
+const chart = require('../chart.js');
+const $ = require('jquery');
 
-var ID = "INDICATOR_TREND";
+const iTrend = {
+  show(panel, isAppend, pathwayId, pathwayStage, standard) {
+    const trend = data.getTrendData('P87024', pathwayId, pathwayStage, standard);
 
-var iTrend = {
-
-  show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
-
-    var trend = data.getTrendData("P87024", pathwayId, pathwayStage, standard);
-
-    var elem = $("<div id='trend-chart' class='fit-to-scrolling-section-height'></div>");
+    const elem = $("<div id='trend-chart' class='fit-to-scrolling-section-height'></div>");
 
     if (isAppend) panel.append(elem);
     else panel.html(elem);
 
-    chart.drawPerformanceTrendChartHC("trend-chart", trend);
-
+    chart.drawPerformanceTrendChartHC('trend-chart', trend);
   },
 
-  wireUp: function() {
-
-  }
-
+  wireUp() {},
 };
 
 module.exports = iTrend;

@@ -1,11 +1,22 @@
-var ap = {
+const $ = require('jquery');
+const modalWhyTemplate = require('../templates/modal-why.jade');
 
-  launchModal: function(data, label, value, reasonText, callbackOnSave, callbackOnCancel, callbackOnUndo) {
-    var tmpl = require("../templates/modal-why");
+const ap = {
+  launchModal(
+    data,
+    label,
+    value,
+    reasonText,
+    callbackOnSave,
+    callbackOnCancel,
+    callbackOnUndo
+  ) {
+    const tmpl = modalWhyTemplate;
+    const templateData = data;
 
-    if (data.reasons && data.reasons.length > 0) data.hasReasons = true;
+    if (data.reasons && data.reasons.length > 0) templateData.hasReasons = true;
 
-    $('#modal').html(tmpl(data));
+    $('#modal').html(tmpl(templateData));
 
     if (reasonText) {
       $('#modal textarea').val(reasonText.trim());
@@ -13,44 +24,65 @@ var ap = {
     ap.modalSaved = false;
     ap.modalUndo = false;
 
-    $('#modal .modal').off('shown.bs.modal').on('shown.bs.modal', function (e) {
-      $('#modal-why-text').focus();
-    });
+    $('#modal .modal')
+      .off('shown.bs.modal')
+      .on('shown.bs.modal', () => {
+        $('#modal-why-text').focus();
+      });
 
-    $('#modal .modal').off('click', '.undo-plan').on('click', '.undo-plan', function(e) {
-      ap.modalUndo = true;
-    }).off('submit', 'form').on('submit', 'form', {
-      "label": label
-    }, function(e) {
-      if (!e.data.label) e.data.label = "team";
-      var reason = $('input:radio[name=reason]:checked').val();
-      var reasonText = $('#modal textarea').val();
+    $('#modal .modal')
+      .off('click', '.undo-plan')
+      .on('click', '.undo-plan', () => {
+        ap.modalUndo = true;
+      })
+      .off('submit', 'form')
+      .on(
+        'submit',
+        'form',
+        {
+          label,
+        },
+        (e) => {
+          if (!e.data.label) {
+            // e.data.label = 'team';
+            console.warn('Hopefyully we dont get here');
+          }
+          const reason = $('input:radio[name=reason]:checked').val();
+          const localReasonText = $('#modal textarea').val();
 
-      ap.rejectedReason = reason;
-      ap.rejectedReasonText = reasonText;
+          ap.rejectedReason = reason;
+          ap.rejectedReasonText = localReasonText;
 
-      ap.modalSaved = true;
+          ap.modalSaved = true;
 
-      e.preventDefault();
-      $('#modal .modal').modal('hide');
-    }).modal();
+          e.preventDefault();
+          $('#modal .modal').modal('hide');
+        }
+      )
+      .modal();
 
-    $('#modal').off('hidden.bs.modal').on('hidden.bs.modal', {
-      "label": label
-    }, function(e) {
-      if (ap.modalSaved) {
-        ap.modalSaved = false;
-        if (callbackOnSave) callbackOnSave();
-      } else if (ap.modalUndo) {
-        ap.modalUndo = false;
-        if (callbackOnUndo) callbackOnUndo();
-      } else {
-        //uncheck as cancelled. - but not if value is empty as this unchecks everything - or if already checked
-        if (callbackOnCancel) callbackOnCancel();
-      }
-    });
-  }
-
+    $('#modal')
+      .off('hidden.bs.modal')
+      .on(
+        'hidden.bs.modal',
+        {
+          label,
+        },
+        () => {
+          if (ap.modalSaved) {
+            ap.modalSaved = false;
+            if (callbackOnSave) callbackOnSave();
+          } else if (ap.modalUndo) {
+            ap.modalUndo = false;
+            if (callbackOnUndo) callbackOnUndo();
+          } else if (callbackOnCancel) {
+            callbackOnCancel();
+            // uncheck as cancelled. - but not if value is empty as
+            // this unchecks everything - or if already checked
+          }
+        }
+      );
+  },
 };
 
 module.exports = ap;

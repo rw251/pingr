@@ -6,7 +6,8 @@ var nodemailer = require('nodemailer'),
   mailConfig = require('./config').mail;
 
 var sendEmailViaSendgridHttp = function(config, callback) {
-  var content, helper = sendgrid.mail;
+  var content,
+    helper = sendgrid.mail;
 
   var mail = new helper.Mail(); //, , , content);
 
@@ -27,11 +28,11 @@ var sendEmailViaSendgridHttp = function(config, callback) {
 
   //plain text MUST come first for some reason
   if (config.text) {
-    content = new helper.Content("text/plain", config.text);
+    content = new helper.Content('text/plain', config.text);
     mail.addContent(content);
   }
   if (config.html) {
-    content = new helper.Content("text/html", config.html);
+    content = new helper.Content('text/html', config.html);
     mail.addContent(content);
   }
 
@@ -60,20 +61,20 @@ var sendEmailViaSendgridHttp = function(config, callback) {
 };
 
 var formatEmail = function(emailObject) {
-  return emailObject.name + "<" + emailObject.email + ">";
+  return emailObject.name + '<' + emailObject.email + '>';
 };
 
 var parseEmail = function(email) {
   if (email.name && email.email) return email;
-  var bits = email.split("<");
+  var bits = email.split('<');
   if (bits.length !== 2) {
-    console.log("ERROR with email: " + email);
+    console.log('ERROR with email: ' + email);
     return email;
     //return callback(new Error("Email should be of form: Name <name@email.com>. Instead it is: " + email));
   }
   var fromName = bits[0].trim();
-  var fromEmail = bits[1].replace(">", "").trim();
-  return { name: fromName, email: fromEmail };
+  var fromEmail = bits[1].replace('>', '').trim();
+  return {name: fromName, email: fromEmail};
 };
 
 var sendEmailViaSmtp = function(config, callback) {
@@ -83,18 +84,22 @@ var sendEmailViaSmtp = function(config, callback) {
   if (mailConfig.smtp.useAuth) {
     smtpProperties.auth = {
       user: mailConfig.smtp.username,
-      pass: mailConfig.smtp.password
+      pass: mailConfig.smtp.password,
     };
   } else {
-    smtpProperties.tls = { rejectUnauthorized: false };
+    smtpProperties.tls = {rejectUnauthorized: false};
   }
 
   var transport = nodemailer.createTransport(smtpTransport(smtpProperties));
 
   var mailOptions = {
     from: formatEmail(config.from), // sender address
-    to: config.to.map(function(v) { return formatEmail(v); }).join(","), // list of receivers (comma separated)
-    subject: config.subject
+    to: config.to
+      .map(function(v) {
+        return formatEmail(v);
+      })
+      .join(','), // list of receivers (comma separated)
+    subject: config.subject,
   };
 
   if (config.text) {
@@ -105,8 +110,14 @@ var sendEmailViaSmtp = function(config, callback) {
     mailOptions.html = config.html;
   }
 
-  if (config.attachment && config.attachment.name && config.attachment.content) {
-    mailOptions.attachments = [{ 'filename': config.attachment.name, 'content': config.attachment.content }];
+  if (
+    config.attachment &&
+    config.attachment.name &&
+    config.attachment.content
+  ) {
+    mailOptions.attachments = [
+      {filename: config.attachment.name, content: config.attachment.content},
+    ];
   }
 
   // send mail with defined transport object
@@ -124,19 +135,23 @@ var sendEmailViaSendgridSmtp = function(config, callback) {
   if (mailConfig.smtp.useAuth) {
     smtpProperties.auth = {
       user: mailConfig.smtp.username,
-      pass: mailConfig.smtp.password
+      pass: mailConfig.smtp.password,
     };
     smtpProperties.service = 'SendGrid';
   } else {
-    smtpProperties.tls = { rejectUnauthorized: false };
+    smtpProperties.tls = {rejectUnauthorized: false};
   }
 
   var transport = nodemailer.createTransport(smtpTransport(smtpProperties));
 
   var mailOptions = {
     from: formatEmail(config.from), // sender address
-    to: config.to.map(function(v) { return formatEmail(v); }).join(","), // list of receivers (comma separated)
-    subject: config.subject
+    to: config.to
+      .map(function(v) {
+        return formatEmail(v);
+      })
+      .join(','), // list of receivers (comma separated)
+    subject: config.subject,
   };
 
   if (config.text) {
@@ -147,10 +162,15 @@ var sendEmailViaSendgridSmtp = function(config, callback) {
     mailOptions.html = config.html;
   }
 
-  if (config.attachment && config.attachment.name && config.attachment.content) {
-    mailOptions.attachments = [{ 'filename': config.attachment.name, 'content': config.attachment.content }];
+  if (
+    config.attachment &&
+    config.attachment.name &&
+    config.attachment.content
+  ) {
+    mailOptions.attachments = [
+      {filename: config.attachment.name, content: config.attachment.content},
+    ];
   }
-
 
   // send mail with defined transport object
   transport.sendMail(mailOptions, function(error, info) {
@@ -159,9 +179,9 @@ var sendEmailViaSendgridSmtp = function(config, callback) {
 };
 
 const EMAILTYPE = {
-  SENDGRIDHTTP: "SENDGRIDHTTP",
-  SENDGRIDSMTP: "SENDGRIDSMTP",
-  SMTP: "SMTP"
+  SENDGRIDHTTP: 'SENDGRIDHTTP',
+  SENDGRIDSMTP: 'SENDGRIDSMTP',
+  SMTP: 'SMTP',
 };
 
 exports.EMAILTYPES = Object.keys(EMAILTYPE);
@@ -194,9 +214,12 @@ exports.send = function(config, callback) {
   console.log(config);
   //Validate config.type
   if (!config.type) {
-    config.type = mailConfig.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+    config.type = mailConfig.sendGridAPIKey
+      ? EMAILTYPE.SENDGRIDHTTP
+      : EMAILTYPE.SMTP;
   }
-  if (Object.keys(EMAILTYPE).indexOf(config.type) < 0) config.type = EMAILTYPE.SMTP;
+  if (Object.keys(EMAILTYPE).indexOf(config.type) < 0)
+    config.type = EMAILTYPE.SMTP;
 
   switch (config.type) {
     case EMAILTYPE.SENDGRIDHTTP:
@@ -218,7 +241,7 @@ exports.config = function(type, from, to, subject, text, html, attachment) {
 
   from = from ? parseEmail(from) : {};
 
-  if(to && to.map) {
+  if (to && to.map) {
     //an array
     to = to.map(function(v) {
       return parseEmail(v);
@@ -227,6 +250,5 @@ exports.config = function(type, from, to, subject, text, html, attachment) {
     to = to ? [parseEmail(to)] : [];
   }
 
-
-  return { type, from, to, subject, text, html, attachment };
+  return {type, from, to, subject, text, html, attachment};
 };

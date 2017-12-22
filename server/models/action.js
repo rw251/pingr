@@ -10,15 +10,15 @@ var ActionSchema = new Schema({
   agree: Boolean,
   done: Boolean,
   history: [{
-    _id:false,
+    _id: false,
     who: String,
     what: String,
     when: Date,
-    why: String
+    why: String,
   }],
   userDefined: Boolean,
   rejectedReason: String,
-  rejectedReasonText: String
+  rejectedReasonText: String,
 });
 
 module.exports = mongoose.model('Action', ActionSchema);

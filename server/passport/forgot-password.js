@@ -9,7 +9,7 @@ module.exports = {
   forgot: function(req, res, next) {
     console.log(req.body.email);
     User.findOne({
-      'email': req.body.email
+      email: req.body.email,
     }, function(err, user) {
       // In case of any error, return using the done method
       if (err) {
@@ -19,9 +19,9 @@ module.exports = {
       }
       // already exists
       if (user) {
-        //-//update user with reset token
-        //user.password = req.body.password;
-        //Generate random token
+        // -//update user with reset token
+        // user.password = req.body.password;
+        // Generate random token
         crypto.randomBytes(20, function(err, buf) {
           var token = buf.toString('hex');
 
@@ -36,14 +36,14 @@ module.exports = {
             }
             console.log('Password token issued succesful');
 
-            var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password reset",
-              "Your password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://" + req.headers.host + "/auth/reset/" + token + "\n\n",
+            var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, 'PINGR: Password reset',
+              'Your password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://' + req.headers.host + '/auth/reset/' + token + '\n\n',
               null, null);
 
-            //Send email
+            // Send email
             emailSender.send(emailConfig, function(error, info) {
               if (error) {
-                console.log("email not sent: " + error);
+                console.log('email not sent: ' + error);
               }
               req.flash('success', 'Thanks. Please check your emails for a link to reset your password.');
               return next();
@@ -86,14 +86,14 @@ module.exports = {
                 req.flash('error', 'An error has occurred. Please try again.');
                 return next();
               } else {
-                var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password changed",
-                  "Your password has been changed.\n\nIf you did not initiate this please contact the support team.",
+                var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, 'PINGR: Password changed',
+                  'Your password has been changed.\n\nIf you did not initiate this please contact the support team.',
                   null, null);
 
-                //Send email
+                // Send email
                 emailSender.send(emailConfig, function(error, info) {
                   if (error) {
-                    console.log("email not sent: " + error);
+                    console.log('email not sent: ' + error);
                   }
                   req.flash('success', 'You\re password has now been changed');
                   return next();
@@ -109,6 +109,6 @@ module.exports = {
       }
 
     });
-  }
+  },
 
 };

@@ -2,7 +2,7 @@ var User = require('../models/user');
 
 module.exports = function(req, res, next) {
   User.findOne({
-    'email': req.user.email
+    email: req.user.email,
   }, function(err, user) {
     // In case of any error, return using the done method
     if (err) {
@@ -23,7 +23,7 @@ module.exports = function(req, res, next) {
           req.flash('error', 'Incorrect password');
           return next(); // redirect back to login page
         } else {
-          //console.log('match');
+          // console.log('match');
           user.password = req.body.newpassword;
           user.save(function(err) {
             if (err) {

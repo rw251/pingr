@@ -4,7 +4,7 @@ module.exports = {
 
   get: function(done) {
     Text.find({}, function(err, text) {
-      if(err){
+      if (err){
         console.log(err);
       }
       if (!text) {
@@ -14,6 +14,6 @@ module.exports = {
         done(null, text[0]);
       }
     });
-  }
+  },
 
 };

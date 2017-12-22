@@ -1,9 +1,10 @@
 const events = require('./events');
+const $ = require('jquery');
 
 const JTT = {
   init: () => {
     $(document).on('ready', () => {
-      //Wire up global click/hover listener
+      // Wire up global click/hover listener
       events.listen();
 
       // and tooltips
@@ -11,25 +12,26 @@ const JTT = {
 
       $('#emailPrefs').validate({
         rules: {
-          "patientsToInclude": {
+          patientsToInclude: {
             required: true,
-            minlength: 1
-          }
+            minlength: 1,
+          },
         },
         messages: {
-          "patientsToInclude": "Please select at least one. If you don't want to receive emails - change the email frequency above to 'never'"
+          patientsToInclude:
+            "Please select at least one. If you don't want to receive emails - change the email frequency above to 'never'",
         },
-        errorPlacement: (error, element) => {
+        errorPlacement: (error) => {
           error.appendTo('#errors');
         },
-        invalidHandler: function(event, validator) {
+        invalidHandler() {
           $('#errorAlert').show();
         },
-        showErrors: function (errorMap, errorList) {
-          if(errorList.length===0) $('#errorAlert').hide();
+        showErrors(errorMap, errorList) {
+          if (errorList.length === 0) $('#errorAlert').hide();
           else $('#errorAlert').show();
           this.defaultShowErrors();
-        },  
+        },
       });
 
       // and email sample if available
@@ -37,28 +39,29 @@ const JTT = {
         e.preventDefault();
         $('#modalLoader').show();
         $('#modalContent').hide();
-        $.
-          ajax({
-            url: '/emailsample',
-            success(email) {
-              $('#modalLoader').fadeOut(() => {
-                $('#modalContent').html(email).show();
-              });
-            },
-            error(err) {
-              console.log(err);
-            },
-          });
+        $.ajax({
+          url: '/emailsample',
+          success(email) {
+            $('#modalLoader').fadeOut(() => {
+              $('#modalContent')
+                .html(email)
+                .show();
+            });
+          },
+          error(err) {
+            console.log(err);
+          },
+        });
       });
 
-      //auto hide alerts
+      // auto hide alerts
       setTimeout(() => {
         $('.alert-autoclose').slideUp(() => {
           $('.alert-autoclose').remove();
         });
       }, 5000);
     });
-  }
+  },
 };
 
 module.exports = JTT;

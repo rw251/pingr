@@ -1,28 +1,26 @@
-var base = require('../base.js'),
-  data = require('../data.js'),
-  chart = require('../chart.js');
-  
-var hl = {
+const base = require('../base.js');
+const data = require('../data.js');
+const indicatorHeadlineTemplate = require('../templates/indicator-headline.jade');
 
-  wireUp: function() {
+const hl = {
+  wireUp() {},
 
-  },
+  show(panel, isAppend, pathwayId, pathwayStage, standard) {
+    const indicators = data.getIndicatorDataSync(
+      null,
+      [pathwayId, pathwayStage, standard].join('.')
+    );
 
-  show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
+    const tmpl = indicatorHeadlineTemplate;
+    const html = tmpl(indicators);
 
-    //var indicators = data.getIndicatorDataSync("P87024", [pathwayId, pathwayStage, standard].join("."));
-    var indicators = data.getIndicatorDataSync(null, [pathwayId, pathwayStage, standard].join("."));
-
-    var tmpl = require('templates/indicator-headline');
-    var html = tmpl(indicators);
-
-    if(isAppend) panel.append(html);
-    //*b* maintain state
+    if (isAppend) panel.append(html);
     else {
+      //* b* maintain state
       base.savePanelState();
       panel.html(html);
     }
-  }
+  },
 };
 
 module.exports = hl;

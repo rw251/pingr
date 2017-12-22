@@ -4,70 +4,70 @@ var mongoose = require('mongoose'),
 var PatientSchema = new Schema({
   patientId: {
     type: Number,
-    index: true
+    index: true,
   },
   characteristics: {
     age: Number,
     sex: String,
     nhs: Number,
-    practiceId: String
+    practiceId: String,
   },
   conditions: [
     {
-      _id:false,
+      _id: false,
       name: String,
       intervals: [
         {
-          _id:false,
+          _id: false,
           from: Number,
           to: Number,
-          label: String
-        }
-      ]
-    }
+          label: String,
+        },
+      ],
+    },
   ],
   events: [
     {
-      _id:false,
+      _id: false,
       name: String,
       time: Number,
-      task: Number
+      task: Number,
     },
   ],
-  contacts:[
+  contacts: [
     {
-      _id:false,
+      _id: false,
       name: String,
       time: Number,
-      task: Number
-    }
+      task: Number,
+    },
   ],
   measurements: [
     {
-      _id:false,
+      _id: false,
       id: String,
       name: String,
-      data: Schema.Types.Mixed
-    }
+      data: Schema.Types.Mixed,
+    },
   ],
   standards: [
     {
-      _id:false,
-      type: { type: String, default: "process"}, //Currently "process" OR "outcome" - same as indicator model
+      _id: false,
+      type: { type: String, default: 'process'}, // Currently "process" OR "outcome" - same as indicator model
       display: String,
       targetMet: Boolean,
-      //missing why ???
-      nextReviewDate: Date
-    }
+      // missing why ???
+      nextReviewDate: Date,
+    },
   ],
   medications: [
 
   ],
   actions: [
     {
-      _id:false,
-      id: String, //needed anymore??
-      link: String, //needed anymore??
+      _id: false,
+      id: String, // needed anymore??
+      link: String, // needed anymore??
       indicatorId: String,
       actionCat: String,
       reasonNumber: String,
@@ -75,9 +75,9 @@ var PatientSchema = new Schema({
       priority: Number,
       actionText: String,
       actionTextId: String,
-      supportingText: String
-    }
-  ]
+      supportingText: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model('Patient', PatientSchema);

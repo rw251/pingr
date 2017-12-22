@@ -4,7 +4,7 @@ var practices = require('./practices');
 var indicators = require('./indicators');
 var config = require('../config');
 
-var indicatorLookup={};
+var indicatorLookup = {};
 var processIndicators = function(indicators) {
   return indicators.filter(function(v) {
     indicatorLookup[v.id] = v.name;
@@ -20,11 +20,11 @@ var processIndicators = function(indicators) {
     return (a.values[1][lastidA] * 100 / a.values[2][lastidA]) - (b.values[1][lastidB] * 100 / b.values[2][lastidB]);
   }).map(function(v) {
     var lastid = v.values[0].length - 1;
-    v.link = "indicators/" + v.id.replace(/\./g, "/");
-    v.performance = (v.values[2][lastid] > 0 ? (v.values[1][lastid] * 100 / v.values[2][lastid]).toFixed(0) + "%" : "N/A");
-    v.fraction = v.values[1][lastid] + "/" + v.values[2][lastid];
-    v.target = (100 * v.values[3][lastid]) + "%";
-    v.benchmark = (100 * +v.benchmark) + "%";
+    v.link = 'indicators/' + v.id.replace(/\./g, '/');
+    v.performance = (v.values[2][lastid] > 0 ? (v.values[1][lastid] * 100 / v.values[2][lastid]).toFixed(0) + '%' : 'N/A');
+    v.fraction = v.values[1][lastid] + '/' + v.values[2][lastid];
+    v.target = (100 * v.values[3][lastid]) + '%';
+    v.benchmark = (100 * +v.benchmark) + '%';
     return v;
   });
 };
@@ -34,15 +34,15 @@ var processPatients = function(patients) {
     v.indicators = v.indicators.map(function(vv){
       return indicatorLookup[vv];
     });
-    if(!v.indicatorsWithAction) {
-      v.indicatorsWithAction=[];
-      v.numberOfIndicatorsWithAction=0;
+    if (!v.indicatorsWithAction) {
+      v.indicatorsWithAction = [];
+      v.numberOfIndicatorsWithAction = 0;
     }
     v.indicatorsWithAction = v.indicatorsWithAction.map(function(vv){
       return indicatorLookup[vv];
     });
     return v;
-  }).sort(function(a,b){
+  }).sort(function(a, b){
     return (b.numberOfIndicators - b.numberOfIndicatorsWithAction) - (a.numberOfIndicators - a.numberOfIndicatorsWithAction);
   });
 };
@@ -51,7 +51,7 @@ module.exports = {
 
   getDataForEmails: function(practiceId, user, callback) {
 
-    var greetings = ["Hi","Hello","Dear","Greetings"];
+    var greetings = ['Hi', 'Hello', 'Dear', 'Greetings'];
 
     practices.get(practiceId, function(err, practice){
       patients.getAllPatientsPaginatedConsiderLastReviewDate(practiceId, user, 0, 25, function(err, patients) {
@@ -61,17 +61,17 @@ module.exports = {
           indicators = processIndicators(indicators);
           patients = processPatients(patients);
           user = user.toObject();
-          if(user.last_login) user.last_login = (new Date(user.last_login)).toDateString();
+          if (user.last_login) user.last_login = (new Date(user.last_login)).toDateString();
           user.indicators = indicators;
           user.patients = patients;
           user.reminderEmailsFrom = config.mail.reminderEmailsFrom;
           user.practiceSystem = practice.ehr;
-          user.greeting = greetings[Math.floor(Math.random()*greetings.length)];
+          user.greeting = greetings[Math.floor(Math.random() * greetings.length)];
           user.practiceId = practiceId;
           user.practiceName = practice.name;
           return callback(null, { data: user });
         });
       });
     });
-  }
+  },
 };

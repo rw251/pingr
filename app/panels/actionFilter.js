@@ -1,18 +1,18 @@
-var af = {
+const actionFilterTmpl = require('../templates/action-filter.jade');
 
-  create: function(){
-    return require("templates/action-filter")();
+const af = {
+  create() {
+    return actionFilterTmpl();
   },
 
-  show: function(panel, isAppend){
-    var html = af.create();
+  show(panel, isAppend) {
+    const html = af.create();
 
     if (isAppend) panel.append(html);
     else {
       panel.html(html);
     }
-  }
-
+  },
 };
 
 module.exports = af;

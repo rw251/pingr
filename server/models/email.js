@@ -5,7 +5,7 @@ var EmailSchema = new Schema({
   label: String,
   subject: String,
   body: String,
-  isDefault: Boolean
+  isDefault: Boolean,
 });
 
 module.exports = mongoose.model('Email', EmailSchema);

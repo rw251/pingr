@@ -8,43 +8,43 @@ var UserSchema = new Schema({
     type: String,
     required: true,
     index: {
-      unique: true
-    }
+      unique: true,
+    },
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   fullname: {
     type: String,
-    required: true
+    required: true,
   },
   practices: [
     {
       id: String,
       name: String,
       authorised: Boolean,
-    }
+    },
   ],
   practiceId: {
-    type: String
+    type: String,
   },
   practiceName: {
-    type: String
+    type: String,
   },
   practiceIdNotAuthorised: {
-    type: String
+    type: String,
   },
   practiceNameNotAuthorised: {
-    type: String
+    type: String,
   },
   password_recovery_code: {
-      type: String
+    type: String,
   },
   password_recovery_expiry: {
-      type: Date
+    type: Date,
   },
-  roles:[String],
+  roles: [String],
   last_login: Date,
   last_email_reminder: Date,
   email_opt_out: Boolean,
@@ -55,9 +55,9 @@ var UserSchema = new Schema({
   emailIndicatorIdsToExclude: [String],
   patientTypesToExclude: {
     type: [String],
-    default: ["NO_REVIEW", "AFTER_APRIL", "REVIEW_YET_TO_HAPPEN"]
+    default: ['NO_REVIEW', 'AFTER_APRIL', 'REVIEW_YET_TO_HAPPEN'],
   },
-  registrationCode: String
+  registrationCode: String,
 });
 
 UserSchema.pre('save', function(next) {
@@ -82,15 +82,15 @@ UserSchema.pre('save', function(next) {
 });
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
-    });
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) return cb(err);
+    cb(null, isMatch);
+  });
 };
 
 UserSchema.methods.changePassword = function(newPassword, cb) {
-    this.password = newPassword;
-    this.save();
+  this.password = newPassword;
+  this.save();
 };
 
 module.exports = mongoose.model('User', UserSchema);
