@@ -230,17 +230,17 @@ const base = {
   switchTo2Column1Narrow1Wide() {
     if (base.layout === '12') return;
     base.layout = '12';
-    // farLeftPanel.show();
-    // farRightPanel.show();
-    // centrePanel.hide();
+    base.farLeftPanel.show();
+    base.farRightPanel.show();
+    base.centrePanel.hide();
   },
 
   switchToSingleColumn() {
     if (base.layout === '1') return;
     base.layout = '1';
-    // farLeftPanel.hide();
-    // farRightPanel.hide();
-    // centrePanel.show();
+    base.farLeftPanel.hide();
+    base.farRightPanel.hide();
+    base.centrePanel.show();
   },
 
   updateTitle(title, dontClearRight) {

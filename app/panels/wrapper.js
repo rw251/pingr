@@ -3,19 +3,23 @@ const $ = require('jquery');
 
 const bd = {
   wireUp(firstTabVisibleCallback) {
-    $('#overviewPaneTab').on('click', (e) => {
+    const $overviewPaneTab = $('#overviewPaneTab');
+    const $mainPageTabContent = $('#mainPage-tab-content');
+    const $indicatorPaneTab = $('#indicatorPaneTab');
+    const $patientPaneTab = $('#patientPaneTab');
+    $overviewPaneTab.on('click', (e) => {
       log.navigate('#indicator-patient-list');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
-      $(this)
+      $overviewPaneTab
         .closest('li')
         .addClass('active');
       // var tempMust = $('#welcome-task-list').html();
       // var rendered = Mustache.render(tempMust);
       // var tmpl = require("templates/action-plan-task-list");
-      $('#mainPage-tab-content').fadeOut(250, () => {
-        $('#mainPage-tab-content')
+      $mainPageTabContent.fadeOut(250, () => {
+        $mainPageTabContent
           .children()
           .fadeOut(1);
         $('#overview-content').fadeIn(1, firstTabVisibleCallback);
@@ -23,23 +27,23 @@ const bd = {
         //* b* tabbed content
 
         // welcome.populate(true);
-        $(this).fadeIn(250);
+        $mainPageTabContent.fadeIn(250);
       });
     });
 
-    $('#indicatorPaneTab').on('click', (e) => {
+    $indicatorPaneTab.on('click', (e) => {
       log.navigate('#indicator-trend');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
-      $(this)
+      $indicatorPaneTab
         .closest('li')
         .addClass('active');
       // var tempMust = $('#welcome-task-list').html();
       // var rendered = Mustache.render(tempMust);
       // var tmpl = require("templates/action-plan-task-list");
-      $('#mainPage-tab-content').fadeOut(250, () => {
-        $('#mainPage-tab-content')
+      $mainPageTabContent.fadeOut(250, () => {
+        $mainPageTabContent
           .children()
           .fadeOut(1);
         $('#indicator-content').fadeIn(1);
@@ -47,23 +51,23 @@ const bd = {
         //* b* tabbed content
 
         // welcome.populate(true);
-        $(this).fadeIn(250);
+        $mainPageTabContent.fadeIn(250);
       });
     });
 
-    $('#patientPaneTab').on('click', (e) => {
+    $patientPaneTab.on('click', (e) => {
       log.navigate('#indicator-benchmark');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
-      $(this)
+      $patientPaneTab
         .closest('li')
         .addClass('active');
       // var tempMust = $('#welcome-task-list').html();
       // var rendered = Mustache.render(tempMust);
       // var tmpl = require("templates/action-plan-task-list");
-      $('#mainPage-tab-content').fadeOut(250, () => {
-        $('#mainPage-tab-content')
+      $mainPageTabContent.fadeOut(250, () => {
+        $mainPageTabContent
           .children()
           .fadeOut(1);
         $('#patient-content').fadeIn(1);
@@ -71,7 +75,7 @@ const bd = {
         //* b* tabbed content
 
         // welcome.populate(true);
-        $(this).fadeIn(250);
+        $mainPageTabContent.fadeIn(250);
       });
     });
   },
