@@ -54,6 +54,7 @@
     "clipboard": "^1.7.1",
     "compression": "^1.7.0",
     "connect-flash": "^0.1.1",
+    "corejs-typeahead": "^1.2.1",
     "cors": "^2.8.4",
     "csv-parser": "^1.9.3",
     "datatables.net": "git+https://git@github.com/rw251/DataTables.git",
@@ -81,8 +82,7 @@
     "passport-local": "^1.0.0",
     "sendgrid": "^4.7.1",
     "serve-favicon": "^2.3.0",
-    "textversionjs": "^1.0.2",
-    "typeahead.js": "^0.11.1"
+    "textversionjs": "^1.0.2"
   },
   "engines": {
     "node": "6.11.x"

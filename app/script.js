@@ -5,7 +5,7 @@ window.jQuery = $;
 
 // require all the things that get globally added to jquery
 require('bootstrap');
-require('typeahead.js');
+require('corejs-typeahead');
 require('datatables.net-bs')(window, $);
 require('datatables.net-buttons-bs')(window, $);
 require('datatables.net-buttons/js/buttons.colVis.js')(window, $);

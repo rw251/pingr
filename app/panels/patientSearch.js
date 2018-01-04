@@ -1,15 +1,18 @@
 const data = require('../data.js');
 const state = require('../state.js');
 const log = require('../log.js');
-const Bloodhound = require('typeahead.js/dist/bloodhound');
+const Bloodhound = require('corejs-typeahead/dist/bloodhound');
 const $ = require('jquery');
 const patientSearchTemplate = require('../templates/patient-search.jade');
 
 let states;
 let loadContFn;
+let $searchBox;
 
 const ps = {
   wireUp() {
+    $searchBox = $('#search-box');
+
     if (states) {
       states.clearPrefetchCache();
     }
@@ -35,11 +38,10 @@ const ps = {
 
       states.initialize(true);
 
-      $('#search-box')
-        .find('.typeahead')
-        .typeahead('destroy');
-      $('#search-box')
-        .find('.typeahead')
+      const $typeAhead = $searchBox.find('.typeahead');
+
+      $typeAhead.typeahead('destroy');
+      $typeAhead
         .typeahead(
           {
             hint: true,
@@ -75,11 +77,11 @@ const ps = {
           ) {
             pastedText = e.originalEvent.clipboardData.getData('text/plain');
           }
-          $(this).typeahead('val', pastedText.replace(/\D/g, ''));
-          // $(this).trigger("keyup");
+          $typeAhead.typeahead('val', pastedText.replace(/\D/g, ''));
+          // $searchBox.trigger("keyup");
         });
 
-      $('#search-box').on('click', '.twitter-typeahead', (e) => {
+      $searchBox.on('click', '.twitter-typeahead', (e) => {
         if (e.offsetX < 30) {
           // looks like the search icon is clicked
           // logic should be like below
@@ -95,7 +97,7 @@ const ps = {
 
   onSelected($e, nhsNumberObject) {
     // Hide the suggestions panel
-    $('#search-box')
+    $searchBox
       .find('.tt-dropdown-menu')
       .css('display', 'none');
     log.event('patient-search', window.location.hash, [
