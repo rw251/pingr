@@ -1,6 +1,7 @@
 const data = require('../data.js');
 const state = require('../state.js');
 const log = require('../log.js');
+const Bloodhound = require('typeahead.js/dist/bloodhound');
 const $ = require('jquery');
 const patientSearchTemplate = require('../templates/patient-search.jade');
 

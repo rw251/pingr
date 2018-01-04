@@ -147,7 +147,7 @@ const qs = {
 
         $('#modal .modal')
           .off('submit', 'form')
-          .on('submit', 'form', (e) => {
+          .on('submit', 'form', (submitEvent) => {
             const freetext = $('#modal textarea').val();
 
             log.excludePatient(
@@ -164,7 +164,7 @@ const qs = {
               qs.updateFromId(patientId, indicatorId);
             });
 
-            e.preventDefault();
+            submitEvent.preventDefault();
             $('#modal .modal').modal('hide');
           })
           .modal();

@@ -655,14 +655,11 @@ const dt = {
       Object.keys(dt.patientList).forEach((practiceId) => {
         Object.keys(dt.patientList[practiceId]).forEach((indicatorId) => {
           Object.keys(dt.patientList[practiceId][indicatorId]).forEach((standard) => {
-            dt.patientList[practiceId][indicatorId][
-              standard
-            ].patients.forEach((patient) => {
+            dt.patientList[practiceId][indicatorId][standard].patients.forEach((patient) => {
               if (patient.patientId === +patientId) {
                 if (!patient.actionStatus) patient.actionStatus = [];
-                if (
-                  patient.actionStatus.filter(v => v.actionTextId === action.actionTextId).length === 0
-                ) {
+                if (patient.actionStatus
+                  .filter(v => v.actionTextId === action.actionTextId).length === 0) {
                   if (action.agree || action.userDefined) {
                     patient.actionStatus.push({
                       actionTextId: action.actionTextId,
@@ -727,9 +724,13 @@ const dt = {
                           : '.'
                       }`)
                     .join('<br>');
-                  patient.items[
-                    patient.items.length - 1
-                  ] = `<i class="fa fa-fw fa-check text-success" data-container="body", data-html="true", data-toggle="tooltip", data-placement="bottom", title="${tooltip}"></i>`;
+                  patient.items[patient.items.length - 1] = `
+                    <i class="fa fa-fw fa-check text-success" 
+                      data-container="body" 
+                      data-html="true"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="${tooltip}"></i>`;
                 } else {
                   patient.items[patient.items.length - 1] = '';
                 }

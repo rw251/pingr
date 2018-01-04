@@ -3,8 +3,13 @@ const $ = require('jquery');
 window.$ = $;
 window.jQuery = $;
 
+// require all the things that get globally added to jquery
 require('bootstrap');
 require('typeahead.js');
+require('datatables.net-bs')(window, $);
+require('datatables.net-buttons-bs')(window, $);
+require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
+require('datatables.net-buttons/js/buttons.html5.js')(window, $);
 
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.

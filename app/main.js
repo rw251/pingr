@@ -3,6 +3,7 @@ const data = require('./data');
 const base = require('./base');
 const state = require('./state');
 const log = require('./log');
+const Bloodhound = require('typeahead.js/dist/bloodhound');
 const $ = require('jquery');
 
 let states;

@@ -46,9 +46,7 @@ const ll = {
 
     ll.destroy(elementId);
 
-    const htmlElement = $(`<div class="panel panel-default"><div class="panel-body"><div id="${
-      element
-    }"></div></div></div>`);
+    const htmlElement = $(`<div class="panel panel-default"><div class="panel-body"><div id="${element}"></div></div></div>`);
 
     if (isAppend) panel.append(htmlElement);
     else panel.html(htmlElement);
@@ -151,9 +149,7 @@ const ll = {
       // create the chart
       const barWidth = 16;
       const barSpace = 1;
-      $(`<div class="h-chart h-condition-chart" style="height:${
-        Math.max(50, conditions.length * (barWidth + barSpace))
-      }px">`)
+      $(`<div class="h-chart h-condition-chart" style="height:${Math.max(50, conditions.length * (barWidth + barSpace))}px">`)
         .appendTo(elementId)
         .highcharts({
           chart: {
@@ -206,21 +202,17 @@ const ll = {
           },
 
           tooltip: {
-            formatter: () => {
+            formatter() {
               const yCoord = this.y;
               const labelTmp = conditions[Math.floor(this.x)].intervals
                 .filter(v => yCoord >= v.from && yCoord <= v.to);
               const label =
                 labelTmp.length > 0 ? labelTmp[0].label : 'No label A';
-              return (
-                `<b>${
-                  conditions[Math.floor(this.x)].name
-                }${label ? `: ${label}` : ''
-                }</b><br/>${
-                  Highcharts.dateFormat('%d/%m/%Y', this.point.options.low)
-                } - ${
-                  Highcharts.dateFormat('%d/%m/%Y', this.point.options.high)}`
-              );
+              return (`
+                <b>${conditions[Math.floor(this.x)].name}${label ? `: ${label}` : ''}</b>
+                <br/>
+                ${Highcharts.dateFormat('%d/%m/%Y', this.point.options.low)} - ${Highcharts.dateFormat('%d/%m/%Y', this.point.options.high)}
+              `);
             },
             followPointer: true,
           },
@@ -234,20 +226,17 @@ const ll = {
               dataLabels: {
                 allowOverlap: false,
                 enabled: true,
-                formatter: () => {
+                formatter() {
                   const yCoord = this.y;
                   let idx = -1;
-                  const labelTmp = conditions[
-                    Math.floor(this.x)
-                  ].intervals.filter((v, i) => {
+                  const labelTmp = conditions[Math.floor(this.x)].intervals.filter((v, i) => {
                     if (yCoord >= v.from && yCoord <= v.to) {
                       idx = i;
                       return true;
                     }
                     return false;
                   });
-                  const label =
-                    labelTmp.length > 0 ? labelTmp[0].label : 'No label B';
+                  const label = labelTmp.length > 0 ? labelTmp[0].label : 'No label B';
                   return this.y === this.point.low &&
                     (conditions[Math.floor(this.x)].intervals.length - 1 ===
                       idx ||
@@ -374,16 +363,11 @@ const ll = {
           },
 
           tooltip: {
-            formatter: () => {
+            formatter() {
               const time = this.x;
               return contacts
                 .filter(val => val.time === time)
-                .map(val => (
-                  `<b>${
-                    val.name
-                  }</b><br/>${
-                    Highcharts.dateFormat('%d/%m/%Y', time)}`
-                ))
+                .map(val => (`<b>${val.name}</b><br/>${Highcharts.dateFormat('%d/%m/%Y', time)}`))
                 .join('<br/>');
             },
             followPointer: true,
@@ -549,16 +533,11 @@ const ll = {
           },
 
           tooltip: {
-            formatter: () => {
+            formatter() {
               const time = this.x;
               return importantCodes
                 .filter(val => val.time === time)
-                .map(val => (
-                  `<b>${
-                    val.name
-                  }</b><br/>${
-                    Highcharts.dateFormat('%d/%m/%Y', time)}`
-                ))
+                .map(val => (`<b>${val.name}</b><br/>${Highcharts.dateFormat('%d/%m/%Y', time)}`))
                 .join('<br/>');
             },
             followPointer: true,
@@ -633,11 +612,7 @@ const ll = {
           },
           yAxis: {
             title: {
-              text:
-                `${dataset.name
-                }<br>${
-                  dataset.unit.replace(/\^([0-9]+)/, '<sup>$1</sup>')
-                }`,
+              text: `${dataset.name}<br>${dataset.unit.replace(/\^([0-9]+)/, '<sup>$1</sup>')}`,
               margin: 60,
               rotation: 0,
             },
@@ -658,12 +633,10 @@ const ll = {
               y: -1, // align to title
             }),
             useHTML: true,
-            pointFormat:
-              `<b>${
-                dataset.name
-              }:</b> {point.y} ${
-                dataset.unit.replace(/\^([0-9]+)/, '<sup>$1</sup>')
-              }<br><small>Recorded at: {point.loc}</small>`,
+            pointFormat: `
+              <b>${dataset.name}:</b> {point.y} ${dataset.unit.replace(/\^([0-9]+)/, '<sup>$1</sup>')}
+              <br><small>Recorded at: {point.loc}</small>
+            `,
             valueDecimals: dataset.valueDecimals,
           },
           plotOptions: {
@@ -973,7 +946,7 @@ const ll = {
           },
 
           tooltip: {
-            formatter: () => {
+            formatter() {
               const yCoord = this.y;
 
               const labelTmp = medications[Math.floor(this.x)].intervals
@@ -1004,7 +977,7 @@ const ll = {
               dataLabels: {
                 allowOverlap: false,
                 enabled: true,
-                formatter: () => {
+                formatter() {
                   const yCoord = this.y;
                   let idx = -1;
                   const labelTmp = medications[

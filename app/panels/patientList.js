@@ -7,12 +7,6 @@ const $ = require('jquery');
 const patientListTemplate = require('../templates/patient-list.jade');
 const patientListWrapperTemplate = require('../templates/patient-list-wrapper.jade');
 
-// var $ = require('jquery');
-require('datatables.net-bs')(window, $);
-require('datatables.net-buttons-bs')(window, $);
-require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
-require('datatables.net-buttons/js/buttons.html5.js')(window, $);
-
 let table;
 let patientsPanel;
 

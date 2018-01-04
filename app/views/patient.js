@@ -49,17 +49,14 @@ const updateTabAndTitle = (
 const pv = {
   wireUp() {},
 
-  create(
-    pathwayId,
-    pathwayStage,
-    standard,
-    patientId,
-    loadContentFn
-  ) {
+  create(pathId, pathwayStage, standard, patId, loadContentFn) {
     let skip = 0;
     let limit = 10;
+    let pathwayId = pathId;
+    let patientId = patId;
 
-    if (pathwayId && patientId && !Number.isNaN(pathwayId) && !Number.isNaN(patientId)) {
+
+    if (pathwayId && patientId && !Number.isNaN(Number(pathwayId)) && !Number.isNaN(Number(patientId))) {
       // we're actually in the all patient view so capture the skip/limit values
       skip = +patientId;
       limit = +pathwayId;
