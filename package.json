@@ -40,7 +40,6 @@
     "jshint": "^2.7.0",
     "mocha": "^4.0.1",
     "ncp": "^2.0.0",
-    "prompt": "^1.0.0",
     "rimraf": "^2.3.4",
     "sass-brunch": "^2.6.3",
     "tar-fs": "^1.15.3",
@@ -80,6 +79,7 @@
     "nodemailer-smtp-transport": "^2.7.2",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "prompt": "^1.0.0",
     "sendgrid": "^4.7.1",
     "serve-favicon": "^2.3.0",
     "textversionjs": "^1.0.2"

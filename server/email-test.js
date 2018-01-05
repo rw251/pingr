@@ -1,12 +1,12 @@
-var prompt = require('prompt'),
-  emailSender = require('./email-sender');
+const prompt = require('prompt');
+const emailSender = require('./email-sender');
 
 //
 // Start the prompt
 //
 prompt.start();
 
-var schema = {
+const schema = {
   properties: {
     from: {
       description: 'Who to send the email from',
@@ -27,10 +27,8 @@ var schema = {
     },
     type: {
       description:
-        'Method: \n' +
-        emailSender.EMAILTYPES.map(function(v, i) {
-          return '[' + (i + 1) + '] - ' + v;
-        }).join('\n'),
+        `Method: \n${
+          emailSender.EMAILTYPES.map((v, i) => `[${i + 1}] - ${v}`).join('\n')}`,
       pattern: /^[123]$/,
       default: 1,
       message: 'Please enter 1,2 or 3',
@@ -38,7 +36,7 @@ var schema = {
   },
 };
 
-var emailConfig = emailSender.config(
+const emailConfig = emailSender.config(
   null,
   null,
   null,
@@ -48,19 +46,19 @@ var emailConfig = emailSender.config(
   null
 );
 
-var parseEmail = function(text) {
-  var bits = text.split('|');
-  return {name: bits[0], email: bits[1]};
+const parseEmail = (text) => {
+  const bits = text.split('|');
+  return { name: bits[0], email: bits[1] };
 };
 
-prompt.get(schema, function(err, result) {
-  var emailType = emailSender.EMAILTYPES[+result.type - 1];
+prompt.get(schema, (err, result) => {
+  const emailType = emailSender.EMAILTYPES[+result.type - 1];
 
   console.log('Command-line input received:');
-  console.log('  from: ' + result.from);
-  console.log('    to: ' + result.to);
-  console.log('    and: ' + result.another);
-  console.log('  type: ' + emailType);
+  console.log(`  from: ${result.from}`);
+  console.log(`    to: ${result.to}`);
+  console.log(`    and: ${result.another}`);
+  console.log(`  type: ${emailType}`);
 
   emailConfig.from = parseEmail(result.from);
   emailConfig.to.push(parseEmail(result.to));
@@ -69,10 +67,10 @@ prompt.get(schema, function(err, result) {
   }
   emailConfig.type = emailType;
 
-  emailSender.send(emailConfig, function(err, info) {
-    if (err) {
+  emailSender.send(emailConfig, (sendErr, info) => {
+    if (sendErr) {
       console.log('message failed to send');
-      console.log(err);
+      console.log(sendErr);
       process.exit(1);
     } else {
       if (info) console.log(info);

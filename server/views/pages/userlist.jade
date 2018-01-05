@@ -14,7 +14,7 @@ include ../mixins/toolbar.jade
         th Last email sent
         th Actions
     tbody
-      each user in users
+      each user in userList
         tr
           td= user.fullname
           td= user.email

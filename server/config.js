@@ -1,27 +1,26 @@
 /* jshint esversion:6 */
 
-var mustExist = function(name) {
+const mustExist = (name) => {
   if (!process.env[name]) {
-    console.log(name + ' is not defined but is mandatory.');
+    console.log(`${name} is not defined but is mandatory.`);
     console.log('Exiting...');
-    process.exit(1);
-  } else {
-    return process.env[name];
+    return process.exit(1);
   }
+  return process.env[name];
 };
 
 const ENV = {
-  //mongo url
+  // mongo url
   MONGO_URL: mustExist('PINGR_MONGO_URL'),
 
-  //passport secret for expressjs authentication
+  // passport secret for expressjs authentication
   PASSPORT_SECRET: mustExist('PINGR_PASSPORT_SECRET'),
 
-  //server details
+  // server details
   SERVER_PORT: process.env.PINGR_SERVER_PORT,
   SERVER_URL: mustExist('PINGR_SERVER_URL'),
 
-  //email sending
+  // email sending
   SMTP_HOST: process.env.PINGR_SMTP_HOST || 'mail.srft.nhs.uk',
   SMTP_PORT: process.env.PINGR_SMTP_PORT || 25,
   SMTP_USER: process.env.PINGR_SMTP_USER,
@@ -40,7 +39,7 @@ module.exports = {
   db: {
     url: ENV.MONGO_URL,
   },
-  //user auth
+  // user auth
   passport: {
     secret: ENV.PASSPORT_SECRET,
   },

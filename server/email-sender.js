@@ -1,32 +1,32 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
-var nodemailer = require('nodemailer'),
-  smtpTransport = require('nodemailer-smtp-transport'),
-  sendgrid = require('sendgrid'),
-  mailConfig = require('./config').mail;
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
+const sendgrid = require('sendgrid');
+const mailConfig = require('./config').mail;
 
-var sendEmailViaSendgridHttp = function(config, callback) {
-  var content,
-    helper = sendgrid.mail;
+const sendEmailViaSendgridHttp = (config, callback) => {
+  let content;
+  const helper = sendgrid.mail;
 
-  var mail = new helper.Mail(); //, , , content);
+  const mail = new helper.Mail(); // , , , content);
 
-  var from = new helper.Email(config.from.email, config.from.name);
+  const from = new helper.Email(config.from.email, config.from.name);
   mail.setFrom(from);
 
   mail.setSubject(config.subject);
 
-  var personalization = new helper.Personalization();
+  const personalization = new helper.Personalization();
 
   // Add extra emails if they exist
-  config.to.forEach(function(v, i) {
-    var email = new helper.Email(v.email, v.name);
+  config.to.forEach((v) => {
+    const email = new helper.Email(v.email, v.name);
     personalization.addTo(email);
   });
 
   mail.addPersonalization(personalization);
 
-  //plain text MUST come first for some reason
+  // plain text MUST come first for some reason
   if (config.text) {
     content = new helper.Content('text/plain', config.text);
     mail.addContent(content);
@@ -39,46 +39,46 @@ var sendEmailViaSendgridHttp = function(config, callback) {
   // attachment
   if (config.attachment) {
     // attachment = new helper.Attachment();
-    // attachment.setContent("TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gQ3JhcyBwdW12");
+    // attachment.setContent("
+    // TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gQ3JhcyBwdW12");
     // attachment.setType("application/pdf");
     // attachment.setFilename("balance_001.pdf");
     // attachment.setDisposition("attachment");
     // mail.addAttachment(attachment);
   }
 
-  var sg = sendgrid(mailConfig.sendGridAPIKey);
-  var request = sg.emptyRequest({
+  const sg = sendgrid(mailConfig.sendGridAPIKey);
+  const request = sg.emptyRequest({
     method: 'POST',
     path: '/v3/mail/send',
     body: mail.toJSON(),
   });
 
-  sg.API(request, function(error, response) {
+  sg.API(request, (error, response) => {
     console.log(response.statusCode);
     if (error) return callback(error);
     return callback(null);
   });
 };
 
-var formatEmail = function(emailObject) {
-  return emailObject.name + '<' + emailObject.email + '>';
-};
+const formatEmail = emailObject => `${emailObject.name}<${emailObject.email}>`;
 
-var parseEmail = function(email) {
+const parseEmail = (email) => {
   if (email.name && email.email) return email;
-  var bits = email.split('<');
+  const bits = email.split('<');
   if (bits.length !== 2) {
-    console.log('ERROR with email: ' + email);
+    console.log(`ERROR with email: ${email}`);
     return email;
-    //return callback(new Error("Email should be of form: Name <name@email.com>. Instead it is: " + email));
+    // return callback(new Error("Email should be of form:
+    // Name <name@email.com>. Instead it is: " + email));
   }
-  var fromName = bits[0].trim();
-  var fromEmail = bits[1].replace('>', '').trim();
-  return {name: fromName, email: fromEmail};
+  const fromName = bits[0].trim();
+  const fromEmail = bits[1].replace('>', '').trim();
+  return { name: fromName, email: fromEmail };
 };
 
-var sendEmailViaSmtp = function(config, callback) {
-  var smtpProperties = {};
+const sendEmailViaSmtp = (config, callback) => {
+  const smtpProperties = {};
   smtpProperties.host = mailConfig.smtp.host;
   smtpProperties.port = mailConfig.smtp.port;
   if (mailConfig.smtp.useAuth) {
@@ -87,17 +87,15 @@ var sendEmailViaSmtp = function(config, callback) {
       pass: mailConfig.smtp.password,
     };
   } else {
-    smtpProperties.tls = {rejectUnauthorized: false};
+    smtpProperties.tls = { rejectUnauthorized: false };
   }
 
-  var transport = nodemailer.createTransport(smtpTransport(smtpProperties));
+  const transport = nodemailer.createTransport(smtpTransport(smtpProperties));
 
-  var mailOptions = {
+  const mailOptions = {
     from: formatEmail(config.from), // sender address
     to: config.to
-      .map(function(v) {
-        return formatEmail(v);
-      })
+      .map(v => formatEmail(v))
       .join(','), // list of receivers (comma separated)
     subject: config.subject,
   };
@@ -116,20 +114,18 @@ var sendEmailViaSmtp = function(config, callback) {
     config.attachment.content
   ) {
     mailOptions.attachments = [
-      {filename: config.attachment.name, content: config.attachment.content},
+      { filename: config.attachment.name, content: config.attachment.content },
     ];
   }
 
   // send mail with defined transport object
-  transport.sendMail(mailOptions, function(error, info) {
-    return callback(error, info);
-  });
+  transport.sendMail(mailOptions, (error, info) => callback(error, info));
 };
 
-//attachment if not null should be of the form:
-//{"name":"<filename>","content","<content as string>"}
-var sendEmailViaSendgridSmtp = function(config, callback) {
-  var smtpProperties = {};
+// attachment if not null should be of the form:
+// {"name":"<filename>","content","<content as string>"}
+const sendEmailViaSendgridSmtp = (config, callback) => {
+  const smtpProperties = {};
   smtpProperties.host = mailConfig.smtp.host;
   smtpProperties.port = mailConfig.smtp.port;
   if (mailConfig.smtp.useAuth) {
@@ -139,17 +135,15 @@ var sendEmailViaSendgridSmtp = function(config, callback) {
     };
     smtpProperties.service = 'SendGrid';
   } else {
-    smtpProperties.tls = {rejectUnauthorized: false};
+    smtpProperties.tls = { rejectUnauthorized: false };
   }
 
-  var transport = nodemailer.createTransport(smtpTransport(smtpProperties));
+  const transport = nodemailer.createTransport(smtpTransport(smtpProperties));
 
-  var mailOptions = {
+  const mailOptions = {
     from: formatEmail(config.from), // sender address
     to: config.to
-      .map(function(v) {
-        return formatEmail(v);
-      })
+      .map(v => formatEmail(v))
       .join(','), // list of receivers (comma separated)
     subject: config.subject,
   };
@@ -168,14 +162,12 @@ var sendEmailViaSendgridSmtp = function(config, callback) {
     config.attachment.content
   ) {
     mailOptions.attachments = [
-      {filename: config.attachment.name, content: config.attachment.content},
+      { filename: config.attachment.name, content: config.attachment.content },
     ];
   }
 
   // send mail with defined transport object
-  transport.sendMail(mailOptions, function(error, info) {
-    return callback(error, info);
-  });
+  transport.sendMail(mailOptions, (error, info) => callback(error, info));
 };
 
 const EMAILTYPE = {
@@ -210,16 +202,14 @@ exports.EMAILTYPES = Object.keys(EMAILTYPE);
  *                             if the email sending failed
  * @return Boolean          Whether message sending started
  */
-exports.send = function(config, callback) {
+exports.send = (config, callback) => {
   console.log(config);
-  //Validate config.type
+  // Validate config.type
   if (!config.type) {
     config.type = mailConfig.sendGridAPIKey
       ? EMAILTYPE.SENDGRIDHTTP
       : EMAILTYPE.SMTP;
   }
-  if (Object.keys(EMAILTYPE).indexOf(config.type) < 0)
-    config.type = EMAILTYPE.SMTP;
 
   switch (config.type) {
     case EMAILTYPE.SENDGRIDHTTP:
@@ -228,27 +218,34 @@ exports.send = function(config, callback) {
       return sendEmailViaSendgridSmtp(config, callback);
     case EMAILTYPE.SMTP:
       return sendEmailViaSmtp(config, callback);
+    default:
+      return sendEmailViaSmtp(config, callback);
   }
-
-  return false;
 };
 
-exports.config = function(type, from, to, subject, text, html, attachment) {
-  if (!type) {
-    type = mailConfig.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP;
+exports.config = (
+  type = mailConfig.sendGridAPIKey ? EMAILTYPE.SENDGRIDHTTP : EMAILTYPE.SMTP,
+  emailFrom,
+  emailTo,
+  subject,
+  text,
+  html,
+  attachment
+) => {
+  const from = emailFrom ? parseEmail(emailFrom) : {};
+  let to = [];
+
+  if (emailTo) {
+    // it exists
+    if (emailTo.map) {
+      // an array
+      to = emailTo.map(v => parseEmail(v));
+    } else {
+      to = [parseEmail(emailTo)];
+    }
   }
-  if (Object.keys(EMAILTYPE).indexOf(type) < 0) type = EMAILTYPE.SMTP;
 
-  from = from ? parseEmail(from) : {};
-
-  if (to && to.map) {
-    //an array
-    to = to.map(function(v) {
-      return parseEmail(v);
-    });
-  } else {
-    to = to ? [parseEmail(to)] : [];
-  }
-
-  return {type, from, to, subject, text, html, attachment};
+  return {
+    type, from, to, subject, text, html, attachment,
+  };
 };

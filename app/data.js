@@ -278,29 +278,29 @@ const dt = {
     return null;
   },
 
-  getIndicatorData(practiceId, indicatorId, callback) {
-    if (dt.indicators && dt.indicators[indicatorId]) {
-      return callback(dt.indicators[indicatorId]);
-    }
-    const isAsync = typeof callback === 'function';
-    const ajaxParams = {
-      url: `/api/PatientListForPractice/${practiceId}/Indicator/${indicatorId}`,
-      async: isAsync,
-      success(file) {
-        if (!dt.indicators) dt.indicators = {};
-        dt.indicators[indicatorId] = file;
+  // getIndicatorData(practiceId, indicatorId, callback) {
+  //   if (dt.indicators && dt.indicators[indicatorId]) {
+  //     return callback(dt.indicators[indicatorId]);
+  //   }
+  //   const isAsync = typeof callback === 'function';
+  //   const ajaxParams = {
+  //     url: `/api/PatientListForPractice/${practiceId}/Indicator/${indicatorId}`,
+  //     async: isAsync,
+  //     success(file) {
+  //       if (!dt.indicators) dt.indicators = {};
+  //       dt.indicators[indicatorId] = file;
 
-        if (isAsync) callback(dt.indicators[indicatorId]);
-      },
-      error() {},
-    };
+  //       if (isAsync) callback(dt.indicators[indicatorId]);
+  //     },
+  //     error() {},
+  //   };
 
-    if (!isAsync) {
-      $.ajax(ajaxParams);
-      return dt.indicators[indicatorId];
-    }
-    return $.ajax(ajaxParams);
-  },
+  //   if (!isAsync) {
+  //     $.ajax(ajaxParams);
+  //     return dt.indicators[indicatorId];
+  //   }
+  //   return $.ajax(ajaxParams);
+  // },
 
   // *b* practice id not used??
   getTrendData(practiceId, pathwayId, pathwayStage, standard) {
