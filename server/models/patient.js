@@ -1,7 +1,8 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var PatientSchema = new Schema({
+const { Schema } = mongoose;
+
+const PatientSchema = new Schema({
   patientId: {
     type: Number,
     index: true,
@@ -53,7 +54,7 @@ var PatientSchema = new Schema({
   standards: [
     {
       _id: false,
-      type: { type: String, default: 'process'}, // Currently "process" OR "outcome" - same as indicator model
+      type: { type: String, default: 'process' }, // Currently "process" OR "outcome" - same as indicator model
       display: String,
       targetMet: Boolean,
       // missing why ???

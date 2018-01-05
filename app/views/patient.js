@@ -46,6 +46,8 @@ const updateTabAndTitle = (
   base.updateTab('patients', patid, tabUrl);
 };
 
+const isNumber = n => Number.isNaN(Number(n));
+
 const pv = {
   wireUp() {},
 
@@ -55,8 +57,7 @@ const pv = {
     let pathwayId = pathId;
     let patientId = patId;
 
-
-    if (pathwayId && patientId && !Number.isNaN(Number(pathwayId)) && !Number.isNaN(Number(patientId))) {
+    if (pathwayId && patientId && !isNumber(pathwayId) && !isNumber(patientId)) {
       // we're actually in the all patient view so capture the skip/limit values
       skip = +patientId;
       limit = +pathwayId;

@@ -1,7 +1,8 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var EventSchema = new Schema({
+const { Schema } = mongoose;
+
+const EventSchema = new Schema({
   sessionId: String,
   date: { type: Date, default: Date.now },
   user: String,

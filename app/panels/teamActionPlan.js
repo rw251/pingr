@@ -31,14 +31,14 @@ const tap = {
     // checked action inactive
     if (action.agree === true) {
       yesbox.each((i, v) => {
-        v.currentTarget.checked = true;
+        v.checked = true;
       });
       yesbox
         .parent()
         .removeClass('inactive')
         .addClass('active');
       nobox.each((i, v) => {
-        v.currentTarget.checked = false;
+        v.checked = false;
       });
       nobox
         .parent()
@@ -46,14 +46,14 @@ const tap = {
         .addClass('inactive');
     } else if (action.agree === false) {
       nobox.each((i, v) => {
-        v.currentTarget.checked = true;
+        v.checked = true;
       });
       nobox
         .parent()
         .removeClass('inactive')
         .addClass('active');
       yesbox.each((i, v) => {
-        v.currentTarget.checked = false;
+        v.checked = false;
       });
       yesbox
         .parent()
@@ -61,11 +61,11 @@ const tap = {
         .addClass('inactive');
     } else {
       yesbox.each((i, v) => {
-        v.currentTarget.checked = false;
+        v.checked = false;
       });
       yesbox.parent().removeClass('active inactive');
       nobox.each((i, v) => {
-        v.currentTarget.checked = false;
+        v.checked = false;
       });
       nobox.parent().removeClass('active inactive');
     }

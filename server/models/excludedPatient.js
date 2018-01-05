@@ -1,7 +1,7 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var ExcludedPatientSchema = new Schema({
+const { Schema } = mongoose;
+const ExcludedPatientSchema = new Schema({
   practiceId: String,
   patientId: Number,
   indicatorId: String,

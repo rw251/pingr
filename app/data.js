@@ -784,7 +784,8 @@ const dt = {
               standard
             ].patients.forEach((patient) => {
               if (patient.patientId === +patientId) {
-                patient.actionStatus = patient.actionStatus.filter(v => v.actionTextId !== actionTextId);
+                patient.actionStatus =
+                  patient.actionStatus.filter(v => v.actionTextId !== actionTextId);
                 if (
                   patient.actionStatus.filter(v =>
                     v.indicatorList &&

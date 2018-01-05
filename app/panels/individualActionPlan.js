@@ -477,7 +477,7 @@ const iap = {
           id
         }"]`);
         let any = false;
-        self.find('.btn-toggle input[type=checkbox]:checked').each((elInput) => {
+        self.find('.btn-toggle input[type=checkbox]:checked').each((ix, elInput) => {
           any = true;
           if (elInput.value === 'yes') {
             all.removeClass('danger');
@@ -714,7 +714,7 @@ const iap = {
 
     $('#advice-list')
       .find('span:contains("[INFO")')
-      .each((el) => {
+      .each((i, el) => {
         const html = $(el).html();
         const { subsection } = $(el).data();
         const desc =

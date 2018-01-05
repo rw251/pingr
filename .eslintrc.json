@@ -10,7 +10,7 @@
   },
   "rules": {
     "no-underscore-dangle": ["error", { "allow": ["_id"] }],
-    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["v","vv","vvv"] }],
+    "no-param-reassign": ["error", { "props": false }],
     "comma-dangle": ["error", {
       "arrays": "always-multiline",
       "objects": "always-multiline",

@@ -1,7 +1,8 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var ActionSchema = new Schema({
+const { Schema } = mongoose;
+
+const ActionSchema = new Schema({
   practiceId: String,
   indicatorList: [String],
   patientId: Number,
