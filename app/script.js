@@ -77,7 +77,7 @@ const App = {
       const newPracticeId = $(e.currentTarget).val();
       const newPractice = state.practices.filter(v => v._id === newPracticeId)[0];
       state.selectedPractice = newPractice;
-      console.log('changed practice to: ', newPractice);
+      // console.log('changed practice to: ', newPractice);
       main.getInitialData(() => {
         initialize();
       });

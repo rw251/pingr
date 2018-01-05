@@ -41,7 +41,7 @@ module.exports = {
         console.log(`Error finding action list for practice:  ${practiceId}`);
         return done(null, false);
       }
-      done(null, actions);
+      return done(null, actions);
     });
   },
 
@@ -55,7 +55,7 @@ module.exports = {
         return done(null, false);
       }
 
-      localUpdateAction(action, updatedAction, (updateActionError, act) => {
+      return localUpdateAction(action, updatedAction, (updateActionError, act) => {
         if (updateActionError) {
           console.log(updateActionError);
           return done(updateActionError);
@@ -100,28 +100,24 @@ module.exports = {
   },
 
   updateTeam(practiceId, indicatorId, updatedAction, done) {
-    Action.find({ practiceId, actionTextId: updatedAction.actionTextId }, (err, actions) => {
+    Action.find({ practiceId, actionTextId: updatedAction.actionTextId }, (err, actions = []) => {
       if (err) {
         console.log(err);
         return done(new Error(`Error finding team actions for practice: ${practiceId} and actionTextId ${updatedAction.actionTextId}`));
       }
-      if (!actions || actions.length === 0) {
-        actions = [
-          new Action({
-            practiceId,
-          }),
-        ];
+      if (actions.length === 0) {
+        actions.push(new Action({ practiceId }));
       }
 
       const doneActions = [];
       let errorIfError = null;
 
-      actions.forEach((v) => {
+      return actions.forEach((v) => {
         delete updatedAction.indicatorList;
-        localUpdateAction(v, updatedAction, (err, act) => {
-          if (err) {
-            console.log(err);
-            errorIfError = err;
+        localUpdateAction(v, updatedAction, (locErr, act) => {
+          if (locErr) {
+            console.log(locErr);
+            errorIfError = locErr;
             doneActions.push(act);
           } else {
             doneActions.push(act);
@@ -130,35 +126,36 @@ module.exports = {
             if (errorIfError) return done(errorIfError);
             return done(null, doneActions);
           }
+          return false;
         });
       });
     });
   },
 
   updateIndividual(practiceId, patientId, updatedAction, done) {
-    Action.findOne({ practiceId, patientId, actionTextId: updatedAction.actionTextId }, (err, action) => {
-      if (err) {
-        console.log(err);
-        return done(new Error(`Error finding individual action for practice: ${practiceId} and patient ${patientId} and actionTextId ${updatedAction.actionTextId}`));
-      }
-      if (!action) {
-        action = new Action({
-          practiceId,
-          patientId,
+    Action.findOne(
+      { practiceId, patientId, actionTextId: updatedAction.actionTextId },
+      (err, action = new Action({
+        practiceId,
+        patientId,
+      })) => {
+        if (err) {
+          console.log(err);
+          return done(new Error(`Error finding individual action for practice: ${practiceId} and patient ${patientId} and actionTextId ${updatedAction.actionTextId}`));
+        }
+        Object.keys(updatedAction).forEach((v) => {
+          if (v[0] === '_') return; // ignore hidden properties like _id and __v;
+          action[v] = updatedAction[v];
+        });
+        return action.save((saveErr, act) => {
+          if (saveErr) {
+            console.log('error updating individual action');
+            return done(saveErr);
+          }
+          return done(null, act);
         });
       }
-      Object.keys(updatedAction).forEach((v) => {
-        if (v[0] === '_') return; // ignore hidden properties like _id and __v;
-        action[v] = updatedAction[v];
-      });
-      action.save((err, act) => {
-        if (err) {
-          console.log('error updating individual action');
-          return done(err);
-        }
-        return done(null, act);
-      });
-    });
+    );
   },
 
   getTeam(searchObject, done) {

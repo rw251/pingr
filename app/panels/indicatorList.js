@@ -200,13 +200,13 @@ const indicatorList = {
     $('#overview-table-outcomes').on('draw.dt', () => {
       $.sparkline_display_visible(); // ensure sparklines on hidden tabs display
       // tableOutcomeIndicators.columns.adjust().draw(false); //ensure column headers are correct
-      console.log(`Redraw occurred at: ${new Date().getTime()}`);
+      // console.log(`Redraw occurred at: ${new Date().getTime()}`);
     });
 
     $('#overview-table-process').on('draw.dt', () => {
       $.sparkline_display_visible(); // ensure sparklines on hidden tabs display
       // tableProcessIndicators.columns.adjust().draw(false); //ensure column headers are correct
-      console.log(`Redraw occurred at: ${new Date().getTime()}`);
+      // console.log(`Redraw occurred at: ${new Date().getTime()}`);
     });
 
     $('#overview-table-process, #overview-table-outcomes').floatThead('reflow');

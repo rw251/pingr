@@ -1,7 +1,7 @@
 // execute the following prior to v3.6.0 to move practice info into an array in the user collection
 
 db.users.find().snapshot().forEach(
-  function(e) {
+  (e) => {
     // update document, using its own properties
     e.practices = [{ id: e.practiceId, name: e.practiceName, authorised: true }];
 

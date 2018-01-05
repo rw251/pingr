@@ -45,7 +45,7 @@ const ap = {
         (e) => {
           if (!e.data.label) {
             // e.data.label = 'team';
-            console.warn('Hopefyully we dont get here');
+            console.error('Hopefyully we dont get here');
           }
           const reason = $('input:radio[name=reason]:checked').val();
           const localReasonText = $('#modal textarea').val();

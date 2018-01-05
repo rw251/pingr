@@ -13,7 +13,7 @@ let timer = setTimeout(() => {
 }, SESSION_TIMEOUT); // set session logout to 2 hours
 
 const refreshSession = () => {
-  console.log('Session refreshed...');
+  // console.log('Session refreshed...');
   clearTimeout(timer);
   timer = setTimeout(() => {
     window.location.href = '/signout';
@@ -137,7 +137,7 @@ let isListening = false;
 module.exports = {
   listen() {
     if (isListening) {
-      console.log('Hmm - trying to do the global listening more than once..');
+      console.error('Hmm - trying to do the global listening more than once..');
       return;
     }
 

@@ -239,15 +239,15 @@ const pl = {
         $('#patients-placeholder').hide();
 
         $('#patient-list').on('init.dt', () => {
-          console.log(`Init occurred at: ${new Date().getTime()}`);
+          // console.log(`Init occurred at: ${new Date().getTime()}`);
         });
 
         $('#patient-list').on('preInit.dt', () => {
-          console.log(`PreInit occurred at: ${new Date().getTime()}`);
+          // console.log(`PreInit occurred at: ${new Date().getTime()}`);
         });
 
         $('#patient-list').on('processing.dt', () => {
-          console.log(`processing occurred at: ${new Date().getTime()}`);
+          // console.log(`processing occurred at: ${new Date().getTime()}`);
         });
 
         const numColumns = list['header-items'].length;
@@ -337,7 +337,7 @@ const pl = {
         // Must update after every redraw
         $('#patient-list').on('draw.dt', () => {
           updateInfo();
-          console.log(`Redraw occurred at: ${new Date().getTime()}`);
+          // console.log(`Redraw occurred at: ${new Date().getTime()}`);
         });
 
         $('.dt-buttons').addClass('pull-right');

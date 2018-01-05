@@ -5,7 +5,7 @@ const $ = require('jquery');
 // const lookup = require('./lookup');
 // const log = require('./log');
 
-console.log(`chart.js: data.lastloader= ${data.lastloader}`);
+// console.log(`chart.js: data.lastloader= ${data.lastloader}`);
 data.lastloader = 'chart.js';
 
 const cht = {

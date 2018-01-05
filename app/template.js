@@ -90,7 +90,7 @@ const template = {
         actionPlan.create();
       } else {
         // if screen not in correct segment then select it
-        alert("shouldn't get here");
+        // alert("shouldn't get here");
 
         base.wireUpTooltips();
       }

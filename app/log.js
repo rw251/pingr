@@ -15,8 +15,8 @@ const log = {
       type: 'POST',
       url: '/api/event',
       data: JSON.stringify(dataToSend),
-      success(d) {
-        console.log(d);
+      success() {
+        // console.log(d);
       },
       dataType: 'json',
       contentType: 'application/json',

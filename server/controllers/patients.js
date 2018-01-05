@@ -388,7 +388,12 @@ module.exports = {
           { $match: { patientId: { $in: patientList } } },
           {
             $project: {
-              _id: 0, standards: { $filter: { input: '$standards', as: 'standard', cond: { $eq: ['$$standard.indicatorId', indicatorId] } } }, patientId: 1, characteristics: 1, actions: 1, measurements: { $filter: { input: '$measurements', as: 'measurement',	cond: { $eq: ['$$measurement.id', indicatorValue] } } },
+              _id: 0,
+              standards: { $filter: { input: '$standards', as: 'standard', cond: { $eq: ['$$standard.indicatorId', indicatorId] } } },
+              patientId: 1,
+              characteristics: 1,
+              actions: 1,
+              measurements: { $filter: { input: '$measurements', as: 'measurement', cond: { $eq: ['$$measurement.id', indicatorValue] } } },
             },
           },
           {

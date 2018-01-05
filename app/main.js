@@ -9,7 +9,7 @@ const $ = require('jquery');
 let states;
 let hash;
 
-console.log(`main.js: data.lastloader= ${data.lastloader}`);
+// console.log(`main.js: data.lastloader= ${data.lastloader}`);
 data.lastloader = 'main.js';
 
 const main = {

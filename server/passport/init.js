@@ -3,7 +3,8 @@ const signup = require('./signup');
 const User = require('../models/user');
 
 module.exports = (passport) => {
-  // Passport needs to be able to serialize and deserialize users to support persistent login sessions
+  // Passport needs to be able to serialize and
+  // deserialize users to support persistent login sessions
   passport.serializeUser((user, done) => {
     // console.log('serializing user: ');
     // console.log(user);

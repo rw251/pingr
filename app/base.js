@@ -2,7 +2,6 @@ const data = require('./data');
 const $ = require('jquery');
 const lookup = require('./lookup');
 const state = require('./state');
-// const chart = require('./chart');
 const log = require('./log');
 const notify = require('./notify');
 const Clipboard = require('clipboard');
@@ -164,7 +163,7 @@ const base = {
       log.event('copy-button', window.location.hash, [
         { key: 'data', value: dataText },
       ]);
-      console.log(`Copied text to clipboard: ${dataText}`);
+      // console.log(`Copied text to clipboard: ${dataText}`);
       $(event.trigger).tooltip('hide');
       $(event.trigger).popover({
         trigger: 'manual',
@@ -299,14 +298,14 @@ const base = {
   },
 
   updateFixedHeightElements(elems) {
-    console.log(elems);
-    console.log('update called');
+    // console.log(elems);
+    // console.log('update called');
     const elements = elems || base.elements;
     base.elements = elements;
-    console.log('shall we update?');
+    // console.log('shall we update?');
     const currentlyVisibleElements = elements.filter(v => $(`${v.selector}:visible`).length > 0);
     if (currentlyVisibleElements.length !== elements.length) {
-      console.log('no - wait a bit.');
+      // console.log('no - wait a bit.');
       if ($('#addedCSS').length === 0) {
         $('head').append('<style id="addedCSS" type="text/css"></style>');
       }
@@ -316,14 +315,14 @@ const base = {
         base.updateFixedHeightElements(elements);
       }, 100);
     } else {
-      console.log('yes');
+      // console.log('yes');
       if ($('#addedCSS').length === 0) {
         $('head').append('<style id="addedCSS" type="text/css"></style>');
       }
 
       $('#addedCSS').text(base.getCssText());
 
-      console.log('done');
+      // console.log('done');
     }
   },
 };
