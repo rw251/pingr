@@ -3,6 +3,9 @@
 										------PRACTICE LIST SIZE AND eFI--------
 												-------AS OF TODAY--------
 									----------------------------------------------
+--v5 17/1/18
+--added age/gender structure tables for whole of salford and each practice
+
 --v3
 --commented out the dereg clause because previous version only on practice list if had a dereg code and it was your latest code, so if you had a dereg code and moved to another practice in Salford and had codes afterwards then you weren't on practice list!
 --if have codes after dereg code it then still on list, but if don't then still could be on a list but not have had ontact with new practice yet - so it's useless
@@ -393,3 +396,295 @@ and EntryDate < @refdate
 and EntryDate > DATEADD(year, -2, @refdate)
 and PatID in (select PatID from practiceList)
 group by PatID
+
+
+					-----------------------------------------------------------------------------
+					-------AGE/GENDER STRUCTURE FOR ALL SALFORD AND EACH PRACTICE----------------
+					-----------------------------------------------------------------------------
+
+--Get age and gender structure for whole of Salford
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ageGenderStructureSalford]') AND type in (N'U')) DROP TABLE [dbo].[ageGenderStructureSalford]
+CREATE TABLE [ageGenderStructureSalford] 
+	(ageRange varchar(8), gender varchar(8), type varchar(256), area varchar(256), count int);
+insert into ageGenderStructureSalford
+	
+select '0-10', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age <= 10 and gender = 'M'
+group by gender
+union
+select '0-10', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age <= 10 and gender = 'F'
+group by gender
+union
+select '0-10', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age <= 10
+union
+
+select '11-20', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >10 and age <= 20 and gender = 'M'
+group by gender
+union
+select '11-20', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >10 and age <= 20 and gender = 'F'
+group by gender
+union
+select '11-20', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >10 and age <= 20
+union
+
+select '21-30', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >20 and age <= 30 and gender = 'M'
+group by gender
+union
+select '21-30', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >20 and age <= 30 and gender = 'F'
+group by gender
+union
+select '21-30', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >20 and age <= 30
+union
+
+select '31-40', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >30 and age <= 40 and gender = 'M'
+group by gender
+union
+select '31-40', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >30 and age <= 40 and gender = 'F'
+group by gender
+union
+select '31-40', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >30 and age <= 40
+union
+
+select '41-50', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >40 and age <= 50 and gender = 'M'
+group by gender
+union
+select '41-50', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >40 and age <= 50 and gender = 'F'
+group by gender
+union
+select '41-50', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >40 and age <= 50
+union
+
+select '51-60', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >50 and age <= 60 and gender = 'M'
+group by gender
+union
+select '51-60', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >50 and age <= 60 and gender = 'F'
+group by gender
+union
+select '51-60', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >50 and age <= 60
+union
+
+select '61-70', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >60 and age <= 70 and gender = 'M'
+group by gender
+union
+select '61-70', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >60 and age <= 70 and gender = 'F'
+group by gender
+union
+select '61-70', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >60 and age <= 70
+union
+
+select '71-80', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >70 and age <= 80 and gender = 'M'
+group by gender
+union
+select '71-80', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >70 and age <= 80 and gender = 'F'
+group by gender
+union
+select '71-80', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >70 and age <= 80
+union
+
+select '81-90', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >80 and age <= 90 and gender = 'M'
+group by gender
+union
+select '81-90', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >80 and age <= 90 and gender = 'F'
+group by gender
+union
+select '81-90', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >80 and age <= 90
+union
+
+select '91-100', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >90 and age <= 100 and gender = 'M'
+group by gender
+union
+select '91-100', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >90 and age <= 100 and gender = 'F'
+group by gender
+union
+select '91-100', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >90 and age <= 100
+union
+
+
+select '>100', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >100 and gender = 'M'
+group by gender
+union
+select '>100', gender, 'denominator', 'salford', COUNT(*) from practiceList
+where age >100 and gender = 'F'
+group by gender
+union
+select '>100', 'Both', 'denominator', 'salford', COUNT(*) from practiceList
+where age >100
+
+
+--Get age and gender structure for every practice
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ageGenderStructureEachPractice]') AND type in (N'U')) DROP TABLE [dbo].[ageGenderStructureEachPractice]
+CREATE TABLE [ageGenderStructureEachPractice] 
+	(ageRange varchar(8), gender varchar(8), type varchar(256), area varchar(256), count int);
+insert into ageGenderStructureEachPractice
+
+select '0-10', gender, 'denominator', pracID,  COUNT(*) from practiceList
+where age <= 10 and gender = 'M'
+group by gender, pracID
+union
+select '0-10', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age <= 10 and gender = 'F'
+group by gender, pracID
+union
+select '0-10', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age <= 10
+group by pracID
+union
+
+select '11-20', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >10 and age <= 20 and gender = 'M'
+group by gender, pracID
+union
+select '11-20', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >10 and age <= 20 and gender = 'F'
+group by gender, pracID
+union
+select '11-20', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >10 and age <= 20
+group by pracID
+union
+
+select '21-30', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >20 and age <= 30 and gender = 'M'
+group by gender, pracID
+union
+select '21-30', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >20 and age <= 30 and gender = 'F'
+group by gender, pracID
+union
+select '21-30', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >20 and age <= 30
+group by pracID
+union
+
+select '31-40', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >30 and age <= 40 and gender = 'M'
+group by gender, pracID
+union
+select '31-40', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >30 and age <= 40 and gender = 'F'
+group by gender, pracID
+union
+select '31-40', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >30 and age <= 40
+group by pracID
+union
+
+select '41-50', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >40 and age <= 50 and gender = 'M'
+group by gender, pracID
+union
+select '41-50', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >40 and age <= 50 and gender = 'F'
+group by gender, pracID
+union
+select '41-50', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >40 and age <= 50
+group by pracID
+union
+
+select '51-60', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >50 and age <= 60 and gender = 'M'
+group by gender, pracID
+union
+select '51-60', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >50 and age <= 60 and gender = 'F'
+group by gender, pracID
+union
+select '51-60', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >50 and age <= 60
+group by pracID
+union
+
+select '61-70', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >60 and age <= 70 and gender = 'M'
+group by gender, pracID
+union
+select '61-70', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >60 and age <= 70 and gender = 'F'
+group by gender, pracID
+union
+select '61-70', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >60 and age <= 70
+group by pracID
+union
+
+select '71-80', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >70 and age <= 80 and gender = 'M'
+group by gender, pracID
+union
+select '71-80', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >70 and age <= 80 and gender = 'F'
+group by gender, pracID
+union
+select '71-80', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >70 and age <= 80
+group by pracID
+union
+
+select '81-90', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >80 and age <= 90 and gender = 'M'
+group by gender, pracID
+union
+select '81-90', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >80 and age <= 90 and gender = 'F'
+group by gender, pracID
+union
+select '81-90', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >80 and age <= 90
+group by pracID
+union
+
+select '91-100', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >90 and age <= 100 and gender = 'M'
+group by gender, pracID
+union
+select '91-100', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >90 and age <= 100 and gender = 'F'
+group by gender, pracID
+union
+select '91-100', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >90 and age <= 100
+group by pracID
+union
+
+select '>100', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >100 and gender = 'M'
+group by gender, pracID
+union
+select '>100', gender, 'denominator', pracID, COUNT(*) from practiceList
+where age >100 and gender = 'F'
+group by gender, pracID
+union
+select '>100', 'Both', 'denominator', pracID, COUNT(*) from practiceList
+where age >100
+group by pracID
