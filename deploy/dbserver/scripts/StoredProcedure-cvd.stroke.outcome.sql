@@ -233,15 +233,15 @@ order by firstEverStrokeIncidence asc
 --no of PATIENTS WHO HAVE HAD strokes PER PRACTICE SINCE START DATE
 --FIRST EVER INDICENCE i.e. only one stroke per patient
 
-declare @refdate VARCHAR(10);
-declare @JustTheIndicatorNumbersPlease bit;
-set @refdate = '2017-03-31' --'2016-11-17';
-set @JustTheIndicatorNumbersPlease= 0;
+--declare @refdate VARCHAR(10);
+--declare @JustTheIndicatorNumbersPlease bit;
+--set @refdate = '2017-03-31' --'2016-11-17';
+--set @JustTheIndicatorNumbersPlease= 0;
 
-declare @startDate datetime;
-set @startDate = (select case
-	when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) + '-04-01' --1st April THIS YEAR
-	when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-04-01' end); --1st April LAST YEAR
+--declare @startDate datetime;
+--set @startDate = (select case
+--	when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) + '-04-01' --1st April THIS YEAR
+--	when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-04-01' end); --1st April LAST YEAR
 	
 IF OBJECT_ID('tempdb..#numberOfStrokePatientsPerPracticeByAgeGender') IS NOT NULL DROP TABLE #numberOfStrokePatientsPerPracticeByAgeGender
 CREATE TABLE #numberOfStrokePatientsPerPracticeByAgeGender (ageRange varchar(8), gender varchar(8), type varchar(256), area varchar(256), count int);
