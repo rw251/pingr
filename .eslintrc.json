@@ -11,6 +11,10 @@
       "functions": "never"
     }],
     "no-param-reassign": ["error", { "props": false }],
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    "object-curly-newline": ["error", {
+      "ObjectExpression": { "multiline": true },
+      "ObjectPattern": { "multiline": true }
+    }]
   }
 }
