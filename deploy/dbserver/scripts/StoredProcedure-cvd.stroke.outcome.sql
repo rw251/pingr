@@ -1,3 +1,6 @@
+--v8 23/1/18
+--Added expected counts of strokes per practice
+
 --v7 17/1/18
 --Added adjusted rates / standardised incidence
 
@@ -233,16 +236,6 @@ order by firstEverStrokeIncidence asc
 --no of PATIENTS WHO HAVE HAD strokes PER PRACTICE SINCE START DATE
 --FIRST EVER INDICENCE i.e. only one stroke per patient
 
---declare @refdate VARCHAR(10);
---declare @JustTheIndicatorNumbersPlease bit;
---set @refdate = '2017-03-31' --'2016-11-17';
---set @JustTheIndicatorNumbersPlease= 0;
-
---declare @startDate datetime;
---set @startDate = (select case
---	when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) + '-04-01' --1st April THIS YEAR
---	when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) + '-04-01' end); --1st April LAST YEAR
-	
 IF OBJECT_ID('tempdb..#numberOfStrokePatientsPerPracticeByAgeGender') IS NOT NULL DROP TABLE #numberOfStrokePatientsPerPracticeByAgeGender
 CREATE TABLE #numberOfStrokePatientsPerPracticeByAgeGender (ageRange varchar(8), gender varchar(8), type varchar(256), area varchar(256), count int);
 insert into #numberOfStrokePatientsPerPracticeByAgeGender
@@ -410,16 +403,197 @@ left outer join #numberOfStrokePatientsPerPracticeByAgeGender as c on c.ageRange
 --FIRST EVER INDICENCE i.e. only one stroke per patient
 IF OBJECT_ID('tempdb..#standardisedFirstEverStrokeIncidenceByAgeGender') IS NOT NULL DROP TABLE #standardisedFirstEverStrokeIncidenceByAgeGender
 CREATE TABLE #standardisedFirstEverStrokeIncidenceByAgeGender
-	(area varchar(256), standardisedFirstEverStrokeIncidenceByAgeGender float);
+	(area varchar(256), standardisedFirstEverStrokeIncidenceByAgeGenderPer1000 float);
 insert into #standardisedFirstEverStrokeIncidenceByAgeGender
-select a.area, sum(firstEverStrokeIncidenceByAgeGender*count) as expectedStrokePatients from #firstEverStrokeIncidenceByAgeGender as a
+select a.area, sum(firstEverStrokeIncidenceByAgeGender*count)/SUM(count)*1000 from #firstEverStrokeIncidenceByAgeGender as a
 left outer join ageGenderStructureSalford as b on b.ageRange = a.ageRange COLLATE Latin1_General_CI_AS and b.gender = a.gender COLLATE Latin1_General_CI_AS 
 where a.gender != 'Both'
 group by a.area
-order by expectedStrokePatients desc
 
 					-----------------------------------------------------------------------------
-					---------------------GET AB (TOP 10% BENCHMARK)-----------------------------
+					---------------------EXPECTED COUNTS-----------------------------
+					-----------------------------------------------------------------------------
+
+--Get number of strokes for each age and gender category for WHOLE OF SALFORD
+--no of PATIENTS WHO HAVE HAD strokes SINCE START DATE
+--FIRST EVER INDICENCE i.e. only one stroke per patient
+	
+IF OBJECT_ID('tempdb..#numberOfStrokePatientsSalfordWholeByAgeGender') IS NOT NULL DROP TABLE #numberOfStrokePatientsSalfordWholeByAgeGender
+CREATE TABLE #numberOfStrokePatientsSalfordWholeByAgeGender (ageRange varchar(8), gender varchar(8), type varchar(256), count int);
+insert into #numberOfStrokePatientsSalfordWholeByAgeGender
+
+select '0-10', gender, 'numberOfStrokePatientsSalford',COUNT(distinct(PatID)) from #strokePtsGp
+where age <= 10 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '0-10', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age <= 10 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '0-10', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age <= 10 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '11-20', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >10 and age <= 20 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '11-20', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >10 and age <= 20 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '11-20', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >10 and age <= 20 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '21-30', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >20 and age <= 30 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '21-30', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >20 and age <= 30 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '21-30', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >20 and age <= 30 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '31-40', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >30 and age <= 40 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '31-40', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >30 and age <= 40 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '31-40', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >30 and age <= 40 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '41-50', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >40 and age <= 50 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '41-50', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >40 and age <= 50 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '41-50', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >40 and age <= 50 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '51-60', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >50 and age <= 60 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '51-60', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >50 and age <= 60 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '51-60', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >50 and age <= 60 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '61-70', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >60 and age <= 70 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '61-70', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >60 and age <= 70 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '61-70', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >60 and age <= 70 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '71-80', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >70 and age <= 80 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '71-80', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >70 and age <= 80 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '71-80', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >70 and age <= 80 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '81-90', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >80 and age <= 90 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '81-90', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >80 and age <= 90 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '81-90', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >80 and age <= 90 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '91-100', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >90 and age <= 100 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '91-100', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >90 and age <= 100 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '91-100', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >90 and age <= 100 and strokeCodeDate >= @startDate
+group by pracID
+union
+
+select '>100', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >100 and gender = 'M' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '>100', gender, 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >100 and gender = 'F' and strokeCodeDate >= @startDate
+group by gender, pracID
+union
+select '>100', 'Both', 'numberOfStrokePatientsSalford', COUNT(distinct(PatID)) from #strokePtsGp
+where age >100 and strokeCodeDate >= @startDate
+group by pracID
+
+
+--Get stroke rates for each age and gender category for WHOLE OF SALFORD
+--stroke incidence
+--FIRST EVER INDICENCE i.e. only one stroke per patient
+IF OBJECT_ID('tempdb..#firstEverStrokeIncidenceSalfordWholeByAgeGender') IS NOT NULL DROP TABLE #firstEverStrokeIncidenceSalfordWholeByAgeGender
+CREATE TABLE #firstEverStrokeIncidenceSalfordWholeByAgeGender 
+	(ageRange varchar(8), gender varchar(8), firstEverStrokeIncidenceSalfordWholeByAgeGender float);
+insert into #firstEverStrokeIncidenceSalfordWholeByAgeGender
+select a.ageRange, a.gender,
+	case
+		when c.count is NULL then 0 --prevents null when no strokes in a practice
+		else cast(c.count as float)/cast(a.count as float) 
+	end as firstEverStrokeIncidenceByAgeGender 
+from ageGenderStructureSalford as a
+left outer join #numberOfStrokePatientsSalfordWholeByAgeGender as c on c.ageRange = a.ageRange COLLATE Latin1_General_CI_AS and c.gender = a.gender COLLATE Latin1_General_CI_AS
+
+--EXPECTED COUNTS
+--Get total expected stroke PATIENTS per practice IF they had the same STROKE RATE across age and gender categories as the whole of salford
+--FIRST EVER INDICENCE i.e. only one stroke per patient
+IF OBJECT_ID('tempdb..#expectedFirstEverStrokeIncidenceByAgeGenderPerPractice') IS NOT NULL DROP TABLE #expectedFirstEverStrokeIncidenceByAgeGenderPerPractice
+CREATE TABLE #expectedFirstEverStrokeIncidenceByAgeGenderPerPractice
+	(area varchar(256), expectedFirstEverStrokeIncidenceByAgeGenderPerPractice float);
+insert into #expectedFirstEverStrokeIncidenceByAgeGenderPerPractice
+select area, sum(firstEverStrokeIncidenceSalfordWholeByAgeGender*count) from #firstEverStrokeIncidenceSalfordWholeByAgeGender as a
+left outer join ageGenderStructureEachPractice as b on b.ageRange = a.ageRange COLLATE Latin1_General_CI_AS and b.gender = a.gender COLLATE Latin1_General_CI_AS 
+where a.gender != 'Both'
+group by area
+
+					-----------------------------------------------------------------------------
+					---------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
 					-----------------------------------------------------------------------------
 					---------------------	FIRST EVER INCIDENCE -----------------------------
 					-----------------------------------------------------------------------------
