@@ -145,7 +145,7 @@ CREATE TABLE #strokePtsHosp (PatID int, strokeCodeDate date, strokeCode varchar(
 insert into #strokePtsHosp
 select a.PatID, EntryDate, MAX(Rubric), ReadCode, Source,  pracID from SIR_ALL_Records as a
 inner join ptPractice as b on a.PatID = b.PatID
-where ReadCode in (select code from codeGroups where [group] in ('strokeQof'))
+where ReadCode in (select code from codeGroups where [group] in ('strokeIsch'))
 		and (Rubric like '%stroke%' --guard against rubric over-writes
 			or Rubric like '%haemorrhage%'
 			or  Rubric like '%occlusion%'
@@ -619,7 +619,7 @@ insert into [output.pingr.indicatorOutcome](indicatorId, practiceId, date, patie
 --CREATE TABLE #indicatorOutcome (indicatorId varchar(1000), practiceId varchar(1000), date date, patientCount int, eventCount int, denominator int, standardisedIncidence float, benchmark float);
 --insert into #indicatorOutcome
 
-select 'cvd.stroke.outcome', a.practiceId, CONVERT(char(10), @refdate, 126), numberOfStrokePatientsPerPractice, numberOfStrokesPerPractice, a.practiceListSize, standardisedFirstEverStrokeIncidenceByAgeGender, @abc from #firstEverStrokeIncidence as a
+select 'cvd.stroke.outcome', a.practiceId, CONVERT(char(10), @refdate, 126), numberOfStrokePatientsPerPractice, numberOfStrokesPerPractice, a.practiceListSize, standardisedFirstEverStrokeIncidenceByAgeGenderPer1000, @abc from #firstEverStrokeIncidence as a
 left outer join (select * from #episodeStrokeIncidence) as b on b.practiceId = a.practiceId
 left outer join #standardisedFirstEverStrokeIncidenceByAgeGender as c on c.area = a.practiceId
 
