@@ -725,8 +725,7 @@ select a.PatID,
 	null as priority,
 	null as actionText,
 	null as supportingText
-from #numberOfStrokesPerPatientSinceStartDate as a 
-left outer join (select * from #numberOfStrokesPerPatientBeforeStartDate) as b on b.PatID = a.PatID
+from #numberOfStrokesPerPatientSinceStartDate as a
 where numberOfStrokesPerPatientSinceStartDate > 1
 
 union
@@ -746,7 +745,7 @@ select a.PatID,
 		'</ul>'
 	as supportingText
 from #latestHospitalStrokeDateSinceStartDate as a
-inner join (select * from #numberOfStrokesPerPatientSinceStartDate) as b on b.PatID = a.PatID
+left outer join (select * from #numberOfStrokesPerPatientSinceStartDate) as b on b.PatID = a.PatID
 where numberOfStrokesPerPatientSinceStartDate = 0 or numberOfStrokesPerPatientSinceStartDate is null
 
 							---------------------------------------------------------------
