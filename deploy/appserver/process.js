@@ -348,13 +348,13 @@ var doOutcomeIndicators = function(callback) {
           i.values[0].push(dtt);
           i.values[1].push(data.patientCount);
           i.values[2].push(data.denominator);
-          i.values[3].push(data.standardisedIncidence);
-          i.values[4].push(data.eventCount);
+          i.values[3].push(data.eventCount);
+          i.values[4].push(data.standardisedIncidence);
         } else {
           i.values[1][dttIdx] = data.patientCount;
           i.values[2][dttIdx] = data.denominator;
-          i.values[3][dttIdx] = data.standardisedIncidence;
-          i.values[4][dttIdx] = data.eventCount;
+          i.values[3][dttIdx] = data.eventCount;
+          i.values[4][dttIdx] = data.standardisedIncidence;
         }
 
         // Sort them all..
