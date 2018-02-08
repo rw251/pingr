@@ -15,7 +15,7 @@ body {
 }
 
 header {
-    font-family: 'Raleway', sans-serif;
+    /*font-family: 'Raleway', sans-serif;*/
 }
 
 body,
@@ -40,6 +40,11 @@ a:hover {
 
 .container-narrow {
     max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.container-wide {
     margin-left: auto;
     margin-right: auto;
 }
@@ -1443,10 +1448,12 @@ body.qof {
     background-color: rgb(68, 157, 68);
 }
 
+/*
 tr.standard-row:hover {
     background-color: #eee;
     cursor: pointer;
 }
+*/
 
 span.standard-missed {
     background-color: #ff9999;
@@ -1941,14 +1948,18 @@ td > .fa-caret-down {
     .container {
         width: 970px;
     }
+    .container-wide {
+        width: 1150px;
+        width: 95vw;
+    }
 }
 @media (min-width: 1500px) {
-    .container {
+    .container, .container-wide {
         width: 1270px;
     }
 }
 @media (min-width: 1800px) {
-    .container {
+    .container, .container-wide {
         width: 1570px;
     }
 }
@@ -1968,6 +1979,21 @@ mod
 .modal-dialog.modal-dialog-top {
     margin-top: 100px;
 }
+
+.modal-dialog.modal-dialog-top.modal-fit {
+    margin-top: 10vh;
+    height: 80vh;
+}
+
+.modal-dialog.modal-dialog-top.modal-fit .modal-content {
+    height: 100%;
+}
+
+.modal-dialog.modal-dialog-top.modal-fit .modal-body {
+    overflow-y: auto;
+    height: 90%;
+}
+
 /* Change header*/
 /*.modal-content {
   background-color: #0480be;
@@ -2136,7 +2162,7 @@ header {
 }
 
 .starter-template-high {
-    padding: 15px 15px 0;
+    padding: 15px;
 }
 
 .table > tbody > tr.suggestion.danger td span {
@@ -2784,14 +2810,18 @@ body > svg {
     background-color: #f5f5f5;
 }
 
-.show-more-row,
-.standard-row {
+.show-more-row/*,
+.standard-row*/ {
     background-color: #fafafa;
 }
 
 .standard-row.hover {
     background-color: #eee;
     cursor: pointer;
+}
+
+.standard-row {
+    background-color: white;
 }
 
 .alternate-row {
@@ -2933,4 +2963,13 @@ body > svg {
 }
 .tim-row h3{
     margin-top: 0;
+}
+.checkbox input[type="checkbox"].big-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-left: -25px;
+}
+.checkbox label.big-checkbox-label {
+    line-height: 30px;
+    margin-left: 20px;
 }

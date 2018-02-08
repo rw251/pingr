@@ -1,5 +1,6 @@
 var base = require('../base'),
   data = require('../data'),
+  state = require('../state'),
   patientList = require('../panels/patientList'),
   indicatorBreakdown = require('../panels/indicatorBreakdown'),
   indicatorBenchmark = require('../panels/indicatorBenchmark'),
@@ -87,11 +88,12 @@ var ind = {
       base.updateTitle(data.text.pathways[pathwayId][pathwayStage].standards[standard].name);
       lookup.suggestionModalText = "Screen: Indicator\nIndicator: " + data.text.pathways[pathwayId][pathwayStage].standards[standard].name + "\n===========\n";
 
-      var nothingChanged = layout.pathwayId === pathwayId && layout.pathwayStage === pathwayStage && layout.standard === standard;
+      var nothingChanged = layout.pathwayId === pathwayId && layout.pathwayStage === pathwayStage && layout.standard === standard && layout.practiceId === state.selectedPractice._id;
 
       layout.pathwayId = pathwayId;
       layout.pathwayStage = pathwayStage;
       layout.standard = standard;
+      layout.practiceId = state.selectedPractice._id;
 
       //TODO not sure if this needs moving..?
       data.pathwayId = pathwayId;

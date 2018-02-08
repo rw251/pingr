@@ -57,6 +57,7 @@ script.
       var dataToSend = {
         to: $('#emailAddress').val(),
         subject: $('input[name="subject"]').val(),
+        type: $('input[name=type]:checked').val(),
         html: $('#html').html(),
         text: $('#html').text()
       };

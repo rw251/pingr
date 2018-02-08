@@ -9,7 +9,8 @@ var User = require('../../server/models/user'),
   events = require('../../server/controllers/events'),
   emailTemplates = require('../../server/controllers/emails'),
   indicators = require('../../server/controllers/indicators'),
-  jade = require('jade');
+  jade = require('jade'),
+  createTextVersion = require("textversionjs");
 
 var jade2html = function (input, data) {
   return jade.compile(input, {
@@ -17,6 +18,10 @@ var jade2html = function (input, data) {
     doctype: "5"
   })(data);
 };
+
+console.log("version = v3.5.5"); // check if picked up
+console.log("Mail type: " + config.mail.type);
+console.log("Mail from: " + config.mail.reminderEmailsFrom);
 
 var now = new Date();
 var day = now.getDay();
@@ -33,8 +38,7 @@ fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 47);
 // Mode:
 // PROD: production
 // DEV: do same as production but only email RW and BB
-// TEST: Ensures that RW and BB receive an email
-//        regardless of whether it is the right day or not
+// TEST: Ensures that only RW receives an email regardless of whether it is the right day or not
 var MODES = { PROD: "production", DEV: "development", TEST: "test" };
 var MODE = MODES.PROD;
 if (process.argv.length > 2) {
@@ -62,8 +66,10 @@ if (MODE !== MODES.TEST) {
 if (MODE === MODES.PROD) {
   andComponent.push({ email: { $regex: "nhs.net$" } }); //don't send nhs numbers to none nhs.net accounts
 }
-andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only authorised people
-andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
+andComponent.push({ "practices.authorised": true }); // to ensure it's only authorised people
+andComponent.push({ "practices.id": { $not: /ALL/ } }); // to ensure CCG users don't get one
+// andComponent.push({ practiceId: { $exists: true } }); // to ensure it's only authorised people
+// andComponent.push({ practiceId: { $not: /ALL/ } }); // to ensure CCG users don't get one
 andComponent.push({ emailFrequency: { $ne: 0 } }); // never receives emails
 var searchObject = { $and: andComponent };
 var fieldsToReturn = { password: 0 };
@@ -156,57 +162,68 @@ User.find(searchObject, fieldsToReturn, function (err, users) {
     }
     console.log("Doing: " + v.email);
 
-    utils.getDataForEmails(v, function (err, data) {
-      data = data.data; //!!
-      crypto.randomBytes(6, function (err, buf) {
-        var token = buf.toString('hex');
+    var practicesToDo = v.practices.filter(v => v.authorised && v.id !== 'ALL').length;
+    var practicesDone = 0;
 
-        var urlBaseWithToken = config.server.url + "/t/" + token + "/";
-        console.log(urlBaseWithToken);
-        data.pingrUrl = urlBaseWithToken;
-        data.pingrUrlWithoutTracking = config.server.url + "/";
-
-        var patientIdLookup = {};
-        if(data.patients) {
-          data.patients.forEach((p) => {
-            patientIdLookup[p.nhsNumber] = p._id;
-          });
-        }
-
-        emailTemplates.getDefault(function (err, emailTemplate) {
-          //send email
-          var emailHTMLBody = jade2html(emailTemplate.body, data);
-          //Replace urls with an unstyled hyperlink to allow people to select the text, rather than clicking the link
-          emailHTMLBody = emailHTMLBody.replace(/http(s?):\/\/([^\/]+\/[^i])/g,"http$1<a href='#' style='text-decoration:none; color:#000;'>://$2</a>");
-          
-          emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
-          var emailConfig = emailSender.config(null, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, null, emailHTMLBody, null);
-
-          emailSender.send(emailConfig, function (error, info) {
-            emailsSent++;
-            if (error) {
-              console.log("email not sent: " + error);
-              usersUpdated++;
-            } else {
-              events.emailReminder(v.email, token, emailHTMLBody, now, patientIdLookup, function (err) {
-                if (err) {
-                  console.log("email event not recorded: " + err);
-                }
-                v.last_email_reminder = now;
-                v.email_url_tracking_code = token;
-                v.save(function (err) {
-                  usersUpdated++;
+    v.practices.forEach((p) => {
+      if(!p.authorised || p.id === 'ALL') return;
+      utils.getDataForEmails(p.id, v, function (err, data) {
+        data = data.data; //!!
+        crypto.randomBytes(6, function (err, buf) {
+          var token = buf.toString('hex');
+  
+          var urlBaseWithToken = config.server.url + "/t/" + token + "/";
+          console.log(urlBaseWithToken);
+          data.pingrUrl = urlBaseWithToken;
+          data.pingrUrlWithoutTracking = config.server.url + "/";
+  
+          var patientIdLookup = {};
+          if(data.patients) {
+            data.patients.forEach((p) => {
+              patientIdLookup[p.nhsNumber] = p._id;
+            });
+          }
+  
+          emailTemplates.getDefault(function (err, emailTemplate) {
+            //send email
+            var emailHTMLBody = jade2html(emailTemplate.body, data);
+            //Replace urls with an unstyled hyperlink to allow people to select the text, rather than clicking the link
+            emailHTMLBody = emailHTMLBody.replace(/http(s?):\/\/([^\/]+\/[^i])/g,"http$1<a href='#' style='text-decoration:none; color:#000;'>://$2</a>");
+            
+            var emailTextBody = createTextVersion(emailHTMLBody);
+  
+            emailHTMLBody += "<img src='" + config.server.url + "/img/" + data.email + "/" + token + "'></img>";
+            var emailConfig = emailSender.config(config.mail.type, config.mail.reminderEmailsFrom, { name: v.fullname, email: v.email }, emailTemplate.subject, emailTextBody, emailHTMLBody, null);
+  
+            emailSender.send(emailConfig, function (error, info) {
+              practicesDone += 1;
+              console.log(v.email, practicesDone, practicesToDo, emailsSent, usersUpdated);
+              if(practicesDone === practicesToDo) emailsSent++;
+              if (error) {
+                console.log("email not sent: " + error);
+                if(practicesDone === practicesToDo) usersUpdated++;
+              } else {
+                console.log("Info: " + info);
+                events.emailReminder(v.email, token, emailHTMLBody, now, patientIdLookup, function (err) {
                   if (err) {
-                    console.log("User failed to update: " + error);
+                    console.log("email event not recorded: " + err);
                   }
-                  if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+                  v.last_email_reminder = now;
+                  v.email_url_tracking_code = token;
+                  v.save(function (err) {
+                    if(practicesDone === practicesToDo) usersUpdated++;
+                    if (err) {
+                      console.log("User failed to update: " + error);
+                    }
+                    if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+                  });
                 });
-              });
-            }
-            if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+              }
+              if (emailsSent === users.length && usersUpdated === users.length) process.exit(0);
+            });
           });
         });
       });
-    });
+    });    
   });
 });

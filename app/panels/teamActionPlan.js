@@ -1,5 +1,6 @@
 var base = require('../base.js'),
   data = require('../data.js'),
+  state = require('../state.js'),
   log = require('../log.js'),
   actionPlan = require('./actionPlan.js');
 
@@ -100,6 +101,19 @@ var tap = {
 
         $('#deletePlan').modal('hide');
       }).modal();
+      // RW TODO the below might be being done on the overview.js page instead now - CHECK
+    // }).on('click', '.add-plan', function() {
+    //   var actionText = $(this).parent().parent().find('textarea').val();
+    //   $(this).parent().parent().find('textarea').val("");
+    //   var actionTextId = actionText.toLowerCase().replace(/[^a-z0-9]/g, "");
+    //   log.recordTeamPlan(state.selectedPractice._id, actionText, indicatorId, function(err, a) {
+    //     if (!userDefinedTeamActionsObject[actionTextId]) userDefinedTeamActionsObject[actionTextId] = a;
+    //     tap.displayPersonalisedTeamActionPlan($('#personalPlanTeam'));
+    //   });
+    // }).on('keyup', 'input[type=text]', function(e) {
+    //   if (e.which === 13) {
+    //     actionPanel.find('.add-plan').click();
+    //   }
     });
 
     // //suggestion addition control
@@ -136,7 +150,7 @@ var tap = {
         if (!action.history) action.history = [];
         action.history.unshift({ who: $('#user_fullname').text().trim(), what: "agreed with", when: new Date() });
       }
-      log.updateTeamAction(indicatorId, action);
+      log.updateTeamAction(state.selectedPractice._id, indicatorId, action);
       tap.updateAction(action);
 
       e.stopPropagation();
@@ -156,13 +170,13 @@ var tap = {
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateTeamAction(indicatorId, action);
+          log.updateTeamAction(state.selectedPractice._id, indicatorId, action);
           tap.updateAction(action);
         }, null, function() {
           action.agree = null;
           delete action.rejectedReason;
           delete action.rejectedReasonText;
-          log.updateTeamAction(indicatorId, action);
+          log.updateTeamAction(state.selectedPractice._id, indicatorId, action);
           tap.updateAction(action);
         });
         e.stopPropagation();
@@ -175,7 +189,7 @@ var tap = {
           action.agree = false;
           action.rejectedReason = actionPlan.rejectedReason;
           action.rejectedReasonText = actionPlan.rejectedReasonText;
-          log.updateTeamAction(indicatorId, action);
+          log.updateTeamAction(state.selectedPractice._id, indicatorId, action);
           tap.updateAction(action);
         });
         e.stopPropagation();
@@ -341,7 +355,7 @@ var tap = {
   },
 
   loadAndPopulateIndividualSuggestedActions: function(pathwayId, pathwayStage, standard, visible) {
-    data.getTeamActionData(pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : "", function(err, a) {
+    data.getTeamActionData(state.selectedPractice._id, pathwayId && pathwayStage && standard ? [pathwayId, pathwayStage, standard].join(".") : "", function(err, a) {
       teamActionsObject = {};
       userDefinedTeamActionsObject = {};
       a.userDefinedActions.forEach(function(v) {
@@ -396,14 +410,14 @@ var tap = {
     $('#advice-list').html(tmpl(localData));
 
     //Wire up any clipboard stuff in the suggestions
-    var isVision = $('#practice_system').text() === "Vision";
+    var isVision = state.selectedPractice.ehr === "Vision";
     $('#advice-list').find('span:contains("[COPY")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1') + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><i class="material-icons">content_copy</i></button>'));
+      $(this).html(html.replace(/\[COPY:([^\]\.]*)(\.*)\]/g, (isVision ? '#$1$2' : '$1') + ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + state.selectedPractice.ehr + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><i class="material-icons">content_copy</i></button>'));
     });
     $('#advice-list').find('span:contains("[")').each(function() {
       var html = $(this).html();
-      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
+      $(this).html(html.replace(/\[([^\]\.]*)(\.*)\]/g, ' <button type="button" data-clipboard-text="' + (isVision ? '#$1$2' : '$1') + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + state.selectedPractice.ehr + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ' + (isVision ? '#$1$2' : '$1') + ' to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>'));
     });
     $('#advice-list').find('li:contains("[")').each(function() {
       var html = $(this).html();
@@ -448,7 +462,7 @@ var tap = {
           .replace(/&gt;/g, ">")
           .replace(/&lt;/g, "<")
           .replace(/<a.+href=["']([^"']+)["'].*>([^<]+)<\/a>/g, "$2 - $1");
-        reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + $('#practice_system').text() + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-round btn-default btn-copy"><span class="material-icons">content_copy</span></button>');
+        reasoning.replaceWith('Reasoning <button type="button" data-clipboard-text="' + content + '" data-content="Copied!<br><strong>Use Ctrl + v to paste into ' + state.selectedPractice.ehr + '!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-round btn-default btn-copy"><span class="material-icons">content_copy</span></button>');
       }
     });
 

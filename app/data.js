@@ -37,27 +37,44 @@ var isFetchingNhsLookup = false;
 
 var dt = {
 
+  clinicalArea: {
+    "copd" : "COPD",
+    "htn" : "Hypertension",
+    "cvd.stroke" : "Stroke",
+    "cvd.af" : "Atrial Fibrillation",
+    "ckd" : "CKD",
+    "ckdAndDm" : "Diabetes",
+    "ckdAndProt" : "CKD",    
+  },
+
   pathwayNames: {},
   diseases: [],
   options: [],
   excludedPatients: {},
   excludedPatientsByIndicator: {},
 
-  populateNhsLookup: function (done) {
+  getNHS: (practiceId, patientId) => {
+    if(dt.patLookup && dt.patLookup[practiceId] && dt.patLookup[practiceId][patientId]) 
+      return dt.patLookup[practiceId][patientId];
+    return patientId;
+  },
+
+  populateNhsLookup: function (practiceId, done) {
     if (isFetchingNhsLookup) return;
-    if (dt.patLookup) return done();
+    if (dt.patLookup && dt.patLookup[practiceId]) return done();
     isFetchingNhsLookup = true;
-    $.getJSON("/api/nhs", function (lookup) {
-      dt.patLookup = lookup;
+    $.getJSON("/api/nhs/" + practiceId, function (lookup) {
+      if(!dt.patLookup) dt.patLookup = {};
+      dt.patLookup[practiceId] = lookup;
       isFetchingNhsLookup = false;
       return done();
     });
   },
 
-  getAllAgreedWithActions: function (done) {
+  getAllAgreedWithActions: function (practiceId, done) {
     $.ajax({
       type: "GET",
-      url: "/api/action/all/",
+      url: "/api/action/all/" + practiceId,
       success: function (d) {
         return done(null, d);
       },
@@ -66,22 +83,18 @@ var dt = {
     });
   },
 
-  get: function (callback, json) {
-    $.getJSON("/api/userDetails", function (userDetails) {
-      dt.userDetails = userDetails;
-
-      $.getJSON("/api/Text", function (textfile) {
-        dt.text = textfile;
-        dt.getAllIndicatorData(null, function () {
-          dt.getExcludedPatients(function (err) {
-            if (typeof callback === 'function') {
-              callback();
-            }
-          });
+  get: function (practiceId, force, callback, json) {
+    $.getJSON("/api/Text", function (textfile) {
+      dt.text = textfile;
+      dt.getAllIndicatorData(practiceId, force, function () {
+        dt.getExcludedPatients(practiceId, function (err) {
+          if (typeof callback === 'function') {
+            callback();
+          }
         });
-      }).fail(function (err) {
-        //alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
       });
+    }).fail(function (err) {
+      //alert("data/text.json failed to load!! - if you've changed it recently check it's valid json at jsonlint.com");
     });
   },
 
@@ -122,6 +135,13 @@ var dt = {
       var pathwayId = indicator.id.split(".")[0];
       var pathwayStage = indicator.id.split(".")[1];
       var standard = indicator.id.split(".")[2];
+      if(dt.clinicalArea[pathwayId]) {
+        indicator.clinicalArea = dt.clinicalArea[pathwayId];
+      } else if (dt.clinicalArea[pathwayId + '.' + pathwayStage]) {
+        indicator.clinicalArea = dt.clinicalArea[pathwayId + '.' + pathwayStage];
+      } else {
+        indicator.clinicalArea = 'Unknown';
+      }
       //if (!dt.pathwayNames[pathwayId]) dt.pathwayNames[pathwayId] = "";
       var percentage = Math.round(100 * indicator.values[1][last] * 100 / indicator.values[2][last]) / 100;
       indicator.performance = {
@@ -130,7 +150,8 @@ var dt = {
       };
       if (indicator.type === "outcome") {
         indicator.performance.incidence = (percentage * 10).toFixed(1);
-        indicator.performance.incidenceMultiple = (Math.round(100 * indicator.values[4][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
+        indicator.performance.incidenceMultiple = (Math.round(100 * indicator.values[3][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
+        indicator.performance.incidenceStandardised = (Math.round(100 * indicator.values[4][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
       }
       indicator.patientsWithOpportunity = indicator.values[2][last] - indicator.values[1][last];
       //indicator.benchmark = "90%"; //TODO magic number
@@ -185,14 +206,14 @@ var dt = {
   },
 
   //prepare an annoymised ranking demonstrating my postition in amongst other practices
-  getPracticePerformanceData: function (pathwayId, pathwayStage, standard, callback) {
+  getPracticePerformanceData: function (practiceId, pathwayId, pathwayStage, standard, callback) {
 
     var practiceObj;
 
     var indicatorId = [pathwayId, pathwayStage, standard].join(".");
 
     $.ajax({
-      url: "/api/BenchmarkDataFor/" + indicatorId,
+      url: "/api/BenchmarkDataFor/" + practiceId + "/" + indicatorId,
       success: function (benchmarkData) {
         return callback(benchmarkData);
       },
@@ -211,7 +232,7 @@ var dt = {
     }
   },
 
-  getAllIndicatorData: function (practiceId, callback) {
+  getAllIndicatorData: function (practiceId, force, callback) {
     //var addId = '/'+practiceId;
     var routeURL;
     if (practiceId) {
@@ -222,7 +243,7 @@ var dt = {
     }
 
     //we never want to cache this anymore.
-    if (dt.indicators) {
+    if (dt.indicators && !force) {
       var indicatorsToReturn = dt.processIndicatorsRemoveExcludedPatients(dt.indicators);
       return callback(indicatorsToReturn);
     } else {
@@ -230,7 +251,7 @@ var dt = {
       $.ajax({
         url: routeURL,
         success: function (file) {
-          //don't retian the object, refresh of object
+          //don't retain the object, refresh of object
           dt.indicators = dt.processIndicators(file);
 
           var indicatorsToReturn = dt.processIndicatorsRemoveExcludedPatients(dt.indicators);
@@ -261,7 +282,7 @@ var dt = {
     var isAsync = typeof (callback) === "function";
 
     $.ajax({
-      url: "/api/PatientListForPractice/Indicator/" + indicatorId,
+      url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
       async: isAsync,
       success: function (file) {
         if (!dt.indicators) dt.indicators = {};
@@ -470,9 +491,9 @@ var dt = {
     return rtn;
   },
 
-  getAllPatientList: function (skip, limit, callback) {
+  getAllPatientList: function (practiceId, skip, limit, callback) {
     $.ajax({
-      url: "api/WorstPatients/" + skip + "/" + limit,
+      url: "api/WorstPatients/" + practiceId + "/" + skip + "/" + limit,
       success: function (file) {
         return callback(null, file);
       },
@@ -495,7 +516,7 @@ var dt = {
     } else {
 
       $.ajax({
-        url: "/api/PatientListForPractice/Indicator/" + indicatorId,
+        url: "/api/PatientListForPractice/" + practiceId + "/Indicator/" + indicatorId,
         success: function (file) {
           dt.patientList[practiceId][indicatorId].file = file;
           dt.patientList[practiceId][indicatorId][subsection] = dt.processPatientList(pathwayId, pathwayStage, standard, subsection, file);
@@ -666,9 +687,9 @@ var dt = {
     return _getPatientData(patientId, callback);
   },
 
-  getPatientActionData: function (patientId, callback) {
+  getPatientActionData: function (practiceId, patientId, callback) {
     $.ajax({
-      url: "api/action/individual/" + patientId,
+      url: "api/action/individual/" + practiceId + "/" + patientId,
       success: function (file) {
         return callback(null, file);
       },
@@ -678,9 +699,9 @@ var dt = {
     });
   },
 
-  getTeamActionData: function (indicatorId, callback) {
+  getTeamActionData: function (practiceId, indicatorId, callback) {
     $.ajax({
-      url: "api/action/team/" + indicatorId,
+      url: "api/action/team/" + practiceId + "/" + indicatorId,
       success: function (file) {
         return callback(null, file);
       },
@@ -690,9 +711,9 @@ var dt = {
     });
   },
 
-  getExcludedPatients: function (callback) {
+  getExcludedPatients: function (practiceId, callback) {
     $.ajax({
-      url: "/api/excludedpatients",
+      url: "/api/excludedpatients/practice/" + practiceId,
       success: function (file) {
         dt.excludedPatients = {};
         dt.excludedPatientsByIndicator = {};

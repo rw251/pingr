@@ -1,4 +1,45 @@
-var User = require('../models/user');
+const User = require('../models/user');
+const patients = require('./patients');
+const indicators = require('./indicators');
+
+const addEmailPrefsToUser = (user, body, callback) => {
+  indicators.getList((err, indicatorList) => {
+    if(err) return callback(err);
+
+    if(body.indicatorIdsToInclude) {
+      const indicatorsToExclude = {};
+      indicatorList.forEach((i)=>{
+        indicatorsToExclude[i._id]=true;
+      });
+      // either string or array depending on whether 1 or more things selected
+      if(typeof body.indicatorIdsToInclude === 'string') body.indicatorIdsToInclude = [body.indicatorIdsToInclude];
+      body.indicatorIdsToInclude.forEach((i)=>{
+        delete indicatorsToExclude[i];
+      });
+      user.emailIndicatorIdsToExclude = Object.keys(indicatorsToExclude);
+    } else {
+      user.emailIndicatorIdsToExclude = indicatorList.map(i => i._id);
+    }
+    if(body.patientsToInclude) {
+      const patientTypesToExclude = {};
+      patients.possibleExcludeType.forEach((i)=>{
+        patientTypesToExclude[i.id]=true;
+      });
+      if(typeof body.patientsToInclude === 'string') body.patientsToInclude = [body.patientsToInclude];
+      body.patientsToInclude.forEach((i)=>{
+        delete patientTypesToExclude[i];
+      });
+      user.patientTypesToExclude = Object.keys(patientTypesToExclude);
+    } else {
+      user.patientTypesToExclude = patients.possibleExcludeType.map(i => i.id);
+    }
+    user.emailFrequency = body.freq;
+    user.emailDay = body.day;
+    user.emailHour = body.hour;
+
+    return callback(null, user);
+  });
+};
 
 module.exports = {
 
@@ -31,7 +72,7 @@ module.exports = {
     User.find({ email: email }).remove(done);
   },
 
-  updateEmailPreference: function(email, freq, day, hour, done){
+  updateEmailPreference: function(email, body, done){
     User.findOne({
       'email': email
     }, function(err, user) {
@@ -45,15 +86,14 @@ module.exports = {
         console.log('User doesnt exist with email: ' + email);
         return done(null, false, 'Trying to edit a user with an email not found in the system');
       } else {
-        user.emailFrequency = freq;
-        user.emailDay = day;
-        user.emailHour = hour;
-        user.save(function(err) {
-          if (err) {
-            console.log('Error in Saving user: ' + err);
-            throw err;
-          }
-          return done(null, user);
+        addEmailPrefsToUser(user, body, (err, userToSave) => {
+          userToSave.save(function(err) {
+            if (err) {
+              console.log('Error in Saving user: ' + err);
+              throw err;
+            }
+            return done(null, user);
+          });
         });
       }
     });
@@ -78,23 +118,36 @@ module.exports = {
         if (req.body.isAdmin) roles.push("admin");
         var originalUser = user;
 
+        if(typeof req.body.practice === 'string') req.body.practice = [req.body.practice];
+        var userPractices = req.body.practice.map((v) => {
+          var els = v.split('|');
+          if(els[0]!=="") {
+            return {id: els[0], name: els[1], authorised: true};
+          } else {
+            return null;
+          }
+        }).filter((v) => {
+          return v;
+        });
+
         if(email === req.body.email){
           //email not changing so update is fine
           user.fullname = req.body.fullname;
           user.emailFrequency = req.body.freq;
           user.emailDay = req.body.day;
           user.emailHour = req.body.hour;
-          var els = req.body.practice.split("|");
-          user.practiceId = els[0] !== "" ? els[0] : "";
-          user.practiceName = els[0] !== "" ? els[1] : "None";
+          user.practices = userPractices;
           user.roles = roles;
-          // save the user
-          user.save(function(err) {
-            if (err) {
-              console.log('Error in Saving user: ' + err);
-              throw err;
-            }
-            return done(null, user);
+
+          addEmailPrefsToUser(user, req.body, (err, userToSave) => {          
+            // save the user
+            userToSave.save(function(err) {
+              if (err) {
+                console.log('Error in Saving user: ' + err);
+                throw err;
+              }
+              return done(null, userToSave);
+            });
           });
         } else {
           //check no existing user with that email
@@ -111,17 +164,18 @@ module.exports = {
               originalUser.emailFrequency = req.body.freq;
               originalUser.emailDay = req.body.day;
               originalUser.emailHour = req.body.hour;
-              var els = req.body.practice.split("|");
-              originalUser.practiceId = els[0] !== "" ? els[0] : "";
-              originalUser.practiceName = els[0] !== "" ? els[1] : "None";
+              originalUser.practices = userPractices;
               originalUser.roles = roles;
-              // save the user
-              originalUser.save(function(err) {
-                if (err) {
-                  console.log('Error in Saving user: ' + err);
-                  throw err;
-                }
-                return done(null, originalUser);
+
+              addEmailPrefsToUser(originalUser, req.body, (err, userToSave) => {          
+                // save the user
+                userToSave.save(function(err) {
+                  if (err) {
+                    console.log('Error in Saving user: ' + err);
+                    throw err;
+                  }
+                  return done(null, userToSave);
+                });
               });
             }
           });
@@ -149,7 +203,17 @@ module.exports = {
         var roles = [];
         if (req.body.isAdmin) roles.push("admin");
 
-        var els = req.body.practice.split("|");
+        if(typeof req.body.practice === 'string') req.body.practice = [req.body.practice];
+        var userPractices = req.body.practice.map((v) => {
+          var els = v.split('|');
+          if(els[0]!=="") {
+            return {id: els[0], name: els[1], authorised: true};
+          } else {
+            return null;
+          }
+        }).filter((v) => {
+          return v;
+        });
         var newUser = new User({
           email: req.body.email,
           emailFrequency: req.body.freq,
@@ -157,19 +221,20 @@ module.exports = {
           emailHour: req.body.hour,
           password: req.body.password,
           fullname: req.body.fullname,
-          practiceId: els[0] !== "" ? els[0] : "",
-          practiceName: els[0] !== "" ? els[1] : "None",
+          practices: userPractices,
           roles: roles
         });
 
-        // save the user
-        newUser.save(function(err) {
-          if (err) {
-            console.log('Error in Saving user: ' + err);
-            throw err;
-          }
-          console.log('User Registration succesful');
-          return done(null, newUser);
+        addEmailPrefsToUser(newUser, req.body, (err, userToSave) => {          
+          // save the user
+          userToSave.save(function(err) {
+            if (err) {
+              console.log('Error in Saving user: ' + err);
+              throw err;
+            }
+            console.log('User Registration succesful');
+            return done(null, userToSave);
+          });
         });
       }
     });

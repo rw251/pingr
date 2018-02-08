@@ -52,7 +52,7 @@ var overview = {
     //before further execution
     setTimeout(function() {
 
-      var practiceName = $('#practice_name').text();
+      var practiceName = state.selectedPractice.name;
 
       if (layout.view !== ID) {
         //Not already in this view so we need to rejig a few things
@@ -61,7 +61,11 @@ var overview = {
         layout.showMainView();
 
         $('#mainTitle').show();
-        base.updateTitle("Overview of " + practiceName + "'s performance");
+        let title = `Overview of ${practiceName}'s performance`;
+        if(state.practices && state.practices.length>1) {
+          title = `Performance overview of <select class='practice-picker'>${state.practices.map(v=>'<option value="' + v._id + '" ' + (v._id===state.selectedPractice._id ? 'selected' : '') + ' >' + v.name + '</option>')}</select>`;
+        }
+        base.updateTitle(title);
 
         //base.hidePanels(farRightPanel);
 
@@ -91,7 +95,7 @@ var overview = {
       //farRightPanel.attr("class", "col-xl-6 col-lg-6 state-overview-rightPanel");
       //farLeftPanel.attr("class", "col-xl-6 col-lg-6 state-overview-leftPanel");
 
-      //base.updateFixedHeightElements([{selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250},{selector:'.table-scroll',padding:250, minHeight:300}]);
+      //base.updateFixedHeightElements([{selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);//,{selector:'.table-scroll',padding:250, minHeight:300}]);
     }, 0);
 
   }

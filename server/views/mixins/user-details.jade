@@ -1,0 +1,34 @@
+include ../mixins/password-field.jade
+mixin user-details(submitText, isPasswordVisible, isAdminScreen)
+  h3 Your details
+  .row
+    div(class='col-md-' + (isPasswordVisible ? '4' : '6'))
+      .form-group.input-group
+        span.input-group-addon
+          i.fa.fa-user
+        input.form-control(type='text', name='fullname', placeholder='Full name', required='', autofocus='', value=user.fullname)
+    div(class='col-md-' + (isPasswordVisible ? '4' : '6'))
+      .form-group.input-group
+        span.input-group-addon
+          i.fa.fa-envelope
+        input.form-control(type='text', name='email', placeholder='Email address', required='', autofocus='', value=user.email)
+        if user.email
+          input.form-control(type='hidden', name='originalEmail', value=user.email)
+    if isPasswordVisible
+      +password(false)
+  .form-group.input-group
+    span.input-group-addon
+      i.fa.fa-stethoscope
+    select#selPractice.form-control.selectpicker(name='practice', required='',multiple='',title='Select one or more GP practices')
+      each practice in practices
+        option(value=practice._id+"|"+practice.name)= practice.name
+        option(value=practice._id+"|"+practice.name, selected=(user.practices && user.practices.map(function(v){return v.id;}).indexOf(practice._id) > -1 ))= practice.name
+  if isAdminScreen
+    .form-group
+      .checkbox
+        label
+          input(name='isAdmin', type='checkbox', checked=user.roles && user.roles.indexOf('admin')>-1)
+          | Is Admin
+  button.btn.btn-purple.btn-block.history(type='submit')
+    = submitText + ' '
+    span.fa.fa-arrow-circle-right

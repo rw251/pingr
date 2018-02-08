@@ -1,5 +1,6 @@
 var base = require('../base.js'),
   data = require('../data.js'),
+  state = require('../state.js'),
   lookup = require('../lookup.js'),
   log = require('../log.js');
 var states, loadContFn, ID = "PATIENT_SEARCH";
@@ -13,15 +14,17 @@ var ps = {
       states.clearPrefetchCache();
     }
 
-    data.populateNhsLookup(function() {
+    data.populateNhsLookup(state.selectedPractice._id, function() {
 
       states = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(Object.keys(data.patLookup), function(state) {
+        local: $.map(Object.keys(data.patLookup[state.selectedPractice._id]), function(stt) {
           return {
-            id: state,
-            value: data.patLookup && data.patLookup[state] ? data.patLookup[state].toString().replace(/ /g, "") : state
+            id: stt,
+            value: data.patLookup[state.selectedPractice._id] &&
+              data.patLookup[state.selectedPractice._id][stt] ?
+              data.patLookup[state.selectedPractice._id][stt].toString().replace(/ /g, "") : stt
           };
         })
       });
@@ -86,7 +89,7 @@ var ps = {
 
   show: function(panel, isAppend, isPatientSelected, loadContentFn) {
 
-    var isDataLoaded = data.patLookup ? true : false;
+    var isDataLoaded = (data.patLookup && data.patLookup[state.selectedPractice._id]) ? true : false;
 
     loadContFn = loadContentFn;
     var tmpl = require("templates/patient-search");
@@ -101,7 +104,7 @@ var ps = {
 
     var waitUntilDataLoaded = function() {
       setTimeout(function() {
-        if (!data.patLookup) {
+        if (!data.patLookup || ! data.patLookup[state.selectedPractice._id]) {
           waitUntilDataLoaded();
         } else {
           tmpl = require("templates/patient-search");

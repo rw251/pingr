@@ -1,5 +1,6 @@
 var data = require('./data'),
   lookup = require('./lookup'),
+  state = require('./state'),
   chart = require('./chart'),
   log = require('./log'),
   notify = require('./notify'),
@@ -126,8 +127,8 @@ var base = {
       var dataText = event.text;//data['text/plain'];
       var ispatid = dataText.match(/[0-9]{10}/);
       if (ispatid && ispatid.length > 0) {
-        var poss = Object.keys(data.patLookup).filter(function(v) {
-          return data.patLookup[v] === ispatid[0];
+        var poss = Object.keys(data.patLookup[state.selectedPractice._id]).filter(function(v) {
+          return data.patLookup[state.selectedPractice._id][v] === ispatid[0];
         });
         if (poss & poss.length > 0) {
           dataText = poss[0];
@@ -231,6 +232,12 @@ var base = {
     tabElement.data("href", "#" + tab + "/" + url);
   },
 
+  resetTab: function(tab) {
+    var tabElement = $('#mainTab a[data-href="#' + tab + '"]');
+    tabElement.html(tabElement.text().split(":")[0]);
+    tabElement.data("href", '#' + tab);
+    tabElement.attr('href','#' + tab);
+  },
 /**
  * Show the main loading page and hide everything else
  */

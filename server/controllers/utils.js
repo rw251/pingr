@@ -49,14 +49,14 @@ var processPatients = function(patients) {
 
 module.exports = {
 
-  getDataForEmails: function(user, callback) {
+  getDataForEmails: function(practiceId, user, callback) {
 
     var greetings = ["Hi","Hello","Dear","Greetings"];
 
-    practices.get(user.practiceId, function(err, practice){
-      patients.getAllPatientsPaginated(user.practiceId, 0, 25, function(err, patients) {
+    practices.get(practiceId, function(err, practice){
+      patients.getAllPatientsPaginatedConsiderLastReviewDate(practiceId, user, 0, 25, function(err, patients) {
         if (err) return callback(err);
-        indicators.list(user.practiceId, function(err, indicators) {
+        indicators.list(practiceId, function(err, indicators) {
           if (err) return callback(err);
           indicators = processIndicators(indicators);
           patients = processPatients(patients);
@@ -67,6 +67,8 @@ module.exports = {
           user.reminderEmailsFrom = config.mail.reminderEmailsFrom;
           user.practiceSystem = practice.ehr;
           user.greeting = greetings[Math.floor(Math.random()*greetings.length)];
+          user.practiceId = practiceId;
+          user.practiceName = practice.name;
           return callback(null, { data: user });
         });
       });

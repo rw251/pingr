@@ -111,13 +111,13 @@ var qs = {
       var bits = indicatorId.split('.');
       var row = $(this).parent().parent();
 
-      $('#modal').html(tmpl({ nhs: data.patLookup ? data.patLookup[patientId] : patientId, indicator: data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText }));
+      $('#modal').html(tmpl({ nhs: data.getNHS(state.selectedPractice._id, patientId), indicator: data.text.pathways[bits[0]][bits[1]].standards[bits[2]].tabText }));
 
       $('#modal .modal').off('submit', 'form').on('submit', 'form', function (e) {
 
         var freetext = $('#modal textarea').val();
 
-        log.excludePatient(patientId, indicatorId, $('[name="reason"]:checked').val(), freetext);
+        log.excludePatient(state.selectedPractice._id, patientId, indicatorId, $('[name="reason"]:checked').val(), freetext);
 
         // hide row
         deleteRow(row, function(){
@@ -131,7 +131,7 @@ var qs = {
     }).off('click', '.include').on('click', '.include', function () {
       var indicatorId = $(this).data('id');
       actionPlanRefresh(patientId, indicatorId);
-      log.includePatient(patientId, indicatorId);
+      log.includePatient(state.selectedPractice._id, patientId, indicatorId);
       qs.updateFromId(patientId, indicatorId);
     });
   },

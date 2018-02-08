@@ -1,0 +1,28 @@
+include ../partials/head.jade
+include ../mixins/email-preferences.jade
+include ../mixins/user-details.jade
+include ../mixins/toolbar.jade
+.container-wide.starter-template-high(style="background-color: white")
+  +toolbar('Register an account', [{btn:'btn-info',path:'/',text:'Back to PINGR'}])
+  - if(message && message.success)
+    div.alert.alert-success(role="alert")= message.success
+    - if(message.warning)
+      div.alert.alert-warning(role="alert")
+        strong= message.warning
+  - else
+    form(action='/register', method='post')
+      +user-details('Register',true)
+
+      - if(message && message.error)
+        div.alert.alert-danger(role="alert")= message.error
+      hr
+      h3 Reminder emails
+      p 
+        | PINGR can send you emails to highlight patients that may need reviewing. 
+        //- a#sampleEmail(href='#',data-toggle="modal" data-target="#myModal") View an example email based on your selections below by clicking here (you'll need to save your changes first).
+      hr   
+      +email-prefs("Register", false, false, true) 
+      - if(message && message.error)
+        div.alert.alert-danger(role="alert")= message.error
+include ../partials/footerWithTracking.jade
+include ../partials/bootstrap-select.jade

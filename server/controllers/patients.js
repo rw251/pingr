@@ -91,6 +91,14 @@ var mergeActions = function (actions, patients, patientId) {
   return finalRtn;
 };
 
+const possibleExcludeType = [
+  //Date string: (i.e. from 1st April <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 0 : -1)}</strong> to 31st March <strong>${(new Date()).getFullYear() + ((new Date()).getMonth()>2 ? 1 : 0)}</strong>)
+  {id:"MISSED_REVIEW", checkedByDefault: true, description:"Patients who <strong>have missed</strong> their annual chronic disease review"},
+  {id:"AFTER_APRIL", description:"Patients who <strong>have had</strong> their annual review but are still missing targets"},
+  {id:"REVIEW_YET_TO_HAPPEN", description:"Patients who <strong>have not yet had</strong> their annual review"},
+  {id:"NO_REVIEW", description:"Patients who <strong>have never before</strong> had an annual review"},
+];
+
 module.exports = {
 
   //Return a list of patients - not sure this is needed
@@ -212,6 +220,70 @@ module.exports = {
     });
   },
 
+  getAllPatientsPaginatedConsiderLastReviewDate: function (practiceId, user, skip, limit, done) {
+    var now = new Date();
+    var nextApril1st = new Date();
+    if(nextApril1st.getMonth()>2) {
+      nextApril1st.setFullYear(nextApril1st.getFullYear()+1);
+    }
+    nextApril1st.setMonth(3);
+    nextApril1st.setDate(1);
+    console.log(now);
+    console.log(nextApril1st);
+
+    const dateRangeQueryOptions = {
+      MISSED_REVIEW: { "standards.nextReviewDate" : {$lt: now.getTime() } },
+      NO_REVIEW: { "standards.nextReviewDate" : { $exists:false } },
+      AFTER_APRIL: { "standards.nextReviewDate" : {$gt: nextApril1st.getTime() } },
+      REVIEW_YET_TO_HAPPEN: { $and: [ { "standards.nextReviewDate": {$gte: now.getTime()}}, {"standards.nextReviewDate": {$lte: nextApril1st.getTime() }} ] },
+    }
+    if(user.patientTypesToExclude) {
+      user.patientTypesToExclude.forEach((type) => {
+        delete dateRangeQueryOptions[type];
+      });
+    }
+
+    const dateRangeOrQuery = Object.keys(dateRangeQueryOptions).map(key => dateRangeQueryOptions[key]);
+
+    var aggregateQuery = [
+      { $match: { "characteristics.practiceId": practiceId } },
+      { $project: { _id: 0, patientId: 1, standards: 1, characteristics: 1 } },
+      { $unwind: "$standards" },
+      { $match: { $and : [ 
+        { "standards.indicatorId" : { $nin: user.emailIndicatorIdsToExclude } }, 
+        {"standards.targetMet":false} , 
+        { $or : dateRangeOrQuery } 
+      ]}},
+      { $group: { _id: "$patientId", nhsNumber: { $max: "$characteristics.nhs" }, age: { $max: "$characteristics.age" }, sex: { $max: "$characteristics.sex" },  indicators: { $addToSet: "$standards.indicatorId" } } },
+      { $project: { _id: 1, nhsNumber: 1, age: 1, sex: 1, indicators: 1, numberOfIndicators: { $size: "$indicators" } } },
+      { $sort: { numberOfIndicators: -1 } },
+      { $skip: skip },
+      { $limit: limit }
+    ];
+
+    Patient.aggregate(aggregateQuery, function (err, results) {
+      if (err) return done(err);
+      var patientIds = results.map(function (v) {
+        return v._id;
+      });
+      var resultsObject = {};
+      results.forEach(function (v, i) {
+        resultsObject[v._id] = v;
+        resultsObject[v._id].pos = i;
+      });
+      actions.patientsWithPlansPerIndicator(patientIds, function (err, patientsWithActions) {
+        patientsWithActions.forEach(function (v) {
+          resultsObject[v._id].indicatorsWithAction = v.indicatorList;
+          resultsObject[v._id].numberOfIndicatorsWithAction = v.indicatorList.length;
+        });
+        Object.keys(resultsObject).map(function (v) {
+          results[v.pos] = resultsObject[v];
+        });
+        return done(null, results);
+      });
+    });
+  },
+
   getAllPatientsPaginated: function (practiceId, skip, limit, done) {
     var aggregateQuery = [
       { $match: { "characteristics.practiceId": practiceId, "actions": { $exists: true } } },
@@ -255,6 +327,10 @@ module.exports = {
     indicators.get(practiceId, indicatorId, function (err, indicator) {
       //console.timeEnd(["getListForIndicator", "indicators", "get"].join("--"));
       //console.time(["getListForIndicator", "indicators", "process"].join("--"));
+      if(!indicator) {
+        return done(null, [], null);
+      }
+
       var patientList = indicator.opportunities.reduce(function (prev, curr) {
         var union = prev.concat(curr.patients);
         return union.filter(function (item, pos) {
@@ -348,5 +424,7 @@ module.exports = {
           });
       });
     });
-  }
+  },
+
+  possibleExcludeType
 };

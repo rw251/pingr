@@ -19,6 +19,13 @@ var UserSchema = new Schema({
     type: String,
     required: true
   },
+  practices: [
+    {
+      id: String,
+      name: String,
+      authorised: Boolean,
+    }
+  ],
   practiceId: {
     type: String
   },
@@ -45,6 +52,11 @@ var UserSchema = new Schema({
   emailFrequency: Number,
   emailDay: Number,
   emailHour: Number,
+  emailIndicatorIdsToExclude: [String],
+  patientTypesToExclude: {
+    type: [String],
+    default: ["NO_REVIEW", "AFTER_APRIL", "REVIEW_YET_TO_HAPPEN"]
+  },
   registrationCode: String
 });
 

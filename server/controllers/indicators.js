@@ -78,6 +78,19 @@ var mergeActions = function(actions, indicators, indicatorId) {
 
 module.exports = {
 
+  // just get the indicator names and details
+  getList: (done) => {
+    Indicator.aggregate([
+        {$group:{_id:"$id", name:{$max:"$name"}, description:{$max:"$description"}}},
+        {$sort:{"name":1}}
+      ], (err, indicators)=>{
+      if(err) {
+        console.log(err);
+        return done(new Error("Error finding indicator list"));
+      }
+      return done(null, indicators);
+    });
+  },
   //Get list of indicators for a single practice - for use on the overview screen
   list: function(practiceId, done) {
     Indicator.find({ practiceId: practiceId }, function(err, indicators) {
@@ -180,6 +193,7 @@ module.exports = {
 
   //Get team actions for a single indicator or all indicators
   getActions: function(practiceId, indicatorId, done) {
+    //console.log(practiceId, indicatorId);
     var searchObject = { practiceId: practiceId };
     actions.getTeam({ practiceId: practiceId, patientId: { $exists: false } }, function(err, actions) {
       if (err) return done(err);
@@ -192,7 +206,7 @@ module.exports = {
           return done(new Error("Error finding indicator"));
         }
 
-        if (indicatorId && indicators[0].type === "outcome") {
+        if (indicatorId && indicators.length > 0 && indicators[0].type === "outcome") {
           //we need to find the actions for the associated process indicators
 
           searchObject.id = { $in: indicators[0].mappedIndicators };

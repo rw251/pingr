@@ -36,8 +36,8 @@ module.exports = {
             }
             console.log('Password token issued succesful');
 
-            var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password reset",
-              "Your password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://" + req.headers.host + "/forgot/" + token + "\n\n",
+            var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password reset",
+              "Your password has been reset. To complete the process click the link below to enter a new password.  If you did not recently reset your password please contact the support team at info@pingr.srft.nhs.uk. \n\n https://" + req.headers.host + "/auth/reset/" + token + "\n\n",
               null, null);
 
             //Send email
@@ -86,7 +86,7 @@ module.exports = {
                 req.flash('error', 'An error has occurred. Please try again.');
                 return next();
               } else {
-                var emailConfig = emailSender.config(null, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password changed",
+                var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: user.fullname, email: user.email }, "PINGR: Password changed",
                   "Your password has been changed.\n\nIf you did not initiate this please contact the support team.",
                   null, null);
 

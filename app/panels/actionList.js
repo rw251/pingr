@@ -1,5 +1,6 @@
-var data = require('../data.js'),
-  base = require('../base.js'),
+var data = require('../data'),
+  base = require('../base'),
+  state = require('../state'),
   jsPDF = require('jspdf'),
   jspdfAutoTable = require('jspdf-autotable');
 
@@ -50,7 +51,7 @@ var al = {
   },
 
   load: function(done) {
-    data.getAllAgreedWithActions(function(err, actions) {
+    data.getAllAgreedWithActions(state.selectedPractice._id, function(err, actions) {
       actionObject = actions;
 
       if (done && typeof done === "function") {
@@ -62,7 +63,7 @@ var al = {
   process: function(done) {
     actionArray = [];
 
-    if (actionObject.patient && !data.patLookup) {
+    if (actionObject.patient && (!data.patLookup || !data.patLookup[state.selectedPractice._id])) {
       //pat lookup not loaded so let's wait
       setTimeout(function() {
         al.process(done);
@@ -72,7 +73,7 @@ var al = {
     if (actionObject.patient) {
       Object.keys(actionObject.patient).forEach(function(v) {
         actionObject.patient[v].actions.forEach(function(vv) {
-          var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, supportingText: vv.supportingText };
+          var actionItem = { patientId: data.patLookup[state.selectedPractice._id][v], actionText: vv.actionText, supportingText: vv.supportingText };
           if (vv.history && vv.history.length > 0) {
             var who = vv.history[0].who;
             actionItem.who = who;
@@ -80,7 +81,7 @@ var al = {
           actionArray.push(actionItem);
         });
         actionObject.patient[v].userDefinedActions.forEach(function(vv) {
-          var actionItem = { patientId: data.patLookup[v], actionText: vv.actionText, userDefined: true };
+          var actionItem = { patientId: data.patLookup[state.selectedPractice._id][v], actionText: vv.actionText, userDefined: true };
           if (vv.history && vv.history.length > 0) {
             var who = vv.history[0].who;
             actionItem.who = who;

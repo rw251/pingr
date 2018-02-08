@@ -1,8 +1,10 @@
-var Event = require('../models/event'),
-  json2csv = require('json2csv'),
-  User = require('../models/user');
+const Event = require('../models/event');
+const json2csv = require('json2csv');
+const User = require('../models/user');
+const emailSender = require('../email-sender');
+const config = require('../config');
 
-var headings = {};
+const headings = {};
 
 var processEvent = function (event) {
   event = event.toObject();
@@ -121,7 +123,20 @@ var e = {
           if (err) {
             return done(err);
           } else {
-            return done(null);
+            // if suggestion then email ben
+            if(event.type === "suggestion") {
+              var emailConfig = emailSender.config(config.mail.type, config.mail.adminEmailsFrom, { name: "Ben Brown", email: config.mail.suggestionEmailsTo }, "PINGR: Someone has made a suggestion",
+              "Someone has made a suggestion. Details are:\n\n " + JSON.stringify(event, null, 2) + "\n\n Regards,\n\nPINGR", null, null);
+              //Send email
+              return emailSender.send(emailConfig, (error, info) => {
+                if (error) {
+                  console.log("email not sent: " + error);
+                }
+                return done(null);
+              });
+            } else {
+              return done(null);
+            }
           }
         });
       } catch (e) {

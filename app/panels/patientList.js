@@ -1,6 +1,7 @@
 var Highcharts = require('highcharts/highstock'),
   base = require('../base.js'),
   data = require('../data.js'),
+  state = require('../state.js'),
   lookup = require('../lookup.js'),
   FileSaver = require('file-saver'),
   jsPDF = require('jspdf'),
@@ -195,9 +196,10 @@ var pl = {
     var i, k, prop, header, pList = [];
 
     //data.getPatientList("P87024", pathwayId, pathwayStage, standard, subsection, function(list) {
-    data.getPatientList(data.userDetails.practiceId, pathwayId, pathwayStage, standard, subsection, function (list) {
+    data.getPatientList(state.selectedPractice._id, pathwayId, pathwayStage, standard, subsection, function (list) {
 
       list.indicatorId = [pathwayId, pathwayStage, standard].join(".");
+      list.selectedPractice = state.selectedPractice;
       currentPatients = list;
       base.createPanelShow(require('templates/patient-list'), patientsPanel, list);
 
