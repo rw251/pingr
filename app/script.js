@@ -87,7 +87,7 @@ var App = {
     /******************************************
      *** This happens when the page is ready ***
      ******************************************/
-    $(document).on('ready', function() {
+    $(document).ready(function() {
       state.practices = JSON.parse($('#practices').text());
       state.selectedPractice = JSON.parse($('#selectedPractice').text());
       pageIsReady = true;

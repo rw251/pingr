@@ -48,12 +48,13 @@ var indicatorList = {
         panel.html(html);
       }
 
-      $('.inlinesparkline').sparkline('html', { //- REVIEW - [TEST] was '#processIndicators .inline..." in rw version -update- remove id selector - class is sufficient
+      $('#processIndicators .inlinesparkline').sparkline('html', { 
         tooltipFormatter: function(sparkline, options, fields) {
           var dts = processIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return dts[fields.x] + ": " + fields.y + "%";
         },
-        width: "100px"
+        width: "100px",
+        height: "20px",
       });
 
       $('#outcomeIndicators .inlinesparkline').sparkline('html', {
@@ -61,7 +62,8 @@ var indicatorList = {
           var dts = outcomeIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return dts[fields.x] + ": " + fields.y + "%";
         },
-        width: "100px"
+        width: "100px",
+        height: "20px",
       });
 
       tableOutcomeIndicators = $('#overview-table-outcomes').DataTable({

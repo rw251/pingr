@@ -8,10 +8,10 @@ var data = require('./data'),
 
 require('./helpers/jquery-smartresize');
 
-$(window).smartresize(function() {
-  $('#addedCSS').text(base.getCssText());
-  base.updateFixedHeightElements();
-});
+// $(window).smartresize(function() {
+//   $('#addedCSS').text(base.getCssText());
+//   base.updateFixedHeightElements();
+// });
 
 var clipboard;
 
@@ -282,17 +282,17 @@ var base = {
         $('head').append('<style id="addedCSS" type="text/css"></style>');
       }
 
-      $('#addedCSS').text(base.getCssText(currentlyVisibleElements));
-      setTimeout(function() {
-        base.updateFixedHeightElements(elements);
-      }, 100);
+      // $('#addedCSS').text(base.getCssText(currentlyVisibleElements));
+      // setTimeout(function() {
+      //   base.updateFixedHeightElements(elements);
+      // }, 100);
     } else {
 //      console.log("yes");
-      if ($('#addedCSS').length === 0) {
-        $('head').append('<style id="addedCSS" type="text/css"></style>');
-      }
+      // if ($('#addedCSS').length === 0) {
+      //   $('head').append('<style id="addedCSS" type="text/css"></style>');
+      // }
 
-      $('#addedCSS').text(base.getCssText());
+      // $('#addedCSS').text(base.getCssText());
 
       console.log("done");
     }
