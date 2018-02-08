@@ -245,7 +245,5 @@ exports.config = (
     }
   }
 
-  return {
-    type, from, to, subject, text, html, attachment,
-  };
+  return { type, from, to, subject, text, html, attachment };
 };

@@ -3,15 +3,11 @@ const User = require('../models/user');
 
 module.exports = (passport) => {
   passport.use('login', new LocalStrategy(
-    {
-      passReqToCallback: true,
-    },
+    { passReqToCallback: true },
     ((req, username, password, done) => {
     // check in mongo if a user with email exists or not
       User.findOne(
-        {
-          email: username,
-        },
+        { email: username },
         (err, user) => {
           // In case of any error, return using the done method
           if (err) { return done(err); }

@@ -3,9 +3,7 @@ const Practice = require('../models/practice');
 module.exports = {
 
   get(id, done) {
-    Practice.findOne({
-      _id: id,
-    }, (err, practice) => {
+    Practice.findOne({ _id: id }, (err, practice) => {
       if (!practice) {
         console.log(`Practice doesnt exists with id: ${id}`);
         return done(null, false);
@@ -15,11 +13,7 @@ module.exports = {
   },
 
   getMany(ids, done) {
-    Practice.find({
-      _id: {
-        $in: ids,
-      },
-    }, (err, practices) => {
+    Practice.find({ _id: { $in: ids } }, (err, practices) => {
       if (!practices || practices.length === 0) {
         console.log(`Practice doesnt exists with ids: ${ids.join(', ')}`);
         return done(null, false);

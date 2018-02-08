@@ -56,9 +56,7 @@ module.exports = {
   getDefault,
 
   setDefault(label, done) {
-    Email.findOne({
-      label,
-    }, (err, email) => {
+    Email.findOne({ label }, (err, email) => {
       // In case of any error, return using the done method
       if (err) {
         console.log(`Error in email setDefault: ${err}`);
@@ -111,9 +109,7 @@ module.exports = {
         });
       }
       // check no existing email with that email
-      return Email.findOne({
-        label: req.body.label,
-      }, (findErr, anExistingEmailTemplate) => {
+      return Email.findOne({ label: req.body.label }, (findErr, anExistingEmailTemplate) => {
         // if there is already an email with the modified label
         if (anExistingEmailTemplate) {
           console.log(`Trying to change the label to one that already appears in the system: ${label}`);

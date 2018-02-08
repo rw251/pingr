@@ -9,9 +9,7 @@ module.exports = (passport) => {
       ((req, username, password, done) => {
         // check in mongo if a user with email exists or not
         User.findOne(
-          {
-            email: username,
-          },
+          { email: username },
           (err, user) => {
           // In case of any error, return using the done method
             if (err) { return done(err); }

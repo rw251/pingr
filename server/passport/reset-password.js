@@ -1,9 +1,7 @@
 const User = require('../models/user');
 
 module.exports = (req, res, next) => {
-  User.findOne({
-    email: req.params.email,
-  }, (err, user) => {
+  User.findOne({ email: req.params.email }, (err, user) => {
     // In case of any error, return using the done method
     if (err) {
       console.log(`Error in change password: ${err}`);

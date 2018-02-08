@@ -1,6 +1,4 @@
 const express = require('express');
-
-const router = express.Router();
 const cp = require('../passport/change-password');
 const fp = require('../passport/forgot-password');
 const reg = require('../passport/register-user');
@@ -17,6 +15,8 @@ const emailSender = require('../email-sender.js');
 const text = require('../controllers/text.js');
 const utils = require('../controllers/utils.js');
 const config = require('../config');
+
+const router = express.Router();
 
 const isAuthenticated = (req, res, next) => {
   // if user is authenticated in the session, call the next() to call the next request handler
@@ -79,9 +79,7 @@ module.exports = (passport) => {
         if (updateErr || msg) {
           res.render('pages/optOut.jade', { user: req.user, indicatorList, patientsToIncludeList: patients.possibleExcludeType });
         } else {
-          res.render('pages/optOut.jade', {
-            user, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: { success: `Email preference updated. ${req.body.freq === '0' ? 'You wil not longer receive our reminder emails.' : 'You are currently set to receive reminder emails.'}` },
-          });
+          res.render('pages/optOut.jade', { user, indicatorList, patientsToIncludeList: patients.possibleExcludeType, message: { success: `Email preference updated. ${req.body.freq === '0' ? 'You wil not longer receive our reminder emails.' : 'You are currently set to receive reminder emails.'}` } });
         }
       });
     });
@@ -343,9 +341,7 @@ module.exports = (passport) => {
     users.get(req.params.email, (err, user) => {
       indicators.getList((getListErr, indicatorList) => {
         practices.list((getErr, practiceList) => {
-          res.render('pages/useredit.jade', {
-            user, practiceList, indicatorList, patientsToIncludeList: patients.possibleExcludeType,
-          });
+          res.render('pages/useredit.jade', { user, practiceList, indicatorList, patientsToIncludeList: patients.possibleExcludeType });
         });
       });
     });
@@ -704,9 +700,7 @@ module.exports = (passport) => {
     // });
     const practiceIds = req.user.practices.map(v => v.id);
     practices.getMany(practiceIds, (err, practiceList) => {
-      res.render('pages/index.jade', {
-        admin: req.user.roles.indexOf('admin') > -1, fullname: req.user.fullname, practiceList, selectedPractice: practiceList[0],
-      });
+      res.render('pages/index.jade', { admin: req.user.roles.indexOf('admin') > -1, fullname: req.user.fullname, practiceList, selectedPractice: practiceList[0] });
     });
   });
 

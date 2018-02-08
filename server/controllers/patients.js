@@ -256,11 +256,7 @@ module.exports = {
 
     const aggregateQuery = [
       { $match: { 'characteristics.practiceId': practiceId } },
-      {
-        $project: {
-          _id: 0, patientId: 1, standards: 1, characteristics: 1,
-        },
-      },
+      { $project: { _id: 0, patientId: 1, standards: 1, characteristics: 1 } },
       { $unwind: '$standards' },
       {
         $match: {
@@ -271,16 +267,8 @@ module.exports = {
           ],
         },
       },
-      {
-        $group: {
-          _id: '$patientId', nhsNumber: { $max: '$characteristics.nhs' }, age: { $max: '$characteristics.age' }, sex: { $max: '$characteristics.sex' }, indicators: { $addToSet: '$standards.indicatorId' },
-        },
-      },
-      {
-        $project: {
-          _id: 1, nhsNumber: 1, age: 1, sex: 1, indicators: 1, numberOfIndicators: { $size: '$indicators' },
-        },
-      },
+      { $group: { _id: '$patientId', nhsNumber: { $max: '$characteristics.nhs' }, age: { $max: '$characteristics.age' }, sex: { $max: '$characteristics.sex' }, indicators: { $addToSet: '$standards.indicatorId' } } },
+      { $project: { _id: 1, nhsNumber: 1, age: 1, sex: 1, indicators: 1, numberOfIndicators: { $size: '$indicators' } } },
       { $sort: { numberOfIndicators: -1 } },
       { $skip: skip },
       { $limit: limit },
@@ -310,22 +298,10 @@ module.exports = {
   getAllPatientsPaginated(practiceId, skip, limit, done) {
     const aggregateQuery = [
       { $match: { 'characteristics.practiceId': practiceId, actions: { $exists: true } } },
-      {
-        $project: {
-          _id: 0, patientId: 1, actions: 1, characteristics: 1,
-        },
-      },
+      { $project: { _id: 0, patientId: 1, actions: 1, characteristics: 1 } },
       { $unwind: '$actions' },
-      {
-        $group: {
-          _id: '$patientId', nhsNumber: { $max: '$characteristics.nhs' }, age: { $max: '$characteristics.age' }, sex: { $max: '$characteristics.sex' }, tot: { $sum: '$actions.pointsPerAction' }, indicators: { $addToSet: '$actions.indicatorId' },
-        },
-      },
-      {
-        $project: {
-          _id: 1, nhsNumber: 1, age: 1, sex: 1, tot: 1, indicators: 1, numberOfIndicators: { $size: '$indicators' },
-        },
-      },
+      { $group: { _id: '$patientId', nhsNumber: { $max: '$characteristics.nhs' }, age: { $max: '$characteristics.age' }, sex: { $max: '$characteristics.sex' }, tot: { $sum: '$actions.pointsPerAction' }, indicators: { $addToSet: '$actions.indicatorId' } } },
+      { $project: { _id: 1, nhsNumber: 1, age: 1, sex: 1, tot: 1, indicators: 1, numberOfIndicators: { $size: '$indicators' } } },
       { $sort: { numberOfIndicators: -1, tot: -1 } },
       { $skip: skip },
       { $limit: limit },
@@ -396,30 +372,14 @@ module.exports = {
               measurements: { $filter: { input: '$measurements', as: 'measurement', cond: { $eq: ['$$measurement.id', indicatorValue] } } },
             },
           },
-          {
-            $project: {
-              reviewDateObj: { $arrayElemAt: ['$standards', 0] }, patientId: 1, characteristics: 1, actions: 1, measurements: { $arrayElemAt: ['$measurements', 0] },
-            },
-          },
+          { $project: { reviewDateObj: { $arrayElemAt: ['$standards', 0] }, patientId: 1, characteristics: 1, actions: 1, measurements: { $arrayElemAt: ['$measurements', 0] } } },
         ];
         if (indicator.displayValueFrom === 'practice') {
-          query.push({
-            $project: {
-              patientId: 1, characteristics: 1, actions: 1, reviewDate: '$reviewDateObj.nextReviewDate', measurements: { $slice: [{ $filter: { input: '$measurements.data', as: 'data', cond: { $not: { $setIsSubset: [['salfordt'], '$$data'] } } } }, -1] },
-            },
-          });
+          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, reviewDate: '$reviewDateObj.nextReviewDate', measurements: { $slice: [{ $filter: { input: '$measurements.data', as: 'data', cond: { $not: { $setIsSubset: [['salfordt'], '$$data'] } } } }, -1] } } });
         } else if (indicator.displayValueFrom === 'hospital') {
-          query.push({
-            $project: {
-              patientId: 1, characteristics: 1, actions: 1, reviewDate: '$reviewDateObj.nextReviewDate', measurements: { $slice: [{ $filter: { input: '$measurements.data', as: 'data', cond: { $setIsSubset: [['salfordt'], '$$data'] } } }, -1] },
-            },
-          });
+          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, reviewDate: '$reviewDateObj.nextReviewDate', measurements: { $slice: [{ $filter: { input: '$measurements.data', as: 'data', cond: { $setIsSubset: [['salfordt'], '$$data'] } } }, -1] } } });
         } else {
-          query.push({
-            $project: {
-              patientId: 1, characteristics: 1, actions: 1, reviewDate: '$reviewDateObj.nextReviewDate', measurements: { $slice: ['$measurements.data', -1] },
-            },
-          });
+          query.push({ $project: { patientId: 1, characteristics: 1, actions: 1, reviewDate: '$reviewDateObj.nextReviewDate', measurements: { $slice: ['$measurements.data', -1] } } });
         }
         return Patient.aggregate(
           query,

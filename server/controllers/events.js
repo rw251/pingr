@@ -198,9 +198,7 @@ const e = {
   },
 
   emailReminder(email, token, body, date, patientIdLookup, done) {
-    const newEvent = new Event({
-      date, user: email, type: 'emailReminderSent', data: [{ key: 'token', value: token }],
-    });
+    const newEvent = new Event({ date, user: email, type: 'emailReminderSent', data: [{ key: 'token', value: token }] });
 
     // find nhs numbers if any
     const matches = body.match(/[0-9]{9,10}/g);
@@ -240,9 +238,7 @@ const e = {
   emailReminderTokenCheck(token, url) {
     User.findOne({ email_url_tracking_code: token }, (err, user) => {
       if (user) {
-        const newEvent = new Event({
-          user: user.email, type: 'emailReminderLinkClicked', url, data: [{ key: 'token', value: token }],
-        });
+        const newEvent = new Event({ user: user.email, type: 'emailReminderLinkClicked', url, data: [{ key: 'token', value: token }] });
 
         // save the event
         newEvent.save((saveErr) => {

@@ -199,40 +199,44 @@ module.exports = {
       if (indicatorId) {
         searchObject.id = indicatorId;
       }
-      return Indicator.find(searchObject, {
-        _id: 0, actions: 1, mappedIndicators: 1, type: 1,
-      }, (findErr, indicators) => {
-        if (findErr) {
-          console.log(findErr);
-          return done(new Error('Error finding indicator'));
-        }
+      return Indicator.find(
+        searchObject,
+        { _id: 0, actions: 1, mappedIndicators: 1, type: 1 },
+        (findErr, indicators) => {
+          if (findErr) {
+            console.log(findErr);
+            return done(new Error('Error finding indicator'));
+          }
 
-        if (indicatorId && indicators.length > 0 && indicators[0].type === 'outcome') {
+          if (indicatorId && indicators.length > 0 && indicators[0].type === 'outcome') {
           // we need to find the actions for the associated process indicators
 
-          searchObject.id = { $in: indicators[0].mappedIndicators };
-          return Indicator.find(searchObject, {
-            _id: 0, actions: 1, mappedIndicators: 1, type: 1,
-          }, (findErr2, indicatorList) => {
-            if (findErr2) {
-              console.log(findErr2);
-              return done(new Error('Error finding indicator'));
-            }
-            if (!indicatorList) {
-              console.log(`Invalid request for indicatorId: ${indicatorId}`);
-              return done(null, false);
-            }
-            const rtn = mergeActions(actionList, indicatorList, indicatorId);
-            return done(null, rtn);
-          });
+            searchObject.id = { $in: indicators[0].mappedIndicators };
+            return Indicator.find(
+              searchObject,
+              { _id: 0, actions: 1, mappedIndicators: 1, type: 1 },
+              (findErr2, indicatorList) => {
+                if (findErr2) {
+                  console.log(findErr2);
+                  return done(new Error('Error finding indicator'));
+                }
+                if (!indicatorList) {
+                  console.log(`Invalid request for indicatorId: ${indicatorId}`);
+                  return done(null, false);
+                }
+                const rtn = mergeActions(actionList, indicatorList, indicatorId);
+                return done(null, rtn);
+              }
+            );
+          }
+          if (!indicators) {
+            console.log(`Invalid request for indicatorId: ${indicatorId}`);
+            return done(null, false);
+          }
+          const rtn = mergeActions(actionList, indicators, indicatorId);
+          return done(null, rtn);
         }
-        if (!indicators) {
-          console.log(`Invalid request for indicatorId: ${indicatorId}`);
-          return done(null, false);
-        }
-        const rtn = mergeActions(actionList, indicators, indicatorId);
-        return done(null, rtn);
-      });
+      );
     });
   },
 

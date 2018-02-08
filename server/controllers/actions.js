@@ -232,7 +232,8 @@ module.exports = {
     Action.aggregate([
       {
         $match: {
-          patientId: { $in: patientList }, $or: [{ agree: true }, { userDefined: true }],
+          patientId: { $in: patientList },
+          $or: [{ agree: true }, { userDefined: true }],
         },
       },
       { $project: { patientId: 1, indicatorList: 1 } },
@@ -254,16 +255,15 @@ module.exports = {
   patientsWithPlan(patientList, done) {
     Action.aggregate([
       {
-        $match: { patientId: { $in: patientList }, $or: [{ agree: true }, { userDefined: true }] },
+        $match: {
+          patientId: { $in: patientList },
+          $or: [{ agree: true }, { userDefined: true }],
+        },
       },
       {
         $group: {
           _id: '$patientId',
-          actions: {
-            $push: {
-              actionTextId: '$actionTextId', agree: '$agree', history: '$history', indicatorList: '$indicatorList',
-            },
-          },
+          actions: { $push: { actionTextId: '$actionTextId', agree: '$agree', history: '$history', indicatorList: '$indicatorList' } },
         },
       },
     ], (err, actions) => {

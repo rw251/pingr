@@ -8,9 +8,7 @@ module.exports = {
 
   forgot(req, res, next) {
     console.log(req.body.email);
-    User.findOne({
-      email: req.body.email,
-    }, (err, user) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
       // In case of any error, return using the done method
       if (err) {
         console.log(`Error in forgot password: ${err}`);

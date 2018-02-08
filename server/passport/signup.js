@@ -3,15 +3,11 @@ const User = require('../models/user');
 
 module.exports = (passport) => {
   passport.use('signup', new LocalStrategy(
-    {
-      passReqToCallback: true, // allows us to pass back the entire request to the callback
-    },
+    { passReqToCallback: true }, // allows us to pass back the entire request to the callback
     ((req, email, password, done) => {
       const findOrCreateUser = () => {
       // find a user in Mongo with provided email
-        User.findOne({
-          email,
-        }, (err, user) => {
+        User.findOne({ email }, (err, user) => {
         // In case of any error, return using the done method
           if (err) {
             console.log(`Error in SignUp: ${err}`);

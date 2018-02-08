@@ -36,13 +36,9 @@ const ENV = {
 };
 
 module.exports = {
-  db: {
-    url: ENV.MONGO_URL,
-  },
+  db: { url: ENV.MONGO_URL },
   // user auth
-  passport: {
-    secret: ENV.PASSPORT_SECRET,
-  },
+  passport: { secret: ENV.PASSPORT_SECRET },
   server: {
     port: ENV.SERVER_PORT,
     url: ENV.SERVER_URL,
@@ -56,9 +52,7 @@ module.exports = {
       username: ENV.SMTP_USER || '',
       password: ENV.SMTP_PASS || '',
     },
-    options: {
-      from: 'PINGR <noreply@smash.srft.nhs.uk>',
-    },
+    options: { from: 'PINGR <noreply@smash.srft.nhs.uk>' },
     reminderEmailsFrom: ENV.REMINDER_EMAILS_FROM,
     adminEmailsFrom: ENV.ADMIN_EMAILS_FROM,
     sendGridAPIKey: ENV.SENDGRID_API_KEY,

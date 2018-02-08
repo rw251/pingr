@@ -44,9 +44,7 @@ const addEmailPrefsToUser = (user, body, callback) => {
 module.exports = {
 
   get(email, done) {
-    User.findOne({
-      email,
-    }, (err, user) => {
+    User.findOne({ email }, (err, user) => {
       if (!user) {
         console.log(`User doesnt exists with email: ${email}`);
         return done(null, false);
@@ -70,9 +68,7 @@ module.exports = {
   },
 
   updateEmailPreference(email, body, done) {
-    User.findOne({
-      email,
-    }, (err, user) => {
+    User.findOne({ email }, (err, user) => {
       // In case of any error, return using the done method
       if (err) {
         console.log(`Error in email preference update: ${err}`);
@@ -96,9 +92,7 @@ module.exports = {
   },
 
   edit(email, req, done) {
-    User.findOne({
-      email,
-    }, (err, user) => {
+    User.findOne({ email }, (err, user) => {
       // In case of any error, return using the done method
       if (err) {
         console.log(`Error in SignUp: ${err}`);
@@ -144,9 +138,7 @@ module.exports = {
         });
       }
       // check no existing user with that email
-      return User.findOne({
-        email: req.body.email,
-      }, (findErr, existingUser) => {
+      return User.findOne({ email: req.body.email }, (findErr, existingUser) => {
         // if there is already a user with the modified email address
         if (existingUser) {
           console.log(`Trying to change the email to one that already appears in the system: ${email}`);
@@ -175,9 +167,7 @@ module.exports = {
   },
 
   add(req, done) {
-    User.findOne({
-      email: req.body.email,
-    }, (err, user) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
       // In case of any error, return using the done method
       if (err) {
         console.log(`Error in SignUp: ${err}`);

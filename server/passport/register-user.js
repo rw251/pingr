@@ -8,9 +8,7 @@ const config = require('../config');
 
 module.exports = {
   register(req, res, next) {
-    User.findOne({
-      email: req.body.email,
-    }, (err, user) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
       // In case of any error, return using the done method
       if (err) {
         console.log(`Error in user register: ${err}`);
@@ -124,9 +122,7 @@ module.exports = {
   },
 
   token(req, res, next) {
-    User.findOne({
-      registrationCode: req.params.token,
-    }, (err, user) => {
+    User.findOne({ registrationCode: req.params.token }, (err, user) => {
       // In case of any error, return using the done method
       if (err || !user) {
         req.flash('error', 'User doesn\'t exist');
@@ -141,9 +137,7 @@ module.exports = {
   },
 
   authorise(req, res, next) {
-    User.findOne({
-      email: req.params.email,
-    }, (err, user) => {
+    User.findOne({ email: req.params.email }, (err, user) => {
       // In case of any error, return using the done method
       if (err || !user) {
         console.log(`Error in user register: ${err}`);
@@ -192,9 +186,7 @@ module.exports = {
   },
 
   reject(req, res, next) {
-    User.findOne({
-      email: req.params.email,
-    }, (err, user) => {
+    User.findOne({ email: req.params.email }, (err, user) => {
       // In case of any error, return using the done method
       if (err || !user) {
         console.log(`Error in user register: ${err}`);

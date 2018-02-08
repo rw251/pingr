@@ -10,9 +10,7 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
-    index: {
-      unique: true,
-    },
+    index: { unique: true },
   },
   password: {
     type: String,
@@ -29,24 +27,12 @@ const UserSchema = new Schema({
       authorised: Boolean,
     },
   ],
-  practiceId: {
-    type: String,
-  },
-  practiceName: {
-    type: String,
-  },
-  practiceIdNotAuthorised: {
-    type: String,
-  },
-  practiceNameNotAuthorised: {
-    type: String,
-  },
-  password_recovery_code: {
-    type: String,
-  },
-  password_recovery_expiry: {
-    type: Date,
-  },
+  practiceId: { type: String },
+  practiceName: { type: String },
+  practiceIdNotAuthorised: { type: String },
+  practiceNameNotAuthorised: { type: String },
+  password_recovery_code: { type: String },
+  password_recovery_expiry: { type: Date },
   roles: [String],
   last_login: Date,
   last_email_reminder: Date,
