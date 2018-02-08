@@ -127,8 +127,12 @@ const dt = {
       };
       if (indicator.type === 'outcome') {
         indicator.performance.incidence = (percentage * 10).toFixed(1);
-        indicator.performance.incidenceMultiple = (Math.round(100 * indicator.values[3][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
-        indicator.performance.incidenceStandardised = (Math.round(100 * indicator.values[4][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
+        indicator.performance.incidenceMultiple = (
+          Math.round((10000 * indicator.values[3][last]) / indicator.values[2][last]) / 10
+        ).toFixed(1);
+        indicator.performance.incidenceStandardised = (
+          Math.round((10000 * indicator.values[4][last]) / indicator.values[2][last]) / 10
+        ).toFixed(1);
       }
       indicator.patientsWithOpportunity =
         indicator.values[2][last] - indicator.values[1][last];
