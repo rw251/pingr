@@ -119,9 +119,7 @@ const cht = {
                 borderWidth: 0,
               },
             },
-            legend: {
-              enabled: false,
-            },
+            legend: { enabled: false },
             series: [
               {
                 name: 'Performance',
@@ -287,9 +285,7 @@ const cht = {
             color: 'green',
             dashStyle: 'shortdash',
             width: 2,
-            label: {
-              text: `Target - ${target}%`,
-            },
+            label: { text: `Target - ${target}%` },
           },
         ],
       },
@@ -299,9 +295,7 @@ const cht = {
           '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:.2f}%</b> ({point.label})<br/>',
       },
 
-      navigator: {
-        enabled: true,
-      },
+      navigator: { enabled: true },
 
       series,
     });
@@ -342,22 +336,16 @@ const cht = {
           },
         },
       },
-      title: {
-        text: 'Patients with improvement opportunities',
-      },
+      title: { text: 'Patients with improvement opportunities' },
       subtitle: {
         text:
           document.ontouchstart === undefined
             ? 'Click a column to filter the patient list'
             : 'Tap a column to filter the patient list',
       },
-      xAxis: {
-        categories: chartData.map(v => v[0]),
-      },
+      xAxis: { categories: chartData.map(v => v[0]) },
       yAxis: {
-        title: {
-          text: 'Number of patients',
-        },
+        title: { text: 'Number of patients' },
         stackLabels: {
           enabled: true,
           style: {
@@ -366,9 +354,7 @@ const cht = {
           },
         },
       },
-      legend: {
-        enabled: false,
-      },
+      legend: { enabled: false },
 
       tooltip: {
         animation: false,
@@ -380,9 +366,7 @@ const cht = {
             .join('<br>');
         },
 
-        style: {
-          whiteSpace: 'normal',
-        },
+        style: { whiteSpace: 'normal' },
 
         useHTML: true,
       },

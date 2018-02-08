@@ -39,9 +39,7 @@ const ap = {
       .on(
         'submit',
         'form',
-        {
-          label,
-        },
+        { label },
         (e) => {
           if (!e.data.label) {
             // e.data.label = 'team';
@@ -65,9 +63,7 @@ const ap = {
       .off('hidden.bs.modal')
       .on(
         'hidden.bs.modal',
-        {
-          label,
-        },
+        { label },
         () => {
           if (ap.modalSaved) {
             ap.modalSaved = false;

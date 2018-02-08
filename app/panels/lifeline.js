@@ -101,15 +101,11 @@ const ll = {
             if (chart.inverted) {
               if (chart.yAxis[0].setExtremes) {
                 // It is null while updating
-                chart.yAxis[0].setExtremes(e.min, e.max, undefined, false, {
-                  trigger: 'syncExtremes',
-                });
+                chart.yAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
               }
             } else if (chart.xAxis[0].setExtremes) {
               // It is null while updating
-              chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
-                trigger: 'syncExtremes',
-              });
+              chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
             }
           }
         });
@@ -180,9 +176,7 @@ const ll = {
           xAxis: {
             min: -0.6,
             max: conditions.length - 0.5,
-            labels: {
-              enabled: false,
-            },
+            labels: { enabled: false },
             startOnTick: false,
             endOnTick: false,
             title: {
@@ -193,13 +187,9 @@ const ll = {
             tickWidth: 0,
             lineWidth: 1,
           },
-          credits: {
-            enabled: false,
-          },
+          credits: { enabled: false },
 
-          legend: {
-            enabled: false,
-          },
+          legend: { enabled: false },
 
           tooltip: {
             formatter() {
@@ -281,9 +271,7 @@ const ll = {
       const contactSeries = contacts.map((v) => {
         if (!latestContact) latestContact = v.time;
         else latestContact = Math.max(latestContact, v.time);
-        return {
-          x: v.time, y: 0, name: v.name, marker: markers.Telephone,
-        };
+        return { x: v.time, y: 0, name: v.name, marker: markers.Telephone };
       });
 
       if (latestContact) minMaxDate = Math.min(latestContact, minMaxDate);
@@ -310,12 +298,8 @@ const ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: {
-              snap: false,
-            },
-            events: {
-              setExtremes: syncExtremes,
-            },
+            crosshair: { snap: false },
+            events: { setExtremes: syncExtremes },
             labels: {
               enabled: true,
               y: 0, // gap between axis labels and chart
@@ -329,16 +313,12 @@ const ll = {
             minPadding: 0.01,
             startOnTick: false,
             tickWidth: 0,
-            title: {
-              text: '',
-            },
+            title: { text: '' },
             tickPixelInterval: 100,
           },
 
           yAxis: {
-            labels: {
-              enabled: false,
-            },
+            labels: { enabled: false },
             min: -0.1,
             max: 0.1,
             startOnTick: false,
@@ -354,13 +334,9 @@ const ll = {
             gridLineWidth: 0,
             lineWidth: 1,
           },
-          credits: {
-            enabled: false,
-          },
+          credits: { enabled: false },
 
-          legend: {
-            enabled: false,
-          },
+          legend: { enabled: false },
 
           tooltip: {
             formatter() {
@@ -377,9 +353,7 @@ const ll = {
               states: {
                 hover: {
                   enabled: true,
-                  halo: {
-                    size: 0,
-                  },
+                  halo: { size: 0 },
                 },
               },
               events: {
@@ -395,9 +369,7 @@ const ll = {
           },
 
           series: [
-            {
-              data: contactSeries,
-            },
+            { data: contactSeries },
           ],
         });
     };
@@ -459,15 +431,9 @@ const ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: {
-              snap: false,
-            },
-            events: {
-              setExtremes: syncExtremes,
-            },
-            labels: {
-              enabled: false,
-            },
+            crosshair: { snap: false },
+            events: { setExtremes: syncExtremes },
+            labels: { enabled: false },
 
             // things that are normally xAxis defaults
             endOnTick: false,
@@ -477,16 +443,12 @@ const ll = {
             minPadding: 0.01,
             startOnTick: false,
             tickWidth: 0,
-            title: {
-              text: '',
-            },
+            title: { text: '' },
             tickPixelInterval: 100,
           },
 
           yAxis: {
-            labels: {
-              enabled: false,
-            },
+            labels: { enabled: false },
             min: -0.1,
             max: 0.1,
             startOnTick: false,
@@ -502,22 +464,16 @@ const ll = {
             gridLineWidth: 0,
             lineWidth: 1,
           },
-          credits: {
-            enabled: false,
-          },
+          credits: { enabled: false },
 
-          legend: {
-            enabled: false,
-          },
+          legend: { enabled: false },
 
           plotOptions: {
             series: {
               states: {
                 hover: {
                   enabled: true,
-                  halo: {
-                    size: 0,
-                  },
+                  halo: { size: 0 },
                 },
               },
               events: {
@@ -585,25 +541,15 @@ const ll = {
             margin: 0,
             x: 30,
           },
-          credits: {
-            enabled: false,
-          },
-          legend: {
-            enabled: false,
-          },
+          credits: { enabled: false },
+          legend: { enabled: false },
           xAxis: {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: {
-              snap: false,
-            },
-            events: {
-              setExtremes: syncExtremes,
-            },
-            labels: {
-              enabled: false,
-            },
+            crosshair: { snap: false },
+            events: { setExtremes: syncExtremes },
+            labels: { enabled: false },
             lineWidth: 0,
             minorGridLineWidth: 0,
             lineColor: 'transparent',
@@ -618,11 +564,7 @@ const ll = {
             },
             startOnTick: false,
             endOnTick: false,
-            labels: {
-              style: {
-                textOverflow: 'none',
-              },
-            },
+            labels: { style: { textOverflow: 'none' } },
             tickPixelInterval: 25,
             maxPadding: 0.1,
             minPadding: 0.1,
@@ -671,9 +613,7 @@ const ll = {
               type: dataset.type,
               color: colour.next(),
               fillOpacity: 0.3,
-              marker: {
-                enabled: true,
-              },
+              marker: { enabled: true },
             },
           ],
         };
@@ -702,9 +642,7 @@ const ll = {
         }
 
         if (i === measurements.length - 1) {
-          chartOptions.xAxis.labels = {
-            enabled: true,
-          };
+          chartOptions.xAxis.labels = { enabled: true };
         }
         $(`<div class="sync-chart h-chart${
           i === measurements.length - 1 ? ' h-last-measurement-chart' : ''
@@ -729,21 +667,15 @@ const ll = {
             borderColor: '#ddd',
           },
 
-          title: {
-            text: '',
-          },
+          title: { text: '' },
 
           xAxis: {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
             crosshair: false,
-            events: {
-              setExtremes: syncExtremes,
-            },
-            labels: {
-              enabled: false,
-            },
+            events: { setExtremes: syncExtremes },
+            labels: { enabled: false },
             lineWidth: 0,
             minorGridLineWidth: 0,
             lineColor: 'transparent',
@@ -764,33 +696,21 @@ const ll = {
             },
             minPadding: 0.2,
             maxPadding: 0.2,
-            labels: {
-              enabled: false,
-            },
+            labels: { enabled: false },
           },
 
-          legend: {
-            enabled: false,
-          },
+          legend: { enabled: false },
 
           navigator: {
             enabled: true,
-            xAxis: {
-              labels: {
-                enabled: false,
-              },
-            },
+            xAxis: { labels: { enabled: false } },
           },
 
           plotOptions: {
             line: {
               lineWidth: 0,
-              marker: {
-                enabled: false,
-              },
-              dataLabels: {
-                enabled: false,
-              },
+              marker: { enabled: false },
+              dataLabels: { enabled: false },
             },
           },
 
@@ -872,9 +792,7 @@ const ll = {
             borderWidth: 0,
             borderColor: '#ddd',
           },
-          lang: {
-            noData: 'No relevant medications',
-          },
+          lang: { noData: 'No relevant medications' },
           noData: {
             style: {
               fontWeight: 'bold',
@@ -889,12 +807,8 @@ const ll = {
             type: 'datetime',
             min: Date.UTC(2005, 6, 12),
             max: new Date().getTime(),
-            crosshair: {
-              snap: false,
-            },
-            events: {
-              setExtremes: syncExtremes,
-            },
+            crosshair: { snap: false },
+            events: { setExtremes: syncExtremes },
 
             labels: {
               enabled: true,
@@ -919,9 +833,7 @@ const ll = {
           xAxis: {
             min: -0.6,
             max: medications.length - 0.5,
-            labels: {
-              enabled: false,
-            },
+            labels: { enabled: false },
             startOnTick: false,
             endOnTick: false,
             title: {
@@ -937,13 +849,9 @@ const ll = {
             // gridLineWidth: 0,
             lineWidth: 1,
           },
-          credits: {
-            enabled: false,
-          },
+          credits: { enabled: false },
 
-          legend: {
-            enabled: false,
-          },
+          legend: { enabled: false },
 
           tooltip: {
             formatter() {
@@ -1021,9 +929,7 @@ const ll = {
     const c = plotMedications(data.medications);
     plotNavigator();
     const today = new Date().getTime();
-    c.highcharts().axes[1].setExtremes(minMaxDate, today, undefined, false, {
-      trigger: 'syncExtremes',
-    });
+    c.highcharts().axes[1].setExtremes(minMaxDate, today, undefined, false, { trigger: 'syncExtremes' });
 
     ll.chartArray = Highcharts.charts.slice(
       Highcharts.charts.length - ll.charts,

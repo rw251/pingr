@@ -70,9 +70,7 @@ $.extend($.fn.dataTableExt.oSort, {
 let currentPatients;
 
 const writeToFile = (list) => {
-  const blob = new Blob([list.join('\r\n')], {
-    type: 'text/plain;charset=utf-8',
-  });
+  const blob = new Blob([list.join('\r\n')], { type: 'text/plain;charset=utf-8' });
   FileSaver.saveAs(blob, 'nhsNumbers.txt');
 };
 

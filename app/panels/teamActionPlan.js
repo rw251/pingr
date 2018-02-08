@@ -514,9 +514,7 @@ const tap = {
     standard,
     visible
   ) {
-    const localData = {
-      visible,
-    };
+    const localData = { visible };
 
     if (teamActions.length === 0) {
       localData.noSuggestions = true;

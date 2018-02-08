@@ -120,9 +120,7 @@ const main = {
             .eq(1)
             .val();
         }
-        main.onSelected(null, {
-          id: val,
-        });
+        main.onSelected(null, {id: val,});
       });
     });
   },
