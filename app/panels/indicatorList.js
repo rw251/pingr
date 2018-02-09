@@ -217,8 +217,8 @@ var indicatorList = {
     });
 
 
-    panel.off('click', '#overview-table-outcome .show-more');
-    panel.on('click', '#overview-table-outcome .show-more', function(e) {
+    panel.off('click', '#overview-table-outcomes .show-more');
+    panel.on('click', '#overview-table-outcomes .show-more', function(e) {
       var id = $(this).data("id");
       var tr = $(this).closest("tr");
       var row = tableOutcomeIndicators.row( tr );
