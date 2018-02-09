@@ -322,13 +322,13 @@ var doOutcomeIndicators = function (callback) {
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
             name: indText.name,
             description: indText.description,
-            values: [["x"], ["patientCount"], ["expectedPatientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]],
+            values: [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"], ["expectedPatientCount"]],
             opportunities: []
           };
           indicators.push(i);
         } else {
-          if (i.values[1][0] === "numerator" || i.values[2][0] === "denominator") {
-            i.values = [["x"], ["patientCount"], ["expectedPatientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]];
+          if (i.values[1][0] === "numerator" || i.values.length === 5) {
+            i.values = [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"], ["expectedPatientCount"]];
           }
           i.benchmark = data.benchmark;
           i.measurementId = indText.valueId;
@@ -347,16 +347,16 @@ var doOutcomeIndicators = function (callback) {
         if (dttIdx === -1) {
           i.values[0].push(dtt);
           i.values[1].push(data.patientCount);
-          i.values[2].push(data.expectedPatientCount);
-          i.values[3].push(data.denominator);
-          i.values[4].push(data.eventCount);
-          i.values[5].push(data.standardisedIncidence);
+          i.values[2].push(data.denominator);
+          i.values[3].push(data.eventCount);
+          i.values[4].push(data.standardisedIncidence);
+          i.values[5].push(data.expectedPatientCount);
         } else {
           i.values[1][dttIdx] = data.patientCount;
-          i.values[2][dttIdx] = data.expectedPatientCount;
-          i.values[3][dttIdx] = data.denominator;
-          i.values[4][dttIdx] = data.eventCount;
-          i.values[5][dttIdx] = data.standardisedIncidence;
+          i.values[2][dttIdx] = data.denominator;
+          i.values[3][dttIdx] = data.eventCount;
+          i.values[4][dttIdx] = data.standardisedIncidence;
+          i.values[5][dttIdx] = data.expectedPatientCount;
         }
 
         //Sort them all..
