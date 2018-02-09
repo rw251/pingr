@@ -234,7 +234,7 @@ var base = {
 
   resetTab: function(tab) {
     var tabElement = $('#mainTab a[data-href="#' + tab + '"]');
-    tabElement.html(tabElement.text().split(":")[0]);
+    tabElement.find('.btn.btn-arrow-right').html(tabElement.text().split(" - ")[0]);
     tabElement.data("href", '#' + tab);
     tabElement.attr('href','#' + tab);
   },
