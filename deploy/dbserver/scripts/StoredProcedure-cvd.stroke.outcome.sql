@@ -612,16 +612,17 @@ order by perc desc) sub);
 
 
 									--TO RUN AS STORED PROCEDURE--
-insert into [output.pingr.indicatorOutcome](indicatorId, practiceId, date, patientCount, eventCount, denominator, standardisedIncidence, benchmark)
+insert into [output.pingr.indicatorOutcome](indicatorId, practiceId, date, patientCount, expectedPatientCount, eventCount, denominator, standardisedIncidence, benchmark)
 
 									--TO TEST ON THE FLY--
 --IF OBJECT_ID('tempdb..#indicatorOutcome') IS NOT NULL DROP TABLE #indicatorOutcome
 --CREATE TABLE #indicatorOutcome (indicatorId varchar(1000), practiceId varchar(1000), date date, patientCount int, eventCount int, denominator int, standardisedIncidence float, benchmark float);
 --insert into #indicatorOutcome
 
-select 'cvd.stroke.outcome', a.practiceId, CONVERT(char(10), @refdate, 126), numberOfStrokePatientsPerPractice, numberOfStrokesPerPractice, a.practiceListSize, standardisedFirstEverStrokeIncidenceByAgeGenderPer1000, @abc from #firstEverStrokeIncidence as a
+select 'cvd.stroke.outcome', a.practiceId, CONVERT(char(10), @refdate, 126), numberOfStrokePatientsPerPractice, expectedFirstEverStrokeIncidenceByAgeGenderPerPractice, numberOfStrokesPerPractice, a.practiceListSize, standardisedFirstEverStrokeIncidenceByAgeGenderPer1000, @abc from #firstEverStrokeIncidence as a
 left outer join (select * from #episodeStrokeIncidence) as b on b.practiceId = a.practiceId
 left outer join #standardisedFirstEverStrokeIncidenceByAgeGender as c on c.area = a.practiceId
+left outer join #expectedFirstEverStrokeIncidenceByAgeGenderPerPractice as d on d.area = a.practiceId
 
 									----------------------------------------------
 									-------POPULATE MAIN DENOMINATOR TABLE--------
