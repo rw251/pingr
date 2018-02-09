@@ -16,7 +16,8 @@ var ID = "OVERVIEW";
 var overview = {
   updateTab: function(dontClearRight) {
     var titleTmpl = require("templates/overview-title");
-    base.updateTitle(titleTmpl({}), dontClearRight);
+    // base.updateTitle(titleTmpl({}), dontClearRight);
+    base.updateTitle(titleTmpl({selectedPractice: state.selectedPractice, practices: state.practices}), dontClearRight);
 
     suggestionCard = $('#teamSuggestionCard');
 

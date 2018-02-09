@@ -6,7 +6,7 @@
   "scripts": {
     "prestart": "rimraf dist/*",
     "start": "brunch watch --server",
-  	"testing": "brunch watch --server --debug",
+    "testing": "brunch watch --server --debug",
     "build": "brunch build --production",
     "postbuild": "ncp deploy/appserver/.foreverignore dist/.foreverignore",
     "postinstall": "npm run build",

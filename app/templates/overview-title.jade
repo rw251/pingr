@@ -4,7 +4,12 @@
       i.material-icons aspect_ratio
       h2.card-title Overview
     .card-content
-      h4 Start here to look over all bloody of your patients' data
+      - if (practices && practices.length > 1)
+        select.practice-picker
+          each practice in practices
+            option(value=practice._id, selected=practice._id === selectedPractice._id)= practice.name
+      - else
+        h4= "Start here to look over " + selectedPractice + "patients' data"
 .col-lg-6
   .card#teamSuggestionCard
     .card-header.card-header-icon(data-background-color="green")
