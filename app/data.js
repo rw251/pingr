@@ -152,6 +152,8 @@ var dt = {
         indicator.performance.incidence = (percentage * 10).toFixed(1);
         indicator.performance.incidenceMultiple = (Math.round(100 * indicator.values[3][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
         indicator.performance.incidenceStandardised = (Math.round(100 * indicator.values[4][last] * 100 / indicator.values[2][last]) / 10).toFixed(1);
+        indicator.performance.number = indicator.values[1][last];
+        indicator.performance.expectedNumber = (indicator.values[5][last]).toFixed(1);
       }
       indicator.patientsWithOpportunity = indicator.values[2][last] - indicator.values[1][last];
       //indicator.benchmark = "90%"; //TODO magic number

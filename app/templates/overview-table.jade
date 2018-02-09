@@ -28,23 +28,24 @@ div
                     a.show-more(data-id=indicator.id)
                       | Show more 
                       i.fa.fa-caret-down
-                  td
-                    //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-                    if isNaN(indicator.performance.percentage)
-                      strong(class = 'text-underPerform') N/A
-                    else if indicator.aboveTarget
-                      if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
-                        strong(class = 'text-topTen')= indicator.performance.incidence + ' per 1000'
-                      else
-                        strong(class = 'text-overPerform')= indicator.performance.incidence + ' per 1000'
-                    else
-                      strong(class = 'text-underPerform')= indicator.performance.incidence + ' per 1000'
+                  td= indicator.performance.number
+                  td= indicator.performance.expectedNumber
+                    //- strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                    //- if isNaN(indicator.performance.percentage)
+                    //-   strong(class = 'text-underPerform') N/A
+                    //- else if indicator.aboveTarget
+                    //-   if ((indicator.benchmark*100).toFixed(0)) < indicator.performance.percentage
+                    //-     strong(class = 'text-topTen')= indicator.performance.incidence + ' per 1000'
+                    //-   else
+                    //-     strong(class = 'text-overPerform')= indicator.performance.incidence + ' per 1000'
+                    //- else
+                    //-   strong(class = 'text-underPerform')= indicator.performance.incidence + ' per 1000'
                       
-                    //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
-                    span= ' (' + indicator.performance.fraction + ')'
-                  td= indicator.performance.incidenceMultiple + ' per 1000'
-                  td= indicator.performance.incidenceStandardised ?  indicator.performance.incidenceStandardised + ' per 1000' : 'TBA'
-                  td= (indicator.benchmark*100).toFixed(0)+"%"
+                    //- //strong(class=indicator.aboveTarget ? 'text-overPerform' : 'text-underPerform')= indicator.performance.percentage + '%'
+                  //-   //- span= ' (' + indicator.performance.fraction + ')'
+                  //- td= indicator.performance.incidenceMultiple + ' per 1000'
+                  //- td= indicator.performance.incidenceStandardised ?  indicator.performance.incidenceStandardised + ' per 1000' : 'TBA'
+                  //- td= (indicator.benchmark*100).toFixed(0)+"%"
                   td(style="text-align:center")
                     if indicator.change==="up"
                       i.fa.fa-2x.fa-fw.fa-caret-up
