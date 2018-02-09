@@ -286,7 +286,7 @@ var doOutcomeIndicators = function (callback) {
     .pipe(
     csv({
       separator: '\t',
-      headers: ['indicatorid', 'gpcode', 'date', 'patientCount', 'eventCount', 'denominator', 'standardisedIncidence', 'benchmark']
+      headers: ['indicatorid', 'gpcode', 'date', 'patientCount', 'expectedPatientCount', 'eventCount', 'denominator', 'standardisedIncidence', 'benchmark']
     })
     )
     .on('data', function (data) {
@@ -322,13 +322,13 @@ var doOutcomeIndicators = function (callback) {
             sortDirection: indText.valueSortDirection ? indText.valueSortDirection[0] === "a" : "desc",
             name: indText.name,
             description: indText.description,
-            values: [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]],
+            values: [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"], ["expectedPatientCount"]],
             opportunities: []
           };
           indicators.push(i);
         } else {
-          if (i.values[1][0] === "numerator") {
-            i.values = [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"]];
+          if (i.values[1][0] === "numerator" || i.values.length === 5) {
+            i.values = [["x"], ["patientCount"], ["denominator"], ["eventCount"], ["standardisedIncidence"], ["expectedPatientCount"]];
           }
           i.benchmark = data.benchmark;
           i.measurementId = indText.valueId;
@@ -350,16 +350,18 @@ var doOutcomeIndicators = function (callback) {
           i.values[2].push(data.denominator);
           i.values[3].push(data.eventCount);
           i.values[4].push(data.standardisedIncidence);
+          i.values[5].push(data.expectedPatientCount);
         } else {
           i.values[1][dttIdx] = data.patientCount;
           i.values[2][dttIdx] = data.denominator;
           i.values[3][dttIdx] = data.eventCount;
           i.values[4][dttIdx] = data.standardisedIncidence;
+          i.values[5][dttIdx] = data.expectedPatientCount;
         }
 
         //Sort them all..
         var temp = i.values[0].slice(1).map(function (v, idx) {
-          return { a: v, b: i.values[1][idx + 1], c: i.values[2][idx + 1], d: i.values[3][idx + 1], e: i.values[4][idx + 1] };
+          return { a: v, b: i.values[1][idx + 1], c: i.values[2][idx + 1], d: i.values[3][idx + 1], e: i.values[4][idx + 1], f: i.values[5][idx + 1] };
         });
         //sort
         temp.sort(function (a, b) {
@@ -373,6 +375,7 @@ var doOutcomeIndicators = function (callback) {
           i.values[2][idx + 1] = v.c;
           i.values[3][idx + 1] = v.d;
           i.values[4][idx + 1] = v.e;
+          i.values[5][idx + 1] = v.f;
         });
       }
     })

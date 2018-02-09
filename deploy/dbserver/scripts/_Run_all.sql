@@ -89,7 +89,7 @@ CREATE TABLE [output.pingr.indicator] (indicatorId varchar(1000), practiceId var
 
 --Outcome indicator results
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[output.pingr.indicatorOutcome]') AND type in (N'U')) DROP TABLE [dbo].[output.pingr.indicatorOutcome]
-CREATE TABLE [output.pingr.indicatorOutcome] (indicatorId varchar(1000), practiceId varchar(1000), date date, patientCount int, eventCount int, denominator int, standardisedIncidence float, benchmark float)
+CREATE TABLE [output.pingr.indicatorOutcome] (indicatorId varchar(1000), practiceId varchar(1000), date date, patientCount int, expectedPatientCount float, eventCount int, denominator int, standardisedIncidence float, benchmark float)
 
 --Text
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[pingr.text]') AND type in (N'U')) DROP TABLE [dbo].[pingr.text]
