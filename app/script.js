@@ -17,6 +17,8 @@ var template = require('./template'),
   state = require('./state'),
   layout = require('./layout');
 
+require('./sideshow')();
+
 //TODO not sure why i did this - was in local variable
 //maybe a separate module
 //window.location = window.history.location || window.location;
@@ -27,7 +29,13 @@ var gotInitialData = false;
 var pageIsReady = false;
 
 var App = {
-  init: function init() {
+  init: function init() { 
+
+    $('#tutorial').on('click', (e) => {
+      e.preventDefault();
+      Sideshow.start({ listAll: true });
+    });
+
     layout.showPage('main-dashboard');
 
     var initialize = function(){
