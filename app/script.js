@@ -51,9 +51,15 @@ var tourbusTour = $('#tourbus-demo-1').tourbus({
       $('.tour-overlay-bottom').css('width', targetRight - targetLeft + 2*padding);
       $('.tour-overlay').show();
     }
+    if( leg.rawData.mask) {
+      $('.tour-overlay-right').css('left', 0).show();
+    }
   },
   onLegEnd: function( leg, bus ) {
     if( leg.rawData.highlight ) {
+      $('.tour-overlay').hide();
+    }
+    if( leg.rawData.mask) {
       $('.tour-overlay').hide();
     }
   }

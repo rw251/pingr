@@ -21,18 +21,18 @@ module.exports = () => {
   }).storyLine({
     showStepPosition: true,
     steps: [
-      // {
-		  //   title: "The PINGR tutorial",
-		  //   text: "OK! Let's show you how to use PINGR."
-		  // },
-      // {
-		  //   title: "Here to help",
-		  //   text: "PINGR is here to suggest actions to improve patient care. All of it's suggestions are based on your practice's data."
-      // },
-      // {
-      //   title: "You can help PINGR",
-      //   text: "Your input improves PINGR over time. By giving a thumb_down you help PINGR's suggestions for all users"
-      // },
+      {
+		    title: "The PINGR tutorial",
+		    text: "OK! Let's show you how to use PINGR."
+		  },
+      {
+		    title: "Here to help",
+		    text: "PINGR is here to suggest actions to improve patient care. All of it's suggestions are based on your practice's data."
+      },
+      {
+        title: "You can help PINGR",
+        text: "Your input improves PINGR over time. By giving a thumb_down you help PINGR's suggestions for all users"
+      },
       {
         title: "System Buttons",
         text: "These buttons are system level buttons. They are used to let you log out, change your password or contact the admins to help you out!",
