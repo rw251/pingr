@@ -31,8 +31,15 @@ section#main
           ul.nav.navbar-nav.navbar-right
             li
               a(href='#help') Help
-            li
-              a#tutorial(href='#tutorial') Tutorial
+            li.dropdown
+              a.dropdown-toggle(data-toggle='dropdown', href='#')
+                span Tutorials 
+                i.fa.fa-caret-down
+              ul.dropdown-menu.dropdown-user
+                li
+                  a#tutorial1(href='#') Side show (current)
+                li
+                  a#tutorial2(href='#') Tour bus
             li
               a(href='#contact') Contact us
             li.dropdown
@@ -75,3 +82,24 @@ section#main
                     |  Logout
             li
               button#suggs.btn.btn-warning(style='margin:7px') Send a comment
+.tour-overlay.tour-overlay-left
+.tour-overlay.tour-overlay-right
+.tour-overlay.tour-overlay-top
+.tour-overlay.tour-overlay-bottom
+ol#tourbus-demo-1.tourbus-legs
+  // INTRO
+  li(data-el='.nav.navbar-nav.navbar-right', data-highlight='true', data-orientation='bottom', data-width='400')
+    h2 System buttons
+    p These buttons are system level buttons. They are used to let you log out, change your password or contact the admins to help you out!
+    a.tourbus-next(href='javascript:void(0);') Next: Navigation
+  li(data-el='#mainTab', data-highlight='true', data-orientation='bottom', data-width='400')
+    h2 Navigation
+    p With these buttons you can access other panels in the system. In general you will move from left (overview panel) to right (action plans panel).
+    p Press these buttons to take you to a specific part of the system in case you want to go somewhere specific.
+    a.tourbus-next(href='javascript:void(0);') Next: The log out button
+  li(data-el='#suggs', data-highlight='true', data-orientation='left', data-arrow='10%', data-width='400')
+    h2 The log out button.
+    p Click this button if you want to log out of the system.
+    a.tourbus-stop(href='javascript:void(0);') Done!
+
+

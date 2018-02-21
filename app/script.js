@@ -28,12 +28,48 @@ require('./sideshow')();
 var gotInitialData = false;
 var pageIsReady = false;
 
+var tourbusTour = $('#tourbus-demo-1').tourbus({
+  leg: {
+    margin: 25,
+  },
+  onLegStart: function( leg, bus ) {
+    if( leg.rawData.highlight ) {
+      const targetLeft = leg.$target.offset().left;
+      const targetRight = targetLeft + leg.$target.outerWidth();
+      const targetTop = leg.$target.offset().top;
+      const targetBottom = targetTop + leg.$target.outerHeight();
+      const padding = 2;
+      $('.tour-overlay-left').css('width', targetLeft - padding);
+      $('.tour-overlay-right').css('left', targetRight + padding);
+
+      $('.tour-overlay-top').css('height', targetTop - padding);
+      $('.tour-overlay-top').css('left', targetLeft - padding);
+      $('.tour-overlay-top').css('width', targetRight - targetLeft + 2*padding);
+
+      $('.tour-overlay-bottom').css('top', targetBottom + padding);
+      $('.tour-overlay-bottom').css('left', targetLeft - padding);
+      $('.tour-overlay-bottom').css('width', targetRight - targetLeft + 2*padding);
+      $('.tour-overlay').show();
+    }
+  },
+  onLegEnd: function( leg, bus ) {
+    if( leg.rawData.highlight ) {
+      $('.tour-overlay').hide();
+    }
+  }
+} );
+
 var App = {
   init: function init() { 
 
-    $('#tutorial').on('click', (e) => {
+    $('#tutorial1').on('click', (e) => {
       e.preventDefault();
       Sideshow.start({ listAll: true });
+    });
+
+    $('#tutorial2').on('click', (e) => {
+      e.preventDefault();
+      tourbusTour.trigger('depart.tourbus');
     });
 
     layout.showPage('main-dashboard');
