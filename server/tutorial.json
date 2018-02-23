@@ -1,0 +1,63 @@
+[
+  {
+    "title": "The PINGR tutorial",
+    "paragraphs": ["OK! Let's show you how to use PINGR."],
+    "attributes": {
+      "data-orientation":"centered",
+      "data-mask":"true",
+      "data-width":600
+    }
+  },
+  {
+    "title": "Here to help",
+    "paragraphs": ["PINGR is here to suggest actions to improve patient care. All of its suggestions are based on your practice's data."],
+    "attributes": {
+      "data-orientation":"centered",
+      "data-mask":"true",
+      "data-width":600
+    }
+  },
+  {
+    "title": "You can help PINGR",
+    "paragraphs": ["Your input improves PINGR over time. By disagreeing with a suggestion (<span class='fa fa-thumbs-down'></span>) you help PINGR's suggestions for all users"],
+    "attributes": {
+      "data-orientation":"centered",
+      "data-mask":"true",
+      "data-width":600
+    }
+  },
+  {
+    "title": "System buttons",
+    "paragraphs": ["These buttons are system level buttons. They are used to let you log out, change your password or contact the admins to help you out!"],
+    "attributes": {
+      "data-el":".nav.navbar-nav.navbar-right",
+      "data-highlight":"true",
+      "data-orientation":"bottom",
+      "data-width":400
+    } 
+  },
+  {
+    "title": "Navigation",
+    "paragraphs": [
+      "With these buttons you can access other panels in the system. In general you will move from left (overview panel) to right (action plans panel).",
+      "Press these buttons to take you to a specific part of the system in case you want to go somewhere specific."
+    ],
+    "attributes": {
+      "data-el":"#mainTab",
+      "data-highlight":"true",
+      "data-orientation":"bottom",
+      "data-width":400
+    }
+  },
+  {
+    "title": "The log out button.",
+    "paragraphs": ["Click this button if you want to log out of the system."],
+    "attributes": {
+      "data-el":"#suggs",
+      "data-arrow":"10%",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400
+    }
+  }
+]

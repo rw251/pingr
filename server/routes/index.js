@@ -16,6 +16,7 @@ var emailSender = require('../email-sender.js');
 var text = require('../controllers/text.js');
 var utils = require('../controllers/utils.js');
 var config = require('../config');
+var tutorialStages = require('../tutorial');
 
 const isAuthenticated = function(req, res, next) {
   // if user is authenticated in the session, call the next() to call the next request handler
@@ -621,7 +622,7 @@ module.exports = function(passport) {
     // });
     const practiceIds = req.user.practices.map(v=>v.id);
     practices.getMany(practiceIds, function(err, practices) {
-      res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practices, selectedPractice: practices[0] });
+      res.render('pages/index.jade', { admin: req.user.roles.indexOf("admin") > -1, fullname: req.user.fullname, practices, selectedPractice: practices[0], tutorialStages });
     });
   });
 

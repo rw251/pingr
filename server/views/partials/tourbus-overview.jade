@@ -1,0 +1,19 @@
+.tour-overlay.tour-overlay-left
+.tour-overlay.tour-overlay-right
+.tour-overlay.tour-overlay-top
+.tour-overlay.tour-overlay-bottom
+ol#tourbus-demo-1.tourbus-legs
+  each stage,i in tutorialStages
+    li&attributes(stage.attributes)
+      a.tourbus-stop.tourbus-exit-icon(href='javascript:void(0);') 🗙
+      h2
+        span.sub= (i+1) + '/' + tutorialStages.length
+        = stage.title
+      each para in stage.paragraphs
+        p!= para
+      if(i>0)
+        a.tourbus-prev.tourbus-button(href='javascript:void(0);') Back
+      if(i<tutorialStages.length-1)
+        a.tourbus-next.tourbus-button(href='javascript:void(0);')= '▶ Next: ' + tutorialStages[i+1].title
+      else
+        a.tourbus-stop.tourbus-button(href='javascript:void(0);') Done!

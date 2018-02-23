@@ -17,8 +17,6 @@ var template = require('./template'),
   state = require('./state'),
   layout = require('./layout');
 
-require('./sideshow')();
-
 //TODO not sure why i did this - was in local variable
 //maybe a separate module
 //window.location = window.history.location || window.location;
@@ -68,12 +66,7 @@ var tourbusTour = $('#tourbus-demo-1').tourbus({
 var App = {
   init: function init() { 
 
-    $('#tutorial1').on('click', (e) => {
-      e.preventDefault();
-      Sideshow.start({ listAll: true });
-    });
-
-    $('#tutorial2').on('click', (e) => {
+    $('#tutorial').on('click', (e) => {
       e.preventDefault();
       tourbusTour.trigger('depart.tourbus');
     });
