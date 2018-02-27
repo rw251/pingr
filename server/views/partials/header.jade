@@ -14,18 +14,18 @@ section#main
       .navbar-inner
         .container
           ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist')
-            li.active(role='presentation', style='width:20%', data-id='overview')
+            li#overviewTab.active(role='presentation', style='width:20%', data-id='overview')
               a(href='#overview', data-href='#overview', role='tab') OVERVIEW
               .nav-arrow
-            li(role='presentation', style='width:20%', data-id='indicator')
+            li#indicatorTab(role='presentation', style='width:20%', data-id='indicator')
               .nav-wedge
               a(href='#indicators', data-href='#indicators', role='tab') INDICATOR
               .nav-arrow
-            li(role='presentation', style='width:20%', data-id='patient')
+            li#patientTab(role='presentation', style='width:20%', data-id='patient')
               .nav-wedge
               a(href='#patients', data-href='#patients', role='tab') PATIENT
               .nav-arrow
-            li(role='presentation', style='width:20%', data-id='actions')
+            li#actionPlanTab(role='presentation', style='width:20%', data-id='actions')
               .nav-wedge
               a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
           ul.nav.navbar-nav.navbar-right
@@ -35,7 +35,7 @@ section#main
               a#tutorial(href='#') Tutorial
             li
               a(href='#contact') Contact us
-            li.dropdown
+            li#userMenu.dropdown
               a.dropdown-toggle(data-toggle='dropdown', href='#')
                 span#user_fullname.hide-if-bit-small= fullname + " "
                 span#practice_name(style="display:none")= practice_name

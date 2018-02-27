@@ -19,7 +19,7 @@
   },
   {
     "title": "You can help PINGR",
-    "paragraphs": ["Your input improves PINGR over time. By disagreeing with a suggestion (<span class='fa fa-thumbs-down'></span>) you help PINGR's suggestions for all users"],
+    "paragraphs": ["Your input improves PINGR over time. By disagreeing with a suggestion (<span class='fa fa-thumbs-down'></span>) you help PINGR's suggestions for all users."],
     "attributes": {
       "data-orientation":"centered",
       "data-mask":"true",
@@ -37,6 +37,31 @@
     } 
   },
   {
+    "title": "Send a comment",
+    "paragraphs": [
+      "If you have anything you want to tell us e.g. problems with data, suggestions for how PINGR could be improved, please send them to us by clicking this button.",
+      "If you’re telling us about a specific patient or part of the system, you don’t need to tell us, we’ll know what you mean because we can see what page you’ve clicked the button on. (Please don’t put NHS numbers in your comments!)"
+    ],
+    "attributes": {
+      "data-el":"#suggs",
+      "data-arrow":"10%",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400
+    } 
+  },
+  {
+    "title": "User menu",
+    "paragraphs": ["You can change your password or email settings by clicking your name here"],
+    "attributes": {
+      "data-el":"#userMenu",
+      "data-arrow":"10%",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400
+    } 
+  },
+  {
     "title": "Navigation",
     "paragraphs": [
       "With these buttons you can access other panels in the system. In general you will move from left (overview panel) to right (action plans panel).",
@@ -44,6 +69,220 @@
     ],
     "attributes": {
       "data-el":"#mainTab",
+      "data-highlight":"true",
+      "data-orientation":"bottom",
+      "data-width":400
+    }
+  },
+  {
+    "title": "Overview tab",
+    "paragraphs": [
+      "We're currently on the overview tab. Let's take a look around..."
+    ],
+    "attributes": {
+      "data-el":"#overviewTab",
+      "data-highlight":"true",
+      "data-orientation":"bottom",
+      "data-width":400
+    }
+  },
+  {
+    "title": "Overview tab",
+    "paragraphs": [
+      "The Overview tab gives you information on how your practice as a whole has been performing on particular key performance indicators (KPIs). These are split into Outcomes (e.g. the number of strokes in your practice) or Processes (e.g. the number of patients with controlled hypertension). You can choose which to look at by selecting the corresponding tab.",
+      "Please select the 'Process Indicator' tab before continuing."
+    ],
+    "attributes": {
+      "data-el":"#right-panel",
+      "data-enable-elements": "true",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400,
+      "data-wait-for": "a[href='#processIndicators']",
+      "data-wait-for-event": "click"
+    }
+  },
+  {
+    "title": "Process indicators",
+    "paragraphs": [
+      "The KPIs are provided in a table, which has columns relating to the clinical area, the indicator name, your current performance, the number of actioned patients (i.e. number of patients not meeting the indicator who have been actioned), the Salford target, top 10% benchmark (i.e. the average score of the top 10% of practices in Salford), your change in score from yesterday, and 1 year trend.",
+      "All of these columns can be ordered by clicking on the arrows next to them."
+    ],
+    "attributes": {
+      "data-el":"#overview-table-process_wrapper",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400
+    }
+  },
+  {
+    "title": "Process indicators",
+    "paragraphs": [
+      "The ‘Show more’ link gives you more information on the KPI and links to further evidence e.g. NICE guidelines or BMJ articles.",
+      "To see your patients not meeting the KPI, simply click on the KPI and it will take you to the Indicator tab.",
+      "Please select this indicator by clicking it to continue."
+    ],
+    "attributes": {
+      "data-el":"#overview-table-process tr.standard-row:first",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-enable-elements": "true",
+      "data-width":400,
+      "data-wait-for": "#overview-table-process tr.standard-row:first",
+      "data-wait-for-ignore": "#overview-table-process tr.standard-row:first .show-more",
+      "data-wait-for-event": "click"
+    }
+  },
+  {
+    "title": "Indicator tab",
+    "paragraphs": [
+      "We're now on the indicator tab which lists the patients not achieving the KPI."
+    ],
+    "attributes": {
+      "data-el":"#indicatorTab",
+      "data-highlight":"true",
+      "data-orientation":"right",
+      "data-width":400
+    }
+  },
+  {
+    "title": "Patient list",
+    "paragraphs": [
+      "There are orange buttons next to each NHS number that you can click to copy and then paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+      "The list can be ordered according to a number of different columns, including patient age, and next annual review date"
+    ],
+    "attributes": {
+      "data-el":"#patient-list_wrapper",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-scroll-element": "#right-panel",
+      "data-scroll-value": 1000,
+      "data-width":400
+    }
+  },
+  {
+    "title": "Patient list",
+    "paragraphs": [
+      "This list can be downloaded as a PDF and shared or printed with other staff. Beware this includes NHS numbers though."
+    ],
+    "attributes": {
+      "data-el":"#patient-list_wrapper .dt-buttons",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400
+    }
+  },
+  {
+    "title": "Charts",
+    "paragraphs": [
+      "There is a bar chart that groups the patients in the list into categories associated with different actions. Hover over the bars to see what they mean. Click the bars to filter the patient list below to patients with that action only (the coloured boxes in the list indicate what actions are relevant to each patient).",
+      "Your current and future trend and comparison to other practices on this KPI can be accessed on tabs. "
+    ],
+    "attributes": {
+      "data-el":"#right-panel",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-scroll-element": "#right-panel",
+      "data-scroll-value": 0,
+      "data-width":400
+    }
+  },
+  {
+    "title": "Select a patient",
+    "paragraphs": [
+      "To see information on an individual patient not meeting the KPI, simply click on the patient in the list and it will take you to the Patient tab.",
+      "Please select any patient by clicking on a row in this table to continue."
+    ],
+    "attributes": {
+      "data-el":"#patient-list_wrapper",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-enable-elements": "true",
+      "data-width":400,
+      "data-scroll-element": "#right-panel",
+      "data-scroll-value": 1000,
+      "data-wait-for": "#patient-list tr.list-item",
+      "data-wait-for-ignore": "#patient-list tr.list-item .btn-copy",
+      "data-wait-for-event": "click"
+    }
+  },
+  {
+    "title": "Patient tab",
+    "paragraphs": [
+      "We're now on the patient tab which provides information on individual patients."
+    ],
+    "attributes": {
+      "data-el":"#patientTab",
+      "data-highlight":"true",
+      "data-orientation":"right",
+      "data-width":400
+    }
+  },
+  {
+    "title": "Timeline",
+    "paragraphs": [
+      "There is a timeline at the bottom of the page that shows diagnoses, contacts with your practice, measurements, and medications. Hover over each one to get more information.",
+      "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include some data from the hospital too."
+    ],
+    "attributes": {
+      "data-el":"#lifeline-chart",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400,
+      "data-scroll-element": "#right-panel",
+      "data-scroll-value": 1000
+    }
+  },
+  {
+    "title": "Patient KPIs",
+    "paragraphs": [
+      "There is a table at the top of the page that shows all KPIs the patient is meeting or not meeting.",
+      "There is a red exclude button to exclude the patient from that KPI in PINGR.",
+      "You can display actions for all or just one KPI by clicking the button next to exclude."
+    ],
+    "attributes": {
+      "data-el":"#processIndicatorsQS",
+      "data-highlight":"true",
+      "data-orientation":"left",
+      "data-width":400,
+      "data-scroll-element": "#right-panel",
+      "data-scroll-value": 0
+    }
+  },
+  {
+    "title": "Copy NHS number",
+    "paragraphs": [
+      "There is another orange button next to the NHS number at the top of the page to copy and paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard"
+    ],
+    "attributes": {
+      "data-el":"#title-left",
+      "data-highlight":"true",
+      "data-orientation":"bottom",
+      "data-enable-elements": "true",
+      "data-width":400
+    }
+  },
+  {
+    "title": "View all patients",
+    "paragraphs": [
+      "You can find a list of all patients in your practice ordered by the number of KPIs they are violating (so you can concentrate on patients who have the most ‘bang for your buck’).",
+      "You can also search for patients according to their NHS number."
+    ],
+    "attributes": {
+      "data-el":"#title-right",
+      "data-highlight":"true",
+      "data-orientation":"bottom",
+      "data-width":400
+    }
+  },
+  {
+    "title": "Filter actions",
+    "paragraphs": [
+      "You can find a list of all patients in your practice ordered by the number of KPIs they are violating (so you can concentrate on patients who have the most ‘bang for your buck’).",
+      "You can also search for patients according to their NHS number."
+    ],
+    "attributes": {
+      "data-el":"#title-right",
       "data-highlight":"true",
       "data-orientation":"bottom",
       "data-width":400

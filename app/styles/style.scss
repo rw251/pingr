@@ -2926,10 +2926,7 @@ $prevButtonColour: #fff;
 
 $legBackgroundColour: #3c3c3c;
 
-.tour-overlay-left,
-.tour-overlay-right,
-.tour-overlay-top,
-.tour-overlay-bottom, {
+.tour-overlay, {
   display: none;
   background: #666;
   opacity: 0.5;
@@ -2948,6 +2945,15 @@ $legBackgroundColour: #3c3c3c;
 }
 .tour-overlay-bottom {
     left: 0; bottom:0;
+}
+.tour-overlay-all {
+    background: transparent;
+    display: none;
+    opacity: 0.5;
+    z-index: 9997;
+    position: fixed;
+    top:0;
+    left: 0; bottom:0; right:0;
 }
 .tourbus-button {
     float: right;

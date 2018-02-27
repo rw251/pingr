@@ -15,7 +15,8 @@ var template = require('./template'),
   data = require('./data'),
   events = require('./events'),
   state = require('./state'),
-  layout = require('./layout');
+  layout = require('./layout'),
+  tutorial = require('./tutorial');
 
 //TODO not sure why i did this - was in local variable
 //maybe a separate module
@@ -26,52 +27,13 @@ var template = require('./template'),
 var gotInitialData = false;
 var pageIsReady = false;
 
-var tourbusTour = $('#tourbus-demo-1').tourbus({
-  leg: {
-    margin: 25,
-  },
-  onLegStart: function( leg, bus ) {
-    if( leg.rawData.highlight ) {
-      const targetLeft = leg.$target.offset().left;
-      const targetRight = targetLeft + leg.$target.outerWidth();
-      const targetTop = leg.$target.offset().top;
-      const targetBottom = targetTop + leg.$target.outerHeight();
-      const padding = 2;
-      $('.tour-overlay-left').css('width', targetLeft - padding);
-      $('.tour-overlay-right').css('left', targetRight + padding);
-
-      $('.tour-overlay-top').css('height', targetTop - padding);
-      $('.tour-overlay-top').css('left', targetLeft - padding);
-      $('.tour-overlay-top').css('width', targetRight - targetLeft + 2*padding);
-
-      $('.tour-overlay-bottom').css('top', targetBottom + padding);
-      $('.tour-overlay-bottom').css('left', targetLeft - padding);
-      $('.tour-overlay-bottom').css('width', targetRight - targetLeft + 2*padding);
-      $('.tour-overlay').show();
-    }
-    if( leg.rawData.mask) {
-      $('.tour-overlay-right').css('left', 0).show();
-    }
-  },
-  onLegEnd: function( leg, bus ) {
-    if( leg.rawData.highlight ) {
-      $('.tour-overlay').hide();
-    }
-    if( leg.rawData.mask) {
-      $('.tour-overlay').hide();
-    }
-  }
-} );
-
 var App = {
   init: function init() { 
 
-    $('#tutorial').on('click', (e) => {
-      e.preventDefault();
-      tourbusTour.trigger('depart.tourbus');
-    });
-
     layout.showPage('main-dashboard');
+
+    //wire up the tutorial
+    tutorial.initialize();
 
     var initialize = function(){
       //Wire up global click/hover listener
