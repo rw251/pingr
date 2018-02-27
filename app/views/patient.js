@@ -1,147 +1,207 @@
-var lifeline = require('../panels/lifeline'),
-  data = require('../data'),
-  base = require('../base'),
-  layout = require('../layout'),
-  lookup = require('../lookup'),
-  state = require('../state'),
-  individualActionPlan = require('../panels/individualActionPlan'),
-  qualityStandards = require('../panels/qualityStandards'),
-  patientSearch = require('../panels/patientSearch'),
-  allPatientList = require('../panels/allPatientList');
+const lifeline = require('../panels/lifeline');
+const data = require('../data');
+const base = require('../base');
+const layout = require('../layout');
+const lookup = require('../lookup');
+const state = require('../state');
+const individualActionPlan = require('../panels/individualActionPlan');
+const qualityStandards = require('../panels/qualityStandards');
+const patientSearch = require('../panels/patientSearch');
+const allPatientList = require('../panels/allPatientList');
+const patientTitleTemplate = require('../templates/patient-title.jade');
+const $ = require('jquery');
 
-var ID = "PATIENT_VIEW";
+const ID = 'PATIENT_VIEW';
 /*
  * The patient page consists of the panels:
  *   Lifeline chart
  *   Individual action plan
  */
 
-var updateTabAndTitle = function(patientId, pathwayId, pathwayStage, standard, patientData, dontClearRight) {
-  var patid = data.getNHS(state.selectedPractice._id, patientId);
-  var sex = patientData.characteristics.sex.toLowerCase() === "m" ?
-    "male" : (patientData.characteristics.sex.toLowerCase() === "f" ? "female" : patientData.characteristics.sex.toLowerCase());
-  var titleTmpl = require("templates/patient-title");
-  base.updateTitle(titleTmpl({
-    patid: patid,
-    nhs: patid.toString().replace(/ /g, ""),
-    age: patientData.characteristics.age,
-    sex: sex,
-    selectedPractice: state.selectedPractice,
-  }), dontClearRight);
+const updateTabAndTitle = (
+  patientId,
+  pathwayId,
+  pathwayStage,
+  standard,
+  patientData,
+  dontClearRight
+) => {
+  const patid = data.getNHS(state.selectedPractice._id, patientId);
+  let sex = patientData.characteristics.sex.toLowerCase();
+  if (sex === 'f') sex = 'female';
+  if (sex === 'm') sex = 'male';
+  base.updateTitle(
+    patientTitleTemplate({
+      patid,
+      nhs: patid.toString().replace(/ /g, ''),
+      age: patientData.characteristics.age,
+      sex,
+      selectedPractice: state.selectedPractice,
+    }),
+    dontClearRight
+  );
 
-  var tabUrl = patientId;
-  if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
-  base.updateTab("patients", patid, tabUrl);
+  let tabUrl = patientId;
+  if (pathwayId && pathwayStage && standard) { tabUrl = [patientId, pathwayId, pathwayStage, standard].join('/'); }
+  base.updateTab('patients', patid, tabUrl);
 };
 
-var pv = {
+const isNumber = n => Number.isNaN(Number(n));
 
-  wireUp: function() {
+const pv = {
+  wireUp() {},
 
-  },
+  create(pathId, pathwayStage, standard, patId, loadContentFn) {
+    let skip = 0;
+    let limit = 10;
+    let pathwayId = pathId;
+    let patientId = patId;
 
-  create: function(pathwayId, pathwayStage, standard, patientId, loadContentFn) {
-
-    var skip=0, limit=10;
-
-    if(pathwayId && patientId && !isNaN(pathwayId) && !isNaN(patientId)){
-      //we're actually in the all patient view so capture the skip/limit values
+    if (pathwayId && patientId && !isNumber(pathwayId) && !isNumber(patientId)) {
+      // we're actually in the all patient view so capture the skip/limit values
       skip = +patientId;
       limit = +pathwayId;
-      pathwayId=null;
-      patientId=null;
+      pathwayId = null;
+      patientId = null;
     }
 
-    if(layout.view === ID && !patientId && layout.allPatientView) {
-      //just changed the pagination
-      if(layout.allPatientView.skip === skip && layout.allPatientView.limit === limit) return; //no change
-      layout.allPatientView = {skip: skip, limit: limit};
-      layout.patientId = "";
+    if (layout.view === ID && !patientId && layout.allPatientView) {
+      // just changed the pagination
+      if (
+        layout.allPatientView.skip === skip &&
+        layout.allPatientView.limit === limit
+      ) { return; } // no change
+      layout.allPatientView = { skip, limit };
+      layout.patientId = '';
       allPatientList.populate(skip, limit);
 
       base.wireUpTooltips();
       base.hideLoading();
 
       return;
-    } else {
-        layout.allPatientView = null;
     }
+    layout.allPatientView = null;
+
 
     if (layout.view === ID && patientId === layout.patientId) {
-      //the view is the same just need to update the actions
-      individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+      // the view is the same just need to update the actions
+      individualActionPlan.show(
+        base.farLeftPanel,
+        pathwayId,
+        pathwayStage,
+        standard,
+        patientId
+      );
       qualityStandards.update(patientId, pathwayId, pathwayStage, standard);
 
-      var tabUrl = patientId;
-      if (pathwayId && pathwayStage && standard) tabUrl = [patientId, pathwayId, pathwayStage, standard].join("/");
-      base.updateTab("patients", data.getNHS(state.selectedPractice._id, patientId), tabUrl);
+      let tabUrl = patientId;
+      if (pathwayId && pathwayStage && standard) { tabUrl = [patientId, pathwayId, pathwayStage, standard].join('/'); }
+      base.updateTab(
+        'patients',
+        data.getNHS(state.selectedPractice._id, patientId),
+        tabUrl
+      );
 
       return;
     }
 
-    base.selectTab("patient");
+    base.selectTab('patient');
     base.showLoading();
 
-    //use a setTimeout to force the UI to change e.g. show the loading-container
-    //before further execution
-    setTimeout(function() {
-
+    // use a setTimeout to force the UI to change e.g. show the loading-container
+    // before further execution
+    setTimeout(() => {
       if (layout.view !== ID) {
-        //Not already in this view so we need to rejig a few things
+        // Not already in this view so we need to rejig a few things
         base.clearBox();
         base.switchTo2Column1Narrow1Wide();
         layout.showMainView();
 
-        base.hidePanels(farRightPanel);
+        base.hidePanels(base.farRightPanel);
 
         layout.view = ID;
       }
 
-      base.hidePanels(farLeftPanel);
+      base.hidePanels(base.farLeftPanel);
 
       if (patientId) {
         base.switchTo2Column1Narrow1Wide();
-        lookup.suggestionModalText = "Screen: Patient\nPatient ID: " + patientId + "  - NB this helps us identify the patient but is NOT their NHS number.\n===========\n";
+        lookup.suggestionModalText =
+          `Screen: Patient\nPatient ID: ${
+            patientId
+          }  - NB this helps us identify the patient but is NOT their NHS number.\n===========\n`;
 
-        data.getPatientData(patientId, function(patientData) {
-
-          if (!data.patLookup || ! data.patLookup[state.selectedPractice._id]) {
-            //we're too early to get nhs number so let's repeat until it's there
-            var updatePatientIds = function() {
-              if (!data.patLookup || ! data.patLookup[state.selectedPractice._id]) {
-                setTimeout(function() {
+        data.getPatientData(patientId, (patientData) => {
+          if (!data.patLookup || !data.patLookup[state.selectedPractice._id]) {
+            // we're too early to get nhs number so let's repeat until it's there
+            const updatePatientIds = () => {
+              if (
+                !data.patLookup ||
+                !data.patLookup[state.selectedPractice._id]
+              ) {
+                setTimeout(() => {
                   updatePatientIds();
                 }, 500);
               } else {
-                updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData, true);
+                updateTabAndTitle(
+                  patientId,
+                  pathwayId,
+                  pathwayStage,
+                  standard,
+                  patientData,
+                  true
+                );
               }
             };
 
-            setTimeout(function() {
+            setTimeout(() => {
               updatePatientIds();
             }, 500);
           }
 
-          //title needs updating
+          // title needs updating
           $('#mainTitle').show();
 
-          updateTabAndTitle(patientId, pathwayId, pathwayStage, standard, patientData);
+          updateTabAndTitle(
+            patientId,
+            pathwayId,
+            pathwayStage,
+            standard,
+            patientData
+          );
 
           layout.patientId = patientId;
           data.patientId = patientId;
           data.pathwayId = pathwayId;
 
           patientSearch.show($('#title-right'), true, true, loadContentFn);
-          qualityStandards.show(farRightPanel, false, patientId, pathwayId, pathwayStage, standard, individualActionPlan.refresh);
+          qualityStandards.show(
+            base.farRightPanel,
+            false,
+            patientId,
+            pathwayId,
+            pathwayStage,
+            standard,
+            individualActionPlan.refresh
+          );
 
-          if (patientData.conditions.length +
-            patientData.contacts.length +
-            patientData.events.length +
-            patientData.medications.length +
-            patientData.measurements.length !== 0) {
-            lifeline.show(farRightPanel, true, patientId, patientData);
+          if (
+            patientData.conditions.length +
+              patientData.contacts.length +
+              patientData.events.length +
+              patientData.medications.length +
+              patientData.measurements.length !==
+            0
+          ) {
+            lifeline.show(base.farRightPanel, true, patientId, patientData);
           }
-          individualActionPlan.show(farLeftPanel, pathwayId, pathwayStage, standard, patientId);
+          individualActionPlan.show(
+            base.farLeftPanel,
+            pathwayId,
+            pathwayStage,
+            standard,
+            patientId
+          );
 
           patientSearch.wireUp();
           $('#patient-pane').show();
@@ -152,46 +212,58 @@ var pv = {
 
           base.hideLoading();
 
-          //add state indicator
-          farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+          // add state indicator
+          base.farRightPanel.attr(
+            'class',
+            'col-xl-8 col-lg-8 state-patient-rightPanel'
+          );
 
-          //$('#right-panel').css("overflow-y", "auto");
-          //$('#right-panel').css("overflow-x", "hidden");
-          base.updateFixedHeightElements([{ selector: '#right-panel', padding: 15,minHeight:300 },{selector:'#personalPlanIndividual',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);
-
+          // $('#right-panel').css("overflow-y", "auto");
+          // $('#right-panel').css("overflow-x", "hidden");
+          base.updateFixedHeightElements([
+            { selector: '#right-panel', padding: 15, minHeight: 300 },
+            {
+              selector: '#personalPlanIndividual',
+              padding: 820,
+              minHeight: 200,
+            },
+            { selector: '#advice-list', padding: 430, minHeight: 250 },
+          ]);
         });
       } else {
-        base.updateTitle("No patient currently selected");
+        base.updateTitle('No patient currently selected');
         base.switchToSingleColumn();
         base.savePanelState();
-        patientSearch.show(centrePanel, false, false, loadContentFn);
-        allPatientList.show(centrePanel, true, skip, limit, loadContentFn);
+        patientSearch.show(base.centrePanel, false, false, loadContentFn);
+        allPatientList.show(base.centrePanel, true, skip, limit, loadContentFn);
 
-        layout.allPatientView = {skip: skip, limit: limit};
+        layout.allPatientView = { skip, limit };
 
-        layout.patientId = "";
+        layout.patientId = '';
 
-        lookup.suggestionModalText = "Screen: Patient\nPatient ID: None selected\n===========\n";
+        lookup.suggestionModalText =
+          'Screen: Patient\nPatient ID: None selected\n===========\n';
 
         base.wireUpTooltips();
         base.hideLoading();
 
-        //add state indicator
-        farRightPanel.attr("class", "col-xl-8 col-lg-8 state-patient-rightPanel");
+        // add state indicator
+        base.farRightPanel.attr(
+          'class',
+          'col-xl-8 col-lg-8 state-patient-rightPanel'
+        );
 
-        base.updateTab("patients", "", "");
+        base.updateTab('patients', '', '');
 
-        base.updateFixedHeightElements([{ selector: '#centre-panel', padding: 15,minHeight:300 }, { selector: '.table-scroll', padding: 220,minHeight:300 }]);
+        base.updateFixedHeightElements([
+          { selector: '#centre-panel', padding: 15, minHeight: 300 },
+          { selector: '.table-scroll', padding: 220, minHeight: 300 },
+        ]);
       }
-
     }, 0);
-
   },
 
-  populate: function() {
-
-  }
-
+  populate() {},
 };
 
 module.exports = pv;

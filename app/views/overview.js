@@ -1,56 +1,64 @@
-var base = require('../base'),
-  data = require('../data'),
-  layout = require('../layout'),
-  lookup = require('../lookup'),
-  state = require('../state'),
-  indicatorList = require('../panels/indicatorList'),
-  teamActionPlan = require('../panels/teamActionPlan');
+const base = require('../base');
+const data = require('../data');
+const layout = require('../layout');
+const lookup = require('../lookup');
+const state = require('../state');
+const indicatorList = require('../panels/indicatorList');
+const teamActionPlan = require('../panels/teamActionPlan');
+const $ = require('jquery');
 
-var ID = "OVERVIEW";
+const ID = 'OVERVIEW';
 /*
  * The overview page consists of the panels:
  *   Indicator list
  *   Team action plan
  */
-var overview = {
+const overview = {
+  create(loadContentFn) {
+    lookup.suggestionModalText = 'Screen: Overview\n===========\n';
 
-  create: function(loadContentFn) {
-
-    lookup.suggestionModalText = "Screen: Overview\n===========\n";
-
-    base.selectTab("overview");
+    base.selectTab('overview');
     base.showLoading();
 
-    //use a setTimeout to force the UI to change e.g. show the loading-container
-    //before further execution
-    setTimeout(function() {
-
-      var practiceName = state.selectedPractice.name;
+    // use a setTimeout to force the UI to change e.g. show the loading-container
+    // before further execution
+    setTimeout(() => {
+      const practiceName = state.selectedPractice.name;
 
       if (layout.view !== ID) {
-        //Not already in this view so we need to rejig a few things
+        // Not already in this view so we need to rejig a few things
         base.clearBox();
         base.switchTo2Column1Narrow1Wide();
         layout.showMainView();
 
         $('#mainTitle').show();
         let title = `Overview of ${practiceName}'s performance`;
-        if(state.practices && state.practices.length>1) {
-          title = `Performance overview of <select class='practice-picker'>${state.practices.map(v=>'<option value="' + v._id + '" ' + (v._id===state.selectedPractice._id ? 'selected' : '') + ' >' + v.name + '</option>')}</select>`;
+        if (state.practices && state.practices.length > 1) {
+          title = `Performance overview of <select class='practice-picker'>${state.practices.map(v =>
+            `<option value="${
+              v._id
+            }" ${
+              v._id === state.selectedPractice._id ? 'selected' : ''
+            } >${
+              v.name
+            }</option>`)}</select>`;
         }
         base.updateTitle(title);
 
-        base.hidePanels(farRightPanel);
+        base.hidePanels(base.farRightPanel);
 
         layout.view = ID;
       }
 
-      data.pathwayId = "htn"; //TODO fudge
+      data.pathwayId = 'htn'; // TODO fudge
 
-      //The two panels we need to show
-      //Panels decide whether they need to redraw themselves
-      teamActionPlan.show(farLeftPanel, "Top 3 suggested actions for " + practiceName);
-      indicatorList.show(farRightPanel, false, loadContentFn);
+      // The two panels we need to show
+      // Panels decide whether they need to redraw themselves
+      teamActionPlan.show(
+        base.farLeftPanel,
+        `Top 3 suggested actions for ${practiceName}`
+      );
+      indicatorList.show(base.farRightPanel, false, loadContentFn);
 
       $('#overview-pane').show();
 
@@ -60,14 +68,18 @@ var overview = {
 
       base.hideLoading();
 
-      //add state indicator
-      farRightPanel.attr("class", "col-xl-8 col-lg-8 state-overview-rightPanel");
+      // add state indicator
+      base.farRightPanel.attr(
+        'class',
+        'col-xl-8 col-lg-8 state-overview-rightPanel'
+      );
 
-      base.updateFixedHeightElements([{selector:'#personalPlanTeam',padding:820, minHeight:200},{selector:'#advice-list',padding:430, minHeight:250}]);//,{selector:'.table-scroll',padding:250, minHeight:300}]);
+      base.updateFixedHeightElements([
+        { selector: '#personalPlanTeam', padding: 820, minHeight: 200 },
+        { selector: '#advice-list', padding: 430, minHeight: 250 },
+      ]); // ,{selector:'.table-scroll',padding:250, minHeight:300}]);
     }, 0);
-
-  }
-
+  },
 };
 
 module.exports = overview;

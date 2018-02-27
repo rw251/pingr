@@ -1,18 +1,22 @@
-var data = require('../data'),
-  base = require('../base'),
-  state = require('../state'),
-  jsPDF = require('jspdf'),
-  jspdfAutoTable = require('jspdf-autotable');
+const data = require('../data');
+const base = require('../base');
+const state = require('../state');
+const JSPDF = require('jspdf');
+const $ = require('jquery');
+const actionListWrapperTmpl = require('../templates/action-list-wrapper.jade');
+const actionListTemplate = require('../templates/action-list.jade');
+// const jspdfAutoTable = require('jspdf-autotable');
 
-var actionObject = {};
-var al = {
+let actionObject = {};
+let actionArray;
 
-  create: function() {
-    return require("templates/action-list-wrapper")();
+const al = {
+  create() {
+    return actionListWrapperTmpl();
   },
 
-  show: function(panel, isAppend) {
-    var html = al.create();
+  show(panel, isAppend) {
+    const html = al.create();
 
     if (isAppend) panel.append(html);
     else {
@@ -21,69 +25,79 @@ var al = {
     al.wireup();
   },
 
-  wireup: function() {
-    $('#downloadActionPlan').on('click', function() {
-
-      var columns = ["Team action or patient id", "Created by", "Agreed by", "Action"];
-      var rows = actionArray.map(function(v) {
-        return [
-          v.patientId ? v.patientId : "Team action",
-          v.userDefined ? v.who : "PINGR",
-          v.who,
-          v.actionText
-        ];
-      });
+  wireup() {
+    $('#downloadActionPlan').on('click', () => {
+      const columns = [
+        'Team action or patient id',
+        'Created by',
+        'Agreed by',
+        'Action',
+      ];
+      const rows = actionArray.map(v => [
+        v.patientId ? v.patientId : 'Team action',
+        v.userDefined ? v.who : 'PINGR',
+        v.who,
+        v.actionText,
+      ]);
 
       // Only pt supported (not mm or in)
-      var doc = new jsPDF('l', 'pt');
+      const doc = new JSPDF('l', 'pt');
       doc.autoTable(columns, rows, {
         styles: {
-          overflow: "linebreak",
-          columWidth: "wrap"
-        }
+          overflow: 'linebreak',
+          columWidth: 'wrap',
+        },
       });
       doc.save('action-plan.pdf');
-
     });
-    al.load(function() {
+    al.load(() => {
       al.process(al.populate);
     });
   },
 
-  load: function(done) {
-    data.getAllAgreedWithActions(state.selectedPractice._id, function(err, actions) {
+  load(done) {
+    data.getAllAgreedWithActions(state.selectedPractice._id, (err, actions) => {
       actionObject = actions;
 
-      if (done && typeof done === "function") {
+      if (done && typeof done === 'function') {
         return done();
       }
+      return false;
     });
   },
 
-  process: function(done) {
+  process(done) {
     actionArray = [];
 
-    if (actionObject.patient && (!data.patLookup || !data.patLookup[state.selectedPractice._id])) {
-      //pat lookup not loaded so let's wait
-      setTimeout(function() {
+    if (actionObject.patient &&
+      (!data.patLookup || !data.patLookup[state.selectedPractice._id])) {
+      // pat lookup not loaded so let's wait
+      return setTimeout(() => {
         al.process(done);
       }, 1000);
-      return;
     }
     if (actionObject.patient) {
-      Object.keys(actionObject.patient).forEach(function(v) {
-        actionObject.patient[v].actions.forEach(function(vv) {
-          var actionItem = { patientId: data.patLookup[state.selectedPractice._id][v], actionText: vv.actionText, supportingText: vv.supportingText };
+      Object.keys(actionObject.patient).forEach((v) => {
+        actionObject.patient[v].actions.forEach((vv) => {
+          const actionItem = {
+            patientId: data.patLookup[state.selectedPractice._id][v],
+            actionText: vv.actionText,
+            supportingText: vv.supportingText,
+          };
           if (vv.history && vv.history.length > 0) {
-            var who = vv.history[0].who;
+            const { who } = vv.history[0];
             actionItem.who = who;
           }
           actionArray.push(actionItem);
         });
-        actionObject.patient[v].userDefinedActions.forEach(function(vv) {
-          var actionItem = { patientId: data.patLookup[state.selectedPractice._id][v], actionText: vv.actionText, userDefined: true };
+        actionObject.patient[v].userDefinedActions.forEach((vv) => {
+          const actionItem = {
+            patientId: data.patLookup[state.selectedPractice._id][v],
+            actionText: vv.actionText,
+            userDefined: true,
+          };
           if (vv.history && vv.history.length > 0) {
-            var who = vv.history[0].who;
+            const { who } = vv.history[0];
             actionItem.who = who;
           }
           actionArray.push(actionItem);
@@ -92,46 +106,52 @@ var al = {
     }
     if (actionObject.team) {
       if (actionObject.team.actions) {
-        actionObject.team.actions.forEach(function(v) {
-          var actionItem = v;
+        actionObject.team.actions.forEach((v) => {
+          const actionItem = v;
           if (v.history && v.history.length > 0) {
-            var who = v.history[0].who;
+            const { who } = v.history[0];
             actionItem.who = who;
           }
           actionArray.push(actionItem);
         });
       }
       if (actionObject.team.userDefinedActions) {
-        actionObject.team.userDefinedActions.forEach(function(v) {
-          var actionItem = v;
+        actionObject.team.userDefinedActions.forEach((v) => {
+          const actionItem = v;
           if (v.history && v.history.length > 0) {
-            var who = v.history[0].who;
+            const { who } = v.history[0];
             actionItem.who = who;
           }
           actionArray.push(actionItem);
         });
       }
     }
-    if (done && typeof done === "function") {
+    if (done && typeof done === 'function') {
       return done();
     }
+    return false;
   },
 
-  populate: function() {
-    var tmpl = require("templates/action-list");
-    var dataObject = { "actions": actionArray };
+  populate() {
+    const tmpl = actionListTemplate;
+    const dataObject = { actions: actionArray };
     if (actionArray.length === 0) dataObject.noSuggestions = true;
     $('#suggested-actions-table')
       .html(tmpl(dataObject))
       .floatThead({
         position: 'absolute',
         scrollContainer: true,
-        zIndex: 50
+        zIndex: 50,
       });
 
-    base.updateFixedHeightElements([{ selector: '#suggested-actions-table-wrapper', padding: 250, minHeight: 300 }]);
-  }
-
+    base.updateFixedHeightElements([
+      {
+        selector: '#suggested-actions-table-wrapper',
+        padding: 250,
+        minHeight: 300,
+      },
+    ]);
+  },
 };
 
 module.exports = al;

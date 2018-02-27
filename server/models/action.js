@@ -1,7 +1,8 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var ActionSchema = new Schema({
+const { Schema } = mongoose;
+
+const ActionSchema = new Schema({
   practiceId: String,
   indicatorList: [String],
   patientId: Number,
@@ -10,15 +11,15 @@ var ActionSchema = new Schema({
   agree: Boolean,
   done: Boolean,
   history: [{
-    _id:false,
+    _id: false,
     who: String,
     what: String,
     when: Date,
-    why: String
+    why: String,
   }],
   userDefined: Boolean,
   rejectedReason: String,
-  rejectedReasonText: String
+  rejectedReasonText: String,
 });
 
 module.exports = mongoose.model('Action', ActionSchema);

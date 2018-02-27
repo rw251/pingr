@@ -1,33 +1,25 @@
-var base = require('../base.js'),
-  data = require('../data.js'),
-  chart = require('../chart.js'),
-  patientList = require('./patientList.js');
+const chart = require('../chart.js');
+const $ = require('jquery');
 
-var ID = "INDICATOR_BENCHMARK";
+const iTrend = {
+  show(panel, isAppend, pathwayId, pathwayStage, standard) {
+    const elem = $("<div id='benchmark-chart' class='fit-to-scrolling-section-height'></div>");
 
-var iTrend = {
-
-  show: function(panel, isAppend, pathwayId, pathwayStage, standard) {
-
-    var elem = $("<div id='benchmark-chart' class='fit-to-scrolling-section-height'></div>");
-
-    if (isAppend)
-    {
+    if (isAppend) {
       panel.append(elem);
-    }
-    else
-    {
+    } else {
       panel.html(elem);
     }
 
-    chart.drawBenchmarkChartHC("benchmark-chart", pathwayId, pathwayStage, standard);
-
+    chart.drawBenchmarkChartHC(
+      'benchmark-chart',
+      pathwayId,
+      pathwayStage,
+      standard
+    );
   },
 
-  wireUp: function() {
-
-  }
-
+  wireUp() {},
 };
 
 module.exports = iTrend;

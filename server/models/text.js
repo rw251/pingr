@@ -1,10 +1,11 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var TextSchema = new Schema({
-  events : Schema.Types.Mixed,
-  measurements : Schema.Types.Mixed,
-  pathways : Schema.Types.Mixed
+const { Schema } = mongoose;
+
+const TextSchema = new Schema({
+  events: Schema.Types.Mixed,
+  measurements: Schema.Types.Mixed,
+  pathways: Schema.Types.Mixed,
 }, { collection: 'text' });
 
 module.exports = mongoose.model('Text', TextSchema);

@@ -1,9 +1,10 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var ConfigSchema = new Schema({
-  key : String,
-  value : String
+const { Schema } = mongoose;
+
+const ConfigSchema = new Schema({
+  key: String,
+  value: String,
 });
 
 module.exports = mongoose.model('Config', ConfigSchema);

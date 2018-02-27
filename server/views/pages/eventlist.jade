@@ -34,7 +34,7 @@ div
         th Data
         th XPath
     tbody
-      each event in events
+      each event in eventList
         tr
           td(title=event.user)
             a(href='/events/'+event.user)= (event.user && event.user.match(/^[^@]+/)) ? event.user.match(/^[^@]+/) : ""

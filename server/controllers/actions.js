@@ -1,282 +1,282 @@
-var Action = require('../models/action');
+const Action = require('../models/action');
 
-var _updateAction = function(action, updatedAction, callback) {
-  Object.keys(updatedAction).forEach(function(v) {
-    if (v[0] === "_") return; //ignore hidden properties like _id and __v;
+const localUpdateAction = (action, updatedAction, callback) => {
+  Object.keys(updatedAction).forEach((v) => {
+    if (v[0] === '_') return; // ignore hidden properties like _id and __v;
     action[v] = updatedAction[v];
   });
-  action.save(function(err, act) {
+  action.save((err, act) => {
     if (err) {
-      console.log("error updating team action");
+      console.log('error updating team action');
       return callback(err);
-    } else {
-      return callback(null, act);
     }
+    return callback(null, act);
   });
 };
 
 module.exports = {
 
-  //Get list of actions for a single practice
-  list: function(practiceId, done) {
-    Action.find({ practiceId: practiceId }, function(err, actions) {
+  // Get list of actions for a single practice
+  list(practiceId, done) {
+    Action.find({ practiceId }, (err, actions) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding action list for practice: " + practiceId));
+        return done(new Error(`Error finding action list for practice: ${practiceId}`));
       }
       if (!actions) {
-        console.log('Error finding action list for practice:  ' + practiceId);
+        console.log(`Error finding action list for practice:  ${practiceId}`);
         return done(null, false);
-      } else {
-        done(null, actions);
       }
+      return done(null, actions);
     });
   },
 
-  listAgreedWith: function(practiceId, done) {
-    Action.find({ practiceId: practiceId, $or: [{ agree: true }, { userDefined: true }] }, function(err, actions) {
+  listAgreedWith(practiceId, done) {
+    Action.find({ practiceId, $or: [{ agree: true }, { userDefined: true }] }, (err, actions) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding action list for practice: " + practiceId));
+        return done(new Error(`Error finding action list for practice: ${practiceId}`));
       }
       if (!actions) {
-        console.log('Error finding action list for practice:  ' + practiceId);
+        console.log(`Error finding action list for practice:  ${practiceId}`);
         return done(null, false);
-      } else {
-        done(null, actions);
       }
+      return done(null, actions);
     });
   },
 
-  updatePatientUserDefined: function(patientId, actionTextId, updatedAction, done) {
-    Action.findOne({ actionTextId: actionTextId, patientId: patientId, userDefined: true }, function(err, action) {
+  updatePatientUserDefined(patientId, actionTextId, updatedAction, done) {
+    Action.findOne({ actionTextId, patientId, userDefined: true }, (err, action) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding patient user defined actions for  " + actionTextId));
+        return done(new Error(`Error finding patient user defined actions for  ${actionTextId}`));
       }
       if (!action) {
         return done(null, false);
       }
 
-      _updateAction(action, updatedAction, function(err, act) {
-        if (err) {
-          console.log(err);
-          return done(err);
+      return localUpdateAction(action, updatedAction, (updateActionError, act) => {
+        if (updateActionError) {
+          console.log(updateActionError);
+          return done(updateActionError);
         }
         return done(null, act);
       });
-
     });
   },
 
-  updateTeamUserDefined: function(actionTextId, updatedAction, done) {
-    Action.findOne({ actionTextId: actionTextId, userDefined: true }, function(err, action) {
+  updateTeamUserDefined(actionTextId, updatedAction, done) {
+    Action.findOne({ actionTextId, userDefined: true }, (err, action) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding team user defined actions for  " + actionTextId));
+        return done(new Error(`Error finding team user defined actions for  ${actionTextId}`));
       }
       if (!action) {
         return done(null, false);
       }
 
-      _updateAction(action, updatedAction, function(err, act) {
-        if (err) {
-          console.log(err);
-          return done(err);
+      return localUpdateAction(action, updatedAction, (updateActionError, act) => {
+        if (updateActionError) {
+          console.log(updateActionError);
+          return done(updateActionError);
         }
         return done(null, act);
       });
-
     });
   },
 
-  deleteUserDefinedTeamAction: function(actionTextId, done) {
-    Action.remove({ actionTextId: actionTextId, userDefined: true }, function(err) {
+  deleteUserDefinedTeamAction(actionTextId, done) {
+    Action.remove({ actionTextId, userDefined: true }, (err) => {
       if (err) return done(err);
       return done(null);
     });
   },
 
-  deleteUserDefinedPatientAction: function(patientId, actionTextId, done) {
-    Action.remove({ actionTextId: actionTextId, patientId: patientId, userDefined: true }, function(err) {
+  deleteUserDefinedPatientAction(patientId, actionTextId, done) {
+    Action.remove({ actionTextId, patientId, userDefined: true }, (err) => {
       if (err) return done(err);
       return done(null);
     });
   },
 
-  updateTeam: function(practiceId, indicatorId, updatedAction, done) {
-    Action.find({ practiceId: practiceId, actionTextId: updatedAction.actionTextId }, function(err, actions) {
+  updateTeam(practiceId, indicatorId, updatedAction, done) {
+    Action.find({ practiceId, actionTextId: updatedAction.actionTextId }, (err, actions = []) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding team actions for practice: " + practiceId + " and actionTextId " + updatedAction.actionTextId));
+        return done(new Error(`Error finding team actions for practice: ${practiceId} and actionTextId ${updatedAction.actionTextId}`));
       }
-      if (!actions || actions.length === 0) {
-        actions = [
-            new Action({
-            practiceId: practiceId
-          })
-          ];
+      if (actions.length === 0) {
+        actions.push(new Action({ practiceId }));
       }
 
-      var doneActions = [];
-      var errorIfError = null;
+      const doneActions = [];
+      let errorIfError = null;
 
-      actions.forEach(function(v) {
+      return actions.forEach((v) => {
         delete updatedAction.indicatorList;
-        _updateAction(v, updatedAction, function(err, act) {
-          if (err) {
-            console.log(err);
-            errorIfError = err;
+        localUpdateAction(v, updatedAction, (locErr, act) => {
+          if (locErr) {
+            console.log(locErr);
+            errorIfError = locErr;
             doneActions.push(act);
           } else {
             doneActions.push(act);
           }
           if (doneActions.length === actions.length) {
             if (errorIfError) return done(errorIfError);
-            else return done(null, doneActions);
+            return done(null, doneActions);
           }
+          return false;
         });
       });
     });
   },
 
-  updateIndividual: function(practiceId, patientId, updatedAction, done) {
-    Action.findOne({ practiceId: practiceId, patientId: patientId, actionTextId: updatedAction.actionTextId }, function(err, action) {
-      if (err) {
-        console.log(err);
-        return done(new Error("Error finding individual action for practice: " + practiceId + " and patient " + patientId + " and actionTextId " + updatedAction.actionTextId));
-      }
-      if (!action) {
-        action = new Action({
-          practiceId: practiceId,
-          patientId: patientId
-        });
-      }
-      Object.keys(updatedAction).forEach(function(v) {
-        if (v[0] === "_") return; //ignore hidden properties like _id and __v;
-        action[v] = updatedAction[v];
-      });
-      action.save(function(err, act) {
+  updateIndividual(practiceId, patientId, updatedAction, done) {
+    Action.findOne(
+      { practiceId, patientId, actionTextId: updatedAction.actionTextId },
+      (err, action = new Action({
+        practiceId,
+        patientId,
+      })) => {
         if (err) {
-          console.log("error updating individual action");
-          return done(err);
-        } else {
-          return done(null, act);
+          console.log(err);
+          return done(new Error(`Error finding individual action for practice: ${practiceId} and patient ${patientId} and actionTextId ${updatedAction.actionTextId}`));
         }
-      });
-    });
+        Object.keys(updatedAction).forEach((v) => {
+          if (v[0] === '_') return; // ignore hidden properties like _id and __v;
+          action[v] = updatedAction[v];
+        });
+        return action.save((saveErr, act) => {
+          if (saveErr) {
+            console.log('error updating individual action');
+            return done(saveErr);
+          }
+          return done(null, act);
+        });
+      }
+    );
   },
 
-  getTeam: function(searchObject, done) {
-    Action.find(searchObject, function(err, actions) {
+  getTeam(searchObject, done) {
+    Action.find(searchObject, (err, actions) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding team action list for practice: " + searchObject.practiceId + " and indicator " + searchObject.indicatorId));
+        return done(new Error(`Error finding team action list for practice: ${searchObject.practiceId} and indicator ${searchObject.indicatorId}`));
       }
       if (!actions) {
-        console.log('Error finding team action list for practice:  ' + searchObject.practiceId + " and indicator " + searchObject.indicatorId);
+        console.log(`Error finding team action list for practice:  ${searchObject.practiceId} and indicator ${searchObject.indicatorId}`);
         return done(null, false);
-      } else {
-        done(null, actions);
       }
+      return done(null, actions);
     });
   },
 
-  getIndividual: function(searchObject, done) {
-    Action.find(searchObject, function(err, actions) {
+  getIndividual(searchObject, done) {
+    Action.find(searchObject, (err, actions) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding individual action list for practice: " + practiceId + " and patient " + patientId));
+        return done(new Error(`Error finding individual action list for practice: ${searchObject.practiceId} and patient ${searchObject.patientId}`));
       }
       if (!actions) {
-        console.log('Error finding individual action list for practice:  ' + practiceId + " and patient " + patientId);
+        console.log(`Error finding individual action list for practice:  ${searchObject.practiceId} and patient ${searchObject.patientId}`);
         return done(null, false);
-      } else {
-        done(null, actions);
       }
+      return done(null, actions);
     });
   },
 
-  addTeamAction: function(practiceId, indicatorId, username, actionText, done) {
-    var actionObject = {
-      practiceId: practiceId,
-      actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
-      actionText: actionText,
-      history: [{ who: username, what: "added", when: new Date() }],
+  addTeamAction(practiceId, indicatorId, username, actionText, done) {
+    const actionObject = {
+      practiceId,
+      actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ''),
+      actionText,
+      history: [{ who: username, what: 'added', when: new Date() }],
       userDefined: true,
-      done: false
+      done: false,
     };
     if (indicatorId) actionObject.indicatorList = [indicatorId];
-    var action = new Action(actionObject);
+    const action = new Action(actionObject);
 
     // save the event
-    action.save(function(err, act) {
+    action.save((err, act) => {
       if (err) {
         return done(err);
-      } else {
-        return done(null, act);
       }
+      return done(null, act);
     });
   },
 
-  addIndividualAction: function(practiceId, patientId, indicatorList, username, actionText, done) {
-    var action = new Action({
-      practiceId: practiceId,
-      patientId: patientId,
-      indicatorList: indicatorList,
-      actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ""),
-      actionText: actionText,
-      history: [{ who: username, what: "added", when: new Date() }],
+  addIndividualAction(practiceId, patientId, indicatorList, username, actionText, done) {
+    const action = new Action({
+      practiceId,
+      patientId,
+      indicatorList,
+      actionTextId: actionText.toLowerCase().replace(/[^a-z0-9]/g, ''),
+      actionText,
+      history: [{ who: username, what: 'added', when: new Date() }],
       userDefined: true,
-      done: false
+      done: false,
     });
 
     // save the event
-    action.save(function(err, act) {
+    action.save((err, act) => {
       if (err) {
         return done(err);
-      } else {
-        return done(null, act);
       }
+      return done(null, act);
     });
   },
 
-  patientsWithPlansPerIndicator: function(patientList, done) {
+  patientsWithPlansPerIndicator(patientList, done) {
     Action.aggregate([
-      { $match: { patientId: { $in: patientList }, $or: [{ agree: true }, { userDefined: true }] } },
+      {
+        $match: {
+          patientId: { $in: patientList },
+          $or: [{ agree: true }, { userDefined: true }],
+        },
+      },
       { $project: { patientId: 1, indicatorList: 1 } },
-      { $unwind: "$indicatorList" },
-      { $group: { _id: "$patientId", indicatorList: { $addToSet: "$indicatorList" } } }
-    ], function(err, actions) {
+      { $unwind: '$indicatorList' },
+      { $group: { _id: '$patientId', indicatorList: { $addToSet: '$indicatorList' } } },
+    ], (err, actions) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding actions for patients: " + patientList));
+        return done(new Error(`Error finding actions for patients: ${patientList}`));
       }
       if (!actions) {
-        console.log("Error finding actions for patients: " + patientList);
+        console.log(`Error finding actions for patients: ${patientList}`);
         return done(null, false);
-      } else {
-        done(null, actions);
       }
+      return done(null, actions);
     });
   },
 
-  patientsWithPlan: function(patientList, done) {
+  patientsWithPlan(patientList, done) {
     Action.aggregate([
-      { $match: { patientId: { $in: patientList }, $or: [{ agree: true }, { userDefined: true }] } },
-      { $group: { _id: "$patientId", actions: { $push: { actionTextId: "$actionTextId", agree: "$agree", history: "$history", indicatorList: "$indicatorList" } } } }
-    ], function(err, actions) {
+      {
+        $match: {
+          patientId: { $in: patientList },
+          $or: [{ agree: true }, { userDefined: true }],
+        },
+      },
+      {
+        $group: {
+          _id: '$patientId',
+          actions: { $push: { actionTextId: '$actionTextId', agree: '$agree', history: '$history', indicatorList: '$indicatorList' } },
+        },
+      },
+    ], (err, actions) => {
       if (err) {
         console.log(err);
-        return done(new Error("Error finding individual action list for practice: " + practiceId + " and patient " + patientId));
+        return done(new Error('Error finding patientsWithPlan'));
       }
       if (!actions) {
-        console.log('Error finding individual action list for practice:  ' + practiceId + " and patient " + patientId);
+        console.log('Error finding patientsWithPlan');
         return done(null, false);
-      } else {
-        done(null, actions);
       }
+      return done(null, actions);
     });
-  }
+  },
 
 };

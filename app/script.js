@@ -1,71 +1,81 @@
-/*jslint browser: true*/
-/*jshint -W055 */
-/*global console, alert*/
+const $ = require('jquery');
+
+window.$ = $;
+window.jQuery = $;
+
+// require all the things that get globally added to jquery
+require('bootstrap');
+require('corejs-typeahead');
+require('datatables.net-bs')(window, $);
+require('datatables.net-buttons-bs')(window, $);
+require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
+require('datatables.net-buttons/js/buttons.html5.js')(window, $);
 
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.
  * Each stage gets a single panel on the front screen.
- * Clicking on a panel takes you to a screen specific to that stage, but similar in layout and content
- *  to all the others.
+ * Clicking on a panel takes you to a screen specific to that stage, but similar
+ * in layout and content to all the others.
  */
 
-var template = require('./template'),
-  main = require('./main'),
-  base = require('./base'),
-  data = require('./data'),
-  events = require('./events'),
-  state = require('./state'),
-  layout = require('./layout'),
-  tutorial = require('./tutorial');
+const template = require('./template');
+const main = require('./main');
+const base = require('./base');
+const data = require('./data');
+const events = require('./events');
+const state = require('./state');
+const layout = require('./layout');
+const tutorial = require('./tutorial');
 
-//TODO not sure why i did this - was in local variable
-//maybe a separate module
-//window.location = window.history.location || window.location;
-/********************************************************
+// TODO not sure why i did this - was in local variable
+// maybe a separate module
+// window.location = window.history.location || window.location;
+/** ******************************************************
  *** Shows the pre-load image and slowly fades it out. ***
- ********************************************************/
-var gotInitialData = false;
-var pageIsReady = false;
+ ******************************************************* */
+let gotInitialData = false;
+let pageIsReady = false;
 
-var App = {
-  init: function init() { 
-
+const App = {
+  init: function init() {
     layout.showPage('main-dashboard');
-
+    
     //wire up the tutorial
     tutorial.initialize();
 
-    var initialize = function(){
-      //Wire up global click/hover listener
+    const initialize = () => {
+      // Wire up global click/hover listener
       events.listen();
-      //Grab the hash if exists - IE seems to forget it
-      main.hash = location.hash || "#overview";
-      //main.hash="#overview";
+      // Grab the hash if exists - IE seems to forget it
+      main.hash = window.location.hash || '#overview';
+      // main.hash="#overview";
 
-      //Load the data then wire up the events on the page
+      // Load the data then wire up the events on the page
       main.init();
 
       $('[data-toggle="tooltip"]').tooltip({
         container: 'body',
         delay: {
-          "show": 500,
-          "hide": 100
+          show: 500,
+          hide: 100,
         },
-        html: true
+        html: true,
       });
       $('[data-toggle="lone-tooltip"]').tooltip({
         container: 'body',
         delay: {
-          "show": 300,
-          "hide": 100
-        }
+          show: 300,
+          hide: 100,
+        },
       });
-      $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip', function(e) {
-        $('[data-toggle="tooltip"]').not(this).tooltip('hide');
+      $('[data-toggle="lone-tooltip"]').on('shown.bs.tooltip', () => {
+        $('[data-toggle="tooltip"]')
+          .not(this)
+          .tooltip('hide');
       });
     };
 
-    $('body').on('change', '.practice-picker', (e)=>{
+    $('body').on('change', '.practice-picker', (e) => {
       base.showLoading();
       base.resetTab('indicators');
       base.resetTab('patients');
@@ -73,34 +83,34 @@ var App = {
       const newPracticeId = $(e.currentTarget).val();
       const newPractice = state.practices.filter(v => v._id === newPracticeId)[0];
       state.selectedPractice = newPractice;
-      console.log("changed practice to: ", newPractice);
-      main.getInitialData(()=>{
+      // console.log('changed practice to: ', newPractice);
+      main.getInitialData(() => {
         initialize();
       });
     });
-    
+
     state.practices = JSON.parse($('#practices').text());
     state.selectedPractice = JSON.parse($('#selectedPractice').text());
 
-    main.getInitialData(function(){
+    main.getInitialData(() => {
       gotInitialData = true;
-      if(gotInitialData && pageIsReady) {
+      if (gotInitialData && pageIsReady) {
         initialize();
       }
     });
 
-    /******************************************
+    /** ****************************************
      *** This happens when the page is ready ***
-     ******************************************/
-    $(document).on('ready', function() {
+     ***************************************** */
+    $(document).ready(() => {
       state.practices = JSON.parse($('#practices').text());
       state.selectedPractice = JSON.parse($('#selectedPractice').text());
       pageIsReady = true;
-      if(gotInitialData && pageIsReady) {
+      if (gotInitialData && pageIsReady) {
         initialize();
       }
     });
-  }
+  },
 };
 
 module.exports = App;

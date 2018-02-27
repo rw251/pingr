@@ -2442,7 +2442,7 @@ th {
 /* Typeahead for patient searching
 ************************************/
 .gist,
-.tt-dropdown-menu {
+.tt-menu {
     text-align: left;
 }
 
@@ -2479,7 +2479,7 @@ th {
     color: #999;
 }
 
-.tt-dropdown-menu {
+.tt-menu {
     width: 422px;
     margin-top: 12px;
     padding: 8px 0;
@@ -2525,7 +2525,7 @@ th {
     height: 36px;
 }
 
-.tt-dropdown-menu,
+.tt-menu,
 .tt-hint,
 .tt-input,
 .twitter-typeahead {
