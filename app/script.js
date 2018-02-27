@@ -18,10 +18,8 @@ require('datatables.net-buttons/js/buttons.html5.js')(window, $);
  * in layout and content to all the others.
  */
 
-const template = require('./template');
 const main = require('./main');
 const base = require('./base');
-const data = require('./data');
 const events = require('./events');
 const state = require('./state');
 const layout = require('./layout');
@@ -39,8 +37,8 @@ let pageIsReady = false;
 const App = {
   init: function init() {
     layout.showPage('main-dashboard');
-    
-    //wire up the tutorial
+
+    // wire up the tutorial
     tutorial.initialize();
 
     const initialize = () => {

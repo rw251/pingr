@@ -4,11 +4,8 @@ mixin actionPlanItem(suggestion)
       span!= suggestion.actionText
     td
       button.btn.btn-warning.edit-plan
-        i.fa.fa-pencil.pull-left
-        | Edit
+        i.fa.fa-pencil-alt
+        |  Edit
       button.btn.btn-danger.delete-plan
-        i.fa.fa-trash.pull-left
-        | Delete
-      //.btn-group.btn-hover-show-group.pull-right(data-toggle='buttons')
-      //  i.fa.fa-pencil.edit-plan.clickable(data-toggle='tooltip', data-placement='top', title='Edit plan')
-      //  i.fa.fa-trash.delete-plan.clickable(data-toggle='tooltip', data-placement='top', title='Delete plan')
+        i.fa.fa-trash-alt
+        |  Delete

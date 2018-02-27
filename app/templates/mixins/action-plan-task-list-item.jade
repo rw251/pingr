@@ -14,8 +14,8 @@ mixin actionPlanTaskListItem(thing)
           strong.black.f20!= thing.task.short
           if thing.canEdit
             .btn-group.btn-hover-show-group.pull-right(data-toggle='buttons')
-              i.fa.fa-pencil.edit-plan.clickable(data-toggle='tooltip', data-placement='top', title='Edit plan')
-              i.fa.fa-trash.delete-plan.clickable(data-toggle='tooltip', data-placement='top', title='Delete plan')
+              i.fa.fa-pencil-alt.edit-plan.clickable(data-toggle='tooltip', data-placement='top', title='Edit plan')
+              i.fa.fa-trash-alt.delete-plan.clickable(data-toggle='tooltip', data-placement='top', title='Delete plan')
           if thing.task.long || thing.task.reason
             br
             a.show-more(data-id=thing.id)
