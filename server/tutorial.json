@@ -58,6 +58,7 @@
       "data-arrow":"10%",
       "data-highlight":"true",
       "data-orientation":"left",
+      "data-enable-el": "#userMenu",
       "data-width":400
     } 
   },
@@ -94,7 +95,7 @@
     ],
     "attributes": {
       "data-el":"#right-panel",
-      "data-enable-elements": "true",
+      "data-enable-el": "#right-panel .nav.nav-tabs",
       "data-highlight":"true",
       "data-orientation":"left",
       "data-width":400,
@@ -112,6 +113,7 @@
       "data-el":"#overview-table-process_wrapper",
       "data-highlight":"true",
       "data-orientation":"left",
+      "data-enable-el": "#overview-table-process_wrapper .dataTables_scrollHead",
       "data-width":400
     }
   },
@@ -126,7 +128,7 @@
       "data-el":"#overview-table-process tr.standard-row:first",
       "data-highlight":"true",
       "data-orientation":"left",
-      "data-enable-elements": "true",
+      "data-enable-el": "#overview-table-process tr.standard-row:first",
       "data-width":400,
       "data-wait-for": "#overview-table-process tr.standard-row:first",
       "data-wait-for-ignore": "#overview-table-process tr.standard-row:first .show-more",
@@ -161,7 +163,7 @@
     }
   },
   {
-    "title": "Patient list",
+    "title": "Download",
     "paragraphs": [
       "This list can be downloaded as a PDF and shared or printed with other staff. Beware this includes NHS numbers though."
     ],
@@ -169,6 +171,7 @@
       "data-el":"#patient-list_wrapper .dt-buttons",
       "data-highlight":"true",
       "data-orientation":"left",
+      "data-enable-el": "#patient-list_wrapper .dt-buttons .btn-group",
       "data-width":400
     }
   },
@@ -197,7 +200,7 @@
       "data-el":"#patient-list_wrapper",
       "data-highlight":"true",
       "data-orientation":"left",
-      "data-enable-elements": "true",
+      "data-enable-el": "#patient-list_wrapper",
       "data-width":400,
       "data-scroll-element": "#right-panel",
       "data-scroll-value": 1000,
@@ -230,6 +233,7 @@
       "data-orientation":"left",
       "data-width":400,
       "data-scroll-element": "#right-panel",
+      "data-enable-el": "#lifeline-chart",
       "data-scroll-value": 1000
     }
   },
@@ -258,7 +262,7 @@
       "data-el":"#title-left",
       "data-highlight":"true",
       "data-orientation":"bottom",
-      "data-enable-elements": "true",
+      "data-enable-el": "#title-left",
       "data-width":400
     }
   },

@@ -1,6 +1,25 @@
 const $ = require('jquery');
 
 let ignoreThisEvent = false;
+let isNextEnabled = true;
+
+const arrangeMask = (maskType, target, padding) => {
+  const targetLeft = target.offset().left;
+  const targetRight = targetLeft + target.outerWidth();
+  const targetTop = target.offset().top;
+  const targetBottom = targetTop + target.outerHeight();
+  $(`.tutorial-${maskType}-mask.tutorial-mask-left`).css('width', targetLeft - padding);
+  $(`.tutorial-${maskType}-mask.tutorial-mask-right`).css('left', targetRight + padding);
+
+  $(`.tutorial-${maskType}-mask.tutorial-mask-top`).css('height', targetTop - padding);
+  $(`.tutorial-${maskType}-mask.tutorial-mask-top`).css('left', targetLeft - padding);
+  $(`.tutorial-${maskType}-mask.tutorial-mask-top`).css('width', (targetRight - targetLeft) + (2 * padding));
+
+  $(`.tutorial-${maskType}-mask.tutorial-mask-bottom`).css('top', targetBottom + padding);
+  $(`.tutorial-${maskType}-mask.tutorial-mask-bottom`).css('left', targetLeft - padding);
+  $(`.tutorial-${maskType}-mask.tutorial-mask-bottom`).css('width', (targetRight - targetLeft) + (2 * padding));
+  $(`.tutorial-${maskType}-mask`).show();
+};
 
 exports.initialize = () => {
   $('#tutorial').off('click').on('click', (clickEvent) => {
@@ -15,7 +34,7 @@ exports.initialize = () => {
             // case 13:
             // right arrow
             case 39:
-              bus.next();
+              if (isNextEnabled) bus.next();
               break;
             // left arrow
             case 37:
@@ -47,6 +66,7 @@ exports.initialize = () => {
           $(leg.rawData.scrollElement).scrollTop(leg.rawData.scrollValue);
         }
         if (leg.rawData.waitFor) {
+          isNextEnabled = false;
           $(leg.rawData.waitFor).on(leg.rawData.waitForEvent, () => {
             if (!ignoreThisEvent) {
               setTimeout(() => {
@@ -64,45 +84,26 @@ exports.initialize = () => {
           }
         }
         if (leg.rawData.highlight) {
-          const targetLeft = leg.$target.offset().left;
-          const targetRight = targetLeft + leg.$target.outerWidth();
-          const targetTop = leg.$target.offset().top;
-          const targetBottom = targetTop + leg.$target.outerHeight();
-          const padding = 2;
-          $('.tour-overlay-left').css('width', targetLeft - padding);
-          $('.tour-overlay-right').css('left', targetRight + padding);
-
-          $('.tour-overlay-top').css('height', targetTop - padding);
-          $('.tour-overlay-top').css('left', targetLeft - padding);
-          $('.tour-overlay-top').css('width', (targetRight - targetLeft) + (2 * padding));
-
-          $('.tour-overlay-bottom').css('top', targetBottom + padding);
-          $('.tour-overlay-bottom').css('left', targetLeft - padding);
-          $('.tour-overlay-bottom').css('width', (targetRight - targetLeft) + (2 * padding));
-          $('.tour-overlay').show();
+          arrangeMask('highlight', leg.$target, 2);
         }
         if (leg.rawData.mask) {
-          $('.tour-overlay-right').css('left', 0).show();
+          $('.tutorial-highlight-mask.tutorial-mask-right').css('left', 0).show();
         }
-        if (!leg.rawData.enableElements) {
-          $('.tour-overlay-all').show();
+        if (leg.rawData.enableEl) {
+          arrangeMask('disabling', $(leg.rawData.enableEl), 0);
+        } else {
+          $('.tutorial-disabling-mask.tutorial-mask-right').css('left', 0).show();
         }
         leg.reposition();
       },
       // called before switching _from_ a leg
       onLegEnd(leg) {
-        if (leg.rawData.highlight) {
-          $('.tour-overlay').hide();
-        }
-        if (leg.rawData.mask) {
-          $('.tour-overlay').hide();
-        }
         if (leg.rawData.waitFor) {
+          isNextEnabled = true;
           $(leg.rawData.waitFor).off(leg.rawData.waitForEvent);
         }
-        if (!leg.rawData.enableElements) {
-          $('.tour-overlay-all').hide();
-        }
+        $('.tutorial-highlight-mask').hide();
+        $('.tutorial-disabling-mask').hide();
       },
     });
     tour.depart();

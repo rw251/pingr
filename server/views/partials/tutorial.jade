@@ -1,9 +1,12 @@
-.tour-overlay.tour-overlay-left
-.tour-overlay.tour-overlay-right
-.tour-overlay.tour-overlay-top
-.tour-overlay.tour-overlay-bottom
-.tour-overlay-all
-ol#tourbus-demo-1.tourbus-legs
+.tutorial-highlight-mask.tutorial-mask-left
+.tutorial-highlight-mask.tutorial-mask-right
+.tutorial-highlight-mask.tutorial-mask-top
+.tutorial-highlight-mask.tutorial-mask-bottom
+.tutorial-disabling-mask.tutorial-mask-left
+.tutorial-disabling-mask.tutorial-mask-right
+.tutorial-disabling-mask.tutorial-mask-top
+.tutorial-disabling-mask.tutorial-mask-bottom
+ol#tourbus-demo-1.tourbus-legs(data-debug='true')
   each stage,i in tutorialStages
     li&attributes(stage.attributes)
       a.tourbus-stop.tourbus-exit-icon(href='javascript:void(0);') 🗙
