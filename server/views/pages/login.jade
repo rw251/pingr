@@ -22,7 +22,7 @@ include ../partials/head.jade
               p= message.error
         div#lock-hook
           br
-          form(action='/login', method='post', id='login')
+          form(action='/login', method='post')
             .form-group.input-group
               span.input-group-addon
                 i.fa.fa-envelope
@@ -46,25 +46,25 @@ include ../partials/head.jade
 
           p To use this webtool we recommend either Chrome or Firefox, either of which can be downloaded for free with these buttons!
           div
-            a.chrome-button(href='https://www.google.co.uk/chrome/')
-              button.btn.btn-info.btn-block 
-                h4 Go get Chrome
+            a.chrome-button.btn.btn-info.btn-block.btn-lg(href='https://www.google.co.uk/chrome/') Go get Chrome
           br
           div
-            a.firefox-button(href='https://www.mozilla.org/en-GB/firefox/new/')
-              button.btn.btn-warning.btn-block 
-                h4 Go get Firefox
+            a.firefox-button.btn.btn-warning.btn-block.btn-lg(href='https://www.mozilla.org/en-GB/firefox/new/')
           
-          script. 
-            //*b* using comment process to assert this 
-            var ie9OrLess = $('.unsuppotedIE').length < 1;
-            //remove is a deliberate choice to avoid inappropriate attempts to access
-            if(ie9OrLess)
-            {
-              $('#alt-suggestion').remove();
-              $('#lock-hook').show();  
-            }
-            else {
-              $('#lock-hook').remove();
-              $('#alt-suggestion').show();  
-            }
+// jQuery fallback if no online version
+script(src="https://code.jquery.com/jquery-1.12.4.min.js", integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=", crossorigin="anonymous")
+script.
+  window.jQuery || document.write('<script src="js/jquery/jquery-1.12.4.min.js"><\/script>')
+script. 
+  //*b* using comment process to assert this 
+  var ie9OrLess = $('.unsuppotedIE').length < 1;
+  //remove is a deliberate choice to avoid inappropriate attempts to access
+  if(ie9OrLess)
+  {
+    $('#alt-suggestion').remove();
+    $('#lock-hook').show();  
+  }
+  else {
+    $('#lock-hook').remove();
+    $('#alt-suggestion').show();  
+  }

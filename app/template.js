@@ -51,20 +51,12 @@ const template = {
           params.tab || 'trend',
           template.loadContent
         );
-      } else if (urlBits[0] === '#help') {
-        layout.view = 'HELP';
-        lookup.suggestionModalText = 'Screen: Help\n===========\n';
+      } else if (urlBits[0] === '#about') {
+        layout.view = 'ABOUT';
+        lookup.suggestionModalText = 'Screen: About us\n===========\n';
         base.clearBox();
         base.selectTab('');
-        layout.showPage('help-page');
-
-        layout.showHeaderBarItems();
-      } else if (urlBits[0] === '#contact') {
-        layout.view = 'CONTACT';
-        lookup.suggestionModalText = 'Screen: Contact us\n===========\n';
-        base.clearBox();
-        base.selectTab('');
-        layout.showPage('contact-page');
+        layout.showPage('about-page');
 
         layout.showHeaderBarItems();
       } else if (urlBits[0] === '#patient') {
@@ -94,6 +86,13 @@ const template = {
 
         base.wireUpTooltips();
       }
+
+      $('#about')
+        .off('click')
+        .on('click', (e) => {
+          base.launchAboutModal();
+          e.preventDefault();
+        });
 
       $('#suggs')
         .off('click')

@@ -6,6 +6,7 @@ const log = require('./log');
 const notify = require('./notify');
 const Clipboard = require('clipboard');
 const modalSuggestionTmpl = require('./templates/modal-suggestion.jade');
+const modalAboutTmpl = require('./templates/modal-about.jade');
 const loadingTmpl = require('./templates/loading.jade');
 
 require('./helpers/jquery-smartresize');
@@ -38,6 +39,11 @@ const base = {
       .addClass('active')
       .find('a')
       .removeAttr('href');
+  },
+
+  // get the currently selected tab
+  getTab() {
+    return $('#mainTab li.active').attr('id');
   },
 
   createPanel(templateFn, templateData) {
@@ -197,6 +203,32 @@ const base = {
   /** ******************************
    * Modals
    ******************************* */
+
+  launchAboutModal() {
+    $('#modal').html(modalAboutTmpl());
+
+    $('#modal .modal')
+      .off('shown.bs.modal')
+      .on('shown.bs.modal', () => {
+        $('#modal-suggestion-text').focus();
+      });
+
+    $('#modal .modal')
+      .off('submit', 'form')
+      .on('submit', 'form', (e) => {
+        const suggestion = $('#modal textarea').val();
+
+        log.event('suggestion', window.location.hash, [
+          { key: 'text', value: suggestion },
+        ]);
+
+        e.preventDefault();
+        $('#modal .modal').modal('hide');
+
+        notify.showSaved();
+      })
+      .modal();
+  },
 
   launchSuggestionModal() {
     $('#modal').html(modalSuggestionTmpl({ text: lookup.suggestionModalText }));

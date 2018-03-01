@@ -15,7 +15,7 @@ const emailSender = require('../email-sender.js');
 const text = require('../controllers/text.js');
 const utils = require('../controllers/utils.js');
 const config = require('../config');
-const tutorialStages = require('../tutorial');
+const tutorials = require('../tutorials');
 
 const router = express.Router();
 
@@ -701,7 +701,7 @@ module.exports = (passport) => {
     // });
     const practiceIds = req.user.practices.map(v => v.id);
     practices.getMany(practiceIds, (err, practiceList) => {
-      res.render('pages/index.jade', { admin: req.user.roles.indexOf('admin') > -1, fullname: req.user.fullname, practiceList, selectedPractice: practiceList[0], tutorialStages });
+      res.render('pages/index.jade', { admin: req.user.roles.indexOf('admin') > -1, fullname: req.user.fullname, practiceList, selectedPractice: practiceList[0], tutorials });
     });
   });
 

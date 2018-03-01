@@ -1,0 +1,35 @@
+.tutorial-highlight-mask.tutorial-mask-left
+.tutorial-highlight-mask.tutorial-mask-right
+.tutorial-highlight-mask.tutorial-mask-top
+.tutorial-highlight-mask.tutorial-mask-bottom
+.tutorial-disabling-mask.tutorial-mask-left
+.tutorial-disabling-mask.tutorial-mask-right
+.tutorial-disabling-mask.tutorial-mask-top
+.tutorial-disabling-mask.tutorial-mask-bottom
+each tutorial in tutorials
+  ol.tourbus-legs(id='tutorial-' + tutorial.name)
+    each stage,i in tutorial.legs
+      li&attributes(stage.attributes)
+        a.tourbus-stop.tourbus-exit-icon(href='javascript:void(0);') &#x2716;
+        h2
+          span.sub= (i+1) + '/' + tutorial.legs.length
+          = stage.title
+        each para in stage.paragraphs
+          p!= para
+        if(i>0)
+          a.tourbus-prev.tourbus-button.btn-warning(href='javascript:void(0);') Back
+        if(i<tutorial.legs.length-1)
+          if(!stage.attributes['data-wait-for'])
+            a.tourbus-next.tourbus-button.btn-info(href='javascript:void(0);')= '▶ Next: ' + tutorial.legs[i+1].title
+        else
+          a.tourbus-stop.tourbus-button.btn-info(href='javascript:void(0);') Done!
+.tutorial-menu-mask
+.tutorial-menu
+  h1.tutorial-menu-title Available Tutorials
+  ul
+    each tutorial in tutorials
+      li(data-id=tutorial.name)
+        span.tutorial-menu-item-estimated-time!= '&#9716; ' + tutorial.time + ' Minutes'
+        h2= tutorial.title
+        span.tutorial-menu-item-description= tutorial.description
+  button.tutorial-close &#x2716; CLOSE
