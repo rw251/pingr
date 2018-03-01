@@ -34,6 +34,29 @@ const tutorial = require('./tutorial');
 let gotInitialData = false;
 let pageIsReady = false;
 
+const getServerParameters = () => {
+  state.practices = JSON.parse($('#practices').text());
+  state.selectedPractice = JSON.parse($('#selectedPractice').text());
+  if ($('#last_login').text() === '') {
+    // first login
+    $('#tutorialText').text('Welcome to PINGR! Pleased to see you! As this is your first time you might want to check out our tutorials here.');
+    tutorial.intro();
+  } else if ($('#last_viewed_tutorial').text() === '') {
+    // never seen tutorial
+    $('#tutorialText').text('Welcome! Since you last logged in we\'ve added some tutorials which you might find informative. Check them out here.');
+    tutorial.intro();
+  } else {
+    const lastLogin = new Date($('#last_login').text());
+    // const lastViewedTutorial = new Date($('#last_viewed_tutorial').text());
+
+    if ((new Date() - lastLogin) / (1000 * 60 * 60 * 24) > 30) {
+      // not logged in for 30 days so show tutorial
+      $('#tutorialText').text('Welcome back! It\'s been a while, so if you need a refresher remember to check out the tutorials.');
+      tutorial.intro();
+    }
+  }
+};
+
 const App = {
   init: function init() {
     layout.showPage('main-dashboard');
@@ -87,8 +110,7 @@ const App = {
       });
     });
 
-    state.practices = JSON.parse($('#practices').text());
-    state.selectedPractice = JSON.parse($('#selectedPractice').text());
+    getServerParameters();
 
     main.getInitialData(() => {
       gotInitialData = true;
@@ -101,8 +123,7 @@ const App = {
      *** This happens when the page is ready ***
      ***************************************** */
     $(document).ready(() => {
-      state.practices = JSON.parse($('#practices').text());
-      state.selectedPractice = JSON.parse($('#selectedPractice').text());
+      getServerParameters();
       pageIsReady = true;
       if (gotInitialData && pageIsReady) {
         initialize();

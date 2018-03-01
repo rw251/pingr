@@ -67,6 +67,14 @@ module.exports = {
     User.find({ email }).remove(done);
   },
 
+  tutorialViewed(user, done) {
+    user.last_viewed_tutorial = new Date();
+    user.save((err) => {
+      if (err) return done(err);
+      return done();
+    });
+  },
+
   updateEmailPreference(email, body, done) {
     User.findOne({ email }, (err, user) => {
       // In case of any error, return using the done method

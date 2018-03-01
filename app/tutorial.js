@@ -5,6 +5,7 @@ const template = require('./template');
 let ignoreThisEvent = false;
 let isNextEnabled = true;
 let isAnimating = false;
+let wasNextClicked = true;
 
 const arrangeMask = (maskType, target, padding) => {
   const targetLeft = target.offset().left;
@@ -37,6 +38,36 @@ const showMenuMask = () => {
 const hideMenuMask = () => {
   $('.tutorial-menu-mask').hide();
 };
+
+const disableScroll = () => {
+  // TODO this is a possibility...
+  // $(window).on('scroll', (e) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   $(window).scrollTop(0);
+  // });
+};
+
+const reposition = (leg) => {
+  // Do leg itselft
+  leg.reposition();
+
+  // Do highlight mask if needed
+  if (leg.rawData.highlight) {
+    arrangeMask('highlight', leg.$target, 2);
+  }
+
+  // Do disabling mask if needed
+  if (leg.rawData.enableEl) {
+    arrangeMask('disabling', $(leg.rawData.enableEl), 0);
+  }
+};
+
+const getResizeListener = tour => [
+  () => {
+    reposition(tour.currentLeg());
+  },
+];
 
 const tabMapping = {
   overviewTab: ['overview'],
@@ -73,6 +104,7 @@ const beforeLegStart = (leg, bus) => {
     $(leg.rawData.waitFor).on(leg.rawData.waitForEvent, () => {
       if (!ignoreThisEvent) {
         setTimeout(() => {
+          wasNextClicked = false;
           bus.next();
         }, 400);
       }
@@ -147,8 +179,21 @@ const tourbusParams = {
     if (leg.rawData.waitFor) {
       isNextEnabled = true;
       $(leg.rawData.waitFor).off(leg.rawData.waitForEvent);
+      if (wasNextClicked) {
+        $(leg.rawData.waitFor).first().click();
+      }
+      wasNextClicked = true;
     }
   },
+};
+
+const startTour = (tourId) => {
+  const tour = $.tourbus(tourId, tourbusParams);
+  base.resizeListeners = getResizeListener(tour);
+  disableScroll();
+  $.ajax({ url: '/api/tutorial/viewed', method: 'POST', dataType: 'json' });
+  tour.depart();
+  return tour;
 };
 
 const hideMenu = () => {
@@ -169,8 +214,7 @@ const showMenu = () => {
 
     hideMenu();
 
-    const tour = $.tourbus(`#tutorial-${selectedTutorial}`, tourbusParams);
-    tour.depart();
+    startTour(`#tutorial-${selectedTutorial}`);
   });
 };
 
@@ -183,8 +227,7 @@ const getAvailableTutorials = () => {
 const showTutorials = (tutorials = []) => {
   if (tutorials.length === 1) {
     // start tutorial
-    const tour = $.tourbus(`#tutorial-${tutorials[0]}`, tourbusParams);
-    tour.depart();
+    startTour(`#tutorial-${tutorials[0]}`);
   } else if (tutorials.length > 1) {
     // show main mask
     showMenuMask();
@@ -212,17 +255,45 @@ const showTutorials = (tutorials = []) => {
     // starting not on a tab so let's just go to the overview
     template.loadContent('#overview');
 
-    const tour = $.tourbus('#tutorial-overview', tourbusParams);
-    tour.depart();
+    startTour('#tutorial-overview');
   }
 };
+
+let introTour;
 
 const wireUpTutorialLink = () => {
   $('#tutorial').off('click').on('click', (clickEvent) => {
     clickEvent.preventDefault();
+
+    // close existing intro tour if open
+    if (introTour) {
+      introTour.stop();
+      introTour = null;
+    }
+
     const availableTutorials = getAvailableTutorials();
     showTutorials(availableTutorials);
   });
 };
 
+const waitUntilReady = () => {
+  if (!$('#tutorial').is(':visible')) {
+    setTimeout(() => {
+      waitUntilReady();
+    }, 2000);
+  } else {
+    introTour = startTour('#tutorial-intro');
+  }
+};
+
+let hasAlreadyBeenCalled = false;
+const showIntroduction = () => {
+  if (!hasAlreadyBeenCalled) {
+    hasAlreadyBeenCalled = true;
+    waitUntilReady();
+  }
+};
+
 exports.initialize = wireUpTutorialLink;
+
+exports.intro = showIntroduction;

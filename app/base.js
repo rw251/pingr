@@ -10,6 +10,7 @@ const modalAboutTmpl = require('./templates/modal-about.jade');
 const loadingTmpl = require('./templates/loading.jade');
 
 require('./helpers/jquery-smartresize');
+// require('./helpers/jquery-smartscroll');
 
 let clipboard;
 
@@ -355,11 +356,23 @@ const base = {
       // console.log('done');
     }
   },
+
+  resizeListeners: [],
 };
 
 $(window).smartresize(() => {
   $('#addedCSS').text(base.getCssText());
   base.updateFixedHeightElements();
+
+  base.resizeListeners.forEach((l) => {
+    l();
+  });
 });
+
+// $('#right-panel').smartscroll(() => {
+//   base.resizeListeners.forEach((l) => {
+//     l();
+//   });
+// });
 
 module.exports = base;

@@ -35,6 +35,7 @@ const UserSchema = new Schema({
   password_recovery_expiry: { type: Date },
   roles: [String],
   last_login: Date,
+  last_viewed_tutorial: Date,
   last_email_reminder: Date,
   email_opt_out: Boolean,
   email_url_tracking_code: String,

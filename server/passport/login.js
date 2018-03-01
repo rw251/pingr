@@ -29,11 +29,13 @@ module.exports = (passport) => {
                 return done(null, false, req.flash('error', 'Invalid Password')); // redirect back to login page
               }
               // console.log('match'); // -> Password123: true
+              const previousLogin = user.last_login;
               user.last_login = new Date();
               return user.save((saveErr) => {
                 if (saveErr) {
                   console.log(`Error in updating users last login date: ${err}`);
                 }
+                user.previousLogin = previousLogin;
                 return done(null, user);
               });
             });

@@ -50,7 +50,7 @@
         ],
         "attributes": {
           "data-el":"#suggs",
-          "data-arrow":"10%",
+          "data-arrow":"5%",
           "data-highlight":"true",
           "data-orientation":"left",
           "data-width":400
@@ -61,7 +61,7 @@
         "paragraphs": ["You can change your password or email settings by clicking your name here"],
         "attributes": {
           "data-el":"#userMenu",
-          "data-arrow":"10%",
+          "data-arrow":"16%",
           "data-highlight":"true",
           "data-orientation":"left",
           "data-enable-el": "#userMenu",
@@ -97,7 +97,7 @@
         "title": "Overview tab",
         "paragraphs": [
           "The Overview tab gives you information on how your practice as a whole has been performing on particular key performance indicators (KPIs). These are split into Outcomes (e.g. the number of strokes in your practice) or Processes (e.g. the number of patients with controlled hypertension). You can choose which to look at by selecting the corresponding tab.",
-          "Please select the 'Process Indicator' tab before continuing."
+          "<strong>Please select the 'Process Indicators' tab before continuing.</strong>"
         ],
         "attributes": {
           "data-el":"#right-panel",
@@ -150,6 +150,7 @@
         "attributes": {
           "data-el":"#indicatorTab",
           "data-highlight":"true",
+          "data-arrow": "30%",
           "data-orientation":"right",
           "data-width":400
         }
@@ -304,7 +305,7 @@
         "paragraphs": ["Click this button if you want to log out of the system."],
         "attributes": {
           "data-el":"#suggs",
-          "data-arrow":"10%",
+          "data-arrow":"20%",
           "data-highlight":"true",
           "data-orientation":"left",
           "data-width":400

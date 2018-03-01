@@ -29,8 +29,8 @@ section#main
               .nav-wedge
               a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
           ul.nav.navbar-nav.navbar-right
-            li
-              a#tutorial(href='#') Tutorial
+            li#tutorial
+              a(href='javascript:void(0);') Tutorial
             li
               a#about(href='javascript:void(0);') About us
             li#userMenu.dropdown
@@ -39,6 +39,8 @@ section#main
                 span#practice_name(style="display:none")= practice_name
                 span#practice_id(style="display:none")= practice_id
                 span#practice_system(style="display:none")= practice_system
+                span#last_login(style="display:none")= last_login
+                span#last_viewed_tutorial(style="display:none")= last_viewed_tutorial
                 span#practices(style="display:none")= JSON.stringify(practiceList)
                 span#selectedPractice(style="display:none")= JSON.stringify(selectedPractice)
                 i.fa.fa-user.fa-fw

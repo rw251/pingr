@@ -6,6 +6,12 @@
 .tutorial-disabling-mask.tutorial-mask-right
 .tutorial-disabling-mask.tutorial-mask-top
 .tutorial-disabling-mask.tutorial-mask-bottom
+// Intro tutorial
+ol.tourbus-legs(id='tutorial-intro')
+  li(data-el="#tutorial", data-arrow="20%", data-highlight="true", data-orientation="left", data-enable-el="#tutorial", data-width="400")
+    a.tourbus-stop.tourbus-exit-icon(href='javascript:void(0);') &#x2716;
+    p#tutorialText We have some tutorials - check them out here.
+// Data driven tutorials from tutorials.json
 each tutorial in tutorials
   ol.tourbus-legs(id='tutorial-' + tutorial.name)
     each stage,i in tutorial.legs
@@ -19,8 +25,8 @@ each tutorial in tutorials
         if(i>0)
           a.tourbus-prev.tourbus-button.btn-warning(href='javascript:void(0);') Back
         if(i<tutorial.legs.length-1)
-          if(!stage.attributes['data-wait-for'])
-            a.tourbus-next.tourbus-button.btn-info(href='javascript:void(0);')= '▶ Next: ' + tutorial.legs[i+1].title
+          // if(!stage.attributes['data-wait-for'])
+          a.tourbus-next.tourbus-button.btn-info(href='javascript:void(0);')= '▶ Next: ' + tutorial.legs[i+1].title
         else
           a.tourbus-stop.tourbus-button.btn-info(href='javascript:void(0);') Done!
 .tutorial-menu-mask

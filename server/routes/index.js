@@ -55,6 +55,10 @@ module.exports = (passport) => {
     if (req.body.hash) red += `#${req.body.hash}`;
     req.session.redirect_to = null;
     delete req.session.redirect_to;
+
+    // seems this is the only way to actually pass somwthing from the user object
+    req.session.previousLogin = req.user.previousLogin;
+
     res.redirect(red);
   });
 
@@ -560,6 +564,14 @@ module.exports = (passport) => {
     });
   });
 
+  // mark tutorial as viewed
+  router.post('/api/tutorial/viewed', (req, res, next) => {
+    users.tutorialViewed(req.user, (err) => {
+      if (err) next(err);
+      else res.send(true);
+    });
+  });
+
   // store Event
   router.post('/api/event', (req, res, next) => {
     if (!req.body.event) {
@@ -701,7 +713,7 @@ module.exports = (passport) => {
     // });
     const practiceIds = req.user.practices.map(v => v.id);
     practices.getMany(practiceIds, (err, practiceList) => {
-      res.render('pages/index.jade', { admin: req.user.roles.indexOf('admin') > -1, fullname: req.user.fullname, practiceList, selectedPractice: practiceList[0], tutorials });
+      res.render('pages/index.jade', { admin: req.user.roles.indexOf('admin') > -1, fullname: req.user.fullname, practiceList, selectedPractice: practiceList[0], tutorials, last_login: req.session.previousLogin, last_viewed_tutorial: req.user.last_viewed_tutorial });
     });
   });
 
