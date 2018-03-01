@@ -7,9 +7,7 @@ module.exports = {
 
   files: {
     javascripts: {
-      joinTo: {
-        'libraries.js': /^(?!(app|server)\/)/,
-      },
+      joinTo: { 'libraries.js': /^(?!(app|server)\/)/ },
       order: {
         before: [
           /jquery/,
@@ -23,21 +21,16 @@ module.exports = {
         ],
       },
       entryPoints: {
-        'app/script.js': {
-          'app.js': /^app\//,
-        },
+        'app/script.js': { 'app.js': /^app\// },
+        'app/login.js': 'login.js',
         'app/justTheTracking.js': 'jtt.js',
       },
     },
     stylesheets: {
       joinTo: 'app.css',
-      order: {
-        before: ['vendor/styles/bootstrap.scss'],
-      },
+      order: { before: ['vendor/styles/bootstrap.scss'] },
     },
 
-    templates: {
-      joinTo: 'app.js',
-    },
+    templates: { joinTo: 'app.js' },
   },
 };

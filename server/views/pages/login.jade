@@ -50,21 +50,7 @@ include ../partials/head.jade
           br
           div
             a.firefox-button.btn.btn-warning.btn-block.btn-lg(href='https://www.mozilla.org/en-GB/firefox/new/')
-          
-// jQuery fallback if no online version
-script(src="https://code.jquery.com/jquery-1.12.4.min.js", integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=", crossorigin="anonymous")
+script(src='libraries.js')
+script(src='login.js')
 script.
-  window.jQuery || document.write('<script src="js/jquery/jquery-1.12.4.min.js"><\/script>')
-script. 
-  //*b* using comment process to assert this 
-  var ie9OrLess = $('.unsuppotedIE').length < 1;
-  //remove is a deliberate choice to avoid inappropriate attempts to access
-  if(ie9OrLess)
-  {
-    $('#alt-suggestion').remove();
-    $('#lock-hook').show();  
-  }
-  else {
-    $('#lock-hook').remove();
-    $('#alt-suggestion').show();  
-  }
+  require("login").init();

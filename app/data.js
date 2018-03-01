@@ -67,9 +67,6 @@ const dt = {
           }
         });
       });
-    }).fail(() => {
-      // alert("data/text.json failed to load!! - if you've
-      // changed it recently check it's valid json at jsonlint.com");
     });
   },
 

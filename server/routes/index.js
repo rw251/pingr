@@ -717,10 +717,11 @@ module.exports = (passport) => {
     });
   });
 
-  /* Ensure all html/js resources are only accessible if authenticated */
-  router.get(/^\/(.*html|.*js|)$/, isAuthenticated, (req, res, next) => {
-    next();
-  });
+  /* Ensure all other html/js resources are only accessible if authenticated */
+  // RW - there is now nothing sensitive in js / html files so all can be let through
+  // router.get(/^\/(.*html|.*js|)$/, isAuthenticated, (req, res, next) => {
+  //   next();
+  // });
 
   return router;
 };
