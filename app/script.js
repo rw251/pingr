@@ -1,4 +1,5 @@
 const $ = require('jquery');
+const lookup = require('./lookup');
 
 window.$ = $;
 window.jQuery = $;
@@ -35,15 +36,16 @@ let gotInitialData = false;
 let pageIsReady = false;
 
 const getServerParameters = () => {
+  lookup.userName = $('#user_fullname').text().trim();
   state.practices = JSON.parse($('#practices').text());
   state.selectedPractice = JSON.parse($('#selectedPractice').text());
   if ($('#last_login').text() === '') {
     // first login
-    $('#tutorialText').text('Welcome to PINGR! Pleased to see you! As this is your first time you might want to check out our tutorials here.');
+    $('#tutorialText').text(`Welcome to PINGR ${lookup.userName}! Pleased to see you! As this is your first time you might want to check out our tutorials by clicking here.`);
     tutorial.intro();
   } else if ($('#last_viewed_tutorial').text() === '') {
     // never seen tutorial
-    $('#tutorialText').text('Welcome! Since you last logged in we\'ve added some tutorials which you might find informative. Check them out here.');
+    $('#tutorialText').text(`Welcome ${lookup.userName}! Since you last logged in we've added some tutorials which you might find informative. Check them out by clicking here.`);
     tutorial.intro();
   } else {
     const lastLogin = new Date($('#last_login').text());
@@ -51,7 +53,7 @@ const getServerParameters = () => {
 
     if ((new Date() - lastLogin) / (1000 * 60 * 60 * 24) > 30) {
       // not logged in for 30 days so show tutorial
-      $('#tutorialText').text('Welcome back! It\'s been a while, so if you need a refresher remember to check out the tutorials.');
+      $('#tutorialText').text(`Welcome back ${lookup.userName}! It's been a while, so if you need a refresher remember to check out the tutorials by clicking here.`);
       tutorial.intro();
     }
   }

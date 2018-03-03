@@ -1,6 +1,7 @@
 const base = require('../base.js');
 const data = require('../data.js');
 const state = require('../state.js');
+const lookup = require('../lookup');
 const log = require('../log.js');
 const actionPlan = require('./actionPlan.js');
 const $ = require('jquery');
@@ -191,9 +192,7 @@ const tap = {
         if (action.agree) {
           if (!action.history) action.history = [];
           action.history.unshift({
-            who: $('#user_fullname')
-              .text()
-              .trim(),
+            who: lookup.userName,
             what: 'agreed with',
             when: new Date(),
           });
@@ -226,9 +225,7 @@ const tap = {
             () => {
               if (!action.history) action.history = [];
               action.history.unshift({
-                who: $('#user_fullname')
-                  .text()
-                  .trim(),
+                who: lookup.userName,
                 what: 'disagreed with',
                 when: new Date(),
                 why: actionPlan.rejectedReasonText,
@@ -269,9 +266,7 @@ const tap = {
             () => {
               if (!action.history) action.history = [];
               action.history.unshift({
-                who: $('#user_fullname')
-                  .text()
-                  .trim(),
+                who: lookup.userName,
                 what: 'disagreed with',
                 when: new Date(),
                 why: actionPlan.rejectedReasonText,

@@ -1,4 +1,5 @@
 const Highcharts = require('highcharts/highstock');
+const lookup = require('./lookup');
 const $ = require('jquery');
 //  log = require('./log'),
 // const lookup = require('./lookup');
@@ -37,9 +38,9 @@ const dt = {
     if (isFetchingNhsLookup) return false;
     if (dt.patLookup && dt.patLookup[practiceId]) return done();
     isFetchingNhsLookup = true;
-    return $.getJSON(`/api/nhs/${practiceId}`, (lookup) => {
+    return $.getJSON(`/api/nhs/${practiceId}`, (nhsLookup) => {
       if (!dt.patLookup) dt.patLookup = {};
-      dt.patLookup[practiceId] = lookup;
+      dt.patLookup[practiceId] = nhsLookup;
       isFetchingNhsLookup = false;
       return done();
     });
@@ -384,12 +385,9 @@ const dt = {
           const info = {};
           let mostRecent;
           releventActions.forEach((v) => {
-            const name =
-              $('#user_fullname')
-                .text()
-                .trim() === v.history[0].who
-                ? 'You have'
-                : `${v.history[0].who} has`;
+            const name = lookup.userName === v.history[0].who
+              ? 'You have'
+              : `${v.history[0].who} has`;
             if (!info[name]) info[name] = { agree: 0, added: 0 };
 
             if (!mostRecent) mostRecent = v.history[0].when;
@@ -690,12 +688,9 @@ const dt = {
                   const info = {};
                   let mostRecent;
                   releventActions.forEach((v) => {
-                    const name =
-                        $('#user_fullname')
-                          .text()
-                          .trim() === v.history[0].who
-                          ? 'You have'
-                          : `${v.history[0].who} has`;
+                    const name = lookup.userName === v.history[0].who
+                      ? 'You have'
+                      : `${v.history[0].who} has`;
                     if (!info[name]) info[name] = { agree: 0, added: 0 };
 
                     if (!mostRecent) mostRecent = v.history[0].when;

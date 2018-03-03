@@ -1,5 +1,6 @@
 const base = require('../base.js');
 const data = require('../data.js');
+const lookup = require('../lookup');
 const state = require('../state.js');
 const log = require('../log.js');
 const actionPlan = require('./actionPlan.js');
@@ -258,9 +259,7 @@ const iap = {
         if (action.agree) {
           if (!action.history) action.history = [];
           action.history.unshift({
-            who: $('#user_fullname')
-              .text()
-              .trim(),
+            who: lookup.userName,
             what: 'agreed with',
             when: new Date(),
           });
@@ -305,9 +304,7 @@ const iap = {
             () => {
               if (!action.history) action.history = [];
               action.history.unshift({
-                who: $('#user_fullname')
-                  .text()
-                  .trim(),
+                who: lookup.userName,
                 what: 'disagreed with',
                 when: new Date(),
                 why: actionPlan.rejectedReasonText,
@@ -364,9 +361,7 @@ const iap = {
             () => {
               if (!action.history) action.history = [];
               action.history.unshift({
-                who: $('#user_fullname')
-                  .text()
-                  .trim(),
+                who: lookup.userName,
                 what: 'disagreed with',
                 when: new Date(),
                 why: actionPlan.rejectedReasonText,

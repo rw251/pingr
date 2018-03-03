@@ -32,9 +32,7 @@ module.exports = (PORT, PATH, CALLBACK) => {
   app.use(compression());
 
   // add cors (for reverse proxy and pingr-proxy)
-  app.use(cors({
-    origin: ['https://pingr-proxy.herokuapp.com', 'https://pingr-dev.herokuapp.com', 'https://pingr-ben.herokuapp.com'],
-  }));
+  app.use(cors({ origin: ['https://pingr-proxy.herokuapp.com', 'https://pingr-dev.herokuapp.com', 'https://pingr-ben.herokuapp.com'] }));
 
   // view engine setup
   // app.set('views', path.join(__dirname, 'views'));
@@ -46,9 +44,7 @@ module.exports = (PORT, PATH, CALLBACK) => {
   // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
   // app.use(logger('dev'));
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({
-    extended: false,
-  }));
+  app.use(bodyParser.urlencoded({ extended: false }));
 
   const SESSION_TIMEOUT = 4 * 3600 * 1000; // 4 hours to be sure - but client side
   // 2 hours redirects to signout

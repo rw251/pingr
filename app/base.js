@@ -20,10 +20,7 @@ const base = {
 
   textFromHistory(history) {
     if (!history.who) return history;
-    return `${(history.who.trim() ===
-    $('#user_fullname')
-      .text()
-      .trim()
+    return `${(history.who.trim() === lookup.userName
       ? 'You '
       : `${history.who.trim()} `) + history.what} this action on ${new Date(history.when).toDateString()}${
       history.why ? ` You disagreed because you said: '${history.why}'` : ''

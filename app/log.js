@@ -1,5 +1,6 @@
 const notify = require('./notify');
 const data = require('./data');
+const lookup = require('./lookup');
 const $ = require('jquery');
 
 const log = {
@@ -30,7 +31,7 @@ const log = {
       indicatorId,
       reason,
       freetext,
-      who: $('#user_fullname').text(),
+      who: lookup.userName,
       when: Date.now(),
     };
     if (!data.excludedPatients[patientId]) {

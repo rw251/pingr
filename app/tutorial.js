@@ -6,6 +6,8 @@ let ignoreThisEvent = false;
 let isNextEnabled = true;
 let isAnimating = false;
 let wasNextClicked = true;
+let lastLeg = 0;
+let clickThisIfGoingForwards;
 
 const arrangeMask = (maskType, target, padding) => {
   const targetLeft = target.offset().left;
@@ -73,18 +75,15 @@ const tabMapping = {
   overviewTab: ['overview'],
   indicatorTab: ['overview', 'indicator'],
   patientTab: ['overview', 'patient'],
-  actionTab: ['overview', 'action'],
+  actionPlanTab: ['overview', 'action'],
 };
 
 const beforeLegStart = (leg, bus) => {
   isAnimating = true;
   if (!leg.$target.is(':visible')) {
-    console.log('not visible - lets check the rawData.el');
     if ($(leg.rawData.el).is(':visible')) {
-      console.log('its visible. lets go!');
       leg.$target = $(leg.rawData.el);
     } else {
-      console.log('not visible either, wait 100ms and try again');
       setTimeout(() => {
         beforeLegStart(leg, bus);
       }, 100);
@@ -92,7 +91,6 @@ const beforeLegStart = (leg, bus) => {
     }
   }
   hideTotalMask();
-  console.log('visible');
   if (leg.rawData.moveableElement) {
     leg.$target = $(leg.rawData.el);
   }
@@ -143,6 +141,7 @@ const tourbusParams = {
   leg: { margin: 25 },
   // called when the tour starts
   onDepart(bus) {
+    lastLeg = 0;
     $(document).off('keyup').on('keyup', (e) => {
       switch (e.keyCode) {
         // enter
@@ -172,15 +171,21 @@ const tourbusParams = {
   },
   // called before switching to a leg
   onLegStart(leg, bus) {
+    if (lastLeg < leg.index && clickThisIfGoingForwards) {
+      // going forwards
+      $(clickThisIfGoingForwards).first().click();
+    }
+    lastLeg = leg.index;
     return beforeLegStart(leg, bus);
   },
   // called before switching _from_ a leg
   onLegEnd(leg) {
+    clickThisIfGoingForwards = null;
     if (leg.rawData.waitFor) {
       isNextEnabled = true;
       $(leg.rawData.waitFor).off(leg.rawData.waitForEvent);
       if (wasNextClicked) {
-        $(leg.rawData.waitFor).first().click();
+        clickThisIfGoingForwards = leg.rawData.waitFor;
       }
       wasNextClicked = true;
     }
