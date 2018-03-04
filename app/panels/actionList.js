@@ -2,7 +2,6 @@ const data = require('../data');
 const base = require('../base');
 const state = require('../state');
 const JSPDF = require('jspdf');
-const $ = require('jquery');
 const actionListWrapperTmpl = require('../templates/action-list-wrapper.jade');
 const actionListTemplate = require('../templates/action-list.jade');
 // const jspdfAutoTable = require('jspdf-autotable');

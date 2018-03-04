@@ -1,7 +1,6 @@
 const notify = require('./notify');
 const data = require('./data');
 const lookup = require('./lookup');
-const $ = require('jquery');
 
 const log = {
   reason: {},

@@ -2,7 +2,6 @@ const base = require('../base.js');
 const log = require('../log.js');
 const data = require('../data.js');
 const state = require('../state');
-const $ = require('jquery');
 const overviewTableTemplate = require('../templates/overview-table.jade');
 require('jquery-sparkline');
 

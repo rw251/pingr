@@ -10,7 +10,6 @@ const teamActionPlan = require('../panels/teamActionPlan');
 const wrapper = require('../panels/wrapper');
 const layout = require('../layout');
 const lookup = require('../lookup');
-const $ = require('jquery');
 
 const ID = 'INDICATOR';
 /*

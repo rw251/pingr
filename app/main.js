@@ -4,7 +4,6 @@ const base = require('./base');
 const state = require('./state');
 const log = require('./log');
 const Bloodhound = require('corejs-typeahead/dist/bloodhound');
-const $ = require('jquery');
 
 let states;
 let hash;

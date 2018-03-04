@@ -1,5 +1,4 @@
 const log = require('./log');
-const $ = require('jquery');
 
 const tabs = {};
 

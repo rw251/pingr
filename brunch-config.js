@@ -33,4 +33,6 @@ module.exports = {
 
     templates: { joinTo: 'app.js' },
   },
+
+  plugins: { babel: { presets: [['env', { targets: { browsers: ['ie >= 11'] } }]] } },
 };

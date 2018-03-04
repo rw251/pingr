@@ -3,7 +3,6 @@ const data = require('../data.js');
 const state = require('../state.js');
 const FileSaver = require('file-saver');
 const JSPDF = require('jspdf');
-const $ = require('jquery');
 const patientListTemplate = require('../templates/patient-list.jade');
 const patientListWrapperTemplate = require('../templates/patient-list-wrapper.jade');
 

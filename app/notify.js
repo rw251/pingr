@@ -1,5 +1,3 @@
-const $ = require('jquery');
-
 const messages = [
   'Thanks!',
   'Cheers!',

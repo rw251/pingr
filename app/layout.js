@@ -1,5 +1,3 @@
-const $ = require('jquery');
-
 const layout = {
   elements: {},
 

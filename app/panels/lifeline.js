@@ -1,5 +1,4 @@
 const Highcharts = require('highcharts/highstock');
-const $ = require('jquery');
 require('highcharts/highcharts-more')(Highcharts);
 
 // Define a custom symbol path

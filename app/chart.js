@@ -1,7 +1,6 @@
 const Highcharts = require('highcharts/highstock');
 const data = require('./data');
 const state = require('./state');
-const $ = require('jquery');
 // const lookup = require('./lookup');
 // const log = require('./log');
 

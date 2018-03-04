@@ -1,5 +1,4 @@
 const events = require('./events');
-const $ = require('jquery');
 
 const JTT = {
   init: () => {

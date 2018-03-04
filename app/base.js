@@ -1,5 +1,4 @@
 const data = require('./data');
-const $ = require('jquery');
 const lookup = require('./lookup');
 const state = require('./state');
 const log = require('./log');

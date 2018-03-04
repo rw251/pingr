@@ -2,7 +2,6 @@ const base = require('../base');
 const data = require('../data');
 const state = require('../state');
 const log = require('../log');
-const $ = require('jquery');
 const qualityStandardTemplate = require('../templates/quality-standard.jade');
 const modalExcludeTemplate = require('../templates/modal-exclude.jade');
 

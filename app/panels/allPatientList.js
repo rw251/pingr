@@ -1,7 +1,6 @@
 const base = require('../base.js');
 const data = require('../data.js');
 const state = require('../state.js');
-const $ = require('jquery');
 const allPatientListTemplate = require('../templates/all-patient-list.jade');
 const allPatientListWrapperTemplate = require('../templates/all-patient-list-wrapper.jade');
 

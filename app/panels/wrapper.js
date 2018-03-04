@@ -1,5 +1,4 @@
 const log = require('../log.js');
-const $ = require('jquery');
 
 const bd = {
   wireUp(firstTabVisibleCallback) {

@@ -1,4 +1,3 @@
-const $ = require('jquery');
 const modalWhyTemplate = require('../templates/modal-why.jade');
 
 const ap = {

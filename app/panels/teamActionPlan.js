@@ -4,7 +4,6 @@ const state = require('../state.js');
 const lookup = require('../lookup');
 const log = require('../log.js');
 const actionPlan = require('./actionPlan.js');
-const $ = require('jquery');
 const teamActionPlanTemplate = require('../templates/team-action-plan.jade');
 const teamTemplate = require('../templates/team.jade');
 const actionPlanListTemplate = require('../templates/action-plan-list.jade');

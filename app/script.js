@@ -1,12 +1,8 @@
-const $ = require('jquery');
 const lookup = require('./lookup');
-
-window.$ = $;
-window.jQuery = $;
+require('./polyfills');
 
 // require all the things that get globally added to jquery
 require('bootstrap');
-require('corejs-typeahead');
 require('datatables.net-bs')(window, $);
 require('datatables.net-buttons-bs')(window, $);
 require('datatables.net-buttons/js/buttons.colVis.js')(window, $);

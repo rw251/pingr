@@ -9,7 +9,6 @@ const qualityStandards = require('../panels/qualityStandards');
 const patientSearch = require('../panels/patientSearch');
 const allPatientList = require('../panels/allPatientList');
 const patientTitleTemplate = require('../templates/patient-title.jade');
-const $ = require('jquery');
 
 const ID = 'PATIENT_VIEW';
 /*

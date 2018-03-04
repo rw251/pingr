@@ -1,5 +1,3 @@
-const $ = require('jquery');
-
 const login = {
   init: () => {
     $(document).on('ready', () => {

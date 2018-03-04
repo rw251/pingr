@@ -1,6 +1,5 @@
 const data = require('../data.js');
 const chart = require('../chart.js');
-const $ = require('jquery');
 
 const bd = {
   wireUp() {},

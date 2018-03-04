@@ -5,7 +5,6 @@ const lookup = require('../lookup');
 const state = require('../state');
 const indicatorList = require('../panels/indicatorList');
 const teamActionPlan = require('../panels/teamActionPlan');
-const $ = require('jquery');
 
 const ID = 'OVERVIEW';
 /*

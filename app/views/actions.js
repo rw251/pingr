@@ -2,7 +2,6 @@ const base = require('../base');
 const layout = require('../layout');
 const lookup = require('../lookup');
 const actionList = require('../panels/actionList');
-const $ = require('jquery');
 //  actionFilter = require('../panels/actionFilter');
 
 const ID = 'ACTION_PLAN_VIEW';

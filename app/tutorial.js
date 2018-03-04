@@ -1,4 +1,3 @@
-const $ = require('jquery');
 const base = require('./base');
 const template = require('./template');
 

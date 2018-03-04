@@ -6,7 +6,6 @@ const overview = require('./views/overview');
 const indicatorView = require('./views/indicator');
 const patientView = require('./views/patient');
 const actionPlan = require('./views/actions');
-const $ = require('jquery');
 
 const template = {
   loadContent(hash, isPoppingState) {

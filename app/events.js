@@ -2,8 +2,6 @@
  * Gets an XPath for an element which describes its hierarchical location.
  * Copied from firebug with a BSD licence - https://code.google.com/p/fbug/source/browse/branches/firebug1.6/content/firebug/lib.js?spec=svn12950&r=8828#1332
  */
-const $ = require('jquery');
-
 const SESSION_TIMEOUT = 2 * 3600 * 1000;
 
 let eventFailCount = 0;
