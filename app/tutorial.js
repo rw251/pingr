@@ -127,6 +127,10 @@ const beforeLegStart = (leg, bus) => {
     $('.tutorial-disabling-mask.tutorial-mask-right').css('left', 0).show();
   }
   leg.reposition();
+  if (leg.rawData.left) {
+    // for data-left it seems to add it to rather than overwrite
+    leg.$el.css({ left: leg.rawData.left });
+  }
   leg.$el
     .css({ visibility: 'visible', opacity: 0, zIndex: 9999 })
     .animate({ opacity: 1.0 }, 600, () => {
@@ -141,6 +145,11 @@ const tourbusParams = {
   // called when the tour starts
   onDepart(bus) {
     lastLeg = 0;
+    // close if click off pop up
+    $('.tutorial-highlight-mask').on('click', () => {
+      bus.stop();
+    });
+    //
     $(document).off('keyup').on('keyup', (e) => {
       switch (e.keyCode) {
         // enter
@@ -172,7 +181,11 @@ const tourbusParams = {
   onLegStart(leg, bus) {
     if (lastLeg < leg.index && clickThisIfGoingForwards) {
       // going forwards
-      $(clickThisIfGoingForwards).first().click();
+      if (clickThisIfGoingForwards === "a[href='#agreedactions']") {
+        template.loadContent('#agreedactions');
+      } else {
+        $(clickThisIfGoingForwards).first().click();
+      }
     }
     lastLeg = leg.index;
     return beforeLegStart(leg, bus);
@@ -214,6 +227,9 @@ const showMenu = () => {
     if (selectedTutorial === 'overview') {
       // navigate to overview tab first
       template.loadContent('#overview');
+    } else if (selectedTutorial === 'patient') {
+      // navigate to all patient page first
+      template.loadContent('#patients');
     }
 
     hideMenu();

@@ -2900,7 +2900,7 @@ $legBackgroundColour: #3c3c3c;
     background: transparent;
     display: none;
     opacity: 0.5;
-    z-index: 9997;
+    z-index: 9996;
     position: fixed;
     top:0;
 }
@@ -3104,7 +3104,7 @@ $legBackgroundColour: #3c3c3c;
     cursor: pointer;
     opacity: 0;
     position: relative;
-    left: -90px;
+    left: -110px;
     -webkit-animation-name: tutorial-menu-appear;
     animation-name: tutorial-menu-appear;
     -webkit-animation-duration: 0.8s;
@@ -3123,7 +3123,7 @@ $legBackgroundColour: #3c3c3c;
 .tutorial-menu ul li h2 {
     -webkit-transition: color 300ms ease;
     transition: color 300ms ease;
-    font-size: 12px;
+    font-size: 18px;
     font-weight: 400;
     text-transform: uppercase;
     color: #fff;
@@ -3132,7 +3132,8 @@ $legBackgroundColour: #3c3c3c;
 
 .tutorial-menu ul li .tutorial-menu-item-description {
     color: #fff;
-    font-size: 12px
+    font-size: 16px;
+    font-weight: lighter;
 }
 
 .tutorial-menu ul li .tutorial-menu-item-estimated-time {
@@ -3140,12 +3141,12 @@ $legBackgroundColour: #3c3c3c;
     transition: border-right 300ms ease;
     border-right: solid 0 #fff;
     opacity: .5;
-    font-size: 10px;
+    font-size: 14px;
     color: #fff;
     float: left;
     height: 50px;
-    width: 80px;
-    margin-right: 10px;
+    width: 100px;
+    margin-right: 14px;
     position: relative
 }
 

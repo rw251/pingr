@@ -387,9 +387,12 @@
           "Here you will find all the actions that you have clicked the green thumbs up for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
         ],
         "attributes": {
-          "data-orientation":"centered",
-          "data-mask":"true",
-          "data-width":600
+          "data-el":"#suggested-actions-table-wrapper",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-top":200,
+          "data-left":500,
+          "data-width":400
         }
       },
       {
@@ -414,7 +417,8 @@
         "attributes": {
           "data-orientation":"centered",
           "data-mask":"true",
-          "data-width":600
+          "data-width":600,
+          "data-top": 200
         }
       }
     ]
@@ -529,6 +533,51 @@
         }
       },
       {
+        "title": "All patient list",
+        "paragraphs": [
+          "If you haven't selected a patient you will see a list of all patients in your practice ordered by the number of KPIs they are violating (so you can concentrate on patients who have the most ‘bang for your buck’)."
+        ],
+        "attributes": {
+          "data-el":"#all-patient-list",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-top":300,
+          "data-left":700,
+          "data-width":400
+        }
+      },
+      {
+        "title": "Search",
+        "paragraphs": [
+          "You can also search for patients by their NHS number."
+        ],
+        "attributes": {
+          "data-el":"#search-box",
+          "data-highlight":"true",
+          "data-orientation":"bottom",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Select a patient",
+        "paragraphs": [
+          "Please now select a patient by clicking on a row in the table."
+        ],
+        "attributes": {
+          "data-el":"#allPatientTable",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-top":300,
+          "data-left":700,
+          "data-width":400,
+          "data-moveable-element": "true",
+          "data-enable-el": "#allPatientTable tbody",
+          "data-wait-for": "#allPatientTable tr.list-item",
+          "data-wait-for-ignore": "#allPatientTable tr.list-item .showIndicators,#allPatientTable tr.list-item .hideIndicators",
+          "data-wait-for-event": "click"
+        }
+      },
+      {
         "title": "Actions",
         "paragraphs": [
           "The actions on this tab are related to the currently selected patient. You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
@@ -615,8 +664,8 @@
       {
         "title": "View all patients",
         "paragraphs": [
-          "You can find a list of all patients in your practice ordered by the number of KPIs they are violating (so you can concentrate on patients who have the most ‘bang for your buck’).",
-          "You can also search for patients according to their NHS number."
+          "You can return to the list of all patients in your practice ordered by the number of KPIs they are violating by clicking here.",
+          "You can also search for patients according to their NHS number direct from this page here."
         ],
         "attributes": {
           "data-el":"#title-right",
@@ -639,9 +688,12 @@
           "Here you will find all the actions that you have clicked the green thumbs up for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
         ],
         "attributes": {
-          "data-orientation":"centered",
-          "data-mask":"true",
-          "data-width":600
+          "data-el":"#suggested-actions-table-wrapper",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-top":200,
+          "data-left":500,
+          "data-width":400
         }
       },
       {
