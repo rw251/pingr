@@ -1413,7 +1413,6 @@ Just For Demo / Showcase
 body {
     overflow-y: hidden;
     /*padding-bottom: 70px;*/
-    font-size: 16px;
 }
 
 body.qof {
@@ -1693,6 +1692,10 @@ $mainPadding: 15px;
 /* +--------------+ */
 
 /* RESTRICTIVE CSS FOR 1024px SCREENS */
+body {
+    font-size: 14px;
+}
+
 .nav-tabs > li > a > div {
     white-space: nowrap;
     max-width: 180px;
@@ -1748,6 +1751,33 @@ $mainPadding: 15px;
     padding-left:0;
 }
 
+.main-container {
+    padding-left: 8px;
+    padding-right: 8px;
+    min-height: 545px;
+    height: calc(100vh - 110px);
+}
+
+#left-panel {
+    padding-right: 5px;
+    font-size: 13px;
+}
+#right-panel {
+    padding-left: 5px;
+}
+
+.thumb-header {
+    padding:0 !important;
+    width: 52px;
+}
+
+.f20 {
+    font-size: 13px;
+}
+.table > tbody > tr > td {
+    padding: 2px 0 2px 5px;
+}
+
 /* RESTRICTIVE CSS FOR 1200px SCREENS */
 @media (min-width: 1200px) {
     .nav-tabs > li > a > div{
@@ -1773,13 +1803,39 @@ $mainPadding: 15px;
     .navbar .container {
         padding-left:$mainPadding;
     }
+    .main-container {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    .thumb-header {
+        width: 105px
+    }
+    .table > tbody > tr > td {
+        padding: 8px;
+    }
+    .f20 {
+        font-size: 14px;
+    }
 }
 
 /* RESTRICTIVE CSS FOR 1280px SCREENS */
 @media (min-width: 1280px) {
+    body {
+        font-size: 16px;
+    }
     .nav > li > a {
         padding-left:$mainPadding;
         padding-right:$mainPadding;
+    }
+    #left-panel {
+        padding-right: 15px;
+        font-size: 16px;
+    }
+    #right-panel {
+        padding-left: 15px;
+    }
+    .f20 {
+        font-size: 16px;
     }
 }
 
@@ -1794,6 +1850,9 @@ $mainPadding: 15px;
 @media (min-width: 1600px) {
     .nav-tabs > li > a > div {
         max-width: 500px;
+    }
+    .f20 {
+        font-size: 20px;
     }
 }
 
@@ -2837,10 +2896,6 @@ body > svg {
 
 .black {
     color: black;
-}
-
-.f20 {
-    font-size: 20px;
 }
 
 .v-small {
