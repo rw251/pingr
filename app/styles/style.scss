@@ -1572,6 +1572,38 @@ tr.suggestion.success:hover .btn-hover-show-group {
     display: none;
 }
 
+
+/* Better widths for container */
+@media (min-width: 768px) {
+    .container {
+        width: 538px;
+    }
+}
+@media (min-width: 992px) {
+    .container {
+        width: 762px;
+    }
+}
+@media (min-width: 1200px) {
+    .container {
+        width: 970px;
+    }
+    .container-wide {
+        width: 1150px;
+        width: 95vw;
+    }
+}
+@media (min-width: 1500px) {
+    .container, .container-wide {
+        width: 1270px;
+    }
+}
+@media (min-width: 1800px) {
+    .container, .container-wide {
+        width: 1570px;
+    }
+}
+
 hr {
     margin-top: 30px;
     margin-bottom: 20px;
@@ -1630,23 +1662,9 @@ hr {
     color: #C2C3C6;
 }
 
-.nav-tabs-tall > li > a {
-    /* adjust padding for height*/
-    /*padding-top: 25px;
-    padding-bottom: 25px;*/
-    height: 75px;
-}
-
-.nav-tabs-tall {
-    border-bottom-width: 0;
-    width: 1070px;
-}
-
-
 #mainTab {
     border-bottom-width: 0;
 }
-
 
 .nav-tabs a.active {
     border-bottom: 2px solid white;
@@ -1657,8 +1675,23 @@ header .navbar-default .navbar-nav > li > a {
     cursor: pointer;
 }
 
+/* ------------------ Login page --------------------*/
+.login-page > .login-container {
+    width: 360px;
+    margin-top: -100px;
+    padding-top: 50px;
+}
+.login-page .login-panel {
+    margin-top: 40px;
+}
+
 $mainPaddingSmall: 2px;
 $mainPadding: 15px;
+
+/* +--------------+ */
+/* |WIDTH SETTINGS| */
+/* +--------------+ */
+
 /* RESTRICTIVE CSS FOR 1024px SCREENS */
 .nav-tabs > li > a > div {
     white-space: nowrap;
@@ -1764,40 +1797,19 @@ $mainPadding: 15px;
     }
 }
 
-
-@media (max-width: 1600px) {
-    .nav-tabs-tall {
-        width: 970px;
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 800px SCREENS */
+@media (min-height: 800px) {
+    .login-page > .login-container {
+        margin-top: -90px;
     }
 }
-@media (max-width: 1550px) {
-    .nav-tabs-tall {
-        width: 870px;
-    }
-}
-@media (max-width: 1450px) {
-    .nav-tabs-tall {
-        width: 770px;
-    }
-}
-@media (max-width: 1350px) {
-    .nav-tabs-tall {
-        width: 670px;
-    }
-}
-@media (max-width: 1250px) {
-    .nav-tabs-tall {
-        width: 570px;
-    }
-}
-@media (max-width: 1150px) {
-    .nav-tabs-tall {
-        width: 470px;
-    }
-}
-@media (max-width: 1050px) {
-    .nav-tabs-tall {
-        width: 370px;
+/* RESTRICTIVE CSS FOR 900px SCREENS */
+@media (min-height: 900px) {
+    .login-page > .login-container {
+        margin-top: -80px;
     }
 }
 
@@ -2013,36 +2025,6 @@ td > .fa-caret-down {
 .user.text-center.clickable:hover {
     color: white;
     transition: color 0.2s ease;
-}
-/* Better widths for container */
-@media (min-width: 768px) {
-    .container {
-        width: 538px;
-    }
-}
-@media (min-width: 992px) {
-    .container {
-        width: 762px;
-    }
-}
-@media (min-width: 1200px) {
-    .container {
-        width: 970px;
-    }
-    .container-wide {
-        width: 1150px;
-        width: 95vw;
-    }
-}
-@media (min-width: 1500px) {
-    .container, .container-wide {
-        width: 1270px;
-    }
-}
-@media (min-width: 1800px) {
-    .container, .container-wide {
-        width: 1570px;
-    }
 }
 /*
 To stop screen shifting left slightly on modal popup
@@ -2333,19 +2315,6 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .input-group .form-control {
   margin:0;
 }*/
-/* ------------------ Login page --------------------*/
-.login-page > .login-container {
-    width: 360px;
-    margin-top: -80px;
-    padding-top: 50px;
-}
-/*
-.narrow-container{
-  width: 360px;
-}*/
-.login-page .login-panel {
-    margin-top: 40px;
-}
 
 .c3-chart-arc path._unselected_ {
     opacity: 0.3 !important;
