@@ -70,7 +70,7 @@
         "title": "Actions",
         "paragraphs": [
           "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
-          "The actions on the overview tab are things you can do at practice level and are based on your practice's data, NICE guidelines and the wider scientific literature."
+          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -83,6 +83,7 @@
       {
         "title": "Actions - continued",
         "paragraphs": [
+          "The actions on the overview tab are things you can do at practice level and are based on your practice's data, NICE guidelines and the wider scientific literature.",
           "The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record."
         ],
         "attributes": {
@@ -104,6 +105,18 @@
           "data-highlight":"true",
           "data-orientation":"right",
           "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Add your own actions",
+        "paragraphs": [
+          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
+        ],
+        "attributes": {
+          "data-el":"#personalPlanTeam",
+          "data-highlight":"true",
+          "data-orientation":"right",
           "data-width":600
         }
       },
@@ -172,7 +185,8 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level."
+          "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level.",
+          "Remember to use the thumbs up button when you agree and the thumbs down button when you disagree with a suggested action to help PINGR improve for you and all users."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -259,25 +273,14 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The actions on this tab are related to the currently selected patient. You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+          "The actions on this tab are related to the currently selected patient. Remember that you always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'.",
+          "And once more... let PINGR know if it's right or wrong by agreeing or disagreeing with the suggested actions."
         ],
         "attributes": {
           "data-el":"#left-panel",
           "data-highlight":"true",
           "data-orientation":"right",
           "data-enable-el": "#left-panel",
-          "data-width":600
-        }
-      },
-      {
-        "title": "Add your own actions",
-        "paragraphs": [
-          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
-        ],
-        "attributes": {
-          "data-el":"#personalPlanIndividual",
-          "data-highlight":"true",
-          "data-orientation":"right",
           "data-width":600
         }
       },
@@ -445,13 +448,54 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level."
+          "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
+          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
         ],
         "attributes": {
           "data-el":"#left-panel",
           "data-highlight":"true",
           "data-orientation":"right",
           "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Actions - continued",
+        "paragraphs": [
+          "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level. They are based on your practice's data, NICE guidelines and the wider scientific literature.",
+          "The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record."
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Agree/Disagree",
+        "paragraphs": [
+          "If you agree with a suggested action, you can click the green thumbs up. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
+          "If you disagree with a suggested action, you can click the red thumbs down. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Add your own actions",
+        "paragraphs": [
+          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
+        ],
+        "attributes": {
+          "data-el":"#personalPlanTeam",
+          "data-highlight":"true",
+          "data-orientation":"right",
           "data-width":600
         }
       },
@@ -578,9 +622,50 @@
         }
       },
       {
+        "title": "Individual patient",
+        "paragraphs": [
+          "The tab now shows the patient's NHS number."
+        ],
+        "attributes": {
+          "data-el":"#patientTab",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-width":400
+        }
+      },
+      {
         "title": "Actions",
         "paragraphs": [
-          "The actions on this tab are related to the currently selected patient. You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+          "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
+          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Actions - continued",
+        "paragraphs": [
+          "The actions on this tab relate to the currently selected patient and are based on the patient's data, NICE guidelines and the wider scientific literature.",
+          "The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record."
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Agree/Disagree",
+        "paragraphs": [
+          "If you agree with a suggested action, you can click the green thumbs up. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
+          "If you disagree with a suggested action, you can click the red thumbs down. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
