@@ -451,16 +451,7 @@ header {
 .app-search .form-control::-moz-placeholder {
     color: #c4c4cd;
 }
-/*** Nav Toolbar (right)***/
-.navbar-default {
-    margin-left: 15px;
-    margin-right: 15px;
-}
 
-header .navbar-default .navbar-nav > li > a {
-    color: blue;
-    cursor: pointer;
-}
 /*** Nav Toolbar (right)***/
 .nav-toolbar {
     margin: 8px 0;
@@ -1650,6 +1641,130 @@ hr {
     border-bottom-width: 0;
     width: 1070px;
 }
+
+
+#mainTab {
+    border-bottom-width: 0;
+}
+
+
+.nav-tabs a.active {
+    border-bottom: 2px solid white;
+    background-color: blue;
+}
+header .navbar-default .navbar-nav > li > a {
+    color: blue;
+    cursor: pointer;
+}
+
+$mainPaddingSmall: 2px;
+$mainPadding: 15px;
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+.nav-tabs > li > a > div {
+    white-space: nowrap;
+    max-width: 180px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.nav-tabs > li > a > div:hover {
+    white-space: normal;
+}
+
+.nav-tabs > li.active > a > div:hover {
+    white-space: nowrap;
+}
+
+.nav-tabs > li > a {
+    border: 1px solid #ddd;
+    background-color: #EEE;
+    margin-right: 5px;
+    margin-top: 10px;
+}
+
+.nav-tabs > li > a:hover {
+    border: 1px solid #ddd;
+    border-bottom: 0;
+}
+
+.nav-tabs > li > a.active {
+    border-bottom: 2px solid white;
+}
+
+.nav > li > a {
+    padding-left:5px;
+    padding-right:5px;
+}
+
+.title-row {
+    left: $mainPaddingSmall;
+    right: $mainPaddingSmall;
+}
+
+/*** Nav Toolbar (right)***/
+.navbar-default {
+    margin-left: $mainPaddingSmall;
+    margin-right: $mainPaddingSmall;
+}
+
+.starter-template {
+    padding: 91px $mainPaddingSmall 0;
+}
+
+.navbar .container {
+    padding-left:0;
+}
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1200px) {
+    .nav-tabs > li > a > div{
+        max-width: 215px;
+    }
+
+    .nav-tabs > li > a {
+        margin-right: 10px;
+    }
+
+    .starter-template {
+        padding-left: $mainPadding;
+        padding-right: $mainPadding;
+    }
+    .navbar-default {
+        margin-left: $mainPadding;
+        margin-right: $mainPadding;
+    }
+    .title-row {
+        left: $mainPadding;
+        right: $mainPadding;
+    }
+    .navbar .container {
+        padding-left:$mainPadding;
+    }
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1280px) {
+    .nav > li > a {
+        padding-left:$mainPadding;
+        padding-right:$mainPadding;
+    }
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1366px) {
+    .nav-tabs > li > a > div {
+        max-width: 300px;
+    }
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1600px) {
+    .nav-tabs > li > a > div {
+        max-width: 500px;
+    }
+}
+
+
 @media (max-width: 1600px) {
     .nav-tabs-tall {
         width: 970px;
@@ -1690,26 +1805,6 @@ hr {
     font-style: italic;
 }
 
-.nav-tabs > li a {
-    border: 1px solid #ddd;
-    background-color: #EEE;
-    margin-right: 10px;
-    margin-top: 10px;
-}
-
-.nav-tabs > li a:hover {
-    border: 1px solid #ddd;
-    border-bottom: 0;
-}
-
-.nav-tabs > li a.active {
-    border-bottom: 2px solid white;
-}
-
-.nav-tabs a.active {
-    border-bottom: 2px solid white;
-    background-color: blue;
-}
 /*support for slightly wider desktops */
 .col-xl-1,
 .col-xl-10,
@@ -2137,11 +2232,6 @@ header {
 .pagetitle-small {
     color: #70ba63;
     background-color: #70ba63;
-}
-
-.starter-template {
-    //padding: 112px 15px 0;
-    padding: 116px 15px 0;
 }
 
 .starter-template-high {
@@ -2584,86 +2674,7 @@ body > svg {
 .h-navigator-chart {
     height: 60px;
 }
-/*
-.nav-tabs.nav-wizard > li {
-  position: relative;
-  overflow: visible;
-  border-right: 15px solid transparent;
-  border-left: 15px solid transparent;
-}
-.nav-tabs.nav-wizard > li + li {
-  margin-left: 0;
-}
-.nav-tabs.nav-wizard > li:first-child {
-  border-left: 0;
-}
-.nav-tabs.nav-wizard > li:first-child a {
-  border-radius: 5px 0 0 0;
-}
-.nav-tabs.nav-wizard > li:last-child {
-  border-right: 0;
-}
-.nav-tabs.nav-wizard > li:last-child a {
-  border-radius: 0 5px 0 0;
-}
-.nav-tabs.nav-wizard > li a {
-  border-radius: 0;
-  border:0;
-  margin:0;
-}
-.nav-tabs.nav-wizard > li .nav-arrow {
-  position: absolute;
-  top: 0px;
-  right: -15px;
-  width: 0px;
-  height: 0px;
-  border-style: solid;
-  border-width: 36px 0 36px 15px;
-  border-color: transparent transparent transparent #F9F9F9;
-  z-index: 150;
-}
-.nav-tabs.nav-wizard > li .nav-wedge {
-  position: absolute;
-  top: 0px;
-  left: -14px;
-  width: 0px;
-  height: 0px;
-  border-style: solid;
-  border-width: 36px 0 36px 15px;
-  border-color: #F9F9F9 #F9F9F9 #F9F9F9 transparent;
-  z-index: 150;
-}
-.nav-tabs.nav-wizard > li.active a {
-  font-weight:bold;
-}
-.nav-tabs.nav-wizard > li:hover .nav-arrow {
-  border-color: transparent transparent transparent #aaa;
-}
-.nav-tabs.nav-wizard > li:hover .nav-wedge {
-  border-color: #aaa #aaa #aaa transparent;
-}
-.nav-tabs.nav-wizard > li:hover a {
-  background-color: #aaa;
-  color: #fff;
-}
-.nav-tabs.nav-wizard > li.active .nav-arrow {
-  border-color: transparent transparent transparent #fff;
-}
-.nav-tabs.nav-wizard > li.active .nav-wedge {
-  border-color: #fff #fff #fff transparent;
-}
-.nav-tabs.nav-wizard > li.active:hover a {
-  background-color: #fff;
-  color: #555;
-  border:0;
-}
-.nav-tabs.nav-wizard > li.active .nav-arrow {
-  border-color: transparent transparent transparent #fff;
-}
-.nav-tabs.nav-wizard > li.active.active .nav-wedge {
-  border-color: #fff #fff #fff transparent;
-}
-*/
+
 #right-panel {
     overflow-y: auto;
     overflow-x: hidden;
@@ -2805,9 +2816,7 @@ body > svg {
     display: none;
     font-size: 20px;
     position: fixed;
-    top: 75px;
-    left: 15px;
-    right: 15px;
+    top: 50px;
     border-right: 1px solid rgb(221, 221, 221);
     border-left: 1px solid rgb(221, 221, 221);
     background: white;

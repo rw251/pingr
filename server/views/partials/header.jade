@@ -9,30 +9,34 @@
     .l4
       div
 section#main
-  header.top-head.container-fluid.hide-if-logged-out
+  header.container-fluid.hide-if-logged-out
     nav.navbar.navbar-default.navbar-fixed-top.hidden-xs(role='navigation')
       .navbar-inner
         .container
-          ul#mainTab.nav.nav-tabs.nav-tabs-tall.nav-wizard.pull-left(role='tablist')
-            li#overviewTab.active(role='presentation', style='width:20%', data-id='overview')
-              a(href='#overview', data-href='#overview', role='tab') OVERVIEW
+          ul#mainTab.nav.nav-tabs.nav-wizard.pull-left(role='tablist')
+            li#overviewTab.active(role='presentation', data-id='overview')
+              a(href='#overview', data-href='#overview', role='tab')
+                div OVERVIEW
               .nav-arrow
-            li#indicatorTab(role='presentation', style='width:20%', data-id='indicator')
+            li#indicatorTab(role='presentation', data-id='indicator')
               .nav-wedge
-              a(href='#indicators', data-href='#indicators', role='tab') INDICATOR
+              a(href='#indicators', data-href='#indicators', role='tab')
+                div INDICATOR
               .nav-arrow
-            li#patientTab(role='presentation', style='width:20%', data-id='patient')
+            li#patientTab(role='presentation', data-id='patient')
               .nav-wedge
-              a(href='#patients', data-href='#patients', role='tab') PATIENT
+              a(href='#patients', data-href='#patients', role='tab')
+                div PATIENT
               .nav-arrow
-            li#actionPlanTab(role='presentation', style='width:20%', data-id='actions')
+            li#actionPlanTab(role='presentation', data-id='actions')
               .nav-wedge
-              a(href='#agreedactions', data-href='#agreedactions', role='tab') ACTION PLANS
+              a(href='#agreedactions', data-href='#agreedactions', role='tab')
+                div ACTION PLANS
           ul.nav.navbar-nav.navbar-right
             li#tutorial
               a(href='javascript:void(0);') Tutorial
-            li
-              a#about(href='javascript:void(0);') About us
+            li.visible-lg-inline
+              a.about-link(href='javascript:void(0);') About us
             li#userMenu.dropdown
               a.dropdown-toggle(data-toggle='dropdown', href='#')
                 span#user_fullname.hide-if-bit-small= fullname + " "
@@ -68,6 +72,11 @@ section#main
                   a(href='emailpreference')
                     i.fa.fa-envelope.fa-fw
                     |  Manage email preferences
+                li.divider.hidden-lg
+                li.hidden-lg
+                  a.about-link(href='javascript:void(0);') 
+                    i.fa.fa-users.fa-fw
+                    |  About us
                 li.divider
                 li
                   a(href='signout')

@@ -86,7 +86,7 @@ const template = {
         base.wireUpTooltips();
       }
 
-      $('#about')
+      $('.about-link')
         .off('click')
         .on('click', (e) => {
           base.launchAboutModal();

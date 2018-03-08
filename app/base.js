@@ -280,15 +280,15 @@ const base = {
 
   updateTab(tab, value, url) {
     const tabElement = $(`#mainTab a[data-href="#${tab}"]`);
-    tabElement.html(`${
-      tabElement.text().split(':')[0]
-    }:<br><span><strong>${value}</strong></span>`);
+    const tabContent = tabElement.find('div');
+    tabContent.html(`${tabContent.text().split(':')[0]}: <strong>${value}</strong>`);
     tabElement.data('href', `#${tab}/${url}`);
   },
 
   resetTab(tab) {
     const tabElement = $(`#mainTab a[data-href="#${tab}"]`);
-    tabElement.html(tabElement.text().split(':')[0]);
+    const tabContent = tabElement.find('div');
+    tabElement.html(tabContent.text().split(':')[0]);
     tabElement.data('href', `#${tab}`);
     tabElement.attr('href', `#${tab}`);
   },
