@@ -1,0 +1,67 @@
+/* UNIVERSAL STUFF */
+.title-row {
+  display: none;
+  font-size: 20px;
+  position: fixed;
+  top: 50px;
+  border-right: 1px solid rgb(221, 221, 221);
+  border-left: 1px solid rgb(221, 221, 221);
+  background: white;
+  padding-top: 10px;
+  padding-left: 30px;
+  padding-right: 15px;
+  z-index: 100;
+  min-height: 46px;
+  text-align: center;
+}
+
+#title-left {
+  font-weight: bold;
+}
+
+/* +---------------+ */
+/* |WIDTH SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+.title-row {
+  left: $mainPaddingSmall;
+  right: $mainPaddingSmall;
+}
+
+#title-left {
+  font-size: 20px;
+}
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1190px) {
+  .title-row {
+    left: $mainPadding;
+    right: $mainPadding;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1270px) {
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1356px) {
+}
+
+/* RESTRICTIVE CSS FOR 1600px SCREENS */
+@media (min-width: 1590px) {
+}
+
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 800px SCREENS */
+@media (min-height: 800px) {
+
+}
+/* RESTRICTIVE CSS FOR 900px SCREENS */
+@media (min-height: 900px) {
+  #title-left {
+    font-size: 28px;
+  }
+}

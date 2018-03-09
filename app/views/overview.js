@@ -73,10 +73,10 @@ const overview = {
         'col-xl-8 col-lg-8 state-overview-rightPanel'
       );
 
-      base.updateFixedHeightElements([
-        { selector: '#personalPlanTeam', padding: 820, minHeight: 200 },
-        { selector: '#advice-list', padding: 430, minHeight: 250 },
-      ]); // ,{selector:'.table-scroll',padding:250, minHeight:300}]);
+      // base.updateFixedHeightElements([
+      //   { selector: '#personalPlanTeam', padding: 820, minHeight: 200 },
+      //   { selector: '#advice-list', padding: 430, minHeight: 250 },
+      // ]); // ,{selector:'.table-scroll',padding:250, minHeight:300}]);
     }, 0);
   },
 };

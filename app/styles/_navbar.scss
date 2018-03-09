@@ -1,0 +1,204 @@
+/* UNIVERSAL STUFF */
+header {
+  background-color: $background;
+  border-bottom: 1px solid #ececee;
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  .navbar-default .navbar-nav > li > a {
+    color: blue;
+    cursor: pointer;
+  }
+}
+
+.hide-if-logged-out {
+  display: none;
+}
+
+.nav-toolbar {
+  margin: 8px 0;
+  float: right;
+
+  li {
+    padding: 0;
+    display: inline-block;
+    margin-left: 5px;
+    position: relative;
+    list-style: none;
+
+    a {
+      color: #d3d3db;
+      font-size: 18px;
+      border: 1px solid #d3d3db;
+      border-radius: 50px;
+      height: 34px;
+      width: 34px;
+      text-align: center;
+      display: block;
+      padding: 4px;
+
+      &:hover {
+        color: #C1C1C9;
+        border: 1px solid #C1C1C9;
+      }
+    }
+
+    span.badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background-color: #8d82b5;
+      font-weight: 300;
+      cursor: pointer;
+      height: 18px;
+      width: 18px;
+      padding: 1px;
+
+      &.bg-info {
+        background-color: #8d82b5;
+      }
+
+      &.bg-warning {
+        background-color: #E35B5A;
+      }
+    }
+  }
+
+  .dropdown-menu.panel {
+    padding-top: 0;
+    padding-bottom: 0;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+  }
+}
+
+
+.nav-tabs a.active {
+  border-bottom: 2px solid white;
+  background-color: blue;
+}
+
+.navbar-nav > li > .btn-group {
+  padding: 8px 15px;
+}
+
+.navbar-toggle {
+  display: block;
+}
+
+.navbar {
+  .collapsed {
+    display: none;
+  }
+  .container {
+    width: auto;
+    background-color: rgb(242, 242, 244);
+  }
+}
+
+/* +---------------+ */
+/* |WIDTH SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+
+.nav-tabs {
+  > li {
+    > a {
+      border: 1px solid #ddd;
+      background-color: #EEE;
+      margin-right: 5px;
+      margin-top: 10px;
+
+      &:hover {
+        border: 1px solid #ddd;
+        border-bottom: 0;
+      }
+
+      &:active {
+        border-bottom: 2px solid white;
+      }
+
+      > div {
+        white-space: nowrap;
+        max-width: 180px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        &:hover {
+          white-space: normal;
+        }
+      }
+    }
+
+    &.active {
+      > a > div:hover {
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.nav > li > a {
+  padding-left:5px;
+  padding-right:5px;
+}
+
+.navbar-default {
+    margin-left: $mainPaddingSmall;
+    margin-right: $mainPaddingSmall;
+}
+
+.navbar .container {
+  padding-left:0;
+}
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1190px) {
+  .nav-tabs > li > a {
+      margin-right: 10px;
+      
+      div{
+        max-width: 200px;
+      }
+  }
+  .navbar-default {
+    margin-left: $mainPadding;
+    margin-right: $mainPadding;
+  }
+  .navbar .container {
+    padding-left:$mainPadding;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1270px) {
+  .nav > li > a {
+    padding-left:$mainPadding;
+    padding-right:$mainPadding;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1356px) {
+  .nav-tabs > li > a > div {
+      max-width: 280px;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1600px SCREENS */
+@media (min-width: 1590px) {
+  .nav-tabs > li > a > div {
+      max-width: 500px;
+  }
+}
+
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 800px SCREENS */
+@media (min-height: 800px) {
+
+}
+/* RESTRICTIVE CSS FOR 900px SCREENS */
+@media (min-height: 900px) {
+
+}

@@ -1,9 +1,9 @@
-.panel.panel-default(style='margin-bottom:10px')
+.panel.panel-default.top-half-of-action-panel(style='margin-bottom:10px')
   .clearfix.panel-heading!=title
   #team-action-panel.panel-body(style='padding:0')
-    #advice-list(style='overflow-y:auto')
-.panel.panel-default(style='margin-bottom:5px')
+    #advice-list
+.panel.panel-default.bottom-half-of-action-panel(style='margin-bottom:5px')
   #user-action-panel.panel-body
-    #personalPlanTeam(style='overflow-y:auto')
+    #personalPlanTeam
 include mixins/edit-plan-modal
 include mixins/delete-plan-modal
