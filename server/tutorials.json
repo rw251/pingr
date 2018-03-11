@@ -6,41 +6,6 @@
     "time": 5,
     "legs": [
       {
-        "title": "The PINGR tutorial",
-        "paragraphs": ["OK! Let's show you how to use PINGR. We'll start with the buttons in the top right."],
-        "attributes": {
-          "data-orientation":"centered",
-          "data-mask":"true",
-          "data-width":600
-        }
-      },
-      {
-        "title": "Send a comment",
-        "paragraphs": [
-          "If you have anything you want to tell us e.g. problems with data, suggestions for how PINGR could be improved, please send them to us by clicking this button.",
-          "If you’re telling us about a specific patient or part of the system, you don’t need to tell us, we’ll know what you mean because we can see what page you’ve clicked the button on. (Please don’t put NHS numbers in your comments!)"
-        ],
-        "attributes": {
-          "data-el":"#suggs",
-          "data-arrow":"5%",
-          "data-highlight":"true",
-          "data-orientation":"left",
-          "data-width":400
-        } 
-      },
-      {
-        "title": "User menu",
-        "paragraphs": ["You can change your password or email settings by clicking your name here"],
-        "attributes": {
-          "data-el":"#userMenu",
-          "data-arrow":"16%",
-          "data-highlight":"true",
-          "data-orientation":"left",
-          "data-enable-el": "#userMenu",
-          "data-width":400
-        } 
-      },
-      {
         "title": "Navigation",
         "paragraphs": [
           "With these buttons you can access other panels in the system. In general you will move from left (overview panel) to right (action plans panel).",
@@ -84,7 +49,7 @@
         "title": "Actions - continued",
         "paragraphs": [
           "The actions on the overview tab are things you can do at practice level and are based on your practice's data, NICE guidelines and the wider scientific literature.",
-          "The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record."
+          "<span class='bold orange'>The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record.</span>"
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -97,8 +62,8 @@
       {
         "title": "Agree/Disagree",
         "paragraphs": [
-          "If you agree with a suggested action, you can click the green thumbs up. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
-          "If you disagree with a suggested action, you can click the red thumbs down. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
+          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -124,7 +89,7 @@
         "title": "Overview tab",
         "paragraphs": [
           "The Overview tab gives you information on how your practice as a whole has been performing on particular key performance indicators (KPIs). These are split into Outcomes (e.g. the number of strokes in your practice) or Processes (e.g. the number of patients with controlled hypertension). You can choose which to look at by selecting the corresponding tab.",
-          "<span class='highlight'>Please select the 'Process Indicators' tab before continuing.</span>"
+          "<span class='highlight bold orange'>Please select the 'Process Indicators' tab before continuing.</span>"
         ],
         "attributes": {
           "data-el":"#right-panel",
@@ -147,7 +112,8 @@
           "data-highlight":"true",
           "data-orientation":"left",
           "data-enable-el": "#overview-table-process_wrapper .dataTables_scrollHead",
-          "data-width":400
+          "data-width":400,
+          "data-click-on-back": "a[href='#outcomeIndicators']"
         }
       },
       {
@@ -155,7 +121,7 @@
         "paragraphs": [
           "The ‘Show more’ link gives you more information on the KPI and links to further evidence e.g. NICE guidelines or BMJ articles.",
           "To see your patients not meeting the KPI, simply click on the KPI and it will take you to the Indicator tab.",
-          "<span class='highlight'>Please select this indicator by clicking it to continue.</span>"
+          "<span class='highlight bold orange'>Please select this indicator by clicking it to continue.</span>"
         ],
         "attributes": {
           "data-el":"#overview-table-process tr.standard-row:first",
@@ -179,14 +145,15 @@
           "data-highlight":"true",
           "data-arrow": "30%",
           "data-orientation":"right",
-          "data-width":400
+          "data-width":400,
+          "data-click-on-back": "a[href='#overview']"
         }
       },
       {
         "title": "Actions",
         "paragraphs": [
           "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level.",
-          "Remember to use the thumbs up button when you agree and the thumbs down button when you disagree with a suggested action to help PINGR improve for you and all users."
+          "Remember to use the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label> button when you agree and the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label> button when you disagree with a suggested action to help PINGR improve for you and all users."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -243,7 +210,7 @@
         "title": "Select a patient",
         "paragraphs": [
           "To see information on an individual patient not meeting the KPI, simply click on the patient in the list and it will take you to the Patient tab.",
-          "<span class='highlight'>Please select any patient by clicking on a row in this table to continue.</span>"
+          "<span class='highlight bold orange'>Please select any patient by clicking on a row in this table to continue.</span>"
         ],
         "attributes": {
           "data-el":"#patient-list_wrapper",
@@ -267,7 +234,8 @@
           "data-el":"#patientTab",
           "data-highlight":"true",
           "data-orientation":"right",
-          "data-width":400
+          "data-width":400,
+          "data-click-on-back": "URL"
         }
       },
       {
@@ -360,7 +328,7 @@
         "title": "Action plans tab",
         "paragraphs": [
           "Let's go to the final tab.",
-          "<span class='highlight'>Please click the Action Plans tab.</span>"
+          "<span class='highlight bold orange'>Please click the Action Plans tab.</span>"
         ],
         "attributes": {
           "data-el":"header .navbar",
@@ -381,13 +349,14 @@
           "data-el":"#actionPlanTab",
           "data-highlight":"true",
           "data-orientation":"right",
-          "data-width":400
+          "data-width":400,
+          "data-click-on-back": "a[href='#patients']"
         }
       },
       {
         "title": "Action plans",
         "paragraphs": [
-          "Here you will find all the actions that you have clicked the green thumbs up for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
+          "Here you will find all the actions that you have clicked the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label> for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
         ],
         "attributes": {
           "data-el":"#suggested-actions-table-wrapper",
@@ -412,6 +381,32 @@
           "data-scroll-value": 1000,
           "data-width":600
         }
+      },
+      {
+        "title": "Send a comment",
+        "paragraphs": [
+          "If you have anything you want to tell us e.g. problems with data, suggestions for how PINGR could be improved, please send them to us by clicking this button.",
+          "If you’re telling us about a specific patient or part of the system, you don’t need to tell us, we’ll know what you mean because we can see what page you’ve clicked the button on. (Please don’t put NHS numbers in your comments!)"
+        ],
+        "attributes": {
+          "data-el":"#suggs",
+          "data-arrow":"5%",
+          "data-highlight":"true",
+          "data-orientation":"left",
+          "data-width":400
+        } 
+      },
+      {
+        "title": "User menu",
+        "paragraphs": ["You can change your password or email settings by clicking your name here"],
+        "attributes": {
+          "data-el":"#userMenu",
+          "data-arrow":"16%",
+          "data-highlight":"true",
+          "data-orientation":"left",
+          "data-enable-el": "#userMenu",
+          "data-width":400
+        } 
       },
       {
         "title": "The End",
@@ -463,7 +458,7 @@
         "title": "Actions - continued",
         "paragraphs": [
           "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level. They are based on your practice's data, NICE guidelines and the wider scientific literature.",
-          "The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record."
+          "<span class='bold orange'>The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record.</span>"
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -476,8 +471,8 @@
       {
         "title": "Agree/Disagree",
         "paragraphs": [
-          "If you agree with a suggested action, you can click the green thumbs up. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
-          "If you disagree with a suggested action, you can click the red thumbs down. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
+          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -567,6 +562,210 @@
       {
         "title": "Patient tab",
         "paragraphs": [
+          "We're now on the patient tab which provides information on individual patients.",
+          "The NHS number of the currently selected patient appears in the tab here."
+        ],
+        "attributes": {
+          "data-el":"#patientTab",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Actions",
+        "paragraphs": [
+          "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
+          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Actions - continued",
+        "paragraphs": [
+          "The actions on this tab relate to the currently selected patient and are based on the patient's data, NICE guidelines and the wider scientific literature.",
+          "<span class='bold orange'>The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record.</span>"
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Agree/Disagree",
+        "paragraphs": [
+          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
+          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Add your own actions",
+        "paragraphs": [
+          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
+        ],
+        "attributes": {
+          "data-el":"#personalPlanIndividual",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Clinical coding",
+        "paragraphs": [
+          "If PINGR suggests a particular code to use in a patient record, there is an orange copy button to help you paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "You can see more about why PINGR has suggested a particular action by clicking show more. This may include links to NICE guidelines and other helpful information e.g. patient leaflets."
+        ],
+        "attributes": {
+          "data-el":"#left-panel",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-enable-el": "#left-panel",
+          "data-width":600
+        }
+      },
+      {
+        "title": "Timeline",
+        "paragraphs": [
+          "There is a timeline at the bottom of the page that shows diagnoses, contacts with your practice, measurements, and medications. Hover over each one to get more information.",
+          "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include some data from the hospital too."
+        ],
+        "attributes": {
+          "data-el":"#lifeline-chart",
+          "data-highlight":"true",
+          "data-orientation":"left",
+          "data-width":400,
+          "data-scroll-element": "#right-panel",
+          "data-enable-el": "#lifeline-chart",
+          "data-scroll-value": 1000
+        }
+      },
+      {
+        "title": "Patient KPIs",
+        "paragraphs": [
+          "There is a table at the top of the page that shows all KPIs the patient is meeting or not meeting.",
+          "There is a red exclude button to exclude the patient from that KPI in PINGR.",
+          "You can display actions for all or just one KPI by clicking the button next to exclude."
+        ],
+        "attributes": {
+          "data-el":"#processIndicatorsQS",
+          "data-highlight":"true",
+          "data-orientation":"left",
+          "data-width":400,
+          "data-scroll-element": "#right-panel",
+          "data-scroll-value": 0
+        }
+      },
+      {
+        "title": "Copy NHS number",
+        "paragraphs": [
+          "There is another orange button next to the NHS number at the top of the page to copy and paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard"
+        ],
+        "attributes": {
+          "data-el":"#title-left",
+          "data-highlight":"true",
+          "data-orientation":"bottom",
+          "data-enable-el": "#title-left",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Search / View all patients",
+        "paragraphs": [
+          "You can search for patients according to their NHS number direct from this page here.",
+          "<span class='highlight bold orange'>Click on the 'View all patients' link to view a list of all patients in your practice ordered by the number of KPIs they are violating.</span>"          
+        ],
+        "attributes": {
+          "data-el":"#title-right",
+          "data-highlight":"true",
+          "data-orientation":"bottom",
+          "data-enable-el": "#search-box label a",
+          "data-wait-for": "#search-box label a",
+          "data-wait-for-event": "click",
+          "data-width":400
+        }
+      },
+      {
+        "title": "All patients",
+        "paragraphs": [
+          "The tab no longer has the patient's NHS number as no-one is selected."
+        ],
+        "attributes": {
+          "data-el":"#patientTab",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-width":400,
+          "data-click-on-back": "URL"
+        }
+      },
+      {
+        "title": "All patient list",
+        "paragraphs": [
+          "There is now a list of all patients in your practice ordered by the number of KPIs they are violating (so you can concentrate on patients who have the most ‘bang for your buck’)."
+        ],
+        "attributes": {
+          "data-el":"#all-patient-list",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-top":300,
+          "data-left":700,
+          "data-width":400
+        }
+      },
+      {
+        "title": "Search",
+        "paragraphs": [
+          "You can also search for patients on this screen by their NHS number."
+        ],
+        "attributes": {
+          "data-el":"#search-box",
+          "data-highlight":"true",
+          "data-orientation":"bottom",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Select a patient",
+        "paragraphs": [
+          "You can return to the individual patient view by selecting a patient in the table."
+        ],
+        "attributes": {
+          "data-el":"#allPatientTable",
+          "data-highlight":"true",
+          "data-orientation":"right",
+          "data-top":300,
+          "data-left":700,
+          "data-width":400,
+          "data-moveable-element": "true"
+        }
+      }
+    ]
+  },
+  {
+    "name": "patients",
+    "title": "Patient tab tutorial",
+    "description": "Just learn about what's on this page.",
+    "time": 2,
+    "legs":  [
+      {
+        "title": "Patient tab",
+        "paragraphs": [
           "We're now on the patient tab which provides information on individual patients."
         ],
         "attributes": {
@@ -630,7 +829,8 @@
           "data-el":"#patientTab",
           "data-highlight":"true",
           "data-orientation":"right",
-          "data-width":400
+          "data-width":400,
+          "data-click-on-back": "a[href='#patients']"
         }
       },
       {
@@ -651,7 +851,7 @@
         "title": "Actions - continued",
         "paragraphs": [
           "The actions on this tab relate to the currently selected patient and are based on the patient's data, NICE guidelines and the wider scientific literature.",
-          "The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record."
+          "<span class='bold orange'>The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record.</span>"
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -664,8 +864,8 @@
       {
         "title": "Agree/Disagree",
         "paragraphs": [
-          "If you agree with a suggested action, you can click the green thumbs up. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
-          "If you disagree with a suggested action, you can click the red thumbs down. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
+          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -770,7 +970,7 @@
       {
         "title": "Action plans",
         "paragraphs": [
-          "Here you will find all the actions that you have clicked the green thumbs up for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
+          "Here you will find all the actions that you have clicked the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label> for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
         ],
         "attributes": {
           "data-el":"#suggested-actions-table-wrapper",

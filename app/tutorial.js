@@ -7,6 +7,9 @@ let isAnimating = false;
 let wasNextClicked = true;
 let lastLeg = 0;
 let clickThisIfGoingForwards;
+let clickThisIfGoingBackwards;
+let url = '';
+let visitedUrls = [];
 
 const arrangeMask = (maskType, target, padding) => {
   const targetLeft = target.offset().left;
@@ -74,6 +77,7 @@ const tabMapping = {
   overviewTab: ['overview'],
   indicatorTab: ['overview', 'indicator'],
   patientTab: ['overview', 'patient'],
+  patientsTab: ['overview', 'patients'],
   actionPlanTab: ['overview', 'action'],
 };
 
@@ -145,6 +149,7 @@ const tourbusParams = {
   // called when the tour starts
   onDepart(bus) {
     lastLeg = 0;
+    visitedUrls = [];
     // close if click off pop up
     $('.tutorial-highlight-mask').on('click', () => {
       bus.stop();
@@ -183,16 +188,41 @@ const tourbusParams = {
       // going forwards
       if (clickThisIfGoingForwards === "a[href='#agreedactions']") {
         template.loadContent('#agreedactions');
+      } else if (clickThisIfGoingForwards === '#search-box label a') {
+        template.loadContent('#patients');
       } else {
         $(clickThisIfGoingForwards).first().click();
       }
+    } else if (lastLeg > leg.index) {
+      // going backwards
+      visitedUrls.pop();
+      let i = visitedUrls.length;
+      while (i > 0 && visitedUrls[i - 1] === window.location.hash) i -= 1;
+      if (clickThisIfGoingBackwards) {
+        if (clickThisIfGoingBackwards === "a[href='#overview']") {
+          template.loadContent('#overview');
+        } else if (clickThisIfGoingBackwards === "a[href='#patients']") {
+          template.loadContent('#patients');
+        } else if (clickThisIfGoingBackwards === "a[href='#indicator']") {
+          template.loadContent('#indicator');
+        } else if (clickThisIfGoingBackwards === 'URL') {
+          console.log(`NAV: ${visitedUrls[i - 1]}`);
+          template.loadContent(visitedUrls[i - 1]);
+        } else {
+          $(clickThisIfGoingBackwards).first().click();
+        }
+      }
     }
+    console.log(visitedUrls.join(', '));
     lastLeg = leg.index;
+    url = window.location.hash;
     return beforeLegStart(leg, bus);
   },
   // called before switching _from_ a leg
   onLegEnd(leg) {
+    visitedUrls.push(window.location.hash);
     clickThisIfGoingForwards = null;
+    clickThisIfGoingBackwards = null;
     if (leg.rawData.waitFor) {
       isNextEnabled = true;
       $(leg.rawData.waitFor).off(leg.rawData.waitForEvent);
@@ -200,6 +230,9 @@ const tourbusParams = {
         clickThisIfGoingForwards = leg.rawData.waitFor;
       }
       wasNextClicked = true;
+    }
+    if (leg.rawData.clickOnBack) {
+      clickThisIfGoingBackwards = leg.rawData.clickOnBack;
     }
   },
 };
@@ -218,18 +251,19 @@ const hideMenu = () => {
   $('.tutorial-menu').hide();
 };
 
+let alreadyPressed = false;
 const showMenu = () => {
+  alreadyPressed = false;
   $('.tutorial-menu').show();
 
   $('.tutorial-menu li').off('click').on('click', (e) => {
+    if (alreadyPressed) return;
+    alreadyPressed = true;
     const selectedTutorial = $(e.currentTarget).data('id');
 
     if (selectedTutorial === 'overview') {
       // navigate to overview tab first
       template.loadContent('#overview');
-    } else if (selectedTutorial === 'patient') {
-      // navigate to all patient page first
-      template.loadContent('#patients');
     }
 
     hideMenu();

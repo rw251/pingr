@@ -102,8 +102,8 @@ const ps = {
     log.event('patient-search', window.location.hash, [
       { key: 'patid', value: nhsNumberObject.id },
     ]);
-    window.history.pushState(null, null, `#patients/${nhsNumberObject.id}`);
-    loadContFn(`#patients/${nhsNumberObject.id}`, true);
+    window.history.pushState(null, null, `#patient/${nhsNumberObject.id}`);
+    loadContFn(`#patient/${nhsNumberObject.id}`, true);
   },
 
   show(panel, isAppend, isPatientSelected, loadContentFn) {

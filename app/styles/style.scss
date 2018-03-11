@@ -2935,9 +2935,13 @@ $legBackgroundColour: #3c3c3c;
 .tutorial-mask-bottom {
     left: 0; bottom:0;
 }
-.tourbus-leg .highlight {
-    font-weight: bold;
+.tourbus-leg .orange {
     color: orange;
+}
+.tourbus-leg .bold {
+    font-weight: bold;
+}
+.tourbus-leg .highlight {
     opacity: 0.5;
     -webkit-animation: pulsate 3s ease-out;
     -ms-animation: pulsate 3s ease-out;

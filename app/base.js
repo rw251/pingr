@@ -40,6 +40,8 @@ const base = {
 
   // get the currently selected tab
   getTab() {
+    const tab = $('#mainTab li.active').attr('id');
+    if (tab === 'patientTab' && window.location.hash.indexOf('patients') > -1) { return 'patientsTab'; }
     return $('#mainTab li.active').attr('id');
   },
 
