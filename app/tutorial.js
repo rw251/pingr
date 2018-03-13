@@ -8,7 +8,6 @@ let wasNextClicked = true;
 let lastLeg = 0;
 let clickThisIfGoingForwards;
 let clickThisIfGoingBackwards;
-let url = '';
 let visitedUrls = [];
 
 const arrangeMask = (maskType, target, padding) => {
@@ -203,24 +202,21 @@ const tourbusParams = {
           template.loadContent('#overview');
         } else if (clickThisIfGoingBackwards === "a[href='#patients']") {
           template.loadContent('#patients');
-        } else if (clickThisIfGoingBackwards === "a[href='#indicator']") {
-          template.loadContent('#indicator');
         } else if (clickThisIfGoingBackwards === 'URL') {
-          console.log(`NAV: ${visitedUrls[i - 1]}`);
           template.loadContent(visitedUrls[i - 1]);
         } else {
           $(clickThisIfGoingBackwards).first().click();
         }
       }
     }
-    console.log(visitedUrls.join(', '));
     lastLeg = leg.index;
-    url = window.location.hash;
     return beforeLegStart(leg, bus);
   },
   // called before switching _from_ a leg
   onLegEnd(leg) {
-    visitedUrls.push(window.location.hash);
+    if (visitedUrls.length === 0 || visitedUrls[visitedUrls.length - 1] !== window.location.hash) {
+      visitedUrls.push(window.location.hash);
+    }
     clickThisIfGoingForwards = null;
     clickThisIfGoingBackwards = null;
     if (leg.rawData.waitFor) {

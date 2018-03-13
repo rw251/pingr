@@ -219,7 +219,7 @@
           "data-enable-el": "#patient-list_wrapper",
           "data-width":400,
           "data-scroll-element": "#right-panel",
-          "data-scroll-value": 1000,
+          "data-scroll-value": 100,
           "data-wait-for": "#patient-list tr.list-item",
           "data-wait-for-ignore": "#patient-list tr.list-item .btn-copy",
           "data-wait-for-event": "click"
@@ -350,7 +350,7 @@
           "data-highlight":"true",
           "data-orientation":"right",
           "data-width":400,
-          "data-click-on-back": "a[href='#patients']"
+          "data-click-on-back": "URL"
         }
       },
       {
