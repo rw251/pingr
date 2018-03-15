@@ -8,8 +8,8 @@
       {
         "title": "Navigation",
         "paragraphs": [
-          "With these buttons you can access other panels in the system. In general you will move from left (overview panel) to right (action plans panel).",
-          "Press these buttons to take you to a specific part of the system in case you want to go somewhere specific."
+          "With these tabs you can access other panels in the system. <span class='bold orange'>In general you will move from left (overview panel) to right (action plans panel).</span>",
+          "You can also click these tabs to take you directly to a specific part of the system."
         ],
         "attributes": {
           "data-el":"#mainTab",
@@ -34,8 +34,8 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
-          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+          "The key thing PINGR does that other software does not, is that it <span class='bold orange'>suggests actions you could take to improve care.</span> These actions always appear on the left hand side of the screen.",
+          "You always see the <span class='bold orange'>top 3</span> suggested actions, but if there are more than that there will be a link at the bottom of the list that says <span class='bold orange'>'Show more than top 3 actions'</span>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -62,8 +62,8 @@
       {
         "title": "Agree/Disagree",
         "paragraphs": [
-          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
-          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+          "<span class='bold orange'>If you agree with a suggested action</span>, you can click the <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label>. This will save it to your action plans tab (more on that later). It will also tell PINGR that it has made a good suggestion, which will help improve it.",
+          "<span class='bold orange'>If you disagree with a suggested action</span>, you can click the <label class='btn btn-danger btn-xs'><span class='fa fa-thumbs-down'></span></label>. You can then say why you disagree (though you don’t have to!). This will then remove the action so you don’t see it again, and also help PINGR improve the suggestions it makes (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -76,7 +76,7 @@
       {
         "title": "Add your own actions",
         "paragraphs": [
-          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
+          "You can also add your own actions <span class='bold orange'>if there are things you think need to happen but PINGR hasn’t suggested.</span> These can then be shown to others as a way of sharing best practice in Salford."
         ],
         "attributes": {
           "data-el":"#personalPlanTeam",
@@ -86,10 +86,10 @@
         }
       },
       {
-        "title": "Overview tab",
+        "title": "Indicator table",
         "paragraphs": [
-          "The Overview tab gives you information on how your practice as a whole has been performing on particular key performance indicators (KPIs). These are split into Outcomes (e.g. the number of strokes in your practice) or Processes (e.g. the number of patients with controlled hypertension). You can choose which to look at by selecting the corresponding tab.",
-          "<span class='highlight bold orange'>Please select the 'Process Indicators' tab before continuing.</span>"
+          "The indicator table gives you information on how your practice is performing on particular <span class='bold orange'>key performance indicators (KPIs).</span> These are split into Outcomes (e.g. the number of strokes in your practice) and Processes (e.g. the number of patients with controlled hypertension). You can choose which to look at by selecting the corresponding tab.",
+          "<span class='highlight bold text-info'>Please select the 'Process Indicators' tab before continuing.</span>"
         ],
         "attributes": {
           "data-el":"#right-panel",
@@ -104,8 +104,8 @@
       {
         "title": "Process indicators",
         "paragraphs": [
-          "The KPIs are provided in a table, which has columns relating to the clinical area, the indicator name, your current performance, the number of actioned patients (i.e. number of patients not meeting the indicator who have been actioned), the Salford target, top 10% benchmark (i.e. the average score of the top 10% of practices in Salford), your change in score from yesterday, and 1 year trend.",
-          "All of these columns can be ordered by clicking on the arrows next to them."
+          "The process KPIs table has columns relating to: the <span class='bold orange'>clinical area</span>, the <span class='bold orange'>indicator name</span>, your <span class='bold orange'>current performance</span>, the number of <span class='bold orange'>actioned patients</span> (i.e. number of patients not meeting the indicator who have been actioned), the <span class='bold orange'>Salford target</span>, <span class='bold orange'>top 10% benchmark</span> (i.e. the average score of the top 10% of practices in Salford), your <span class='bold orange'>change in score from yesterday</span>, and <span class='bold orange'>1 year trend</span>.",
+          "All columns can be <span class='bold orange'>ordered</span> by clicking the arrows <span class='glyphicon glyphicon-sort' aria-hidden='true'></span> next to them."
         ],
         "attributes": {
           "data-el":"#overview-table-process_wrapper",
@@ -119,9 +119,8 @@
       {
         "title": "Process indicators",
         "paragraphs": [
-          "The ‘Show more’ link gives you more information on the KPI and links to further evidence e.g. NICE guidelines or BMJ articles.",
-          "To see your patients not meeting the KPI, simply click on the KPI and it will take you to the Indicator tab.",
-          "<span class='highlight bold orange'>Please select this indicator by clicking it to continue.</span>"
+          "The <span class='bold orange'>‘Show more’</span> link gives you more information on the KPI and links to further evidence e.g. NICE guidelines or BMJ articles.",
+          "To view patients not meeting the KPI, simply <span class='bold orange'>click on the KPI</span> and it will take you to the Indicator tab. <span class='highlight bold text-info'>Please do this now to continue the tutorial.</span>"
         ],
         "attributes": {
           "data-el":"#overview-table-process tr.standard-row:first",
@@ -138,7 +137,7 @@
       {
         "title": "Indicator tab",
         "paragraphs": [
-          "We're now on the indicator tab which lists the patients not achieving the KPI."
+          "We're now on the indicator tab which lists the patients not achieving KPIs."
         ],
         "attributes": {
           "data-el":"#indicatorTab",
@@ -152,8 +151,8 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level.",
-          "Remember to use the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label> button when you agree and the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label> button when you disagree with a suggested action to help PINGR improve for you and all users."
+          "The actions on this tab relate to the currently selected KPI, and are things you can do as a practice.",
+          "Remember to use the <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label> button when you <span class='bold orange'>agree</span>, and the <label class='btn btn-danger btn-xs'><span class='fa fa-thumbs-down'></span></label> button when you <span class='bold orange'>disagree</span> with a suggested action."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -166,8 +165,9 @@
       {
         "title": "Patient list",
         "paragraphs": [
-          "There are orange buttons next to each NHS number that you can click to copy and then paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
-          "The list can be ordered according to a number of different columns, including patient age, and next annual review date"
+          "Here are all the patients not meeting the KPI.",
+          "There are orange buttons <span class='far fa-copy btn-copy'></span> next to each NHS number you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "The list can be <span class='bold orange'>ordered</span>, again by clicking the arrows <span class='glyphicon glyphicon-sort' aria-hidden='true'></span> according to a number of different columns, including patient age, and next annual review date"
         ],
         "attributes": {
           "data-el":"#patient-list_wrapper",
@@ -181,12 +181,13 @@
       {
         "title": "Download",
         "paragraphs": [
-          "This list can be downloaded as a PDF and shared or printed with other staff. Beware this includes NHS numbers though."
+          "This list can be <span class='bold orange'>downloaded</span> by clicking this button in order to be shared with others or printed. <span class='bold orange'>Beware this will include NHS numbers.</span>"
         ],
         "attributes": {
-          "data-el":"#patient-list_wrapper .dt-buttons",
+          "data-el":"#patient-list_wrapper .dt-buttons .btn-group",
           "data-highlight":"true",
           "data-orientation":"left",
+          "data-arrow":"10%",
           "data-enable-el": "#patient-list_wrapper .dt-buttons .btn-group",
           "data-width":400
         }
@@ -194,13 +195,28 @@
       {
         "title": "Charts",
         "paragraphs": [
-          "There is a bar chart that groups the patients in the list into categories associated with different actions. Hover over the bars to see what they mean. Click the bars to filter the patient list below to patients with that action only (the coloured boxes in the list indicate what actions are relevant to each patient).",
-          "Your current and future trend and comparison to other practices on this KPI can be accessed on tabs. "
+          "This bar chart groups patients in the list into categories associated with different actions. <span class='bold orange'>Hover</span> over the bars to see what they mean. <span class='bold orange'>Click</span> the bars to <span class='bold orange'>filter</span> the patient list below to patients with only that action (the coloured boxes in the list indicate what actions are relevant to each patient)."
         ],
         "attributes": {
           "data-el":"#right-panel",
           "data-highlight":"true",
           "data-orientation":"left",
+          "data-scroll-element": "#right-panel",
+          "data-scroll-value": 0,
+          "data-enable-el": "#breakdown-chart",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Trend and comparison",
+        "paragraphs": [
+          "Your <span class='orange bold'>current and future trend</span> and <span class='orange bold'>comparison to other practices</span> on this KPI can be accessed by clicking on the other tabs. "
+        ],
+        "attributes": {
+          "data-el":"#mainPage-tabs",
+          "data-highlight":"true",
+          "data-orientation":"bottom",
+          "data-align":"center",
           "data-scroll-element": "#right-panel",
           "data-scroll-value": 0,
           "data-width":400
@@ -209,19 +225,20 @@
       {
         "title": "Select a patient",
         "paragraphs": [
-          "To see information on an individual patient not meeting the KPI, simply click on the patient in the list and it will take you to the Patient tab.",
-          "<span class='highlight bold orange'>Please select any patient by clicking on a row in this table to continue.</span>"
+          "To see information on an individual patient not meeting the KPI, simply <span class='bold orange'>click</span> on the patient in the list and it will take you to the Patient tab.",
+          "<span class='highlight bold text-info'>Please do this now to continue the tutorial.</span>"
         ],
         "attributes": {
-          "data-el":"#patient-list_wrapper",
+          "data-el":"#patient-list tr.list-item:first",
           "data-highlight":"true",
           "data-orientation":"left",
-          "data-enable-el": "#patient-list_wrapper",
+          "data-enable-el": "#patient-list tr.list-item:first",
           "data-width":400,
           "data-scroll-element": "#right-panel",
           "data-scroll-value": 100,
-          "data-wait-for": "#patient-list tr.list-item",
-          "data-wait-for-ignore": "#patient-list tr.list-item .btn-copy",
+          "data-arrow": "10%",
+          "data-wait-for": "#patient-list tr.list-item:first",
+          "data-wait-for-ignore": "#patient-list tr.list-item:first .btn-copy",
           "data-wait-for-event": "click"
         }
       },
@@ -241,8 +258,8 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The actions on this tab are related to the currently selected patient. Remember that you always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'.",
-          "And once more... let PINGR know if it's right or wrong by agreeing or disagreeing with the suggested actions."
+          "The actions on this tab relate to the <span class='bold orange'>currently selected patient</span>. Remember you always see the <span class='bold orange'>top 3</span> suggested actions. If there are more than that <span class='bold orange'>click</span> the link at the bottom that says <span class='bold orange'>'Show more than top 3 actions'</span>.",
+          "And once more... let PINGR know if you <span class='bold orange'>agree or disagree</span> with its suggested actions by clicking <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label> or <label class='btn btn-danger btn-xs'><span class='fa fa-thumbs-down'></span></label>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -253,10 +270,10 @@
         }
       },
       {
-        "title": "Clinical coding",
+        "title": "Codes",
         "paragraphs": [
-          "If PINGR suggests a particular code to use in a patient record, there is an orange copy button to help you paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
-          "You can see more about why PINGR has suggested a particular action by clicking show more. This may include links to NICE guidelines and other helpful information e.g. patient leaflets."
+          "If PINGR suggests a particular code to use, there is an orange button <span class='far fa-copy btn-copy'></span> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "You can see why PINGR has suggested a particular action by clicking the link that says '<span class='bold orange'>show more</span>'. This may include links to <span class='bold orange'>NICE guidelines</span> and other helpful information e.g. <span class='bold orange'>patient leaflets</span>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -269,8 +286,8 @@
       {
         "title": "Timeline",
         "paragraphs": [
-          "There is a timeline at the bottom of the page that shows diagnoses, contacts with your practice, measurements, and medications. Hover over each one to get more information.",
-          "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include some data from the hospital too."
+          "This timeline shows a patient's diagnoses, contacts with your practice, measurements, and medications. <span class='bold orange'>Hover over each point to get more information</span>.",
+          "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include information from the <span class='bold orange'>hospital</span> too."
         ],
         "attributes": {
           "data-el":"#lifeline-chart",
@@ -285,9 +302,9 @@
       {
         "title": "Patient KPIs",
         "paragraphs": [
-          "There is a table at the top of the page that shows all KPIs the patient is meeting or not meeting.",
-          "There is a red exclude button to exclude the patient from that KPI in PINGR.",
-          "You can display actions for all or just one KPI by clicking the button next to exclude."
+          "This table shows all KPIs the patient is meeting or not.",
+          "There is a <span class='bold orange'>red exclude button</span> to remove the patient from that KPI in PINGR (this won't remove them from any QOF indicators though).",
+          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for this patient)"
         ],
         "attributes": {
           "data-el":"#processIndicatorsQS",
@@ -301,26 +318,40 @@
       {
         "title": "Copy NHS number",
         "paragraphs": [
-          "There is another orange button next to the NHS number at the top of the page to copy and paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard"
+          "Again you can click this orange button <span class='far fa-copy btn-copy'></span> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
         ],
         "attributes": {
-          "data-el":"#title-left",
+          "data-el":"#title-left .btn-copy",
           "data-highlight":"true",
           "data-orientation":"bottom",
-          "data-enable-el": "#title-left",
+          "data-arrow": "4%",
+          "data-enable-el": "#title-left .btn-copy",
           "data-width":400
         }
       },
       {
         "title": "View all patients",
         "paragraphs": [
-          "You can find a list of all patients in your practice ordered by the number of KPIs they are violating (so you can concentrate on patients who have the most ‘bang for your buck’).",
-          "You can also search for patients according to their NHS number."
+          "This gives a list of all patients in your practice ordered by the number of KPIs they are violating (so you can concentrate on patients who have the most ‘bang for your buck’)."
         ],
         "attributes": {
-          "data-el":"#title-right",
+          "data-el":"#title-right #search-box > label",
           "data-highlight":"true",
-          "data-orientation":"bottom",
+          "data-orientation":"left",
+          "data-arrow": "10%",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Patient search",
+        "paragraphs": [
+          "You can search for patients according to their NHS number."
+        ],
+        "attributes": {
+          "data-el":"#title-right #search-box > span",
+          "data-highlight":"true",
+          "data-orientation":"left",
+          "data-arrow": "10%",
           "data-width":400
         }
       },
@@ -328,13 +359,14 @@
         "title": "Action plans tab",
         "paragraphs": [
           "Let's go to the final tab.",
-          "<span class='highlight bold orange'>Please click the Action Plans tab.</span>"
+          "<span class='highlight bold text-info'>Please click the Action Plans tab.</span>"
         ],
         "attributes": {
-          "data-el":"header .navbar",
+          "data-el":"#actionPlanTab",
           "data-enable-el": "#actionPlanTab",
           "data-highlight": "true",
           "data-orientation":"bottom",
+          "data-arrow": "20%",
           "data-width":400,
           "data-wait-for": "a[href='#agreedactions']",
           "data-wait-for-event": "click"
@@ -356,7 +388,8 @@
       {
         "title": "Action plans",
         "paragraphs": [
-          "Here you will find all the actions that you have clicked the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label> for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
+          "Here you will find all the actions you have clicked the <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label> for, or added yourself.",
+          "It also shows all the actions added by other members of staff in your practice, so you can build up a <span class='bold orange'>shared action plan</span>."
         ],
         "attributes": {
           "data-el":"#suggested-actions-table-wrapper",
@@ -370,7 +403,8 @@
       {
         "title": "Download action plans",
         "paragraphs": [
-          "You can download this action plan as a PDF and share with other members of your practice, or give out at a practice meeting. Beware this includes NHS numbers though."
+          "You can download this action plan as a PDF and share with other members of your practice, for example at a practice meeting.",
+          "<span class='bold orange'>Beware this includes NHS numbers.</span>"
         ],
         "attributes": {
           "data-el":"#downloadActionPlan",
@@ -385,8 +419,9 @@
       {
         "title": "Send a comment",
         "paragraphs": [
-          "If you have anything you want to tell us e.g. problems with data, suggestions for how PINGR could be improved, please send them to us by clicking this button.",
-          "If you’re telling us about a specific patient or part of the system, you don’t need to tell us, we’ll know what you mean because we can see what page you’ve clicked the button on. (Please don’t put NHS numbers in your comments!)"
+          "If there is <span class='bold orange'>anything you want to tell us</span> such as problems with data or suggestions for how PINGR could be improved, please send them to us by clicking this button.",
+          "If you’re telling us about a specific patient or part of the system, don't worry, we’ll know what you mean because we know what page you’re on.",
+          "<span class='bold orange'>Please don’t put NHS numbers in your comments!</span>"
         ],
         "attributes": {
           "data-el":"#suggs",
@@ -398,13 +433,25 @@
       },
       {
         "title": "User menu",
-        "paragraphs": ["You can change your password or email settings by clicking your name here"],
+        "paragraphs": ["You can change your password or email settings by clicking this link here."],
         "attributes": {
           "data-el":"#userMenu",
           "data-arrow":"16%",
           "data-highlight":"true",
           "data-orientation":"left",
           "data-enable-el": "#userMenu",
+          "data-width":400
+        } 
+      },
+      {
+        "title": "About us",
+        "paragraphs": ["If you want to find out more about PINGR, such as its methodology or the people who built it, click this link."],
+        "attributes": {
+          "data-el":"#about",
+          "data-arrow":"16%",
+          "data-highlight":"true",
+          "data-orientation":"left",
+          "data-enable-el": "#about",
           "data-width":400
         } 
       },
@@ -443,8 +490,8 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
-          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+          "The key thing PINGR does that other software does not, is that it <span class='bold orange'>suggests actions you could take to improve care.</span> These actions always appear on the left hand side of the screen.",
+          "You always see the <span class='bold orange'>top 3</span> suggested actions, but if there are more than that there will be a link at the bottom of the list that says <span class='bold orange'>'Show more than top 3 actions'</span>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -457,7 +504,7 @@
       {
         "title": "Actions - continued",
         "paragraphs": [
-          "The actions on this tab are related to the currently selected indicator and are things you can do at a practice rather than an individual level. They are based on your practice's data, NICE guidelines and the wider scientific literature.",
+          "The actions on this tab relate to the currently selected KPI, and are things you can do as a practice. They are based on your practice's data, NICE guidelines and the wider scientific literature.",
           "<span class='bold orange'>The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record.</span>"
         ],
         "attributes": {
@@ -471,8 +518,8 @@
       {
         "title": "Agree/Disagree",
         "paragraphs": [
-          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
-          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+          "<span class='bold orange'>If you agree with a suggested action</span>, you can click the <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label>. This will save it to your action plans tab (more on that later). It will also tell PINGR that it has made a good suggestion, which will help improve it.",
+          "<span class='bold orange'>If you disagree with a suggested action</span>, you can click the <label class='btn btn-danger btn-xs'><span class='fa fa-thumbs-down'></span></label>. You can then say why you disagree (though you don’t have to!). This will then remove the action so you don’t see it again, and also help PINGR improve the suggestions it makes (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -485,7 +532,7 @@
       {
         "title": "Add your own actions",
         "paragraphs": [
-          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
+          "You can also add your own actions <span class='bold orange'>if there are things you think need to happen but PINGR hasn’t suggested.</span> These can then be shown to others as a way of sharing best practice in Salford."
         ],
         "attributes": {
           "data-el":"#personalPlanTeam",
@@ -497,8 +544,9 @@
       {
         "title": "Patient list",
         "paragraphs": [
-          "There are orange buttons next to each NHS number that you can click to copy and then paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
-          "The list can be ordered according to a number of different columns, including patient age, and next annual review date"
+          "Here are all the patients not meeting the KPI.",
+          "There are orange buttons <span class='far fa-copy btn-copy'></span> next to each NHS number you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "The list can be <span class='bold orange'>ordered</span>, by clicking the arrows <span class='glyphicon glyphicon-sort' aria-hidden='true'></span>, according to a number of different columns, including patient age, and next annual review date"
         ],
         "attributes": {
           "data-el":"#patient-list_wrapper",
@@ -512,12 +560,13 @@
       {
         "title": "Download",
         "paragraphs": [
-          "This list can be downloaded as a PDF and shared or printed with other staff. Beware this includes NHS numbers though."
+          "This list can be <span class='bold orange'>downloaded</span> by clicking this button in order to be shared with others or printed. <span class='bold orange'>Beware this will include NHS numbers.</span>"
         ],
         "attributes": {
-          "data-el":"#patient-list_wrapper .dt-buttons",
+          "data-el":"#patient-list_wrapper .dt-buttons .btn-group",
           "data-highlight":"true",
           "data-orientation":"left",
+          "data-arrow":"10%",
           "data-enable-el": "#patient-list_wrapper .dt-buttons .btn-group",
           "data-width":400
         }
@@ -525,13 +574,28 @@
       {
         "title": "Charts",
         "paragraphs": [
-          "There is a bar chart that groups the patients in the list into categories associated with different actions. Hover over the bars to see what they mean. Click the bars to filter the patient list below to patients with that action only (the coloured boxes in the list indicate what actions are relevant to each patient).",
-          "Your current and future trend and comparison to other practices on this KPI can be accessed on tabs. "
+          "This bar chart groups patients in the list into categories associated with different actions. <span class='bold orange'>Hover</span> over the bars to see what they mean. <span class='bold orange'>Click</span> the bars to <span class='bold orange'>filter</span> the patient list below to patients with only that action (the coloured boxes in the list indicate what actions are relevant to each patient)."
         ],
         "attributes": {
           "data-el":"#right-panel",
           "data-highlight":"true",
           "data-orientation":"left",
+          "data-scroll-element": "#right-panel",
+          "data-scroll-value": 0,
+          "data-enable-el": "#breakdown-chart",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Trend and comparison",
+        "paragraphs": [
+          "Your <span class='orange bold'>current and future trend</span> and <span class='orange bold'>comparison to other practices</span> on this KPI can be accessed by clicking on the other tabs. "
+        ],
+        "attributes": {
+          "data-el":"#mainPage-tabs",
+          "data-highlight":"true",
+          "data-orientation":"bottom",
+          "data-align":"center",
           "data-scroll-element": "#right-panel",
           "data-scroll-value": 0,
           "data-width":400
@@ -540,7 +604,7 @@
       {
         "title": "Select a patient",
         "paragraphs": [
-          "To see information on an individual patient not meeting the KPI, simply click on the patient in the list and it will take you to the Patient tab."
+          "To see information on an individual patient not meeting the KPI, simply <span class='bold orange'>click</span> on the patient in the list and it will take you to the Patient tab."
         ],
         "attributes": {
           "data-el":"#patient-list_wrapper",
@@ -569,14 +633,15 @@
           "data-el":"#patientTab",
           "data-highlight":"true",
           "data-orientation":"right",
+          "data-arrow": "20%",
           "data-width":400
         }
       },
       {
         "title": "Actions",
         "paragraphs": [
-          "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
-          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+          "The key thing PINGR does that other software does not, is that it <span class='bold orange'>suggests actions you could take to improve care.</span> These actions always appear on the left hand side of the screen.",
+          "You always see the <span class='bold orange'>top 3</span> suggested actions, but if there are more than that there will be a link at the bottom of the list that says <span class='bold orange'>'Show more than top 3 actions'</span>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -589,7 +654,7 @@
       {
         "title": "Actions - continued",
         "paragraphs": [
-          "The actions on this tab relate to the currently selected patient and are based on the patient's data, NICE guidelines and the wider scientific literature.",
+          "The actions on this tab relate to the <span class='bold orange'>currently selected patient</span> and are based on the patient's data, NICE guidelines and the wider scientific literature.",
           "<span class='bold orange'>The actions suggested by PINGR are only suggestions. You, the user, must decide whether or not they should be carried out in practice. Although they are based on NICE guidelines and we take into account each individual patient’s situation (e.g. PINGR doesn’t suggest starting a medication that a patient is allergic to), they may be incorrect, for example if key information is missing from the patient record.</span>"
         ],
         "attributes": {
@@ -603,8 +668,8 @@
       {
         "title": "Agree/Disagree",
         "paragraphs": [
-          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
-          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+          "<span class='bold orange'>If you agree with a suggested action</span>, you can click the <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label>. This will save it to your action plans tab (more on that later). It will also tell PINGR that it has made a good suggestion, which will help improve it.",
+          "<span class='bold orange'>If you disagree with a suggested action</span>, you can click the <label class='btn btn-danger btn-xs'><span class='fa fa-thumbs-down'></span></label>. You can then say why you disagree (though you don’t have to!). This will then remove the action so you don’t see it again, and also help PINGR improve the suggestions it makes (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -617,7 +682,7 @@
       {
         "title": "Add your own actions",
         "paragraphs": [
-          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
+          "You can also add your own actions <span class='bold orange'>if there are things you think need to happen but PINGR hasn’t suggested.</span> These can then be shown to others as a way of sharing best practice in Salford."
         ],
         "attributes": {
           "data-el":"#personalPlanIndividual",
@@ -627,10 +692,10 @@
         }
       },
       {
-        "title": "Clinical coding",
+        "title": "Codes",
         "paragraphs": [
-          "If PINGR suggests a particular code to use in a patient record, there is an orange copy button to help you paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
-          "You can see more about why PINGR has suggested a particular action by clicking show more. This may include links to NICE guidelines and other helpful information e.g. patient leaflets."
+          "If PINGR suggests a particular code to use, there is an orange button <span class='far fa-copy btn-copy'></span> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "You can see why PINGR has suggested a particular action by clicking the link that says '<span class='bold orange'>show more</span>'. This may include links to <span class='bold orange'>NICE guidelines</span> and other helpful information e.g. <span class='bold orange'>patient leaflets</span>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -643,8 +708,8 @@
       {
         "title": "Timeline",
         "paragraphs": [
-          "There is a timeline at the bottom of the page that shows diagnoses, contacts with your practice, measurements, and medications. Hover over each one to get more information.",
-          "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include some data from the hospital too."
+          "This timeline shows a patient's diagnoses, contacts with your practice, measurements, and medications. <span class='bold orange'>Hover over each point to get more information</span>.",
+          "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include information from the <span class='bold orange'>hospital</span> too."
         ],
         "attributes": {
           "data-el":"#lifeline-chart",
@@ -659,9 +724,9 @@
       {
         "title": "Patient KPIs",
         "paragraphs": [
-          "There is a table at the top of the page that shows all KPIs the patient is meeting or not meeting.",
-          "There is a red exclude button to exclude the patient from that KPI in PINGR.",
-          "You can display actions for all or just one KPI by clicking the button next to exclude."
+          "This table shows all KPIs the patient is meeting or not.",
+          "There is a <span class='bold orange'>red exclude button</span> to remove the patient from that KPI in PINGR (this won't remove them from any QOF indicators though).",
+          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for this patient)"
         ],
         "attributes": {
           "data-el":"#processIndicatorsQS",
@@ -675,26 +740,40 @@
       {
         "title": "Copy NHS number",
         "paragraphs": [
-          "There is another orange button next to the NHS number at the top of the page to copy and paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard"
+          "Again you can click this orange button <span class='far fa-copy btn-copy'></span> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
         ],
         "attributes": {
-          "data-el":"#title-left",
+          "data-el":"#title-left .btn-copy",
           "data-highlight":"true",
           "data-orientation":"bottom",
-          "data-enable-el": "#title-left",
+          "data-arrow": "4%",
+          "data-enable-el": "#title-left .btn-copy",
           "data-width":400
         }
       },
       {
-        "title": "Search / View all patients",
+        "title": "Patient search",
         "paragraphs": [
-          "You can search for patients according to their NHS number direct from this page here.",
-          "<span class='highlight bold orange'>Click on the 'View all patients' link to view a list of all patients in your practice ordered by the number of KPIs they are violating.</span>"          
+          "You can search for patients according to their NHS number."
         ],
         "attributes": {
-          "data-el":"#title-right",
+          "data-el":"#title-right #search-box > span",
           "data-highlight":"true",
-          "data-orientation":"bottom",
+          "data-orientation":"left",
+          "data-arrow": "10%",
+          "data-width":400
+        }
+      },
+      {
+        "title": "View all patients",
+        "paragraphs": [
+          "This gives a list of all patients in your practice. <span class='highlight bold text-info'>Click the link to continue the tutorial.</span>"          
+        ],
+        "attributes": {
+          "data-el":"#title-right #search-box > label",
+          "data-highlight":"true",
+          "data-orientation":"left",
+          "data-arrow": "10%",
           "data-enable-el": "#search-box label a",
           "data-wait-for": "#search-box label a",
           "data-wait-for-event": "click",
@@ -804,7 +883,7 @@
       {
         "title": "Select a patient",
         "paragraphs": [
-          "Please now select a patient by clicking on a row in the table."
+          "<span class='highlight bold text-info'>Please now select a patient by clicking on a row in the table.</span>"
         ],
         "attributes": {
           "data-el":"#allPatientTable",
@@ -836,8 +915,8 @@
       {
         "title": "Actions",
         "paragraphs": [
-          "The key thing that PINGR does that other software does not, is that it suggests actions you could take to improve care. These actions always appear on the left hand side of the screen.",
-          "You always see the top 3 suggested actions, but if there are more than that there will be a link at the bottom of the list 'Show more than top 3 actions'."
+          "The key thing PINGR does that other software does not, is that it <span class='bold orange'>suggests actions you could take to improve care.</span> These actions always appear on the left hand side of the screen.",
+          "You always see the <span class='bold orange'>top 3</span> suggested actions, but if there are more than that there will be a link at the bottom of the list that says <span class='bold orange'>'Show more than top 3 actions'</span>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -864,8 +943,8 @@
       {
         "title": "Agree/Disagree",
         "paragraphs": [
-          "If you agree with a suggested action, you can click the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label>. This will then save it to your action plans tab (more on that later). It will also give PINGR feedback that it has made a good suggestion, which will help improve it.",
-          "If you disagree with a suggested action, you can click the <label class='btn btn-danger btn-xs btn-no btn-toggle'><span class='fa fa-2x fa-thumbs-down'></span></label>. You can then say why you disagree with it (though you don’t have to!). This will then remove the action so you don’t see it again for this patient, and also help PINGR improve the suggestions it makes in future (because it then knows what it’s done wrong)."
+          "<span class='bold orange'>If you agree with a suggested action</span>, you can click the <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label>. This will save it to your action plans tab (more on that later). It will also tell PINGR that it has made a good suggestion, which will help improve it.",
+          "<span class='bold orange'>If you disagree with a suggested action</span>, you can click the <label class='btn btn-danger btn-xs'><span class='fa fa-thumbs-down'></span></label>. You can then say why you disagree (though you don’t have to!). This will then remove the action so you don’t see it again, and also help PINGR improve the suggestions it makes (because it then knows what it’s done wrong)."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -878,7 +957,7 @@
       {
         "title": "Add your own actions",
         "paragraphs": [
-          "You can also add your own actions if there are things you think need to happen but PINGR hasn’t suggested. These can then be shared with other practices too as a way to share best practice in Salford."
+          "You can also add your own actions <span class='bold orange'>if there are things you think need to happen but PINGR hasn’t suggested.</span> These can then be shown to others as a way of sharing best practice in Salford."
         ],
         "attributes": {
           "data-el":"#personalPlanIndividual",
@@ -888,10 +967,10 @@
         }
       },
       {
-        "title": "Clinical coding",
+        "title": "Codes",
         "paragraphs": [
-          "If PINGR suggests a particular code to use in a patient record, there is an orange copy button to help you paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
-          "You can see more about why PINGR has suggested a particular action by clicking show more. This may include links to NICE guidelines and other helpful information e.g. patient leaflets."
+          "If PINGR suggests a particular code to use, there is an orange button <span class='far fa-copy btn-copy'></span> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "You can see why PINGR has suggested a particular action by clicking the link that says '<span class='bold orange'>show more</span>'. This may include links to <span class='bold orange'>NICE guidelines</span> and other helpful information e.g. <span class='bold orange'>patient leaflets</span>."
         ],
         "attributes": {
           "data-el":"#left-panel",
@@ -904,8 +983,8 @@
       {
         "title": "Timeline",
         "paragraphs": [
-          "There is a timeline at the bottom of the page that shows diagnoses, contacts with your practice, measurements, and medications. Hover over each one to get more information.",
-          "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include some data from the hospital too."
+          "This timeline shows a patient's diagnoses, contacts with your practice, measurements, and medications. <span class='bold orange'>Hover over each point to get more information</span>.",
+          "Because PINGR gets data from the Salford Integrated Record (SIR), this will also include information from the <span class='bold orange'>hospital</span> too."
         ],
         "attributes": {
           "data-el":"#lifeline-chart",
@@ -920,9 +999,9 @@
       {
         "title": "Patient KPIs",
         "paragraphs": [
-          "There is a table at the top of the page that shows all KPIs the patient is meeting or not meeting.",
-          "There is a red exclude button to exclude the patient from that KPI in PINGR.",
-          "You can display actions for all or just one KPI by clicking the button next to exclude."
+          "This table shows all KPIs the patient is meeting or not.",
+          "There is a <span class='bold orange'>red exclude button</span> to remove the patient from that KPI in PINGR (this won't remove them from any QOF indicators though).",
+          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for this patient)"
         ],
         "attributes": {
           "data-el":"#processIndicatorsQS",
@@ -936,26 +1015,40 @@
       {
         "title": "Copy NHS number",
         "paragraphs": [
-          "There is another orange button next to the NHS number at the top of the page to copy and paste into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard"
+          "Again you can click this orange button <span class='far fa-copy btn-copy'></span> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
         ],
         "attributes": {
-          "data-el":"#title-left",
+          "data-el":"#title-left .btn-copy",
           "data-highlight":"true",
           "data-orientation":"bottom",
-          "data-enable-el": "#title-left",
+          "data-arrow": "4%",
+          "data-enable-el": "#title-left .btn-copy",
           "data-width":400
         }
       },
       {
         "title": "View all patients",
         "paragraphs": [
-          "You can return to the list of all patients in your practice ordered by the number of KPIs they are violating by clicking here.",
-          "You can also search for patients according to their NHS number direct from this page here."
+          "You can return to the list of all patients in your practice, ordered by the number of KPIs they are violating, by clicking here."
         ],
         "attributes": {
-          "data-el":"#title-right",
+          "data-el":"#title-right #search-box > label",
           "data-highlight":"true",
-          "data-orientation":"bottom",
+          "data-orientation":"left",
+          "data-arrow": "10%",
+          "data-width":400
+        }
+      },
+      {
+        "title": "Patient search",
+        "paragraphs": [
+          "You can search for patients according to their NHS number."
+        ],
+        "attributes": {
+          "data-el":"#title-right #search-box > span",
+          "data-highlight":"true",
+          "data-arrow": "10%",
+          "data-orientation":"left",
           "data-width":400
         }
       }
@@ -970,7 +1063,8 @@
       {
         "title": "Action plans",
         "paragraphs": [
-          "Here you will find all the actions that you have clicked the <label class='btn btn-success btn-xs btn-yes btn-toggle'><span class='fa fa-2x fa-thumbs-up'></span></label> for, or added yourself. It also shows all the actions added by other members of staff in your practice, so you can build up a shared action plan for the practice."
+          "Here you will find all the actions you have clicked the <label class='btn btn-success btn-xs'><span class='fa fa-thumbs-up'></span></label> for, or added yourself.",
+          "It also shows all the actions added by other members of staff in your practice, so you can build up a <span class='bold orange'>shared action plan</span>."
         ],
         "attributes": {
           "data-el":"#suggested-actions-table-wrapper",
@@ -984,7 +1078,8 @@
       {
         "title": "Download action plans",
         "paragraphs": [
-          "You can download this action plan as a PDF and share with other members of your practice, or give out at a practice meeting. Beware this includes NHS numbers though."
+          "You can download this action plan as a PDF and share with other members of your practice, for example at a practice meeting.",
+          "<span class='bold orange'>Beware this includes NHS numbers.</span>"
         ],
         "attributes": {
           "data-el":"#downloadActionPlan",

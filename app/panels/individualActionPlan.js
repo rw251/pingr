@@ -687,7 +687,7 @@ const iap = {
             state.selectedPractice.ehr
           }!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ${
             isVision ? '#$1$2' : '$1'
-          } to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>`
+          } to clipboard." class="btn btn-xs btn-default btn-copy"><span class="far fa-copy"></span></button>`
         ));
       });
     $('#advice-list')
@@ -702,7 +702,7 @@ const iap = {
             state.selectedPractice.ehr
           }!</strong>" data-toggle="tooltip" data-placement="top" title="Copy ${
             isVision ? '#$1$2' : '$1'
-          } to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>`
+          } to clipboard." class="btn btn-xs btn-default btn-copy"><span class="far fa-copy"></span></button>`
         ));
       });
 
@@ -759,7 +759,7 @@ const iap = {
             content
           }" data-content="Copied!<br><strong>Use Ctrl + v to paste into ${
             state.selectedPractice.ehr
-          }!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="fa fa-clipboard"></span></button>`);
+          }!</strong>" data-toggle="tooltip" data-placement="top" title="Copy reasoning to clipboard." class="btn btn-xs btn-default btn-copy"><span class="far fa-copy"></span></button>`);
         }
       });
 

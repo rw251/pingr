@@ -281,7 +281,8 @@ const base = {
   },
 
   updateTab(tab, value, url) {
-    const tabElement = $(`#mainTab a[data-href="#${tab}"]`);
+    const tabId = tab === 'patient' ? 'patients' : tab;
+    const tabElement = $(`#mainTab a[data-href="#${tabId}"]`);
     tabElement.html(`${
       tabElement.text().split(':')[0]
     }:<br><span><strong>${value}</strong></span>`);
