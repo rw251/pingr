@@ -166,7 +166,7 @@
         "title": "Patient list",
         "paragraphs": [
           "Here are all the patients not meeting the KPI.",
-          "There are orange buttons <span class='far fa-copy btn-copy'></span> next to each NHS number you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "There are orange buttons <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> next to each NHS number you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
           "The list can be <span class='bold orange'>ordered</span>, again by clicking the arrows <span class='glyphicon glyphicon-sort' aria-hidden='true'></span> according to a number of different columns, including patient age, and next annual review date"
         ],
         "attributes": {
@@ -272,7 +272,7 @@
       {
         "title": "Codes",
         "paragraphs": [
-          "If PINGR suggests a particular code to use, there is an orange button <span class='far fa-copy btn-copy'></span> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "If PINGR suggests a particular code to use, there is an orange button <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
           "You can see why PINGR has suggested a particular action by clicking the link that says '<span class='bold orange'>show more</span>'. This may include links to <span class='bold orange'>NICE guidelines</span> and other helpful information e.g. <span class='bold orange'>patient leaflets</span>."
         ],
         "attributes": {
@@ -304,7 +304,7 @@
         "paragraphs": [
           "This table shows all KPIs the patient is meeting or not.",
           "There is a <span class='bold orange'>red exclude button</span> to remove the patient from that KPI in PINGR (this won't remove them from any QOF indicators though).",
-          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for this patient)"
+          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for a patient)"
         ],
         "attributes": {
           "data-el":"#processIndicatorsQS",
@@ -318,7 +318,7 @@
       {
         "title": "Copy NHS number",
         "paragraphs": [
-          "Again you can click this orange button <span class='far fa-copy btn-copy'></span> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
+          "Again you can click this orange button <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
         ],
         "attributes": {
           "data-el":"#title-left .btn-copy",
@@ -545,7 +545,7 @@
         "title": "Patient list",
         "paragraphs": [
           "Here are all the patients not meeting the KPI.",
-          "There are orange buttons <span class='far fa-copy btn-copy'></span> next to each NHS number you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "There are orange buttons <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> next to each NHS number you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
           "The list can be <span class='bold orange'>ordered</span>, by clicking the arrows <span class='glyphicon glyphicon-sort' aria-hidden='true'></span>, according to a number of different columns, including patient age, and next annual review date"
         ],
         "attributes": {
@@ -694,7 +694,7 @@
       {
         "title": "Codes",
         "paragraphs": [
-          "If PINGR suggests a particular code to use, there is an orange button <span class='far fa-copy btn-copy'></span> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "If PINGR suggests a particular code to use, there is an orange button <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
           "You can see why PINGR has suggested a particular action by clicking the link that says '<span class='bold orange'>show more</span>'. This may include links to <span class='bold orange'>NICE guidelines</span> and other helpful information e.g. <span class='bold orange'>patient leaflets</span>."
         ],
         "attributes": {
@@ -726,7 +726,7 @@
         "paragraphs": [
           "This table shows all KPIs the patient is meeting or not.",
           "There is a <span class='bold orange'>red exclude button</span> to remove the patient from that KPI in PINGR (this won't remove them from any QOF indicators though).",
-          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for this patient)"
+          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for a patient)"
         ],
         "attributes": {
           "data-el":"#processIndicatorsQS",
@@ -740,7 +740,7 @@
       {
         "title": "Copy NHS number",
         "paragraphs": [
-          "Again you can click this orange button <span class='far fa-copy btn-copy'></span> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
+          "Again you can click this orange button <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
         ],
         "attributes": {
           "data-el":"#title-left .btn-copy",
@@ -969,7 +969,7 @@
       {
         "title": "Codes",
         "paragraphs": [
-          "If PINGR suggests a particular code to use, there is an orange button <span class='far fa-copy btn-copy'></span> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
+          "If PINGR suggests a particular code to use, there is an orange button <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> next to the code you can click to <span class='bold orange'>copy</span>. You can then <span class='bold orange'>paste</span> this code into EMIS or Vision by pressing ‘Ctrl’ and ‘v’ on your keyboard.",
           "You can see why PINGR has suggested a particular action by clicking the link that says '<span class='bold orange'>show more</span>'. This may include links to <span class='bold orange'>NICE guidelines</span> and other helpful information e.g. <span class='bold orange'>patient leaflets</span>."
         ],
         "attributes": {
@@ -1001,7 +1001,7 @@
         "paragraphs": [
           "This table shows all KPIs the patient is meeting or not.",
           "There is a <span class='bold orange'>red exclude button</span> to remove the patient from that KPI in PINGR (this won't remove them from any QOF indicators though).",
-          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for this patient)"
+          "You can display actions for all or just one KPI by clicking the button to <span class='bold orange'>the left of 'exclude'</span>. (NB. This is only visible when there is more than one KPI for a patient)"
         ],
         "attributes": {
           "data-el":"#processIndicatorsQS",
@@ -1015,7 +1015,7 @@
       {
         "title": "Copy NHS number",
         "paragraphs": [
-          "Again you can click this orange button <span class='far fa-copy btn-copy'></span> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
+          "Again you can click this orange button <button class='btn btn-xs btn-default'><span class='far fa-copy btn-copy'></span></button> to <span class='bold orange'>copy</span> the NHS number. You can then <span class='bold orange'>paste</span> this number into EMIS or Vision to find the patient by pressing ‘Ctrl’ and ‘v’ on your keyboard."
         ],
         "attributes": {
           "data-el":"#title-left .btn-copy",
