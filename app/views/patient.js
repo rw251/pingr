@@ -42,7 +42,7 @@ const updateTabAndTitle = (
 
   let tabUrl = patientId;
   if (pathwayId && pathwayStage && standard) { tabUrl = [patientId, pathwayId, pathwayStage, standard].join('/'); }
-  base.updateTab('patients', patid, tabUrl);
+  base.updateTab('patient', patid, tabUrl);
 };
 
 const isNumber = n => Number.isNaN(Number(n));
@@ -96,7 +96,7 @@ const pv = {
       let tabUrl = patientId;
       if (pathwayId && pathwayStage && standard) { tabUrl = [patientId, pathwayId, pathwayStage, standard].join('/'); }
       base.updateTab(
-        'patients',
+        'patient',
         data.getNHS(state.selectedPractice._id, patientId),
         tabUrl
       );

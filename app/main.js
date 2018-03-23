@@ -37,8 +37,8 @@ const main = {
     log.event('patient-search', window.location.hash, [
       { key: 'patid', value: nhsNumberObject.id },
     ]);
-    window.history.pushState(null, null, `#patients/${nhsNumberObject.id}`);
-    template.loadContent(`#patients/${nhsNumberObject.id}`, true);
+    window.history.pushState(null, null, `#patient/${nhsNumberObject.id}`);
+    template.loadContent(`#patient/${nhsNumberObject.id}`, true);
   },
 
   wireUpSearchBox() {

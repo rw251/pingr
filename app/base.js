@@ -40,6 +40,8 @@ const base = {
 
   // get the currently selected tab
   getTab() {
+    const tab = $('#mainTab li.active').attr('id');
+    if (tab === 'patientTab' && window.location.hash.indexOf('patients') > -1) { return 'patientsTab'; }
     return $('#mainTab li.active').attr('id');
   },
 
@@ -279,9 +281,12 @@ const base = {
   },
 
   updateTab(tab, value, url) {
-    const tabElement = $(`#mainTab a[data-href="#${tab}"]`);
+    const tabId = tab === 'patient' ? 'patients' : tab;
+    const tabElement = $(`#mainTab a[data-href="#${tabId}"]`);
+
     const tabContent = tabElement.find('div');
     tabContent.html(`${tabContent.text().split(':')[0]}: <strong>${value}</strong>`);
+
     tabElement.data('href', `#${tab}/${url}`);
   },
 
