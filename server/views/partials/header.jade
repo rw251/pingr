@@ -8,79 +8,78 @@
       div
     .l4
       div
-section#main
-  header.container-fluid.hide-if-logged-out
-    nav.navbar.navbar-default.navbar-fixed-top.hidden-xs(role='navigation')
-      .navbar-inner
-        .container
-          ul#mainTab.nav.nav-tabs.pull-left(role='tablist')
-            li#overviewTab.active(role='presentation', data-id='overview')
-              a(href='#overview', data-href='#overview', role='tab')
-                div OVERVIEW
-              .nav-arrow
-            li#indicatorTab(role='presentation', data-id='indicator')
-              .nav-wedge
-              a(href='#indicators', data-href='#indicators', role='tab')
-                div INDICATOR
-              .nav-arrow
-            li#patientTab(role='presentation', data-id='patient')
-              .nav-wedge
-              a(href='#patients', data-href='#patients', role='tab')
-                div PATIENT
-              .nav-arrow
-            li#actionPlanTab(role='presentation', data-id='actions')
-              .nav-wedge
-              a(href='#agreedactions', data-href='#agreedactions', role='tab')
-                div ACTION PLANS
-          ul.nav.navbar-nav.navbar-right
-            li#tutorial
-              a(href='javascript:void(0);') Tutorial
-            li.visible-lg-inline
-              a.about-link(href='javascript:void(0);') About us
-            li#userMenu.dropdown
-              a.dropdown-toggle(data-toggle='dropdown', href='#')
-                span#user_fullname.hide-if-bit-small= fullname + " "
-                span#practice_name(style="display:none")= practice_name
-                span#practice_id(style="display:none")= practice_id
-                span#practice_system(style="display:none")= practice_system
-                span#last_login(style="display:none")= last_login
-                span#last_viewed_tutorial(style="display:none")= last_viewed_tutorial
-                span#practices(style="display:none")= JSON.stringify(practiceList)
-                span#selectedPractice(style="display:none")= JSON.stringify(selectedPractice)
-                i.fa.fa-user.fa-fw
-                i.fa.fa-caret-down
-              ul.dropdown-menu.dropdown-user
-                - if(admin)
-                  li
-                    a(href='admin')
-                      i.fa.fa-user.fa-fw
-                      |  User management
-                  li
-                    a(href='emailadmin')
-                      i.fa.fa-edit.fa-fw
-                      |  Email admin
-                  li
-                    a(href='events')
-                      i.fa.fa-list.fa-fw
-                      |  Event logs
-                  li.divider
+ header.hide-if-logged-out
+  nav.navbar.navbar-default.navbar-fixed-top.hidden-xs(role='navigation')
+    .navbar-inner
+      .container
+        ul#mainTab.nav.nav-tabs.pull-left(role='tablist')
+          li#overviewTab.active(role='presentation', data-id='overview')
+            a(href='#overview', data-href='#overview', role='tab')
+              div OVERVIEW
+            .nav-arrow
+          li#indicatorTab(role='presentation', data-id='indicator')
+            .nav-wedge
+            a(href='#indicators', data-href='#indicators', role='tab')
+              div INDICATOR
+            .nav-arrow
+          li#patientTab(role='presentation', data-id='patient')
+            .nav-wedge
+            a(href='#patients', data-href='#patients', role='tab')
+              div PATIENT
+            .nav-arrow
+          li#actionPlanTab(role='presentation', data-id='actions')
+            .nav-wedge
+            a(href='#agreedactions', data-href='#agreedactions', role='tab')
+              div ACTION PLANS
+        ul.nav.navbar-nav.navbar-right
+          li#tutorial
+            a(href='javascript:void(0);') Tutorial
+          li.visible-lg-inline
+            a.about-link(href='javascript:void(0);') About us
+          li#userMenu.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+              span#user_fullname.hide-if-bit-small= fullname + " "
+              span#practice_name(style="display:none")= practice_name
+              span#practice_id(style="display:none")= practice_id
+              span#practice_system(style="display:none")= practice_system
+              span#last_login(style="display:none")= last_login
+              span#last_viewed_tutorial(style="display:none")= last_viewed_tutorial
+              span#practices(style="display:none")= JSON.stringify(practiceList)
+              span#selectedPractice(style="display:none")= JSON.stringify(selectedPractice)
+              i.fa.fa-user.fa-fw
+              i.fa.fa-caret-down
+            ul.dropdown-menu.dropdown-user
+              - if(admin)
                 li
-                  a(href='changepassword')
-                    i.fa.fa-key.fa-fw
-                    |  Change password
+                  a(href='admin')
+                    i.fa.fa-user.fa-fw
+                    |  User management
                 li
-                  a(href='emailpreference')
-                    i.fa.fa-envelope.fa-fw
-                    |  Manage email preferences
-                li.divider.hidden-lg
-                li.hidden-lg
-                  a.about-link(href='javascript:void(0);') 
-                    i.fa.fa-users.fa-fw
-                    |  About us
+                  a(href='emailadmin')
+                    i.fa.fa-edit.fa-fw
+                    |  Email admin
+                li
+                  a(href='events')
+                    i.fa.fa-list.fa-fw
+                    |  Event logs
                 li.divider
-                li
-                  a(href='signout')
-                    i.fa.fa-sign-out-alt.fa-fw
-                    |  Logout
-            li
-              button#suggs.btn.btn-warning(style='margin:7px') Send a comment
+              li
+                a(href='changepassword')
+                  i.fa.fa-key.fa-fw
+                  |  Change password
+              li
+                a(href='emailpreference')
+                  i.fa.fa-envelope.fa-fw
+                  |  Manage email preferences
+              li.divider.hidden-lg
+              li.hidden-lg
+                a.about-link(href='javascript:void(0);') 
+                  i.fa.fa-users.fa-fw
+                  |  About us
+              li.divider
+              li
+                a(href='signout')
+                  i.fa.fa-sign-out-alt.fa-fw
+                  |  Logout
+          li
+            button#suggs.btn.btn-warning(style='margin:7px') Send a comment

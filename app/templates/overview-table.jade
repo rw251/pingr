@@ -8,7 +8,7 @@ div
   .tab-content    
     #outcomeIndicators.tab-pane.fade(class=!selectedTab || selectedTab==='#outcomeIndicators' ? "active in" : "",role="tabpanel")
       .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
-        .panel-body.pastel-pink.overview-table
+        .panel-body.pastel-pink.overview-table.no-padding
           table#overview-table-outcomes.table.table-condensed.order-column.hover
             thead
               tr(style='background-color:#fff9ff')
@@ -57,7 +57,7 @@ div
                     span.inlinesparkline= indicator.trend
     #processIndicators.tab-pane.fade(class=selectedTab==='#processIndicators' ? "active in" : "",role="tabpanel")
       .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
-        .panel-body.pastel-pink.overview-table
+        .panel-body.pastel-pink.overview-table.no-padding
           table#overview-table-process.table.table-condensed.order-column.hover
             thead
               tr(style='background-color:#fff9ff')

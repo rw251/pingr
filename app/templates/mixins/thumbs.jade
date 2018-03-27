@@ -6,5 +6,5 @@ mixin thumbs(suggestion)
       span.fa.hidden-lg.fa-thumbs-up
     label.btn.btn-xs.btn-no.btn-toggle.btn-danger(class=suggestion.agree===false ? 'active' : '', data-container='body', data-html='true',data-toggle='tooltip', data-placement='bottom', title='Click to disagree with this action and remove it from your suggested actions list ')
       input(type='checkbox', value='no', autocomplete='off', checked=suggestion.agree===false ? 'checked' : undefined)
-      span.fa.fa-2x.fa-thumbs-up.visible-lg-inline
+      span.fa.fa-2x.fa-thumbs-down.visible-lg-inline
       span.fa.hidden-lg.fa-thumbs-down

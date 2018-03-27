@@ -1121,6 +1121,21 @@ hr {
     padding-bottom:0;
 }
 
+.no-padding {
+    padding:0;
+}
+
+.input-group textarea {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-radius:0;
+}
+
+.input-group .btn {
+    border-width:0;
+}
+
 /* +--------------+ */
 /* |WIDTH SETTINGS| */
 /* +--------------+ */
@@ -1157,6 +1172,10 @@ body {
     padding-left: 5px;
 }
 
+.top-half-of-action-panel .panel-heading {
+    padding-left: 5px;
+}
+
 /* RESTRICTIVE CSS FOR 1200px SCREENS */
 @media (min-width: 1190px) {
     .starter-template {
@@ -1173,6 +1192,9 @@ body {
     .table > tbody > tr > td {
         padding-left: 8px;
         padding-right: 8px;
+    }
+    .top-half-of-action-panel .panel-heading {
+        padding-left: 8px;
     }
 }
 
