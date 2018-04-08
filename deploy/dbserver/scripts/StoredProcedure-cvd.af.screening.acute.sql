@@ -627,7 +627,7 @@ insert into #reasonProportions
 select c.pracID, 'pulseRateChecked', 
 	SUM(case when numerator = 0 and latestPulseRateCodeDate >= latestAnySxCodeDate then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator in (0,1) then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestPulseRateCodeDate >= latestAnySxCodeDate then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestPulseRateCodeDate >= latestAnySxCodeDate then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -642,7 +642,7 @@ union
 select c.pracID, 'bpChecked', 
 	SUM(case when numerator = 0 and latestBpCodeDate >= latestAnySxCodeDate then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator in (0,1) then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestBpCodeDate >= latestAnySxCodeDate then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestBpCodeDate >= latestAnySxCodeDate then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -657,7 +657,7 @@ union
 select c.pracID, 'annualReview', 
 	SUM(case when numerator = 0 and latestAnnualReviewCodeDate >= latestAnySxCodeDate then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator in (0,1) then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and (latestAnnualReviewCodeDate is null or latestAnnualReviewCodeDate < latestAnySxCodeDate) then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and (latestAnnualReviewCodeDate is null or latestAnnualReviewCodeDate < latestAnySxCodeDate) then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -672,7 +672,7 @@ union
 select e.pracID, 'fluVaccs', 
 	SUM(case when indicatorId = 'cvd.af.screeningAcute' and actionCat = 'flu vacc' then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator in (0,1) then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator in (0,1) then 1.0 else 0.0 end),0),
 	SUM(case when indicatorId = 'cvd.af.screeningAcute' and actionCat = 'flu vacc' then 1.0 else 0.0 end),	
 	SUM(case when indicatorId = 'cvd.af.screeningAcute' and actionCat = 'flu vacc' then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -687,7 +687,7 @@ union
 select c.pracID, 'sob',
 	SUM(case when numerator = 0 and latestSobCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator = 0 then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator = 0 then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestSobCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestSobCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -701,7 +701,7 @@ union
 select c.pracID, 'palps', 
 	SUM(case when numerator = 0 and latestPalpsCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator = 0 then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator = 0 then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestPalpsCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestPalpsCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -715,7 +715,7 @@ union
 select c.pracID, 'Syncope', 
 	SUM(case when numerator = 0 and latestSyncopeCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator = 0 then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator = 0 then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestSyncopeCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestSyncopeCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -729,7 +729,7 @@ union
 select c.pracID, 'ChestPain', 
 	SUM(case when numerator = 0 and latestChestPainCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator = 0 then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator = 0 then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestChestPainCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestChestPainCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -743,7 +743,7 @@ union
 select c.pracID, 'StrokeIsch', 
 	SUM(case when numerator = 0 and latestStrokeIschCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator = 0 then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator = 0 then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestStrokeIschCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestStrokeIschCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -757,7 +757,7 @@ union
 select c.pracID, 'Tia', 
 	SUM(case when numerator = 0 and latestTiaCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator = 0 then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator = 0 then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestTiaCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestTiaCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
@@ -771,7 +771,7 @@ union
 select c.pracID, 'Hf', 
 	SUM(case when numerator = 0 and latestHfCode is not null then 1.0 else 0.0 end)
 	/
-	SUM(case when numerator = 0 then 1.0 else 0.0 end),
+	NULLIF(SUM(case when numerator = 0 then 1.0 else 0.0 end),0),
 	SUM(case when numerator = 0 and latestHfCode is not null then 1.0 else 0.0 end),	
 	SUM(case when numerator = 0 and latestHfCode is not null then 1.0 else 0.0 end)*@ptPercPoints
 from #numerator as a
