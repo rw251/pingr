@@ -48,6 +48,7 @@ const UserSchema = new Schema({
     default: ['NO_REVIEW', 'AFTER_APRIL', 'REVIEW_YET_TO_HAPPEN'],
   },
   registrationCode: String,
+
 });
 
 // Don't change to '=>' syntax as we need 'this' to be the user

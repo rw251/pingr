@@ -250,6 +250,15 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] VALUES ('Starting pingr.meds.azt.monitor', GETDATE());
+EXEC	@return_value = [dbo].[pingr.meds.azt.monitor]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
 INSERT INTO [pingr.sql.log] VALUES ('Stored procedures completed', GETDATE());
 
 							---------------------------------------------------------------
