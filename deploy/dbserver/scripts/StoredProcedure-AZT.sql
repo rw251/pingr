@@ -43,6 +43,7 @@ select s.PatID, latestAZTCodeDate from SIR_ALL_Records_Narrow as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestAZTCodeDate from SIR_ALL_Records_Narrow
 		where ReadCode in (select code from codeGroups where [group] = 'azt')
+		and EntryDate >= @startDate
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestAZTCodeDate = s.EntryDate
 where ReadCode in (select code from codeGroups where [group] = 'azt')
@@ -54,7 +55,7 @@ group by s.PatID, latestAZTCodeDate
 IF OBJECT_ID('tempdb..#denominator') IS NOT NULL DROP TABLE #denominator
 CREATE TABLE #denominator (PatID int);
 insert into #denominator
-select a.PatID from #AZT
+select PatID from #AZT
 
 
 										-----------------------

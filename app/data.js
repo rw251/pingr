@@ -14,6 +14,7 @@ const dt = {
     ckd: 'CKD',
     ckdAndDm: 'Diabetes',
     ckdAndProt: 'CKD',
+    meds: 'Medication',
   },
 
   pathwayNames: {},
