@@ -94,8 +94,16 @@ module.exports = {
     });
   },
   // Get list of indicators for a single practice - for use on the overview screen
-  list(practiceId, done) {
-    Indicator.find({ practiceId }, (err, indicators) => {
+  list(practiceId, user, done) {
+    const query = { practiceId };
+    if (user.viewAllIndicators === false) {
+      if (user.indicatorIdsToInclude.length > 0) {
+        query.id = { $in: user.indicatorIdsToInclude };
+      } else if (user.indicatorIdsToExclude.length > 0) {
+        query.id = { $nin: user.indicatorIdsToExclude };
+      }
+    }
+    Indicator.find(query, (err, indicators) => {
       if (err) {
         console.log(err);
         return done(new Error(`Error finding indicator list for practice: ${practiceId}`));
@@ -191,13 +199,19 @@ module.exports = {
   },
 
   // Get team actions for a single indicator or all indicators
-  getActions(practiceId, indicatorId, done) {
+  getActions(practiceId, indicatorId, user, done) {
     // console.log(practiceId, indicatorId);
     const searchObject = { practiceId };
     actions.getTeam({ practiceId, patientId: { $exists: false } }, (err, actionList) => {
       if (err) return done(err);
       if (indicatorId) {
         searchObject.id = indicatorId;
+      } else if (user.viewAllIndicators === false) {
+        if (user.indicatorIdsToInclude.length > 0) {
+          searchObject.id = { $in: user.indicatorIdsToInclude };
+        } else if (user.indicatorIdsToExclude.length > 0) {
+          searchObject.id = { $nin: user.indicatorIdsToExclude };
+        }
       }
       return Indicator.find(
         searchObject,

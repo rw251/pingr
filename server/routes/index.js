@@ -533,17 +533,27 @@ module.exports = (passport) => {
     });
   });
   router.get('/api/action/team/:practiceId/:indicatorId?', isAuthenticated, isUserOkToViewPractice, (req, res) => {
-    indicators.getActions(req.params.practiceId, req.params.indicatorId, (err, actionList) => {
-      if (err) res.send(err);
-      else res.send(actionList);
-    });
+    indicators.getActions(
+      req.params.practiceId,
+      req.params.indicatorId,
+      req.user,
+      (err, actionList) => {
+        if (err) res.send(err);
+        else res.send(actionList);
+      }
+    );
   });
   router.get('/api/action/individual/:practiceId/:patientId?', isAuthenticated, isUserOkToViewPractice, (req, res) => {
-    patients.getActions(req.params.practiceId, req.params.patientId, (err, actionList) => {
-      if (err) res.send(err);
-      if (req.params.patientId) res.send(actionList[req.params.patientId]);
-      else res.send(actionList);
-    });
+    patients.getActions(
+      req.params.practiceId,
+      req.params.patientId,
+      req.user,
+      (err, actionList) => {
+        if (err) res.send(err);
+        if (req.params.patientId) res.send(actionList[req.params.patientId]);
+        else res.send(actionList);
+      }
+    );
   });
   router.get('/api/action/all/:practiceId', isAuthenticated, isUserOkToViewPractice, (req, res) => {
     actions.listAgreedWith(req.params.practiceId, (err, actionList) => {
@@ -610,6 +620,7 @@ module.exports = (passport) => {
   router.get('/api/WorstPatients/:practiceId/:skip/:limit', isAuthenticated, isUserOkToViewPractice, (req, res) => {
     patients.getAllPatientsPaginated(
       req.params.practiceId,
+      req.user,
       +req.params.skip,
       +req.params.limit,
       (err, patientList) => {
@@ -619,7 +630,7 @@ module.exports = (passport) => {
   });
   // Get a single patient's details - for use on the patient screen
   router.get('/api/PatientDetails/:patientId', isAuthenticated, (req, res) => {
-    patients.get(req.params.patientId, (err, patient) => {
+    patients.get(req.params.patientId, req.user, (err, patient) => {
       res.send(patient);
     });
   });
@@ -650,14 +661,14 @@ module.exports = (passport) => {
   router.get('/api/ListOfIndicatorsForPractice', isAuthenticated, (req, res) => {
     const authorisedPractices = req.user.practices.filter(v => v.authorised);
     const practiceId = authorisedPractices.length > 0 ? authorisedPractices[0].id : null;
-    indicators.list(practiceId, (err, indicatorList) => {
+    indicators.list(practiceId, req.user, (err, indicatorList) => {
       res.send(indicatorList);
     });
   });
 
   // Get list of indicators for a single practice (inc option) - for use on the overview screen
   router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, isUserOkToViewPractice, (req, res) => {
-    indicators.list(req.params.practiceId, (err, indicatorList) => {
+    indicators.list(req.params.practiceId, req.user, (err, indicatorList) => {
       res.send(indicatorList);
     });
   });
@@ -683,7 +694,7 @@ module.exports = (passport) => {
   // });
   // Get text
   router.get('/api/Text', isAuthenticated, (req, res) => {
-    text.get((err, textObj) => {
+    text.get(req.user, (err, textObj) => {
       res.send(textObj);
     });
   });

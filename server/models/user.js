@@ -49,6 +49,12 @@ const UserSchema = new Schema({
   },
   registrationCode: String,
 
+  // whether or not the user sees all indicators
+  viewAllIndicators: Boolean,
+  // if above is false and this is not null then include these indicators
+  indicatorIdsToInclude: [String],
+  // if above is false and this is not null then exclude these indicators
+  indicatorIdsToExclude: [String],
 });
 
 // Don't change to '=>' syntax as we need 'this' to be the user

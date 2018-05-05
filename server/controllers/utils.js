@@ -55,7 +55,7 @@ module.exports = {
         25,
         (getErr, patientList) => {
           if (getErr) return callback(getErr);
-          return indicators.list(practiceId, (listErr, indicatorList) => {
+          return indicators.list(practiceId, user, (listErr, indicatorList) => {
             if (listErr) return callback(listErr);
             const processedIndicators = processIndicators(indicatorList);
             const processedPatients = processPatients(patientList);
