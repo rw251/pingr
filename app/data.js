@@ -489,7 +489,7 @@ const dt = {
         title: 'Next review date',
         type: 'date-uk',
         orderSequence: ['desc', 'asc'],
-        tooltip: 'Next review date',
+        tooltip: 'Next annual chronic disease review. This is calculated as 1 year after the last review. "?" - means no review has taken place before.',
         isSorted: false,
         direction: 'sort-asc',
       });
