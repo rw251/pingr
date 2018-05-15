@@ -96,11 +96,11 @@ insert into #latestUECode
 select s.PatID, latestUECodeDate, MAX(Rubric), case when MAX(Source) != MIN(Source) then 'GP' when MAX(Source) = 'salfordt' then 'Hospital' else 'GP' end from SIR_ALL_Records as s
 	inner join (
 		select PatID, MAX(EntryDate) as latestUECodeDate from SIR_ALL_Records_Narrow
-		where ReadCode in (select code from codeGroups where [group] = 'U+E')
+		where ReadCode in (select code from codeGroups where [group] in ('U+E', 'NA_LEVEL', 'K_LEVEL', 'UREA_LEVEL', 'EGFR_LEVEL'))
 		and PatID in (select PatID from #denominator)
 		group by PatID
 	) sub on sub.PatID = s.PatID and sub.latestUECodeDate = s.EntryDate
-where ReadCode in (select code from codeGroups where [group] = 'U+E')
+where ReadCode in (select code from codeGroups where [group] in ('U+E', 'NA_LEVEL', 'K_LEVEL', 'UREA_LEVEL', 'EGFR_LEVEL'))
 and s.PatID in (select PatID from #denominator)
 group by s.PatID, latestUECodeDate
 
