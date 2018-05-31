@@ -1,12 +1,12 @@
 # PINGR
 
-How to setup deployment..
+## Testing different screen sizes
 
-```
-mkdir dist-test
-cd dist-test
-git init
-git remote add origin git@github.com:rw251/pingr-test.git
-git pull origin gh-pages
-git checkout gh-pages
-```
+We currently test the following screen sizes
+
+Small laptop - 1024x768 (viewport 1024 x 638)
+Medium laptop 1 - 13664x768 (viewport 1366 x 638)
+Medium laptop 2 - 1280x800 (viewport 1280 x 670)
+Widescreen laptop - 1920x1080 (viewport 1920 x 950)
+
+Add these in google dev tools for easy testing.
