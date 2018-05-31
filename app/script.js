@@ -8,6 +8,8 @@ require('datatables.net-buttons-bs')(window, $);
 require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
 require('datatables.net-buttons/js/buttons.html5.js')(window, $);
 
+const abConfig = require('../shared/abConfig');
+
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.
  * Each stage gets a single panel on the front screen.
@@ -109,6 +111,19 @@ const App = {
     });
 
     getServerParameters();
+
+    // if (abConfig.abTestTest.isRunning) {
+    const group = abConfig.assignUser(abConfig.abTestTest.name, lookup.userName);
+    console.log(`User ${lookup.userName} is in group ${group}`);
+    if (group === abConfig.groups.feature) {
+      if ($('#abTestCss').length === 0) {
+        $('head').append('<style id="abTestCss" type="text/css"></style>');
+      }
+
+      $('#abTestCss').text('.btn.btn-xs.btn-yes.btn-toggle.btn-success{ background-color: blue }');
+    }
+
+    // }
 
     main.getInitialData(() => {
       gotInitialData = true;

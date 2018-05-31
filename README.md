@@ -1,12 +1,7 @@
 # PINGR
 
-How to setup deployment..
+## A/B testing
 
-```
-mkdir dist-test
-cd dist-test
-git init
-git remote add origin git@github.com:rw251/pingr-test.git
-git pull origin gh-pages
-git checkout gh-pages
-```
+Assume every test has two groups - "baseline" and "feature". "baseline" get the existing behaviour, "feature" get the new feature.
+
+Each test must first get an entry in server/abConfig.js
