@@ -11,6 +11,7 @@ const indicators = require('../controllers/indicators.js');
 const events = require('../controllers/events.js');
 const actions = require('../controllers/actions.js');
 const emails = require('../controllers/emails.js');
+const testCtrl = require('../controllers/tests');
 const emailSender = require('../email-sender.js');
 const text = require('../controllers/text.js');
 const utils = require('../controllers/utils.js');
@@ -188,6 +189,11 @@ module.exports = (passport) => {
         }
       });
     });
+  });
+
+  router.get('/ab', isAuthenticated, isAdmin, async (req, res) => {
+    const tests = await testCtrl.list();
+    res.render('pages/ab.jade', { tests });
   });
 
   // User forgets password

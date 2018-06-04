@@ -113,14 +113,10 @@ const App = {
     getServerParameters();
 
     // if (abConfig.abTestTest.isRunning) {
-    const group = abConfig.assignUser(abConfig.abTestTest.name, lookup.userName);
+    const group = abConfig.assignPerUser(abConfig.abTestTest, lookup.userName);
     console.log(`User ${lookup.userName} is in group ${group}`);
     if (group === abConfig.groups.feature) {
-      if ($('#abTestCss').length === 0) {
-        $('head').append('<style id="abTestCss" type="text/css"></style>');
-      }
-
-      $('#abTestCss').text('.btn.btn-xs.btn-yes.btn-toggle.btn-success{ background-color: blue }');
+      abConfig.abTestTest.featureCode($);
     }
 
     // }
