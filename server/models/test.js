@@ -2,14 +2,35 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+const statuses = {
+  new: 'new',
+  configured: 'configured',
+  running: 'running',
+  paused: 'paused',
+  complete: 'complete',
+  archived: 'archived',
+};
+
+const randomisationTypes = {
+  perSession: 'perSession',
+  perUser: 'perUser',
+  perPractice: 'perPractice',
+};
+
+
 // For A/B tests
 const TestSchema = new Schema({
-  _id: String,
+  _id: Number,
   name: String,
   description: String,
-  startDate: { type: Date, default: Date.now },
-  typeOfRandomisation: { type: String, enum: ['perSession', 'perUser', 'perPractice'] },
-  isRunning: { type: Boolean, default: false },
+  status: { type: String, enum: Object.keys(statuses), default: statuses.new },
+  startDate: Date,
+  randomisationType: { type: String, enum: Object.keys(randomisationTypes) },
+  benchmarkId: Number,
 });
 
-module.exports = mongoose.model('Test', TestSchema);
+module.exports = {
+  statuses,
+  randomisationTypes,
+  Test: mongoose.model('Test', TestSchema),
+};

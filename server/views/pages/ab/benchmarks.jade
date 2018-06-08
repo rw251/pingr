@@ -1,0 +1,24 @@
+include ../../partials/head.jade
+include ../../mixins/toolbar.jade
+.container.starter-template-high(style='background:white')
+  +toolbar('Benchmarks', [{btn:'btn-info',path:'/ab',text:'Back to A/B Test list'}])
+  if message && message.error
+    .alert.alert-danger.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.error
+  if message && message.success
+    .alert.alert-success.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.success
+  table.table
+    thead
+      tr
+        th Description
+        th Value
+    tbody
+      each benchmark in benchmarks
+        tr
+          td= benchmark.description
+          td= benchmark.value

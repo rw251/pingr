@@ -34,5 +34,7 @@ module.exports = {
     templates: { joinTo: 'app.js' },
   },
 
+  server: { port: 3883 },
+
   plugins: { babel: { presets: [['env', { targets: { browsers: ['ie >= 11'] } }]] } },
 };

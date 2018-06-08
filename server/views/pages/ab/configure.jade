@@ -1,0 +1,38 @@
+include ../../partials/head.jade
+include ../../mixins/toolbar.jade
+.container.starter-template-high
+  +toolbar('A/B Test Configuration', [{btn:'btn-info',path:'/ab',text:'Back to test list'}])
+  if message && message.error
+    .alert.alert-danger.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.error
+  if message && message.success
+    .alert.alert-success.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.success
+  form(action='/ab/config/'+test._id, method='post')
+    h3 A/B Test
+    .form-group.input-group
+      span.input-group-addon
+        i.fa.fa-stethoscope
+      select#selBenchmark.form-control.selectpicker(name='benchmarkId', required='',title='Select benchmark')
+        option(selected='', disabled='') Select benchmark
+        each benchmark in benchmarks
+          option(value=benchmark.id, selected=test.benchmarkId===benchmark.id)= benchmark.description + '(' + benchmark.value + ')'
+    .form-group.input-group
+      span.input-group-addon
+        i.fa.fa-stethoscope
+      select#selRandomisation.form-control.selectpicker(name='randomisationType', required='',title='Select randomisation type')
+        option(selected='', disabled='') Select randomisation type
+        option(value='perSession', selected=test.status==='perSession') Per Session
+        option(value='perUser', selected=test.status==='perUser') Per User
+        option(value='perPractice', selected=test.status==='perPractice') Per Practice
+    .form-group.input-group
+      span.input-group-addon
+        i.fa.fa-user
+      input.form-control(type='text', name='startDate', placeholder='Start Date (yyyy-mm-dd)', required='', autofocus='', value=test.startDate)
+    button.btn.btn-purple.btn-block.history(type='submit')
+      | Configure 
+      span.fa.fa-arrow-circle-right
