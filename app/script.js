@@ -113,11 +113,11 @@ const App = {
     getServerParameters();
 
     // if (abConfig.abTestTest.isRunning) {
-    const group = abConfig.assignPerUser(abConfig.abTestTest, lookup.userName);
-    console.log(`User ${lookup.userName} is in group ${group}`);
-    if (group === abConfig.groups.feature) {
-      abConfig.abTestTest.featureCode($);
-    }
+    // const group = abConfig.assignPerUser(abConfig.abTestTest, lookup.userName);
+    // console.log(`User ${lookup.userName} is in group ${group}`);
+    // if (group === abConfig.groups.feature) {
+    //   abConfig.abTestTest.featureCode($);
+    // }
 
     // }
 
