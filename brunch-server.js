@@ -108,6 +108,7 @@ module.exports = (PORT, PATH, CALLBACK) => {
   let port = PORT || config.server.port;
   if (!port) port = process.env.PORT || '3000';
   app.set('port', port);
+  console.log(`port:${port}`);
 
   /**
    * Create HTTP server.

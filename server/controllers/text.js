@@ -33,7 +33,7 @@ module.exports = {
           Object.keys(text.pathways).forEach((pathway) => {
             Object.keys(text.pathways[pathway]).forEach((stage) => {
               Object.keys(text.pathways[pathway][stage].standards).forEach((standard) => {
-                if (user.indicatorIdsToInclude.indexOf(`${pathway}.${stage}.${standard}`) > -1) {
+                if (user.indicatorIdsToExclude.indexOf(`${pathway}.${stage}.${standard}`) > -1) {
                   delete text.pathways[pathway][stage].standards[standard];
                   if (Object.keys(text.pathways[pathway][stage].standards).length === 0) {
                     delete text.pathways[pathway][stage];
