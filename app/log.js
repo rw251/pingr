@@ -2,6 +2,8 @@ const notify = require('./notify');
 const data = require('./data');
 const lookup = require('./lookup');
 
+let eventFailCount = 0;
+
 const log = {
   reason: {},
 
@@ -9,14 +11,25 @@ const log = {
     log.event('navigate', toUrl, dataProp);
   },
 
-  event(type, url, dataProp) {
-    const dataToSend = { event: { type, url, dataProp } };
+  event(type, url, dataProp, xpath) {
+    const dataToSend = { event: { type, url, data: dataProp } };
+    if (xpath && xpath.length > 0) dataToSend.event.xpath = xpath;
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.event.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url: '/api/event',
       data: JSON.stringify(dataToSend),
       success() {
-        // console.log(d);
+        eventFailCount = 0;
+      },
+      error() {
+        eventFailCount += 1;
+        if (eventFailCount > 5) {
+          // We've had too many errors from the back end - could be the server
+          // is down, or has restarted and the session has ended. Either way
+          // a page refresh might help
+          window.location.reload();
+        }
       },
       dataType: 'json',
       contentType: 'application/json',

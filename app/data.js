@@ -23,6 +23,9 @@ const dt = {
   excludedPatients: {},
   excludedPatientsByIndicator: {},
 
+  // don't cache always fetch
+  getRunningTests: callback => $.getJSON('/ab/running', tests => callback(tests)),
+
   getNHS: (practiceId, patientId) => {
     if (
       dt.patLookup &&

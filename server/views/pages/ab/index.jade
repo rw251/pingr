@@ -18,6 +18,7 @@ include ../../mixins/toolbar.jade
         th Name
         th Description
         th Start date
+        th Benchmark
         th Type of randomisation
         th Status
         th(style='width:280px') Actions
@@ -26,7 +27,8 @@ include ../../mixins/toolbar.jade
         tr
           td= test.name
           td= test.description
-          td= test.startDate
+          td= test.startDate.toISOString().substr(0,10)
+          td= test.benchmark
           td= test.randomisationType
           td= test.status
           td

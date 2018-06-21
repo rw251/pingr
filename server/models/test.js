@@ -1,21 +1,7 @@
 const mongoose = require('mongoose');
+const { statuses, randomisationTypes } = require('../../shared/ab/config');
 
 const { Schema } = mongoose;
-
-const statuses = {
-  new: 'new',
-  configured: 'configured',
-  running: 'running',
-  paused: 'paused',
-  complete: 'complete',
-  archived: 'archived',
-};
-
-const randomisationTypes = {
-  perSession: 'perSession',
-  perUser: 'perUser',
-  perPractice: 'perPractice',
-};
 
 
 // For A/B tests
@@ -29,8 +15,4 @@ const TestSchema = new Schema({
   benchmarkId: Number,
 });
 
-module.exports = {
-  statuses,
-  randomisationTypes,
-  Test: mongoose.model('Test', TestSchema),
-};
+module.exports = mongoose.model('Test', TestSchema);

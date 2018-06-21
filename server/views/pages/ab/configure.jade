@@ -26,9 +26,9 @@ include ../../mixins/toolbar.jade
         i.fa.fa-stethoscope
       select#selRandomisation.form-control.selectpicker(name='randomisationType', required='',title='Select randomisation type')
         option(selected='', disabled='') Select randomisation type
-        option(value='perSession', selected=test.status==='perSession') Per Session
-        option(value='perUser', selected=test.status==='perUser') Per User
-        option(value='perPractice', selected=test.status==='perPractice') Per Practice
+        option(value='perSession', selected=test.randomisationType==='perSession') Per Session
+        option(value='perUser', selected=test.randomisationType==='perUser') Per User
+        option(value='perPractice', selected=test.randomisationType==='perPractice') Per Practice
     .form-group.input-group
       span.input-group-addon
         i.fa.fa-user

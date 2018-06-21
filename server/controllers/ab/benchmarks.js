@@ -1,5 +1,14 @@
 const Event = require('../../models/event');
 
+const benchmarkNames = [
+  'Agrees clicked per session in last 90 days.',
+  'Disagrees clicked per session in last 90 days.',
+  'Thumbs clicked per session in last 90 days.',
+  'Agrees clicked per minute in last 90 days.',
+  'Disagrees clicked per minute in last 90 days.',
+  'Thumbs clicked per minute in last 90 days.',
+];
+
 const getNDaysAgo = (n) => {
   const today = new Date();
   const nDaysAgo = new Date();
@@ -44,17 +53,17 @@ const eventsPerMinuteLastNDays = (eventTypes, n, id, description, callback) => {
 };
 
 const agreesPerSessionLastNDays = (n, callback) =>
-  eventsPerSessionLastNDays(['agree'], n, 1, `Agrees clicked per session in last ${n} days.`, callback);
+  eventsPerSessionLastNDays(['agree'], n, 1, benchmarkNames[0], callback);
 const disagreesPerSessionLastNDays = (n, callback) =>
-  eventsPerSessionLastNDays(['disagree'], n, 2, `Disagrees clicked per session in last ${n} days.`, callback);
+  eventsPerSessionLastNDays(['disagree'], n, 2, benchmarkNames[1], callback);
 const thumbsPerSessionLastNDays = (n, callback) =>
-  eventsPerSessionLastNDays(['agree', 'disagree'], n, 3, `Thumbs clicked per session in last ${n} days.`, callback);
+  eventsPerSessionLastNDays(['agree', 'disagree'], n, 3, benchmarkNames[2], callback);
 const agreesPerMinuteLastNDays = (n, callback) =>
-  eventsPerMinuteLastNDays(['agree'], n, 4, `Agrees clicked per minute in last ${n} days.`, callback);
+  eventsPerMinuteLastNDays(['agree'], n, 4, benchmarkNames[3], callback);
 const disagreesPerMinuteLastNDays = (n, callback) =>
-  eventsPerMinuteLastNDays(['disagree'], n, 5, `Disagrees clicked per minute in last ${n} days.`, callback);
+  eventsPerMinuteLastNDays(['disagree'], n, 5, benchmarkNames[4], callback);
 const thumbsPerMinuteLastNDays = (n, callback) =>
-  eventsPerMinuteLastNDays(['agree', 'disagree'], n, 6, `Thumbs clicked per minute in last ${n} days.`, callback);
+  eventsPerMinuteLastNDays(['agree', 'disagree'], n, 6, benchmarkNames[5], callback);
 
 const go = (n, func) => {
   func(n, (err, output) => output.result);
@@ -76,6 +85,7 @@ const getAll = (callback) => {
 };
 
 module.exports = {
+
   agreesPerSessionLastNDays: n => go(n, agreesPerSessionLastNDays),
   disagreesPerSessionLastNDays: n => go(n, disagreesPerSessionLastNDays),
   thumbsPerSessionLastNDays: n => go(n, thumbsPerSessionLastNDays),
@@ -90,4 +100,6 @@ module.exports = {
   },
 
   getAll,
+
+  nameFromId: id => benchmarkNames[id - 1],
 };

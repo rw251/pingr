@@ -12,6 +12,8 @@ module.exports = {
     router.get('/ab/progress/:testId', isAuthenticated, isAdmin, ctl.progress);
     router.get('/ab/delete/:testId', isAuthenticated, isAdmin, ctl.delete);
 
+    router.get('/ab/running', isAuthenticated, isAdmin, ctl.running);
+
     router.get('/benchmarks', isAuthenticated, isAdmin, benchCtl.all);
   },
 };

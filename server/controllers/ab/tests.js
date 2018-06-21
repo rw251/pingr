@@ -1,11 +1,24 @@
-const { Test, statuses } = require('../../models/test');
+const Test = require('../../models/test');
+const { statuses } = require('../../../shared/ab/config');
 const benchCtl = require('./benchmarks');
 
 module.exports = {
 
   index: (req, res) => {
     Test.find({ status: { $ne: statuses.archived } }, (err, tests) => {
-      res.render('pages/ab/index.jade', { tests });
+      const testMods = tests.map((test) => {
+        if (test.benchmarkId) {
+          test.benchmark = benchCtl.nameFromId(test.benchmarkId);
+        }
+        return test;
+      });
+      res.render('pages/ab/index.jade', { tests: testMods });
+    });
+  },
+
+  running: (req, res) => {
+    Test.find({ status: statuses.running }, (err, tests) => {
+      res.send(tests);
     });
   },
 

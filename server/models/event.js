@@ -10,6 +10,7 @@ const EventSchema = new Schema({
   data: [{ _id: false, key: String, value: String }],
   url: String,
   xpath: String,
+  tests: Object, // the tests for the current user
 });
 
 module.exports = mongoose.model('Event', EventSchema);

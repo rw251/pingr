@@ -1,10 +1,9 @@
+const log = require('./log');
 /**
  * Gets an XPath for an element which describes its hierarchical location.
  * Copied from firebug with a BSD licence - https://code.google.com/p/fbug/source/browse/branches/firebug1.6/content/firebug/lib.js?spec=svn12950&r=8828#1332
  */
 const SESSION_TIMEOUT = 2 * 3600 * 1000;
-
-let eventFailCount = 0;
 
 let timer = setTimeout(() => {
   window.location.href = '/signout';
@@ -51,13 +50,11 @@ const getElementXPath = (el) => {
 
 const logInfo = (event, type, href) => {
   refreshSession();
-  const obj = {};
-  obj.url = href || window.location.href;
-  obj.type = type;
-  obj.data = [];
+  const data = [];
+  let xpath = '';
   let text = '';
   if (event) {
-    obj.xpath = getElementXPath(event.target);
+    xpath = getElementXPath(event.target);
 
     const t = event.target;
 
@@ -101,30 +98,11 @@ const logInfo = (event, type, href) => {
   } // if(event)
 
   if (text !== '') {
-    obj.data.push({ key: 'text', value: text });
+    data.push({ key: 'text', value: text });
   }
   // console.log(obj);
   setTimeout(() => {
-    const dataToSend = { event: obj };
-    $.ajax({
-      type: 'POST',
-      url: '/api/event',
-      data: JSON.stringify(dataToSend),
-      success() {
-        eventFailCount = 0;
-      },
-      error() {
-        eventFailCount += 1;
-        if (eventFailCount > 2) {
-          // We've had too many errors from the back end - could be the server
-          // is down, or has restarted and the session has ended. Either way
-          // a page refresh might help
-          window.location.reload();
-        }
-      },
-      dataType: 'json',
-      contentType: 'application/json',
-    });
+    log.event(type, href || window.location.href, data, xpath);
   }, 1);
 };
 
