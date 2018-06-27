@@ -1,7 +1,7 @@
 include ../../partials/head.jade
 include ../../mixins/toolbar.jade
 .container.starter-template-high(style='background:white')
-  +toolbar('A/B Test Config', [{btn:'btn-info',path:'/',text:'Back to PINGR'},{btn:'btn-info',path:'/benchmarks',text:'View Benchmarks'}])
+  +toolbar('A/B Test List', [{btn:'btn-info',path:'/',text:'Back to PINGR'},{btn:'btn-info',path:'/conversionMetrics',text:'View Conversion Metrics'},{btn:'btn-success',path:'/ab/new',text:'New A/B Test'}])
   if message && message.error
     .alert.alert-danger.alert-dismissible.fade-in(role="alert")
       button.close(type="button" data-dismiss="alert" aria-label="Close")
@@ -12,13 +12,17 @@ include ../../mixins/toolbar.jade
       button.close(type="button" data-dismiss="alert" aria-label="Close")
         span(aria-hidden="true") ×
       p= message.success
+  if(showArchived)
+    a.btn.btn-warning(href='/ab') Hide archived tests
+  else
+    a.btn.btn-warning(href='/ab?showArchived=true') Show archived tests
   table.table
     thead
       tr
         th Name
         th Description
         th Start date
-        th Benchmark
+        th Conversion Metric
         th Type of randomisation
         th Status
         th(style='width:280px') Actions
@@ -27,23 +31,29 @@ include ../../mixins/toolbar.jade
         tr
           td= test.name
           td= test.description
-          td= test.startDate.toISOString().substr(0,10)
-          td= test.benchmark
+          td= test.startDate ? test.startDate.toISOString().substr(0,10) : ''
+          td= test.conversionMetric
           td= test.randomisationType
           td= test.status
           td
             .btn-toolbar
               if(!test.status || test.status === 'new')
-                a.btn.btn-primary(href='/ab/config/'+test._id) Configure
+                a.btn.btn-warning(href='/ab/config/'+test._id) Edit
+                a.btn.btn-danger(href='/ab/remove/'+test._id) Delete
               if(test.status === 'configured')
-                a.btn.btn-primary(href='/ab/config/'+test._id) Configure
-                a.btn.btn-primary(href='/ab/start/'+test._id) Start
+                a.btn.btn-warning(href='/ab/config/'+test._id) Edit
+                a.btn.btn-danger(href='/ab/remove/'+test._id) Delete
+                a.btn.btn-success(href='/ab/start/'+test._id) Start
               if(test.status === 'running')
                 a.btn.btn-primary(href='/ab/progress/'+test._id) View Progress
-                a.btn.btn-primary(href='/ab/pause/'+test._id) Pause
+                a.btn.btn-warning(href='/ab/pause/'+test._id) Pause
+                a.btn.btn-danger(href='/ab/stop/'+test._id) End test
               if(test.status === 'paused')
                 a.btn.btn-primary(href='/ab/progress/'+test._id) View Progress
-                a.btn.btn-primary(href='/ab/start/'+test._id) Resume
-              if(test.status === 'complete')
-                a.btn.btn-primary(href='/ab/progress/'+test._id) View Progress
-                a.btn.btn-primary(href='/ab/delete/'+test._id) Delete
+                a.btn.btn-success(href='/ab/start/'+test._id) Resume
+                a.btn.btn-danger(href='/ab/stop/'+test._id) End test
+              if(test.status === 'completed')
+                a.btn.btn-primary(href='/ab/results/'+test._id) View Results
+                a.btn.btn-warning(href='/ab/archive/'+test._id) Archive
+              if(test.status === 'archived')
+                a.btn.btn-primary(href='/ab/results/'+test._id) View Results

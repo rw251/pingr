@@ -10,8 +10,8 @@ const statuses = {
   configured: 'configured',
   running: 'running',
   paused: 'paused',
-  complete: 'complete',
   archived: 'archived',
+  completed: 'completed',
 };
 
 const randomisationTypes = {

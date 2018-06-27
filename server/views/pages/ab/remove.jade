@@ -1,0 +1,20 @@
+include ../../partials/head.jade
+include ../../mixins/toolbar.jade
+.container.starter-template-high(style='background:white')
+  +toolbar('A/B Test Deletion', [{btn:'btn-info',path:'/ab',text:'Back to test list'}])
+  form(action='/ab/remove/' + test._id, method='post')
+    h3 Are you sure you want to delete?
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Name:
+      .col-sm-9
+        label= test.name
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Description:
+      .col-sm-9
+        label= test.description
+        input(type='hidden', value=test._id)
+    button.btn.btn-danger.btn-block.history(type='submit')
+      | DELETE 
+      span.fa.fa-arrow-circle-right
