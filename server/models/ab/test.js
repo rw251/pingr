@@ -6,7 +6,7 @@ const { Schema } = mongoose;
 
 // For A/B tests
 const TestSchema = new Schema({
-  name: String,
+  name: { type: String, index: { unique: true } },
   description: String,
   status: { type: String, enum: Object.keys(statuses), default: statuses.new },
   startDate: Date,
