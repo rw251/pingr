@@ -43,7 +43,10 @@ include ../../mixins/toolbar.jade
               if(test.status === 'configured')
                 a.btn.btn-warning(href='/ab/config/'+test._id) Edit
                 a.btn.btn-danger(href='/ab/remove/'+test._id) Delete
-                a.btn.btn-success(href='/ab/start/'+test._id) Start
+                if(test.readyToDeploy)
+                  a.btn.btn-success(href='/ab/start/'+test._id) Start!
+                else
+                  label(title='Test is not configured on the back end yet. Give Richard a kick.') Start?
               if(test.status === 'running')
                 a.btn.btn-primary(href='/ab/progress/'+test._id) View Progress
                 a.btn.btn-warning(href='/ab/pause/'+test._id) Pause

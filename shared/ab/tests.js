@@ -7,11 +7,35 @@ module.exports = {
       $('#abTestCss').text('.btn.btn-xs.btn-yes.btn-toggle.btn-success{ background-color: blue }');
     },
     description: 'Do people click blue thumbs more than green thumbs',
+    readyToDeploy: 'true',
   },
-  test: {
+  Test1: {
+    description: '',
     init: ($) => {
       // INSERT TEST CODE HERE
     },
+    readyToDeploy: 'false',
+  },
+  'New test': {
+    description: 'sdfgs dfgd fg',
+    init: ($) => {
+      // INSERT TEST CODE HERE
+    },
+    readyToDeploy: 'true',
+  },
+  test: {
     description: 'a fasdfas df',
+    init: ($) => {
+      // INSERT TEST CODE HERE
+    },
+    readyToDeploy: 'false',
+  },
+  'My test': {
+    description: 'my test',
+    init: ($) => {
+      // INSERT TEST CODE HERE
+      console.log("let's go!!!");
+    },
+    readyToDeploy: 'true',
   },
 };

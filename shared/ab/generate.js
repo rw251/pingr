@@ -58,6 +58,7 @@ Test.find({}, (err, tests) => {
       localTests[test.name].init = ($) => {
         // INSERT TEST CODE HERE
       };
+      localTests[test.name].readyToDeploy = false;
     }
   });
   mongoose.disconnect();

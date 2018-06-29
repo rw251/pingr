@@ -20,6 +20,11 @@ const randomisationTypes = {
   perPractice: 'perPractice',
 };
 
+const hitCounters = {
+  pageView: 'pageView',
+  patientView: 'patientView',
+};
+
 // this should be in db
 const userCache = {};
 
@@ -64,4 +69,5 @@ module.exports = {
   groups,
   statuses,
   randomisationTypes,
+  hitCounters,
 };

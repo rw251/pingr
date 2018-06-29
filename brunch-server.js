@@ -19,7 +19,7 @@ const routeIndex = require('./server/routes/index');
 const debug = require('debug')('passport-mongo:server');
 const http = require('http');
 
-const DEBUG = false;
+const DEBUG = true;
 
 module.exports = (PORT, PATH, CALLBACK) => {
   mongoose.set('debug', DEBUG);

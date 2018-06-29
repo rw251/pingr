@@ -26,11 +26,18 @@ mixin test(submitText, postTo)
       .col-sm-3(style="text-align:right")
         label(style="font-weight:normal") Randomisation type:
       .col-sm-9
-        select#selRandomisation.form-control.selectpicker(name='randomisationType',title='Select randomisation type')
+        select.form-control.selectpicker(name='randomisationType',title='Select randomisation type')
           option(selected='', disabled='') Select randomisation type
-          option(value='perSession', selected=test.randomisationType==='perSession') Per Session
-          option(value='perUser', selected=test.randomisationType==='perUser') Per User
-          option(value='perPractice', selected=test.randomisationType==='perPractice') Per Practice    
+          each rt in Object.keys(randomisationTypes)
+            option(value=rt, selected=test.randomisationType===rt)= randomisationTypes[rt]
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") What counts as a "hit":
+      .col-sm-9
+        select.form-control.selectpicker(name='hitCounter',title='Select what counts as a hit')
+          option(selected='', disabled='') Select what counts as a hit
+          each hc in Object.keys(hitCounters)
+            option(value=rt, selected=test.hitCounter===hc)= hitCounters[hc]
     .row.form-group
       .col-sm-3(style="text-align:right")
         label(style="font-weight:normal") Start date:

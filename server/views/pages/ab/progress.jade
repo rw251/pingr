@@ -1,6 +1,6 @@
 include ../../partials/head.jade
 include ../../mixins/toolbar.jade
-.container.starter-template-high.c-text
+.container.starter-template-high(style='background:white')
   +toolbar('A/B Test Progress', [{btn:'btn-info',path:'/ab',text:'Back to test list'}])
   if message && message.error
     .alert.alert-danger.alert-dismissible.fade-in(role="alert")
@@ -12,7 +12,27 @@ include ../../mixins/toolbar.jade
       button.close(type="button" data-dismiss="alert" aria-label="Close")
         span(aria-hidden="true") ×
       p= message.success
-  p= test._id
-  p= test.name
-  p= test.description
+  table.table
+    tbody
+      tr
+        td Name:
+        td=test.name
+      tr
+        td Description:
+        td=test.description
+      tr
+        td Randomisation type:
+        td=test.randomisationType
+      tr
+        td Required sample size (per variation):
+        td=test.conversionSampleSize
+      tr
+        td Current baseline hits:
+        td=test.baselineHits + ' (' + (100*test.baselineHits/test.conversionSampleSize).toFixed(0) + '%)'
+      tr
+        td Current feature hits:
+        td=test.featureHits + ' (' + (100*test.featureHits/test.conversionSampleSize).toFixed(0) + '%)'
+      tr
+        td Time since start:
+        td=Math.floor(( ( new Date() ) - test.startDate ) / ( 1000 * 60 * 60 * 24 )) + ' days'
   

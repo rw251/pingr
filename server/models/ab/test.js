@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { statuses, randomisationTypes } = require('../../../shared/ab/config');
+const { statuses, randomisationTypes, hitCounters } = require('../../../shared/ab/config');
 
 const { Schema } = mongoose;
 
@@ -17,6 +17,7 @@ const TestSchema = new Schema({
   conversionPower: Number,
   conversionAlpha: Number,
   conversionSampleSize: Number,
+  hitCounter: { type: String, enum: Object.keys(hitCounters) },
 });
 
 module.exports = mongoose.model('Test', TestSchema);
