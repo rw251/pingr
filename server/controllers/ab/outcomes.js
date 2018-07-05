@@ -26,8 +26,7 @@ const getQuery = (trial, outcome, days) => {
       switch (outcome) {
         case outcomes.thumbClicks: {
           const match = { $match: { date: { $gt: nDaysAgo } } };
-          // add this if matching a test group
-          // match.$match[`tests.${test.name}`] = { $exists: true };
+
           const project = { $project: { _id: 0, groope: `$tests.${test.name}` } };
           const group = { $group: { _id: '$groope', total: { $sum: 1 } } };
           const query = [match, project, group];
