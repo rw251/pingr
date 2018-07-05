@@ -58,13 +58,13 @@ module.exports = {
   pageViews,
   patientViews,
   hits: (test, callback) => {
-    switch (test.hitCounter) {
+    switch (test.trial) {
       case 'pageView':
         return pageViews(test, callback);
       case 'patientView':
         return patientViews(test, callback);
       default:
-        return callback(new Error('Unexpected hitCounter'));
+        return callback(new Error('Unexpected trial'));
     }
   },
 };

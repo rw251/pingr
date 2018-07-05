@@ -1,5 +1,5 @@
 const ctl = require('../controllers/ab/tests');
-const benchCtl = require('../controllers/ab/conversionMetrics');
+const benchCtl = require('../controllers/ab/outcomes');
 const { isAuthenticated, isAdmin } = require('./helpers');
 
 module.exports = {
@@ -25,6 +25,8 @@ module.exports = {
 
     router.get('/ab/running', isAuthenticated, isAdmin, ctl.running);
 
-    router.get('/conversionMetrics', isAuthenticated, isAdmin, benchCtl.all);
+    router.get('/ab/conversions/for/trial/:trial/outcome/:outcome/over/:days/days', isAuthenticated, isAdmin, benchCtl.conversion);
+
+    router.get('/outcomes', isAuthenticated, isAdmin, benchCtl.all);
   },
 };

@@ -13,52 +13,54 @@ mixin test(submitText, postTo)
     h3 Initial config
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") Name:
+        label(style="font-weight:normal") Research question:
       .col-sm-9
-        input.form-control(type='text', name='name', placeholder='A short name', autofocus='', value=test.name)
+        input.form-control(type='text', name='researchQuestion', placeholder='E.g. Do blue thumbs up get clicked more frequently than green thumbs?', autofocus='', value=test.researchQuestion)
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") Description:
+        label(style="font-weight:normal") Name:
+      .col-sm-9
+        input.form-control(type='text', name='name', placeholder='A short name', value=test.name)
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Description (optional):
       .col-sm-9
         input.form-control(type='text', name='description', placeholder='A longer description', value=test.description)
-    
     .row.form-group
       .col-sm-3(style="text-align:right")
         label(style="font-weight:normal") Randomisation type:
       .col-sm-9
         select.form-control.selectpicker(name='randomisationType',title='Select randomisation type')
           option(selected='', disabled='') Select randomisation type
-          each rt in Object.keys(randomisationTypes)
-            option(value=rt, selected=test.randomisationType===rt)= randomisationTypes[rt]
+          each rt in randomisationTypeArray
+            option(value=rt.id, selected=test.randomisationType===rt.id)= rt.name
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") What counts as a "hit":
+        label(style="font-weight:normal") What counts as a "trial":
       .col-sm-9
-        select.form-control.selectpicker(name='hitCounter',title='Select what counts as a hit')
-          option(selected='', disabled='') Select what counts as a hit
-          each hc in Object.keys(hitCounters)
-            option(value=rt, selected=test.hitCounter===hc)= hitCounters[hc]
+        select.form-control.selectpicker(name='trial',title='Select what counts as a trial')
+          option(selected='', disabled='') Select what counts as a trial
+          each trial in trialArray
+            option(value=trial.id, selected=test.trial===trial.id)= trial.name
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") Start date:
+        label(for="day",style="font-weight:normal") Outcome (what we're measuring per trial):
       .col-sm-9
-        input.form-control(type='text', name='startDate', placeholder='Start Date (yyyy-mm-dd)', value=test.startDate)
-     
-    h3 Conversion sample size calculator
+        select#selOutcome.form-control.selectpicker(name='outcomeId',title='Select outcome')
+          option(selected='', disabled='') Select outcome
+          each outcome in outcomes
+            option(value=outcome.id, selected=test.outcomeId===outcome.id)= outcome.description
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(for="day",style="font-weight:normal") Conversion metric:
+        label(for="day",style="font-weight:normal") No. of previous days over which to measure the baseline conversion rate:
       .col-sm-9
-        select#selConversionMetric.form-control.selectpicker(name='conversionMetricId',title='Select conversion metric')
-          option(selected='', disabled='') Select Conversion Metric
-          each conversionMetric in conversionMetrics
-            option(value=conversionMetric.id, selected=test.conversionMetricId===conversionMetric.id)= conversionMetric.description
+        input#days(name='days',value=test.days || 90, type='text', size="3", style="text-align: center")
     .row.form-group
       .col-sm-3(style="text-align:right")
         label(for="day",style="font-weight:normal") Baseline conversion rate:
       .col-sm-9
-          input#conversionRateHidden(type='hidden', name='conversionMetricBaselineValue',value=test.conversionMetricBaselineValue)
-          label#conversionRate=test.conversionMetricBaselineValue
+          input#conversionRateHidden(type='hidden', name='outcomeBaselineValue',value=test.outcomeBaselineValue)
+          label#conversionRate=test.outcomeBaselineValue
     .row.form-group
       .col-sm-3(style="text-align:right")
         label(for="day",style="font-weight:normal") Minimum detectable effect (absolute):
@@ -83,6 +85,11 @@ mixin test(submitText, postTo)
       .col-sm-9
         label#sampleSize
         input#hiddenSampleSize(type='hidden',name='conversionSampleSize',value=test.conversionSampleSize)
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Start date:
+      .col-sm-9
+        input.form-control(type='text', name='startDate', placeholder='Start Date (yyyy-mm-dd)', value=test.startDate)
     button.btn.btn-purple.btn-block.history(type='submit')
       = submitText
       | 
@@ -92,7 +99,7 @@ script.
   window.jQuery || document.write('<script src="/js/jquery/jquery-1.12.4.min.js"><\/script>')
 script
   | var metrics = [
-  = conversionMetrics.map((v) => v.value).join(',')
+  = outcomes.map((v) => v.value).join(',')
   | ];
 script.
   function ppnd(p) {
@@ -177,7 +184,7 @@ script.
   };
 
   $(document).ready(() => {
-    $('#selConversionMetric').on('change', (e) => {
+    $('#selOutcome').on('change', (e) => {
       const newValue = metrics[e.currentTarget.selectedIndex - 1];
       $('#conversionRate').text(newValue);
       $('#conversionRateHidden').val(newValue);

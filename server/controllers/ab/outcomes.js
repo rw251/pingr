@@ -1,6 +1,7 @@
 const Event = require('../../models/event');
+const { outcomes, trials } = require('../../../shared/ab/config');
 
-const conversionMetricNames = [
+const outcomeNames = [
   'Agrees clicked per session in last 90 days.',
   'Disagrees clicked per session in last 90 days.',
   'Thumbs clicked per session in last 90 days.',
@@ -18,6 +19,45 @@ const getNDaysAgo = (n) => {
   return nDaysAgo;
 };
 
+const getQuery = (trial, outcome, days) => {
+  const nDaysAgo = getNDaysAgo(days);
+  switch (trial) {
+    case trials.pageView:
+      switch (outcome) {
+        case outcomes.thumbClicks: {
+          const match = { $match: { date: { $gt: nDaysAgo } } };
+          // add this if matching a test group
+          // match.$match[`tests.${test.name}`] = { $exists: true };
+          const project = { $project: { _id: 0, groope: `$tests.${test.name}` } };
+          const group = { $group: { _id: '$groope', total: { $sum: 1 } } };
+          const query = [match, project, group];
+          return [
+            { $match: { date: { $gt: nDaysAgo } } },
+            {
+              $project: {
+                sessionId: 1,
+                hasEvent: { $cond: { if: { $in: ['$type', eventTypes] }, then: 1, else: 0 } },
+              },
+            },
+            { $group: { _id: '$sessionId', events: { $sum: '$hasEvent' } } },
+            { $group: { _id: null, result: { $avg: '$events' } } },
+          ]; }
+        default:
+          return false;
+      }
+    case trials.patientView:
+      switch (outcome) {
+        case outcomes.thumbClicks:
+          return false;
+        default:
+          return false;
+      }
+    default:
+      return false;
+  }
+};
+
+
 const eventsPerSessionLastNDays = (eventTypes, n, id, description, callback) => {
   const nDaysAgo = getNDaysAgo(n);
   const query = [
@@ -31,7 +71,8 @@ const eventsPerSessionLastNDays = (eventTypes, n, id, description, callback) => 
     { $group: { _id: '$sessionId', events: { $sum: '$hasEvent' } } },
     { $group: { _id: null, result: { $avg: '$events' } } },
   ];
-  Event.aggregate(query, (err, output) => callback(err, { id, description, value: output[0].result * 100 }));
+  Event.aggregate(query, (err, output) =>
+    callback(err, { id, description, value: output[0].result * 100 }));
 };
 
 const eventsPerMinuteLastNDays = (eventTypes, n, id, description, callback) => {
@@ -51,21 +92,22 @@ const eventsPerMinuteLastNDays = (eventTypes, n, id, description, callback) => {
     { $project: { eventsPerMillisecond: { $divide: ['$totalEvents', '$totalDuration'] } } },
     { $project: { result: { $multiply: [60000, '$eventsPerMillisecond'] } } },
   ];
-  Event.aggregate(query, (err, output) => callback(err, { id, description, value: output[0].result * 100 }));
+  Event.aggregate(query, (err, output) =>
+    callback(err, { id, description, value: output[0].result * 100 }));
 };
 
 const agreesPerSessionLastNDays = (n, callback) =>
-  eventsPerSessionLastNDays(['agree'], n, 1, conversionMetricNames[0], callback);
+  eventsPerSessionLastNDays(['agree'], n, 1, outcomeNames[0], callback);
 const disagreesPerSessionLastNDays = (n, callback) =>
-  eventsPerSessionLastNDays(['disagree'], n, 2, conversionMetricNames[1], callback);
+  eventsPerSessionLastNDays(['disagree'], n, 2, outcomeNames[1], callback);
 const thumbsPerSessionLastNDays = (n, callback) =>
-  eventsPerSessionLastNDays(['agree', 'disagree'], n, 3, conversionMetricNames[2], callback);
+  eventsPerSessionLastNDays(['agree', 'disagree'], n, 3, outcomeNames[2], callback);
 const agreesPerMinuteLastNDays = (n, callback) =>
-  eventsPerMinuteLastNDays(['agree'], n, 4, conversionMetricNames[3], callback);
+  eventsPerMinuteLastNDays(['agree'], n, 4, outcomeNames[3], callback);
 const disagreesPerMinuteLastNDays = (n, callback) =>
-  eventsPerMinuteLastNDays(['disagree'], n, 5, conversionMetricNames[4], callback);
+  eventsPerMinuteLastNDays(['disagree'], n, 5, outcomeNames[4], callback);
 const thumbsPerMinuteLastNDays = (n, callback) =>
-  eventsPerMinuteLastNDays(['agree', 'disagree'], n, 6, conversionMetricNames[5], callback);
+  eventsPerMinuteLastNDays(['agree', 'disagree'], n, 6, outcomeNames[5], callback);
 
 const go = (n, func) => {
   func(n, (err, output) => output.result);
@@ -74,13 +116,13 @@ const go = (n, func) => {
 const getAll = (callback) => {
   const need = 2;
   let done = 0;
-  const conversionMetrics = [];
+  const outcomes = [];
   [thumbsPerSessionLastNDays, thumbsPerMinuteLastNDays].forEach((func) => {
     func(90, (err, output) => {
       done += 1;
-      conversionMetrics.push(output);
+      outcomes.push(output);
       if (done === need) {
-        callback(null, conversionMetrics);
+        callback(null, outcomes);
       }
     });
   });
@@ -96,12 +138,20 @@ module.exports = {
   thumbsPerMinuteLastNDays: n => go(n, thumbsPerMinuteLastNDays),
 
   all: (req, res) => {
-    getAll((err, conversionMetrics) => {
-      res.render('pages/ab/conversionMetrics.jade', { conversionMetrics });
-    });
+    // getAll((err, outcomes) => {
+    res.render('pages/ab/outcomes.jade', { outcomes });
+    // });
   },
 
   getAll,
 
-  nameFromId: id => conversionMetricNames[id - 1],
+  nameFromId: id => outcomeNames[id - 1],
+
+  conversion: (req, res) => {
+    const { trial, outcome, days } = req.params;
+    const query = getQuery(trial, outcome, days);
+    Event.aggregate(query, (err, output) => {
+      res.send({ error: err, value: output[0].result });
+    });
+  },
 };

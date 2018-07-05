@@ -6,24 +6,27 @@ const groups = {
 };
 
 const statuses = {
-  new: 'new',
-  configured: 'configured',
-  running: 'running',
-  paused: 'paused',
-  archived: 'archived',
-  completed: 'completed',
+  new: { id: 'new', description: 'New' },
+  configured: { id: 'configured', description: 'Configured' },
+  running: { id: 'running', description: 'Running' },
+  paused: { id: 'paused', description: 'Paused' },
+  archived: { id: 'archived', description: 'Archived' },
+  completed: { id: 'completed', description: 'Completed' },
 };
 
 const randomisationTypes = {
-  perSession: 'perSession',
-  perUser: 'perUser',
-  perPractice: 'perPractice',
+  perPage: { id: 'perPage', name: 'Per page view', description: 'Assigned to random group on every page visit' },
+  perPatientViewed: { id: 'perPatientViewed', name: 'Per patient view', description: 'Assigned to random group on every patient page visit' },
+  perSession: { id: 'perSession', name: 'Per session', description: 'Assigned to random group on every login' },
+  perUser: { id: 'perUser', name: 'Per user', description: 'Assigned to random group on first login' },
 };
 
-const hitCounters = {
-  pageView: 'pageView',
-  patientView: 'patientView',
+const trials = {
+  pageView: { id: 'pageView', name: 'Page view', description: 'A single trial is the viewing of a single page.' },
+  patientView: { id: 'patientView', name: 'Patient page view', description: 'A single trial is the viewing of a single patient page.' },
 };
+
+const outcomes = { thumbClicks: { id: 'thumbClicks', name: 'Thumb clicks', description: 'Whether or not a thumb was clicked during the trial.' } };
 
 // this should be in db
 const userCache = {};
@@ -34,12 +37,16 @@ const userCache = {};
 module.exports = {
 
   assign: (test) => {
-    switch (test.randomisationTypes) {
-      case randomisationTypes.perPractice:
+    switch (test.randomisationType) {
+      case randomisationTypes.perPractice.id:
         return Math.random() < 0.5 ? groups.baseline : groups.feature;
-      case randomisationTypes.perUser:
+      case randomisationTypes.perUser.id:
         return Math.random() < 0.5 ? groups.baseline : groups.feature;
-      default: // randomisationTypes.perSession:
+      case randomisationTypes.perPage.id:
+        return Math.random() < 0.5 ? groups.baseline : groups.feature;
+      case randomisationTypes.perPatientViewed.id:
+        return Math.random() < 0.5 ? groups.baseline : groups.feature;
+      default: // randomisationTypes.perSession.id:
         return Math.random() < 0.5 ? groups.baseline : groups.feature;
     }
   },
@@ -69,5 +76,9 @@ module.exports = {
   groups,
   statuses,
   randomisationTypes,
-  hitCounters,
+  trials,
+  outcomes,
+  statusArray: Object.keys(statuses).map(v => statuses[v]),
+  randomisationTypeArray: Object.keys(randomisationTypes).map(v => randomisationTypes[v]),
+  trialArray: Object.keys(trials).map(v => trials[v]),
 };
