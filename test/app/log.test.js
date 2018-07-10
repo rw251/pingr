@@ -21,7 +21,7 @@ describe('log', () => {
     const toUrl = 'http://test';
     const dataProp = { some: 'props', keys: [1, 2, 3] };
 
-    log.navigate(toUrl, dataProp);
+    log.navigatePage(toUrl, dataProp);
 
     assert.equals(requests.length = 1);
     assert.match(requests[0].url, '/todo/42/items');

@@ -8,21 +8,24 @@ const patientView = require('./views/patient');
 const actionPlan = require('./views/actions');
 
 const template = {
-  loadContent(hash, isPoppingState) {
+  loadContent(hash, isPoppingState, callback) {
     base.hideTooltips();
 
-    log.navigate(hash, []);
+    log.navigatePage(hash, []);
 
     let patientId;
     if (!isPoppingState) {
       window.location.hash = hash;
     }
 
+    let shouldCallCallback = false;
+
     if (hash === '') {
       base.clearBox();
       base.showFooter();
       layout.showPage('login');
       $('html').removeClass('scroll-bar');
+      shouldCallCallback = true;
     } else {
       base.hideFooter();
       // $('html').addClass('scroll-bar');
@@ -41,14 +44,15 @@ const template = {
       }
 
       if (urlBits[0] === '#overview' && !urlBits[1]) {
-        overview.create(template.loadContent);
+        overview.create(template.loadContent, callback);
       } else if (urlBits[0] === '#indicators') {
         indicatorView.create(
           urlBits[1],
           urlBits[2],
           urlBits[3],
           params.tab || 'trend',
-          template.loadContent
+          template.loadContent,
+          callback
         );
       } else if (urlBits[0] === '#about') {
         layout.view = 'ABOUT';
@@ -58,6 +62,8 @@ const template = {
         layout.showPage('about-page');
 
         layout.showHeaderBarItems();
+
+        shouldCallCallback = true;
       } else if (urlBits[0] === '#patient') {
         // create(pathwayId, pathwayStage, standard, patientId)
         patientView.create(
@@ -65,7 +71,8 @@ const template = {
           urlBits[3],
           urlBits[4],
           urlBits[1],
-          template.loadContent
+          template.loadContent,
+          callback
         );
       } else if (urlBits[0] === '#patients') {
         [, patientId] = urlBits;
@@ -75,15 +82,17 @@ const template = {
           urlBits[3],
           urlBits[4],
           patientId,
-          template.loadContent
+          template.loadContent,
+          callback
         );
       } else if (urlBits[0] === '#agreedactions') {
-        actionPlan.create();
+        actionPlan.create(callback);
       } else {
         // if screen not in correct segment then select it
         // alert("shouldn't get here");
 
         base.wireUpTooltips();
+        shouldCallCallback = true;
       }
 
       $('#about')
@@ -102,6 +111,8 @@ const template = {
     }
 
     lookup.currentUrl = hash;
+
+    if (shouldCallCallback) return callback();
   },
 };
 

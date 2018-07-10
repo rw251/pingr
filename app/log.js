@@ -1,18 +1,25 @@
 const notify = require('./notify');
 const data = require('./data');
 const lookup = require('./lookup');
+const uuidv4 = require('uuid/v4');
 
 let eventFailCount = 0;
+let pageId = '';
 
 const log = {
   reason: {},
 
-  navigate(toUrl, dataProp) {
+  navigatePage(toUrl, dataProp) {
+    pageId = uuidv4();
     log.event('navigate', toUrl, dataProp);
   },
 
+  navigateTab(toUrl, dataProp) {
+    log.event('navigate-tab', toUrl, dataProp);
+  },
+
   event(type, url, dataProp, xpath) {
-    const dataToSend = { event: { type, url, data: dataProp } };
+    const dataToSend = { event: { type, url, pageId, data: dataProp } };
     if (xpath && xpath.length > 0) dataToSend.event.xpath = xpath;
     if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.event.tests = lookup.tests;
     $.ajax({

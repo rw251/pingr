@@ -7,7 +7,8 @@ const bd = {
     const $indicatorPaneTab = $('#indicatorPaneTab');
     const $patientPaneTab = $('#patientPaneTab');
     $overviewPaneTab.on('click', (e) => {
-      log.navigate('#indicator-patient-list');
+      // only log if an actual click
+      if (e.which) log.navigateTab('#indicator-patient-list');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
@@ -31,7 +32,8 @@ const bd = {
     });
 
     $indicatorPaneTab.on('click', (e) => {
-      log.navigate('#indicator-trend');
+      // only log if an actual click
+      if (e.which) log.navigateTab('#indicator-trend');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');
@@ -55,7 +57,8 @@ const bd = {
     });
 
     $patientPaneTab.on('click', (e) => {
-      log.navigate('#indicator-benchmark');
+      // only log if an actual click
+      if (e.which) log.navigateTab('#indicator-benchmark');
       e.preventDefault();
 
       $('#mainPage-tabs li').removeClass('active');

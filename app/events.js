@@ -151,6 +151,8 @@ module.exports = {
         clearTimeout(setTimeoutConst[event.target]);
       })
       .on('click', (event) => {
+        // don't log 'triggered' clicks
+        if (!event.which) return;
         clearTimeout(setTimeoutConst[event.target]);
         setTimeoutConst[event.target] = setTimeout(() => {
           logInfo(event, 'hover');
