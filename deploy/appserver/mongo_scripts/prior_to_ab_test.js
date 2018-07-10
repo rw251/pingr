@@ -7,20 +7,93 @@
 // 2. Extract the events collection
 // mongoexport -d pingr -c events --sort '{date:1}' --out events.json
 // 3. Run this script to process the events
+// node prior_to_ab_test.js
 // 4. Imprt back into mongo
 // mongoimport -d pingr -c events2 --drop events.processed.json
-// 5. Run test script TODO
-// var props = {};
-// var props2 = {};
-// db.events.find().forEach(function(e){ Object.keys(e).forEach(function(p){if(!props[p]) props[p]=1; else props[p]+=1;});})
-// db.events2.find().forEach(function(e){ Object.keys(e).forEach(function(p){if(!props2[p]) props2[p]=1; else props2[p]+=1;});})
-// print("The only thing printed below should be a line mentioning 'pageId'")
-// Object.keys(props2).forEach(function(p){if(!props[p]) print("This should only happen for 'pageId':" + p);})
-// Object.keys(props).forEach(function(p){if(!props2[p]) print("This should never print.");})
-// 6. export events2 and then replace events collectoin for real
+// 5. Add indexes
+// db.events2.ensureIndex({user:1, date:1})
+// db.events2.ensureIndex({date:1})
+// 6. Run test script
+// var checked = 0;
+// db.events.find({date:{$gt:new Date(2018,3,1)}}).count();
+// db.events.find({date:{$gt:new Date(2018,3,1)}}).forEach(function(e){
+// 	var query = {};
+// 	Object.keys(e).forEach(function(k){
+// 		if(k==='_id' || k==='data') {
+
+// 		} else if(k==='date') {
+// 			query.date = new Date(e[k]);
+// 		} else {
+// 			query[k] = e[k];
+// 		}
+// 	});
+// 	var i = 0;
+//  if(!query.type || query.type.indexOf('email') < 0) {
+//   	if(query.type==='navigate') query.type=new RegExp("navigate");
+//   db.events2.find(query).forEach(function(match){
+//     if(i>0) {
+//       print("We have a problem where this query matches more than one entry:")
+//       print(JSON.stringify(query));
+//     }
+//     if(match._id.toString()!==e._id.toString()) {
+//       print("We have a problem where the object id in events mismatches with events2:")
+//       print(JSON.stringify(query));
+//     }
+//     i++;
+//    checked++
+//  if(checked%100===0) print(checked);
+//   });
+//   if(i===0) {
+//       print("We have a problem where this query matches nothing:")
+//       print(JSON.stringify(query));
+//   }
+// }
+// });
+// print ("Checked: " + checked);
+
+// var checked = 0;
+// db.events2.find({date:{$gt:new Date(2018,3,1)}}).count();
+// db.events2.find({date:{$gt:new Date(2018,3,1)}}).forEach(function(e){
+// 	var query = {};
+// 	Object.keys(e).forEach(function(k){
+// 		if(k==='_id' || k==='data') {
+
+// 		} else if(k==='date') {
+// 			query.date = new Date(e[k]);
+// 		} else {
+// 			query[k] = e[k];
+// 		}
+// 	});
+// 	var i = 0;
+// if(!query.type || query.type.indexOf('email') < 0) {
+// 	if(query.type==='navigate' || query.type==='navigate-tab') query.type=new RegExp("navigate");
+// 	delete query.pageId;
+// 	db.events.find(query).forEach(function(match){
+// 		if(i>0) {
+// 			print("We have a problem where this query matches more than one entry:")
+// 			print(JSON.stringify(query));
+// 		}
+// 		if(match._id.toString()!==e._id.toString()) {
+// 			print("We have a problem where the object id in events mismatches with events2:")
+// 			print(JSON.stringify(query));
+// 		}
+// 		i++;
+//    checked++
+//  if(checked%100===0) print(checked);
+// 	});
+// 	if(i===0) {
+// 			print("We have a problem where this query matches nothing:")
+// 			print(JSON.stringify(query));
+// 	}
+// }
+// });
+// print ("Checked: " + checked);
+
+// 7. drop events2 collection and then replace events collection for real
+// mongoimport -d pingr -c events --drop events.processed.json
 
 const fs = require('fs');
-const uuidv1 = require('uuid/v4');
+const uuidv4 = require('uuid/v4');
 const lineReader = require('readline').createInterface({
   input: fs.createReadStream('events.json'),
   output: fs.createWriteStream('events.processed.json'),
@@ -54,7 +127,7 @@ lineReader
         if (sessionPage[jLine.sessionId] && sessionPage[jLine.sessionId].url === jLine.url) {
           jLine.pageId = sessionPage[jLine.sessionId].pageId;
         } else {
-          jLine.pageId = uuidv1();
+          jLine.pageId = uuidv4();
           sessionPage[jLine.sessionId] = { url: jLine.url, pageId: jLine.pageId };
         }
       } else {
