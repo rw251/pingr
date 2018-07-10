@@ -14,4 +14,6 @@ const EventSchema = new Schema({
   tests: Object, // the tests for the current user
 });
 
+EventSchema.index({ user: 1, date: 1 });
+
 module.exports = mongoose.model('Event', EventSchema);

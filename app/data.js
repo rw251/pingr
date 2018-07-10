@@ -363,8 +363,12 @@ const dt = {
       const patient = pt;
       patient.nhsNumber = patient.nhs || patient.patientId;
       patient.items = [patient.age];
-      if (patient.value) patient.items.push(patient.value);
-      if (patient.date) patient.items.push(patient.date);
+      if (dOv === 'value' || dOv === 'both') {
+        patient.items.push(patient.value);
+      }
+      if (dOv === 'date' || dOv === 'both') {
+        patient.items.push(patient.date);
+      }
       if (patient.reviewDate) patient.items.push(patient.reviewDate);
       patient.items.push(patient.opportunities
         .map(v =>

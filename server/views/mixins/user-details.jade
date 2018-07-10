@@ -21,7 +21,6 @@ mixin user-details(submitText, isPasswordVisible, isAdminScreen)
       i.fa.fa-stethoscope
     select#selPractice.form-control.selectpicker(name='practice', required='',multiple='',title='Select one or more GP practices')
       each practice in practiceList
-        option(value=practice._id+"|"+practice.name)= practice.name
         option(value=practice._id+"|"+practice.name, selected=(user.practices && user.practices.map(function(v){return v.id;}).indexOf(practice._id) > -1 ))= practice.name
   if isAdminScreen
     .form-group

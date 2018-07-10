@@ -570,7 +570,7 @@ module.exports = (passport) => {
       next(new Error('No event posted'));
     } else {
       req.body.event.sessionId = req.sessionID;
-      req.body.event.user = req.user.email;
+      if (req.user) req.body.event.user = req.user.email;
       events.add(req.body.event, (err) => {
         if (err) next(err);
         else res.send(true);
