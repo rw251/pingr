@@ -11,6 +11,7 @@
 // 4. Imprt back into mongo
 // mongoimport -d pingr -c events2 --drop events.processed.json
 // 5. Add indexes
+// mongo pingr
 // db.events2.ensureIndex({user:1, date:1})
 // db.events2.ensureIndex({date:1})
 // 6. Run test script
@@ -90,6 +91,8 @@
 // print ("Checked: " + checked);
 
 // 7. drop events2 collection and then replace events collection for real
+// db.events2.drop()
+// exit
 // mongoimport -d pingr -c events --drop events.processed.json
 
 const fs = require('fs');
