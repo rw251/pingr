@@ -1,26 +1,25 @@
 const Test = require('../../models/ab/test');
-const { statuses, randomisationTypeArray, trialArray } = require('../../../shared/ab/config');
-const benchCtl = require('./outcomes');
+const { statuses, randomisationTypes, randomisationTypeArray, trials, trialArray, outcomes, outcomeArray } = require('../../../shared/ab/config');
 const hitCtl = require('./trials');
 const testConfigs = require('../../../shared/ab/tests');
 
-let localMetrics = [];
-
 const isTestFullyConfigured = test => test.name &&
                                       test.researchQuestion &&
-                                      test.randomisationType &&
-                                      test.trial &&
+                                      test.randomisationTypeId &&
+                                      test.trialId &&
                                       test.outcomeId;
 
 module.exports = {
 
   index: (req, res) => {
-    const query = req.query.showArchived ? {} : { status: { $ne: statuses.archived.id } };
+    const query = req.query.showArchived ? {} : { statusId: { $ne: statuses.archived.id } };
     Test.find(query, (err, tests) => {
       const testMods = tests.map((test) => {
-        if (test.outcomeId) {
-          test.outcome = benchCtl.nameFromId(test.outcomeId);
-        }
+        test.outcome = test.outcomeId ? outcomes[test.outcomeId] : {};
+        test.trial = test.trialId ? trials[test.trialId] : {};
+        test.status = test.statusId ? statuses[test.statusId] : {};
+        test.randomisationType = test.randomisationTypeId ? randomisationTypes[test.randomisationTypeId] : {};
+
         test.readyToDeploy = testConfigs[test.name] ? testConfigs[test.name].readyToDeploy === 'true' : false;
         return test;
       });
@@ -29,24 +28,21 @@ module.exports = {
   },
 
   running: (req, res) => {
-    Test.find({ status: statuses.running.id }, (err, tests) => {
+    Test.find({ statusId: statuses.running.id }, (err, tests) => {
       res.send(tests);
     });
   },
 
   create: {
     get: (req, res) => {
-      benchCtl.getAll((getAllErr, outcomes) => {
-        localMetrics = outcomes;
-        res.render('pages/ab/create.jade', { test: {}, outcomes, randomisationTypeArray, trialArray });
-      });
+      res.render('pages/ab/create.jade', { test: {}, outcomeArray, randomisationTypeArray, trialArray });
     },
     post: (req, res) => {
       const newTest = new Test(req.body);
-      if (isTestFullyConfigured(newTest)) newTest.status = statuses.configured.id;
-      else newTest.status = statuses.new.id;
+      if (isTestFullyConfigured(newTest)) newTest.statusId = statuses.configured.id;
+      else newTest.statusId = statuses.new.id;
       newTest.save((err) => {
-        if (err) res.render('pages/ab/create.jade', { test: newTest, message: { error: err }, outcomes: localMetrics, randomisationTypeArray, trialArray });
+        if (err) res.render('pages/ab/create.jade', { test: newTest, message: { error: err }, outcomeArray, randomisationTypeArray, trialArray });
         else res.redirect('/ab');
       });
     },
@@ -55,9 +51,7 @@ module.exports = {
   configure: {
     get: (req, res) => {
       Test.findById(req.params.testId, (err, test) => {
-        benchCtl.getAll((getAllErr, outcomes) => {
-          res.render('pages/ab/configure.jade', { test, outcomes, randomisationTypeArray, trialArray });
-        });
+        res.render('pages/ab/configure.jade', { test, outcomeArray, randomisationTypeArray, trialArray });
       });
     },
     post: (req, res) => {
@@ -66,17 +60,17 @@ module.exports = {
         test.description = req.body.description;
         test.researchQuestion = req.body.researchQuestion;
         test.days = req.body.days;
-        test.randomisationType = req.body.randomisationType;
+        test.randomisationTypeId = req.body.randomisationTypeId;
         test.outcomeId = req.body.outcomeId;
         test.outcomeBaselineValue = req.body.outcomeBaselineValue;
         test.conversionMinDetectableEffect = req.body.conversionMinDetectableEffect;
         test.conversionPower = req.body.conversionPower;
         test.conversionAlpha = req.body.conversionAlpha;
         test.conversionSampleSize = req.body.conversionSampleSize;
-        test.trial = req.body.trial;
+        test.trialId = req.body.trialId;
         if (req.body.startDate) test.startDate = new Date(req.body.startDate);
-        if (isTestFullyConfigured(test)) test.status = statuses.configured.id;
-        else test.status = statuses.new.id;
+        if (isTestFullyConfigured(test)) test.statusId = statuses.configured.id;
+        else test.statusId = statuses.new.id;
         test.save(() => {
           res.redirect('/ab');
         });
@@ -118,7 +112,7 @@ module.exports = {
 
   pause: (req, res) => {
     Test.findById(req.params.testId, (err, test) => {
-      test.status = statuses.paused.id;
+      test.statusId = statuses.paused.id;
       test.save(() => {
         res.redirect('/ab');
       });
@@ -127,7 +121,7 @@ module.exports = {
 
   start: (req, res) => {
     Test.findById(req.params.testId, (err, test) => {
-      test.status = statuses.running.id;
+      test.statusId = statuses.running.id;
       if (!test.startDate) {
         const now = new Date();
         now.setHours(2);
@@ -143,7 +137,7 @@ module.exports = {
 
   stop: (req, res) => {
     Test.findById(req.params.testId, (err, test) => {
-      test.status = statuses.completed.id;
+      test.statusId = statuses.completed.id;
       test.save(() => {
         res.redirect('/ab');
       });
@@ -152,7 +146,7 @@ module.exports = {
 
   archive: (req, res) => {
     Test.findById(req.params.testId, (err, test) => {
-      test.status = statuses.archived.id;
+      test.statusId = statuses.archived.id;
       test.save(() => {
         res.redirect('/ab');
       });

@@ -6,12 +6,12 @@ const groups = {
 };
 
 const statuses = {
-  new: { id: 'new', description: 'New' },
-  configured: { id: 'configured', description: 'Configured' },
-  running: { id: 'running', description: 'Running' },
-  paused: { id: 'paused', description: 'Paused' },
-  archived: { id: 'archived', description: 'Archived' },
-  completed: { id: 'completed', description: 'Completed' },
+  new: { id: 'new', description: 'New', name: 'New' },
+  configured: { id: 'configured', description: 'Configured', name: 'Configured' },
+  running: { id: 'running', description: 'Running', name: 'Running' },
+  paused: { id: 'paused', description: 'Paused', name: 'Paused' },
+  archived: { id: 'archived', description: 'Archived', name: 'Archived' },
+  completed: { id: 'completed', description: 'Completed', name: 'Completed' },
 };
 
 const randomisationTypes = {
@@ -26,7 +26,13 @@ const trials = {
   patientView: { id: 'patientView', name: 'Patient page view', description: 'A single trial is the viewing of a single patient page.' },
 };
 
-const outcomes = { thumbClicks: { id: 'thumbClicks', name: 'Thumb clicks', description: 'Whether or not a thumb was clicked during the trial.' } };
+const outcomes = {
+  thumbClicks: { id: 'thumbClicks', name: 'Thumb clicks', description: 'Whether or not a thumb was clicked during the trial.' },
+  thumbAgreeClicks: { id: 'thumbAgreeClicks', name: 'Agree thumb clicks', description: 'Whether or not an "agree" thumb was clicked during the trial.' },
+  thumbDisagreeClicks: { id: 'thumbDisagreeClicks', name: 'Disagree thumb clicks', description: 'Whether or not a "disagree" thumb was clicked during the trial.' },
+};
+
+const objectToArray = obj => Object.keys(obj).map(v => obj[v]);
 
 // this should be in db
 const userCache = {};
@@ -37,7 +43,7 @@ const userCache = {};
 module.exports = {
 
   assign: (test) => {
-    switch (test.randomisationType) {
+    switch (test.randomisationTypeId) {
       case randomisationTypes.perPractice.id:
         return Math.random() < 0.5 ? groups.baseline : groups.feature;
       case randomisationTypes.perUser.id:
@@ -78,7 +84,8 @@ module.exports = {
   randomisationTypes,
   trials,
   outcomes,
-  statusArray: Object.keys(statuses).map(v => statuses[v]),
-  randomisationTypeArray: Object.keys(randomisationTypes).map(v => randomisationTypes[v]),
-  trialArray: Object.keys(trials).map(v => trials[v]),
+  statusArray: objectToArray(statuses),
+  randomisationTypeArray: objectToArray(randomisationTypes),
+  trialArray: objectToArray(trials),
+  outcomeArray: objectToArray(outcomes),
 };

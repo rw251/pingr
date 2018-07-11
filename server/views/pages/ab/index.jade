@@ -22,8 +22,9 @@ include ../../mixins/toolbar.jade
         th Name
         th Description
         th Start date
+        th Randomisation
+        th Trial
         th Outcome
-        th Type of randomisation
         th Status
         th(style='width:280px') Actions
     tbody
@@ -32,31 +33,32 @@ include ../../mixins/toolbar.jade
           td= test.name
           td= test.description
           td= test.startDate ? test.startDate.toISOString().substr(0,10) : ''
-          td= test.outcome
-          td= test.randomisationType
-          td= test.status
+          td(title=test.randomisationType.description)= test.randomisationType.name
+          td(title=test.trial.description)= test.trial.name
+          td(title=test.outcome.description)= test.outcome.name
+          td(title=test.status.description)= test.status.name
           td
             .btn-toolbar
-              if(!test.status || test.status === 'new')
+              if(!test.statusId || test.statusId === 'new')
                 a.btn.btn-warning(href='/ab/config/'+test._id) Edit
                 a.btn.btn-danger(href='/ab/remove/'+test._id) Delete
-              if(test.status === 'configured')
+              if(test.statusId === 'configured')
                 a.btn.btn-warning(href='/ab/config/'+test._id) Edit
                 a.btn.btn-danger(href='/ab/remove/'+test._id) Delete
                 if(test.readyToDeploy)
                   a.btn.btn-success(href='/ab/start/'+test._id) Start!
                 else
                   label(title='Test is not configured on the back end yet. Give Richard a kick.') Start?
-              if(test.status === 'running')
+              if(test.statusId === 'running')
                 a.btn.btn-primary(href='/ab/progress/'+test._id) View Progress
                 a.btn.btn-warning(href='/ab/pause/'+test._id) Pause
                 a.btn.btn-danger(href='/ab/stop/'+test._id) End test
-              if(test.status === 'paused')
+              if(test.statusId === 'paused')
                 a.btn.btn-primary(href='/ab/progress/'+test._id) View Progress
                 a.btn.btn-success(href='/ab/start/'+test._id) Resume
                 a.btn.btn-danger(href='/ab/stop/'+test._id) End test
-              if(test.status === 'completed')
+              if(test.statusId === 'completed')
                 a.btn.btn-primary(href='/ab/results/'+test._id) View Results
                 a.btn.btn-warning(href='/ab/archive/'+test._id) Archive
-              if(test.status === 'archived')
+              if(test.statusId === 'archived')
                 a.btn.btn-primary(href='/ab/results/'+test._id) View Results
