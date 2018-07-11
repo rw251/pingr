@@ -13,17 +13,40 @@ const getQueryForPageViewThumbClicks = (days, eventTypes) => {
   return [
     // Only things with a page id within the last n days
     { $match: { date: { $gt: nDaysAgo }, pageId: { $exists: true } } },
+
     // Determine if there is a thumb click event
-    {
-      $project: {
-        pageId: 1,
-        hasEvent: { $cond: { if: { $in: ['$type', eventTypes] }, then: 1, else: 0 } },
-      },
-    },
+    { $project: { pageId: 1, hasEvent: { $cond: { if: { $in: ['$type', eventTypes] }, then: 1, else: 0 } } } },
+
     // Determine if there is a thumb click event for each pageId
     { $group: { _id: '$pageId', clicks: { $max: '$hasEvent' } } },
+
     // Average to get the proportion of page views with a thumb click
     { $group: { _id: null, value: { $avg: '$clicks' } } },
+
+    // Convert proportion into a percentage
+    { $project: { result: { $multiply: [100, '$value'] } } },
+  ];
+};
+
+const getQueryForPatientPageViewThumbClicks = (days, eventTypes) => {
+  const nDaysAgo = getNDaysAgo(days);
+  return [
+    // Only things with a page id within the last n days that are either one of the event types
+    // or a patient page url (agree/disagree don't have a url so aren't matched otherwise)
+    { $match: { date: { $gt: nDaysAgo }, pageId: { $exists: true }, $or: [{ url: /patients?\/\d/ }, { type: { $in: eventTypes } }] } },
+
+    // Determine if there is a thumb click event
+    { $project: { pageId: 1, url: 1, hasEvent: { $cond: { if: { $in: ['$type', eventTypes] }, then: 1, else: 0 } } } },
+
+    // Determine if there is a thumb click event for each pageId
+    { $group: { _id: '$pageId', clicks: { $max: '$hasEvent' }, url: { $max: '$url' } } },
+
+    // If url is null then it is a thumb click on a non-patient page
+    { $match: { url: { $ne: null } } },
+
+    // Average to get the proportion of page views with a thumb click
+    { $group: { _id: null, value: { $avg: '$clicks' } } },
+
     // Convert proportion into a percentage
     { $project: { result: { $multiply: [100, '$value'] } } },
   ];
@@ -34,53 +57,29 @@ const getQuery = (trialId, outcomeId, days) => {
   switch (trialId) {
     case trials.pageView.id:
       switch (outcomeId) {
-        case outcomes.thumbClicks.id: {
+        case outcomes.thumbClicks.id:
           return getQueryForPageViewThumbClicks(days, ['agree', 'disagree']);
-        }
-        case outcomes.thumbAgreeClicks.id: {
+        case outcomes.thumbAgreeClicks.id:
           return getQueryForPageViewThumbClicks(days, ['agree']);
-        }
-        case outcomes.thumbDisagreeClicks.id: {
+        case outcomes.thumbDisagreeClicks.id:
           return getQueryForPageViewThumbClicks(days, ['disagree']);
-        }
         default:
           return false;
       }
     case trials.patientView.id:
       switch (outcomeId) {
         case outcomes.thumbClicks.id:
-          return false;
+          return getQueryForPatientPageViewThumbClicks(days, ['agree', 'disagree']);
         case outcomes.thumbAgreeClicks.id:
-          return false;
+          return getQueryForPatientPageViewThumbClicks(days, ['agree']);
         case outcomes.thumbDisagreeClicks.id:
-          return false;
+          return getQueryForPatientPageViewThumbClicks(days, ['disagree']);
         default:
           return false;
       }
     default:
       return false;
   }
-};
-
-const eventsPerMinuteLastNDays = (eventTypes, n, id, description, callback) => {
-  const nDaysAgo = getNDaysAgo(n);
-  const query = [
-    { $match: { date: { $gt: nDaysAgo } } },
-    {
-      $project: {
-        date: 1,
-        sessionId: 1,
-        hasEvent: { $cond: { if: { $in: ['$type', eventTypes] }, then: 1, else: 0 } },
-      },
-    },
-    { $group: { _id: '$sessionId', start: { $min: '$date' }, end: { $max: '$date' }, events: { $sum: '$hasEvent' } } },
-    { $project: { _id: 1, duration: { $subtract: ['$end', '$start'] }, events: 1 } },
-    { $group: { _id: null, totalDuration: { $sum: '$duration' }, totalEvents: { $sum: '$events' } } },
-    { $project: { eventsPerMillisecond: { $divide: ['$totalEvents', '$totalDuration'] } } },
-    { $project: { result: { $multiply: [60000, '$eventsPerMillisecond'] } } },
-  ];
-  Event.aggregate(query, (err, output) =>
-    callback(err, { id, description, value: output[0].result * 100 }));
 };
 
 module.exports = {

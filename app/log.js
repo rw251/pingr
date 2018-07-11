@@ -99,7 +99,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/addIndividual/${practiceId}/${patientId}`,
-      data: JSON.stringify({ actionText: text, indicatorList }),
+      data: JSON.stringify({ actionText: text, indicatorList, pageId }),
       success(action) {
         notify.showSaved();
         data.addOrUpdatePatientAction(patientId, action);
@@ -130,7 +130,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/individual/${practiceId}/${patientId}`,
-      data: JSON.stringify({ action: updatedAction }),
+      data: JSON.stringify({ action: updatedAction, pageId }),
       success(action) {
         notify.showSaved();
         if (action.agree === true) {
@@ -151,7 +151,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/team/${practiceId}/${indicatorId}`,
-      data: JSON.stringify({ action: dataProp }),
+      data: JSON.stringify({ action: dataProp, pageId }),
       success(d) {
         if (!done) return notify.showSaved();
         return done(null, d);
@@ -207,7 +207,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url,
-      data: JSON.stringify({ actionText: text }),
+      data: JSON.stringify({ actionText: text, pageId }),
       success(d) {
         notify.showSaved();
         return done(null, d);
