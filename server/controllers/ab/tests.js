@@ -1,6 +1,6 @@
 const Test = require('../../models/ab/test');
 const { statuses, randomisationTypes, randomisationTypeArray, trials, trialArray, outcomes, outcomeArray } = require('../../../shared/ab/config');
-const hitCtl = require('./trials');
+const outcomeCtl = require('./outcomes');
 const testConfigs = require('../../../shared/ab/tests');
 
 const isTestFullyConfigured = test => test.name &&
@@ -18,7 +18,9 @@ module.exports = {
         test.outcome = test.outcomeId ? outcomes[test.outcomeId] : {};
         test.trial = test.trialId ? trials[test.trialId] : {};
         test.status = test.statusId ? statuses[test.statusId] : {};
-        test.randomisationType = test.randomisationTypeId ? randomisationTypes[test.randomisationTypeId] : {};
+        test.randomisationType = test.randomisationTypeId ?
+          randomisationTypes[test.randomisationTypeId] :
+          {};
 
         test.readyToDeploy = testConfigs[test.name] ? testConfigs[test.name].readyToDeploy === 'true' : false;
         return test;
@@ -28,7 +30,15 @@ module.exports = {
   },
 
   running: (req, res) => {
-    Test.find({ statusId: statuses.running.id }, (err, tests) => {
+    const query = { statusId: statuses.running.id };
+    if (req.query.randomisationTypeId) {
+      if (typeof req.query.randomisationType === 'string') {
+        query.randomisationTypeId = req.query.randomisationTypeId;
+      } else {
+        query.randomisationTypeId = { $in: req.query.randomisationTypeId };
+      }
+    }
+    Test.find(query, (err, tests) => {
       res.send(tests);
     });
   },
@@ -93,13 +103,22 @@ module.exports = {
 
   progress: (req, res) => {
     Test.findById(req.params.testId, (err, test) => {
-      hitCtl.hits(test, (hitErr, result) => {
+      outcomeCtl.trialHits(test, (hitErr, result) => {
         if (err || hitErr) res.render('pages/ab/progress.jade', { test, message: { error: err || hitErr } });
         else {
           test.baselineHits = result.baseline;
           test.featureHits = result.feature;
           res.render('pages/ab/progress.jade', { test });
         }
+      });
+    });
+  },
+
+  rawProgress: (req, res) => {
+    Test.findById(req.params.testId, (err, test) => {
+      outcomeCtl.trialHits(test, (hitErr, result) => {
+        result.needed = test.conversionSampleSize;
+        res.send(result);
       });
     });
   },

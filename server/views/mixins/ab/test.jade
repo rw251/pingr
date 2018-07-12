@@ -41,7 +41,7 @@ mixin test(submitText, postTo)
         select#selTrial.form-control.selectpicker(name='trialId',title='Select what counts as a trial')
           option(selected='', disabled='') Select what counts as a trial
           each trial in trialArray
-            option(value=trial.id, selected=test.trialId===trial.id)= trial.name
+            option(value=trial.id, selected=test.trialId===trial.id)= trial.name + ' (' + trial.description + ')'
     .row.form-group
       .col-sm-3(style="text-align:right")
         label(for="day",style="font-weight:normal") Outcome (what we're measuring per trial):
@@ -52,15 +52,15 @@ mixin test(submitText, postTo)
             option(value=outcome.id, selected=test.outcomeId===outcome.id)= outcome.description
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(for="day",style="font-weight:normal") No. of previous days over which to measure the baseline conversion rate:
+        label(for="day",style="font-weight:normal") No. of previous days over which to measure the current conversion rate:
       .col-sm-9
         input#days(name='days',value=test.days || 90, type='text', size="3", style="text-align: center")
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(for="day",style="font-weight:normal") Baseline conversion rate:
+        label(for="day",style="font-weight:normal") Current conversion rate:
       .col-sm-9
           input#conversionRateHidden(type='hidden', name='outcomeBaselineValue',value=test.outcomeBaselineValue)
-          label#conversionRate=test.outcomeBaselineValue
+          label#conversionRate Will display when "trial", "outcome" and "days" are set.
     .row.form-group
       .col-sm-3(style="text-align:right")
         label(for="day",style="font-weight:normal") Minimum detectable effect (absolute):
@@ -97,10 +97,6 @@ mixin test(submitText, postTo)
 script(src='https://code.jquery.com/jquery-1.12.4.min.js', integrity='sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=', crossorigin='anonymous')
 script.
   window.jQuery || document.write('<script src="/js/jquery/jquery-1.12.4.min.js"><\/script>')
-script
-  | var metrics = [
-  = outcomeArray.map((v) => v.value).join(',')
-  | ];
 script.
   function ppnd(p) {
     const a0 = 2.50662823884;
@@ -184,10 +180,11 @@ script.
   };
 
   const updateConversionRate = () => {
+    if(!$('#selTrial').val() || !$('#selOutcome').val() || !$('#days').val() ) return;
     $
       .getJSON('/ab/conversions/for/trial/' + $('#selTrial').val() + '/outcome/' + $('#selOutcome').val() + '/over/' + $('#days').val() + '/days')
       .done((data) => {
-        $('#conversionRate').text(data.value);
+        $('#conversionRate').text(data.value.toFixed(2)+'%');
         $('#conversionRateHidden').val(data.value);
         updateSampleSize();
       });
@@ -200,12 +197,15 @@ script.
 
     $('input[type="text"]')
       .on('keyup', (e) => {
-        //if(e.currentTarget)
-        updateSampleSize();
+        if(e.currentTarget.id === 'days') {
+          updateConversionRate();
+        } else {
+          updateSampleSize();
+        }
       })
       .on('click', (e) => {
         e.currentTarget.select();
       });
 
-    updateSampleSize();
+    updateConversionRate();
   });

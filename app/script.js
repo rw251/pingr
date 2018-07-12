@@ -8,7 +8,7 @@ require('datatables.net-buttons-bs')(window, $);
 require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
 require('datatables.net-buttons/js/buttons.html5.js')(window, $);
 
-const abConfig = require('../shared/ab/config');
+const { randomisationTypes } = require('../shared/ab/config');
 
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.
@@ -23,6 +23,7 @@ const events = require('./events');
 const state = require('./state');
 const layout = require('./layout');
 const tutorial = require('./tutorial');
+const abTests = require('./abTests');
 
 // TODO not sure why i did this - was in local variable
 // maybe a separate module
@@ -112,30 +113,7 @@ const App = {
 
     getServerParameters();
 
-    // Get all currently running A/B tests
-    main.getRunningTests((tests) => {
-      if (tests) {
-        lookup.tests = {}; // list of groups for the user
-        tests.forEach((test) => {
-          // assign the user to a group (might be already defined)
-          test.group = abConfig.assign(test);
-          // add to the state object
-          lookup.tests[test.name] = test.group;
-          // if the user is in the feature group execute
-          abConfig.init($, test);
-          console.log(`User ${lookup.userName} assigned to the '${test.group}' group for test '${test.name}'`);
-        });
-      }
-    });
-
-    // if (abConfig.abTestTest.isRunning) {
-    // const group = abConfig.assignPerUser(abConfig.abTestTest, lookup.userName);
-    // console.log(`User ${lookup.userName} is in group ${group}`);
-    // if (group === abConfig.groups.feature) {
-    //   abConfig.abTestTest.featureCode($);
-    // }
-
-    // }
+    abTests.process([randomisationTypes.perUser.id, randomisationTypes.perSession.id]);
 
     main.getInitialData(() => {
       gotInitialData = true;

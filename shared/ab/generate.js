@@ -24,9 +24,9 @@ const makeFile = () => {
     file += `
   ${name}: {`;
     Object.keys(localTests[key]).forEach((key2) => {
-      if (key2 === 'init') {
+      if (key2 === 'init' || key2 === 'pullDown') {
         file += `
-    init: ${localTests[key].init.toString()},`;
+    ${key2}: ${localTests[key].init.toString()},`;
       } else {
         const name2 = key2.indexOf(' ') > -1 ? `'${key2}'` : key2;
         file += `
@@ -52,10 +52,17 @@ Test.find({}, (err, tests) => {
   tests.forEach((test) => {
     if (localTests[test.name]) {
       localTests[test.name].description = test.description;
+      localTests[test.name].researchQuestion = test.researchQuestion;
       delete localTests[test.name]['NOT IN DB'];
     } else {
-      localTests[test.name] = { description: test.description };
+      localTests[test.name] = {
+        description: test.description,
+        researchQuestion: test.researchQuestion,
+      };
       localTests[test.name].init = ($) => {
+        // INSERT TEST CODE HERE
+      };
+      localTests[test.name].pullDown = ($) => {
         // INSERT TEST CODE HERE
       };
       localTests[test.name].readyToDeploy = false;

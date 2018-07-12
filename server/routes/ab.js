@@ -23,6 +23,8 @@ module.exports = {
     router.get('/ab/progress/:testId', isAuthenticated, isAdmin, ctl.progress);
     router.get('/ab/results/:testId', isAuthenticated, isAdmin, ctl.results);
 
+    router.get('/ab/raw/progress/:testId', isAuthenticated, isAdmin, ctl.rawProgress);
+
     router.get('/ab/running', isAuthenticated, isAdmin, ctl.running);
 
     router.get('/ab/conversions/for/trial/:trialId/outcome/:outcomeId/over/:days/days', isAuthenticated, isAdmin, benchCtl.conversion);

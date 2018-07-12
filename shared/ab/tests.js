@@ -1,41 +1,30 @@
 module.exports = {
   'Blue thumbs': {
     init: ($) => {
-      if ($('#abTestCss').length === 0) {
-        $('head').append('<style id="abTestCss" type="text/css"></style>');
+      if ($('#blueThumbCss').length === 0) {
+        $('head').append('<style id="blueThumbCss" type="text/css"></style>');
       }
-      $('#abTestCss').text('.btn.btn-xs.btn-yes.btn-toggle.btn-success{ background-color: blue }');
+      $('#blueThumbCss').text('.btn.btn-xs.btn-yes.btn-toggle.btn-success{ background-color: blue }');
     },
-    description: 'Do people click blue thumbs more than green thumbs',
-    readyToDeploy: 'true',
-  },
-  Test1: {
+    pullDown: ($) => {
+      $('#blueThumbCss').remove();
+    },
     description: '',
+    readyToDeploy: 'true',
+    researchQuestion: 'Do people agree with more actions if the thumbs are blue instead of green?',
+  },
+  Grey: {
+    description: '',
+    researchQuestion: 'Are grey thumbs clicked more than red thumbs?',
     init: ($) => {
-      // INSERT TEST CODE HERE
+      if ($('#greyCss').length === 0) {
+        $('head').append('<style id="greyCss" type="text/css"></style>');
+      }
+      $('#greyCss').text('.btn.btn-xs.btn-no.btn-toggle.btn-danger{ background-color: grey }');
+    },
+    pullDown: ($) => {
+      $('#greyCss').remove();
     },
     readyToDeploy: 'false',
-  },
-  'New test': {
-    description: 'sdfgs dfgd fg',
-    init: ($) => {
-      // INSERT TEST CODE HERE
-    },
-    readyToDeploy: 'true',
-  },
-  test: {
-    description: 'a fasdfas df',
-    init: ($) => {
-      // INSERT TEST CODE HERE
-    },
-    readyToDeploy: 'false',
-  },
-  'My test': {
-    description: 'my test',
-    init: ($) => {
-      // INSERT TEST CODE HERE
-      console.log("let's go!!!");
-    },
-    readyToDeploy: 'true',
   },
 };

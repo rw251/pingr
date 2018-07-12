@@ -34,18 +34,10 @@ const outcomes = {
 
 const objectToArray = obj => Object.keys(obj).map(v => obj[v]);
 
-// this should be in db
-const userCache = {};
-
-// load all test files
-
-
 module.exports = {
 
   assign: (test) => {
     switch (test.randomisationTypeId) {
-      case randomisationTypes.perPractice.id:
-        return Math.random() < 0.5 ? groups.baseline : groups.feature;
       case randomisationTypes.perUser.id:
         return Math.random() < 0.5 ? groups.baseline : groups.feature;
       case randomisationTypes.perPage.id:
@@ -60,23 +52,9 @@ module.exports = {
   init: ($, test) => {
     if (test.group === groups.feature) {
       tests[test.name].init($);
+    } else {
+      tests[test.name].pullDown($);
     }
-  },
-
-  assignPerUser: (test, user) => {
-    if (!userCache[test.name]) {
-      console.log(`No cache for test: ${test.name}. Created.`);
-      userCache[test.name] = {};
-    }
-    if (!userCache[test.name][user]) {
-      console.log(`No user cached for test: ${test.name}. Assigned.`);
-      if (Math.random() < 0.5) {
-        userCache[test.name][user] = groups.baseline;
-      } else {
-        userCache[test.name][user] = groups.feature;
-      }
-    }
-    return userCache[test.name][user];
   },
 
   groups,

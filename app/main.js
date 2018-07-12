@@ -21,10 +21,6 @@ const main = {
     main.wireUpPages();
   },
 
-  getRunningTests(callback) {
-    return data.getRunningTests(callback);
-  },
-
   getInitialData(callback) {
     data.get(
       state.selectedPractice ? state.selectedPractice._id : null,

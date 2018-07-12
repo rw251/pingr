@@ -1,15 +1,20 @@
 const log = require('./log');
 const lookup = require('./lookup');
 const base = require('./base');
+const abTests = require('./abTests');
 const layout = require('./layout');
 const overview = require('./views/overview');
 const indicatorView = require('./views/indicator');
 const patientView = require('./views/patient');
 const actionPlan = require('./views/actions');
+const { randomisationTypes } = require('../shared/ab/config');
 
 const template = {
   loadContent(hash, isPoppingState, callback) {
     base.hideTooltips();
+
+    // Must do this before we log the navigate page event
+    abTests.clearPageGroups();
 
     log.navigatePage(hash, []);
 
@@ -27,6 +32,7 @@ const template = {
       $('html').removeClass('scroll-bar');
       shouldCallCallback = true;
     } else {
+      abTests.process([randomisationTypes.perPage.id]);
       base.hideFooter();
       // $('html').addClass('scroll-bar');
       const params = {};
@@ -66,6 +72,7 @@ const template = {
         shouldCallCallback = true;
       } else if (urlBits[0] === '#patient') {
         // create(pathwayId, pathwayStage, standard, patientId)
+        abTests.process([randomisationTypes.perPatientViewed]);
         patientView.create(
           urlBits[2],
           urlBits[3],
@@ -112,7 +119,7 @@ const template = {
 
     lookup.currentUrl = hash;
 
-    if (shouldCallCallback) return callback();
+    if (shouldCallCallback) return callback;
   },
 };
 

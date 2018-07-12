@@ -19,24 +19,21 @@ include ../../mixins/toolbar.jade
   table.table
     thead
       tr
-        th Name
-        th Description
+        th Research question
         th Start date
-        th Randomisation
-        th Trial
-        th Outcome
+        th Test details
         th Status
         th(style='width:280px') Actions
     tbody
       each test in tests
         tr
-          td= test.name
-          td= test.description
+          td= test.researchQuestion
           td= test.startDate ? test.startDate.toISOString().substr(0,10) : ''
-          td(title=test.randomisationType.description)= test.randomisationType.name
-          td(title=test.trial.description)= test.trial.name
-          td(title=test.outcome.description)= test.outcome.name
-          td(title=test.status.description)= test.status.name
+          td(title='Randomisation: ' + test.randomisationType.description + '\nTrial: ' + test.trial.description + '\nOutcome: ' + test.outcome.description)
+            .item= 'Randomisation: ' + test.randomisationType.name
+            .item= 'Trial: ' + test.trial.name
+            .item= 'Outcome: ' + test.outcome.name
+          td(id=test._id,title=test.status.description)= test.status.name
           td
             .btn-toolbar
               if(!test.statusId || test.statusId === 'new')
@@ -62,3 +59,18 @@ include ../../mixins/toolbar.jade
                 a.btn.btn-warning(href='/ab/archive/'+test._id) Archive
               if(test.statusId === 'archived')
                 a.btn.btn-primary(href='/ab/results/'+test._id) View Results
+script(src='https://code.jquery.com/jquery-1.12.4.min.js', integrity='sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=', crossorigin='anonymous')
+script.
+  window.jQuery || document.write('<script src="/js/jquery/jquery-1.12.4.min.js"><\/script>')
+script
+  | var testIds = ['
+  = tests.filter(function(v){ return v.statusId==='running';}).map(function(v){ return v._id;}).join("','")
+  | '];
+script.
+  testIds.forEach(function(testId) {
+    $
+      .getJSON('/ab/raw/progress/' + testId)
+      .done(function(data){
+        $('#' + testId).html('Running:<br> baseline: ' + data.baseline + '/' + data.needed+ '<br> feature: ' + data.feature + '/' + data.needed)
+      });
+  });  
