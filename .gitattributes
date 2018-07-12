@@ -3,3 +3,6 @@
 
 # Declare files that will always have LF line endings on checkout.
 *.js text eol=lf
+*.json text eol=lf
+*.jade text eol=lf
+*.scss text eol=lf
