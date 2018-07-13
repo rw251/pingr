@@ -20,9 +20,9 @@ $ git clone https://github.com/rw251/pingr -b dev
 
 2. Set up your environment
 
-```
-FIXME
-```
+  * Copy the file .env.dist to .env 
+  * Populate the .env file with the appropriate settings
+
 
 3. Build
 
