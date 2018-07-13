@@ -32,4 +32,9 @@ $ npm install
 
 ## Running PINGR
 
+To start PINGR on a development system:
+
+```
+$ npm start
+```
 
