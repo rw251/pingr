@@ -1,7 +1,35 @@
 # PINGR
 
-## A/B testing
+## Prerequisites
 
-Assume every test has two groups - "baseline" and "feature". "baseline" get the existing behaviour, "feature" get the new feature.
+1. MongoDB
+  * PINGR requires v3.4.x
 
-Each test must first get an entry in server/abConfig.js
+2. Node.js
+  * PINGR currently uses node v8.x.x
+  * nvm is recommended for managing multiple versions on node on your system
+
+ 
+## Installation
+
+1. Clone the repository and checkout the 'dev' branch
+
+```
+$ git clone https://github.com/rw251/pingr -b dev
+```
+
+2. Set up your environment
+
+```
+FIXME
+```
+
+3. Build
+
+```
+$ npm install 
+```	
+
+## Running PINGR
+
+
