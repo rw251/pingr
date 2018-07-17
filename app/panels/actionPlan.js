@@ -40,10 +40,6 @@ const ap = {
         'form',
         { label },
         (e) => {
-          if (!e.data.label) {
-            // e.data.label = 'team';
-            console.error('Hopefyully we dont get here');
-          }
           const reason = $('input:radio[name=reason]:checked').val();
           const localReasonText = $('#modal textarea').val();
 
