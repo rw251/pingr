@@ -4,6 +4,7 @@
 
 1. MongoDB
   * PINGR requires v3.4.x
+  * Instructions for installing MongoDB can be found here: https://docs.mongodb.com/manual/administration/install-community/
 
 2. Node.js
   * PINGR currently uses node v8.x.x
