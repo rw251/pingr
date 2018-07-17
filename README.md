@@ -38,3 +38,14 @@ To start PINGR on a development system:
 $ npm start
 ```
 
+You can also debug the backend by calling:
+
+```
+$ npm run debug 
+```
+
+And point Chrome to:
+
+```
+chrome://inspect
+```
