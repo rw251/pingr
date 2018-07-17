@@ -44,7 +44,7 @@ You can also debug the backend by calling:
 $ npm run debug 
 ```
 
-And point Chrome to:
+And point your Chrome DevTools Protocol enabled browser to:
 
 ```
 chrome://inspect
