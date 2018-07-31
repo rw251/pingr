@@ -12,21 +12,21 @@ This approach keeps the master branch free of code that might be broken or not y
 First make sure your working copy of the repository is on the latest version of the master branch:
 
 ```
-git checkout master
-git fetch origin
-git reset --hard origin/master
+$ git checkout master
+$ git fetch origin
+$ git reset --hard origin/master
 ```
 
 Then create a branch for then new feature or bug fix:
 
 ```
-git checkout -b feat/my-new-feature
+$ git checkout -b feat/my-new-feature
 ```
 
 When ready to push your commits to the central repository for the first time, do the following:
 
 ```
-git push --set-upstream origin feat/my-new-feature
+$ git push --set-upstream origin feat/my-new-feature
 ```
 
 This will add the feature as a remote tracking branch. Subsequent pushes can be done simply by invoking `git push`
@@ -54,4 +54,9 @@ closes #5
 
 will ensure that issue #5 will be closed when the pull request is merged. 
 
-Finally, the feature branch should be deleted, unless there is a specific need to preserve it.
+Finally, the feature branch should be deleted (unless there is a specific need to preserve it). The following will delete the branch from both you local copy of the project and the central repository:
+
+```
+$ git branch -d feat/my-new-feature
+$ git push origin :feat/my-new-feature
+```
