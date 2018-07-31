@@ -37,7 +37,7 @@ This will add the feature as a remote tracking branch. Subsequent pushes can be 
 When you're happy the new feature is done, or if you want to invite other project developers to collaborate on the feature, then you should issue a pull request:
 
 1. Visit the [project page on GitHub](https://github.com/rw251/pingr) and use the **branch** select box to switch to your feature branch.
-2. Click the **New pull request** button. Confirm that the **base** and **compare** select boxes show *master* and your feature branch, respectively; change them if necessary.   
+2. Click the **New pull request** button. Confirm that the **base** and **compare** select boxes show *master* and your feature branch, respectively. Change them if necessary.   
 3. Enter an appropriate description for your pull request.
 4. Click **Create pull request.**
 
@@ -46,7 +46,7 @@ When you're happy the new feature is done, or if you want to invite other projec
 
 Once everyone is happy that the feature is complete and ready to go into the master branch, the pull request can be merged. Normally this will be done by the project owner.
  
-If the feature addresses an active project issue on GitHub, then that issue should be closed. This can be done automatically by posting a special message referencing the issue to the pull request message thread; e.g. for a feature which addresses issue #5, posting:
+If the feature addresses an active project issue on GitHub, then that issue should be closed. This can be done automatically by posting a special message referencing the issue to the pull request message thread. E.g. for a feature which addresses issue #5, posting:
 
 ```
 closes #5
