@@ -31,7 +31,7 @@ Install Git for Windows (https://gitforwindows.org) with the following options:
 
 Install NVM for Windows (https://github.com/coreybutler/nvm-windows) first. **NOTE** don't install in a path containing spaces! A sensible installation dir is C:\nvm
 		
-Use this to install nodejs / npm Open an Administrator command prompt to install the most recent version of node 8:
+Open an administrator command prompt and use NVM install the most recent version of node 8:
 
 ```
 nvm install 8.11.3
@@ -40,7 +40,7 @@ nvm use 8.11.3
 
 ### MongoDB
 
-MongoDB is only required for the Import/Export tools. 
+MongoDB is required for its Import/Export tools. 
 
  * For Windows 8.1, first install the Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.23026 (https://www.microsoft.com/en-us/download/confirmation.aspx?id=48145)
  * Download the MongoDB installer for the correct version (currently 3.6.6)
@@ -49,7 +49,7 @@ MongoDB is only required for the Import/Export tools.
 
 ### Windows build tools    
 
-This can be done very simply using npm. Open an admin command prompt and enter:
+This can be done very simply using npm. Open an administrator command prompt and enter:
 
 ```
 npm install --global --production windows-build-tools
@@ -89,6 +89,7 @@ npm install
 
 ### 4a. Prepare data to be imported
 
+ * Obtain suitable .dat files exported from another instance of the database
  * Create the directory C:\tempdata
  * Copy the .dat files to C:\tempdata
 
@@ -102,16 +103,16 @@ cd C:\Development
 git clone git@bitbucket.org:rwilliams251/smash-data.git
 ```
 
- * Run the import script (FIXME: update the name!):
+ * Run the import script:
 
 ```	
 cd C:\Development\smash-data\Batches
-new_pingr_specific_script.bat
+initial_load_of_SIR_data_PINGR.bat
 ```
 	
 ### 4c. Load the stored procedures
 
-FIXME: The UpdateDates stored procedure needs to be included in the repository and loaded as part of thus step
+FIXME: The UpdateDates stored procedure needs to be included in the repository and loaded into the db as part of this step
 
 ```
 cd C:\Development\pingr\deploy\dbserver
@@ -120,7 +121,7 @@ load_Stored_Procedures.bat
 
 ### 4d. Run the UpdateDates stored procedure to shift date window to present date
 
-This stored procedure can be triggered manually using SQL Sever Management Studio. It will take at least 20 mins to complete. 
+This stored procedure should be triggered manually using SQL Sever Management Studio. It will take at least 20 mins to complete. 
 
 ### 4e. Run PINGR testserver deploy scripts: 
 
