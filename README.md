@@ -13,10 +13,10 @@
  
 ## Installation
 
-1. Clone the repository and checkout the 'dev' branch
+1. Clone the repository
 
 ```
-$ git clone https://github.com/rw251/pingr -b dev
+$ git clone https://github.com/rw251/pingr
 ```
 
 2. Set up your environment
