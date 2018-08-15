@@ -2,8 +2,8 @@
 
 The below shows how to get the development system up and running. Further documentation is available:
 
-- [Setting up the Windows DB server](../blob/master/docs/DB_DEPLOYMENT.md)
-- [Our current git workflow](../blob/master/docs/GIT_WORKFLOW.md)
+- [Setting up the Windows DB server](../master/docs/DB_DEPLOYMENT.md)
+- [Our current git workflow](../master/docs/GIT_WORKFLOW.md)
 
 ## Prerequisites
 
