@@ -434,6 +434,7 @@ module.exports = (passport) => {
     });
   });
   router.post('/api/action/update/individual/:practiceId/:patientId', isAuthenticated, isUserOkToViewPractice, (req, res) => {
+    const { indicatorList } = req.body.action;
     actions.updateIndividual(
       req.params.practiceId,
       req.params.patientId,
@@ -446,11 +447,18 @@ module.exports = (passport) => {
             data: [
               { key: 'action', value: req.body.action.actionTextId },
               { key: 'patientId', value: req.params.patientId },
+              { key: 'actionCat', value: req.body.action.actionCat },
             ],
             sessionId: req.sessionID,
             user: req.user.email,
             pageId: req.body.pageId,
           };
+          if (indicatorList) {
+            evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
+          }
+          if (req.body.url) {
+            evt.url = req.body.url;
+          }
           if (req.body.action.agree === true) {
             evt.type = 'agree';
           } else if (req.body.action.agree === false) {
@@ -476,6 +484,7 @@ module.exports = (passport) => {
     );
   });
   router.post('/api/action/update/team/:practiceId/:indicatorId?', isAuthenticated, isUserOkToViewPractice, (req, res) => {
+    const { indicatorList } = req.body.action;
     actions.updateTeam(
       req.params.practiceId,
       req.params.indicatorId,
@@ -485,11 +494,20 @@ module.exports = (passport) => {
         else {
           const evt = {
             type: 'undo',
-            data: [{ key: 'action', value: req.body.action.actionTextId }],
+            data: [
+              { key: 'action', value: req.body.action.actionTextId },
+              { key: 'actionCat', value: req.body.action.actionCat },
+            ],
             sessionId: req.sessionID,
             user: req.user.email,
             pageId: req.body.pageId,
           };
+          if (indicatorList) {
+            evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
+          }
+          if (req.body.url) {
+            evt.url = req.body.url;
+          }
           if (req.params.indicatorId) {
             evt.data.push({ key: 'indicatorId', value: req.params.indicatorId });
           }

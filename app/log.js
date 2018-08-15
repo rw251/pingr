@@ -130,7 +130,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/individual/${practiceId}/${patientId}`,
-      data: JSON.stringify({ action: updatedAction, pageId }),
+      data: JSON.stringify({ action: updatedAction, url: window.location.href, pageId }),
       success(action) {
         notify.showSaved();
         if (action.agree === true) {
@@ -151,7 +151,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/team/${practiceId}/${indicatorId}`,
-      data: JSON.stringify({ action: dataProp, pageId }),
+      data: JSON.stringify({ action: dataProp, url: window.location.href, pageId }),
       success(d) {
         if (!done) return notify.showSaved();
         return done(null, d);

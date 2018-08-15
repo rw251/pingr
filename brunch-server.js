@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -25,7 +25,7 @@ const DEBUG = true;
 module.exports = (PORT, PATH, CALLBACK) => {
   mongoose.set('debug', DEBUG);
   mongoose.Promise = global.Promise;
-  mongoose.connect(config.db.url);
+  mongoose.connect(config.db.url, { useMongoClient: true });
 
   const app = express();
 

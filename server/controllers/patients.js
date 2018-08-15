@@ -310,6 +310,14 @@ module.exports = {
       { $limit: limit },
     ];
 
+    if (user.viewAllIndicators === false) {
+      if (user.indicatorIdsToInclude.length > 0) {
+        aggregateQuery.splice(3, 0, { $match: { 'standards.indicatorId': { $in: user.indicatorIdsToInclude } } });
+      } else if (user.indicatorIdsToExclude.length > 0) {
+        aggregateQuery.splice(3, 0, { $match: { 'standards.indicatorId': { $nin: user.indicatorIdsToExclude } } });
+      }
+    }
+
     Patient.aggregate(aggregateQuery, (err, results) => {
       if (err) return done(err);
       const patientIds = results.map(v => v._id);
