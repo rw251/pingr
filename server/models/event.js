@@ -10,6 +10,7 @@ const EventSchema = new Schema({
   data: [{ _id: false, key: String, value: String }],
   url: String,
   xpath: String,
+  pageId: String,
 });
 
 EventSchema.index({ user: 1, date: 1 });
