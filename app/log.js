@@ -144,6 +144,7 @@ const log = {
       data: JSON.stringify({ action: dataProp }),
       success(action) {
         notify.showSaved();
+        action.oldActionTextId = actionTextId;
         return data.addOrUpdatePatientAction(patientId, action, () => callback(null, action));
       },
       dataType: 'json',
