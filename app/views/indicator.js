@@ -40,7 +40,8 @@ const ind = {
     pathwayStage = dflt.pathwayStage(pathwayId),
     standard = dflt.standard(pathwayId, pathwayStage),
     tab,
-    loadContentFn
+    loadContentFn,
+    callback
   ) {
     base.selectTab('indicator');
     base.showLoading();
@@ -255,6 +256,8 @@ const ind = {
         },
         { selector: '#advice-list', padding: 430, minHeight: 250 },
       ]);
+
+      if (callback) return callback();
     }, 0);
   },
 };

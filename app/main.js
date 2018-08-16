@@ -129,7 +129,12 @@ const main = {
     main.wireUpSearchBox();
 
     if (main.hash !== window.location.hash) window.location.hash = main.hash;
-    template.loadContent(window.location.hash, true);
+    template.loadContent(window.location.hash, true, () => {
+      // Called when the back button is hit
+      $(window).on('popstate', () => {
+        template.loadContent(window.location.hash, true);
+      });
+    });
   },
 
   preWireUpPages() {
@@ -140,11 +145,6 @@ const main = {
       template.loadContent(window.location.hash, true);
       // do not give a default action
       return false;
-    });
-
-    // Called when the back button is hit
-    $(window).on('popstate', () => {
-      template.loadContent(window.location.hash, true);
     });
 
     // // Template DOM container constants

@@ -50,7 +50,7 @@ const isNumber = n => Number.isNaN(Number(n));
 const pv = {
   wireUp() {},
 
-  create(pathId, pathwayStage, standard, patId, loadContentFn) {
+  create(pathId, pathwayStage, standard, patId, loadContentFn, callback) {
     let skip = 0;
     let limit = 10;
     let pathwayId = pathId;
@@ -77,7 +77,7 @@ const pv = {
       base.wireUpTooltips();
       base.hideLoading();
 
-      return;
+      if (callback) return callback();
     }
     layout.allPatientView = null;
 
@@ -101,7 +101,7 @@ const pv = {
         tabUrl
       );
 
-      return;
+      if (callback) return callback();
     }
 
     base.selectTab('patient');
@@ -259,6 +259,7 @@ const pv = {
           { selector: '.table-scroll', padding: 220, minHeight: 300 },
         ]);
       }
+      if (callback) return callback();
     }, 0);
   },
 
