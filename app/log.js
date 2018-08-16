@@ -1,42 +1,23 @@
 const notify = require('./notify');
 const data = require('./data');
 const lookup = require('./lookup');
-const uuidv4 = require('uuid/v4');
-
-let eventFailCount = 0;
-let pageId = '';
 
 const log = {
   reason: {},
 
-  navigatePage(toUrl, dataProp) {
-    pageId = uuidv4();
+  navigate(toUrl, dataProp) {
     log.event('navigate', toUrl, dataProp);
   },
 
-  navigateTab(toUrl, dataProp) {
-    log.event('navigate-tab', toUrl, dataProp);
-  },
-
-  event(type, url, dataProp, xpath) {
-    const dataToSend = { event: { type, url, pageId, data: dataProp } };
-    if (xpath && xpath.length > 0) dataToSend.event.xpath = xpath;
+  event(type, url, dataProp) {
+    const dataToSend = { event: { type, url, dataProp } };
     if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.event.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url: '/api/event',
       data: JSON.stringify(dataToSend),
       success() {
-        eventFailCount = 0;
-      },
-      error() {
-        eventFailCount += 1;
-        if (eventFailCount > 5) {
-          // We've had too many errors from the back end - could be the server
-          // is down, or has restarted and the session has ended. Either way
-          // a page refresh might help
-          window.location.reload();
-        }
+        // console.log(d);
       },
       dataType: 'json',
       contentType: 'application/json',
@@ -99,7 +80,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/addIndividual/${practiceId}/${patientId}`,
-      data: JSON.stringify({ actionText: text, indicatorList, pageId }),
+      data: JSON.stringify({ actionText: text, indicatorList }),
       success(action) {
         notify.showSaved();
         data.addOrUpdatePatientAction(patientId, action);
@@ -130,7 +111,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/individual/${practiceId}/${patientId}`,
-      data: JSON.stringify({ action: updatedAction, url: window.location.href, pageId }),
+      data: JSON.stringify({ action: updatedAction, url: window.location.href }),
       success(action) {
         notify.showSaved();
         if (action.agree === true) {
@@ -151,7 +132,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/team/${practiceId}/${indicatorId}`,
-      data: JSON.stringify({ action: dataProp, url: window.location.href, pageId }),
+      data: JSON.stringify({ action: dataProp, url: window.location.href }),
       success(d) {
         if (!done) return notify.showSaved();
         return done(null, d);
@@ -207,7 +188,7 @@ const log = {
     $.ajax({
       type: 'POST',
       url,
-      data: JSON.stringify({ actionText: text, pageId }),
+      data: JSON.stringify({ actionText: text }),
       success(d) {
         notify.showSaved();
         return done(null, d);
