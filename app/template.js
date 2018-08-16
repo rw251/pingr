@@ -10,27 +10,24 @@ const actionPlan = require('./views/actions');
 const { randomisationTypes } = require('../shared/ab/config');
 
 const template = {
-  loadContent(hash, isPoppingState, callback) {
+  loadContent(hash, isPoppingState) {
     base.hideTooltips();
 
     // Must do this before we log the navigate page event
     abTests.clearPageGroups();
 
-    log.navigatePage(hash, []);
+    log.navigate(hash, []);
 
     let patientId;
     if (!isPoppingState) {
       window.location.hash = hash;
     }
 
-    let shouldCallCallback = false;
-
     if (hash === '') {
       base.clearBox();
       base.showFooter();
       layout.showPage('login');
       $('html').removeClass('scroll-bar');
-      shouldCallCallback = true;
     } else {
       abTests.process([randomisationTypes.perPage.id]);
       base.hideFooter();
@@ -50,15 +47,14 @@ const template = {
       }
 
       if (urlBits[0] === '#overview' && !urlBits[1]) {
-        overview.create(template.loadContent, callback);
+        overview.create(template.loadContent);
       } else if (urlBits[0] === '#indicators') {
         indicatorView.create(
           urlBits[1],
           urlBits[2],
           urlBits[3],
           params.tab || 'trend',
-          template.loadContent,
-          callback
+          template.loadContent
         );
       } else if (urlBits[0] === '#about') {
         layout.view = 'ABOUT';
@@ -68,8 +64,6 @@ const template = {
         layout.showPage('about-page');
 
         layout.showHeaderBarItems();
-
-        shouldCallCallback = true;
       } else if (urlBits[0] === '#patient') {
         // create(pathwayId, pathwayStage, standard, patientId)
         abTests.process([randomisationTypes.perPatientViewed]);
@@ -78,8 +72,7 @@ const template = {
           urlBits[3],
           urlBits[4],
           urlBits[1],
-          template.loadContent,
-          callback
+          template.loadContent
         );
       } else if (urlBits[0] === '#patients') {
         [, patientId] = urlBits;
@@ -89,17 +82,15 @@ const template = {
           urlBits[3],
           urlBits[4],
           patientId,
-          template.loadContent,
-          callback
+          template.loadContent
         );
       } else if (urlBits[0] === '#agreedactions') {
-        actionPlan.create(callback);
+        actionPlan.create();
       } else {
         // if screen not in correct segment then select it
         // alert("shouldn't get here");
 
         base.wireUpTooltips();
-        shouldCallCallback = true;
       }
 
       $('#about')
@@ -118,8 +109,6 @@ const template = {
     }
 
     lookup.currentUrl = hash;
-
-    if (shouldCallCallback) return callback;
   },
 };
 

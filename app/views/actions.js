@@ -7,7 +7,7 @@ const actionList = require('../panels/actionList');
 const ID = 'ACTION_PLAN_VIEW';
 
 const ap = {
-  create(callback) {
+  create() {
     base.selectTab('actions');
     base.showLoading();
 
@@ -45,8 +45,6 @@ const ap = {
           minHeight: 300,
         },
       ]);
-
-      if (callback) return callback();
     }, 0);
   },
 };
