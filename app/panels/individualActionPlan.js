@@ -4,7 +4,7 @@ const lookup = require('../lookup');
 const state = require('../state.js');
 const log = require('../log.js');
 const actionPlan = require('./actionPlan.js');
-const qualityStandards = require('./qualityStandards'); 
+const qualityStandards = require('./qualityStandards');
 const individualActionPlanTemplate = require('../templates/individual-action-plan.jade');
 const actionPlanListTemplate = require('../templates/action-plan-list.jade');
 const individualTemplate = require('../templates/individual.jade');
@@ -132,13 +132,15 @@ const iap = {
               log.updateUserDefinedPatientAction(
                 patientId,
                 oldActionId,
-                action
+                action,
+                (err, savedAction) => {
+                  iap.updateAction(savedAction);
+                }
               );
               delete userDefinedPatientActionsObject[oldActionId];
               if (!userDefinedPatientActionsObject[action.actionTextId]) {
                 userDefinedPatientActionsObject[action.actionTextId] = action;
               }
-              iap.updateAction(action);
             }
             $('#editPlan').modal('hide');
           })
