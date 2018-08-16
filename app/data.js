@@ -679,6 +679,7 @@ const dt = {
                         v.agree = action.agree;
                         v.history = action.history;
                         v.indicatorList = action.indicatorList;
+                        v.userDefined = action.userDefined;
                       }
                       return v;
                     })
@@ -744,7 +745,7 @@ const dt = {
     return callback();
   },
 
-  removePatientAction(patientId, actionTextId) {
+  removePatientAction(patientId, actionTextId, callback) {
     if (
       dt.patients &&
       dt.patients[patientId] &&
@@ -801,6 +802,7 @@ const dt = {
         });
       });
     }
+    return callback();
   },
 
   getPatientActionData(practiceId, patientId, callback) {

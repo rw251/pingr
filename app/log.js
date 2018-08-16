@@ -137,14 +137,14 @@ const log = {
     });
   },
 
-  updateUserDefinedPatientAction(patientId, actionTextId, dataProp, done) {
+  updateUserDefinedPatientAction(patientId, actionTextId, dataProp, callback) {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/userdefinedpatient/${patientId}/${actionTextId}`,
       data: JSON.stringify({ action: dataProp }),
-      success(d) {
-        if (!done) return notify.showSaved();
-        return done(null, d);
+      success(action) {
+        notify.showSaved();
+        return data.addOrUpdatePatientAction(patientId, action, () => callback(null, action));
       },
       dataType: 'json',
       contentType: 'application/json',
