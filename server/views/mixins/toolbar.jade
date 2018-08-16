@@ -1,5 +1,5 @@
 mixin toolbar(title, urls)
   .btn-toolbar
     each url in urls
-      a.btn(class=url.btn, href=url.path)= url.text
+      a.btn.btn-info(class=url.btn, href=url.path)= url.text
   h1= title

@@ -76,6 +76,8 @@ const pv = {
 
       base.wireUpTooltips();
       base.hideLoading();
+
+      return;
     }
     layout.allPatientView = null;
 
@@ -98,6 +100,8 @@ const pv = {
         data.getNHS(state.selectedPractice._id, patientId),
         tabUrl
       );
+
+      return;
     }
 
     base.selectTab('patient');
