@@ -385,7 +385,6 @@ module.exports = (passport) => {
               data: [{ key: 'text', value: req.body.actionText }],
               sessionId: req.sessionID,
               user: req.user.email,
-              pageId: req.body.pageId,
             };
             if (req.params.indicatorId) {
               evt.data.push({ key: 'indicatorId', value: req.params.indicatorId });
@@ -418,7 +417,6 @@ module.exports = (passport) => {
             ],
             sessionId: req.sessionID,
             user: req.user.email,
-            pageId: req.body.pageId,
           };
           events.add(evt, () => {
             res.send(action);
@@ -451,7 +449,6 @@ module.exports = (passport) => {
             ],
             sessionId: req.sessionID,
             user: req.user.email,
-            pageId: req.body.pageId,
           };
           if (indicatorList) {
             evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
@@ -500,7 +497,6 @@ module.exports = (passport) => {
             ],
             sessionId: req.sessionID,
             user: req.user.email,
-            pageId: req.body.pageId,
           };
           if (indicatorList) {
             evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
