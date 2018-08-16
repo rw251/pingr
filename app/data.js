@@ -587,7 +587,7 @@ const dt = {
     });
   },
 
-  addOrUpdatePatientAction(patientId, action) {
+  addOrUpdatePatientAction(patientId, action, callback) {
     if (
       dt.patients &&
       dt.patients[patientId] &&
@@ -741,6 +741,7 @@ const dt = {
         });
       });
     }
+    return callback();
   },
 
   removePatientAction(patientId, actionTextId) {
