@@ -11,6 +11,7 @@ const EventSchema = new Schema({
   url: String,
   xpath: String,
   tests: Object, // the tests for the current user
+  pageId: String,
 });
 
 EventSchema.index({ user: 1, date: 1 });

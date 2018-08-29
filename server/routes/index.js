@@ -16,7 +16,6 @@ const text = require('../controllers/text.js');
 const utils = require('../controllers/utils.js');
 const config = require('../config');
 const tutorials = require('../tutorials');
-const abRoutes = require('./ab');
 const { isAuthenticated, isAdmin, isUserOkToViewPractice } = require('./helpers');
 
 const router = express.Router();
@@ -169,8 +168,6 @@ module.exports = (passport) => {
       });
     });
   });
-
-  abRoutes.applyTo(router);
 
   // User forgets password
   router.get('/auth/reset', (req, res) => {
@@ -385,6 +382,7 @@ module.exports = (passport) => {
               data: [{ key: 'text', value: req.body.actionText }],
               sessionId: req.sessionID,
               user: req.user.email,
+              pageId: req.body.pageId,
             };
             if (req.params.indicatorId) {
               evt.data.push({ key: 'indicatorId', value: req.params.indicatorId });
@@ -417,6 +415,7 @@ module.exports = (passport) => {
             ],
             sessionId: req.sessionID,
             user: req.user.email,
+            pageId: req.body.pageId,
           };
           events.add(evt, () => {
             res.send(action);
@@ -449,6 +448,7 @@ module.exports = (passport) => {
             ],
             sessionId: req.sessionID,
             user: req.user.email,
+            pageId: req.body.pageId,
           };
           if (indicatorList) {
             evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
@@ -497,6 +497,7 @@ module.exports = (passport) => {
             ],
             sessionId: req.sessionID,
             user: req.user.email,
+            pageId: req.body.pageId,
           };
           if (indicatorList) {
             evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
