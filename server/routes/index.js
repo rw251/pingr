@@ -16,7 +16,6 @@ const text = require('../controllers/text.js');
 const utils = require('../controllers/utils.js');
 const config = require('../config');
 const tutorials = require('../tutorials');
-const abRoutes = require('./ab');
 const { isAuthenticated, isAdmin, isUserOkToViewPractice } = require('./helpers');
 
 const router = express.Router();
@@ -169,8 +168,6 @@ module.exports = (passport) => {
       });
     });
   });
-
-  abRoutes.applyTo(router);
 
   // User forgets password
   router.get('/auth/reset', (req, res) => {
