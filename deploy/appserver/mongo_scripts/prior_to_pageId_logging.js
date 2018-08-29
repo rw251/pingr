@@ -7,7 +7,7 @@
 // 2. Extract the events collection
 // mongoexport -d pingr -c events --sort '{date:1}' --out events.json
 // 3. Run this script to process the events
-// node prior_to_ab_test.js
+// node prior_to_pageId_logging.js
 // 4. Imprt back into mongo
 // mongoimport -d pingr -c events2 --drop events.processed.json
 // 5. Add indexes
