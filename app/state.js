@@ -9,7 +9,7 @@ module.exports = {
   rememberTabs(identifier) {
     $('a[data-toggle="tab"]').on('shown.bs.tab', (e) => {
       tabs[identifier] = e.target.hash; // e.target new tab
-      log.navigate(e.target.hash);
+      log.navigateTab(e.target.hash);
     });
   },
 
