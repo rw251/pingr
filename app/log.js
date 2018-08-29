@@ -83,8 +83,7 @@ const log = {
       data: JSON.stringify({ actionText: text, indicatorList }),
       success(action) {
         notify.showSaved();
-        data.addOrUpdatePatientAction(patientId, action);
-        return done(null, action);
+        data.addOrUpdatePatientAction(patientId, action, () => done(null, action));
       },
       dataType: 'json',
       contentType: 'application/json',
@@ -92,14 +91,13 @@ const log = {
   },
 
   // rwhere
-  deleteUserDefinedPatientAction(patientId, actionTextId, done) {
+  deleteUserDefinedPatientAction(patientId, actionTextId, callback) {
     $.ajax({
       type: 'DELETE',
       url: `/api/action/userdefinedpatient/${patientId}/${actionTextId}`,
       success(d) {
         notify.showSaved();
-        if (!done) return data.removePatientAction(patientId, actionTextId);
-        return done(null, d);
+        return data.removePatientAction(patientId, actionTextId, () => callback(null, d));
       },
       dataType: 'json',
       contentType: 'application/json',
@@ -107,7 +105,7 @@ const log = {
   },
 
   // rwhere
-  updateIndividualAction(practiceId, patientId, updatedAction, done) {
+  updateIndividualAction(practiceId, patientId, updatedAction, callback) {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/individual/${practiceId}/${patientId}`,
@@ -115,13 +113,11 @@ const log = {
       success(action) {
         notify.showSaved();
         if (action.agree === true) {
-          if (!done) return data.addOrUpdatePatientAction(patientId, action);
+          return data.addOrUpdatePatientAction(patientId, action, () => callback(null, action));
         } else if (action.agree === false) {
-          if (!done) return data.addOrUpdatePatientAction(patientId, action);
-        } else if (!done) {
-          return data.removePatientAction(patientId, action.actionTextId);
+          return data.addOrUpdatePatientAction(patientId, action, () => callback(null, action));
         }
-        return done(null, action);
+        return data.removePatientAction(patientId, action.actionTextId, () => callback(null, action));
       },
       dataType: 'json',
       contentType: 'application/json',
@@ -142,14 +138,15 @@ const log = {
     });
   },
 
-  updateUserDefinedPatientAction(patientId, actionTextId, dataProp, done) {
+  updateUserDefinedPatientAction(patientId, actionTextId, dataProp, callback) {
     $.ajax({
       type: 'POST',
       url: `/api/action/update/userdefinedpatient/${patientId}/${actionTextId}`,
       data: JSON.stringify({ action: dataProp }),
-      success(d) {
-        if (!done) return notify.showSaved();
-        return done(null, d);
+      success(action) {
+        notify.showSaved();
+        action.oldActionTextId = actionTextId;
+        return data.addOrUpdatePatientAction(patientId, action, () => callback(null, action));
       },
       dataType: 'json',
       contentType: 'application/json',

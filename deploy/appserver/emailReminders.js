@@ -213,7 +213,10 @@ User.find(searchObject, fieldsToReturn, (err, users) => {
                   v.last_email_reminder = now;
                   v.email_url_tracking_code = token;
                   v.save((err) => {
-                    if (practicesDone === practicesToDo) usersUpdated++;
+                    if (practicesDone === practicesToDo) {
+                      practicesDone = -1; // otherwise this can fire multiple times
+                      usersUpdated++;
+                    }
                     if (err) {
                       console.log(`User failed to update: ${error}`);
                     }
