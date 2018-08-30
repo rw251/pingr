@@ -20,15 +20,15 @@ const makeFile = () => {
   let file = 'module.exports = {';
 
   Object.keys(localTests).forEach((key) => {
-    const name = key.indexOf(' ') > -1 ? `'${key}'` : key;
+    const name = key.indexOf(' ') > -1 ? `"${key}"` : key;
     file += `
   ${name}: {`;
     Object.keys(localTests[key]).forEach((key2) => {
       if (key2 === 'init' || key2 === 'pullDown') {
         file += `
-    ${key2}: ${localTests[key].init.toString()},`;
-      } else {
-        const name2 = key2.indexOf(' ') > -1 ? `'${key2}'` : key2;
+    ${key2}: ${localTests[key][key2].toString()},`;
+      } else if (localTests[key][key2] === false || localTests[key][key2]) {
+        const name2 = key2.indexOf(' ') > -1 ? `"${key2}"` : key2;
         file += `
     ${name2}: '${localTests[key][key2].toString()}',`;
       }

@@ -68,9 +68,10 @@ script
   | '];
 script.
   testIds.forEach(function(testId) {
+    if(!testId) return;
     $
       .getJSON('/ab/raw/progress/' + testId)
       .done(function(data){
-        $('#' + testId).html('Running:<br> baseline: ' + data.baseline + '/' + data.needed+ '<br> feature: ' + data.feature + '/' + data.needed)
+        $('#' + testId).html('Running:<br> baseline: ' + data.baseline.total + '/' + data.needed+ '<br> feature: ' + data.feature.total + '/' + data.needed)
       });
   });  

@@ -10,6 +10,7 @@ const TestSchema = new Schema({
   description: String,
   researchQuestion: String,
   startDate: Date,
+  endDate: Date,
   days: Number,
   outcomeBaselineValue: Number,
   conversionMinDetectableEffect: Number,
@@ -20,6 +21,14 @@ const TestSchema = new Schema({
   randomisationTypeId: { type: String, enum: Object.keys(randomisationTypes) },
   outcomeId: { type: String, enum: Object.keys(outcomes) },
   trialId: { type: String, enum: Object.keys(trials) },
+});
+
+TestSchema.virtual('randomisationType').get(function () {
+  return this.randomisationTypeId ? randomisationTypes[this.randomisationTypeId].name : 'Not set';
+});
+
+TestSchema.virtual('status').get(function () {
+  return this.statusId ? statuses[this.statusId].name : 'Not set';
 });
 
 module.exports = mongoose.model('Test', TestSchema);

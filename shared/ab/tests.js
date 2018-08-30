@@ -9,22 +9,50 @@ module.exports = {
     pullDown: ($) => {
       $('#blueThumbCss').remove();
     },
-    description: '',
+    description: 'Do people click blue thumbs more than green thumbs?',
     readyToDeploy: 'true',
-    researchQuestion: 'Do people agree with more actions if the thumbs are blue instead of green?',
   },
-  Grey: {
-    description: '',
-    researchQuestion: 'Are grey thumbs clicked more than red thumbs?',
+  'New test': {
+    description: 'Another test',
     init: ($) => {
-      if ($('#greyCss').length === 0) {
-        $('head').append('<style id="greyCss" type="text/css"></style>');
-      }
-      $('#greyCss').text('.btn.btn-xs.btn-no.btn-toggle.btn-danger{ background-color: grey }');
+      // INSERT TEST CODE HERE
     },
     pullDown: ($) => {
-      $('#greyCss').remove();
+      // INSERT TEST CODE HERE
     },
     readyToDeploy: 'false',
+  },
+  "Ben's test": {
+    description: 'asdfasdflk jlasdfj',
+    init: ($) => {
+      // INSERT TEST CODE HERE
+    },
+    pullDown: ($) => {
+      // INSERT TEST CODE HERE
+    },
+    readyToDeploy: 'false',
+  },
+  'And one more': {
+    description: 'lll',
+    init: ($) => {
+      // INSERT TEST CODE HERE
+    },
+    pullDown: ($) => {
+      // INSERT TEST CODE HERE
+    },
+    readyToDeploy: 'false',
+  },
+  doesit: {
+    researchQuestion: 'Does this new thing happen more?',
+    init: ($) => {
+      if ($('#blueThumbCss').length === 0) {
+        $('head').append('<style id="blueThumbCss" type="text/css"></style>');
+      }
+      $('#blueThumbCss').text('.btn.btn-xs.btn-yes.btn-toggle.btn-success{ background-color: blue }');
+    },
+    pullDown: ($) => {
+      $('#blueThumbCss').remove();
+    },
+    readyToDeploy: 'true',
   },
 };

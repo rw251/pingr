@@ -80,10 +80,10 @@ const getHitQueryForPageViewThumbClicks = (test, eventTypes) => {
     // Determine if there is a thumb click event
     $project,
 
-    { $group: { _id: '$pageId', groop: { $max: '$groop' } } },
+    { $group: { _id: '$pageId', groop: { $max: '$groop' }, hits: { $max: '$hasEvent' } } },
 
     // Determine if there is a thumb click event for each pageId
-    { $group: { _id: '$groop', total: { $sum: 1 } } },
+    { $group: { _id: '$groop', total: { $sum: 1 }, hits: { $sum: '$hits' } } },
   ];
 };
 
@@ -101,13 +101,13 @@ const getHitQueryForPatientPageViewThumbClicks = (test, eventTypes) => {
     $project,
 
     // Determine if there is a thumb click event for each pageId
-    { $group: { _id: '$pageId', url: { $max: '$url' }, groop: { $max: '$groop' } } },
+    { $group: { _id: '$pageId', url: { $max: '$url' }, groop: { $max: '$groop' }, hits: { $max: '$hasEvent' } } },
 
     // If url is null then it is a thumb click on a non-patient page
     { $match: { url: { $ne: null } } },
 
     // Determine if there is a thumb click event for each pageId
-    { $group: { _id: '$groop', total: { $sum: 1 } } },
+    { $group: { _id: '$groop', total: { $sum: 1 }, hits: { $sum: '$hits' } } },
   ];
 };
 
@@ -189,8 +189,8 @@ module.exports = {
       let baseline = 0;
       let feature = 0;
       output.forEach((o) => {
-        if (o._id === 'baseline') baseline = o.total;
-        else feature = o.total;
+        if (o._id === 'baseline') baseline = { total: o.total, hits: o.hits };
+        else feature = { total: o.total, hits: o.hits };
       });
       return callback(err, { baseline, feature });
     });

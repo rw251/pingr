@@ -2,6 +2,7 @@ const Test = require('../../models/ab/test');
 const { statuses, randomisationTypes, randomisationTypeArray, trials, trialArray, outcomes, outcomeArray } = require('../../../shared/ab/config');
 const outcomeCtl = require('./outcomes');
 const testConfigs = require('../../../shared/ab/tests');
+const significance = require('./significanceCalculator');
 
 const isTestFullyConfigured = test => test.name &&
                                       test.researchQuestion &&
@@ -106,8 +107,8 @@ module.exports = {
       outcomeCtl.trialHits(test, (hitErr, result) => {
         if (err || hitErr) res.render('pages/ab/progress.jade', { test, message: { error: err || hitErr } });
         else {
-          test.baselineHits = result.baseline;
-          test.featureHits = result.feature;
+          test.baselineHits = result.baseline.total;
+          test.featureHits = result.feature.total;
           res.render('pages/ab/progress.jade', { test });
         }
       });
@@ -125,7 +126,35 @@ module.exports = {
 
   results: (req, res) => {
     Test.findById(req.params.testId, (err, test) => {
-      res.render('pages/ab/progress.jade', { test });
+      outcomeCtl.trialHits(test, (hitErr, result) => {
+        if (err || hitErr) res.render('pages/ab/results.jade', { test, message: { error: err || hitErr } });
+        else {
+          test.pValue = significance.pValue(0, result.baseline, 0, result.feature);
+          test.baselineHits = result.baseline.total;
+          test.baselineSuccesses = result.baseline.hits;
+          test.featureHits = result.feature.total;
+          test.featureSuccesses = result.feature.hits;
+          test.pValue = significance.pValue(
+            result.baseline.hits, result.baseline.total,
+            result.feature.hits, result.feature.total
+          );
+          if (test.baselineHits > 0 && test.featureHits > 0) {
+            if (test.baselineSuccesses / test.baselineHits > test.featureSuccesses / test.featureHits) {
+              test.verdict = 'Baseline is more successful than feature.';
+            } else {
+              test.verdict = 'Feature is more successful than baseline.';
+            }
+            if (test.pValue < 0.05) {
+              test.verdict += ` This is SIGNIFICANT with a p-value of ${test.pValue}.`;
+            } else if (test.pValue < 0.1) {
+              test.verdict += ` This is borderline significant with a p-value of ${test.pValue}.`;
+            } else {
+              test.verdict += ` This is NOT significant: p-value = ${test.pValue}.`;
+            }
+          }
+          res.render('pages/ab/results.jade', { test });
+        }
+      });
     });
   },
 
@@ -157,6 +186,7 @@ module.exports = {
   stop: (req, res) => {
     Test.findById(req.params.testId, (err, test) => {
       test.statusId = statuses.completed.id;
+      test.endDate = new Date();
       test.save(() => {
         res.redirect('/ab');
       });
