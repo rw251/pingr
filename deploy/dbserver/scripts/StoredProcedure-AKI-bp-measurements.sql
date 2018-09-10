@@ -52,7 +52,7 @@ select PatID, bpCheckDate, bpCheckCodeMin, bpCheckCodeMax, bpCheckCode from (
 	select s.PatID, EntryDate as bpCheckDate, MIN(Rubric) as bpCheckCodeMin, MAX(Rubric) as bpCheckCodeMax, case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as bpCheckCode, ROW_NUMBER() over (PARTITION BY s.PatID ORDER BY s.EntryDate DESC) rn 
  		from SIR_ALL_Records as s
 		inner join #latestAKICode on #latestAKICode.PatID = s.PatID  
-		and s.EntryDate => #latestAKICode.latestAKICodeDate and s.EntryDate <= dateadd(month, 3, #latestAKICode.latestAKICodeDate)
+		and s.EntryDate >= #latestAKICode.latestAKICodeDate and s.EntryDate <= dateadd(month, 3, #latestAKICode.latestAKICodeDate)
 		where ReadCode in (select code from codeGroups where [group] in ('bp', 'sdp', 'dbp'))	
 		group by s.PatID, EntryDate
 	) sub
@@ -132,9 +132,66 @@ declare @indicatorScore float;
 set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 declare @target float;
 -- FIXME: what value do we want here?
-set @target = 0.75;
+set @target = 1.0;
 declare @numerator int;
 set @numerator = (select sum(case when numerator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
 declare @denominator int;
 set @denominator = (select sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
+
+
+-----------------------------------------------------------------------------
+------------------------POPULATE INDICATOR TABLE-----------------------------
+-----------------------------------------------------------------------------
+					
+                    				--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+--CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+--insert into #indicator
+
+select 'aki.bp.3months', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
+	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
+	sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc 
+from #eligiblePopulationAllData as a
+	inner join ptPractice as b on a.PatID = b.PatID
+	group by b.pracID;
+
+
+----------------------------------------------
+-------POPULATE MAIN DENOMINATOR TABLE--------
+----------------------------------------------
+
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
+--insert into #denominators
+
+select a.PatID, 'aki.bp.3months',
+	'<ul>'+
+	'<li>Patient had AKI diagnosis ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
+	case
+		when numerator = 1 then '<li>Their monitoring blood tests are <strong>up to date:</strong><ul>'
+		else '<li>Their monitoring blood tests are <strong>NOT up to date:</strong><ul>'
+	end +
+	case 
+		when bpCheckDate is NULL then '<li><strong>There is no BP check on record for this patient.</strong></li>'
+        else '<li><strong>This patient had a BP check on ' + CONVERT(VARCHAR, bpCheckDate, 3) + '.</strong></li>'
+	end + '</ul></ul>'
+	,
+	DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData as a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID;
+
+---------------------------------------------------------
+-- Exit if we're just getting the indicator numbers -----
+---------------------------------------------------------
+
+IF @JustTheIndicatorNumbersPlease = 1 RETURN;
+
+
 
