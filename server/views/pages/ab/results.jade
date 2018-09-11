@@ -26,7 +26,7 @@ include ../../mixins/toolbar.jade
         td=test.description
       tr
         td Randomisation type:
-        td=test.randomisationType
+        td(title=test.randomisationType.description)=test.randomisationType.name
       tr
         td Required sample size (per variation):
         td=test.conversionSampleSize

@@ -1,7 +1,7 @@
 include ../../partials/head.jade
 include ../../mixins/toolbar.jade
 .container.starter-template-high(style='background:white')
-  +toolbar('A/B Test List', [{btn:'btn-info',path:'/',text:'Back to PINGR'},{btn:'btn-info',path:'/outcomes',text:'View Conversion Metrics'},{btn:'btn-success',path:'/ab/new',text:'New A/B Test'}])
+  +toolbar('A/B Test List', [{btn:'btn-info',path:'/',text:'Back to PINGR'},{btn:'btn-success',path:'/ab/new',text:'New A/B Test'}])
   if message && message.error
     .alert.alert-danger.alert-dismissible.fade-in(role="alert")
       button.close(type="button" data-dismiss="alert" aria-label="Close")
@@ -56,6 +56,7 @@ include ../../mixins/toolbar.jade
                 a.btn.btn-danger(href='/ab/stop/'+test._id) End test
               if(test.statusId === 'completed')
                 a.btn.btn-primary(href='/ab/results/'+test._id) View Results
+                a.btn.btn-danger(href='/ab/start/'+test._id) Restart
                 a.btn.btn-warning(href='/ab/archive/'+test._id) Archive
               if(test.statusId === 'archived')
                 a.btn.btn-primary(href='/ab/results/'+test._id) View Results

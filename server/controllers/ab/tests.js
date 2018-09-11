@@ -1,7 +1,6 @@
 const Test = require('../../models/ab/test');
-const { statuses, randomisationTypes, randomisationTypeArray, trials, trialArray, outcomes, outcomeArray } = require('../../../shared/ab/config');
+const { statuses, randomisationTypeArray, trialArray, outcomeArray } = require('../../../shared/ab/config');
 const outcomeCtl = require('./outcomes');
-const testConfigs = require('../../../shared/ab/tests');
 const significance = require('./significanceCalculator');
 
 const isTestFullyConfigured = test => test.name &&
@@ -15,18 +14,7 @@ module.exports = {
   index: (req, res) => {
     const query = req.query.showArchived ? {} : { statusId: { $ne: statuses.archived.id } };
     Test.find(query, (err, tests) => {
-      const testMods = tests.map((test) => {
-        test.outcome = test.outcomeId ? outcomes[test.outcomeId] : {};
-        test.trial = test.trialId ? trials[test.trialId] : {};
-        test.status = test.statusId ? statuses[test.statusId] : {};
-        test.randomisationType = test.randomisationTypeId ?
-          randomisationTypes[test.randomisationTypeId] :
-          {};
-
-        test.readyToDeploy = testConfigs[test.name] ? testConfigs[test.name].readyToDeploy === 'true' : false;
-        return test;
-      });
-      res.render('pages/ab/index.jade', { tests: testMods, showArchived: req.query.showArchived });
+      res.render('pages/ab/index.jade', { tests, showArchived: req.query.showArchived });
     });
   },
 
@@ -139,7 +127,8 @@ module.exports = {
             result.feature.hits, result.feature.total
           );
           if (test.baselineHits > 0 && test.featureHits > 0) {
-            if (test.baselineSuccesses / test.baselineHits > test.featureSuccesses / test.featureHits) {
+            if (test.baselineSuccesses / test.baselineHits >
+              test.featureSuccesses / test.featureHits) {
               test.verdict = 'Baseline is more successful than feature.';
             } else {
               test.verdict = 'Feature is more successful than baseline.';

@@ -171,23 +171,23 @@ const getTrialHitQuery = (test) => {
 
 module.exports = {
 
-  all: (req, res) => {
-    res.render('pages/ab/outcomes.jade', { outcomes });
-  },
-
   conversion: (req, res) => {
     const { trialId, outcomeId, days } = req.params;
     const query = getConversionQuery(trialId, outcomeId, days);
     Event.aggregate(query, (err, output) => {
-      res.send({ error: err, value: output[0].result });
+      if (output && output.length > 0) {
+        res.send({ error: err, value: output[0].result });
+      } else {
+        res.send({ error: err, value: 0 });
+      }
     });
   },
 
   trialHits: (test, callback) => {
     const query = getTrialHitQuery(test);
     Event.aggregate(query, (err, output) => {
-      let baseline = 0;
-      let feature = 0;
+      let baseline = { total: 0, hits: 0 };
+      let feature = { total: 0, hits: 0 };
       output.forEach((o) => {
         if (o._id === 'baseline') baseline = { total: o.total, hits: o.hits };
         else feature = { total: o.total, hits: o.hits };

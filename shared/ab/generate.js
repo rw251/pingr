@@ -1,3 +1,4 @@
+require('dotenv').config();
 // Run with:
 //  node generate.js
 

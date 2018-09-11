@@ -28,7 +28,5 @@ module.exports = {
     router.get('/ab/running', isAuthenticated, isAdmin, ctl.running);
 
     router.get('/ab/conversions/for/trial/:trialId/outcome/:outcomeId/over/:days/days', isAuthenticated, isAdmin, benchCtl.conversion);
-
-    router.get('/outcomes', isAuthenticated, isAdmin, benchCtl.all);
   },
 };

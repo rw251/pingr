@@ -13,12 +13,12 @@ mixin test(submitText, postTo)
     h3 Initial config
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") Research question:
+        label(style="font-weight:normal") Research question*:
       .col-sm-9
         input.form-control(type='text', name='researchQuestion', placeholder='E.g. Do blue thumbs up get clicked more frequently than green thumbs?', autofocus='', value=test.researchQuestion)
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") Name:
+        label(style="font-weight:normal") Name*:
       .col-sm-9
         input.form-control(type='text', name='name', placeholder='A short name', value=test.name)
     .row.form-group
@@ -28,7 +28,7 @@ mixin test(submitText, postTo)
         input.form-control(type='text', name='description', placeholder='A longer description', value=test.description)
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") Randomisation type:
+        label(style="font-weight:normal") Randomisation type*:
       .col-sm-9
         select.form-control.selectpicker(name='randomisationTypeId',title='Select randomisation type')
           option(selected='', disabled='') Select randomisation type
@@ -36,7 +36,7 @@ mixin test(submitText, postTo)
             option(value=rt.id, selected=test.randomisationTypeId===rt.id)= rt.name
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(style="font-weight:normal") What counts as a "trial":
+        label(style="font-weight:normal") What counts as a "trial"*:
       .col-sm-9
         select#selTrial.form-control.selectpicker(name='trialId',title='Select what counts as a trial')
           option(selected='', disabled='') Select what counts as a trial
@@ -44,7 +44,7 @@ mixin test(submitText, postTo)
             option(value=trial.id, selected=test.trialId===trial.id)= trial.name + ' (' + trial.description + ')'
     .row.form-group
       .col-sm-3(style="text-align:right")
-        label(for="day",style="font-weight:normal") Outcome (what we're measuring per trial):
+        label(for="day",style="font-weight:normal") Outcome (what we're measuring per trial)*:
       .col-sm-9
         select#selOutcome.form-control.selectpicker(name='outcomeId',title='Select outcome')
           option(selected='', disabled='') Select outcome
