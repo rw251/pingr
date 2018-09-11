@@ -1,7 +1,9 @@
-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -- AKI-bp-measurements
--- Population 01a and BP checked within 3 months of AKI diagnosis
-------------------------------------------------------------------------------------------
+--
+-- Coded AKI in the last 3 months
+-- and BP checked within 3 months of AKI diagnosis
+-------------------------------------------------------------------------------
 
 -- FIXME: temporary, to be replaced by standard boostrapping code
 
@@ -18,7 +20,9 @@ declare @startDate datetime;
 set @startDate = DATEADD(month, @monthdelta, @refdate);
 
 
+-------------------------------------------------------------------------------
 -- ELIGIBLE POPULATION
+-------------------------------------------------------------------------------
 
 -- #latestAKICode [01a]
 
@@ -43,7 +47,8 @@ insert into #latestAKICode
 -- NOTES:
 -- ID of all patients that have had a BP check within 3 months of an AKI code, and the date of the most recent check
 --   What if the patient had multiple BP checks within the 3 month window?
---  FIXME: > or >= for date test?
+
+-- FIXME: to simplify if the rubric is not required
 
 IF OBJECT_ID('tempdb..#bpChecked3MonthsAfterAKICoded') IS NOT NULL DROP TABLE #bpChecked3MonthsAfterAKICoded;
 CREATE TABLE #bpChecked3MonthsAfterAKICoded (PatID int, bpCheckDate date, bpCheckCodeMin varchar(255), bpCheckCodeMax varchar(255), bpCheckCode varchar(255));
@@ -91,7 +96,7 @@ insert into #numerator
 
 -- #eligiblePopulationAllData
 
---all data from above combined into one table, plus denominator/numerator columns
+-- all data from above combined into one table, plus denominator/numerator columns
 
 
 IF OBJECT_ID('tempdb..#eligiblePopulationAllData') IS NOT NULL DROP TABLE #eligiblePopulationAllData
@@ -113,9 +118,10 @@ insert into #eligiblePopulationAllData
 			left outer join (select PatID, numerator from #numerator) d on d.PatID = a.PatID;
 		
 		
------------------------------------------------------------------------------
----------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- GET ABC (TOP 10% BENCHMARK
+-------------------------------------------------------------------------------
+
 declare @abc float;
 set @abc = (select round(avg(perc),2) from (
 select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when denominator = 1 then 1.0 else 0.0 end) as perc from #eligiblePopulationAllData as a
@@ -125,9 +131,10 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 	order by perc desc) sub);
 
 
------------------------------------------------------------------------------
---DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE-------------
------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE
+-------------------------------------------------------------------------------
+
 declare @indicatorScore float;
 set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 declare @target float;
@@ -139,9 +146,9 @@ declare @denominator int;
 set @denominator = (select sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
 
 
------------------------------------------------------------------------------
-------------------------POPULATE INDICATOR TABLE-----------------------------
------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- POPULATE INDICATOR TABLE
+-------------------------------------------------------------------------------
 					
                     				--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
@@ -159,9 +166,9 @@ from #eligiblePopulationAllData as a
 	group by b.pracID;
 
 
-----------------------------------------------
--------POPULATE MAIN DENOMINATOR TABLE--------
-----------------------------------------------
+-------------------------------------------------------------------------------
+-- POPULATE MAIN DENOMINATOR TABLE 
+-------------------------------------------------------------------------------
 
 									--TO RUN AS STORED PROCEDURE--
 insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
@@ -171,9 +178,11 @@ insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 --CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
 --insert into #denominators
 
+-- FIXME: the 'why' text is minimal - do we want to elaborate?
+
 select a.PatID, 'aki.bp.3months',
 	'<ul>'+
-	'<li>Patient had AKI diagnosis ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
+	'<li>Patient had AKI diagnosis on ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
 	case
 		when numerator = 1 then '<li>Their monitoring blood tests are <strong>up to date:</strong><ul>'
 		else '<li>Their monitoring blood tests are <strong>NOT up to date:</strong><ul>'
@@ -187,11 +196,108 @@ select a.PatID, 'aki.bp.3months',
 from #eligiblePopulationAllData as a
 left outer join latestAnnualReviewCode l on l.PatID = a.PatID;
 
----------------------------------------------------------
--- Exit if we're just getting the indicator numbers -----
----------------------------------------------------------
+
+
+-------------------------------------------------------------------------------
+-- Exit if we're just getting the indicator numbers 
+-------------------------------------------------------------------------------
 
 IF @JustTheIndicatorNumbersPlease = 1 RETURN;
 
+declare @daysLeft int;
+set @daysLeft = (select DATEDIFF(day,@refdate,@endDate))
 
+
+-------------------------------------------------------------------------------
+-- DEFINE % POINTS PER PATIENT
+-------------------------------------------------------------------------------
+
+-- FIXME: is this method correct? There seems to be differences between indicators
+
+declare @ptPercPoints float;
+set @ptPercPoints = 
+(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end) 
+from #eligiblePopulationAllData);
+
+
+-------------------------------------------------------------------------------
+-- PATIENT-LEVEL ACTIONS
+-------------------------------------------------------------------------------
+
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+--CREATE TABLE #patActions
+--	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #patActions
+
+-- NO PRIM CARE CONTACT IN THE LAST YEAR
+--> CHECK REGISTERED
+select a.PatID,
+	'aki.bp.3months' as indicatorId,
+	'Registered?' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	1 as priority,
+	'Check this patient is registered' as actionText,
+	'Reasoning' +
+		'<ul><li>No contact with your practice in the last year.</li>' +
+		'<li>If <strong>not registered</strong> please add code <strong>92...</strong> [92...] to their records.</li>' +
+		'<li>If <strong>dead</strong> please add code <strong>9134.</strong> [9134.] to their records.</li></ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+left outer join (select PatID, latestPrimCareContactDate from latestPrimCareContact) as b on b.PatID = a.PatID
+where numerator is NULL
+and latestPrimCareContactDate < DATEADD(year, -1, @refdate)
+
+union
+
+-- REGULAR F2F CONTACT
+--> DO WHEN NEXT COMES IN
+select a.PatID,
+	'aki.bp.3months' as indicatorId,
+	'Opportunistic' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	2 as priority,
+	'Put note on medical record to measure BP at next face-to-face contact' as actionText,
+	'Reasoning' +
+		'<ul>'+
+		'<li>Patient has had ' + CONVERT(VARCHAR, noOfF2fContactsInLastYear, 3) + ' face-to-face contacts with your practice in the last year.</li>'+
+		'<li>There are ' + CONVERT(VARCHAR, datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)), 3) + ' days left for this patient to achieve the indicator.</li>'+
+		'<li>Patient is expected to have ' + CONVERT(VARCHAR, (noOfF2fContactsInLastYear * datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)) / 365), 3) + ' further face-to-face contacts with your practice before then.</li>'+
+		'<li>You could put a note in their record to remind the next person to see them to measure their BP.</li>'+
+		'<li>Either as an alert when you open the record, or as a consultation note.</li>'+
+		'</ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+left outer join (select * from noOfF2fContactsInLastYear) as b on b.PatID = a.PatID
+where numerator is NULL
+and (noOfF2fContactsInLastYear * datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)) / 365) >= 1.5
+
+union
+
+-- INFREQUENT F2F CONTACT
+--> SEND LETTER
+select a.PatID,
+	'aki.bp.3months' as indicatorId,
+	'Send letter' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	3 as priority,
+	'Send letter to request BP measurement' as actionText,
+	'Reasoning' +
+		'<ul>'+
+		'<li>Patient has had ' + CONVERT(VARCHAR, noOfF2fContactsInLastYear, 3) + ' face-to-face contacts with your practice in the last year.</li>'+
+		'<li>There are ' + CONVERT(VARCHAR, datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)), 3) + ' days ramaining for patient to achieve the indicator.</li>'+
+		'<li>Patient is not expected to have any further face-to-face contacts with your practice before then.</li>'+
+		'<li>Send a letter to patient asking them to arrange an appointment to have their BP measured.</li>'+
+		'</ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+left outer join (select * from noOfF2fContactsInLastYear) as b on b.PatID = a.PatID
+where numerator is NULL
+and (noOfF2fContactsInLastYear * datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)) / 365) < 1;
 
