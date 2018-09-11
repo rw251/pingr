@@ -119,7 +119,7 @@ module.exports = {
   },
 
   // Get a single patient's details - for use on the patient screen
-  get(patientId, done) {
+  get(patientId, user, done) {
     Patient.findOne({ patientId }, (err, patient) => {
       if (err) {
         console.log(err);
@@ -153,6 +153,23 @@ module.exports = {
             }
             return v;
           });
+          if (user.viewAllIndicators === false) {
+            if (user.indicatorIdsToInclude.length > 0) {
+              patientObj.standards = patientObj.standards
+                .filter(v => user.indicatorIdsToInclude.indexOf(v.indicatorId) > -1);
+              if (patientObj.actions) {
+                patientObj.actions = patientObj.actions
+                  .filter(v => user.indicatorIdsToInclude.indexOf(v.indicatorId) > -1);
+              }
+            } else if (user.indicatorIdsToExclude.length > 0) {
+              patientObj.standards = patientObj.standards
+                .filter(v => user.indicatorIdsToExclude.indexOf(v.indicatorId) < 0);
+              if (patientObj.actions) {
+                patientObj.actions = patientObj.actions
+                  .filter(v => user.indicatorIdsToInclude.indexOf(v.indicatorId) > -1);
+              }
+            }
+          }
         }
         done(null, patientObj);
       });
@@ -186,7 +203,7 @@ module.exports = {
   },
 
   // Get a single patient's actions - for use on the patient screen
-  getActions(practiceId, patientId, done) {
+  getActions(practiceId, patientId, user, done) {
     const searchObject = {};
     if (patientId) searchObject.patientId = patientId;
     actions.getIndividual(searchObject, (err, actionList) => {
@@ -205,6 +222,25 @@ module.exports = {
             return done(null, false);
           }
           const rtn = mergeActions(actionList, patients, patientId);
+          if (user.viewAllIndicators === false) {
+            if (user.indicatorIdsToInclude.length > 0) {
+              if (patientId) {
+                rtn[patientId].actions = rtn[patientId].actions
+                  .filter(v => user.indicatorIdsToInclude.indexOf(v.indicatorId) > -1);
+              } else {
+                rtn.actions = rtn.actions
+                  .filter(v => user.indicatorIdsToInclude.indexOf(v.indicatorId) > -1);
+              }
+            } else if (user.indicatorIdsToExclude.length > 0) {
+              if (patientId) {
+                rtn[patientId].actions = rtn[patientId].actions
+                  .filter(v => user.indicatorIdsToExclude.indexOf(v.indicatorId) < 0);
+              } else {
+                rtn.actions = rtn.actions
+                  .filter(v => user.indicatorIdsToExclude.indexOf(v.indicatorId) < 0);
+              }
+            }
+          }
           return done(null, rtn);
         }
       );
@@ -274,6 +310,14 @@ module.exports = {
       { $limit: limit },
     ];
 
+    if (user.viewAllIndicators === false) {
+      if (user.indicatorIdsToInclude.length > 0) {
+        aggregateQuery.splice(3, 0, { $match: { 'standards.indicatorId': { $in: user.indicatorIdsToInclude } } });
+      } else if (user.indicatorIdsToExclude.length > 0) {
+        aggregateQuery.splice(3, 0, { $match: { 'standards.indicatorId': { $nin: user.indicatorIdsToExclude } } });
+      }
+    }
+
     Patient.aggregate(aggregateQuery, (err, results) => {
       if (err) return done(err);
       const patientIds = results.map(v => v._id);
@@ -295,7 +339,7 @@ module.exports = {
     });
   },
 
-  getAllPatientsPaginated(practiceId, skip, limit, done) {
+  getAllPatientsPaginated(practiceId, user, skip, limit, done) {
     const aggregateQuery = [
       { $match: { 'characteristics.practiceId': practiceId, actions: { $exists: true } } },
       { $project: { _id: 0, patientId: 1, actions: 1, characteristics: 1 } },
@@ -306,6 +350,14 @@ module.exports = {
       { $skip: skip },
       { $limit: limit },
     ];
+
+    if (user.viewAllIndicators === false) {
+      if (user.indicatorIdsToInclude.length > 0) {
+        aggregateQuery.splice(3, 0, { $match: { 'actions.indicatorId': { $in: user.indicatorIdsToInclude } } });
+      } else if (user.indicatorIdsToExclude.length > 0) {
+        aggregateQuery.splice(3, 0, { $match: { 'actions.indicatorId': { $nin: user.indicatorIdsToExclude } } });
+      }
+    }
 
     Patient.aggregate(aggregateQuery, (err, results) => {
       if (err) return done(err);

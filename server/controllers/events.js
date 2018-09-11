@@ -142,6 +142,19 @@ const e = {
               }
               return done(null);
             });
+          } else if (event.type === 'disagree') {
+            // if thumbs down then email ben
+            const emailConfig = emailSender.config(
+              config.mail.type, config.mail.adminEmailsFrom, { name: 'Ben Brown', email: config.mail.suggestionEmailsTo }, 'PINGR: Someone has disagreed with an action',
+              `Someone has disagreed with an action. Details are:\n\n ${JSON.stringify(event, null, 2)}\n\n Regards,\n\nPINGR`, null, null
+            );
+              // Send email
+            return emailSender.send(emailConfig, (error) => {
+              if (error) {
+                console.log(`email not sent: ${error}`);
+              }
+              return done(null);
+            });
           }
           return done(null);
         });

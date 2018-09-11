@@ -13,7 +13,7 @@ const ID = 'OVERVIEW';
  *   Team action plan
  */
 const overview = {
-  create(loadContentFn) {
+  create(loadContentFn, callback) {
     lookup.suggestionModalText = 'Screen: Overview\n===========\n';
 
     base.selectTab('overview');
@@ -77,6 +77,8 @@ const overview = {
       //   { selector: '#personalPlanTeam', padding: 820, minHeight: 200 },
       //   { selector: '#advice-list', padding: 430, minHeight: 250 },
       // ]); // ,{selector:'.table-scroll',padding:250, minHeight:300}]);
+
+      if (callback) return callback();
     }, 0);
   },
 };

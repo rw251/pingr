@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -24,7 +25,7 @@ const DEBUG = false;
 module.exports = (PORT, PATH, CALLBACK) => {
   mongoose.set('debug', DEBUG);
   mongoose.Promise = global.Promise;
-  mongoose.connect(config.db.url);
+  mongoose.connect(config.db.url, { useMongoClient: true });
 
   const app = express();
 
@@ -108,6 +109,7 @@ module.exports = (PORT, PATH, CALLBACK) => {
   let port = PORT || config.server.port;
   if (!port) port = process.env.PORT || '3000';
   app.set('port', port);
+  console.log(`port:${port}`);
 
   /**
    * Create HTTP server.

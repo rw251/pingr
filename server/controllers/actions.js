@@ -100,19 +100,21 @@ module.exports = {
   },
 
   updateTeam(practiceId, indicatorId, updatedAction, done) {
-    Action.find({ practiceId, actionTextId: updatedAction.actionTextId }, (err, actions = []) => {
+    Action.find({ practiceId, actionTextId: updatedAction.actionTextId }, (err, actions) => {
+      // Can't use default params as actions is null rather than undefined
+      const localActions = actions || [];
       if (err) {
         console.log(err);
         return done(new Error(`Error finding team actions for practice: ${practiceId} and actionTextId ${updatedAction.actionTextId}`));
       }
-      if (actions.length === 0) {
-        actions.push(new Action({ practiceId }));
+      if (localActions.length === 0) {
+        localActions.push(new Action({ practiceId }));
       }
 
       const doneActions = [];
       let errorIfError = null;
 
-      return actions.forEach((v) => {
+      return localActions.forEach((v) => {
         delete updatedAction.indicatorList;
         localUpdateAction(v, updatedAction, (locErr, act) => {
           if (locErr) {
@@ -122,7 +124,7 @@ module.exports = {
           } else {
             doneActions.push(act);
           }
-          if (doneActions.length === actions.length) {
+          if (doneActions.length === localActions.length) {
             if (errorIfError) return done(errorIfError);
             return done(null, doneActions);
           }
@@ -135,19 +137,18 @@ module.exports = {
   updateIndividual(practiceId, patientId, updatedAction, done) {
     Action.findOne(
       { practiceId, patientId, actionTextId: updatedAction.actionTextId },
-      (err, action = new Action({
-        practiceId,
-        patientId,
-      })) => {
+      (err, action) => {
         if (err) {
           console.log(err);
           return done(new Error(`Error finding individual action for practice: ${practiceId} and patient ${patientId} and actionTextId ${updatedAction.actionTextId}`));
         }
+        // Can't use default params as action is null rather than undefined
+        const localAction = action || new Action({ practiceId, patientId });
         Object.keys(updatedAction).forEach((v) => {
           if (v[0] === '_') return; // ignore hidden properties like _id and __v;
-          action[v] = updatedAction[v];
+          localAction[v] = updatedAction[v];
         });
-        return action.save((saveErr, act) => {
+        return localAction.save((saveErr, act) => {
           if (saveErr) {
             console.log('error updating individual action');
             return done(saveErr);

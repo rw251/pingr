@@ -55,11 +55,11 @@ module.exports = {
         25,
         (getErr, patientList) => {
           if (getErr) return callback(getErr);
-          return indicators.list(practiceId, (listErr, indicatorList) => {
+          const user = userThing.toObject();
+          return indicators.list(practiceId, user, (listErr, indicatorList) => {
             if (listErr) return callback(listErr);
             const processedIndicators = processIndicators(indicatorList);
             const processedPatients = processPatients(patientList);
-            const user = userThing.toObject();
             if (user.last_login) user.last_login = (new Date(user.last_login)).toDateString();
             user.indicators = processedIndicators;
             user.patients = processedPatients;

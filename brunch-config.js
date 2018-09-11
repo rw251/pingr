@@ -2,7 +2,7 @@ module.exports = {
   // See http://brunch.io for documentation.
   paths: {
     public: 'dist',
-    watched: ['app', 'vendor'],
+    watched: ['app', 'vendor', 'shared'],
   },
 
   files: {
@@ -33,6 +33,8 @@ module.exports = {
 
     templates: { joinTo: 'app.js' },
   },
+
+  server: { port: 3883 },
 
   plugins: { babel: { presets: [['env', { targets: { browsers: ['ie >= 11'] } }]] } },
 };

@@ -250,6 +250,15 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] VALUES ('Starting pingr.meds.azt.monitor', GETDATE());
+EXEC	@return_value = [dbo].[pingr.meds.azt.monitor]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
 INSERT INTO [pingr.sql.log] VALUES ('Stored procedures completed', GETDATE());
 
 							---------------------------------------------------------------
@@ -369,7 +378,13 @@ select distinct PatID, EntryDate, case
 		when [group] = 'syncope' and Source != 'salfordt' then 'Syncope or dizziness'
 		when [group] = 'palps' and Source != 'salfordt' then 'Palpitations'
 		when [group] = 'sob' and Source != 'salfordt' then 'Shortness of breath'
-		when [group] = 'pulseRhythm' and Source != 'salfordt' then 'Pulse rhythm'
+		when [group] = 'pulseRhythm' then 'Pulse rhythm'
+		when [group] = 'dmardMonitor' then 'DMARD monitoring'
+		when [group] = 'dmardSeenCommunity' then 'DMARD monitoring (community)'
+		when [group] = 'dmardSeenSecondary' then 'DMARD monitoring (secondary care)'
+		when [group] = 'dmardMonitorSecondary' then 'DMARD monitoring (secondary care)'
+		when [group] = 'dnaDmardCommunity' then 'DNA''d DMARD monitoring (community)'
+		when [group] = 'dnaDmardSecondary' then 'DNA''d DMARD monitoring (secondary care)'
 	end as importantCode
 from SIR_ALL_Records s inner join codeGroups cg on cg.code = s.ReadCode
 where [group] in ('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx', 'ckdInvite', '9RX..', 'ckdTempEx', 'bpTempEx', 'posturalHypo',
@@ -377,7 +392,8 @@ where [group] in ('pal', 'frail', 'housebound', 'bedridden', 'houseboundPermEx',
 	'sickSinus', '2/3heartBlock', 'ASrepair', 'loopDiurAllergyAdverseReaction',
 	'alphaAllergyAdverseReaction', 'PotSparDiurAllergyAdverseReaction', 'BBallergyAdverseReaction', 'CCBallergyAdverseReaction',
 	'ARBallergyAdverseReaction', 'ACEIallergyAdverseReaction', 'thiazideAllergyAdverseReaction', 'copdTempEx', 'pulRehabTempExSs',
-	'mrc', 'CopdHosp','copdExacNonSs','copdExacSs','pulRehabOfferedSs','asbp','adbp')
+	'mrc', 'CopdHosp','copdExacNonSs','copdExacSs','pulRehabOfferedSs','asbp','adbp','dmardMonitor','dmardSeenCommunity','dmardSeenSecondary','dmardMonitorSecondary',
+	'dnaDmardCommunity','dnaDmardSecondary')
 	or ([group] in ('cp','syncope','palps','sob', 'pulseRhythm') and Source != 'salfordt')
 
 union

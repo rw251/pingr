@@ -16,30 +16,9 @@ const text = require('../controllers/text.js');
 const utils = require('../controllers/utils.js');
 const config = require('../config');
 const tutorials = require('../tutorials');
+const { isAuthenticated, isAdmin, isUserOkToViewPractice } = require('./helpers');
 
 const router = express.Router();
-
-const isAuthenticated = (req, res, next) => {
-  // if user is authenticated in the session, call the next() to call the next request handler
-  // Passport adds this method to request object. A middleware is allowed to add properties to
-  // request and response objects
-  if (req.isAuthenticated()) { return next(); }
-  // if the user is not authenticated then redirect him to the login page
-  req.session.redirect_to = req.path; // remember the page they tried to load
-  return res.redirect('/login');
-};
-
-const isUserOkToViewPractice = (req, res, next) => {
-  const isUserAuthorisedForThisPractice = req.user.practices
-    .filter(v => v.authorised && v.id === req.params.practiceId).length > 0;
-  if (!isUserAuthorisedForThisPractice) return res.send([]);
-  return next();
-};
-
-const isAdmin = (req, res, next) => {
-  if (req.user.roles.indexOf('admin') > -1) return next();
-  return res.redirect('/login');
-};
 
 module.exports = (passport) => {
   /* GET login page. */
@@ -403,6 +382,7 @@ module.exports = (passport) => {
               data: [{ key: 'text', value: req.body.actionText }],
               sessionId: req.sessionID,
               user: req.user.email,
+              pageId: req.body.pageId,
             };
             if (req.params.indicatorId) {
               evt.data.push({ key: 'indicatorId', value: req.params.indicatorId });
@@ -435,6 +415,7 @@ module.exports = (passport) => {
             ],
             sessionId: req.sessionID,
             user: req.user.email,
+            pageId: req.body.pageId,
           };
           events.add(evt, () => {
             res.send(action);
@@ -450,6 +431,7 @@ module.exports = (passport) => {
     });
   });
   router.post('/api/action/update/individual/:practiceId/:patientId', isAuthenticated, isUserOkToViewPractice, (req, res) => {
+    const { indicatorList } = req.body.action;
     actions.updateIndividual(
       req.params.practiceId,
       req.params.patientId,
@@ -462,10 +444,18 @@ module.exports = (passport) => {
             data: [
               { key: 'action', value: req.body.action.actionTextId },
               { key: 'patientId', value: req.params.patientId },
+              { key: 'actionCat', value: req.body.action.actionCat },
             ],
             sessionId: req.sessionID,
             user: req.user.email,
+            pageId: req.body.pageId,
           };
+          if (indicatorList) {
+            evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
+          }
+          if (req.body.url) {
+            evt.url = req.body.url;
+          }
           if (req.body.action.agree === true) {
             evt.type = 'agree';
           } else if (req.body.action.agree === false) {
@@ -491,6 +481,7 @@ module.exports = (passport) => {
     );
   });
   router.post('/api/action/update/team/:practiceId/:indicatorId?', isAuthenticated, isUserOkToViewPractice, (req, res) => {
+    const { indicatorList } = req.body.action;
     actions.updateTeam(
       req.params.practiceId,
       req.params.indicatorId,
@@ -500,10 +491,20 @@ module.exports = (passport) => {
         else {
           const evt = {
             type: 'undo',
-            data: [{ key: 'action', value: req.body.action.actionTextId }],
+            data: [
+              { key: 'action', value: req.body.action.actionTextId },
+              { key: 'actionCat', value: req.body.action.actionCat },
+            ],
             sessionId: req.sessionID,
             user: req.user.email,
+            pageId: req.body.pageId,
           };
+          if (indicatorList) {
+            evt.data.push({ key: 'indicatorIds', value: indicatorList.join(', ') });
+          }
+          if (req.body.url) {
+            evt.url = req.body.url;
+          }
           if (req.params.indicatorId) {
             evt.data.push({ key: 'indicatorId', value: req.params.indicatorId });
           }
@@ -533,17 +534,27 @@ module.exports = (passport) => {
     });
   });
   router.get('/api/action/team/:practiceId/:indicatorId?', isAuthenticated, isUserOkToViewPractice, (req, res) => {
-    indicators.getActions(req.params.practiceId, req.params.indicatorId, (err, actionList) => {
-      if (err) res.send(err);
-      else res.send(actionList);
-    });
+    indicators.getActions(
+      req.params.practiceId,
+      req.params.indicatorId,
+      req.user,
+      (err, actionList) => {
+        if (err) res.send(err);
+        else res.send(actionList);
+      }
+    );
   });
   router.get('/api/action/individual/:practiceId/:patientId?', isAuthenticated, isUserOkToViewPractice, (req, res) => {
-    patients.getActions(req.params.practiceId, req.params.patientId, (err, actionList) => {
-      if (err) res.send(err);
-      if (req.params.patientId) res.send(actionList[req.params.patientId]);
-      else res.send(actionList);
-    });
+    patients.getActions(
+      req.params.practiceId,
+      req.params.patientId,
+      req.user,
+      (err, actionList) => {
+        if (err) res.send(err);
+        if (req.params.patientId) res.send(actionList[req.params.patientId]);
+        else res.send(actionList);
+      }
+    );
   });
   router.get('/api/action/all/:practiceId', isAuthenticated, isUserOkToViewPractice, (req, res) => {
     actions.listAgreedWith(req.params.practiceId, (err, actionList) => {
@@ -578,7 +589,7 @@ module.exports = (passport) => {
       next(new Error('No event posted'));
     } else {
       req.body.event.sessionId = req.sessionID;
-      req.body.event.user = req.user.email;
+      if (req.user) req.body.event.user = req.user.email;
       events.add(req.body.event, (err) => {
         if (err) next(err);
         else res.send(true);
@@ -610,6 +621,7 @@ module.exports = (passport) => {
   router.get('/api/WorstPatients/:practiceId/:skip/:limit', isAuthenticated, isUserOkToViewPractice, (req, res) => {
     patients.getAllPatientsPaginated(
       req.params.practiceId,
+      req.user,
       +req.params.skip,
       +req.params.limit,
       (err, patientList) => {
@@ -619,7 +631,7 @@ module.exports = (passport) => {
   });
   // Get a single patient's details - for use on the patient screen
   router.get('/api/PatientDetails/:patientId', isAuthenticated, (req, res) => {
-    patients.get(req.params.patientId, (err, patient) => {
+    patients.get(req.params.patientId, req.user, (err, patient) => {
       res.send(patient);
     });
   });
@@ -650,14 +662,14 @@ module.exports = (passport) => {
   router.get('/api/ListOfIndicatorsForPractice', isAuthenticated, (req, res) => {
     const authorisedPractices = req.user.practices.filter(v => v.authorised);
     const practiceId = authorisedPractices.length > 0 ? authorisedPractices[0].id : null;
-    indicators.list(practiceId, (err, indicatorList) => {
+    indicators.list(practiceId, req.user, (err, indicatorList) => {
       res.send(indicatorList);
     });
   });
 
   // Get list of indicators for a single practice (inc option) - for use on the overview screen
   router.get('/api/ListOfIndicatorsForPractice/:practiceId', isAuthenticated, isUserOkToViewPractice, (req, res) => {
-    indicators.list(req.params.practiceId, (err, indicatorList) => {
+    indicators.list(req.params.practiceId, req.user, (err, indicatorList) => {
       res.send(indicatorList);
     });
   });
@@ -683,7 +695,7 @@ module.exports = (passport) => {
   // });
   // Get text
   router.get('/api/Text', isAuthenticated, (req, res) => {
-    text.get((err, textObj) => {
+    text.get(req.user, (err, textObj) => {
       res.send(textObj);
     });
   });

@@ -14,6 +14,7 @@ const dt = {
     ckd: 'CKD',
     ckdAndDm: 'Diabetes',
     ckdAndProt: 'CKD',
+    meds: 'Medication',
   },
 
   pathwayNames: {},
@@ -359,8 +360,12 @@ const dt = {
       const patient = pt;
       patient.nhsNumber = patient.nhs || patient.patientId;
       patient.items = [patient.age];
-      if (patient.value) patient.items.push(patient.value);
-      if (patient.date) patient.items.push(patient.date);
+      if (dOv === 'value' || dOv === 'both') {
+        patient.items.push(patient.value);
+      }
+      if (dOv === 'date' || dOv === 'both') {
+        patient.items.push(patient.date);
+      }
       if (patient.reviewDate) patient.items.push(patient.reviewDate);
       patient.items.push(patient.opportunities
         .map(v =>
@@ -488,7 +493,7 @@ const dt = {
         title: 'Next review date',
         type: 'date-uk',
         orderSequence: ['desc', 'asc'],
-        tooltip: 'Next review date',
+        tooltip: 'Next annual chronic disease review. This is calculated as 1 year after the last review. "?" - means no review has taken place before.',
         isSorted: false,
         direction: 'sort-asc',
       });
@@ -582,7 +587,7 @@ const dt = {
     });
   },
 
-  addOrUpdatePatientAction(patientId, action) {
+  addOrUpdatePatientAction(patientId, action, callback) {
     if (
       dt.patients &&
       dt.patients[patientId] &&
@@ -596,7 +601,23 @@ const dt = {
         if (!v.actionPlans) v.actionPlans = [];
         actions[v.indicatorId].before += v.actionPlans.length;
         actions[v.indicatorId].after += v.actionPlans.length;
-        if (
+
+        if (action.oldActionTextId &&
+          v.actionPlans.filter(vv => vv.actionTextId === action.oldActionTextId).length > 0) {
+          // user defined action has been edited
+          v.actionPlans = v.actionPlans
+            .map((vv) => {
+              if (vv.actionTextId === action.oldActionTextId) {
+                vv.agree = action.agree;
+                vv.history = action.history;
+                vv.indicatorList = action.indicatorList;
+                vv.actionTextId = action.actionTextId;
+                vv.userDefined = action.userDefined;
+              }
+              return vv;
+            })
+            .filter(vv => vv.agree || vv.userDefined);
+        } else if (
           v.actionPlans.filter(vv => vv.actionTextId === action.actionTextId)
             .length === 0
         ) {
@@ -611,6 +632,7 @@ const dt = {
               agree: action.agree,
               history: action.history,
               indicatorList: action.indicatorList,
+              userDefined: action.userDefined,
             });
           }
         } else {
@@ -657,7 +679,23 @@ const dt = {
             dt.patientList[practiceId][indicatorId][standard].patients.forEach((patient) => {
               if (patient.patientId === +patientId) {
                 if (!patient.actionStatus) patient.actionStatus = [];
-                if (patient.actionStatus
+                if (action.oldActionTextId &&
+                  patient.actionStatus
+                    .filter(v => v.actionTextId === action.oldActionTextId).length > 0) {
+                  // user defined action updated
+                  patient.actionStatus = patient.actionStatus
+                    .map((v) => {
+                      if (v.actionTextId === action.oldActionTextId) {
+                        v.agree = action.agree;
+                        v.history = action.history;
+                        v.indicatorList = action.indicatorList;
+                        v.actionTextId = action.actionTextId;
+                        v.userDefined = action.userDefined;
+                      }
+                      return v;
+                    })
+                    .filter(v => v.agree || v.userDefined);
+                } else if (patient.actionStatus
                   .filter(v => v.actionTextId === action.actionTextId).length === 0) {
                   if (action.agree || action.userDefined) {
                     patient.actionStatus.push({
@@ -674,6 +712,7 @@ const dt = {
                         v.agree = action.agree;
                         v.history = action.history;
                         v.indicatorList = action.indicatorList;
+                        v.userDefined = action.userDefined;
                       }
                       return v;
                     })
@@ -736,9 +775,10 @@ const dt = {
         });
       });
     }
+    return callback();
   },
 
-  removePatientAction(patientId, actionTextId) {
+  removePatientAction(patientId, actionTextId, callback) {
     if (
       dt.patients &&
       dt.patients[patientId] &&
@@ -795,6 +835,7 @@ const dt = {
         });
       });
     }
+    return callback();
   },
 
   getPatientActionData(practiceId, patientId, callback) {
