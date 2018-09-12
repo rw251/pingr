@@ -44,6 +44,7 @@
     "jshint": "^2.9.5",
     "mocha": "^4.0.1",
     "ncp": "^2.0.0",
+    "puppeteer": "^1.8.0",
     "rimraf": "^2.6.2",
     "sass-brunch": "^2.6.3",
     "sinon": "^4.1.3",

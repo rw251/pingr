@@ -34,3 +34,5 @@ mongoexport.exe
 analysis/data/*
 rc.txt
 rc.zip
+
+mockups/**/*.png
