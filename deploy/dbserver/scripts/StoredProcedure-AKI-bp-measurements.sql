@@ -10,7 +10,6 @@
 declare @refdate datetime;
 set @refdate = GETDATE();
 
-
 -- Report period
 
 declare @monthdelta int; 
@@ -138,7 +137,6 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 declare @indicatorScore float;
 set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 declare @target float;
--- FIXME: what value do we want here?
 set @target = 1.0;
 declare @numerator int;
 set @numerator = (select sum(case when numerator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
@@ -203,9 +201,6 @@ left outer join latestAnnualReviewCode l on l.PatID = a.PatID;
 -------------------------------------------------------------------------------
 
 IF @JustTheIndicatorNumbersPlease = 1 RETURN;
-
-declare @daysLeft int;
-set @daysLeft = (select DATEDIFF(day,@refdate,@endDate))
 
 
 -------------------------------------------------------------------------------
