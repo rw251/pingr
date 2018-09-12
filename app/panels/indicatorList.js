@@ -70,7 +70,7 @@ const indicatorList = {
         searching: true, // we want a search box
         paging: false, // always want all indicators
         stateSave: true, // let's remember which page/sorting etc
-        dom: '<"row"<"pull-right"f><"pull-right"B>>rt<"clear">',
+        dom: '<"pull-right small-pad-top-right"f><"pull-right small-pad-top-right"B>rt<"clear">',
         scrollY: '50vh',
         scrollCollapse: true,
         buttons: ['colvis'],
@@ -80,7 +80,7 @@ const indicatorList = {
         searching: true, // we want a search box
         paging: false, // always want all indicators
         stateSave: true, // let's remember which page/sorting etc
-        dom: '<"row"<"pull-right"f><"pull-right"B>>rt<"clear">',
+        dom: '<"pull-right small-pad-top-right"f><"pull-right small-pad-top-right"B>rt<"clear">',
         columnDefs: [{ width: '90px', targets: 6 }],
         order: [[1, 'desc']],
         scrollY: '50vh',
