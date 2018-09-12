@@ -1,6 +1,8 @@
 ------------------------------------------------------------------------------------------
 -- AKI-written-information
--- Population 01a and received written information on AKI post diagnosis
+--
+-- Coded AKI in the last 3 months
+-- Written information on AKI received post diagnosis
 ------------------------------------------------------------------------------------------
 
 -- FIXME: temporary, to be replaced by standard boostrapping code
@@ -8,17 +10,18 @@
 declare @refdate datetime;
 set @refdate = GETDATE();
 
-
 -- Report period
 
 declare @monthdelta int; 
-set @monthdelta = -50;
+set @monthdelta = -30;
 
 declare @startDate datetime;
 set @startDate = DATEADD(month, @monthdelta, @refdate);
 
 
+-------------------------------------------------------------------------------
 -- ELIGIBLE POPULATION
+-------------------------------------------------------------------------------
 
 -- #latestAKICode [01a]
 
@@ -38,13 +41,11 @@ insert into #latestAKICode
 	group by s.PatID, s.EntryDate, s.ReadCode;
 
 
--- #writtenInformationReceivedAfterAKICoded [13b]
+-- #writtenInformationReceivedAfterAKICoded [18]
 
 -- NOTES:
 -- ID of all patients that have written information on AKI (8OAG.) following the AKI code
 -- gives date of most recent if there are multiple instances
--- should it be >= or > AKI date?
-
 
  IF OBJECT_ID('tempdb..#writtenInformationReceivedAfterAKICoded') IS NOT NULL DROP TABLE #writtenInformationReceivedAfterAKICoded;
  CREATE TABLE #writtenInformationReceivedAfterAKICoded (PatID int, latestWrittenReceivedDate date);
@@ -111,9 +112,10 @@ insert into #eligiblePopulationAllData
 		
 		
 		
------------------------------------------------------------------------------
----------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- GET ABC (TOP 10% BENCHMARK
+-------------------------------------------------------------------------------
+
 declare @abc float;
 set @abc = (select round(avg(perc),2) from (
 select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when denominator = 1 then 1.0 else 0.0 end) as perc from #eligiblePopulationAllData as a
@@ -123,16 +125,172 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 	order by perc desc) sub);
 
 
------------------------------------------------------------------------------
---DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE-------------
------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE
+-------------------------------------------------------------------------------
+
 declare @indicatorScore float;
 set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 declare @target float;
 -- FIXME: what value do we want here?
-set @target = 0.75;
+set @target = 1.0;
 declare @numerator int;
 set @numerator = (select sum(case when numerator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
 declare @denominator int;
 set @denominator = (select sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
 
+
+-------------------------------------------------------------------------------
+-- POPULATE INDICATOR TABLE
+-------------------------------------------------------------------------------
+					
+                    				--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+--CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+--insert into #indicator
+
+select 'aki.writteninfo.FIXME', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
+	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
+	sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc 
+from #eligiblePopulationAllData as a
+	inner join ptPractice as b on a.PatID = b.PatID
+	group by b.pracID;
+
+
+-------------------------------------------------------------------------------
+-- POPULATE MAIN DENOMINATOR TABLE 
+-------------------------------------------------------------------------------
+
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
+--insert into #denominators
+
+-- FIXME: the 'why' text is minimal - do we want to elaborate?
+
+select a.PatID, 'aki.writteninfo.FIXME',
+	'<ul>'+
+	'<li>Patient had AKI diagnosis on ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
+	case
+		when numerator = 1 then '<li>They received written information on ' + CONVERT(VARCHAR, writtenReceivedDate, 3) + '</li>'
+		else '<li>They have <strong>NOT received any written information</strong></li>'
+	end + 
+	'</ul>',
+	DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData as a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID;
+
+
+-------------------------------------------------------------------------------
+-- Exit if we're just getting the indicator numbers 
+-------------------------------------------------------------------------------
+
+IF @JustTheIndicatorNumbersPlease = 1 RETURN;
+
+
+-------------------------------------------------------------------------------
+-- DEFINE % POINTS PER PATIENT
+-------------------------------------------------------------------------------
+
+-- FIXME: is this method correct? There seems to be differences between indicators
+
+declare @ptPercPoints float;
+set @ptPercPoints = 
+(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end) 
+from #eligiblePopulationAllData);
+
+
+
+-------------------------------------------------------------------------------
+-- PATIENT-LEVEL ACTIONS
+-------------------------------------------------------------------------------
+
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+--CREATE TABLE #patActions
+--	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #patActions
+
+-- FIXME: what actions?
+
+-- NO PRIM CARE CONTACT IN THE LAST YEAR
+--> CHECK REGISTERED
+select a.PatID,
+	'aki.writteninfo.FIXME' as indicatorId,
+	'Registered?' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	1 as priority,
+	'Check this patient is registered' as actionText,
+	'Reasoning' +
+		'<ul><li>No contact with your practice in the last year.</li>' +
+		'<li>If <strong>not registered</strong> please add code <strong>92...</strong> [92...] to their records.</li>' +
+		'<li>If <strong>dead</strong> please add code <strong>9134.</strong> [9134.] to their records.</li></ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+left outer join (select PatID, latestPrimCareContactDate from latestPrimCareContact) as b on b.PatID = a.PatID
+where numerator is NULL
+and latestPrimCareContactDate < DATEADD(year, -1, @refdate)
+
+
+
+-------------------------------------------------------------------------------
+-- ORG-LEVEL ACTIONS
+-------------------------------------------------------------------------------						
+
+									--TO RUN AS STORED PROCEDURE--
+-- insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
+
+										--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+--CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #orgActions
+
+-- TODO
+
+
+-------------------------------------------------------------------------------
+-- TEXT FILE OUTPUTS
+-------------------------------------------------------------------------------						
+
+insert into [pingr.text] (indicatorId, textId, text)
+
+values
+--OVERVIEW TAB
+('aki.writteninfo.FIXME','name','AKI Written Information'), --overview table name
+('aki.writteninfo.FIXME','tabText','AKI Written Info'), --indicator tab text
+('aki.writteninfo.FIXME','description', --'show more' on overview tab
+	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis<br>'+
+    '<strong>Why this is important:</strong> FIXME '),
+
+--INDICATOR TAB
+
+--summary text
+('aki.writteninfo.FIXME','tagline',' of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis'),  -- FIXME
+('aki.writteninfo.FIXME','positiveMessage', --tailored text
+null),
+--pt lists
+('aki.writteninfo.FIXME','valueId','pulseRhythm'), -- FIXME
+('aki.writteninfo.FIXME','valueName','Latest pulse rhythm'), -- FIXME
+('aki.writteninfo.FIXME','dateORvalue','date'), -- FIXME
+('aki.writteninfo.FIXME','valueSortDirection','asc'),  -- 'asc' or 'desc' -- FIXME
+('aki.writteninfo.FIXME','showNextReviewDateColumn', 'true'), -- FIXME
+('aki.writteninfo.FIXME','tableTitle','All patients who require BP measurement'), -- FIXME
+
+--imp opp charts (based on actionCat)
+
+-->CHECK REGISTERED
+('aki.writteninfo.FIXME','opportunities.Registered?.name','Check registered'),
+('aki.writteninfo.FIXME','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
+('aki.writteninfo.FIXME','opportunities.Registered?.positionInBarChart','1');
+
+-- FIXME: update as per actions
