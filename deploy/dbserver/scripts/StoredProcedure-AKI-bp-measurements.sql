@@ -2,7 +2,7 @@
 -- AKI-bp-measurements
 --
 -- Coded AKI in the last 3 months
--- and BP checked within 3 months of AKI diagnosis
+-- BP checked within 3 months of AKI diagnosis
 -------------------------------------------------------------------------------
 
 -- FIXME: temporary, to be replaced by standard boostrapping code
@@ -13,7 +13,7 @@ set @refdate = GETDATE();
 -- Report period
 
 declare @monthdelta int; 
-set @monthdelta = -50;
+set @monthdelta = -3;
 
 declare @startDate datetime;
 set @startDate = DATEADD(month, @monthdelta, @refdate);

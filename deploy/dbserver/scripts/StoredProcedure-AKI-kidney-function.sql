@@ -1,6 +1,8 @@
 ------------------------------------------------------------------------------------------
 -- AKI-kidney-function
--- Population 01a and creatinine, eGFR & ACR checked within 3 months of AKI diagnosis
+--
+-- Coded AKI in the last 3 months
+-- eGFR & ACR checked within 3 months of AKI diagnosis
 ------------------------------------------------------------------------------------------
 
 -- FIXME: temporary, to be replaced by standard boostrapping code
@@ -8,17 +10,17 @@
 declare @refdate datetime;
 set @refdate = GETDATE();
 
-
 -- Report period
 
 declare @monthdelta int; 
-set @monthdelta = -50;
+set @monthdelta = -3;
 
 declare @startDate datetime;
 set @startDate = DATEADD(month, @monthdelta, @refdate);
 
-
+-------------------------------------------------------------------------------
 -- ELIGIBLE POPULATION
+-------------------------------------------------------------------------------
 
 -- #latestAKICode [01a]
 
@@ -102,7 +104,6 @@ select PatID, latestACRDate, latestACRCodeMin, latestACRCodeMax, latestACRCode f
 	where rn = 1;
 
 
-
 -- #exclusions 
 
 -- FIXME: what exclusions do we need?
@@ -174,8 +175,9 @@ insert into #eligiblePopulationAllData
 		
 		
 -----------------------------------------------------------------------------
----------------------GET ABC (TOP 10% BENCHMARK)-----------------------------
+-- GET ABC (TOP 10% BENCHMARK)
 -----------------------------------------------------------------------------
+
 declare @abc float;
 set @abc = (select round(avg(perc),2) from (
 select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when denominator = 1 then 1.0 else 0.0 end) as perc from #eligiblePopulationAllData as a
@@ -186,16 +188,263 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 
 
 -----------------------------------------------------------------------------
---DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE-------------
+-- DECLARE NUMERATOR, INDICATOR AND TARGET FROM DENOMINATOR TABLE
 -----------------------------------------------------------------------------
+
 declare @indicatorScore float;
 set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 declare @target float;
 -- FIXME: what value do we want here?
-set @target = 0.75;
+set @target = 1.0;
 declare @numerator int;
 set @numerator = (select sum(case when numerator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
 declare @denominator int;
 set @denominator = (select sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
+
+
+-------------------------------------------------------------------------------
+-- POPULATE INDICATOR TABLE
+-------------------------------------------------------------------------------
+					
+                    				--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, denominator, target, benchmark)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#indicator') IS NOT NULL DROP TABLE #indicator
+--CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
+--insert into #indicator
+
+select 'aki.kidneyfunction.3months', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
+	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
+	sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc 
+from #eligiblePopulationAllData as a
+	inner join ptPractice as b on a.PatID = b.PatID
+	group by b.pracID;
+
+
+-------------------------------------------------------------------------------
+-- POPULATE MAIN DENOMINATOR TABLE 
+-------------------------------------------------------------------------------
+
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#denominators') IS NOT NULL DROP TABLE #denominators
+--CREATE TABLE #denominators (PatID int, indicatorId varchar(1000), why varchar(max), nextReviewDate date);
+--insert into #denominators
+
+select a.PatID, 'aki.kidneyfunction.3months',
+	'<ul>'+
+	'<li>Patient had AKI diagnosis on ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
+	case
+		when numerator = 1 then '<li>Their monitoring kidney function tests are <strong>up to date:</strong><ul>'
+		else '<li>Their monitoring kidney function tests are <strong>NOT up to date:</strong><ul>'
+	end +
+	case 
+		when latestCreatinineDate is NULL then '<li><strong>There is no Creatinine check on record for this patient.</strong></li>'
+        else '<li><strong>This patient had a Creatinine check on ' + CONVERT(VARCHAR, latestCreatinineDate, 3) + '.</strong></li>'
+	end + 
+	case 
+		when latesteGFRCheckDate is NULL then '<li><strong>There is no eGFR check on record for this patient.</strong></li>'
+        else '<li><strong>This patient had an eGFR check on ' + CONVERT(VARCHAR, latesteGFRCheckDate, 3) + '.</strong></li>'
+	end + 
+	case 
+		when latestACRDate is NULL then '<li><strong>There is no ACR check on record for this patient.</strong></li>'
+        else '<li><strong>This patient had an ACR check on ' + CONVERT(VARCHAR, latestACRDate, 3) + '.</strong></li>'
+	end + 
+	'</ul></ul>'
+	,
+	DATEADD(year, 1, l.latestAnnualReviewCodeDate)
+from #eligiblePopulationAllData as a
+left outer join latestAnnualReviewCode l on l.PatID = a.PatID;
+
+
+-------------------------------------------------------------------------------
+-- Exit if we're just getting the indicator numbers 
+-------------------------------------------------------------------------------
+
+IF @JustTheIndicatorNumbersPlease = 1 RETURN;
+
+
+-------------------------------------------------------------------------------
+-- DEFINE % POINTS PER PATIENT
+-------------------------------------------------------------------------------
+
+-- FIXME: is this method correct? There seems to be differences between indicators
+
+declare @ptPercPoints float;
+set @ptPercPoints = 
+(select 100 / SUM(case when denominator = 1 then 1.0 else 0.0 end) 
+from #eligiblePopulationAllData);
+
+
+-------------------------------------------------------------------------------
+-- PATIENT-LEVEL ACTIONS
+-------------------------------------------------------------------------------
+
+									--TO RUN AS STORED PROCEDURE--
+insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumber, pointsPerAction, priority, actionText, supportingText)
+
+									--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#patActions') IS NOT NULL DROP TABLE #patActions
+--CREATE TABLE #patActions
+--	(PatID int, indicatorId varchar(1000), actionCat varchar(1000), reasonNumber int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #patActions
+
+-- NO PRIM CARE CONTACT IN THE LAST YEAR
+--> CHECK REGISTERED
+select a.PatID,
+	'aki.kidneyfunction.3months' as indicatorId,
+	'Registered?' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	1 as priority,
+	'Check this patient is registered' as actionText,
+	'Reasoning' +
+		'<ul><li>No contact with your practice in the last year.</li>' +
+		'<li>If <strong>not registered</strong> please add code <strong>92...</strong> [92...] to their records.</li>' +
+		'<li>If <strong>dead</strong> please add code <strong>9134.</strong> [9134.] to their records.</li></ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+left outer join (select PatID, latestPrimCareContactDate from latestPrimCareContact) as b on b.PatID = a.PatID
+where numerator = 0
+and latestPrimCareContactDate < DATEADD(year, -1, @refdate)
+
+union
+
+-- REGULAR F2F CONTACT
+--> DO WHEN NEXT COMES IN
+select a.PatID,
+	'aki.kidneyfunction.3months' as indicatorId,
+	'Opportunistic' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	2 as priority,
+	'Put note on medical record to check kidney function at next face-to-face contact' as actionText,
+	'Reasoning' +
+		'<ul>'+
+		'<li>Patient has had ' + CONVERT(VARCHAR, noOfF2fContactsInLastYear, 3) + ' face-to-face contacts with your practice in the last year.</li>'+
+		'<li>There are ' + CONVERT(VARCHAR, datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)), 3) + ' days left for this patient to achieve the indicator.</li>'+
+		'<li>Patient is expected to have ' + CONVERT(VARCHAR, (noOfF2fContactsInLastYear * datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)) / 365), 3) + ' further face-to-face contacts with your practice before then.</li>'+
+		'<li>You could put a note in their record to remind the next person to see them to perform the following kidney function tests:'+
+		'<ul>' +
+			case 
+				when latestCreatinineDate is NULL then '<li>Creatinine</li>' else ''
+			end + 
+			case 
+				when latesteGFRCheckDate is NULL then '<li>eGFR</li>' else ''
+			end + 
+			case 
+				when latestACRDate is NULL then '<li>ACR</li>' else ''
+			end + 
+		'</ul></li>' +
+		'<li>Either as an alert when you open the record, or as a consultation note.</li>'+
+		'</ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+left outer join (select * from noOfF2fContactsInLastYear) as b on b.PatID = a.PatID
+where numerator = 0
+and (noOfF2fContactsInLastYear * datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)) / 365) >= 1.5
+
+union
+
+-- INFREQUENT F2F CONTACT
+--> SEND LETTER
+select a.PatID,
+	'aki.kidneyfunction.3months' as indicatorId,
+	'Send letter' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	3 as priority,
+	'Send letter to request kidney function tests' as actionText,
+	'Reasoning' +
+		'<ul>'+
+		'<li>Patient has had ' + CONVERT(VARCHAR, noOfF2fContactsInLastYear, 3) + ' face-to-face contacts with your practice in the last year.</li>'+
+		'<li>There are ' + CONVERT(VARCHAR, datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)), 3) + ' days ramaining for patient to achieve the indicator.</li>'+
+		'<li>Patient is not expected to have any further face-to-face contacts with your practice before then.</li>'+
+		'<li>Send a letter to patient asking them to arrange an appointment to have the following kidney function tests:'+
+		'<ul>' +
+			case 
+				when latestCreatinineDate is NULL then '<li>Creatinine</li>' else ''
+			end + 
+			case 
+				when latesteGFRCheckDate is NULL then '<li>eGFR</li>' else ''
+			end + 
+			case 
+				when latestACRDate is NULL then '<li>ACR</li>' else ''
+			end + 
+		'</ul></li>' +		
+		'</ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+left outer join (select * from noOfF2fContactsInLastYear) as b on b.PatID = a.PatID
+where numerator = 0
+and (noOfF2fContactsInLastYear * datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)) / 365) < 1;
+
+
+-------------------------------------------------------------------------------
+-- ORG-LEVEL ACTIONS
+-------------------------------------------------------------------------------						
+
+									--TO RUN AS STORED PROCEDURE--
+-- insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
+
+										--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+--CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #orgActions
+
+-- TODO
+
+
+-------------------------------------------------------------------------------
+-- TEXT FILE OUTPUTS
+-------------------------------------------------------------------------------						
+
+insert into [pingr.text] (indicatorId, textId, text)
+
+values
+--OVERVIEW TAB
+('aki.bp.kidneyfunction','name','AKI Kidney Function Tests'), --overview table name
+('aki.bp.kidneyfunction','tabText','AKI Kidney Function Tests'), --indicator tab text
+('aki.bp.kidneyfunction','description', --'show more' on overview tab
+	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had Creatinine, eGFR & ACR kidney function tests within 3 months of the diagnosis<br>'+
+    '<strong>Why this is important:</strong> FIXME '),
+
+--INDICATOR TAB
+
+--summary text
+('aki.bp.kidneyfunction','tagline',' of patients diagnosed with AKI in the last 3 months who have had a blood pressure measurement within 3 months of the diagnosis'),  -- FIXME
+('aki.bp.3months','positiveMessage', --tailored text
+null),
+--pt lists
+('aki.bp.kidneyfunction','valueId','pulseRhythm'), -- FIXME
+('aki.bp.kidneyfunction','valueName','Latest pulse rhythm'), -- FIXME
+('aki.bp.kidneyfunction','dateORvalue','date'), -- FIXME
+('aki.bp.kidneyfunction','valueSortDirection','asc'),  -- 'asc' or 'desc' -- FIXME
+('aki.bp.kidneyfunction','showNextReviewDateColumn', 'true'), -- FIXME
+('aki.bp.kidneyfunction','tableTitle','All patients who require kidney function tests'), -- FIXME
+
+--imp opp charts (based on actionCat)
+
+-->CHECK REGISTERED
+('aki.bp.kidneyfunction','opportunities.Registered?.name','Check registered'),
+('aki.bp.kidneyfunction','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
+('aki.bp.kidneyfunction','opportunities.Registered?.positionInBarChart','1'),
+
+--OPPORTUNISTIC
+('aki.bp.kidneyfunction','opportunities.Opportunistic.name','Opportunistic kidney function tests'),
+('aki.bp.kidneyfunction','opportunities.Opportunistic.description','Patients who have regular contact with your practice. You may wish to put a note in their record to remind the next person who sees them to test kidney function.'),
+('aki.bp.kidneyfunction','opportunities.Opportunistic.positionInBarChart','2'),
+
+-->SEND LETTER
+('aki.bp.kidneyfunction','opportunities.Send letter.name','Send letter to request kidney function tests'),
+('aki.bp.kidneyfunction','opportunities.Send letter.description','Patients who require kidney function tests. You may wish to send them a letter.'),
+('aki.bp.kidneyfunction','opportunities.Send letter.positionInBarChart','3');
+
+
+
+
 
 
