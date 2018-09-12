@@ -301,3 +301,63 @@ left outer join (select * from noOfF2fContactsInLastYear) as b on b.PatID = a.Pa
 where numerator is NULL
 and (noOfF2fContactsInLastYear * datediff(day, @refDate, dateadd(month, 3, latestAKICodeDate)) / 365) < 1;
 
+
+-------------------------------------------------------------------------------
+-- ORG-LEVEL ACTIONS
+-------------------------------------------------------------------------------						
+
+									--TO RUN AS STORED PROCEDURE--
+-- insert into [output.pingr.orgActions](pracID, indicatorId, actionCat, proportion, numberPatients, pointsPerAction, priority, actionText, supportingText)
+
+										--TO TEST ON THE FLY--
+--IF OBJECT_ID('tempdb..#orgActions') IS NOT NULL DROP TABLE #orgActions
+--CREATE TABLE #orgActions (pracID varchar(1000), indicatorId varchar(1000), actionCat varchar(1000), proportion float, numberPatients int, pointsPerAction float, priority int, actionText varchar(1000), supportingText varchar(max));
+--insert into #orgActions
+
+-- TODO
+
+
+-------------------------------------------------------------------------------
+-- TEXT FILE OUTPUTS
+-------------------------------------------------------------------------------						
+
+insert into [pingr.text] (indicatorId, textId, text)
+
+values
+--OVERVIEW TAB
+('aki.bp.3months','name','AKI Blood Pressure Monitoring'), --overview table name
+('aki.bp.3months','tabText','AKI BP Monitoring'), --indicator tab text
+('aki.bp.3months','description', --'show more' on overview tab
+	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had a blood pressure measurement within 3 months of the diagnosis<br>'+
+    '<strong>Why this is important:</strong> FIXME '),
+
+--INDICATOR TAB
+
+--summary text
+('aki.bp.3months','tagline',' of patients diagnosed with AKI in the last 3 months who have had a blood pressure measurement within 3 months of the diagnosis'),  -- FIXME
+('aki.bp.3months','positiveMessage', --tailored text
+null),
+--pt lists
+('aki.bp.3months','valueId','pulseRhythm'), -- FIXME
+('aki.bp.3months','valueName','Latest pulse rhythm'), -- FIXME
+('aki.bp.3months','dateORvalue','date'), -- FIXME
+('aki.bp.3months','valueSortDirection','asc'),  -- 'asc' or 'desc' -- FIXME
+('aki.bp.3months','showNextReviewDateColumn', 'true'), -- FIXME
+('aki.bp.3months','tableTitle','All patients who require BP measurement'), -- FIXME
+
+--imp opp charts (based on actionCat)
+
+-->CHECK REGISTERED
+('aki.bp.3months','opportunities.Registered?.name','Check registered'),
+('aki.bp.3months','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
+('aki.bp.3months','opportunities.Registered?.positionInBarChart','1'),
+
+--OPPORTUNISTIC
+('aki.bp.3months','opportunities.Opportunistic.name','Opportunistic BP measurement'),
+('aki.bp.3months','opportunities.Opportunistic.description','Patients who have regular contact with your practice. You may wish to put a note in their record to remind the next person who sees them to take a BP measurement.'),
+('aki.bp.3months','opportunities.Opportunistic.positionInBarChart','2'),
+
+-->SEND LETTER
+('aki.bp.3months','opportunities.Send letter.name','Send letter to request a BP measurement'),
+('aki.bp.3months','opportunities.Send letter.description','Patients who require a BP measurement. You may wish to send them a letter.'),
+('aki.bp.3months','opportunities.Send letter.positionInBarChart','3');
