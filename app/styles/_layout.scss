@@ -1,0 +1,116 @@
+/* UNIVERSAL STUFF */
+body {
+  background-color: $background;
+  color: #85868d;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  position: relative;
+  overflow-y: hidden;
+}
+
+body,
+html {
+  overflow-x: hidden;
+}
+
+.starter-template {
+    padding-bottom:0;
+    padding-right: $mainPaddingSmall;
+    padding-left: $mainPaddingSmall;
+    padding-top: 78px;
+}
+
+.starter-template-high {
+  padding: 15px;
+}
+
+.main-container {
+  padding-left: 8px;
+  padding-right: 8px;
+  height: calc(100vh - 100px);
+}
+
+#left-panel {
+  padding-right: 5px;
+  font-size: 13px;
+}
+#right-panel {
+  padding-left: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* +---------------+ */
+/* |WIDTH SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1190px) {
+  .starter-template {
+      padding-left: $mainPadding;
+      padding-right: $mainPadding;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1270px) {
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1356px) {
+  body {
+      font-size: 16px;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1600px SCREENS */
+@media (min-width: 1590px) {
+  .main-container {
+      padding-left: 30px;
+      padding-right: 30px;
+  }
+  #left-panel {
+      padding-right: 15px;
+  }
+  #right-panel {
+      padding-left: 15px;
+  }
+}
+
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 690px SCREENS */
+@media (min-height: 650px) {
+
+}
+/* RESTRICTIVE CSS FOR 740px SCREENS */
+@media (min-height: 700px) {
+  #left-panel {
+      font-size: 14px;
+  }
+  .f20 {
+      font-size: 14px;
+  }    
+}
+/* RESTRICTIVE CSS FOR 840px SCREENS */
+@media (min-height: 800px) {
+  .starter-template {
+      padding-top:91px;
+  }
+  #left-panel {
+      font-size: 16px;
+  } 
+  .main-container {
+      height: calc(100vh - 120px);
+  }     
+}
+
+/* WIDESCREEN */
+@media (min-height: 950px) and (min-width: 1800px) {   
+  .f20 {
+      font-size: 20px;
+  }
+}

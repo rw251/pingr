@@ -1,0 +1,103 @@
+/* UNIVERSAL STUFF */
+
+.top-half-of-action-panel .panel-heading {
+  padding-left: 5px;
+}
+
+.top-half-of-action-panel {
+  max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} + #{$extraSpaceForMainActions});
+  .panel-body {
+      max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} - #{$panelHeadingHeight} + #{$extraSpaceForMainActions});
+      overflow-y:auto;
+  }
+}
+.bottom-half-of-action-panel {
+  max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} - #{$extraSpaceForMainActions});
+  
+  textarea {
+      height: 70px;
+  }
+
+  .personal-action-table-wrapper {
+      max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} - #{$actionTextareaHeight} - #{$extraSpaceForMainActions});
+      overflow-y:auto;
+  }
+}
+   
+.action-text-header {
+  padding: 0 !important;
+  border: 0 !important;
+}
+.thumb-header {
+  padding:0 !important;
+  width: 52px;
+  border: 0 !important;
+}
+
+.f20 {
+  font-size: 13px;
+}
+
+/* +---------------+ */
+/* |WIDTH SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1190px) {
+  .top-half-of-action-panel .panel-heading {
+      padding-left: 8px;
+  }    
+  .thumb-header {
+    width: 63px;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1270px) {
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1356px) {    
+  .thumb-header {
+    width: 90px;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1600px SCREENS */
+@media (min-width: 1590px) {  
+  .thumb-header {
+    width: 105px;
+  }
+}
+
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 690px SCREENS */
+@media (min-height: 650px) {
+
+}
+/* RESTRICTIVE CSS FOR 740px SCREENS */
+@media (min-height: 700px) {
+
+}
+/* RESTRICTIVE CSS FOR 840px SCREENS */
+@media (min-height: 800px) {
+  .top-half-of-action-panel {
+      max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} + #{$extraSpaceForMainActions});
+      .panel-body {
+          max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} - #{$panelHeadingHeight} + #{$extraSpaceForMainActions});
+      }   
+  }           
+
+  .bottom-half-of-action-panel {
+      max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} - #{$extraSpaceForMainActions});
+      textarea {
+          height: 80px;
+      }
+      .personal-action-table-wrapper {
+          max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} - #{$actionTextareaHeight} - #{$extraSpaceForMainActions});
+      }
+  }
+}

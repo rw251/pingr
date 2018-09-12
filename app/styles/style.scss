@@ -1,11 +1,12 @@
 //includes
 @import "variables";
 @import "navbar";
+@import "layout";
 @import "title-bar";
-
-#lock-hook{
-    display: none;
-}
+@import "action-plans";
+@import "indicator-lists";
+@import "login";
+@import "thumbs";
 
 #alt-suggestion{
     display: none;
@@ -15,18 +16,6 @@ table.dataTable.table-condensed .sorting:after,
 table.dataTable.table-condensed .sorting_asc:after,
 table.dataTable.table-condensed .sorting_desc:after {
     top:auto;
-}
-
-body {
-    background-color: $background;
-    color: #85868d;
-    font-family: 'Roboto', sans-serif;
-    position: relative;
-}
-
-body,
-html {
-    overflow-x: hidden;
 }
 
 .transit {
@@ -802,26 +791,6 @@ Responsive Stying
 =========================================
 *****************************************/
 @media (max-width: 768px) {
-    aside.left-panel.collapsed {
-        width: 250px;
-        height: 3000px;
-        left: 0;
-        /*overflow:hidden !important;*/
-    }
-
-    aside.left-panel.collapsed + .content {
-        margin-left: 0;
-        transform: translate3d(250px, 0px, 0px);
-        -ms-transform: translate3d(250px, 0px, 0px);
-        -webkit-transform: translate3d(250px, 0px, 0px);
-        -moz-transition: translate3d(250px, 0px, 0px);
-        -o-transition: translate3d(250px, 0px, 0px);
-        transition: translate3d(250px, 0px, 0px);
-    }
-
-    aside.left-panel {
-        left: 100%;
-    }
 
     section.content {
         margin-left: 0;
@@ -865,61 +834,7 @@ Responsive Stying
         right: 44px;
     }
 }
-/****************************************
-=========================================
-Just For Demo / Showcase
-=========================================
-*****************************************/
-.showcase-btn,
-.showcase-btn li {
-    margin-bottom: 10px;
-}
 
-.showcase-switch-button {
-    margin-right: 15px;
-}
-
-.showcase-pagination {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.showcase-icons div {
-    line-height: 40px;
-    cursor: pointer;
-    height: 40px;
-}
-
-.showcase-icons i {
-    transition: font-size 0.2s ease 0s;
-    text-align: center;
-    width: 40px;
-}
-
-.showcase-icons > div:hover i {
-    font-size: 26px;
-}
-
-body {
-    overflow-y: hidden;
-    /*padding-bottom: 70px;*/
-}
-
-body.qof {
-    background-color: #ddf9f9;
-}
-
-.btn.btn-xs.btn-yes.btn-toggle.btn-success {
-    /*color: #e9e9e9;*/
-    background-color: rgb(68, 157, 68);
-}
-
-/*
-tr.standard-row:hover {
-    background-color: #eee;
-    cursor: pointer;
-}
-*/
 
 span.standard-missed {
     background-color: #ff9999;
@@ -973,56 +888,6 @@ div.standard-not-relevant-page {
     background-color: yellow;
 }
 
-.btn.btn-xs.btn-yes.btn-toggle.btn-success:hover {
-    color: white;
-    background-color: #00b20b;
-    border-color: #00b20b;
-}
-
-.btn.btn-xs.btn-yes.btn-toggle.btn-success.active {
-    color: white;
-    background-color: #00b20b;
-    border-color: #00b20b;
-}
-
-.btn.btn-xs.btn-yes.btn-toggle.btn-success.active:hover {
-    color: #e5e5e5;
-    background-color: #00b20b;
-    border-color: #00b20b;
-}
-
-.btn.btn-xs.btn-yes.btn-toggle.btn-success.inactive {
-    color: #e9e9e9;
-}
-
-.btn.btn-xs.btn-no.btn-toggle.btn-danger {
-    /*color: #e9e9e9;*/
-    background-color: rgb(201, 48, 44);
-}
-
-.btn.btn-xs.btn-no.btn-toggle.btn-danger:hover {
-    color: white;
-    background-color: rgb(201, 48, 44);
-    border-color: #FF0000;
-}
-
-.btn.btn-xs.btn-no.btn-toggle.btn-danger.inactive:hover {
-    background-color: rgb(201, 48, 44);
-    border-color: transparent;
-}
-
-.btn.btn-xs.btn-no.btn-toggle.btn-danger.active {
-    color: white;
-    background-color: #FF0000;
-    border-color: #FF0000;
-}
-
-.btn.btn-xs.btn-no.btn-toggle.btn-danger.active:hover {
-    background-color: #FF0000;
-    border-color: #FF0000;
-    color: #e5e5e5;
-}
-
 .btn-switch {
     background-color: lightgrey;
     color: darkgrey;
@@ -1035,11 +900,7 @@ div.standard-not-relevant-page {
     background-color: rgb(241,241,241);
     border-color: rgb(184,184,184);
 }
-/*
-.btn:hover {
-    color: white;
-    background-color: lightgrey;
-}*/
+
 .btn-switch.active {
     box-shadow: inset -2px 0 8px -2px rgba(100, 203, 238, 1);
 }
@@ -1108,19 +969,6 @@ hr {
     border-bottom-width: 0;
 }
 
-/* ------------------ Login page --------------------*/
-.login-page > .login-container {
-    width: 360px;
-    margin-top: 5px;
-}
-.login-page .login-panel {
-    margin: 0;
-}
-
-.starter-template {
-    padding-bottom:0;
-}
-
 .no-padding {
     padding:0;
 }
@@ -1140,134 +988,52 @@ hr {
 /* |WIDTH SETTINGS| */
 /* +--------------+ */
 
-/* RESTRICTIVE CSS FOR 1024px SCREENS */
-body {
-    font-size: 14px;
-}
-
-.starter-template {
-    padding-right: $mainPaddingSmall;
-    padding-left: $mainPaddingSmall;
-}
-
-.main-container {
-    padding-left: 8px;
-    padding-right: 8px;
-}
-
-#left-panel {
-    padding-right: 5px;
-}
-#right-panel {
-    padding-left: 5px;
-}
-
-.thumb-header {
-    padding:0 !important;
-    width: 52px;
-}
 
 .table > tbody > tr > td {
     padding-right:0;
     padding-left: 5px;
 }
 
-.top-half-of-action-panel .panel-heading {
-    padding-left: 5px;
+.show-inline-1366 {
+    display: none !important;
 }
-
 /* RESTRICTIVE CSS FOR 1200px SCREENS */
 @media (min-width: 1190px) {
-    .starter-template {
-        padding-left: $mainPadding;
-        padding-right: $mainPadding;
-    }
-    .main-container {
-        padding-left: 30px;
-        padding-right: 30px;
-    }     
-    .thumb-header {
-        width: 105px
-    }
     .table > tbody > tr > td {
         padding-left: 8px;
         padding-right: 8px;
-    }
-    .top-half-of-action-panel .panel-heading {
-        padding-left: 8px;
     }
 }
 
 /* RESTRICTIVE CSS FOR 1280px SCREENS */
 @media (min-width: 1270px) {
-    body {
-        font-size: 16px;
-    }
-    #left-panel {
-        padding-right: 15px;
-    }
-    #right-panel {
-        padding-left: 15px;
-    }
 }
 
 /* RESTRICTIVE CSS FOR 1366px SCREENS */
 @media (min-width: 1356px) {
-
+    .hide-1366 {
+        display: none !important;
+    }
+    .show-inline-1366 {
+        display: inline !important;
+    }
+    .show-block-1366 {
+        display: block !important;
+    }
 }
 
-/* RESTRICTIVE CSS FOR 1600px SCREENS */
-@media (min-width: 1590px) {
-
-}
 
 /* +---------------+ */
 /* |HEIGHT SETTINGS| */
 /* +---------------+ */
 /* RESTRICTIVE CSS FOR 1024px SCREENS */
-.starter-template {
-    padding-top: 78px;
-}
-.main-container {
-    height: calc(100vh - 100px);
-}
-#left-panel {
-    font-size: 13px;
-}
-.f20 {
-    font-size: 13px;
-}
+
 .table > tbody > tr > td {
     padding-top:2px;
     padding-bottom: 2px;
 }
-$viewportHeight: 100vh;
-$viewportHeightHalf: 50vh;
-$halfOfActionPanelSmall: 65px;
-$halfOfActionPanel:  75px;
-$extraSpaceForMainActions: 30px;
-$panelHeadingHeight: 45px;
-$actionTextareaHeight: 90px;
-.top-half-of-action-panel {
-    max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} + #{$extraSpaceForMainActions});
-    .panel-body {
-        max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} - #{$panelHeadingHeight} + #{$extraSpaceForMainActions});
-        overflow-y:auto;
-    }
-}
-.bottom-half-of-action-panel {
-    max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} - #{$extraSpaceForMainActions});
-    
-    textarea {
-        height: 70px;
-    }
 
-    .personal-action-table-wrapper {
-        max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanelSmall} - #{$actionTextareaHeight} - #{$extraSpaceForMainActions});
-        overflow-y:auto;
-    }
-}
-/* RESTRICTIVE CSS FOR 8px SCREENS (lose viewport height to browser toolbars */
+/* RESTRICTIVE CSS FOR 750px SCREENS (lose viewport height to browser toolbars */
 @media (min-height: 650px) {
     .table > tbody > tr > td {
         padding-top:4px;
@@ -1276,53 +1042,13 @@ $actionTextareaHeight: 90px;
 }
 /* RESTRICTIVE CSS FOR 800px SCREENS (lose viewport height to browser toolbars */
 @media (min-height: 700px) {
-    .login-page > .login-container {
-        margin-top: 40px;
-    }
-    #left-panel {
-        font-size: 14px;
-    }
-    .f20 {
-        font-size: 14px;
-    }    
     .table > tbody > tr > td {
         padding-top:8px;
         padding-bottom: 8px;
     }
 }
 /* RESTRICTIVE CSS FOR 900px SCREENS (lose viewport height to browser toolbars */
-@media (min-height: 800px) {
-    .starter-template {
-        padding-top:91px;
-    }
-    .login-page > .login-container {
-        margin-top: 80px;
-    }
-    .main-container {
-        height: calc(100vh - 120px);
-    }           
-    #left-panel {
-        font-size: 16px;
-    }
-    .f20 {
-        font-size: 20px;
-    }
-    .top-half-of-action-panel {
-        max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} + #{$extraSpaceForMainActions});
-        .panel-body {
-            max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} - #{$panelHeadingHeight} + #{$extraSpaceForMainActions});
-        }   
-    }           
-
-    .bottom-half-of-action-panel {
-        max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} - #{$extraSpaceForMainActions});
-        textarea {
-            height: 80px;
-        }
-        .personal-action-table-wrapper {
-            max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} - #{$actionTextareaHeight} - #{$extraSpaceForMainActions});
-        }
-    }
+@media (min-height: 800px) {    
 }
 
 .italic {
@@ -1682,10 +1408,6 @@ mod
     background-color: #70ba63;
 }
 
-.starter-template-high {
-    padding: 15px;
-}
-
 .table > tbody > tr.suggestion.danger td span {
     text-decoration: line-through;
 }
@@ -1720,14 +1442,6 @@ mod
 
 tr.suggestion.success label.btn-toggle.btn-success.active {
     opacity: 0.5;
-}
-
-.thumb-up {
-    color: rgb(68, 157, 68);
-}
-
-.thumb-down {
-    color: rgb(201, 48, 44);
 }
 
 .btn-padding {
@@ -2043,12 +1757,12 @@ th {
    extra svg elements at the bottom
    of the page cause the vertical
    scrollbar to toggle  */
-body > svg {
-    /*height:0px !important;*/
-    position: absolute;
-    z-index: -10;
-    top: 0;
-}
+// body > svg {
+//     /*height:0px !important;*/
+//     position: absolute;
+//     z-index: -10;
+//     top: 0;
+// }
 /* Define a class for a padding less row*/
 .row-no-padding > div {
     padding-left: 0 !important;
@@ -2108,11 +1822,6 @@ body > svg {
 
 .h-navigator-chart {
     height: 60px;
-}
-
-#right-panel {
-    overflow-y: auto;
-    overflow-x: hidden;
 }
 
 .page > .tab-content > .panel {
@@ -2626,4 +2335,10 @@ $legBackgroundColour: #3c3c3c;
 
 .small-pad-top-right {
     padding: 4px 4px 0 0;
+}
+
+@media (max-width: 1200px) {
+  .ellipsis-if-small {
+    /*width: 30px !important;*/
+  }
 }

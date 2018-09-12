@@ -1,0 +1,94 @@
+/* UNIVERSAL STUFF */
+$thumbUpPrimary: #00b20b;
+$thumbDownPrimary: rgb(201, 48, 44);
+/* alternative colors */
+// rgb(68, 157, 68)
+
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success:hover {
+    color: white;
+    background-color: $thumbUpPrimary;
+    border-color: $thumbUpPrimary;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.active {
+    color: white;
+    background-color: $thumbUpPrimary;
+    border-color: $thumbUpPrimary;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.active:hover {
+    color: #e5e5e5;
+    background-color: $thumbUpPrimary;
+    border-color: $thumbUpPrimary;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success.inactive {
+    color: #e9e9e9;
+}
+
+.btn.btn-xs.btn-yes.btn-toggle.btn-success {
+  background-color: rgb(68, 157, 68);
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger {
+    background-color: $thumbDownPrimary;
+}
+
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger:hover {
+    color: white;
+    background-color: $thumbDownPrimary;
+    border-color: #FF0000;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.inactive:hover {
+    background-color: $thumbDownPrimary;
+    border-color: transparent;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.active {
+    color: white;
+    background-color: #FF0000;
+    border-color: #FF0000;
+}
+
+.btn.btn-xs.btn-no.btn-toggle.btn-danger.active:hover {
+    background-color: #FF0000;
+    border-color: #FF0000;
+    color: #e5e5e5;
+}
+
+/* +---------------+ */
+/* |WIDTH SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1190px) {
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1270px) {
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1356px) {
+}
+
+/* RESTRICTIVE CSS FOR 1600px SCREENS */
+@media (min-width: 1590px) {
+}
+
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 800px SCREENS */
+@media (min-height: 800px) {
+
+}
+/* RESTRICTIVE CSS FOR 900px SCREENS */
+@media (min-height: 900px) {
+
+}

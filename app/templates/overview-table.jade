@@ -17,7 +17,7 @@ div
                 th Number of patients
                 th Expected number
                 th Change from Yesterday
-                th 1 Year Trend
+                th(width="50px") 1 Year Trend
             tbody
               each indicator in outcomeIndicators
                 tr.standard-row(data-id=indicator.id,data-description=indicator.description,data-toggle='tooltip', data-placement='left', title='Click for more detail')
@@ -53,7 +53,7 @@ div
                       i.fa.fa-2x.fa-fw.fa-caret-down
                     else
                       i.fa.fa-fw.fa-minus
-                  td
+                  td(width="50px")
                     span.inlinesparkline= indicator.trend
     #processIndicators.tab-pane.fade(class=selectedTab==='#processIndicators' ? "active in" : "",role="tabpanel")
       .panel.panel-default(style='border-top-width: 0;border-radius: 0;')
@@ -61,18 +61,22 @@ div
           table#overview-table-process.table.table-condensed.order-column.hover
             thead
               tr(style='background-color:#fff9ff')
-                th Clinical Area
+                th.ellipsis-if-small Clinical Area
                 th Indicator
-                th Current Performance
+                th 
+                  span.visible-lg-inline Current Performance
+                  span.hidden-lg Perf
                 th Actioned Patients
                 th Salford Target
-                th Top 10% Benchmark
+                th 
+                  span.visible-lg-inline Top 10% Benchmark
+                  span.hidden-lg Top 10% B'mark 
                 th Change from Yesterday
-                th(width="90px") 1 Year Trend
+                th(width="50px") 1 Year Trend
             tbody
               each indicator in processIndicators
                 tr.standard-row(data-id=indicator.id,data-description=indicator.description,data-toggle='tooltip', data-placement='left', title='Click for more detail')
-                  td= indicator.clinicalArea
+                  td.ellipsis-if-small= indicator.clinicalArea
                   td
                     strong!= indicator.name
                     br
@@ -104,5 +108,5 @@ div
                     else
                       i.fa.fa-fw.fa-minus
                   td
-                    div(style='width:90px;overflow:hidden')
+                    div(style='width:50px;overflow:hidden')
                       span.inlinesparkline= indicator.trend

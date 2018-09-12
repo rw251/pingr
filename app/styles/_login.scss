@@ -1,5 +1,14 @@
 /* UNIVERSAL STUFF */
-
+.login-page > .login-container {
+  width: 360px;
+  margin-top: 5px;
+}
+.login-page .login-panel {
+  margin: 0;
+}
+#lock-hook{
+  display: none;
+}
 
 /* +---------------+ */
 /* |WIDTH SETTINGS| */
@@ -26,15 +35,19 @@
 /* +---------------+ */
 /* |HEIGHT SETTINGS| */
 /* +---------------+ */
-/* RESTRICTIVE CSS FOR 690px SCREENS */
+/* RESTRICTIVE CSS FOR 700px SCREENS */
 @media (min-height: 650px) {
 
 }
-/* RESTRICTIVE CSS FOR 740px SCREENS */
+/* RESTRICTIVE CSS FOR 800px SCREENS */
 @media (min-height: 700px) {
-
+  .login-page > .login-container {
+      margin-top: 40px;
+  }
 }
-/* RESTRICTIVE CSS FOR 840px SCREENS */
+/* RESTRICTIVE CSS FOR 900px SCREENS */
 @media (min-height: 800px) {
-
+  .login-page > .login-container {
+      margin-top: 80px;
+  }
 }

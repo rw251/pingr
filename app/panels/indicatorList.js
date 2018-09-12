@@ -54,7 +54,7 @@ const indicatorList = {
             processIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return `${dts[fields.x]}: ${fields.y}%`;
         },
-        width: '100px',
+        width: '100%',
       });
 
       $('#outcomeIndicators .inlinesparkline').sparkline('html', {
@@ -63,7 +63,7 @@ const indicatorList = {
             outcomeIndicators[$('.inlinesparkline').index(sparkline.el)].dates;
           return `${dts[fields.x]}: ${fields.y}%`;
         },
-        width: '100px',
+        width: '100%',
       });
 
       tableOutcomeIndicators = $('#overview-table-outcomes').DataTable({
