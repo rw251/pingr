@@ -5,22 +5,22 @@
 -- eGFR & ACR checked within 3 months of AKI diagnosis
 ------------------------------------------------------------------------------------------
 
--- FIXME: temporary, to be replaced by standard boostrapping code
+IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.aki.kidney.function') DROP PROCEDURE [pingr.aki.kidney.function];
 
-declare @refdate datetime;
-set @refdate = GETDATE();
+GO
+CREATE PROCEDURE [pingr.aki.kidney.function] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
+AS
+SET NOCOUNT ON
 
--- Report period
-
-declare @monthdelta int; 
-set @monthdelta = -3;
-
-declare @startDate datetime;
-set @startDate = DATEADD(month, @monthdelta, @refdate);
 
 -------------------------------------------------------------------------------
 -- ELIGIBLE POPULATION
 -------------------------------------------------------------------------------
+
+-- Start date is 3 months prior to report date
+
+declare @startDate datetime;
+set @startDate = DATEADD(month, -3, @refdate);
 
 -- #latestAKICode [01a]
 

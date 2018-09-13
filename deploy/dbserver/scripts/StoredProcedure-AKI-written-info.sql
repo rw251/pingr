@@ -5,23 +5,21 @@
 -- Written information on AKI received post diagnosis
 ------------------------------------------------------------------------------------------
 
--- FIXME: temporary, to be replaced by standard boostrapping code
+IF EXISTS(SELECT * FROM sys.objects WHERE Type = 'P' AND Name ='pingr.aki.written.info') DROP PROCEDURE [pingr.aki.written.info];
 
-declare @refdate datetime;
-set @refdate = GETDATE();
-
--- Report period
-
-declare @monthdelta int; 
-set @monthdelta = -30;
-
-declare @startDate datetime;
-set @startDate = DATEADD(month, @monthdelta, @refdate);
-
+GO
+CREATE PROCEDURE [pingr.aki.written.info] @refdate VARCHAR(10), @JustTheIndicatorNumbersPlease bit = 0
+AS
+SET NOCOUNT ON
 
 -------------------------------------------------------------------------------
 -- ELIGIBLE POPULATION
 -------------------------------------------------------------------------------
+
+-- Start date is 3 months prior to report date
+
+declare @startDate datetime;
+set @startDate = DATEADD(month, -3, @refdate);
 
 -- #latestAKICode [01a]
 
