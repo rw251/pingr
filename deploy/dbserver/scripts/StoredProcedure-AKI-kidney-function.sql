@@ -44,7 +44,6 @@ insert into #latestAKICode
 
 -- 01a with creatinine checked within 3 months
 
---  NOTES: > or >= for date test?
 --    Often multiple codes on the same date, but rubric seems to be the same 
 
 IF OBJECT_ID('tempdb..#creatinineWithin3Months') IS NOT NULL DROP TABLE #creatinineWithin3Months;
@@ -65,8 +64,6 @@ select PatID, latestCreatinineDate, latestCreatinineCodeMin, latestCreatinineCod
 
 -- 01a with eGFR checked within 3 months
 
---  FIXME: > or >= for date test?
--- NOTE:
 --   There seem to be large numbers of eGFR checks within the 3 month window following the latest AKI code
 --   We're just selecting the most recent in each case here
 
@@ -77,7 +74,7 @@ select PatID, eGFRDate, ReadCode, eGFRCodeMin, eGFRCodeMax, eGFRCode from (
 	select s.PatID, s.EntryDate as eGFRDate, ReadCode, MIN(Rubric) as eGFRCodeMin, MAX(Rubric) as eGFRCodeMax, case when MIN(Rubric)=MAX(Rubric) then MAX(Rubric) else 'Differ' end as eGFRCode, ROW_NUMBER() over (PARTITION BY s.PatID ORDER BY s.EntryDate DESC) rn
 		from SIR_ALL_Records as s
 		inner join #latestAKICode on #latestAKICode.PatID = s.PatID  
-		and s.EntryDate > #latestAKICode.latestAKICodeDate and s.EntryDate < dateadd(month, 3, #latestAKICode.latestAKICodeDate)
+		and s.EntryDate >= #latestAKICode.latestAKICodeDate and s.EntryDate <= dateadd(month, 3, #latestAKICode.latestAKICodeDate)
 		where s.ReadCode in ('451F.', '451E.', 'G2410')
 		group by s.PatID, EntryDate, ReadCode
 	) sub
@@ -87,8 +84,6 @@ select PatID, eGFRDate, ReadCode, eGFRCodeMin, eGFRCodeMax, eGFRCode from (
 -- #acrWithin3Months [07g]
 
 -- 01a with ACR checked within 3 months
-
---  FIXME: > or >= for date test?
 
 IF OBJECT_ID('tempdb..#acrWithin3Months') IS NOT NULL DROP TABLE #acrWithin3Months;
 CREATE TABLE #acrWithin3Months (PatID int, latestACRDate date, latestACRCodeMin varchar(255), latestACRCodeMax varchar(255), latestACRCode varchar(255));
@@ -194,7 +189,6 @@ select top 5 sum(case when numerator = 1 then 1.0 else 0.0 end) / SUM(case when 
 declare @indicatorScore float;
 set @indicatorScore = (select sum(case when numerator = 1 then 1 else 0 end)/sum(case when denominator = 1 then 1 else 0 end) from #eligiblePopulationAllData having SUM(case when denominator = 1 then 1.0 else 0.0 end) > 0);
 declare @target float;
--- FIXME: what value do we want here?
 set @target = 1.0;
 declare @numerator int;
 set @numerator = (select sum(case when numerator = 1 then 1 else 0 end) from #eligiblePopulationAllData);
