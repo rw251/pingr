@@ -117,7 +117,7 @@ const ind = {
         $('#mainPage-tabs').not('#stateM-indicator #mainPage-tabs').length < 1
       ) {
         const tabList = $('<ul id="mainPage-tabs" class="nav nav-tabs"></ul>');
-        const tabContent = $('<div id="mainPage-tab-content" class="indicators-content"></div>');
+        const tabContent = $('<div id="mainPage-tab-content" class="indicators-content tab-content"></div>');
         base.farRightPanel.append(tabList);
         base.farRightPanel.append(tabContent);
 
@@ -183,36 +183,6 @@ const ind = {
           false
         );
 
-        /*          wrapper.showTab(tabContent, tabList, "Improvement opportunities",  "Overview", [
-                    {
-                      show: indicatorHeadlines.show,
-                      args: [pathwayId, pathwayStage, standard]
-                      //args: [pathwayId, pathways, standard]
-                    }, {
-                      show: indicatorBreakdown.show,
-                     args: [pathwayId, pathwayStage, standard, patientList.selectSubsection]
-                   }, {
-                      show: patientList.show,
-                      args: [pathwayId, pathwayStage, standard, loadContentFn]
-                   }
-                 ], true);
-
-                  // *B* 2nd tabbed panel
-                  wrapper.showTab(tabContent, tabList, "Current and future trend", "indicator", [
-                    {
-                      show: indicatorTrend.show,
-                      args: [pathwayId, pathwayStage, standard]
-                    }
-                  ], false);
-
-                   // *B* 3rd tabbed panel
-                  wrapper.showTab(tabContent, tabList, "Comparison to other practices", "patient", [
-                    {
-                      show: indicatorBenchmark.show,
-                      args: [pathwayId, pathwayStage, standard]
-                    }
-                  ], false);
-        */
         // setup tab buttons
         wrapper.wireUp(patientList.restoreFromState);
       } else {
@@ -240,13 +210,6 @@ const ind = {
       }), 2000); */
 
       base.hideLoading();
-
-      // on tab changed
-      $('a[data-toggle="tab"]').off('shown.bs.tab').on('shown.bs.tab', () => {
-        // ensure charts are resized
-        const visibleChart = $('div[data-highcharts-chart]:visible');
-        if (visibleChart.length > 0) visibleChart.highcharts().reflow();
-      });
 
       // add state indicator
       base.farRightPanel.attr(

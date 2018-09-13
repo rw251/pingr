@@ -240,7 +240,7 @@ const pl = {
           searching: false, // we don't want a search box
           stateSave: true, // let's remember which page/sorting etc
           dom:
-            '<"p-list-header"<"col-sm-9 col-xl-8 toolbar"i><"col-sm-3 col-xl-4 centred"B>>rt<"row"<"col-sm-4"l><"col-sm-8"p>><"clear">',
+            '<"p-list-header fx"<"col-sm-9 col-xl-8 toolbar"i><"col-sm-3 col-xl-4 fx fx-v-mid fx-h-r"B>>rt<"p-list-footer fx"<"col-sm-4 fx fx-v-mid fx-h-l"l><"col-sm-8 fx fx-v-mid fx-h-r"p>><"clear">',
           columnDefs: list['header-items'].map((v, i) => {
             const thing = {
               type: v.type,

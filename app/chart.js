@@ -42,123 +42,98 @@ const cht = {
         let local = true;
 
         // const bChart =
-        $(`#${element}`).highcharts(
-          {
-            chart: {
-              type: 'column',
-              events: {
-                load() {
-                  const thisChart = this;
-                  if (!isCCG) {
-                    thisChart.renderer
-                      .button(
-                        'Toggle neighbourhood - ccg',
-                        100,
-                        100,
-                        () => {
-                          local = !local;
-                          thisChart.xAxis[0].categories = tempData
-                            .filter((v) => {
-                              if (local) return v.local;
-                              return true;
-                            })
-                            .map(v => v.pFull);
-                          thisChart.series[0].setData(tempData
-                            .filter((v) => {
-                              if (local) {
-                                return v.local;
-                              }
-                              return true;
-                            })
-                            .map((v) => {
-                              // this is for the (?local/global) chart...
-                              if (v.p === 'You') {
-                                // apple
-                                return { y: v.x, color: '#0EDE61' };
-                              } else if (v.local) {
-                                // dark
-                                return { y: v.x, color: '#444444' };
-                              }
-                              // blue
-                              return { y: v.x, color: '#5187E8' };
-                            }));
-                        }
-                      )
-                      .add();
-                  }
-                },
+        $(`#${element}`).highcharts({
+          chart: {
+            type: 'column',
+            events: {
+              load() {
+                const thisChart = this;
+                if (!isCCG) {
+                  thisChart.renderer
+                    .button(
+                      'Toggle neighbourhood - ccg',
+                      100,
+                      100,
+                      () => {
+                        local = !local;
+                        thisChart.xAxis[0].categories = tempData
+                          .filter((v) => {
+                            if (local) return v.local;
+                            return true;
+                          })
+                          .map(v => v.pFull);
+                        thisChart.series[0].setData(tempData
+                          .filter((v) => {
+                            if (local) {
+                              return v.local;
+                            }
+                            return true;
+                          })
+                          .map((v) => {
+                            // this is for the (?local/global) chart...
+                            if (v.p === 'You') {
+                              // apple
+                              return { y: v.x, color: '#0EDE61' };
+                            } else if (v.local) {
+                              // dark
+                              return { y: v.x, color: '#444444' };
+                            }
+                            // blue
+                            return { y: v.x, color: '#5187E8' };
+                          }));
+                      }
+                    )
+                    .add();
+                }
               },
             },
-            title: { text: title },
-            xAxis: {
-              categories: tempData
-                .filter(v => isCCG || v.local === local)
-                .map(v => v.pFull),
-              crosshair: true,
-            },
-            yAxis: {
-              // make the following dynamic
-              min: minHeight,
-              max: maxHeight,
-              title: { text: '% patients meeting target' },
-            },
-            tooltip: {
-              headerFormat:
+          },
+          title: { text: title },
+          xAxis: {
+            categories: tempData
+              .filter(v => isCCG || v.local === local)
+              .map(v => v.pFull),
+            crosshair: true,
+          },
+          yAxis: {
+            // make the following dynamic
+            min: minHeight,
+            max: maxHeight,
+            title: { text: '% patients meeting target' },
+          },
+          tooltip: {
+            headerFormat:
                 '<span style="font-size:10px">Practice: <b>{point.key}</b></span><table>',
-              pointFormat:
+            pointFormat:
                 '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
                 '<td style="padding:0"><b>{point.y:.1f}%</b></td></tr>',
-              footerFormat: '</table>',
-              shared: true,
-              useHTML: true,
-            },
-            plotOptions: {
-              column: {
-                pointPadding: 0.2,
-                borderWidth: 0,
-              },
-            },
-            legend: { enabled: false },
-            series: [
-              {
-                name: 'Performance',
-                data: tempData
-                  .filter(v => isCCG || v.local === local)
-                  .map((v) => {
-                    if (v.p === 'You') {
-                      // you colour - apple
-                      return { y: v.x, color: '#0EDE61' };
-                    }
-                    // standrd colour - dark
-                    return { y: v.x, color: '#444444' };
-                  }),
-              },
-            ],
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true,
           },
-          (chart) => {
-            // on complete
-            // force chart size based on container parameters
-            chart.setSize(
-              $('.highcharts-container').width(),
-              $('#benchmark-chart').height()
-            );
-            // set text labels to mid of axies
-            // const textX = chart.plotLeft + (chart.plotWidth * 0.5);
-            // const textY = chart.plotTop + (chart.plotHeight * 0.5);
-
-            // LEGACY this applied the 'coming soon' text
-            /* var span = '<span id="pieChartInfoText" style="position:absolute;
-             text-align:center;-ms-transform: rotate(335deg);-webkit-transform:
-             rotate(335deg);transform: rotate(335deg);">';
-          span += '<span style="font-size: 64px">Coming Soon!</span>';
-          span += '</span>'; */
-
-            /* $("#benchmark-chart").append(span);
-          span = $('#pieChartInfoText');
-          span.css('left', textX + (span.width() * -0.5));
-          span.css('top', textY + (span.height() * -0.5)); */
-          }
-        );
+          plotOptions: {
+            column: {
+              pointPadding: 0.2,
+              borderWidth: 0,
+            },
+          },
+          legend: { enabled: false },
+          series: [
+            {
+              name: 'Performance',
+              data: tempData
+                .filter(v => isCCG || v.local === local)
+                .map((v) => {
+                  if (v.p === 'You') {
+                    // you colour - apple
+                    return { y: v.x, color: '#0EDE61' };
+                  }
+                  // standrd colour - dark
+                  return { y: v.x, color: '#444444' };
+                }),
+            },
+          ],
+        });
       }
     );
   },
@@ -318,7 +293,7 @@ const cht = {
         type: 'column',
         spacing: [5, 0, 0, 0],
         backgroundColor: '#F3F9F9',
-        height: 150,
+        height: 170,
         events: {
           click() {
             selectSeriesFn();

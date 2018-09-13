@@ -15,19 +15,17 @@ const bd = {
       $overviewPaneTab
         .closest('li')
         .addClass('active');
-      // var tempMust = $('#welcome-task-list').html();
-      // var rendered = Mustache.render(tempMust);
-      // var tmpl = require("templates/action-plan-task-list");
+
       $mainPageTabContent.fadeOut(250, () => {
         $mainPageTabContent
           .children()
           .fadeOut(1);
         $('#overview-content').fadeIn(1, firstTabVisibleCallback);
 
-        //* b* tabbed content
-
-        // welcome.populate(true);
-        $mainPageTabContent.fadeIn(250);
+        $mainPageTabContent.fadeIn(250, () => {
+          const visibleChart = $('div[data-highcharts-chart]:visible');
+          if (visibleChart.length > 0) visibleChart.highcharts().reflow();
+        });
       });
     });
 
@@ -40,19 +38,17 @@ const bd = {
       $indicatorPaneTab
         .closest('li')
         .addClass('active');
-      // var tempMust = $('#welcome-task-list').html();
-      // var rendered = Mustache.render(tempMust);
-      // var tmpl = require("templates/action-plan-task-list");
+
       $mainPageTabContent.fadeOut(250, () => {
         $mainPageTabContent
           .children()
           .fadeOut(1);
         $('#indicator-content').fadeIn(1);
 
-        //* b* tabbed content
-
-        // welcome.populate(true);
-        $mainPageTabContent.fadeIn(250);
+        $mainPageTabContent.fadeIn(250, () => {
+          const visibleChart = $('div[data-highcharts-chart]:visible');
+          if (visibleChart.length > 0) visibleChart.highcharts().reflow();
+        });
       });
     });
 
@@ -65,19 +61,17 @@ const bd = {
       $patientPaneTab
         .closest('li')
         .addClass('active');
-      // var tempMust = $('#welcome-task-list').html();
-      // var rendered = Mustache.render(tempMust);
-      // var tmpl = require("templates/action-plan-task-list");
+
       $mainPageTabContent.fadeOut(250, () => {
         $mainPageTabContent
           .children()
           .fadeOut(1);
         $('#patient-content').fadeIn(1);
 
-        //* b* tabbed content
-
-        // welcome.populate(true);
-        $mainPageTabContent.fadeIn(250);
+        $mainPageTabContent.fadeIn(250, () => {
+          const visibleChart = $('div[data-highcharts-chart]:visible');
+          if (visibleChart.length > 0) visibleChart.highcharts().reflow();
+        });
       });
     });
   },
@@ -122,6 +116,10 @@ const bd = {
       name
     }</a></li>`);
 
+    // TODO should add class="tab-pane" to the below, then
+    // most of the stuff in wireuptab can be replaced with standard bootstrap tab behaviour
+    // Actually none of the html code should be here - should all be in indicators.jade or
+    // equivalent
     const contentObject = $(`<div id="${routeSuffix.toLowerCase()}-content"></div>`);
     $(sectionElement).append(contentObject);
 
