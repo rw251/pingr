@@ -126,7 +126,7 @@ const ind = {
           tabContent,
           tabList,
           'Improvement opportunities',
-          'A summary of all the relevant information',
+          'A list of patients with opportunities to improve their care',
           'Overview',
           [
             {
@@ -156,7 +156,7 @@ const ind = {
           tabContent,
           tabList,
           'Current and future trend',
-          'A table to show indication information - descrition to be updated',
+          'A line graph of your past and future predicted performance',
           'indicator',
           [
             {
@@ -172,7 +172,7 @@ const ind = {
           tabContent,
           tabList,
           'Comparison to other practices',
-          'A graph that illustrates where you are amongst other practicese in Salford',
+          'A bar chart comparing you to other GP practices',
           'patient',
           [
             {
