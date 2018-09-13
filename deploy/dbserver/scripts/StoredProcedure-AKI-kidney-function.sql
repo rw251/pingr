@@ -412,11 +412,11 @@ values
 ('aki.kidneyfunction.3months','positiveMessage', --tailored text
 null),
 --pt lists
-('aki.kidneyfunction.3months','valueId','strokeHosp'),
-('aki.kidneyfunction.3months','valueName','Latest stroke date'),
+('aki.kidneyfunction.3months','valueId','AKI'),
+('aki.kidneyfunction.3months','valueName','Latest AKI date'),
 ('aki.kidneyfunction.3months','dateORvalue','date'),
 ('aki.kidneyfunction.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('aki.kidneyfunction.3months','tableTitle','Patients who have had a stroke recorded since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
+('aki.kidneyfunction.3months','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
 
 --imp opp charts (based on actionCat)
 

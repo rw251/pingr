@@ -290,12 +290,13 @@ select PatID, EntryDate as date,
 		when ReadCode in (select code from codeGroups where [group] = 'fev1') and Source != 'salfordt' then 'FEV1'
 		when ReadCode in (select code from codeGroups where [group] = 'strokeQof') and Source != 'salfordt' then 'strokeHosp'
 		when ReadCode in (select code from codeGroups where [group] = 'pulseRhythm') then 'pulseRhythm'
+		when ReadCode in (select code from codeGroups where [group] = 'AKI') then 'AKI'		
 		when ReadCode in (select code from codeGroups where [group] in ('tiaQof','strokeIsch','cp', 'syncope', 'palps', 'sob', 'hfQof')) and Source != 'salfordt' then 'latestSx'
 	end as measure,
 CodeValue as value, Source from SIR_ALL_Records
 where
 	(
-		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof','pulseRhythm', 'asbp', 'adbp', 'sbp', 'dbp')) and CodeValue is not NULL)
+		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof','pulseRhythm', 'asbp', 'adbp', 'sbp', 'dbp', 'AKI')) and CodeValue is not NULL)
 		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof', 'fev1', 'tiaQof','strokeIsch','cp', 'syncope', 'palps', 'sob', 'hfQof'))and Source != 'salfordt')
 	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
