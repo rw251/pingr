@@ -35,6 +35,8 @@ sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-bp-control.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-measures-undiagnosed.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-med-undiagnosed.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-AZT.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-AKI-kidney-function.sql
+
 REM sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-screening-undiagnosed.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_Run_all.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_generate_trend_data.sql
