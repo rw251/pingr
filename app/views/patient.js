@@ -214,7 +214,7 @@ const pv = {
           // add state indicator
           base.farRightPanel.attr(
             'class',
-            'col-xl-8 col-lg-8 state-patient-rightPanel'
+            'col-lg-8 state-patient-rightPanel'
           );
 
           // $('#right-panel').css("overflow-y", "auto");
@@ -249,7 +249,7 @@ const pv = {
         // add state indicator
         base.farRightPanel.attr(
           'class',
-          'col-xl-8 col-lg-8 state-patient-rightPanel'
+          'col-lg-8 state-patient-rightPanel'
         );
 
         base.updateTab('patients', '', '');

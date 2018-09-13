@@ -34,10 +34,47 @@ html {
   padding-right: 5px;
   font-size: 13px;
 }
+
+#left-panel .panel-heading {
+  overflow-x:hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 #right-panel {
   padding-left: 5px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.table > tbody > tr > td {
+  padding-right: 2px;
+  padding-left: 3px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.show-inline-1280,.show-inline-1366,.show-inline-1600,.show-inline-1920 {
+  display: none !important;
+}
+
+/*support for slightly wider desktops */
+.col-xl-1,
+.col-xl-10,
+.col-xl-11,
+.col-xl-12,
+.col-xl-2,
+.col-xl-3,
+.col-xl-4,
+.col-xl-5,
+.col-xl-6,
+.col-xl-7,
+.col-xl-8,
+.col-xl-9 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
 }
 
 /* +---------------+ */
@@ -52,16 +89,38 @@ html {
       padding-left: $mainPadding;
       padding-right: $mainPadding;
   }
+  .table > tbody > tr > td {
+      padding-left: 8px;
+      padding-right: 8px;
+  }
 }
 
 /* RESTRICTIVE CSS FOR 1280px SCREENS */
 @media (min-width: 1270px) {
+  .hide-1280 {
+      display: none !important;
+  }
+  .show-inline-1280 {
+      display: inline !important;
+  }
+  .show-block-1280 {
+      display: block !important;
+  }
 }
 
 /* RESTRICTIVE CSS FOR 1366px SCREENS */
 @media (min-width: 1356px) {
   body {
       font-size: 16px;
+  }
+  .hide-1366 {
+      display: none !important;
+  }
+  .show-inline-1366 {
+      display: inline !important;
+  }
+  .show-block-1366 {
+      display: block !important;
   }
 }
 
@@ -77,6 +136,68 @@ html {
   #right-panel {
       padding-left: 15px;
   }
+  .hide-1600 {
+      display: none !important;
+  }
+  .show-inline-1600 {
+      display: inline !important;
+  }
+  .show-block-1600 {
+      display: block !important;
+  }
+  .col-xl-1,
+  .col-xl-10,
+  .col-xl-11,
+  .col-xl-12,
+  .col-xl-2,
+  .col-xl-3,
+  .col-xl-4,
+  .col-xl-5,
+  .col-xl-6,
+  .col-xl-7,
+  .col-xl-8,
+  .col-xl-9 {
+      float: left;
+  }
+
+  .col-xl-12 {
+      width: 100%;
+  }
+
+  .col-xl-8 {
+      width: 66.66666667%;
+  }
+
+  .col-xl-7 {
+    width: 58.33333333%;
+  }
+
+  .col-xl-6 {
+      width: 50%;
+  }
+
+  .col-xl-5 {
+      width: 41.66666667%;
+  }
+
+  .col-xl-4 {
+      width: 33.33333333%;
+  }
+
+  .col-xl-3 {
+      width: 25%;
+  }
+}
+@media (min-width: 1910px) {
+  .hide-1920 {
+    display: none !important;
+  }
+  .show-inline-1920 {
+    display: inline !important;
+  }
+  .show-block-1920 {
+    display: block !important;
+  }
 }
 
 /* +---------------+ */
@@ -84,16 +205,21 @@ html {
 /* +---------------+ */
 /* RESTRICTIVE CSS FOR 690px SCREENS */
 @media (min-height: 650px) {
+  .table > tbody > tr > td {
+      padding-top:4px;
+      padding-bottom: 4px;
+  }
 
 }
 /* RESTRICTIVE CSS FOR 740px SCREENS */
 @media (min-height: 700px) {
+  .table > tbody > tr > td {
+      padding-top:8px;
+      padding-bottom: 8px;
+  }
   #left-panel {
       font-size: 14px;
-  }
-  .f20 {
-      font-size: 14px;
-  }    
+  } 
 }
 /* RESTRICTIVE CSS FOR 840px SCREENS */
 @media (min-height: 800px) {
@@ -106,11 +232,4 @@ html {
   .main-container {
       height: calc(100vh - 120px);
   }     
-}
-
-/* WIDESCREEN */
-@media (min-height: 950px) and (min-width: 1800px) {   
-  .f20 {
-      font-size: 20px;
-  }
 }

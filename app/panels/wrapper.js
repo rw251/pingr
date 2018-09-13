@@ -116,7 +116,7 @@ const bd = {
       tooltipDesc.toLowerCase()
     }"><a id="${
       routeSuffix.toLowerCase()
-    }PaneTab" data-toggle="tab" href="#${
+    }PaneTab" data-toggle="tab" style="margin-top:0" href="#${
       routeSuffix.toLowerCase()
     }PaneTab">${
       name

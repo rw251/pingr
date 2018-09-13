@@ -235,24 +235,12 @@ const pl = {
 
         $('#patients-placeholder').hide();
 
-        $('#patient-list').on('init.dt', () => {
-          // console.log(`Init occurred at: ${new Date().getTime()}`);
-        });
-
-        $('#patient-list').on('preInit.dt', () => {
-          // console.log(`PreInit occurred at: ${new Date().getTime()}`);
-        });
-
-        $('#patient-list').on('processing.dt', () => {
-          // console.log(`processing occurred at: ${new Date().getTime()}`);
-        });
-
         const numColumns = list['header-items'].length;
         table = $('#patient-list').DataTable({
           searching: false, // we don't want a search box
           stateSave: true, // let's remember which page/sorting etc
           dom:
-            '<"row"<"col-sm-7 toolbar"i><"col-sm-5"B>>rt<"row"<"col-sm-5"l><"col-sm-7"p>><"clear">',
+            '<"p-list-header"<"col-sm-9 col-xl-8 toolbar"i><"col-sm-3 col-xl-4 centred"B>>rt<"row"<"col-sm-4"l><"col-sm-8"p>><"clear">',
           columnDefs: list['header-items'].map((v, i) => {
             const thing = {
               type: v.type,
@@ -274,7 +262,19 @@ const pl = {
           buttons: [
             {
               extend: 'colvis',
+              text: 'Col picker',
               columns: 'shown:name',
+              className: 'btn-xs hide-1280',
+            },
+            {
+              extend: 'colvis',
+              columns: 'shown:name',
+              className: 'btn-xs show-inline-1280 hide-1600',
+            },
+            {
+              extend: 'colvis',
+              columns: 'shown:name',
+              className: 'show-inline-1600',
             },
             {
               text: 'Pdf',
@@ -304,9 +304,9 @@ const pl = {
           base.wireUpTooltips();
         });
 
-        $('#overviewPaneTab').on('shown.bs.tab', () => {
-          table.columns.adjust().draw(false); // ensure sparklines on hidden tabs display
-        });
+        // ensure charts are resized
+        const visibleChart = $('div[data-highcharts-chart]:visible');
+        if (visibleChart.length > 0) visibleChart.highcharts().reflow();
 
         setTimeout(() => {
           table.columns.adjust().draw(false);
@@ -327,7 +327,15 @@ const pl = {
             .css('white-space', 'normal');
         };
 
-        $('.download-button').replaceWith($('<div class="btn-group"><button id="downloadPatientList" class="btn btn-danger">Download patient list</button><button data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-danger dropdown-toggle"><span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button><ul class="dropdown-menu"><li><a id="downloadAsPdf" href="#">Full list (pdf)</a></li><li><a id="downloadAsText" href="#">Nhs numbers (text file)</a></li></ul></div>'));
+        $('.download-button').replaceWith($(`
+          <div class="btn-group">
+            <button id="downloadPatientList" class="btn btn-xs btn-danger hide-1600 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download</button>
+            <button id="downloadPatientList" class="btn btn-danger show-inline-1600 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download patient list</button>
+            <ul class="dropdown-menu pull-right">
+              <li><a id="downloadAsPdf" href="#">Full list (pdf)</a></li>
+              <li><a id="downloadAsText" href="#">Nhs numbers (text file)</a></li>
+            </ul>
+          </div>`));
 
         updateInfo();
 
@@ -349,15 +357,15 @@ const pl = {
 
         base.hideLoading();
 
-        base.updateFixedHeightElements([
-          { selector: '#right-panel', padding: 15, minHeight: 300 },
-          /* { selector: '.table-scroll', padding: 340, minHeight: 170 }, */ {
-            selector: '#personalPlanTeam',
-            padding: 820,
-            minHeight: 200,
-          },
-          { selector: '#advice-list', padding: 430, minHeight: 250 },
-        ]);
+        // base.updateFixedHeightElements([
+        //   { selector: '#right-panel', padding: 15, minHeight: 300 },
+        //   /* { selector: '.table-scroll', padding: 340, minHeight: 170 }, */ {
+        //     selector: '#personalPlanTeam',
+        //     padding: 820,
+        //     minHeight: 200,
+        //   },
+        //   { selector: '#advice-list', padding: 430, minHeight: 250 },
+        // ]);
       }
     );
   },

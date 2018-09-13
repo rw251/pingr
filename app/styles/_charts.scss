@@ -1,0 +1,77 @@
+/* UNIVERSAL STUFF */
+
+// highcharts rounds up if inside a container
+// with subpixel width - bad for borders
+.chart-width-fix {
+  overflow: hidden;
+}
+
+
+.h-chart {
+  min-width: 320px;
+  /*max-width: 800px;*/
+  height: 68px;
+  margin: 0 auto;
+}
+
+.h-condition-chart {
+  height: 200px;
+}
+
+.h-medication-chart {
+  height: 200px;
+}
+
+.h-important-codes-chart {
+  height:40px;
+}
+
+.h-contact-chart {
+  height:50px;
+}
+
+.h-last-measurement-chart {
+  height: 80px;
+}
+
+.h-navigator-chart {
+  height: 60px;
+}
+
+/* +---------------+ */
+/* |WIDTH SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1190px) {
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1270px) {
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1356px) {
+}
+
+/* RESTRICTIVE CSS FOR 1600px SCREENS */
+@media (min-width: 1590px) {
+}
+
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 690px SCREENS */
+@media (min-height: 650px) {
+
+}
+/* RESTRICTIVE CSS FOR 740px SCREENS */
+@media (min-height: 700px) {
+
+}
+/* RESTRICTIVE CSS FOR 840px SCREENS */
+@media (min-height: 800px) {
+
+}

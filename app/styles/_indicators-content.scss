@@ -1,0 +1,82 @@
+/* UNIVERSAL STUFF */
+.indicators-content {
+  border: 1px solid lightgray;
+  border-top: 0;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.indicators-content ul {
+  padding-left: 25px;
+  padding-top: 2px;
+  margin-bottom: 2px;
+}
+
+.perf-bullet-msg {
+  font-style: italic;
+}
+
+.p-list-header {
+  padding-left: 5px;
+  padding-right: 5px;
+
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.centred {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: flex;     
+
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* +---------------+ */
+/* |WIDTH SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 1024px SCREENS */
+
+
+/* RESTRICTIVE CSS FOR 1200px SCREENS */
+@media (min-width: 1190px) {
+}
+
+/* RESTRICTIVE CSS FOR 1280px SCREENS */
+@media (min-width: 1270px) {
+  .perf-bullet {
+    font-size: larger;
+  }
+}
+
+/* RESTRICTIVE CSS FOR 1366px SCREENS */
+@media (min-width: 1356px) {
+}
+
+/* RESTRICTIVE CSS FOR 1600px SCREENS */
+@media (min-width: 1590px) {
+}
+
+/* +---------------+ */
+/* |HEIGHT SETTINGS| */
+/* +---------------+ */
+/* RESTRICTIVE CSS FOR 690px SCREENS */
+@media (min-height: 650px) {
+
+}
+/* RESTRICTIVE CSS FOR 740px SCREENS */
+@media (min-height: 700px) {
+
+}
+/* RESTRICTIVE CSS FOR 840px SCREENS */
+@media (min-height: 800px) {
+
+}

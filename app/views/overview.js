@@ -70,7 +70,7 @@ const overview = {
       // add state indicator
       base.farRightPanel.attr(
         'class',
-        'col-xl-8 col-lg-8 state-overview-rightPanel'
+        'col-lg-8 state-overview-rightPanel'
       );
 
       // base.updateFixedHeightElements([

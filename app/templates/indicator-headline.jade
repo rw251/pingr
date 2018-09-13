@@ -12,10 +12,10 @@ ul
     | The target for this quality indicator is 
     b= target
   
-  if aboveTarget
-    li.perf-bullet.perf-bullet-msg
-      span(class="text-overPerform")!= positiveMessage
-  else
-    li.perf-bullet.perf-bullet-msg
-      span(class="text-underPerform")!= positiveMessage
-  //li.perf-bullet.perf-bullet-msg!= positiveMessage
+  if positiveMessage
+    if aboveTarget
+      li.perf-bullet.perf-bullet-msg
+        span(class="text-overPerform")!= positiveMessage
+    else
+      li.perf-bullet.perf-bullet-msg
+        span(class="text-underPerform")!= positiveMessage

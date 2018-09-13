@@ -23,7 +23,7 @@ const bd = {
       Math.max(opp.patients.length, opp.patientCount ? opp.patientCount : 0),
     ]);
 
-    const elem = $("<div id='breakdown-chart'></div>");
+    const elem = $("<div id='breakdown-chart' class='chart-width-fix'></div>");
 
     if (isAppend) panel.append(elem);
     else panel.html(elem);

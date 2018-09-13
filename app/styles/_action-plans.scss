@@ -80,7 +80,9 @@
 }
 /* RESTRICTIVE CSS FOR 740px SCREENS */
 @media (min-height: 700px) {
-
+  .f20 {
+      font-size: 14px;
+  }   
 }
 /* RESTRICTIVE CSS FOR 840px SCREENS */
 @media (min-height: 800px) {
@@ -99,5 +101,12 @@
       .personal-action-table-wrapper {
           max-height: calc(#{$viewportHeightHalf} - #{$halfOfActionPanel} - #{$actionTextareaHeight} - #{$extraSpaceForMainActions});
       }
+  }
+}
+
+/* WIDESCREEN */
+@media (min-height: 950px) and (min-width: 1800px) {   
+  .f20 {
+      font-size: 20px;
   }
 }

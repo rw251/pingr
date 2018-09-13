@@ -140,7 +140,6 @@ const ll = {
         series.push(item);
       });
 
-      // $(elementId).append($('<div class="chart-title">Patient conditions and contacts</div>'));
       // create the chart
       const barWidth = 16;
       const barSpace = 1;

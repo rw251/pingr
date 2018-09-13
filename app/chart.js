@@ -53,8 +53,8 @@ const cht = {
                     thisChart.renderer
                       .button(
                         'Toggle neighbourhood - ccg',
-                        thisChart.plotWidth - 160,
-                        0,
+                        100,
+                        100,
                         () => {
                           local = !local;
                           thisChart.xAxis[0].categories = tempData
@@ -316,8 +316,9 @@ const cht = {
     $(`#${element}`).highcharts({
       chart: {
         type: 'column',
+        spacing: [5, 0, 0, 0],
         backgroundColor: '#F3F9F9',
-        height: 200,
+        height: 150,
         events: {
           click() {
             selectSeriesFn();
@@ -335,6 +336,7 @@ const cht = {
           },
         },
       },
+      credits: { enabled: false },
       title: { text: 'Patients with improvement opportunities' },
       subtitle: {
         text:
@@ -344,7 +346,7 @@ const cht = {
       },
       xAxis: { categories: chartData.map(v => v[0]) },
       yAxis: {
-        title: { text: 'Number of patients' },
+        title: { text: 'No. of patients' },
         stackLabels: {
           enabled: true,
           style: {

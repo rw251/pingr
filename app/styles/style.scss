@@ -2,11 +2,13 @@
 @import "variables";
 @import "navbar";
 @import "layout";
+@import "indicators-content";
 @import "title-bar";
 @import "action-plans";
 @import "indicator-lists";
 @import "login";
 @import "thumbs";
+@import "charts";
 
 #alt-suggestion{
     display: none;
@@ -989,125 +991,8 @@ hr {
 /* +--------------+ */
 
 
-.table > tbody > tr > td {
-    padding-right:0;
-    padding-left: 5px;
-}
-
-.show-inline-1366 {
-    display: none !important;
-}
-/* RESTRICTIVE CSS FOR 1200px SCREENS */
-@media (min-width: 1190px) {
-    .table > tbody > tr > td {
-        padding-left: 8px;
-        padding-right: 8px;
-    }
-}
-
-/* RESTRICTIVE CSS FOR 1280px SCREENS */
-@media (min-width: 1270px) {
-}
-
-/* RESTRICTIVE CSS FOR 1366px SCREENS */
-@media (min-width: 1356px) {
-    .hide-1366 {
-        display: none !important;
-    }
-    .show-inline-1366 {
-        display: inline !important;
-    }
-    .show-block-1366 {
-        display: block !important;
-    }
-}
-
-
-/* +---------------+ */
-/* |HEIGHT SETTINGS| */
-/* +---------------+ */
-/* RESTRICTIVE CSS FOR 1024px SCREENS */
-
-.table > tbody > tr > td {
-    padding-top:2px;
-    padding-bottom: 2px;
-}
-
-/* RESTRICTIVE CSS FOR 750px SCREENS (lose viewport height to browser toolbars */
-@media (min-height: 650px) {
-    .table > tbody > tr > td {
-        padding-top:4px;
-        padding-bottom: 4px;
-    }
-}
-/* RESTRICTIVE CSS FOR 800px SCREENS (lose viewport height to browser toolbars */
-@media (min-height: 700px) {
-    .table > tbody > tr > td {
-        padding-top:8px;
-        padding-bottom: 8px;
-    }
-}
-/* RESTRICTIVE CSS FOR 900px SCREENS (lose viewport height to browser toolbars */
-@media (min-height: 800px) {    
-}
-
 .italic {
     font-style: italic;
-}
-
-/*support for slightly wider desktops */
-.col-xl-1,
-.col-xl-10,
-.col-xl-11,
-.col-xl-12,
-.col-xl-2,
-.col-xl-3,
-.col-xl-4,
-.col-xl-5,
-.col-xl-6,
-.col-xl-7,
-.col-xl-8,
-.col-xl-9 {
-    position: relative;
-    min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
-}
-@media (min-width: 1300px) {
-    .col-xl-1,
-    .col-xl-10,
-    .col-xl-11,
-    .col-xl-12,
-    .col-xl-2,
-    .col-xl-3,
-    .col-xl-4,
-    .col-xl-5,
-    .col-xl-6,
-    .col-xl-7,
-    .col-xl-8,
-    .col-xl-9 {
-        float: left;
-    }
-
-    .col-xl-12 {
-        width: 100%;
-    }
-
-    .col-xl-8 {
-        width: 66.66666667%;
-    }
-
-    .col-xl-6 {
-        width: 50%;
-    }
-
-    .col-xl-4 {
-        width: 33.33333333%;
-    }
-
-    .col-xl-3 {
-        width: 25%;
-    }
 }
 
 .btn-copy {
@@ -1482,51 +1367,7 @@ tr.suggestion.success label.btn-toggle.btn-success.active {
 .table-small-margin {
     margin-bottom: 10px;
 }
-/*
-.form-horizontal .control-label {
-  padding-top: 4px;
-}
-.input-group-addon {
-  padding: 0px 6px;
-}
-.form-group .form-control, .form-group .input-group {
-  margin-bottom: 5px;
-}
-.input-group .form-control {
-  margin:0;
-}*/
 
-.c3-chart-arc path._unselected_ {
-    opacity: 0.3 !important;
-}
-
-.c3-chart-arc path._selected_ {
-    opacity: 1 !important;
-}
-
-.c3-chart-bar path._unselected_ {
-    opacity: 0.3 !important;
-}
-
-.c3-chart-bar path._selected_ {
-    opacity: 1 !important;
-}
-
-.c3-chart-arc text {
-    fill: #000;
-}
-/*
-.dashboard-stats .view-style {
-	opacity: 1;
-	font-style: italic;
-	font-size: 20px;
-	padding: 7px 0px 15px 0px;
-	color: rgb(95, 175,245);
-}*/
-/*
-.fa-check-circle:before {
-  content: "\f058";
-}*/
 table,
 td,
 th {
@@ -1793,36 +1634,6 @@ th {
     box-sizing: content-box;
 }
 
-.h-chart {
-    min-width: 320px;
-    /*max-width: 800px;*/
-    height: 68px;
-    margin: 0 auto;
-}
-
-.h-condition-chart {
-    height: 200px;
-}
-
-.h-medication-chart {
-    height: 200px;
-}
-
-.h-important-codes-chart {
-    height:40px;
-}
-
-.h-contact-chart {
-    height:50px;
-}
-
-.h-last-measurement-chart {
-    height: 80px;
-}
-
-.h-navigator-chart {
-    height: 60px;
-}
 
 .page > .tab-content > .panel {
     margin-bottom: 0;
@@ -1907,13 +1718,6 @@ th {
     margin-top: -25px;
 }
 
-.chart-title {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    font-weight: bold;
-    color: #333333;
-}
-
 .show-less-than-3,
 .show-more,
 .show-more-than-3 {
@@ -1954,14 +1758,6 @@ th {
 
 .table > tbody > tr.show-more-row > td {
     border-top-width: 0;
-}
-
-.perf-bullet {
-    font-size: larger;
-}
-
-.perf-bullet-msg {
-    font-style: italic;
 }
 
 .pastel-blue {
