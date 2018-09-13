@@ -400,42 +400,40 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --OVERVIEW TAB
-('aki.bp.kidneyfunction','name','AKI Kidney Function Tests'), --overview table name
-('aki.bp.kidneyfunction','tabText','AKI Kidney Function Tests'), --indicator tab text
-('aki.bp.kidneyfunction','description', --'show more' on overview tab
-	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had Creatinine, eGFR & ACR kidney function tests within 3 months of the diagnosis<br>'+
-    '<strong>Why this is important:</strong> FIXME '),
+('aki.kidneyfunction.3months','name','AKI Kidney Function Tests'), --overview table name
+('aki.kidneyfunction.3months','tabText','AKI Kidney Function Tests'), --indicator tab text
+('aki.kidneyfunction.3months','description', --'show more' on overview tab
+	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had Creatinine, eGFR & ACR kidney function tests within 3 months of the diagnosis<br>'),
 
 --INDICATOR TAB
 
 --summary text
-('aki.bp.kidneyfunction','tagline',' of patients diagnosed with AKI in the last 3 months who have had a blood pressure measurement within 3 months of the diagnosis'),  -- FIXME
-('aki.bp.3months','positiveMessage', --tailored text
+('aki.kidneyfunction.3months','tagline',' of patients diagnosed with AKI in the last 3 months who have had Creatinine, eGFR & ACR kidney function tests within 3 months of the diagnosis'),  -- FIXME
+('aki.kidneyfunction.3months','positiveMessage', --tailored text
 null),
 --pt lists
-('aki.bp.kidneyfunction','valueId','pulseRhythm'), -- FIXME
-('aki.bp.kidneyfunction','valueName','Latest pulse rhythm'), -- FIXME
-('aki.bp.kidneyfunction','dateORvalue','date'), -- FIXME
-('aki.bp.kidneyfunction','valueSortDirection','asc'),  -- 'asc' or 'desc' -- FIXME
-('aki.bp.kidneyfunction','showNextReviewDateColumn', 'true'), -- FIXME
-('aki.bp.kidneyfunction','tableTitle','All patients who require kidney function tests'), -- FIXME
+('aki.kidneyfunction.3months','valueId','strokeHosp'),
+('aki.kidneyfunction.3months','valueName','Latest stroke date'),
+('aki.kidneyfunction.3months','dateORvalue','date'),
+('aki.kidneyfunction.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
+('aki.kidneyfunction.3months','tableTitle','Patients who have had a stroke recorded since 1st April ' + (case when MONTH(@refdate) >3 then CONVERT(VARCHAR,YEAR(@refdate)) when MONTH(@refdate) <4 then CONVERT(VARCHAR,(YEAR(@refdate) - 1)) end) + '.'),
 
 --imp opp charts (based on actionCat)
 
 -->CHECK REGISTERED
-('aki.bp.kidneyfunction','opportunities.Registered?.name','Check registered'),
-('aki.bp.kidneyfunction','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
-('aki.bp.kidneyfunction','opportunities.Registered?.positionInBarChart','1'),
+('aki.kidneyfunction.3months','opportunities.Registered?.name','Check registered'),
+('aki.kidneyfunction.3months','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
+('aki.kidneyfunction.3months','opportunities.Registered?.positionInBarChart','1'),
 
 --OPPORTUNISTIC
-('aki.bp.kidneyfunction','opportunities.Opportunistic.name','Opportunistic kidney function tests'),
-('aki.bp.kidneyfunction','opportunities.Opportunistic.description','Patients who have regular contact with your practice. You may wish to put a note in their record to remind the next person who sees them to test kidney function.'),
-('aki.bp.kidneyfunction','opportunities.Opportunistic.positionInBarChart','2'),
+('aki.kidneyfunction.3months','opportunities.Opportunistic.name','Opportunistic kidney function tests'),
+('aki.kidneyfunction.3months','opportunities.Opportunistic.description','Patients who have regular contact with your practice. You may wish to put a note in their record to remind the next person who sees them to test kidney function.'),
+('aki.kidneyfunction.3months','opportunities.Opportunistic.positionInBarChart','2'),
 
 -->SEND LETTER
-('aki.bp.kidneyfunction','opportunities.Send letter.name','Send letter to request kidney function tests'),
-('aki.bp.kidneyfunction','opportunities.Send letter.description','Patients who require kidney function tests. You may wish to send them a letter.'),
-('aki.bp.kidneyfunction','opportunities.Send letter.positionInBarChart','3');
+('aki.kidneyfunction.3months','opportunities.Send letter.name','Send letter to request kidney function tests'),
+('aki.kidneyfunction.3months','opportunities.Send letter.description','Patients who require kidney function tests. You may wish to send them a letter.'),
+('aki.kidneyfunction.3months','opportunities.Send letter.positionInBarChart','3');
 
 
 
