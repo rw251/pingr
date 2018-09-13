@@ -331,12 +331,12 @@ values
 ('aki.bp.3months','positiveMessage', --tailored text
 null),
 --pt lists
-('aki.bp.3months','valueId','pulseRhythm'), -- FIXME
-('aki.bp.3months','valueName','Latest pulse rhythm'), -- FIXME
-('aki.bp.3months','dateORvalue','date'), -- FIXME
-('aki.bp.3months','valueSortDirection','asc'),  -- 'asc' or 'desc' -- FIXME
-('aki.bp.3months','showNextReviewDateColumn', 'true'), -- FIXME
-('aki.bp.3months','tableTitle','All patients who require BP measurement'), -- FIXME
+
+('aki.bp.3months','valueId','AKI'),
+('aki.bp.3months','valueName','Latest AKI'),
+('aki.bp.3months','dateORvalue','date'),
+('aki.bp.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
+('aki.bp.3months','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
 
 --imp opp charts (based on actionCat)
 

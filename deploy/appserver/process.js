@@ -56,6 +56,11 @@ var textFile = {
       unit: 'Stroke',
       type: 'line',
     },
+    AKI: {
+      name: 'AKI',
+      unit: 'AKI',
+      type: 'line',
+    },
     pulseRhythm: {
       name: 'Pulse rhythm',
       unit: 'Pulse rhythm',
