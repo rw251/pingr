@@ -413,7 +413,7 @@ values
 null),
 --pt lists
 ('aki.kidneyfunction.3months','valueId','AKI'),
-('aki.kidneyfunction.3months','valueName','Latest AKI date'),
+('aki.kidneyfunction.3months','valueName','Latest AKI'),
 ('aki.kidneyfunction.3months','dateORvalue','date'),
 ('aki.kidneyfunction.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
 ('aki.kidneyfunction.3months','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),

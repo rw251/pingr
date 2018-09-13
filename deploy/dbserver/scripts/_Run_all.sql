@@ -296,8 +296,9 @@ select PatID, EntryDate as date,
 CodeValue as value, Source from SIR_ALL_Records
 where
 	(
-		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof','pulseRhythm', 'asbp', 'adbp', 'sbp', 'dbp', 'AKI')) and CodeValue is not NULL)
+		(ReadCode in (select code from codeGroups where [group] in ('egfr', 'acr', 'strokeQof','pulseRhythm', 'asbp', 'adbp', 'sbp', 'dbp')) and CodeValue is not NULL)
 		or (ReadCode in (select code from codeGroups where [group] in ('strokeQof', 'fev1', 'tiaQof','strokeIsch','cp', 'syncope', 'palps', 'sob', 'hfQof'))and Source != 'salfordt')
+		or (ReadCode in (select code from codeGroups where [group] in ('AKI')))	
 	)
 	and PatID in (select distinct PatID from [dbo].[output.pingr.patActions])
 
