@@ -239,6 +239,27 @@ left outer join (select PatID, latestPrimCareContactDate from latestPrimCareCont
 where numerator is NULL
 and latestPrimCareContactDate < DATEADD(year, -1, @refdate)
 
+union
+
+-- INFREQUENT F2F CONTACT
+--> SEND INFO
+select a.PatID,
+	'aki.followup.writteninfo' as indicatorId,
+	'Send information' as actionCat,
+	1 as reasonNumber,
+	@ptPercPoints as pointsPerAction,
+	2 as priority,
+	'Send written information' as actionText,
+	'Reasoning' +
+		'<ul>'+
+		'<li>Patient has not received written information since their AKI diagnosis on ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
+		'<li>Send written information to the patient.</li>'+
+		'</ul>'
+	as supportingText
+from #eligiblePopulationAllData as a
+where numerator is NULL
+;
+
 
 
 -------------------------------------------------------------------------------
@@ -288,5 +309,10 @@ values
 ('aki.followup.writteninfo','opportunities.Registered?.name','Check registered'),
 ('aki.followup.writteninfo','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
 ('aki.followup.writteninfo','opportunities.Registered?.positionInBarChart','1');
+
+-->SEND INFO
+('aki.followup.writteninfo','opportunities.Send information.name','Send written information'),
+('aki.followup.writteninfo','opportunities.Send information.description','Patients who require a written information. You may wish to send them written information.'),
+('aki.followup.writteninfo','opportunities.Send information.positionInBarChart','2');
 
 -- FIXME: update as per actions
