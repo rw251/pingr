@@ -321,8 +321,7 @@ values
 ('aki.bp.3months','name','AKI Blood Pressure Monitoring'), --overview table name
 ('aki.bp.3months','tabText','AKI BP Monitoring'), --indicator tab text
 ('aki.bp.3months','description', --'show more' on overview tab
-	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had a blood pressure measurement within 3 months of the diagnosis<br>'+
-    '<strong>Why this is important:</strong> FIXME '),
+	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had a blood pressure measurement within 3 months of the diagnosis'),
 
 --INDICATOR TAB
 

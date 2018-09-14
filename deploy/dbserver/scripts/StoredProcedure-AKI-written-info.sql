@@ -267,8 +267,7 @@ values
 ('aki.writteninfo.FIXME','name','AKI Written Information'), --overview table name
 ('aki.writteninfo.FIXME','tabText','AKI Written Info'), --indicator tab text
 ('aki.writteninfo.FIXME','description', --'show more' on overview tab
-	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis<br>'+
-    '<strong>Why this is important:</strong> FIXME '),
+	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis'),
 
 --INDICATOR TAB
 

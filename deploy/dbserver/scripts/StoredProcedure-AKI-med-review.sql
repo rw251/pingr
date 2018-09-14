@@ -321,8 +321,7 @@ values
 ('aki.medreview.3months','name','AKI Medication Review'), --overview table name
 ('aki.medreview.3months','tabText','AKI Medication Review'), --indicator tab text
 ('aki.medreview.3months','description', --'show more' on overview tab
-	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had a medication review within 3 months of the diagnosis<br>'+
-    '<strong>Why this is important:</strong> FIXME '),
+	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have had a medication review within 3 months of the diagnosis'),
 
 --INDICATOR TAB
 

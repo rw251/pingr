@@ -277,6 +277,15 @@ BEGIN
 	RETURN;
 END
 
+INSERT INTO [pingr.sql.log] VALUES ('Starting pingr.aki.med.review', GETDATE());
+EXEC	@return_value = [dbo].[pingr.aki.med.review]
+		@refdate = @ReportDate
+IF @return_value != 0
+BEGIN
+	SELECT 1001;
+	RETURN;
+END
+
 INSERT INTO [pingr.sql.log] VALUES ('Stored procedures completed', GETDATE());
 
 							---------------------------------------------------------------
