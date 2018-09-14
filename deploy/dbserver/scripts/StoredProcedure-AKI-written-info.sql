@@ -274,8 +274,8 @@ values
 
 --summary text
 ('aki.writteninfo.FIXME','tagline',' of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis'),  -- FIXME
-('aki.writteninfo.FIXME','positiveMessage', --tailored text
-null),
+('aki.writteninfo.FIXME','positiveMessage', 'You''ve not yet achieved the Target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'),
+
 --pt lists
 ('aki.writteninfo.3months','valueId','AKI'),
 ('aki.writteninfo.3months','valueName','Latest AKI'),

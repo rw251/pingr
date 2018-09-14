@@ -328,10 +328,9 @@ values
 
 --summary text
 ('aki.bp.3months','tagline',' of patients diagnosed with AKI in the last 3 months who have had a blood pressure measurement within 3 months of the diagnosis'),  -- FIXME
-('aki.bp.3months','positiveMessage', --tailored text
-null),
---pt lists
+('aki.bp.3months','positiveMessage', 'You''ve not yet achieved the Target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'),
 
+--pt lists
 ('aki.bp.3months','valueId','AKI'),
 ('aki.bp.3months','valueName','Latest AKI'),
 ('aki.bp.3months','dateORvalue','date'),
