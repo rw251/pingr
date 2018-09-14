@@ -236,15 +236,15 @@ select a.PatID, 'aki.kidneyfunction.3months',
 		else '<li>Their monitoring kidney function tests are <strong>NOT up to date:</strong><ul>'
 	end +
 	case 
-		when latestCreatinineDate is NULL then '<li><strong>There is no Creatinine check on record for this patient.</strong></li>'
+		when latestCreatinineDate is NULL then '<li><strong>There is no Creatinine check on record for this patient since their AKI diagnosis.</strong></li>'
         else '<li><strong>This patient had a Creatinine check on ' + CONVERT(VARCHAR, latestCreatinineDate, 3) + '.</strong></li>'
 	end + 
 	case 
-		when latesteGFRCheckDate is NULL then '<li><strong>There is no eGFR check on record for this patient.</strong></li>'
+		when latesteGFRCheckDate is NULL then '<li><strong>There is no eGFR check on record for this patient since their AKI diagnosis.</strong></li>'
         else '<li><strong>This patient had an eGFR check on ' + CONVERT(VARCHAR, latesteGFRCheckDate, 3) + '.</strong></li>'
 	end + 
 	case 
-		when latestACRDate is NULL then '<li><strong>There is no ACR check on record for this patient.</strong></li>'
+		when latestACRDate is NULL then '<li><strong>There is no ACR check on record for this patient since their AKI diagnosis.</strong></li>'
         else '<li><strong>This patient had an ACR check on ' + CONVERT(VARCHAR, latestACRDate, 3) + '.</strong></li>'
 	end + 
 	'</ul></ul>'

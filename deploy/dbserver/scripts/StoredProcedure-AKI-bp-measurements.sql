@@ -184,7 +184,7 @@ select a.PatID, 'aki.bp.3months',
 		else '<li>Their monitoring blood tests are <strong>NOT up to date:</strong><ul>'
 	end +
 	case 
-		when bpCheckDate is NULL then '<li><strong>There is no BP check on record for this patient.</strong></li>'
+		when bpCheckDate is NULL then '<li><strong>There is no BP check on record for this patient since their AKI diagnosis.</strong></li>'
         else '<li><strong>This patient had a BP check on ' + CONVERT(VARCHAR, bpCheckDate, 3) + '.</strong></li>'
 	end + '</ul></ul>'
 	,

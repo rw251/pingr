@@ -177,7 +177,7 @@ select a.PatID, 'aki.writteninfo.FIXME',
 	'<li>Patient had AKI diagnosis on ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
 	case
 		when numerator = 1 then '<li>They received written information on ' + CONVERT(VARCHAR, writtenReceivedDate, 3) + '</li>'
-		else '<li>They have <strong>NOT received any written information</strong></li>'
+		else '<li>They have <strong>NOT received any written information since their AKI diagnosis</strong></li>'
 	end + 
 	'</ul>',
 	DATEADD(year, 1, l.latestAnnualReviewCodeDate)
