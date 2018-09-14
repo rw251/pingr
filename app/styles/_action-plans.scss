@@ -51,6 +51,10 @@
   .thumb-header {
     width: 63px;
   }
+  .table > tbody > tr > td.thumb-cell {
+      padding-left: 4px;
+      padding-right: 4px;
+  }
 }
 
 /* RESTRICTIVE CSS FOR 1280px SCREENS */
@@ -60,7 +64,7 @@
 /* RESTRICTIVE CSS FOR 1366px SCREENS */
 @media (min-width: 1356px) {    
   .thumb-header {
-    width: 90px;
+    width: 80px;
   }
 }
 

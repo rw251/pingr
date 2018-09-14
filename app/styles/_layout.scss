@@ -214,8 +214,8 @@ html {
 /* RESTRICTIVE CSS FOR 740px SCREENS */
 @media (min-height: 700px) {
   .table > tbody > tr > td {
-      padding-top:8px;
-      padding-bottom: 8px;
+      padding-top:6px;
+      padding-bottom: 6px;
   }
   #left-panel {
       font-size: 14px;
@@ -224,7 +224,7 @@ html {
 /* RESTRICTIVE CSS FOR 840px SCREENS */
 @media (min-height: 800px) {
   .starter-template {
-      padding-top:91px;
+      padding-top:85px;
   }
   #left-panel {
       font-size: 16px;

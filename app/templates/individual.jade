@@ -30,7 +30,7 @@ else
                 a.show-more(data-id=suggestion.actionTextId)
                   | Show more 
                   i.fa.fa-caret-down
-          td
+          td.thumb-cell
             +thumbs(suggestion)
         if suggestion.supportingText
           tr.show-more-row(data-id=suggestion.actionTextId, class=alt ? '': 'alternate-row')
