@@ -308,7 +308,7 @@ values
 -->CHECK REGISTERED
 ('aki.followup.writteninfo','opportunities.Registered?.name','Check registered'),
 ('aki.followup.writteninfo','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
-('aki.followup.writteninfo','opportunities.Registered?.positionInBarChart','1');
+('aki.followup.writteninfo','opportunities.Registered?.positionInBarChart','1'),
 
 -->SEND INFO
 ('aki.followup.writteninfo','opportunities.Send information.name','Send written information'),
