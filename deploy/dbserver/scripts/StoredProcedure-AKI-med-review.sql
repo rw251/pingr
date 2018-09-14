@@ -335,7 +335,7 @@ values
 ('aki.medreview.3months','valueName','Latest AKI'),
 ('aki.medreview.3months','dateORvalue','date'),
 ('aki.medreview.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('aki.medreview.3months','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
+('aki.medreview.3months','tableTitle','Patients with AKI since ' + CONVERT(VARCHAR, @startDate, 3) + ' who have not had a medication review since their diagnosis.'),
 
 --imp opp charts (based on actionCat)
 

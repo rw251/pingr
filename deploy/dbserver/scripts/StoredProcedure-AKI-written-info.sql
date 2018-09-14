@@ -280,7 +280,7 @@ values
 ('aki.followup.writteninfo','valueName','Latest AKI'),
 ('aki.followup.writteninfo','dateORvalue','date'),
 ('aki.followup.writteninfo','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('aki.followup.writteninfo','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
+('aki.followup.writteninfo','tableTitle','Patients with AKI since ' + CONVERT(VARCHAR, @startDate, 3) + ' who have not received written information since their diagnosis.'),
 
 --imp opp charts (based on actionCat)
 

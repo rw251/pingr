@@ -334,7 +334,7 @@ values
 ('aki.bp.3months','valueName','Latest AKI'),
 ('aki.bp.3months','dateORvalue','date'),
 ('aki.bp.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('aki.bp.3months','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
+('aki.bp.3months','tableTitle','Patients with AKI since ' + CONVERT(VARCHAR, @startDate, 3) + ' who have not had a blood pressure measurement since their diagnosis.'),
 
 --imp opp charts (based on actionCat)
 

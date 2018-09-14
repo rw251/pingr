@@ -416,7 +416,7 @@ values
 ('aki.kidneyfunction.3months','valueName','Latest AKI'),
 ('aki.kidneyfunction.3months','dateORvalue','date'),
 ('aki.kidneyfunction.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('aki.kidneyfunction.3months','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
+('aki.kidneyfunction.3months','tableTitle','Patients with AKI since ' + CONVERT(VARCHAR, @startDate, 3) + ' who have not had Creatinine, eGFR or ACR kidney function tests since their diagnosis.'),
 
 --imp opp charts (based on actionCat)
 
