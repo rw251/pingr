@@ -150,7 +150,7 @@ insert into [output.pingr.indicator](indicatorId, practiceId, date, numerator, d
 --CREATE TABLE #indicator (indicatorId varchar(1000), practiceId varchar(1000), date date, numerator int, denominator int, target float, benchmark float);
 --insert into #indicator
 
-select 'aki.writteninfo.FIXME', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
+select 'aki.followup.writteninfo', b.pracID, CONVERT(char(10), @refdate, 126) as date, 
 	sum(case when numerator = 1 then 1 else 0 end) as numerator, 
 	sum(case when denominator = 1 then 1 else 0 end) as denominator, @target as target, @abc 
 from #eligiblePopulationAllData as a
@@ -172,7 +172,7 @@ insert into [output.pingr.denominators](PatID, indicatorId, why, nextReviewDate)
 
 -- FIXME: the 'why' text is minimal - do we want to elaborate?
 
-select a.PatID, 'aki.writteninfo.FIXME',
+select a.PatID, 'aki.followup.writteninfo',
 	'<ul>'+
 	'<li>Patient had AKI diagnosis on ' + CONVERT(VARCHAR, latestAKICodeDate, 3) + '.</li>'+
 	case
@@ -223,7 +223,7 @@ insert into [output.pingr.patActions](PatID, indicatorId, actionCat, reasonNumbe
 -- NO PRIM CARE CONTACT IN THE LAST YEAR
 --> CHECK REGISTERED
 select a.PatID,
-	'aki.writteninfo.FIXME' as indicatorId,
+	'aki.followup.writteninfo' as indicatorId,
 	'Registered?' as actionCat,
 	1 as reasonNumber,
 	@ptPercPoints as pointsPerAction,
@@ -264,29 +264,29 @@ insert into [pingr.text] (indicatorId, textId, text)
 
 values
 --OVERVIEW TAB
-('aki.writteninfo.FIXME','name','AKI Written Information'), --overview table name
-('aki.writteninfo.FIXME','tabText','AKI Written Info'), --indicator tab text
-('aki.writteninfo.FIXME','description', --'show more' on overview tab
+('aki.followup.writteninfo','name','AKI Written Information'), --overview table name
+('aki.followup.writteninfo','tabText','AKI Written Info'), --indicator tab text
+('aki.followup.writteninfo','description', --'show more' on overview tab
 	'<strong>Definition:</strong> The proportion of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis'),
 
 --INDICATOR TAB
 
 --summary text
-('aki.writteninfo.FIXME','tagline',' of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis'),  -- FIXME
-('aki.writteninfo.FIXME','positiveMessage', 'You''ve not yet achieved the Target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'),
+('aki.followup.writteninfo','tagline',' of patients diagnosed with AKI in the last 3 months who have received written information since the diagnosis'),  -- FIXME
+('aki.followup.writteninfo','positiveMessage', 'You''ve not yet achieved the Target - but don''t be disheartened: Look through the recommended actions on this page and for the patients below for ways to improve.'),
 
 --pt lists
-('aki.writteninfo.3months','valueId','AKI'),
-('aki.writteninfo.3months','valueName','Latest AKI'),
-('aki.writteninfo.3months','dateORvalue','date'),
-('aki.writteninfo.3months','valueSortDirection','desc'),  -- 'asc' or 'desc'
-('aki.writteninfo.3months','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
+('aki.followup.writteninfo','valueId','AKI'),
+('aki.followup.writteninfo','valueName','Latest AKI'),
+('aki.followup.writteninfo','dateORvalue','date'),
+('aki.followup.writteninfo','valueSortDirection','desc'),  -- 'asc' or 'desc'
+('aki.followup.writteninfo','tableTitle','Patients who have had AKI recorded since ' + CONVERT(VARCHAR, @startDate, 3) + '.'),
 
 --imp opp charts (based on actionCat)
 
 -->CHECK REGISTERED
-('aki.writteninfo.FIXME','opportunities.Registered?.name','Check registered'),
-('aki.writteninfo.FIXME','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
-('aki.writteninfo.FIXME','opportunities.Registered?.positionInBarChart','1');
+('aki.followup.writteninfo','opportunities.Registered?.name','Check registered'),
+('aki.followup.writteninfo','opportunities.Registered?.description','Patients who have not had contact with your practice in the last 12 months - are they still registered with you?'),
+('aki.followup.writteninfo','opportunities.Registered?.positionInBarChart','1');
 
 -- FIXME: update as per actions

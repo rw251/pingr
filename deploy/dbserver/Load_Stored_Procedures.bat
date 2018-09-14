@@ -38,6 +38,7 @@ sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-AZT.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-AKI-bp-measurements.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-AKI-kidney-function.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-AKI-med-review.sql
+sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-AKI-written-info.sql
 
 REM sqlcmd -E -d %SMASH.DB% -i scripts/StoredProcedure-htn-screening-undiagnosed.sql
 sqlcmd -E -d %SMASH.DB% -i scripts/_Run_all.sql
