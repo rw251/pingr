@@ -6,6 +6,8 @@ const lookup = require('./lookup');
 let isFetchingNhsLookup = false;
 
 const dt = {
+  // Use to populate the 'Clinical Area' column of the Overview indicators table
+  // TODO: move these values into the specific indicators
   clinicalArea: {
     copd: 'COPD',
     htn: 'Hypertension',
@@ -15,6 +17,7 @@ const dt = {
     ckdAndDm: 'Diabetes',
     ckdAndProt: 'CKD',
     meds: 'Medication',
+    aki: 'AKI',    
   },
 
   pathwayNames: {},
