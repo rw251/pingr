@@ -1,0 +1,211 @@
+mixin test(submitText, postTo)
+  if message && message.error
+    .alert.alert-danger.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.error
+  if message && message.success
+    .alert.alert-success.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.success
+  form(action=postTo, method='post')
+    h3 Initial config
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Research question*:
+      .col-sm-9
+        input.form-control(type='text', name='researchQuestion', placeholder='E.g. Do blue thumbs up get clicked more frequently than green thumbs?', autofocus='', value=test.researchQuestion)
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Name*:
+      .col-sm-9
+        input.form-control(type='text', name='name', placeholder='A short name', value=test.name)
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Description (optional):
+      .col-sm-9
+        input.form-control(type='text', name='description', placeholder='A longer description', value=test.description)
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Randomisation type*:
+      .col-sm-9
+        select.form-control.selectpicker(name='randomisationTypeId',title='Select randomisation type')
+          option(selected='', disabled='') Select randomisation type
+          each rt in randomisationTypeArray
+            option(value=rt.id, selected=test.randomisationTypeId===rt.id)= rt.name
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") What counts as a "trial"*:
+      .col-sm-9
+        select#selTrial.form-control.selectpicker(name='trialId',title='Select what counts as a trial')
+          option(selected='', disabled='') Select what counts as a trial
+          each trial in trialArray
+            option(value=trial.id, selected=test.trialId===trial.id)= trial.name + ' (' + trial.description + ')'
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(for="day",style="font-weight:normal") Outcome (what we're measuring per trial)*:
+      .col-sm-9
+        select#selOutcome.form-control.selectpicker(name='outcomeId',title='Select outcome')
+          option(selected='', disabled='') Select outcome
+          each outcome in outcomeArray
+            option(value=outcome.id, selected=test.outcomeId===outcome.id)= outcome.description
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(for="day",style="font-weight:normal") No. of previous days over which to measure the current conversion rate:
+      .col-sm-9
+        input#days(name='days',value=test.days || 90, type='text', size="3", style="text-align: center")
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(for="day",style="font-weight:normal") Current conversion rate:
+      .col-sm-9
+          input#conversionRateHidden(type='hidden', name='outcomeBaselineValue',value=test.outcomeBaselineValue)
+          label#conversionRate Will display when "trial", "outcome" and "days" are set.
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(for="day",style="font-weight:normal") Minimum detectable effect (absolute):
+      .col-sm-9
+        input#minEffect(name='conversionMinDetectableEffect',value=test.conversionMinDetectableEffect || 5, type='text', size="3", style="text-align: center")
+        label &nbsp;%
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(for="day",style="font-weight:normal") Statistical power 1-β:
+      .col-sm-9
+        input#power(name='conversionPower',value=test.conversionPower || 80, type='text', size="3", style="text-align: center")
+        label &nbsp;% - Percent of the time the minimum effect size will be detected, assuming it exists
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(for="day",style="font-weight:normal") Significance level α:
+      .col-sm-9
+        input#alpha(name='conversionAlpha',value=test.conversionAlpha || 5, type='text', size="3", style="text-align: center")
+        label &nbsp;% - Percent of the time a difference will be detected, assuming one does NOT exist
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(for="day",style="font-weight:normal") Sample size per variation:
+      .col-sm-9
+        label#sampleSize
+        input#hiddenSampleSize(type='hidden',name='conversionSampleSize',value=test.conversionSampleSize)
+    .row.form-group
+      .col-sm-3(style="text-align:right")
+        label(style="font-weight:normal") Start date:
+      .col-sm-9
+        input.form-control(type='text', name='startDate', placeholder='Start Date (yyyy-mm-dd)', value=test.startDate)
+    button.btn.btn-purple.btn-block.history(type='submit')
+      = submitText
+      | 
+      span.fa.fa-arrow-circle-right
+script(src='https://code.jquery.com/jquery-1.12.4.min.js', integrity='sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=', crossorigin='anonymous')
+script.
+  window.jQuery || document.write('<script src="/js/jquery/jquery-1.12.4.min.js"><\/script>')
+script.
+  function ppnd(p) {
+    const a0 = 2.50662823884;
+    const a1 = -18.61500062529;
+    const a2 = 41.39119773534;
+    const a3 = -25.44106049637;
+    const b1 = -8.47351093090;
+    const b2 = 23.08336743743;
+    const b3 = -21.06224101826;
+    const b4 = 3.13082909833;
+    const c0 = -2.78718931138;
+    const c1 = -2.29796479134;
+    const c2 = 4.85014127135;
+    const c3 = 2.32121276858;
+    const d1 = 3.54388924762;
+    const d2 = 1.63706781897;
+    let r;
+    const split = 0.42;
+    let value;
+
+    /*
+        0.08 < P < 0.92
+        */
+    if (Math.abs(p - 0.5) <= split) {
+      r = (p - 0.5) * (p - 0.5);
+      value = (
+        (p - 0.5) *
+        ((((((a3 * r) + a2) * r) + a1) * r) + a0)) /
+        ((((((((b4 * r) + b3) * r) + b2) * r) + b1) * r) + 1.0);
+    } else if (p > 0.0 && p < 1.0) {
+      /*
+        P < 0.08 or P > 0.92,
+        R = min ( P, 1-P )
+        */
+      if (p > 0.5) {
+        r = Math.sqrt(-Math.log(1.0 - p));
+      } else {
+        r = Math.sqrt(-Math.log(p));
+      }
+
+      value = (((c3 * r + c2) * r + c1) * r + c0) / ((d2 * r + d1) * r + 1.0);
+
+      if (p < 0.5) {
+        value = -value;
+      }
+    } else {
+      /*
+        P <= 0.0 or 1.0 <= P
+        */
+      value = NaN;
+    }
+
+    return value;
+  }
+
+
+  function numSubjects(alpha, power_level, p, delta) {
+    if (p > 0.5) {
+      p = 1.0 - p;
+    }
+    const t_alpha2 = ppnd(1.0 - alpha / 2);
+    const t_beta = ppnd(power_level);
+
+    const sd1 = Math.sqrt(2 * p * (1.0 - p));
+    const sd2 = Math.sqrt(p * (1.0 - p) + (p + delta) * (1.0 - p - delta));
+
+    return (t_alpha2 * sd1 + t_beta * sd2) * (t_alpha2 * sd1 + t_beta * sd2) / (delta * delta);
+  }
+  const updateSampleSize = () => {
+    const sampleSize = numSubjects(
+      +$('#alpha').val() / 100,
+      +$('#power').val() / 100,
+      +$('#conversionRateHidden').val() / 100,
+      +$('#minEffect').val() / 100
+    );
+
+    const ssToDisplay = sampleSize ? sampleSize.toFixed(0) : "";
+
+    $('#sampleSize').text(ssToDisplay);
+    $('#hiddenSampleSize').val(ssToDisplay);
+  };
+
+  const updateConversionRate = () => {
+    if(!$('#selTrial').val() || !$('#selOutcome').val() || !$('#days').val() ) return;
+    $
+      .getJSON('/ab/conversions/for/trial/' + $('#selTrial').val() + '/outcome/' + $('#selOutcome').val() + '/over/' + $('#days').val() + '/days')
+      .done((data) => {
+        $('#conversionRate').text(data.value.toFixed(2)+'%');
+        $('#conversionRateHidden').val(data.value);
+        updateSampleSize();
+      });
+  };
+
+  $(document).ready(() => {
+    $('#selOutcome, #selTrial').on('change', (e) => {
+      updateConversionRate();
+    });
+
+    $('input[type="text"]')
+      .on('keyup', (e) => {
+        if(e.currentTarget.id === 'days') {
+          updateConversionRate();
+        } else {
+          updateSampleSize();
+        }
+      })
+      .on('click', (e) => {
+        e.currentTarget.select();
+      });
+
+    updateConversionRate();
+  });

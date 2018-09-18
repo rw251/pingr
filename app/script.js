@@ -8,6 +8,8 @@ require('datatables.net-buttons-bs')(window, $);
 require('datatables.net-buttons/js/buttons.colVis.js')(window, $);
 require('datatables.net-buttons/js/buttons.html5.js')(window, $);
 
+const { randomisationTypes } = require('../shared/ab/config');
+
 /*
  * For each disease area there will be 4 stages: Diagnosis, Monitoring, Treatment and Exclusions.
  * Each stage gets a single panel on the front screen.
@@ -21,6 +23,7 @@ const events = require('./events');
 const state = require('./state');
 const layout = require('./layout');
 const tutorial = require('./tutorial');
+const abTests = require('./abTests');
 
 // TODO not sure why i did this - was in local variable
 // maybe a separate module
@@ -109,6 +112,8 @@ const App = {
     });
 
     getServerParameters();
+
+    abTests.process([randomisationTypes.perUser.id, randomisationTypes.perSession.id]);
 
     main.getInitialData(() => {
       gotInitialData = true;

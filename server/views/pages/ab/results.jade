@@ -1,0 +1,47 @@
+include ../../partials/head.jade
+include ../../mixins/toolbar.jade
+.container.starter-template-high(style='background:white')
+  +toolbar('A/B Test Results', [{btn:'btn-info',path:'/ab',text:'Back to test list'}])
+  if message && message.error
+    .alert.alert-danger.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.error
+  if message && message.success
+    .alert.alert-success.alert-dismissible.fade-in(role="alert")
+      button.close(type="button" data-dismiss="alert" aria-label="Close")
+        span(aria-hidden="true") ×
+      p= message.success
+  h2 Test overview
+  table.table
+    tbody
+      tr
+        td Research question:
+        td=test.researchQuestion
+      tr
+        td Name:
+        td=test.name
+      tr
+        td Description:
+        td=test.description
+      tr
+        td Randomisation type:
+        td(title=test.randomisationType.description)=test.randomisationType.name
+      tr
+        td Required sample size (per variation):
+        td=test.conversionSampleSize
+      tr
+        td Actual baseline hits:
+        td=test.baselineHits + ' (' + (100*test.baselineHits/test.conversionSampleSize).toFixed(0) + '%)'
+      tr
+        td Actual feature hits:
+        td=test.featureHits + ' (' + (100*test.featureHits/test.conversionSampleSize).toFixed(0) + '%)'
+      tr
+        td Duration:
+        td=Math.floor(( test.endDate - test.startDate ) / ( 1000 * 60 * 60 * 24 )) + ' days (' + test.startDate.toISOString().substr(0,10) + ' - ' + test.endDate.toISOString().substr(0,10) + ')'
+  hr
+  h2 Test results
+  div Successes / Trials
+  div= 'Baseline: ' + test.baselineSuccesses + ' / ' + test.baselineHits + ' (' + (100*test.baselineSuccesses/test.baselineHits).toFixed(1) + '%)'
+  div= 'Feature: ' + test.featureSuccesses + ' / ' + test.featureHits + ' (' + (100*test.featureSuccesses/test.featureHits).toFixed(1) + '%)'
+  div= 'Verdict: ' + test.verdict

@@ -20,6 +20,7 @@ const log = {
 
   event(type, url, dataProp, xpath) {
     const dataToSend = { event: { type, url, pageId, data: dataProp } };
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.event.tests = lookup.tests;
     if (xpath && xpath.length > 0) dataToSend.event.xpath = xpath;
     $.ajax({
       type: 'POST',
@@ -95,10 +96,12 @@ const log = {
 
   // rwhere
   recordIndividualPlan(text, practiceId, patientId, indicatorList, done) {
+    const dataToSend = { actionText: text, indicatorList, pageId };
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url: `/api/action/addIndividual/${practiceId}/${patientId}`,
-      data: JSON.stringify({ actionText: text, indicatorList, pageId }),
+      data: JSON.stringify(dataToSend),
       success(action) {
         notify.showSaved();
         data.addOrUpdatePatientAction(patientId, action, () => done(null, action));
@@ -124,10 +127,12 @@ const log = {
 
   // rwhere
   updateIndividualAction(practiceId, patientId, updatedAction, callback) {
+    const dataToSend = { action: updatedAction, url: window.location.href, pageId };
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url: `/api/action/update/individual/${practiceId}/${patientId}`,
-      data: JSON.stringify({ action: updatedAction, url: window.location.href, pageId }),
+      data: JSON.stringify(dataToSend),
       success(action) {
         notify.showSaved();
         if (action.agree === true) {
@@ -143,10 +148,12 @@ const log = {
   },
 
   updateTeamAction(practiceId, indicatorId, dataProp, done) {
+    const dataToSend = { action: dataProp, url: window.location.href, pageId };
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url: `/api/action/update/team/${practiceId}/${indicatorId}`,
-      data: JSON.stringify({ action: dataProp, url: window.location.href, pageId }),
+      data: JSON.stringify(dataToSend),
       success(d) {
         if (!done) return notify.showSaved();
         return done(null, d);
@@ -157,10 +164,12 @@ const log = {
   },
 
   updateUserDefinedPatientAction(patientId, actionTextId, dataProp, callback) {
+    const dataToSend = { action: dataProp };
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url: `/api/action/update/userdefinedpatient/${patientId}/${actionTextId}`,
-      data: JSON.stringify({ action: dataProp }),
+      data: JSON.stringify(dataToSend),
       success(action) {
         notify.showSaved();
         action.oldActionTextId = actionTextId;
@@ -185,10 +194,12 @@ const log = {
   },
 
   updateUserDefinedTeamAction(actionTextId, dataProp, done) {
+    const dataToSend = { action: dataProp };
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url: `/api/action/update/userdefinedteam/${actionTextId}`,
-      data: JSON.stringify({ action: dataProp }),
+      data: JSON.stringify(dataToSend),
       success(d) {
         if (!done) return notify.showSaved();
         return done(null, d);
@@ -200,10 +211,12 @@ const log = {
 
   recordTeamPlan(practiceId, text, indicatorId, done) {
     const url = `/api/action/addTeam/${practiceId}/${indicatorId || ''}`;
+    const dataToSend = { actionText: text, pageId };
+    if (lookup.tests && Object.keys(lookup.tests).length > 0) dataToSend.tests = lookup.tests;
     $.ajax({
       type: 'POST',
       url,
-      data: JSON.stringify({ actionText: text, pageId }),
+      data: JSON.stringify(dataToSend),
       success(d) {
         notify.showSaved();
         return done(null, d);

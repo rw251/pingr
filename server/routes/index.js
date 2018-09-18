@@ -16,6 +16,7 @@ const text = require('../controllers/text.js');
 const utils = require('../controllers/utils.js');
 const config = require('../config');
 const tutorials = require('../tutorials');
+const abRoutes = require('./ab');
 const { isAuthenticated, isAdmin, isUserOkToViewPractice } = require('./helpers');
 
 const router = express.Router();
@@ -168,6 +169,8 @@ module.exports = (passport) => {
       });
     });
   });
+
+  abRoutes.applyTo(router);
 
   // User forgets password
   router.get('/auth/reset', (req, res) => {
@@ -387,6 +390,9 @@ module.exports = (passport) => {
             if (req.params.indicatorId) {
               evt.data.push({ key: 'indicatorId', value: req.params.indicatorId });
             }
+            if (req.body.tests) {
+              evt.tests = req.body.tests;
+            }
             events.add(evt, () => {
               res.send(action);
             });
@@ -417,6 +423,9 @@ module.exports = (passport) => {
             user: req.user.email,
             pageId: req.body.pageId,
           };
+          if (req.body.tests) {
+            evt.tests = req.body.tests;
+          }
           events.add(evt, () => {
             res.send(action);
           });
@@ -455,6 +464,9 @@ module.exports = (passport) => {
           }
           if (req.body.url) {
             evt.url = req.body.url;
+          }
+          if (req.body.tests) {
+            evt.tests = req.body.tests;
           }
           if (req.body.action.agree === true) {
             evt.type = 'agree';
@@ -507,6 +519,9 @@ module.exports = (passport) => {
           }
           if (req.params.indicatorId) {
             evt.data.push({ key: 'indicatorId', value: req.params.indicatorId });
+          }
+          if (req.body.tests) {
+            evt.tests = req.body.tests;
           }
           if (req.body.action.agree === true) {
             evt.type = 'agree';
