@@ -7,6 +7,7 @@ let isFetchingNhsLookup = false;
 
 const dt = {
   clinicalArea: {
+    aki: 'AKI',
     copd: 'COPD',
     htn: 'Hypertension',
     'cvd.stroke': 'Stroke',
